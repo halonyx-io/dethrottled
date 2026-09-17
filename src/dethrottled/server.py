@@ -89,6 +89,19 @@ app = FastAPI(title="dethrottled", version=VERSION,
               description="Zero-API search, fetch and extraction")
 
 
+def _env_flag(name: str, default: bool) -> bool:
+    """A boolean from the environment, spelled the way operators spell booleans."""
+    raw = os.environ.get(name)
+    if raw is None:
+        return default
+    return raw.strip().lower() not in ("0", "false", "no", "off", "")
+
+
+# Reranking is on unless an operator says otherwise. See the note on
+# SearchBody.rerank for why the default is the interesting part.
+_RERANK_BY_DEFAULT = _env_flag("DETHROTTLED_RERANK_DEFAULT", True)
+
+
 class SearchBody(BaseModel):
     # Unknown fields are rejected rather than ignored, so a caller that mistypes
     # one hears about it instead of silently getting the default.
@@ -115,11 +128,25 @@ class SearchBody(BaseModel):
     fresh: bool = False
     profile: str = "balanced"
 
-    # Ranking. `rank` is BM25 and free, so it is on. `rerank` loads a model and
-    # costs per document, so it is not -- but when it is on it is applied to a
-    # shortlist only, which is what makes it affordable at all.
+    # Ranking, both stages on. `rank` is BM25 and free.
+    #
+    # `rerank` loads a model and costs per document, so it began as opt-in --
+    # but a default no caller knows to override is not a default, it is a
+    # trap. A request that omits the field gets lexical ordering, and while
+    # the response does report which stages ran, a client that never sends the
+    # field has no reason to read that line. Measured on a frozen 18-query
+    # pool against this engine's own results, the cross-encoder moved R@1 from
+    # 5.6% to 33.3% and nDCG@10 from 40.6 to 53.6. That is too much quality to
+    # leave behind a field nobody sends.
+    #
+    # So it is opt-OUT: send `rerank: false` for a fast link-only search, or
+    # set DETHROTTLED_RERANK_DEFAULT=0 for the whole deployment.
+    #
+    # BM25 stays on underneath, and the two are not alternatives: BM25 orders
+    # the pool and hands the cross-encoder its shortlist, so switching it off
+    # would remove the reranker's input for no gain.
     rank: bool = True
-    rerank: bool = False
+    rerank: bool = _RERANK_BY_DEFAULT
     # How many already-fetched corpus passages to merge into the pool before
     # ranking. 0 disables it. These cost no fetch, so they are cheaper than the
     # web rows they compete with, not merely additional.

@@ -99,8 +99,25 @@ def test_search_telemetry_is_on_the_first_row_only(client):
 def test_search_reports_which_ranking_stages_ran(client):
     rows = client.post("/search", json={"query": "anything", "rank": True}).json()
     assert "bm25" in rows[0]["ranking"]
-    rows = client.post("/search", json={"query": "anything", "rank": False}).json()
+    # Both stages have to be switched off explicitly to get an empty list,
+    # which is the case this test exists to pin: the response reports what
+    # RAN, not what was asked for. Leaving rerank at its default here would
+    # make the assertion depend on whether a reranker happens to be installed
+    # -- true where the model is baked in, false in CI.
+    rows = client.post("/search", json={"query": "anything", "rank": False,
+                                        "rerank": False}).json()
     assert rows[0]["ranking"] == []
+
+
+def test_rerank_is_on_by_default(client):
+    """The default is what protects a caller that does not know to ask.
+
+    Turned on deliberately: a client that omits the field used to get lexical
+    ordering and no way to tell. If this ever flips back, reranking silently
+    disappears for every caller that does not send it.
+    """
+    assert srv.SearchBody(query="anything").rerank is True
+    assert srv.SearchBody(query="anything", rerank=False).rerank is False
 
 
 def test_search_respects_the_result_limit(client):
