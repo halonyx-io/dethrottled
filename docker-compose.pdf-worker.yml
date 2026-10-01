@@ -1,0 +1,40 @@
+# Optional overlay: an HTML-to-PDF worker. See docker/pdf-worker/README.md.
+# Enable with COMPOSE_FILE=docker-compose.yml:docker-compose.pdf-worker.yml in .env.
+# The image pin below must match the crawl4ai service in docker-compose.yml.
+
+services:
+  pdf-worker:
+    image: unclecode/crawl4ai:0.9.3@sha256:84751dab794259db05d5bd4e5c766a8041a65f0554326e4516e620abdf2fa18b
+    restart: unless-stopped
+    # PID 1 here is Python, which does not reap children. Without an init process every Chromium helper that
+    # exits stays behind as a zombie, one set per PDF. `init: true` runs tini, which reaps them.
+    init: true
+    # The image's built-in health check looks at crawl4ai's port (11235), which this service does not run.
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8788/health', timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    entrypoint: ["python", "/worker/worker.py"]
+    command: []
+    environment:
+      PDF_WORKER_PORT: "8788"
+      HOME: /tmp
+      PLAYWRIGHT_BROWSERS_PATH: /home/appuser/.cache/ms-playwright
+    # Published on all interfaces: the worker cannot fetch anything, so a trusted LAN may use it freely.
+    # Bind it to 127.0.0.1 here if yours is not.
+    ports:
+      - "0.0.0.0:8788:8788"
+    volumes:
+      - ./docker/pdf-worker:/worker:ro
+    read_only: true
+    tmpfs:
+      - /tmp:size=512m,mode=1777
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    shm_size: 1gb
+    deploy:
+      resources:
+        limits:
+          memory: 1g
