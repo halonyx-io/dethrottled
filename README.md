@@ -66,6 +66,33 @@ ODT/ODS/ODP, EPUB, and RTF.
 containerised JavaScript renderer (Crawl4AI) — so a page is only rendered when
 the cheaper tiers cannot read it.
 
+## Measured performance
+
+On 4 October 2026 we ran the same 50 English queries through native x86_64
+and ARM64 builds. szbox is an AMD Ryzen 7 5800U (8 cores / 16 threads,
+30 GiB usable RAM); q6a is a Radxa Dragon Q6A (4 Cortex-A55 + 4 Cortex-A78
+cores, 11 GiB usable RAM). Both builds used the same source commit and Python
+package set. These are client-observed medians with normal services running,
+not latency guarantees for the public web.
+
+| Workload | szbox useful; median | q6a useful; median |
+| --- | ---: | ---: |
+| `/search`, 50 queries | 50/50; **1.43 s** | 50/50; **2.66 s** |
+| `/search-and-fetch`, 50 queries | 47/50; **3.60 s** | 47/50; **5.56 s** |
+| `/fetch`, the same 50 fixed URLs | 42/50; **0.51 s** | 42/50; **0.73 s** |
+| `/research`, eight evidence bundles | 8/8; **7.54 s** | 7/8; **9.26 s** |
+
+A useful fetched page had `quality: ok` and at least 600 extracted characters;
+HTTP 200 alone did not pass. With eight concurrent search callers, szbox
+returned 50/50 useful results at 1.48 queries/s, while q6a returned 48/50
+at 0.71 queries/s. Controlled document fixtures passed 39/39 expected
+outcomes on each host. The browser search worker was the main search CPU
+consumer; the [full report](docs/BENCHMARKS.md) has p95 latency, individual
+failures, per-component CPU/RAM samples, methods, and raw results.
+
+The report and raw JSON are also copied into the API image at
+`/app/docs/BENCHMARKS.md` and `/app/docs/benchmarks/2026-10-04/`.
+
 ## Documentation
 
 | Guide | What it covers |
