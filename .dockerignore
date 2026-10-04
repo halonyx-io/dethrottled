@@ -46,6 +46,7 @@ docker/
 examples/
 *.md
 !README.md
+!docs-next/*.md
 
 .DS_Store
 .idea/
