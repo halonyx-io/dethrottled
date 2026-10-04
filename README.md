@@ -1,9 +1,9 @@
 # Dethrottled
 
 **Keyless web search, fetch, and document extraction for agents and local
-tooling.** No API keys, no quotas, no metered tiers. Search queries go to
-public engines and fetches go to the URLs you name — no language model writes
-answers, and every result stays traceable to the source it came from.
+tooling.** No paid API keys, metered tiers, or purchased provider quotas.
+Search queries go to public engines and fetches go to the URLs you name. No
+language model writes answers; results stay traceable to their sources.
 
 - **Keyless.** No paid search API, no per-query cost, no account.
 - **Local-first.** Runs as a single container. The Compose project adds a
@@ -92,11 +92,13 @@ client ──▶ dethrottled API (:8787) ──▶ search engines (keyless)
 
 The API is a single FastAPI service. The Compose project runs it alongside the
 browser-search worker, SearXNG, Crawl4AI, and an optional HTML-to-PDF worker,
-all on a private bridge network. Only the API is published to the host.
+all on a private bridge network. The API is published to host loopback by
+default; the optional PDF worker publishes host port 8788 as currently
+configured. The browser-search, SearXNG, and Crawl4AI services remain private.
 
 ## Requirements
 
-- Docker with Compose v2 for the full stack, **or** Python 3.11+ for the API alone.
+- Docker with Compose v2 for the full stack, **or** Python 3.10+ for the API alone.
 - No external API keys. The default engine set is keyless.
 
 This repository provides the raw HTTP API. A public REST gateway or MCP bridge
