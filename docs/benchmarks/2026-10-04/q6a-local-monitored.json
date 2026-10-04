@@ -1,0 +1,5684 @@
+{
+  "meta": {
+    "host": "q6a",
+    "machine": "aarch64",
+    "started_at": "2026-10-04T19:47:57+0800",
+    "api": "http://127.0.0.1:18787",
+    "repeats": 3
+  },
+  "formats": [
+    {
+      "file": "article.html",
+      "expected_good": true,
+      "summary": {
+        "requests": 3,
+        "useful": 3,
+        "median_ms": 36.0,
+        "p95_ms": 119.1,
+        "min_ms": 28.6,
+        "max_ms": 119.1
+      },
+      "samples": [
+        {
+          "ms": 119.1,
+          "status": 200,
+          "error": null,
+          "quality": "ok",
+          "tier": "direct/trafilatura",
+          "chars": 12000,
+          "marker": true,
+          "failure_reason": null
+        },
+        {
+          "ms": 28.6,
+          "status": 200,
+          "error": null,
+          "quality": "ok",
+          "tier": "direct/trafilatura",
+          "chars": 12000,
+          "marker": true,
+          "failure_reason": null
+        },
+        {
+          "ms": 36.0,
+          "status": 200,
+          "error": null,
+          "quality": "ok",
+          "tier": "direct/trafilatura",
+          "chars": 12000,
+          "marker": true,
+          "failure_reason": null
+        }
+      ]
+    },
+    {
+      "file": "table.html",
+      "expected_good": true,
+      "summary": {
+        "requests": 3,
+        "useful": 3,
+        "median_ms": 189.5,
+        "p95_ms": 389.8,
+        "min_ms": 79.6,
+        "max_ms": 389.8
+      },
+      "samples": [
+        {
+          "ms": 189.5,
+          "status": 200,
+          "error": null,
+          "quality": "ok",
+          "tier": "direct/trafilatura",
+          "chars": 11769,
+          "marker": true,
+          "failure_reason": null
+        },
+        {
+          "ms": 389.8,
+          "status": 200,
+          "error": null,
+          "quality": "ok",
+          "tier": "direct/trafilatura",
+          "chars": 11769,
+          "marker": true,
+          "failure_reason": null
+        },
+        {
+          "ms": 79.6,
+          "status": 200,
+          "error": null,
+          "quality": "ok",
+          "tier": "direct/trafilatura",
+          "chars": 11769,
+          "marker": true,
+          "failure_reason": null
+        }
+      ]
+    },
+    {
+      "file": "values.csv",
+      "expected_good": true,
+      "summary": {
+        "requests": 3,
+        "useful": 3,
+        "median_ms": 30.7,
+        "p95_ms": 837.1,
+        "min_ms": 25.7,
+        "max_ms": 837.1
+      },
+      "samples": [
+        {
+          "ms": 837.1,
+          "status": 200,
+          "error": null,
+          "quality": "ok",
+          "tier": "direct/direct-native",
+          "chars": 12000,
+          "marker": true,
+          "failure_reason": null
+        },
+        {
+          "ms": 25.7,
+          "status": 200,
+          "error": null,
+          "quality": "ok",
+          "tier": "direct/direct-native",
+          "chars": 12000,
+          "marker": true,
+          "failure_reason": null
+        },
+        {
+          "ms": 30.7,
+          "status": 200,
+          "error": null,
+          "quality": "ok",
+          "tier": "direct/direct-native",
+          "chars": 12000,
+          "marker": true,
+          "failure_reason": null
+        }
+      ]
+    },
+    {
+      "file": "report.pdf",
+      "expected_good": true,
+      "summary": {
+        "requests": 3,
+        "useful": 3,
+        "median_ms": 106.6,
+        "p95_ms": 813.4,
+        "min_ms": 65.7,
+        "max_ms": 813.4
+      },
+      "samples": [
+        {
+          "ms": 813.4,
+          "status": 200,
+          "error": null,
+          "quality": "ok",
+          "tier": "direct/direct-native",
+          "chars": 5672,
+          "marker": true,
+          "failure_reason": null
+        },
+        {
+          "ms": 65.7,
+          "status": 200,
+          "error": null,
+          "quality": "ok",
+          "tier": "direct/direct-native",
+          "chars": 5672,
+          "marker": true,
+          "failure_reason": null
+        },
+        {
+          "ms": 106.6,
+          "status": 200,
+          "error": null,
+          "quality": "ok",
+          "tier": "direct/direct-native",
+          "chars": 5672,
+          "marker": true,
+          "failure_reason": null
+        }
+      ]
+    },
+    {
+      "file": "scan.pdf",
+      "expected_good": true,
+      "summary": {
+        "requests": 3,
+        "useful": 3,
+        "median_ms": 609.4,
+        "p95_ms": 3525.7,
+        "min_ms": 589.9,
+        "max_ms": 3525.7
+      },
+      "samples": [
+        {
+          "ms": 3525.7,
+          "status": 200,
+          "error": null,
+          "quality": "ok",
+          "tier": "direct/direct-native",
+          "chars": 375,
+          "marker": true,
+          "failure_reason": null
+        },
+        {
+          "ms": 609.4,
+          "status": 200,
+          "error": null,
+          "quality": "ok",
+          "tier": "direct/direct-native",
+          "chars": 375,
+          "marker": true,
+          "failure_reason": null
+        },
+        {
+          "ms": 589.9,
+          "status": 200,
+          "error": null,
+          "quality": "ok",
+          "tier": "direct/direct-native",
+          "chars": 375,
+          "marker": true,
+          "failure_reason": null
+        }
+      ]
+    },
+    {
+      "file": "report.docx",
+      "expected_good": true,
+      "summary": {
+        "requests": 3,
+        "useful": 3,
+        "median_ms": 52.4,
+        "p95_ms": 69.9,
+        "min_ms": 29.9,
+        "max_ms": 69.9
+      },
+      "samples": [
+        {
+          "ms": 69.9,
+          "status": 200,
+          "error": null,
+          "quality": "ok",
+          "tier": "direct/direct-native",
+          "chars": 6749,
+          "marker": true,
+          "failure_reason": null
+        },
+        {
+          "ms": 29.9,
+          "status": 200,
+          "error": null,
+          "quality": "ok",
+          "tier": "direct/direct-native",
+          "chars": 6749,
+          "marker": true,
+          "failure_reason": null
+        },
+        {
+          "ms": 52.4,
+          "status": 200,
+          "error": null,
+          "quality": "ok",
+          "tier": "direct/direct-native",
+          "chars": 6749,
+          "marker": true,
+          "failure_reason": null
+        }
+      ]
+    },
+    {
+      "file": "report.xlsx",
+      "expected_good": true,
+      "summary": {
+        "requests": 3,
+        "useful": 3,
+        "median_ms": 80.8,
+        "p95_ms": 1155.0,
+        "min_ms": 70.8,
+        "max_ms": 1155.0
+      },
+      "samples": [
+        {
+          "ms": 1155.0,
+          "status": 200,
+          "error": null,
+          "quality": "ok",
+          "tier": "direct/direct-native",
+          "chars": 12000,
+          "marker": true,
+          "failure_reason": null
+        },
+        {
+          "ms": 70.8,
+          "status": 200,
+          "error": null,
+          "quality": "ok",
+          "tier": "direct/direct-native",
+          "chars": 12000,
+          "marker": true,
+          "failure_reason": null
+        },
+        {
+          "ms": 80.8,
+          "status": 200,
+          "error": null,
+          "quality": "ok",
+          "tier": "direct/direct-native",
+          "chars": 12000,
+          "marker": true,
+          "failure_reason": null
+        }
+      ]
+    },
+    {
+      "file": "report.pptx",
+      "expected_good": true,
+      "summary": {
+        "requests": 3,
+        "useful": 3,
+        "median_ms": 47.8,
+        "p95_ms": 340.7,
+        "min_ms": 35.7,
+        "max_ms": 340.7
+      },
+      "samples": [
+        {
+          "ms": 340.7,
+          "status": 200,
+          "error": null,
+          "quality": "ok",
+          "tier": "direct/direct-native",
+          "chars": 2439,
+          "marker": true,
+          "failure_reason": null
+        },
+        {
+          "ms": 35.7,
+          "status": 200,
+          "error": null,
+          "quality": "ok",
+          "tier": "direct/direct-native",
+          "chars": 2439,
+          "marker": true,
+          "failure_reason": null
+        },
+        {
+          "ms": 47.8,
+          "status": 200,
+          "error": null,
+          "quality": "ok",
+          "tier": "direct/direct-native",
+          "chars": 2439,
+          "marker": true,
+          "failure_reason": null
+        }
+      ]
+    },
+    {
+      "file": "report.odt",
+      "expected_good": true,
+      "summary": {
+        "requests": 3,
+        "useful": 3,
+        "median_ms": 13.4,
+        "p95_ms": 1072.9,
+        "min_ms": 12.2,
+        "max_ms": 1072.9
+      },
+      "samples": [
+        {
+          "ms": 1072.9,
+          "status": 200,
+          "error": null,
+          "quality": "ok",
+          "tier": "direct/direct-native",
+          "chars": 6729,
+          "marker": true,
+          "failure_reason": null
+        },
+        {
+          "ms": 12.2,
+          "status": 200,
+          "error": null,
+          "quality": "ok",
+          "tier": "direct/direct-native",
+          "chars": 6729,
+          "marker": true,
+          "failure_reason": null
+        },
+        {
+          "ms": 13.4,
+          "status": 200,
+          "error": null,
+          "quality": "ok",
+          "tier": "direct/direct-native",
+          "chars": 6729,
+          "marker": true,
+          "failure_reason": null
+        }
+      ]
+    },
+    {
+      "file": "report.epub",
+      "expected_good": true,
+      "summary": {
+        "requests": 3,
+        "useful": 3,
+        "median_ms": 38.7,
+        "p95_ms": 732.8,
+        "min_ms": 37.9,
+        "max_ms": 732.8
+      },
+      "samples": [
+        {
+          "ms": 732.8,
+          "status": 200,
+          "error": null,
+          "quality": "ok",
+          "tier": "direct/direct-native",
+          "chars": 12000,
+          "marker": true,
+          "failure_reason": null
+        },
+        {
+          "ms": 37.9,
+          "status": 200,
+          "error": null,
+          "quality": "ok",
+          "tier": "direct/direct-native",
+          "chars": 12000,
+          "marker": true,
+          "failure_reason": null
+        },
+        {
+          "ms": 38.7,
+          "status": 200,
+          "error": null,
+          "quality": "ok",
+          "tier": "direct/direct-native",
+          "chars": 12000,
+          "marker": true,
+          "failure_reason": null
+        }
+      ]
+    },
+    {
+      "file": "report.rtf",
+      "expected_good": true,
+      "summary": {
+        "requests": 3,
+        "useful": 3,
+        "median_ms": 19.3,
+        "p95_ms": 707.1,
+        "min_ms": 15.6,
+        "max_ms": 707.1
+      },
+      "samples": [
+        {
+          "ms": 707.1,
+          "status": 200,
+          "error": null,
+          "quality": "ok",
+          "tier": "direct/direct-native",
+          "chars": 2219,
+          "marker": true,
+          "failure_reason": null
+        },
+        {
+          "ms": 19.3,
+          "status": 200,
+          "error": null,
+          "quality": "ok",
+          "tier": "direct/direct-native",
+          "chars": 2219,
+          "marker": true,
+          "failure_reason": null
+        },
+        {
+          "ms": 15.6,
+          "status": 200,
+          "error": null,
+          "quality": "ok",
+          "tier": "direct/direct-native",
+          "chars": 2219,
+          "marker": true,
+          "failure_reason": null
+        }
+      ]
+    },
+    {
+      "file": "wrong.pdf",
+      "expected_good": false,
+      "summary": {
+        "requests": 3,
+        "useful": 3,
+        "median_ms": 31.5,
+        "p95_ms": 902.6,
+        "min_ms": 28.7,
+        "max_ms": 902.6
+      },
+      "samples": [
+        {
+          "ms": 902.6,
+          "status": 200,
+          "error": null,
+          "quality": "failed",
+          "tier": "tls",
+          "chars": 0,
+          "marker": false,
+          "failure_reason": "direct:empty | tls:empty"
+        },
+        {
+          "ms": 28.7,
+          "status": 200,
+          "error": null,
+          "quality": "failed",
+          "tier": "tls",
+          "chars": 0,
+          "marker": false,
+          "failure_reason": "direct:empty | tls:empty"
+        },
+        {
+          "ms": 31.5,
+          "status": 200,
+          "error": null,
+          "quality": "failed",
+          "tier": "tls",
+          "chars": 0,
+          "marker": false,
+          "failure_reason": "direct:empty | tls:empty"
+        }
+      ]
+    },
+    {
+      "file": "missing.html",
+      "expected_good": false,
+      "summary": {
+        "requests": 3,
+        "useful": 3,
+        "median_ms": 10.9,
+        "p95_ms": 529.2,
+        "min_ms": 10.7,
+        "max_ms": 529.2
+      },
+      "samples": [
+        {
+          "ms": 529.2,
+          "status": 200,
+          "error": null,
+          "quality": "failed",
+          "tier": "tls",
+          "chars": 0,
+          "marker": false,
+          "failure_reason": "direct:http_404 | tls:tls_http_404"
+        },
+        {
+          "ms": 10.7,
+          "status": 200,
+          "error": null,
+          "quality": "failed",
+          "tier": "tls",
+          "chars": 0,
+          "marker": false,
+          "failure_reason": "direct:http_404 | tls:tls_http_404"
+        },
+        {
+          "ms": 10.9,
+          "status": 200,
+          "error": null,
+          "quality": "failed",
+          "tier": "tls",
+          "chars": 0,
+          "marker": false,
+          "failure_reason": "direct:http_404 | tls:tls_http_404"
+        }
+      ]
+    }
+  ],
+  "load": {
+    "health_c1": {
+      "summary": {
+        "requests": 120,
+        "useful": 120,
+        "median_ms": 3.1,
+        "p95_ms": 6.8,
+        "min_ms": 1.2,
+        "max_ms": 13.1,
+        "wall_s": 0.468,
+        "throughput_rps": 256.41
+      },
+      "samples": [
+        {
+          "ms": 13.1,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 4.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 4.1,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 4.0,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 4.3,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 4.0,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 4.8,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 6.2,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 5.5,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 5.7,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 6.3,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 6.4,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 6.5,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 6.5,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 6.4,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 4.1,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 4.9,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 5.0,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 6.4,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 7.5,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 7.2,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 4.1,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 3.1,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 3.5,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 3.1,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 3.4,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 2.7,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 2.1,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 1.9,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 1.9,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 3.0,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 2.9,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 2.7,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 2.7,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 2.7,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 2.5,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 2.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 2.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 2.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 2.8,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 2.7,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 2.8,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 2.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 2.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 2.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 2.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 2.7,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 2.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 2.9,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 3.2,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 3.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 3.2,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 2.8,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 2.4,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 2.3,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 1.7,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 1.4,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 1.2,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 1.2,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 1.3,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 1.3,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 1.3,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 1.3,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 1.3,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 1.3,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 1.3,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 2.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 2.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 2.9,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 2.9,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 2.7,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 2.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 2.9,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 2.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 2.5,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 2.9,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 3.1,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 3.0,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 6.4,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 4.5,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 4.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 3.8,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 2.9,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 2.8,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 2.5,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 1.7,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 1.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 1.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 3.3,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 3.1,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 5.4,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 7.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 6.1,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 4.0,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 4.4,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 6.8,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 4.3,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 4.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 6.8,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 6.4,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 10.9,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 4.1,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 3.9,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 4.2,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 4.7,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 3.8,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 3.7,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 3.3,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 3.4,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 3.5,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 3.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 4.4,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 3.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 3.2,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 2.9,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 2.8,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 2.7,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 3.1,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 2.8,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 2.7,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        }
+      ]
+    },
+    "health_c8": {
+      "summary": {
+        "requests": 120,
+        "useful": 120,
+        "median_ms": 9.6,
+        "p95_ms": 15.7,
+        "min_ms": 3.8,
+        "max_ms": 20.6,
+        "wall_s": 0.158,
+        "throughput_rps": 759.49
+      },
+      "samples": [
+        {
+          "ms": 15.1,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 14.8,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 15.7,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 14.2,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 15.8,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 15.9,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 13.7,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 13.8,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 9.8,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 5.3,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 8.4,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 13.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 3.8,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 17.5,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 11.0,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 12.4,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 9.0,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 7.2,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 8.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 7.2,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 5.9,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 7.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 9.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 8.0,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 7.1,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 7.9,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 7.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 8.0,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 8.2,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 9.0,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 8.5,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 9.0,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 10.5,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 8.4,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 9.7,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 9.1,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 8.9,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 10.3,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 12.1,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 9.9,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 9.7,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 11.5,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 10.3,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 8.3,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 10.0,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 7.4,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 10.3,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 5.8,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 6.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 7.1,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 9.0,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 7.4,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 10.5,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 9.1,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 8.1,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 9.4,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 9.9,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 7.9,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 9.0,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 8.8,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 10.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 7.8,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 8.9,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 8.8,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 9.1,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 9.5,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 8.7,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 8.9,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 8.0,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 8.2,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 8.9,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 10.2,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 8.4,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 9.2,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 11.7,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 10.0,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 9.2,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 10.8,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 8.8,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 10.1,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 10.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 10.7,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 11.5,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 7.8,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 10.0,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 12.0,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 9.1,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 11.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 13.2,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 15.4,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 5.7,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 13.7,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 7.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 15.1,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 11.1,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 6.8,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 9.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 10.1,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 12.5,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 11.3,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 12.0,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 6.1,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 20.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 16.1,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 16.2,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 7.5,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 11.1,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 9.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 7.1,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 9.9,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 10.4,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 10.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 13.3,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 12.8,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 6.1,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 10.7,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 7.8,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 10.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 9.1,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 7.1,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        }
+      ]
+    },
+    "health_c32": {
+      "summary": {
+        "requests": 120,
+        "useful": 120,
+        "median_ms": 19.8,
+        "p95_ms": 35.0,
+        "min_ms": 4.8,
+        "max_ms": 41.5,
+        "wall_s": 0.13,
+        "throughput_rps": 923.08
+      },
+      "samples": [
+        {
+          "ms": 6.7,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 11.7,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 10.3,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 11.5,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 7.2,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 10.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 10.8,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 8.9,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 12.2,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 11.2,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 10.0,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 10.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 4.8,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 9.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 14.0,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 12.4,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 7.5,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 10.7,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 13.8,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 11.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 10.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 11.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 12.2,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 10.8,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 11.9,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 11.2,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 14.4,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 18.4,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 14.7,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 16.2,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 14.8,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 16.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 18.9,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 17.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 19.0,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 15.3,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 15.4,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 18.5,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 17.2,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 16.3,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 20.8,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 19.0,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 19.8,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 18.7,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 17.5,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 18.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 19.8,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 19.7,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 17.4,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 15.7,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 21.3,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 19.5,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 18.0,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 18.8,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 16.7,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 17.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 24.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 23.9,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 21.1,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 22.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 21.3,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 26.0,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 32.3,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 33.2,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 27.9,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 34.2,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 31.4,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 24.2,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 41.5,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 32.3,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 29.4,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 34.5,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 32.2,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 40.9,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 32.9,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 31.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 32.4,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 34.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 35.2,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 37.2,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 37.2,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 35.2,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 34.9,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 32.9,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 31.4,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 35.0,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 28.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 29.9,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 31.3,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 30.5,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 28.1,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 28.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 28.9,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 26.2,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 26.3,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 24.0,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 24.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 23.7,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 21.0,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 19.7,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 22.1,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 19.1,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 25.4,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 26.0,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 19.3,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 28.4,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 18.8,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 21.9,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 25.6,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 19.1,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 25.5,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 24.8,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 23.9,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 18.1,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 20.2,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 21.8,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 19.5,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 21.4,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 20.1,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        },
+        {
+          "ms": 21.5,
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "service": "dethrottled",
+            "version": "0.2.0"
+          },
+          "error": null
+        }
+      ]
+    },
+    "fetch_c1": {
+      "summary": {
+        "requests": 24,
+        "useful": 24,
+        "median_ms": 45.5,
+        "p95_ms": 1135.6,
+        "min_ms": 18.5,
+        "max_ms": 1209.5,
+        "wall_s": 3.385,
+        "throughput_rps": 7.09
+      },
+      "samples": [
+        {
+          "ms": 18.5,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 18.8,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 116.8,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 30.0,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 39.0,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 45.6,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 39.7,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 23.9,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 1209.5,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 47.4,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 49.2,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 55.0,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 45.5,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 38.4,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 49.1,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 43.8,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 1135.6,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 79.4,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 27.1,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 68.0,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 31.1,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 59.4,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 35.2,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 52.3,
+          "status": 200,
+          "error": null,
+          "good": true
+        }
+      ]
+    },
+    "fetch_c4": {
+      "summary": {
+        "requests": 24,
+        "useful": 24,
+        "median_ms": 763.0,
+        "p95_ms": 1477.5,
+        "min_ms": 288.7,
+        "max_ms": 1600.9,
+        "wall_s": 4.947,
+        "throughput_rps": 4.85
+      },
+      "samples": [
+        {
+          "ms": 1226.0,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 1389.2,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 1477.5,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 1600.9,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 508.4,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 444.5,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 410.5,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 346.4,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 1034.2,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 1216.3,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 1159.1,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 1219.7,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 430.9,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 288.7,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 364.4,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 313.6,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 1061.5,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 1070.1,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 1083.2,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 1017.5,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 315.6,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 415.7,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 402.9,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 439.0,
+          "status": 200,
+          "error": null,
+          "good": true
+        }
+      ]
+    },
+    "fetch_c8": {
+      "summary": {
+        "requests": 24,
+        "useful": 24,
+        "median_ms": 1453.0,
+        "p95_ms": 1515.5,
+        "min_ms": 769.1,
+        "max_ms": 1536.3,
+        "wall_s": 4.383,
+        "throughput_rps": 5.48
+      },
+      "samples": [
+        {
+          "ms": 769.1,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 996.2,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 1165.3,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 1193.1,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 1281.1,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 1510.9,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 1405.0,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 1450.7,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 1515.5,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 1508.2,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 1413.9,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 1406.5,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 1382.1,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 1456.7,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 1536.3,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 1478.9,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 1503.2,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 1462.0,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 1478.2,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 1512.7,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 1504.2,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 1455.3,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 1366.8,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 1384.8,
+          "status": 200,
+          "error": null,
+          "good": true
+        }
+      ]
+    },
+    "corpus_c1": {
+      "summary": {
+        "requests": 48,
+        "useful": 48,
+        "median_ms": 9.4,
+        "p95_ms": 16.3,
+        "min_ms": 8.9,
+        "max_ms": 32.0,
+        "wall_s": 0.508,
+        "throughput_rps": 94.49
+      },
+      "samples": [
+        {
+          "ms": 32.0,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 12.2,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 16.3,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 14.1,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 9.7,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 12.9,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 9.0,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 9.6,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 9.4,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 8.9,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 9.4,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 9.2,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 9.5,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 9.8,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 9.4,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 9.2,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 9.4,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 9.1,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 9.0,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 9.2,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 9.1,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 9.7,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 9.0,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 9.3,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 9.5,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 18.2,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 12.3,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 8.9,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 9.5,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 9.4,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 9.5,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 9.2,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 9.4,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 9.6,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 9.1,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 9.5,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 9.0,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 10.9,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 9.2,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 9.4,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 9.0,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 9.2,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 9.0,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 9.2,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 9.5,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 9.5,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 9.3,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 9.3,
+          "status": 200,
+          "error": null,
+          "good": true
+        }
+      ]
+    },
+    "corpus_c4": {
+      "summary": {
+        "requests": 48,
+        "useful": 48,
+        "median_ms": 37.3,
+        "p95_ms": 61.5,
+        "min_ms": 19.4,
+        "max_ms": 63.0,
+        "wall_s": 0.481,
+        "throughput_rps": 99.79
+      },
+      "samples": [
+        {
+          "ms": 62.4,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 61.5,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 31.2,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 55.1,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 26.7,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 41.1,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 52.9,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 41.1,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 41.6,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 53.8,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 54.3,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 48.3,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 63.0,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 49.4,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 33.9,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 43.2,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 46.0,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 36.4,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 37.7,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 35.8,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 36.5,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 39.1,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 45.4,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 25.3,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 36.9,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 26.6,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 26.6,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 32.0,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 24.0,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 43.0,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 42.0,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 34.1,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 26.8,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 30.2,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 37.8,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 48.8,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 40.8,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 26.0,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 39.4,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 30.3,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 48.5,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 29.4,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 29.5,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 30.3,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 30.6,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 30.1,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 31.2,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 19.4,
+          "status": 200,
+          "error": null,
+          "good": true
+        }
+      ]
+    },
+    "corpus_c8": {
+      "summary": {
+        "requests": 48,
+        "useful": 48,
+        "median_ms": 57.8,
+        "p95_ms": 82.7,
+        "min_ms": 24.1,
+        "max_ms": 113.0,
+        "wall_s": 0.382,
+        "throughput_rps": 125.65
+      },
+      "samples": [
+        {
+          "ms": 37.2,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 24.9,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 50.5,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 82.7,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 46.8,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 64.5,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 76.3,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 67.0,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 51.4,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 63.2,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 45.6,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 45.5,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 48.9,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 63.8,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 68.7,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 51.7,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 65.9,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 57.1,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 52.9,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 51.8,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 42.8,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 46.9,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 66.1,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 58.4,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 58.6,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 54.6,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 64.2,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 56.6,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 56.3,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 38.3,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 24.1,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 53.5,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 73.6,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 44.8,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 113.0,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 85.9,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 75.7,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 66.7,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 64.1,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 30.1,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 43.0,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 59.5,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 56.7,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 60.9,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 58.8,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 60.6,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 61.1,
+          "status": 200,
+          "error": null,
+          "good": true
+        },
+        {
+          "ms": 67.9,
+          "status": 200,
+          "error": null,
+          "good": true
+        }
+      ]
+    }
+  },
+  "resource_samples": [
+    {
+      "at": 1791114475.756121,
+      "name": "dethrottled-bench-api",
+      "cpu_percent": 0.39,
+      "memory_mib": 46.0
+    },
+    {
+      "at": 1791114478.8537486,
+      "name": "dethrottled-bench-api",
+      "cpu_percent": 731.11,
+      "memory_mib": 243.7
+    },
+    {
+      "at": 1791114481.924242,
+      "name": "dethrottled-bench-api",
+      "cpu_percent": 751.87,
+      "memory_mib": 323.6
+    },
+    {
+      "at": 1791114485.107275,
+      "name": "dethrottled-bench-api",
+      "cpu_percent": 737.29,
+      "memory_mib": 311.1
+    },
+    {
+      "at": 1791114488.2126698,
+      "name": "dethrottled-bench-api",
+      "cpu_percent": 730.59,
+      "memory_mib": 351.6
+    },
+    {
+      "at": 1791114491.3211727,
+      "name": "dethrottled-bench-api",
+      "cpu_percent": 700.05,
+      "memory_mib": 353.3
+    },
+    {
+      "at": 1791114494.3830278,
+      "name": "dethrottled-bench-api",
+      "cpu_percent": 296.18,
+      "memory_mib": 353.2
+    },
+    {
+      "at": 1791114497.4250855,
+      "name": "dethrottled-bench-api",
+      "cpu_percent": 31.91,
+      "memory_mib": 354.4
+    },
+    {
+      "at": 1791114500.500536,
+      "name": "dethrottled-bench-api",
+      "cpu_percent": 62.29,
+      "memory_mib": 356.0
+    },
+    {
+      "at": 1791114503.5722399,
+      "name": "dethrottled-bench-api",
+      "cpu_percent": 61.25,
+      "memory_mib": 356.0
+    },
+    {
+      "at": 1791114506.6340542,
+      "name": "dethrottled-bench-api",
+      "cpu_percent": 68.08,
+      "memory_mib": 356.9
+    }
+  ],
+  "resource_summary": {
+    "dethrottled-bench-api": {
+      "samples": 11,
+      "cpu_mean_percent_one_core": 379.18,
+      "cpu_peak_percent_one_core": 751.87,
+      "memory_mean_mib": 309.6,
+      "memory_peak_mib": 356.9
+    }
+  }
+}

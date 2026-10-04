@@ -1,0 +1,202 @@
+[
+  {
+    "query": "EU AI Act enforcement news 2026",
+    "url": "https://presenc.ai/research/eu-ai-act-enforcement-tracker-2026"
+  },
+  {
+    "query": "latest NASA Artemis mission updates",
+    "url": "https://www.nasa.gov/artemis-iii-news-and-updates/"
+  },
+  {
+    "query": "Federal Reserve interest rate latest decision",
+    "url": "https://www.cnbc.com/2026/09/16/fed-rate-decision-september-2026.html"
+  },
+  {
+    "query": "semiconductor supply chain news",
+    "url": "https://www.semiconductors.org/news-events/latest-news/"
+  },
+  {
+    "query": "UK energy price cap October 2026",
+    "url": "https://www.ofgem.gov.uk/press-release/energy-price-cap-will-rise-4-october-2026"
+  },
+  {
+    "query": "Australia housing policy latest news",
+    "url": "https://7news.com.au/business/housing"
+  },
+  {
+    "query": "renewable energy storage breakthrough news",
+    "url": "https://renewablesnow.com/news/energy-storage/"
+  },
+  {
+    "query": "cybersecurity Patch Tuesday latest",
+    "url": "https://cybersecuritynews.com/microsoft-patch-tuesday-update-september-2026/"
+  },
+  {
+    "query": "COP31 climate conference preparations",
+    "url": "https://unfccc.int/cop31"
+  },
+  {
+    "query": "WHO measles outbreak updates",
+    "url": "https://www.cdc.gov/global-measles-vaccination/data-research/global-measles-outbreaks/index.html"
+  },
+  {
+    "query": "Nashville Tennessee zoning ordinance 2026",
+    "url": "https://www.propertyzoned.com/city/tennessee/nashville"
+  },
+  {
+    "query": "Davidson County Tennessee property tax rate",
+    "url": "https://www.padctn.org/resources/tax-rates-and-calculator/"
+  },
+  {
+    "query": "US Census 2025 population estimates",
+    "url": "https://www.census.gov/newsroom/press-kits/2026/national-state-population-estimates.html"
+  },
+  {
+    "query": "EU AI Act official regulation text",
+    "url": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng"
+  },
+  {
+    "query": "California building energy code 2025",
+    "url": "https://www.energy.ca.gov/programs-and-topics/programs/building-energy-efficiency-standards/2025-building-energy-efficiency"
+  },
+  {
+    "query": "qBittorrent port forwarding troubleshooting",
+    "url": "https://www.flippendo.com/troubleshoot/qbittorrent/port-forwarding"
+  },
+  {
+    "query": "Python asyncio TaskGroup documentation",
+    "url": "https://docs.python.org/3.11/library/asyncio-task.html"
+  },
+  {
+    "query": "Rust ownership guide examples",
+    "url": "https://doc.rust-lang.org/book/ch04-00-understanding-ownership.html"
+  },
+  {
+    "query": "Kubernetes liveness readiness startup probes configuration",
+    "url": "https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/"
+  },
+  {
+    "query": "PostgreSQL EXPLAIN ANALYZE guide",
+    "url": "https://www.postgresql.org/docs/current/sql-explain.html"
+  },
+  {
+    "query": "Docker Compose healthcheck syntax",
+    "url": "https://dockerbuild.com/reference/healthcheck"
+  },
+  {
+    "query": "React hydration mismatch troubleshooting",
+    "url": "https://nerdleveltech.com/react-hydration-mismatch"
+  },
+  {
+    "query": "Linux systemd linger documentation",
+    "url": "https://etbe.coker.com.au/2026/07/24/systemd-linger/"
+  },
+  {
+    "query": "ONNX Runtime Python inference documentation",
+    "url": "https://onnxruntime.ai/docs/api/python/api_summary.html"
+  },
+  {
+    "query": "Caddy reverse proxy documentation",
+    "url": "https://caddyserver.com/docs/caddyfile/directives/reverse_proxy"
+  },
+  {
+    "query": "Okapi BM25 ranking function explained",
+    "url": "https://en.wikipedia.org/wiki/Okapi_BM25"
+  },
+  {
+    "query": "SQLite write ahead logging file format",
+    "url": "https://sqlite.org/wal.html"
+  },
+  {
+    "query": "Unicode normalization forms NFC NFKC explanation",
+    "url": "https://www.unicode.org/reports/tr15/"
+  },
+  {
+    "query": "HTTP 429 Retry-After header semantics",
+    "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Retry-After"
+  },
+  {
+    "query": "PDF A archival standard overview",
+    "url": "https://en.wikipedia.org/wiki/PDF/A"
+  },
+  {
+    "query": "genome sequencing read depth explanation",
+    "url": "https://bioinfo.cd-genomics.com/sequencing-depth-coverage-read-types.html"
+  },
+  {
+    "query": "NASA exoplanet archive API documentation",
+    "url": "https://exoplanetarchive.ipac.caltech.edu/docs/program_interfaces.html"
+  },
+  {
+    "query": "lithium ion battery degradation research paper",
+    "url": "https://www.researchgate.net/publication/381681019_Exploring_Lithium-Ion_Battery_Degradation_A_Concise_Review_of_Critical_Factors_Impacts_Data-Driven_Degradation_Estimation_Techniques_and_Sustainable_Directions_for_Energy_Storage_Systems"
+  },
+  {
+    "query": "IPCC AR6 synthesis report PDF",
+    "url": "https://www.ipcc.ch/synthesis-report/"
+  },
+  {
+    "query": "global atmospheric carbon dioxide dataset",
+    "url": "https://earth.gov/ghgcenter/data-catalog/noaa-gggrn-co2-concentrations"
+  },
+  {
+    "query": "government climate risk report PDF",
+    "url": "https://toolkit.climate.gov/NCA5"
+  },
+  {
+    "query": "World Bank population data CSV download",
+    "url": "https://nationdata.org/downloads/population"
+  },
+  {
+    "query": "open electricity data XLSX spreadsheet",
+    "url": "https://www.eia.gov/electricity/data.php"
+  },
+  {
+    "query": "renewable energy public presentation PPTX",
+    "url": "https://www.slideshare.net/slideshow/renewable-energy-79579205/79579205"
+  },
+  {
+    "query": "Project Gutenberg EPUB download",
+    "url": "https://www.gutenberg.org/"
+  },
+  {
+    "query": "Reddit home lab Docker backup discussion",
+    "url": "https://www.reddit.com/r/homelab/comments/199yy6t/best_practice_for_docker_backupfall_back/"
+  },
+  {
+    "query": "GitHub FastAPI memory leak issue",
+    "url": "https://github.com/fastapi/fastapi/discussions/11079"
+  },
+  {
+    "query": "Stack Overflow pandas timezone conversion",
+    "url": "https://stackoverflow.com/questions/22800079/converting-time-zone-pandas-dataframe"
+  },
+  {
+    "query": "Hacker News SQLite performance discussion",
+    "url": "https://news.ycombinator.com/item?id=35547819"
+  },
+  {
+    "query": "forum qBittorrent port forwarding discussion",
+    "url": "https://www.reddit.com/r/qBittorrent/comments/18lzros/port_forwarding/"
+  },
+  {
+    "query": "React single page app client side rendering",
+    "url": "https://dev.to/kkr0423/react-design-pattern-client-side-rendering-c3b"
+  },
+  {
+    "query": "Cloudflare bot challenge documentation",
+    "url": "https://developers.cloudflare.com/bots/"
+  },
+  {
+    "query": "YouTube video transcript captions example",
+    "url": "https://transcriptmagic.com/youtube/"
+  },
+  {
+    "query": "Wikipedia article with large data tables",
+    "url": "https://en.wikipedia.org/wiki/Big_data"
+  },
+  {
+    "query": "laptop specifications comparison Ryzen 5800U 7840U",
+    "url": "https://www.cpu-monkey.com/en/compare_cpu-amd_ryzen_7_7840u-vs-amd_ryzen_7_5800u"
+  }
+]

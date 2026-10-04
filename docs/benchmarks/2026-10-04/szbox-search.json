@@ -1,0 +1,2137 @@
+{
+  "meta": {
+    "mode": "search",
+    "api": "http://127.0.0.1:18788",
+    "started_at_epoch": 1791112447.0992877,
+    "ended_at_epoch": 1791112532.113813,
+    "duration_s": 85.01,
+    "container_names": [
+      "dethrottled-bench-dethrottled-1",
+      "dethrottled-bench-browser-search-1",
+      "dethrottled-bench-searxng-1",
+      "dethrottled-bench-crawl4ai-1"
+    ]
+  },
+  "summary": {
+    "cases": 50,
+    "http_200": 50,
+    "useful_cases": 50,
+    "median_ms": 1429.1,
+    "p95_ms": 2855.2,
+    "mean_ms": 1700.2,
+    "min_ms": 772.8,
+    "max_ms": 3752.5,
+    "resources": {
+      "dethrottled-bench-browser-search-1": {
+        "samples": 22,
+        "cpu_mean_percent_one_core": 49.98,
+        "cpu_peak_percent_one_core": 123.91,
+        "memory_mean_mib": 370.8,
+        "memory_peak_mib": 436.9
+      },
+      "dethrottled-bench-crawl4ai-1": {
+        "samples": 22,
+        "cpu_mean_percent_one_core": 0.63,
+        "cpu_peak_percent_one_core": 4.09,
+        "memory_mean_mib": 282.4,
+        "memory_peak_mib": 282.8
+      },
+      "dethrottled-bench-dethrottled-1": {
+        "samples": 22,
+        "cpu_mean_percent_one_core": 3.26,
+        "cpu_peak_percent_one_core": 7.23,
+        "memory_mean_mib": 53.7,
+        "memory_peak_mib": 54.7
+      },
+      "dethrottled-bench-searxng-1": {
+        "samples": 22,
+        "cpu_mean_percent_one_core": 1.02,
+        "cpu_peak_percent_one_core": 3.95,
+        "memory_mean_mib": 122.0,
+        "memory_peak_mib": 122.5
+      }
+    }
+  },
+  "cases": [
+    {
+      "number": 1,
+      "category": "news",
+      "query": "EU AI Act enforcement news 2026",
+      "elapsed_ms": 951.0,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "results": [
+        {
+          "url": "https://presenc.ai/research/eu-ai-act-enforcement-tracker-2026",
+          "title": "EU AI Act Enforcement Tracker 2026 - Presenc AI",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 245
+        },
+        {
+          "url": "https://www.deepinspect.ai/blog/eu-ai-act-tracker",
+          "title": "EU AI Act News Today: Live Tracker for Enforcement, Guidelines, and ...",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 362
+        },
+        {
+          "url": "https://axis-intelligence.com/eu-ai-act-compliance-tracker/",
+          "title": "EU AI Act Compliance Tracker 2026 \u2014 Every Milestone, Live Status",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 209
+        }
+      ],
+      "useful": true
+    },
+    {
+      "number": 2,
+      "category": "news",
+      "query": "latest NASA Artemis mission updates",
+      "elapsed_ms": 959.7,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "results": [
+        {
+          "url": "https://www.nasa.gov/artemis-iii-news-and-updates/",
+          "title": "Artemis III News and Updates - NASA",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 181
+        },
+        {
+          "url": "https://www.nasa.gov/artemis-ii-news-and-updates/",
+          "title": "Artemis II News and Updates - NASA",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 179
+        },
+        {
+          "url": "https://artemistracker.com/artemis-news/",
+          "title": "NASA Artemis Mission Updates | Artemis III & IV | Artemis Tracker",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 109
+        }
+      ],
+      "useful": true
+    },
+    {
+      "number": 3,
+      "category": "news",
+      "query": "Federal Reserve interest rate latest decision",
+      "elapsed_ms": 1418.5,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "results": [
+        {
+          "url": "https://www.cnbc.com/2026/09/16/fed-rate-decision-september-2026.html",
+          "title": "Fed rate decision September 2026: Rates rise to 3.75%-4% - CNBC",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 112
+        },
+        {
+          "url": "https://www.foxbusiness.com/economy/federal-reserve-interest-rate-decision-september-16-2026",
+          "title": "September FOMC: Federal Reserve hikes interest rates for first time ...",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 146
+        },
+        {
+          "url": "https://www.federalreserve.gov/releases/h15/",
+          "title": "Selected Interest Rates (Daily) - H.15 - Federal Reserve Board",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 346
+        }
+      ],
+      "useful": true
+    },
+    {
+      "number": 4,
+      "category": "news",
+      "query": "semiconductor supply chain news",
+      "elapsed_ms": 829.6,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "results": [
+        {
+          "url": "https://www.semiconductors.org/news-events/latest-news/",
+          "title": "Latest News - SIA | Semiconductor Industry Association",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 149
+        },
+        {
+          "url": "https://www.eetimes.com/tag/semiconductors/",
+          "title": "Semiconductor News & Industry Updates - EE Times",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 184
+        },
+        {
+          "url": "https://www.wsj.com/topics/industry/semiconductors",
+          "title": "Semiconductors - Latest News and Updates - WSJ.com",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 180
+        }
+      ],
+      "useful": true
+    },
+    {
+      "number": 5,
+      "category": "news",
+      "query": "UK energy price cap October 2026",
+      "elapsed_ms": 1005.4,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "results": [
+        {
+          "url": "https://www.ofgem.gov.uk/press-release/energy-price-cap-will-rise-4-october-2026",
+          "title": "Energy price cap will rise by 4% from October 2026 - Ofgem",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 346
+        },
+        {
+          "url": "https://energymadeeasy.co.uk/guides/price-cap-october-2026",
+          "title": "Energy Price Cap October 2026 \u2014 Confirmed at \u00a31,723 (+3.6%)",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 400
+        },
+        {
+          "url": "https://www.energy-uk.org.uk/publications/explaining-the-october-2026-price-cap/",
+          "title": "Explaining the October 2026 energy price cap - Energy UK",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 173
+        }
+      ],
+      "useful": true
+    },
+    {
+      "number": 6,
+      "category": "news",
+      "query": "Australia housing policy latest news",
+      "elapsed_ms": 985.6,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "results": [
+        {
+          "url": "https://7news.com.au/business/housing",
+          "title": "Housing News: Latest & Breaking Housing News, Updates and Today's ...",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 219
+        },
+        {
+          "url": "https://7news.com.au/business/housing-market",
+          "title": "Housing Market News: Latest & Breaking Housing Market News, Updates and ...",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 239
+        },
+        {
+          "url": "https://www.abc.net.au/news/topic/housing-policy",
+          "title": "Housing Policy - Topic - ABC News",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 191
+        }
+      ],
+      "useful": true
+    },
+    {
+      "number": 7,
+      "category": "news",
+      "query": "renewable energy storage breakthrough news",
+      "elapsed_ms": 989.2,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "results": [
+        {
+          "url": "https://renewablesnow.com/news/energy-storage/",
+          "title": "Energy Storage News | Today's latest by Renewables Now",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 214
+        },
+        {
+          "url": "https://www.energy-storage.news/",
+          "title": "Energy Storage News - Global news, analysis and opinion on energy ...",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 181
+        },
+        {
+          "url": "https://renewablesnow.com/company-news/products-technology/",
+          "title": "Renewable Energy Products & Technology News | Latest by Renewables Now",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 108
+        }
+      ],
+      "useful": true
+    },
+    {
+      "number": 8,
+      "category": "news",
+      "query": "cybersecurity Patch Tuesday latest",
+      "elapsed_ms": 1119.6,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "results": [
+        {
+          "url": "https://cybersecuritynews.com/microsoft-patch-tuesday-update-september-2026/",
+          "title": "Microsoft Patch Tuesday Update September 2026 - 973 Vulnerabilities ...",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 170
+        },
+        {
+          "url": "https://tech-insider.org/microsoft-patch-tuesday-september-2026-zero-days/",
+          "title": "Patch Tuesday September 2026: 973 CVEs, 2 Zero-Days",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 393
+        },
+        {
+          "url": "https://www.crowdstrike.com/en-us/blog/patch-tuesday-analysis-september-2026/",
+          "title": "September 2026 Patch Tuesday: Updates and Analysis | CrowdStrike",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 161
+        }
+      ],
+      "useful": true
+    },
+    {
+      "number": 9,
+      "category": "news",
+      "query": "COP31 climate conference preparations",
+      "elapsed_ms": 889.1,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "results": [
+        {
+          "url": "https://unfccc.int/cop31",
+          "title": "UN Climate Change Conference - Antalya, November 2026 - UNFCCC",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 220
+        },
+        {
+          "url": "https://interclimate.org/resources/cop-climate-conference/",
+          "title": "COP31 Conference Resource - InterClimate Network",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 398
+        },
+        {
+          "url": "https://www.europarl.europa.eu/RegData/etudes/BRIE/2026/790565/ECTI_BRI(2026)790565_EN.pdf",
+          "title": "PDF Briefing on the COP31 Climate Change Conference",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 289
+        }
+      ],
+      "useful": true
+    },
+    {
+      "number": 10,
+      "category": "news",
+      "query": "WHO measles outbreak updates",
+      "elapsed_ms": 1089.8,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "results": [
+        {
+          "url": "https://www.cdc.gov/global-measles-vaccination/data-research/global-measles-outbreaks/index.html",
+          "title": "Global Measles Outbreaks | Global Measles Vaccination | CDC",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 272
+        },
+        {
+          "url": "https://www.who.int/news-room/fact-sheets/detail/measles",
+          "title": "Measles - World Health Organization (WHO)",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 326
+        },
+        {
+          "url": "https://www.theguardian.com/us-news/2026/oct/04/pennsylvania-health-officials-measles-outbreak",
+          "title": "Pennsylvania health officials brace themselves as measles outbreak expected to spread",
+          "engine": "bing-news",
+          "snippet_chars": 118
+        }
+      ],
+      "useful": true
+    },
+    {
+      "number": 11,
+      "category": "government",
+      "query": "Nashville Tennessee zoning ordinance 2026",
+      "elapsed_ms": 2762.2,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "results": [
+        {
+          "url": "https://www.propertyzoned.com/city/tennessee/nashville",
+          "title": "Nashville, TN Zoning Rules & Regulations (2026) | PropertyZoned",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 134
+        },
+        {
+          "url": "https://nashville.legistar.com/",
+          "title": "Metropolitan Nashville and Davidson County, TN - Welcome!",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 317
+        },
+        {
+          "url": "https://www.nashville.gov/departments/codes/construction-and-permits/land-use-and-zoning-information/understanding-zoning-code",
+          "title": "Understanding the Zoning Code - Nashville.gov",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 399
+        }
+      ],
+      "useful": true
+    },
+    {
+      "number": 12,
+      "category": "government",
+      "query": "Davidson County Tennessee property tax rate",
+      "elapsed_ms": 3752.5,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "results": [
+        {
+          "url": "https://www.padctn.org/resources/tax-rates-and-calculator/",
+          "title": "Tax Rates & Calculator - Nashville Property Assessor",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 243
+        },
+        {
+          "url": "https://propertytaxescalculator.com/tennessee/davidson-county",
+          "title": "Davidson County, TN Property Tax Calculator & Estimator 2025-2026",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 180
+        },
+        {
+          "url": "https://www.nashville.gov/departments/trustee/calculate-property-taxes",
+          "title": "Calculate Property Taxes - Nashville.gov",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 400
+        }
+      ],
+      "useful": true
+    },
+    {
+      "number": 13,
+      "category": "government",
+      "query": "US Census 2025 population estimates",
+      "elapsed_ms": 882.6,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "results": [
+        {
+          "url": "https://www.census.gov/newsroom/press-kits/2026/national-state-population-estimates.html",
+          "title": "Vintage 2025 National and State Population Estimates - Census.gov",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 108
+        },
+        {
+          "url": "https://www.census.gov/newsroom/press-releases/2026/population-estimates-age-sex.html",
+          "title": "Census Bureau Releases New 2025 U.S. Population Estimates by Age and Sex",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 164
+        },
+        {
+          "url": "https://www.test.census.gov/data/tables/time-series/demo/popest/2020s-national-detail.html",
+          "title": "National Population by Characteristics: 2020-2025 - test.census.gov",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 278
+        }
+      ],
+      "useful": true
+    },
+    {
+      "number": 14,
+      "category": "government",
+      "query": "EU AI Act official regulation text",
+      "elapsed_ms": 1099.5,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "results": [
+        {
+          "url": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng",
+          "title": "Regulation - EU - 2024/1689 - EN - EUR-Lex",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 152
+        },
+        {
+          "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+          "title": "Regulation (EU) 2024/1689 of the European Parliament and of the Council ...",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 152
+        },
+        {
+          "url": "https://aiactinfo.eu/",
+          "title": "Artificial Intelligence Act EU Official Text - AI Act",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 343
+        }
+      ],
+      "useful": true
+    },
+    {
+      "number": 15,
+      "category": "government",
+      "query": "California building energy code 2025",
+      "elapsed_ms": 2761.1,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "results": [
+        {
+          "url": "https://www.energy.ca.gov/programs-and-topics/programs/building-energy-efficiency-standards/2025-building-energy-efficiency",
+          "title": "2025 Building Energy Efficiency Standards - California Energy Commission",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 290
+        },
+        {
+          "url": "https://up.codes/viewer/california/ca-energy-code-2025",
+          "title": "California Energy Code 2025",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 211
+        },
+        {
+          "url": "https://www.energy.ca.gov/sites/default/files/2025-07/CEC-400-2025-010-F_0.pdf",
+          "title": "PDF 2025 Building Energy Efficiency Standards - California Energy Commission",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 223
+        }
+      ],
+      "useful": true
+    },
+    {
+      "number": 16,
+      "category": "technical",
+      "query": "qBittorrent port forwarding troubleshooting",
+      "elapsed_ms": 2609.3,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "results": [
+        {
+          "url": "https://www.flippendo.com/troubleshoot/qbittorrent/port-forwarding",
+          "title": "qBittorrent VPN Port Forwarding \u2014 5 Fixes (2026)",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 139
+        },
+        {
+          "url": "https://natchecker.com/blog/qbittorrent-port-forwarding",
+          "title": "qBittorrent: How to Enable Port Forwarding Correctly",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 143
+        },
+        {
+          "url": "https://trash-guides.info/Downloaders/port-forwarding-troubleshooting/",
+          "title": "Port Forwarding Troubleshooting - TRaSH Guides",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 359
+        }
+      ],
+      "useful": true
+    },
+    {
+      "number": 17,
+      "category": "technical",
+      "query": "Python asyncio TaskGroup documentation",
+      "elapsed_ms": 1649.0,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "results": [
+        {
+          "url": "https://docs.python.org/3.11/library/asyncio-task.html",
+          "title": "Coroutines and Tasks \u2014 Python 3.11.17 documentation",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 347
+        },
+        {
+          "url": "https://docs.python.org/3/library/asyncio.html",
+          "title": "asyncio \u2014 Asynchronous I/O \u2014 Python 3.14.8 documentation",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 351
+        },
+        {
+          "url": "https://www.bbc.co.uk/rd/blog/2020-12-asyncio-tutorial-python-sync-thread",
+          "title": "Asyncio in Python - a tutorial",
+          "engine": "duckduckgo news",
+          "snippet_chars": 257
+        }
+      ],
+      "useful": true
+    },
+    {
+      "number": 18,
+      "category": "technical",
+      "query": "Rust ownership guide examples",
+      "elapsed_ms": 2819.0,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "results": [
+        {
+          "url": "https://doc.rust-lang.org/book/ch04-00-understanding-ownership.html",
+          "title": "Understanding Ownership - The Rust Programming Language",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 392
+        },
+        {
+          "url": "https://doc.rust-lang.org/book/ch04-01-what-is-ownership.html",
+          "title": "What is Ownership? - The Rust Programming Language",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 392
+        },
+        {
+          "url": "https://www.programiz.com/rust/ownership",
+          "title": "Rust Ownership (With Examples) - Programiz",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 299
+        }
+      ],
+      "useful": true
+    },
+    {
+      "number": 19,
+      "category": "technical",
+      "query": "Kubernetes liveness readiness startup probes configuration",
+      "elapsed_ms": 2349.8,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "results": [
+        {
+          "url": "https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/",
+          "title": "Configure Liveness, Readiness and Startup Probes - Kubernetes",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 308
+        },
+        {
+          "url": "https://kubernetes.io/docs/concepts/workloads/pods/probes/",
+          "title": "Liveness, Readiness, and Startup Probes - Kubernetes",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 396
+        },
+        {
+          "url": "https://kubernetes.recipes/recipes/deployments/kubernetes-readiness-liveness-startup/",
+          "title": "Readiness Liveness Startup Probes - K8s Recipes",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 134
+        }
+      ],
+      "useful": true
+    },
+    {
+      "number": 20,
+      "category": "technical",
+      "query": "PostgreSQL EXPLAIN ANALYZE guide",
+      "elapsed_ms": 2563.5,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "results": [
+        {
+          "url": "https://www.postgresql.org/docs/current/sql-explain.html",
+          "title": "PostgreSQL: Documentation: 18: EXPLAIN",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 394
+        },
+        {
+          "url": "https://www.postgresql.org/docs/current/using-explain.html",
+          "title": "PostgreSQL: Documentation: 18: 14.1. Using EXPLAIN",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 270
+        },
+        {
+          "url": "https://www.cybrosys.com/research-and-development/postgres/a-complete-guide-on-how-to-use-every-postgresql-explain-option",
+          "title": "A Complete Guide on How to Use Every PostgreSQL EXPLAIN Option",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 155
+        }
+      ],
+      "useful": true
+    },
+    {
+      "number": 21,
+      "category": "technical",
+      "query": "Docker Compose healthcheck syntax",
+      "elapsed_ms": 2173.4,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "results": [
+        {
+          "url": "https://dockerbuild.com/reference/healthcheck",
+          "title": "Dockerfile HEALTHCHECK & Compose healthcheck Syntax \u2014 DockerBuild.com",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 154
+        },
+        {
+          "url": "https://dev.to/jjoc007/mastering-docker-defining-health-checks-in-docker-compose-4l5k",
+          "title": "Mastering Docker: Defining Health Checks in Docker Compose",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 343
+        },
+        {
+          "url": "https://www.tvaidyan.com/2025/02/13/health-checks-in-docker-compose-a-practical-guide/",
+          "title": "Health Checks in Docker Compose: A Practical Guide",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 249
+        }
+      ],
+      "useful": true
+    },
+    {
+      "number": 22,
+      "category": "technical",
+      "query": "React hydration mismatch troubleshooting",
+      "elapsed_ms": 2129.9,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "results": [
+        {
+          "url": "https://nerdleveltech.com/react-hydration-mismatch",
+          "title": "React Hydration Mismatch: Every Cause and Fix (2026)",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 154
+        },
+        {
+          "url": "https://salivity.github.io/react/article/how-to-debug-react-hydration-errors",
+          "title": "How to Debug React Hydration Errors - react - salivity.github.io",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 396
+        },
+        {
+          "url": "https://deverrors.com/errors/react-hydration-mismatch",
+          "title": "How to fix How to fix \"Hydration mismatch\" in React in React",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 373
+        }
+      ],
+      "useful": true
+    },
+    {
+      "number": 23,
+      "category": "technical",
+      "query": "Linux systemd linger documentation",
+      "elapsed_ms": 823.6,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "results": [
+        {
+          "url": "https://etbe.coker.com.au/2026/07/24/systemd-linger/",
+          "title": "Systemd Linger - etbe - Russell Coker",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 194
+        },
+        {
+          "url": "https://unix.stackexchange.com/questions/462845/how-to-apply-lingering-immediately",
+          "title": "systemd - How to apply lingering immediately - Unix & Linux Stack Exchange",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 309
+        },
+        {
+          "url": "https://www.man7.org/linux/man-pages/man1/loginctl.1.html",
+          "title": "loginctl (1) - Linux manual page - man7.org",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 396
+        }
+      ],
+      "useful": true
+    },
+    {
+      "number": 24,
+      "category": "technical",
+      "query": "ONNX Runtime Python inference documentation",
+      "elapsed_ms": 1115.8,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "results": [
+        {
+          "url": "https://onnxruntime.ai/docs/api/python/api_summary.html",
+          "title": "API - Python API documentation - ONNX Runtime",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 346
+        },
+        {
+          "url": "https://onnxruntime.ai/docs/get-started/with-python.html",
+          "title": "Python | onnxruntime",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 398
+        },
+        {
+          "url": "https://onnx.ai/onnx/intro/python.html",
+          "title": "ONNX with Python - ONNX 1.24.0 documentation",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 184
+        }
+      ],
+      "useful": true
+    },
+    {
+      "number": 25,
+      "category": "technical",
+      "query": "Caddy reverse proxy documentation",
+      "elapsed_ms": 1097.5,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "results": [
+        {
+          "url": "https://caddyserver.com/docs/caddyfile/directives/reverse_proxy",
+          "title": "reverse_proxy (Caddyfile directive) \u2014 Caddy Documentation",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 346
+        },
+        {
+          "url": "https://caddyserver.com/docs/quick-starts/reverse-proxy",
+          "title": "Reverse proxy quick-start \u2014 Caddy Documentation",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 287
+        },
+        {
+          "url": "https://www.msn.com/en-us/technology/general/caddy-replaced-the-reverse-proxy-config-i-dreaded-and-https-stopped-being-painful/ar-AA2bF3XN",
+          "title": "Caddy replaced the reverse proxy config I dreaded, and HTTPS stopped being painful",
+          "engine": "bing-news",
+          "snippet_chars": 200
+        }
+      ],
+      "useful": true
+    },
+    {
+      "number": 26,
+      "category": "reference",
+      "query": "Okapi BM25 ranking function explained",
+      "elapsed_ms": 1790.2,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "results": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Okapi_BM25",
+          "title": "Okapi BM25 - Wikipedia",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 340
+        },
+        {
+          "url": "https://www.geeksforgeeks.org/nlp/what-is-bm25-best-matching-25-algorithm/",
+          "title": "What is BM25 (Best Matching 25) Algorithm - GeeksforGeeks",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 312
+        },
+        {
+          "url": "https://inferensys.com/glossary/semantic-search-and-entity-recognition/bm25-algorithm/bm25-okapi-bm25",
+          "title": "What is BM25? The Okapi Ranking Algorithm Explained",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 397
+        }
+      ],
+      "useful": true
+    },
+    {
+      "number": 27,
+      "category": "reference",
+      "query": "SQLite write ahead logging file format",
+      "elapsed_ms": 2548.8,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "results": [
+        {
+          "url": "https://sqlite.org/wal.html",
+          "title": "Write-Ahead Logging - SQLite",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 346
+        },
+        {
+          "url": "https://deepwiki.com/sqlite/sqlite/3.4-write-ahead-logging-(wal)",
+          "title": "Write-Ahead Logging (WAL) | sqlite/sqlite | DeepWiki",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 341
+        },
+        {
+          "url": "https://systeminternals.dev/sqlite/wal/",
+          "title": "SQLite Write-Ahead Logging",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 169
+        }
+      ],
+      "useful": true
+    },
+    {
+      "number": 28,
+      "category": "reference",
+      "query": "Unicode normalization forms NFC NFKC explanation",
+      "elapsed_ms": 1465.7,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "results": [
+        {
+          "url": "https://www.unicode.org/reports/tr15/",
+          "title": "UAX #15: Unicode Normalization Forms",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 229
+        },
+        {
+          "url": "https://unicodefyi.com/guide/unicode-normalization-guide/",
+          "title": "Unicode Normalization: NFC, NFD, NFKC, NFKD \u2014 Unicode Guides",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 264
+        },
+        {
+          "url": "https://unicodecharacter.com/guides/normalization",
+          "title": "Unicode normalization \u2014 NFC, NFD, NFKC, NFKD explained | UnicodeCharacter",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 143
+        }
+      ],
+      "useful": true
+    },
+    {
+      "number": 29,
+      "category": "reference",
+      "query": "HTTP 429 Retry-After header semantics",
+      "elapsed_ms": 2266.4,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "results": [
+        {
+          "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Retry-After",
+          "title": "Retry-After header - HTTP | MDN - MDN Web Docs",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 397
+        },
+        {
+          "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/429",
+          "title": "429 Too Many Requests - HTTP | MDN - MDN Web Docs",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 216
+        },
+        {
+          "url": "https://openllm.wavise.com/blog/http-rate-limiting-reference",
+          "title": "HTTP Rate Limiting Reference (429, Retry-After, RateLimit)",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 127
+        }
+      ],
+      "useful": true
+    },
+    {
+      "number": 30,
+      "category": "reference",
+      "query": "PDF A archival standard overview",
+      "elapsed_ms": 2274.8,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "results": [
+        {
+          "url": "https://en.wikipedia.org/wiki/PDF/A",
+          "title": "PDF/A - Wikipedia",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 398
+        },
+        {
+          "url": "https://mapsoft.com/posts/pdf-pdfa-standard.html",
+          "title": "PDF/A: The Archival PDF Standard - Mapsoft",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 150
+        },
+        {
+          "url": "https://pdf4.dev/blog/pdf-a-archival-standard-guide",
+          "title": "PDF/A explained: conformance levels, requirements, and how to create ...",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 265
+        }
+      ],
+      "useful": true
+    },
+    {
+      "number": 31,
+      "category": "science",
+      "query": "genome sequencing read depth explanation",
+      "elapsed_ms": 912.8,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "results": [
+        {
+          "url": "https://bioinfo.cd-genomics.com/sequencing-depth-coverage-read-types.html",
+          "title": "Sequencing Depth, Coverage and Read Types for NGS",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 154
+        },
+        {
+          "url": "https://www.cd-genomics.com/resource-sequencing-depth-and-coverage.html",
+          "title": "Sequencing Depth & Coverage Guide | Precision Genomics - CD Genomics",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 162
+        },
+        {
+          "url": "https://www.cd-genomics.com/resource-what-are-reads-in-sequencing.html",
+          "title": "Sequencing Reads Explained: Read Length, Coverage & Why They Matter",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 398
+        }
+      ],
+      "useful": true
+    },
+    {
+      "number": 32,
+      "category": "science",
+      "query": "NASA exoplanet archive API documentation",
+      "elapsed_ms": 1439.7,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "results": [
+        {
+          "url": "https://exoplanetarchive.ipac.caltech.edu/docs/program_interfaces.html",
+          "title": "Exoplanet Archive Application Programming Interface (API) User Guide",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 304
+        },
+        {
+          "url": "https://api.nasa.gov/",
+          "title": "NASA Open APIs",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 193
+        },
+        {
+          "url": "https://exoplanetarchive.ipac.caltech.edu/",
+          "title": "NASA Exoplanet Archive",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 188
+        }
+      ],
+      "useful": true
+    },
+    {
+      "number": 33,
+      "category": "science",
+      "query": "lithium ion battery degradation research paper",
+      "elapsed_ms": 880.9,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "results": [
+        {
+          "url": "https://www.researchgate.net/publication/381681019_Exploring_Lithium-Ion_Battery_Degradation_A_Concise_Review_of_Critical_Factors_Impacts_Data-Driven_Degradation_Estimation_Techniques_and_Sustainable_Directions_for_Energy_Storage_Systems",
+          "title": "Exploring Lithium-Ion Battery Degradation: A Concise ... - ResearchGate",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 170
+        },
+        {
+          "url": "https://www.sciencedirect.com/science/article/pii/S2352152X26009345",
+          "title": "Degradation in Li-ion batteries and capacity decline under different ...",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 305
+        },
+        {
+          "url": "https://www.researchgate.net/publication/381681019_Exploring_Lithium-Ion_Battery_Degradation_A_Concise_Review_of_Critical_Factors_Impacts_Data-Driven_Degradation_Estimation_Techniques_and_Sustainable_Directions_for_Energy_Storage_Systems/fulltext/667b2a8e1dec0c3c6fa3f4d3/Exploring-Lithium-Ion-Battery-Degradation-A-Concise-Review-of-Critical-Factors-Impacts-Data-Driven-Degradation-Estimation-Techniques-and-Sustainable-Directions-for-Energy-Storage-Systems.pdf",
+          "title": "PDF Exploring Lithium-Ion Battery Degradation: A Concise Review of Critical ...",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 193
+        }
+      ],
+      "useful": true
+    },
+    {
+      "number": 34,
+      "category": "science",
+      "query": "IPCC AR6 synthesis report PDF",
+      "elapsed_ms": 2855.2,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "results": [
+        {
+          "url": "https://www.ipcc.ch/synthesis-report/",
+          "title": "Synthesis Report \u2014 IPCC",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 396
+        },
+        {
+          "url": "https://www.ipcc.ch/report//ar6/syr/",
+          "title": "AR6 Synthesis Report: Climate Change 2023 - IPCC",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 125
+        },
+        {
+          "url": "https://ncalf.org/wp-content/uploads/3.-IPCC_AR6_SYR-Full-Report.pdf",
+          "title": "PDF Synthesis Report of The Ipcc Sixth Assessment Report (Ar6)",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 372
+        }
+      ],
+      "useful": true
+    },
+    {
+      "number": 35,
+      "category": "science",
+      "query": "global atmospheric carbon dioxide dataset",
+      "elapsed_ms": 772.8,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "results": [
+        {
+          "url": "https://earth.gov/ghgcenter/data-catalog/noaa-gggrn-co2-concentrations",
+          "title": "Atmospheric Carbon Dioxide Concentrations from the NOAA Global ...",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 292
+        },
+        {
+          "url": "https://cds.climate.copernicus.eu/datasets/satellite-carbon-dioxide?tab=form",
+          "title": "Carbon dioxide data from 2002 to present derived from satellite ...",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 380
+        },
+        {
+          "url": "https://climatedataguide.ucar.edu/climate-data/overview-carbon-dioxide-co2-data-sets",
+          "title": "Overview: Carbon Dioxide (CO2) Data Sets | Climate Data Guide",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 319
+        }
+      ],
+      "useful": true
+    },
+    {
+      "number": 36,
+      "category": "documents",
+      "query": "government climate risk report PDF",
+      "elapsed_ms": 2926.1,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "results": [
+        {
+          "url": "https://toolkit.climate.gov/NCA5",
+          "title": "National Climate Assessments | U.S. Climate Resilience Toolkit",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 232
+        },
+        {
+          "url": "https://downloads.regulations.gov/EPA-HQ-OAR-2022-0985-3969/content.pdf",
+          "title": "PDF Fifth National Climate Assessment - downloads.regulations.gov",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 319
+        },
+        {
+          "url": "https://repository.library.noaa.gov/view/noaa/61592",
+          "title": "Fifth National Climate Assessment",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 391
+        }
+      ],
+      "useful": true
+    },
+    {
+      "number": 37,
+      "category": "documents",
+      "query": "World Bank population data CSV download",
+      "elapsed_ms": 2154.4,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "results": [
+        {
+          "url": "https://nationdata.org/downloads/population",
+          "title": "Downloads \u2014 Free Population Data (Excel & CSV) \u2014 All Countries Dataset",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 117
+        },
+        {
+          "url": "https://data.worldbank.org/indicator/SP.POP.TOTL",
+          "title": "Population, total - World Bank Data",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 59
+        },
+        {
+          "url": "https://datahub.io/core/population",
+          "title": "Population figures for countries, regions (e.g. Asia) and the world",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 148
+        }
+      ],
+      "useful": true
+    },
+    {
+      "number": 38,
+      "category": "documents",
+      "query": "open electricity data XLSX spreadsheet",
+      "elapsed_ms": 2259.1,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "results": [
+        {
+          "url": "https://www.eia.gov/electricity/data.php",
+          "title": "Electricity Data - U.S. Energy Information Administration (EIA)",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 344
+        },
+        {
+          "url": "https://www.eia.gov/opendata/v1/excel/",
+          "title": "OPEN DATA - U.S. Energy Information Administration - EIA",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 388
+        },
+        {
+          "url": "https://www.irena.org/Data/Downloads/Tools",
+          "title": "Download Query Tools - IRENA",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 396
+        }
+      ],
+      "useful": true
+    },
+    {
+      "number": 39,
+      "category": "documents",
+      "query": "renewable energy public presentation PPTX",
+      "elapsed_ms": 2465.3,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "results": [
+        {
+          "url": "https://www.slideshare.net/slideshow/renewable-energy-79579205/79579205",
+          "title": "Renewable energy | PPTX - SlideShare",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 338
+        },
+        {
+          "url": "https://www.slideshare.net/slideshow/presentation-renewable-energy-resources-138941071/138941071",
+          "title": "Presentation renewable energy resources | PPTX - SlideShare",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 400
+        },
+        {
+          "url": "https://www.slideegg.com/powerpoint/renewable-energy-powerpoint-templates",
+          "title": "Free Renewable Energy PPT Templates And Google Slides",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 225
+        }
+      ],
+      "useful": true
+    },
+    {
+      "number": 40,
+      "category": "documents",
+      "query": "Project Gutenberg EPUB download",
+      "elapsed_ms": 2714.2,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "results": [
+        {
+          "url": "https://www.gutenberg.org/",
+          "title": "Free eBooks | Project Gutenberg",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 301
+        },
+        {
+          "url": "https://www.gutenberg.org/help/bibliographic_record.html",
+          "title": "Help on Download Options - Project Gutenberg",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 134
+        },
+        {
+          "url": "https://www.gutenberg.org/ebooks/offline_catalogs.html",
+          "title": "Offline Catalogs | Project Gutenberg",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 394
+        }
+      ],
+      "useful": true
+    },
+    {
+      "number": 41,
+      "category": "community",
+      "query": "Reddit home lab Docker backup discussion",
+      "elapsed_ms": 1162.1,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "results": [
+        {
+          "url": "https://www.reddit.com/r/homelab/comments/199yy6t/best_practice_for_docker_backupfall_back/",
+          "title": "Best practice for docker backup/fall back : r/homelab - Reddit",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 302
+        },
+        {
+          "url": "https://www.reddit.com/r/homelab/comments/16wxb0s/backing_up_containers/",
+          "title": "Backing up Containers : r/homelab - Reddit",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 229
+        },
+        {
+          "url": "https://www.redditmedia.com/r/homelab/comments/1fo9giq/how_do_you_backup_your_docker_volumes/",
+          "title": "How do you backup your docker volumes? : homelab",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 262
+        }
+      ],
+      "useful": true
+    },
+    {
+      "number": 42,
+      "category": "community",
+      "query": "GitHub FastAPI memory leak issue",
+      "elapsed_ms": 1105.1,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "results": [
+        {
+          "url": "https://github.com/fastapi/fastapi/discussions/11079",
+          "title": "Allocated memory increases over time (possible memory leak?) - GitHub",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 223
+        },
+        {
+          "url": "https://github.com/fastapi/fastapi/issues/4649",
+          "title": "No objects ever released by the GC, potential memory leak? - GitHub",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 203
+        },
+        {
+          "url": "https://gist.github.com/adimyth/142c9d2964ae2fec5d6848913b4904dc",
+          "title": "Memory Growth in Python FastAPI Services: A Complete Guide \u00b7 GitHub",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 227
+        }
+      ],
+      "useful": true
+    },
+    {
+      "number": 43,
+      "category": "community",
+      "query": "Stack Overflow pandas timezone conversion",
+      "elapsed_ms": 1024.6,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "results": [
+        {
+          "url": "https://stackoverflow.com/questions/22800079/converting-time-zone-pandas-dataframe",
+          "title": "Converting time zone pandas dataframe - Stack Overflow",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 204
+        },
+        {
+          "url": "https://stackoverflow.com/questions/47822265/efficiently-convert-timezones-in-pandas-dataframe",
+          "title": "Efficiently convert timezones in pandas dataframe - Stack Overflow",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 200
+        },
+        {
+          "url": "https://stackoverflow.com/questions/34789888/convert-datetime-columns-to-a-different-timezone-pandas",
+          "title": "Convert datetime columns to a different timezone pandas",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 199
+        }
+      ],
+      "useful": true
+    },
+    {
+      "number": 44,
+      "category": "community",
+      "query": "Hacker News SQLite performance discussion",
+      "elapsed_ms": 2297.1,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "results": [
+        {
+          "url": "https://news.ycombinator.com/item?id=35547819",
+          "title": "SQLite performance tuning: concurrent reads, multiple GBs ... - Hacker News",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 271
+        },
+        {
+          "url": "https://news.ycombinator.com/item?id=41085376",
+          "title": "SQLite: 35% Faster Than the Filesystem | Hacker News",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 338
+        },
+        {
+          "url": "https://byteiota.com/sqlite-hits-102k-tps-network-latency-is-the-real-bottleneck/",
+          "title": "SQLite Hits 102K TPS: Network Latency Is the Real Bottleneck",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 392
+        }
+      ],
+      "useful": true
+    },
+    {
+      "number": 45,
+      "category": "community",
+      "query": "forum qBittorrent port forwarding discussion",
+      "elapsed_ms": 1125.5,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "results": [
+        {
+          "url": "https://www.reddit.com/r/qBittorrent/comments/18lzros/port_forwarding/",
+          "title": "Port forwarding : r/qBittorrent - Reddit",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 297
+        },
+        {
+          "url": "https://www.reddit.com/r/torrents/comments/fw1on1/port_forwarding_and_qbittorrent/",
+          "title": "Port forwarding and QBittorrent : r/torrents - Reddit",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 399
+        },
+        {
+          "url": "https://natchecker.com/blog/qbittorrent-port-forwarding",
+          "title": "qBittorrent: How to Enable Port Forwarding Correctly",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 143
+        }
+      ],
+      "useful": true
+    },
+    {
+      "number": 46,
+      "category": "web",
+      "query": "React single page app client side rendering",
+      "elapsed_ms": 858.7,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "results": [
+        {
+          "url": "https://dev.to/kkr0423/react-design-pattern-client-side-rendering-c3b",
+          "title": "React Rendering Pattern /Client-side Rendering - DEV Community",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 341
+        },
+        {
+          "url": "https://blog.pixelfreestudio.com/how-to-implement-client-side-rendering-in-react-applications/",
+          "title": "How to Implement Client-Side Rendering in React Applications",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 399
+        },
+        {
+          "url": "https://stackoverflow.com/questions/48535071/single-page-reactjs-app-using-both-server-side-and-client-side-rendering",
+          "title": "Single-page ReactJS app using both server-side and client-side rendering?",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 193
+        }
+      ],
+      "useful": true
+    },
+    {
+      "number": 47,
+      "category": "web",
+      "query": "Cloudflare bot challenge documentation",
+      "elapsed_ms": 931.8,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "results": [
+        {
+          "url": "https://developers.cloudflare.com/bots/",
+          "title": "Overview \u00b7 Cloudflare bot solutions docs",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 77
+        },
+        {
+          "url": "https://developers.cloudflare.com/cloudflare-challenges/concepts/how-challenges-work/",
+          "title": "How Challenges work - Cloudflare Docs",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 87
+        },
+        {
+          "url": "https://www.cloudflare.com/products/bot-management/",
+          "title": "Bot Management - Cloudflare",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 219
+        }
+      ],
+      "useful": true
+    },
+    {
+      "number": 48,
+      "category": "web",
+      "query": "YouTube video transcript captions example",
+      "elapsed_ms": 1127.5,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "results": [
+        {
+          "url": "https://transcriptmagic.com/youtube/",
+          "title": "Free YouTube Transcript Generator \u2014 Any Video to Text in 12s ...",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 164
+        },
+        {
+          "url": "https://transcript.you/youtube-transcript-generator",
+          "title": "Free YouTube Transcript Generator | Transcript.you",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 181
+        },
+        {
+          "url": "https://notegpt.io/blog/video-transcript-examples",
+          "title": "Video Transcript Examples: Real Samples and How to Generate Them with AI",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 93
+        }
+      ],
+      "useful": true
+    },
+    {
+      "number": 49,
+      "category": "web",
+      "query": "Wikipedia article with large data tables",
+      "elapsed_ms": 2420.7,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "results": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Big_data",
+          "title": "Big data - Wikipedia",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 396
+        },
+        {
+          "url": "https://en.wikipedia.org/wiki/Table_(format)",
+          "title": "Table (format) - Wikipedia",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 275
+        },
+        {
+          "url": "https://meta.wikimedia.org/wiki/Datasets",
+          "title": "Datasets - Meta-Wiki",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 203
+        }
+      ],
+      "useful": true
+    },
+    {
+      "number": 50,
+      "category": "web",
+      "query": "laptop specifications comparison Ryzen 5800U 7840U",
+      "elapsed_ms": 2402.7,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "results": [
+        {
+          "url": "https://www.cpu-monkey.com/en/compare_cpu-amd_ryzen_7_7840u-vs-amd_ryzen_7_5800u",
+          "title": "AMD Ryzen 7 7840U vs AMD Ryzen 7 5800U - Benchmark, comparison and ...",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 162
+        },
+        {
+          "url": "https://www.cpu-monkey.com/en/compare_cpu-amd_ryzen_7_5800u-vs-amd_ryzen_7_7840u",
+          "title": "AMD Ryzen 7 5800U vs AMD Ryzen 7 7840U - Benchmark, comparison and ...",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 156
+        },
+        {
+          "url": "https://www.topcpu.net/en/cpu-c/amd-ryzen-7-7840u-vs-amd-ryzen-7-5800u",
+          "title": "AMD Ryzen 7 7840U vs AMD Ryzen 7 5800U - CPU comparison - TopCPU",
+          "engine": "web-browser-ddg-lite",
+          "snippet_chars": 228
+        }
+      ],
+      "useful": true
+    }
+  ],
+  "resource_samples": [
+    {
+      "at": 1791112445.098953,
+      "name": "dethrottled-bench-dethrottled-1",
+      "cpu_percent": 0.25,
+      "memory_mib": 47.5
+    },
+    {
+      "at": 1791112445.098953,
+      "name": "dethrottled-bench-browser-search-1",
+      "cpu_percent": 2.97,
+      "memory_mib": 276.9
+    },
+    {
+      "at": 1791112445.098953,
+      "name": "dethrottled-bench-searxng-1",
+      "cpu_percent": 0.45,
+      "memory_mib": 115.9
+    },
+    {
+      "at": 1791112445.098953,
+      "name": "dethrottled-bench-crawl4ai-1",
+      "cpu_percent": 0.52,
+      "memory_mib": 282.5
+    },
+    {
+      "at": 1791112449.126769,
+      "name": "dethrottled-bench-dethrottled-1",
+      "cpu_percent": 2.16,
+      "memory_mib": 52.1
+    },
+    {
+      "at": 1791112449.126769,
+      "name": "dethrottled-bench-browser-search-1",
+      "cpu_percent": 123.91,
+      "memory_mib": 413.6
+    },
+    {
+      "at": 1791112449.126769,
+      "name": "dethrottled-bench-searxng-1",
+      "cpu_percent": 3.95,
+      "memory_mib": 121.5
+    },
+    {
+      "at": 1791112449.126769,
+      "name": "dethrottled-bench-crawl4ai-1",
+      "cpu_percent": 0.43,
+      "memory_mib": 282.5
+    },
+    {
+      "at": 1791112453.1556225,
+      "name": "dethrottled-bench-dethrottled-1",
+      "cpu_percent": 1.99,
+      "memory_mib": 52.2
+    },
+    {
+      "at": 1791112453.1556225,
+      "name": "dethrottled-bench-browser-search-1",
+      "cpu_percent": 86.65,
+      "memory_mib": 404.0
+    },
+    {
+      "at": 1791112453.1556225,
+      "name": "dethrottled-bench-searxng-1",
+      "cpu_percent": 1.87,
+      "memory_mib": 121.7
+    },
+    {
+      "at": 1791112453.1556225,
+      "name": "dethrottled-bench-crawl4ai-1",
+      "cpu_percent": 0.37,
+      "memory_mib": 282.5
+    },
+    {
+      "at": 1791112457.1858008,
+      "name": "dethrottled-bench-dethrottled-1",
+      "cpu_percent": 7.23,
+      "memory_mib": 54.3
+    },
+    {
+      "at": 1791112457.1858008,
+      "name": "dethrottled-bench-browser-search-1",
+      "cpu_percent": 111.11,
+      "memory_mib": 426.1
+    },
+    {
+      "at": 1791112457.1858008,
+      "name": "dethrottled-bench-searxng-1",
+      "cpu_percent": 0.49,
+      "memory_mib": 122.1
+    },
+    {
+      "at": 1791112457.1858008,
+      "name": "dethrottled-bench-crawl4ai-1",
+      "cpu_percent": 0.47,
+      "memory_mib": 282.5
+    },
+    {
+      "at": 1791112461.2173893,
+      "name": "dethrottled-bench-dethrottled-1",
+      "cpu_percent": 1.86,
+      "memory_mib": 54.1
+    },
+    {
+      "at": 1791112461.2173893,
+      "name": "dethrottled-bench-browser-search-1",
+      "cpu_percent": 2.56,
+      "memory_mib": 334.8
+    },
+    {
+      "at": 1791112461.2173893,
+      "name": "dethrottled-bench-searxng-1",
+      "cpu_percent": 0.54,
+      "memory_mib": 122.1
+    },
+    {
+      "at": 1791112461.2173893,
+      "name": "dethrottled-bench-crawl4ai-1",
+      "cpu_percent": 0.61,
+      "memory_mib": 282.5
+    },
+    {
+      "at": 1791112465.2521973,
+      "name": "dethrottled-bench-dethrottled-1",
+      "cpu_percent": 1.13,
+      "memory_mib": 54.2
+    },
+    {
+      "at": 1791112465.2521973,
+      "name": "dethrottled-bench-browser-search-1",
+      "cpu_percent": 45.09,
+      "memory_mib": 335.8
+    },
+    {
+      "at": 1791112465.2521973,
+      "name": "dethrottled-bench-searxng-1",
+      "cpu_percent": 0.5,
+      "memory_mib": 122.2
+    },
+    {
+      "at": 1791112465.2521973,
+      "name": "dethrottled-bench-crawl4ai-1",
+      "cpu_percent": 0.41,
+      "memory_mib": 282.5
+    },
+    {
+      "at": 1791112469.2884212,
+      "name": "dethrottled-bench-dethrottled-1",
+      "cpu_percent": 4.03,
+      "memory_mib": 54.0
+    },
+    {
+      "at": 1791112469.2884212,
+      "name": "dethrottled-bench-browser-search-1",
+      "cpu_percent": 32.78,
+      "memory_mib": 395.6
+    },
+    {
+      "at": 1791112469.2884212,
+      "name": "dethrottled-bench-searxng-1",
+      "cpu_percent": 1.2,
+      "memory_mib": 122.3
+    },
+    {
+      "at": 1791112469.2884212,
+      "name": "dethrottled-bench-crawl4ai-1",
+      "cpu_percent": 0.51,
+      "memory_mib": 282.8
+    },
+    {
+      "at": 1791112473.3165147,
+      "name": "dethrottled-bench-dethrottled-1",
+      "cpu_percent": 4.36,
+      "memory_mib": 54.2
+    },
+    {
+      "at": 1791112473.3165147,
+      "name": "dethrottled-bench-browser-search-1",
+      "cpu_percent": 18.27,
+      "memory_mib": 338.9
+    },
+    {
+      "at": 1791112473.3165147,
+      "name": "dethrottled-bench-searxng-1",
+      "cpu_percent": 0.48,
+      "memory_mib": 122.2
+    },
+    {
+      "at": 1791112473.3165147,
+      "name": "dethrottled-bench-crawl4ai-1",
+      "cpu_percent": 0.49,
+      "memory_mib": 282.5
+    },
+    {
+      "at": 1791112477.3473737,
+      "name": "dethrottled-bench-dethrottled-1",
+      "cpu_percent": 4.18,
+      "memory_mib": 54.2
+    },
+    {
+      "at": 1791112477.3473737,
+      "name": "dethrottled-bench-browser-search-1",
+      "cpu_percent": 44.14,
+      "memory_mib": 343.8
+    },
+    {
+      "at": 1791112477.3473737,
+      "name": "dethrottled-bench-searxng-1",
+      "cpu_percent": 0.51,
+      "memory_mib": 122.2
+    },
+    {
+      "at": 1791112477.3473737,
+      "name": "dethrottled-bench-crawl4ai-1",
+      "cpu_percent": 0.48,
+      "memory_mib": 282.5
+    },
+    {
+      "at": 1791112481.3827643,
+      "name": "dethrottled-bench-dethrottled-1",
+      "cpu_percent": 4.2,
+      "memory_mib": 53.9
+    },
+    {
+      "at": 1791112481.3827643,
+      "name": "dethrottled-bench-browser-search-1",
+      "cpu_percent": 3.19,
+      "memory_mib": 339.7
+    },
+    {
+      "at": 1791112481.3827643,
+      "name": "dethrottled-bench-searxng-1",
+      "cpu_percent": 1.34,
+      "memory_mib": 122.2
+    },
+    {
+      "at": 1791112481.3827643,
+      "name": "dethrottled-bench-crawl4ai-1",
+      "cpu_percent": 0.47,
+      "memory_mib": 282.5
+    },
+    {
+      "at": 1791112485.413048,
+      "name": "dethrottled-bench-dethrottled-1",
+      "cpu_percent": 1.92,
+      "memory_mib": 53.9
+    },
+    {
+      "at": 1791112485.413048,
+      "name": "dethrottled-bench-browser-search-1",
+      "cpu_percent": 100.99,
+      "memory_mib": 419.6
+    },
+    {
+      "at": 1791112485.413048,
+      "name": "dethrottled-bench-searxng-1",
+      "cpu_percent": 1.54,
+      "memory_mib": 122.3
+    },
+    {
+      "at": 1791112485.413048,
+      "name": "dethrottled-bench-crawl4ai-1",
+      "cpu_percent": 0.41,
+      "memory_mib": 282.5
+    },
+    {
+      "at": 1791112489.4405794,
+      "name": "dethrottled-bench-dethrottled-1",
+      "cpu_percent": 3.99,
+      "memory_mib": 53.9
+    },
+    {
+      "at": 1791112489.4405794,
+      "name": "dethrottled-bench-browser-search-1",
+      "cpu_percent": 24.28,
+      "memory_mib": 345.9
+    },
+    {
+      "at": 1791112489.4405794,
+      "name": "dethrottled-bench-searxng-1",
+      "cpu_percent": 0.55,
+      "memory_mib": 122.3
+    },
+    {
+      "at": 1791112489.4405794,
+      "name": "dethrottled-bench-crawl4ai-1",
+      "cpu_percent": 0.32,
+      "memory_mib": 282.5
+    },
+    {
+      "at": 1791112493.4676902,
+      "name": "dethrottled-bench-dethrottled-1",
+      "cpu_percent": 4.49,
+      "memory_mib": 54.0
+    },
+    {
+      "at": 1791112493.4676902,
+      "name": "dethrottled-bench-browser-search-1",
+      "cpu_percent": 41.57,
+      "memory_mib": 351.7
+    },
+    {
+      "at": 1791112493.4676902,
+      "name": "dethrottled-bench-searxng-1",
+      "cpu_percent": 0.49,
+      "memory_mib": 122.3
+    },
+    {
+      "at": 1791112493.4676902,
+      "name": "dethrottled-bench-crawl4ai-1",
+      "cpu_percent": 4.09,
+      "memory_mib": 282.2
+    },
+    {
+      "at": 1791112497.5005977,
+      "name": "dethrottled-bench-dethrottled-1",
+      "cpu_percent": 2.06,
+      "memory_mib": 54.0
+    },
+    {
+      "at": 1791112497.5005977,
+      "name": "dethrottled-bench-browser-search-1",
+      "cpu_percent": 87.93,
+      "memory_mib": 414.4
+    },
+    {
+      "at": 1791112497.5005977,
+      "name": "dethrottled-bench-searxng-1",
+      "cpu_percent": 1.45,
+      "memory_mib": 122.4
+    },
+    {
+      "at": 1791112497.5005977,
+      "name": "dethrottled-bench-crawl4ai-1",
+      "cpu_percent": 0.48,
+      "memory_mib": 282.2
+    },
+    {
+      "at": 1791112501.5355725,
+      "name": "dethrottled-bench-dethrottled-1",
+      "cpu_percent": 5.32,
+      "memory_mib": 54.2
+    },
+    {
+      "at": 1791112501.5355725,
+      "name": "dethrottled-bench-browser-search-1",
+      "cpu_percent": 0.74,
+      "memory_mib": 346.9
+    },
+    {
+      "at": 1791112501.5355725,
+      "name": "dethrottled-bench-searxng-1",
+      "cpu_percent": 0.57,
+      "memory_mib": 122.5
+    },
+    {
+      "at": 1791112501.5355725,
+      "name": "dethrottled-bench-crawl4ai-1",
+      "cpu_percent": 0.43,
+      "memory_mib": 282.2
+    },
+    {
+      "at": 1791112505.5661967,
+      "name": "dethrottled-bench-dethrottled-1",
+      "cpu_percent": 1.47,
+      "memory_mib": 54.0
+    },
+    {
+      "at": 1791112505.5661967,
+      "name": "dethrottled-bench-browser-search-1",
+      "cpu_percent": 1.1,
+      "memory_mib": 347.4
+    },
+    {
+      "at": 1791112505.5661967,
+      "name": "dethrottled-bench-searxng-1",
+      "cpu_percent": 0.56,
+      "memory_mib": 122.5
+    },
+    {
+      "at": 1791112505.5661967,
+      "name": "dethrottled-bench-crawl4ai-1",
+      "cpu_percent": 0.69,
+      "memory_mib": 282.2
+    },
+    {
+      "at": 1791112509.600701,
+      "name": "dethrottled-bench-dethrottled-1",
+      "cpu_percent": 3.64,
+      "memory_mib": 54.5
+    },
+    {
+      "at": 1791112509.600701,
+      "name": "dethrottled-bench-browser-search-1",
+      "cpu_percent": 45.71,
+      "memory_mib": 352.3
+    },
+    {
+      "at": 1791112509.600701,
+      "name": "dethrottled-bench-searxng-1",
+      "cpu_percent": 0.45,
+      "memory_mib": 122.5
+    },
+    {
+      "at": 1791112509.600701,
+      "name": "dethrottled-bench-crawl4ai-1",
+      "cpu_percent": 0.47,
+      "memory_mib": 282.2
+    },
+    {
+      "at": 1791112513.6317983,
+      "name": "dethrottled-bench-dethrottled-1",
+      "cpu_percent": 2.09,
+      "memory_mib": 54.5
+    },
+    {
+      "at": 1791112513.6317983,
+      "name": "dethrottled-bench-browser-search-1",
+      "cpu_percent": 90.69,
+      "memory_mib": 436.9
+    },
+    {
+      "at": 1791112513.6317983,
+      "name": "dethrottled-bench-searxng-1",
+      "cpu_percent": 1.11,
+      "memory_mib": 122.5
+    },
+    {
+      "at": 1791112513.6317983,
+      "name": "dethrottled-bench-crawl4ai-1",
+      "cpu_percent": 0.46,
+      "memory_mib": 282.2
+    },
+    {
+      "at": 1791112517.6644862,
+      "name": "dethrottled-bench-dethrottled-1",
+      "cpu_percent": 3.39,
+      "memory_mib": 54.5
+    },
+    {
+      "at": 1791112517.6644862,
+      "name": "dethrottled-bench-browser-search-1",
+      "cpu_percent": 85.49,
+      "memory_mib": 354.1
+    },
+    {
+      "at": 1791112517.6644862,
+      "name": "dethrottled-bench-searxng-1",
+      "cpu_percent": 1.27,
+      "memory_mib": 122.5
+    },
+    {
+      "at": 1791112517.6644862,
+      "name": "dethrottled-bench-crawl4ai-1",
+      "cpu_percent": 0.41,
+      "memory_mib": 282.2
+    },
+    {
+      "at": 1791112521.6948977,
+      "name": "dethrottled-bench-dethrottled-1",
+      "cpu_percent": 4.3,
+      "memory_mib": 54.7
+    },
+    {
+      "at": 1791112521.6948977,
+      "name": "dethrottled-bench-browser-search-1",
+      "cpu_percent": 46.71,
+      "memory_mib": 414.2
+    },
+    {
+      "at": 1791112521.6948977,
+      "name": "dethrottled-bench-searxng-1",
+      "cpu_percent": 1.33,
+      "memory_mib": 122.5
+    },
+    {
+      "at": 1791112521.6948977,
+      "name": "dethrottled-bench-crawl4ai-1",
+      "cpu_percent": 0.58,
+      "memory_mib": 282.4
+    },
+    {
+      "at": 1791112525.7258005,
+      "name": "dethrottled-bench-dethrottled-1",
+      "cpu_percent": 2.05,
+      "memory_mib": 54.5
+    },
+    {
+      "at": 1791112525.7258005,
+      "name": "dethrottled-bench-browser-search-1",
+      "cpu_percent": 102.28,
+      "memory_mib": 417.0
+    },
+    {
+      "at": 1791112525.7258005,
+      "name": "dethrottled-bench-searxng-1",
+      "cpu_percent": 1.24,
+      "memory_mib": 122.5
+    },
+    {
+      "at": 1791112525.7258005,
+      "name": "dethrottled-bench-crawl4ai-1",
+      "cpu_percent": 0.36,
+      "memory_mib": 282.2
+    },
+    {
+      "at": 1791112529.7591314,
+      "name": "dethrottled-bench-dethrottled-1",
+      "cpu_percent": 5.67,
+      "memory_mib": 54.5
+    },
+    {
+      "at": 1791112529.7591314,
+      "name": "dethrottled-bench-browser-search-1",
+      "cpu_percent": 1.3,
+      "memory_mib": 348.9
+    },
+    {
+      "at": 1791112529.7591314,
+      "name": "dethrottled-bench-searxng-1",
+      "cpu_percent": 0.54,
+      "memory_mib": 122.5
+    },
+    {
+      "at": 1791112529.7591314,
+      "name": "dethrottled-bench-crawl4ai-1",
+      "cpu_percent": 0.42,
+      "memory_mib": 282.2
+    }
+  ]
+}

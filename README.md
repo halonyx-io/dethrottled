@@ -77,6 +77,7 @@ the cheaper tiers cannot read it.
 | [Configuration](docs/CONFIGURATION.md) | Compose settings and local performance choices |
 | [Operations](docs/OPERATIONS.md) | Verification, backups, upgrades, network exposure |
 | [PDF worker](docs/PDF_WORKER.md) | Optional HTML-to-PDF service |
+| [Benchmarks](docs/BENCHMARKS.md) | Paired x86_64/ARM64 endpoint, quality, and resource measurements |
 
 ## Architecture
 

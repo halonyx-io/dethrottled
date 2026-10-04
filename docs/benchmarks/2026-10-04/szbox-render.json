@@ -1,0 +1,388 @@
+{
+  "meta": {
+    "mode": "render",
+    "api": "http://127.0.0.1:18788",
+    "started_at_epoch": 1791113579.7747486,
+    "ended_at_epoch": 1791113597.8096046,
+    "duration_s": 18.03,
+    "container_names": [
+      "dethrottled-bench-dethrottled-1",
+      "dethrottled-bench-browser-search-1",
+      "dethrottled-bench-searxng-1",
+      "dethrottled-bench-crawl4ai-1",
+      "dethrottled-bench-pdf-worker"
+    ]
+  },
+  "summary": {
+    "cases": 10,
+    "http_200": 10,
+    "useful_cases": 10,
+    "median_ms": 1522.05,
+    "p95_ms": 2965.5,
+    "mean_ms": 1803.3,
+    "min_ms": 668.8,
+    "max_ms": 2965.5,
+    "resources": {
+      "dethrottled-bench-browser-search-1": {
+        "samples": 5,
+        "cpu_mean_percent_one_core": 0.21,
+        "cpu_peak_percent_one_core": 0.25,
+        "memory_mean_mib": 332.4,
+        "memory_peak_mib": 332.4
+      },
+      "dethrottled-bench-crawl4ai-1": {
+        "samples": 5,
+        "cpu_mean_percent_one_core": 50.8,
+        "cpu_peak_percent_one_core": 116.42,
+        "memory_mean_mib": 557.2,
+        "memory_peak_mib": 641.5
+      },
+      "dethrottled-bench-dethrottled-1": {
+        "samples": 5,
+        "cpu_mean_percent_one_core": 192.26,
+        "cpu_peak_percent_one_core": 407.63,
+        "memory_mean_mib": 589.9,
+        "memory_peak_mib": 590.1
+      },
+      "dethrottled-bench-pdf-worker": {
+        "samples": 5,
+        "cpu_mean_percent_one_core": 0.02,
+        "cpu_peak_percent_one_core": 0.03,
+        "memory_mean_mib": 27.3,
+        "memory_peak_mib": 27.3
+      },
+      "dethrottled-bench-searxng-1": {
+        "samples": 5,
+        "cpu_mean_percent_one_core": 0.28,
+        "cpu_peak_percent_one_core": 0.38,
+        "memory_mean_mib": 141.2,
+        "memory_peak_mib": 141.2
+      }
+    },
+    "crawl4ai_cases": 10
+  },
+  "cases": [
+    {
+      "number": 1,
+      "category": "fixed-render-url",
+      "url": "https://www.nasa.gov/artemis-iii-news-and-updates/",
+      "elapsed_ms": 2947.8,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 1,
+      "thin_count": 0,
+      "failed_count": 0,
+      "chars_total": 4000,
+      "tiers": [
+        "crawl4ai/crawl4ai-native"
+      ],
+      "useful": true
+    },
+    {
+      "number": 2,
+      "category": "fixed-render-url",
+      "url": "https://docs.python.org/3.11/library/asyncio-task.html",
+      "elapsed_ms": 668.8,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 1,
+      "thin_count": 0,
+      "failed_count": 0,
+      "chars_total": 4000,
+      "tiers": [
+        "crawl4ai/crawl4ai-native"
+      ],
+      "useful": true
+    },
+    {
+      "number": 3,
+      "category": "fixed-render-url",
+      "url": "https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/",
+      "elapsed_ms": 991.6,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 1,
+      "thin_count": 0,
+      "failed_count": 0,
+      "chars_total": 4000,
+      "tiers": [
+        "crawl4ai/crawl4ai-native"
+      ],
+      "useful": true
+    },
+    {
+      "number": 4,
+      "category": "fixed-render-url",
+      "url": "https://www.postgresql.org/docs/current/sql-explain.html",
+      "elapsed_ms": 1575.5,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 1,
+      "thin_count": 0,
+      "failed_count": 0,
+      "chars_total": 4000,
+      "tiers": [
+        "crawl4ai/crawl4ai-native"
+      ],
+      "useful": true
+    },
+    {
+      "number": 5,
+      "category": "fixed-render-url",
+      "url": "https://caddyserver.com/docs/caddyfile/directives/reverse_proxy",
+      "elapsed_ms": 2935.1,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 1,
+      "thin_count": 0,
+      "failed_count": 0,
+      "chars_total": 4000,
+      "tiers": [
+        "crawl4ai/crawl4ai-native"
+      ],
+      "useful": true
+    },
+    {
+      "number": 6,
+      "category": "fixed-render-url",
+      "url": "https://sqlite.org/wal.html",
+      "elapsed_ms": 2237.4,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 1,
+      "thin_count": 0,
+      "failed_count": 0,
+      "chars_total": 4000,
+      "tiers": [
+        "crawl4ai/crawl4ai-native"
+      ],
+      "useful": true
+    },
+    {
+      "number": 7,
+      "category": "fixed-render-url",
+      "url": "https://www.unicode.org/reports/tr15/",
+      "elapsed_ms": 1199.7,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 1,
+      "thin_count": 0,
+      "failed_count": 0,
+      "chars_total": 4000,
+      "tiers": [
+        "crawl4ai/crawl4ai-native"
+      ],
+      "useful": true
+    },
+    {
+      "number": 8,
+      "category": "fixed-render-url",
+      "url": "https://www.slideshare.net/slideshow/renewable-energy-79579205/79579205",
+      "elapsed_ms": 2965.5,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 1,
+      "thin_count": 0,
+      "failed_count": 0,
+      "chars_total": 4000,
+      "tiers": [
+        "crawl4ai/crawl4ai-native"
+      ],
+      "useful": true
+    },
+    {
+      "number": 9,
+      "category": "fixed-render-url",
+      "url": "https://transcriptmagic.com/youtube/",
+      "elapsed_ms": 1042.7,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 1,
+      "thin_count": 0,
+      "failed_count": 0,
+      "chars_total": 4000,
+      "tiers": [
+        "crawl4ai/crawl4ai-native"
+      ],
+      "useful": true
+    },
+    {
+      "number": 10,
+      "category": "fixed-render-url",
+      "url": "https://en.wikipedia.org/wiki/Big_data",
+      "elapsed_ms": 1468.6,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 1,
+      "thin_count": 0,
+      "failed_count": 0,
+      "chars_total": 4000,
+      "tiers": [
+        "crawl4ai/crawl4ai-native"
+      ],
+      "useful": true
+    }
+  ],
+  "resource_samples": [
+    {
+      "at": 1791113577.7740853,
+      "name": "dethrottled-bench-dethrottled-1",
+      "cpu_percent": 0.46,
+      "memory_mib": 589.0
+    },
+    {
+      "at": 1791113577.7740853,
+      "name": "dethrottled-bench-browser-search-1",
+      "cpu_percent": 0.25,
+      "memory_mib": 332.4
+    },
+    {
+      "at": 1791113577.7740853,
+      "name": "dethrottled-bench-searxng-1",
+      "cpu_percent": 0.38,
+      "memory_mib": 141.2
+    },
+    {
+      "at": 1791113577.7740853,
+      "name": "dethrottled-bench-crawl4ai-1",
+      "cpu_percent": 1.59,
+      "memory_mib": 307.9
+    },
+    {
+      "at": 1791113577.7740853,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 0.03,
+      "memory_mib": 27.3
+    },
+    {
+      "at": 1791113581.8029883,
+      "name": "dethrottled-bench-dethrottled-1",
+      "cpu_percent": 407.63,
+      "memory_mib": 590.0
+    },
+    {
+      "at": 1791113581.8029883,
+      "name": "dethrottled-bench-browser-search-1",
+      "cpu_percent": 0.14,
+      "memory_mib": 332.4
+    },
+    {
+      "at": 1791113581.8029883,
+      "name": "dethrottled-bench-searxng-1",
+      "cpu_percent": 0.18,
+      "memory_mib": 141.2
+    },
+    {
+      "at": 1791113581.8029883,
+      "name": "dethrottled-bench-crawl4ai-1",
+      "cpu_percent": 116.42,
+      "memory_mib": 641.5
+    },
+    {
+      "at": 1791113581.8029883,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 0.03,
+      "memory_mib": 27.3
+    },
+    {
+      "at": 1791113585.8442354,
+      "name": "dethrottled-bench-dethrottled-1",
+      "cpu_percent": 0.19,
+      "memory_mib": 590.1
+    },
+    {
+      "at": 1791113585.8442354,
+      "name": "dethrottled-bench-browser-search-1",
+      "cpu_percent": 0.24,
+      "memory_mib": 332.4
+    },
+    {
+      "at": 1791113585.8442354,
+      "name": "dethrottled-bench-searxng-1",
+      "cpu_percent": 0.23,
+      "memory_mib": 141.2
+    },
+    {
+      "at": 1791113585.8442354,
+      "name": "dethrottled-bench-crawl4ai-1",
+      "cpu_percent": 19.43,
+      "memory_mib": 628.6
+    },
+    {
+      "at": 1791113585.8442354,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 0.02,
+      "memory_mib": 27.3
+    },
+    {
+      "at": 1791113589.876904,
+      "name": "dethrottled-bench-dethrottled-1",
+      "cpu_percent": 289.2,
+      "memory_mib": 590.1
+    },
+    {
+      "at": 1791113589.876904,
+      "name": "dethrottled-bench-browser-search-1",
+      "cpu_percent": 0.21,
+      "memory_mib": 332.4
+    },
+    {
+      "at": 1791113589.876904,
+      "name": "dethrottled-bench-searxng-1",
+      "cpu_percent": 0.28,
+      "memory_mib": 141.2
+    },
+    {
+      "at": 1791113589.876904,
+      "name": "dethrottled-bench-crawl4ai-1",
+      "cpu_percent": 39.72,
+      "memory_mib": 600.2
+    },
+    {
+      "at": 1791113589.876904,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 0.02,
+      "memory_mib": 27.3
+    },
+    {
+      "at": 1791113593.9122899,
+      "name": "dethrottled-bench-dethrottled-1",
+      "cpu_percent": 263.8,
+      "memory_mib": 590.1
+    },
+    {
+      "at": 1791113593.9122899,
+      "name": "dethrottled-bench-browser-search-1",
+      "cpu_percent": 0.23,
+      "memory_mib": 332.4
+    },
+    {
+      "at": 1791113593.9122899,
+      "name": "dethrottled-bench-searxng-1",
+      "cpu_percent": 0.34,
+      "memory_mib": 141.2
+    },
+    {
+      "at": 1791113593.9122899,
+      "name": "dethrottled-bench-crawl4ai-1",
+      "cpu_percent": 76.85,
+      "memory_mib": 607.6
+    },
+    {
+      "at": 1791113593.9122899,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 0.02,
+      "memory_mib": 27.3
+    }
+  ]
+}
