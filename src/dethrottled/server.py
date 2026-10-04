@@ -762,7 +762,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--host", default=os.environ.get(
         "DETHROTTLED_HOST", "127.0.0.1"),
-        help="loopback by default; see SECURITY.md before changing it")
+        help="loopback by default; see docs/OPERATIONS.md before changing it")
     parser.add_argument("--port", type=int, default=int(os.environ.get(
         "DETHROTTLED_PORT", "8787")))
     jina = parser.add_mutually_exclusive_group()

@@ -27,8 +27,8 @@ dist/
 .coverage.*
 htmlcov/
 
-# Local state. Caches hold other people's pages; models are hundreds of
-# megabytes and belong in a volume, not a layer.
+# Local state. Caches hold fetched pages; host models do not belong in the
+# build context. The one required corpus model is fetched in the image build.
 .env
 var/
 models/
@@ -46,7 +46,7 @@ docker/
 examples/
 *.md
 !README.md
-!docs-next/*.md
+!docs/*.md
 
 .DS_Store
 .idea/

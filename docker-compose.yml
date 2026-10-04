@@ -33,7 +33,7 @@ services:
     # Loopback ONLY. This service fetches arbitrary URLs on behalf of whoever
     # can reach it, which makes it a server-side request forgery engine for
     # anyone who can talk to it. Exposing it beyond localhost is a deliberate
-    # decision -- read SECURITY.md, then put an authenticating proxy in front.
+    # decision -- read docs/OPERATIONS.md, then put an authenticating proxy in front.
     ports:
       # Loopback by default: this service fetches URLs on behalf of
       # whoever can reach it, and it has no authentication of its own.

@@ -56,8 +56,7 @@ RUN useradd --create-home --uid 10001 dethrottled \
     && mkdir -p /data \
     && chown dethrottled:dethrottled /data
 # Keep documentation changes out of the dependency and model-download layers.
-# The older root README stays for package metadata until the planned cutover.
-COPY docs-next/ ./docs-next/
+COPY docs/ ./docs/
 USER dethrottled
 
 ENV DETHROTTLED_DATA_DIR=/data \

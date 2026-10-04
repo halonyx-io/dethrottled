@@ -1,4 +1,4 @@
-# Optional overlay: an HTML-to-PDF worker. See docker/pdf-worker/README.md.
+# Optional overlay: an HTML-to-PDF worker. See docs/PDF_WORKER.md.
 # Enable with COMPOSE_FILE=docker-compose.yml:docker-compose.pdf-worker.yml in .env.
 # The image pin below must match the crawl4ai service in docker-compose.yml.
 
