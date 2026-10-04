@@ -7,14 +7,14 @@ decision, see [TLDREADME.md](TLDREADME.md).
 
 ```
 query
-  ├─ web search (duckduckgo, bing)   ┐
+  ├─ browser-search (DDG/Bing race)  ┐
+  │    ↳ direct DDGS on failure      │
   ├─ Bing News RSS                   ├─ pooled, deduped on canonical URL
-  ├─ SearXNG          (optional)     │  and on title
-  └─ Google News RSS                 ┘
+  ├─ SearXNG news                    │  and on title
+  └─ Google News headlines          ┘
         │
         ├─ + corpus passages the web did not return
-        ├─ BM25 over title + first 240 characters
-        ├─ cross-encoder reranks the top 40
+        ├─ BM25 over title + first 240 characters (opt-in)
         ├─ known-unreadable domains moved to the back of the fetch queue
         │
         └─ fetch only the winners
@@ -36,21 +36,48 @@ Three orderings are deliberate:
   declared worse than every web hit.
 - **Check for video first.** No tier extracts prose from a player.
 
+The browser-search worker is a private Compose service with one Patchright
+headed Chromium process under Xvfb. It admits three searches at once, uses at most three tabs per
+search, and bounds the queue at six. Only SERP discovery runs there; URL
+fetching, signature checks, extraction, and the corpus remain in Dethrottled.
+The worker has no published host port and restarts independently of the API.
+If it is unavailable, the existing DDGS web source remains available. News
+RSS and SearXNG news discovery are separate sources in the default search.
+The browser worker, Bing News RSS, and SearXNG are queried concurrently through
+a shared twelve-thread discovery pool; their results are merged in the same
+source order as before. The browser worker itself still admits three searches
+at once, which protects the external engines from bursts.
+For explicit `categories: "news"`, final results are interleaved across browser
+web context, Bing News RSS, and SearXNG news before the response limit is
+applied. This keeps article sources visible in short responses. Other searches
+retain source ordering. Google News headline resolution is skipped when the
+already usable pool fills the full return window and no preferred domains
+were requested; it remains available for thinner pools.
+
+`/fetch` and `/search-and-fetch` read at most four independent URLs at once
+per request, through one eight-thread pool shared across requests. Results
+return in input or search order. This overlaps network waits; it is not a
+promise to occupy every CPU thread. `/research` runs up to two search probes
+concurrently per request, retaining query-order merging, then reads up to
+three pages at once. Its two-request admission limit remains. After reading,
+near-duplicate article text is collapsed and spare candidates backfill the
+bundle without changing the six-source cap.
+
 ## Modules
 
 ```
 src/dethrottled/
   server.py     the HTTP API. Routes, request shapes, background indexing
-  search.py     web + RSS + SearXNG, engine resting, dedup, the sweep
-  fetch.py      the tier ladder, robots, budgets, cooldown, canonical_url
+  search.py     web + default RSS/SearXNG news, engine resting, dedup, the sweep
+  fetch.py      the tier ladder, budgets, cooldown, canonical_url
   extract.py    trafilatura → resiliparse → selectolax
   documents.py  PDF/Office/ODF/EPUB/RTF/CSV, dispatched by file signature
   ocr.py        scanned PDFs via Tesseract, piped as PNG on stdin
   media.py      video URLs → their caption track
   corpus.py     passages, embeddings, the relevance floor, retention
-  rank.py       BM25, corpus merge, cross-encoder
+  rank.py       BM25, corpus merge
   domains.py    learned per-domain fetchability
-  cache.py      SQLite. search 6h, bodies 21d, robots 24h
+  cache.py      SQLite. search 6h, bodies 21d
   health.py     capability probes
   paths.py      where state lives
   _quiet.py     third-party noise we have checked and understood
@@ -95,7 +122,7 @@ there. So escalation is driven by recovered text, and anything under
 
 | tier | speed | needs | notes |
 | --- | --- | --- | --- |
-| `direct` | ~2.1s | nothing | requests + robots. Solves most pages |
+| `direct` | ~2.1s | nothing | requests. Solves most pages |
 | `tls` | ~0.3s | a library | real Chrome TLS fingerprint, no browser |
 | `crawl4ai` | ~4.4s | a container | renders JavaScript, locally |
 | `jina-reader` | ~4.8s | internet | optional, **off by default** — leaves your network |
@@ -143,8 +170,9 @@ learns your URLs, or an address range that is pre-blocklisted.
 - the `tls` tier has its own 8s timeout, so it cannot spend the budget
   belonging to the renderer
 - hourly volume budgets per tier, surfaced by `/stats`
-- robots.txt honoured at every tier and cached; one request per domain at a
-  time with a 1.5s floor; honest User-Agent; 10MB ceiling
+- robots.txt is not requested or consulted by the fetch ladder, including
+  Crawl4AI rendering. There is one request per domain at a time with a 1.5s
+  floor, an identifiable User-Agent, and a 10MB ceiling
 
 **Tier cooldown**: a tier that refuses is rested, doubling to a one-hour cap,
 cleared on success. **Only shared services rest** — `crawl4ai` and
@@ -158,11 +186,12 @@ Two decisions, neither using a model.
 **Video** is decided from the URL before any network: a host allowlist plus an
 11-character ID pattern. 0.9–2.9µs.
 
-**Format** is decided from the file **signature**, never the server's header —
-an HTML error page served as `application/vnd.ms-excel` is routine. OOXML,
+**Format** is routed from the file **signature** for PDF, ZIP containers, OLE2
+and RTF, even if the server's header is wrong. An HTML error page served as
+`application/vnd.ms-excel` is not treated as a spreadsheet. OOXML,
 OpenDocument and EPUB are all zips, so the directory is read to see which: a
-member path for Office, a `mimetype` member for the other two. 0.6µs for HTML,
-9–27µs for zips.
+member path for Office, a `mimetype` member for the other two. The in-memory
+HTML type check measured about 0.7µs on szbox; this excludes network and parsing.
 
 CSV is the one format with no signature and needs a content-type or extension
 hint; guessing would make every HTML page a one-column CSV.
@@ -190,14 +219,15 @@ alternatives.
 
 ## Ranking
 
-Three optional stages, each degrading to the one before.
+Two optional stages, with source order as the default.
 
 1. **BM25** on title + first 240 characters. Chosen over a bi-encoder on
    measurement: more useful rows in the top 14, and no time at all rather than
    167 seconds. Ranking on 240 characters beat ranking on 3,000.
 2. **Corpus merge** — already-fetched passages compete with web results.
-3. **Cross-encoder** over a 40-row shortlist. MRR 0.646 → 0.833 for 16ms.
-   English-only, for licensing and weight reasons.
+
+The former cross-encoder was removed after live web and corpus probes found
+worse ordering and added latency. `rerank: true` is rejected explicitly.
 
 Recency is multiplicative and bounded: it may reorder relevant results and may
 never promote an irrelevant one. Undated rows count as neutral.

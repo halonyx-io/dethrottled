@@ -64,7 +64,6 @@ def main(argv=None):
     parser.add_argument("--top", type=int, default=3,
                         help="how many results per query to extract")
     parser.add_argument("--timeout", type=int, default=180)
-    parser.add_argument("--rerank", action="store_true")
     parser.add_argument("--quick", action="store_true",
                         help="first five cases only")
     args = parser.parse_args(argv)
@@ -78,7 +77,7 @@ def main(argv=None):
     for query, category, lang in cases:
         rows, ms, err = post(base, "/search-and-extract", {
             "query": query, "num_results": args.top,
-            "rerank": args.rerank, "max_chars": 4000}, args.timeout)
+            "max_chars": 4000}, args.timeout)
         if err or rows is None:
             print("%-44s %6s %6s %8s  %s" % (query[:44], "-", "-", "-", err))
             results.append({"query": query, "category": category, "lang": lang,
@@ -126,7 +125,7 @@ def main(argv=None):
 
     payload = {"meta": {"tool": "dethrottled", "url": base,
                         "timestamp": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
-                        "top_n": args.top, "rerank": args.rerank},
+                        "top_n": args.top},
                "summary": summary, "cases": results}
     with open(args.out, "w", encoding="utf-8") as handle:
         json.dump(payload, handle, indent=2, ensure_ascii=False)

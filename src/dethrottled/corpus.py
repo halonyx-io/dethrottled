@@ -106,8 +106,12 @@ def _model():
             from ._quiet import load as _load_onnxruntime
             onnxruntime = _load_onnxruntime()
             options = onnxruntime.SessionOptions()
+            # 0 lets ONNX Runtime size the pool to the host. The old default of
+            # 4 quietly pinned embedding to half a small board and a quarter of
+            # a big one, and assumed a core count this project cannot assume --
+            # it ships to other people's machines. Override only to cap it.
             options.intra_op_num_threads = int(
-                os.environ.get("DETHROTTLED_EMBED_THREADS", "4"))
+                os.environ.get("DETHROTTLED_EMBED_THREADS", "0"))
             # Quiets this session's own logging. The GPU-discovery warning is
             # NOT this -- it fires during import, before any session exists,
             # which is why setting it here never suppressed it. See _quiet.py.
@@ -218,6 +222,8 @@ class Corpus:
             self._db.execute(
                 "CREATE INDEX IF NOT EXISTS idx_url ON passages(url)")
             self._db.commit()
+            self._data_version = self._db.execute(
+                "PRAGMA data_version").fetchone()[0]
 
     # Kept as a column and a constant rather than removed outright: the schema
     # already separates indexes by model, so adding a second one back later
@@ -225,46 +231,56 @@ class Corpus:
     model_name = "minilm"
 
     def add(self, url: str, title: str, text: str) -> int:
-        """Index one page. Returns how many passages were new."""
+        """Index one page. Returns how many passages were added or refreshed."""
         chunks = passages(text, title)
-        if not chunks:
-            return 0
         ids = [hashlib.blake2b(("%s|%s|%d" % (url, self.model_name, i))
                                .encode("utf-8"), digest_size=12).hexdigest()
                for i in range(len(chunks))]
         with self._lock:
-            known = {r[0] for r in self._db.execute(
-                "SELECT id FROM passages WHERE url=? AND model=?",
-                (url, self.model_name))}
-        fresh = [(i, c) for i, c in zip(ids, chunks) if i not in known]
-        if not fresh:
-            return 0
-
-        vectors = embed([c for _, c in fresh])
-        now = time.time()
-        with self._lock:
-            self._db.executemany(
-                "INSERT OR REPLACE INTO passages "
-                "(id, url, title, text, model, vec, ts) VALUES (?,?,?,?,?,?,?)",
-                [(i, url, title, c, self.model_name, _pack(v), now)
-                 for (i, c), v in zip(fresh, vectors)])
+            known = dict(self._db.execute(
+                "SELECT id, text FROM passages WHERE url=? AND model=?",
+                (url, self.model_name)).fetchall())
+            changed = [(i, c) for i, c in zip(ids, chunks)
+                       if known.get(i) != c]
+            stale = set(known) - set(ids)
+            if not changed and not stale and not known:
+                return 0
+            # A URL's identity is stable, but its content is not. The old
+            # code skipped every existing passage ID even when the page had
+            # changed, so refreshed reports remained stale for 180 days.
+            # Hold this instance's lock through embedding so concurrent
+            # refreshes of the same URL cannot commit out of order.
+            vectors = embed([c for _, c in changed]) if changed else []
+            now = time.time()
+            if stale:
+                self._db.executemany(
+                    "DELETE FROM passages WHERE id=?",
+                    [(i,) for i in stale])
+            if changed:
+                self._db.executemany(
+                    "INSERT OR REPLACE INTO passages "
+                    "(id, url, title, text, model, vec, ts) VALUES (?,?,?,?,?,?,?)",
+                    [(i, url, title, c, self.model_name, _pack(v), now)
+                     for (i, c), v in zip(changed, vectors)])
+            # Revisited unchanged pages remain current for retention without
+            # paying another embedding inference.
+            self._db.execute(
+                "UPDATE passages SET ts=? WHERE url=? AND model=?",
+                (now, url, self.model_name))
             self._db.commit()
-            # APPEND to the cached matrix rather than dropping it.
-            #
-            # Dropping it meant the next search re-read every row and rebuilt
-            # the whole array: a second of work at 200,000 passages, paid after
-            # every single write -- and the corpus is written on every fetch, so
-            # in practice almost every search paid it. The new rows are right
-            # here; adding them costs a copy proportional to what arrived, not
-            # to what was already stored.
-            if self._cached is not None:
+            # Pure appends can extend the matrix cheaply. Replacements and
+            # deletions change existing positions, so force one rebuild.
+            replaced = any(i in known for i, _ in changed)
+            if stale or replaced:
+                self._cached = None
+            elif changed and self._cached is not None:
                 import numpy as np
                 old_matrix, old_meta = self._cached
                 added = np.asarray(vectors, dtype="float32")
                 self._cached = (np.vstack([old_matrix, added]),
                                 old_meta + [{"url": url, "title": title,
-                                             "text": c} for _, c in fresh])
-        return len(fresh)
+                                             "text": c} for _, c in changed])
+        return len(changed)
 
     def matrix(self):
         """Every vector for this model, as one array. Built once, then reused.
@@ -273,20 +289,27 @@ class Corpus:
         passages and a projected 2.1s at twenty thousand, spent re-reading rows
         that had not changed. Dropped whenever passages are added.
         """
-        if self._cached is not None:
-            return self._cached
-
         import numpy as np
         with self._lock:
+            # The API reuses this instance, but CLI jobs can write the same
+            # SQLite file through another connection. SQLite's data_version
+            # changes on those external commits, so they invalidate our
+            # resident matrix without a full table scan on every request.
+            version = self._db.execute("PRAGMA data_version").fetchone()[0]
+            if version != self._data_version:
+                self._cached = None
+                self._data_version = version
+            if self._cached is not None:
+                return self._cached
             rows = self._db.execute(
                 "SELECT url, title, text, vec FROM passages WHERE model=?",
                 (self.model_name,)).fetchall()
-        if not rows:
-            return None, []
-        meta = [{"url": r[0], "title": r[1], "text": r[2]} for r in rows]
-        self._cached = (np.asarray([_unpack(r[3]) for r in rows],
-                                   dtype="float32"), meta)
-        return self._cached
+            if not rows:
+                return None, []
+            meta = [{"url": r[0], "title": r[1], "text": r[2]} for r in rows]
+            self._cached = (np.asarray([_unpack(r[3]) for r in rows],
+                                       dtype="float32"), meta)
+            return self._cached
 
     def prune(self) -> int:
         """Drop passages past the age limit, then past the cap. Oldest first.
@@ -375,6 +398,19 @@ class Corpus:
         return {r[0]: {"passages": r[1], "pages": r[2]} for r in rows}
 
 
+_SHARED_CORPUS = None
+_SHARED_CORPUS_LOCK = threading.Lock()
+
+
+def shared_corpus() -> Corpus:
+    """Keep one matrix and SQLite connection per API process."""
+    global _SHARED_CORPUS
+    with _SHARED_CORPUS_LOCK:
+        if _SHARED_CORPUS is None:
+            _SHARED_CORPUS = Corpus()
+        return _SHARED_CORPUS
+
+
 # How much of a page the corpus takes, regardless of how much was fetched.
 # These are two different jobs: a caller wants the whole article, the index
 # wants the part of it that is about something. A page's tail is its footer,
@@ -412,7 +448,7 @@ def index_fetched(fetched) -> int:
     due = (time.time() - _last_prune) > PRUNE_EVERY
     added = 0
     try:
-        corpus = Corpus()
+        corpus = shared_corpus()
     except Exception:
         return 0
     if due:

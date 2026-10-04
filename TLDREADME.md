@@ -63,15 +63,15 @@ Everything else in this document follows from that.
 
 ```
 query
-  ├─ web search (duckduckgo, bing)        ┐
-  ├─ Bing News RSS                        ├─ pooled, deduplicated on
-  ├─ SearXNG            (optional)        │  canonical URL and on title
-  └─ Google News RSS                      ┘
+  ├─ browser-search DDG/Bing race          ┐
+  │    ↳ direct DDGS if unavailable        │
+  ├─ Bing News RSS                         ├─ pooled, deduplicated on
+  ├─ SearXNG news                          │  canonical URL and on title
+  └─ Google News headline resolution      ┘
         │
         ├─ + corpus passages the web did not return
         │
         ├─ BM25 over title + first 240 characters
-        ├─ cross-encoder reranks the top 40
         ├─ known-unreadable domains moved to the back of the fetch queue
         │
         └─ fetch only the winners
@@ -104,22 +104,47 @@ player, so spending three of them proving it is waste.
 
 ## 3. Search
 
-Four sources, all keyless. None requires an account.
+General web and news by default, all keyless. None requires an account.
 
 ### The sources
 
 | source | what it is | configured by |
 | --- | --- | --- |
-| `web-duckduckgo` | general web, via `ddgs` | on by default |
-| `web-bing` | general web, via `ddgs` | on by default |
-| `bing-news-rss` | news, real publisher URLs | always on |
-| `google-news-rss` | headline discovery only | always on |
-| `searxng` | your own instance, dozens of engines | `DETHROTTLED_SEARXNG_URL` |
+| `browser-search` | general web, DuckDuckGo/Bing race in headed Patchright Chromium | private Compose worker, on by default |
+| `web-google`, `web-auto` | general web, via `ddgs`, if the browser worker fails or returns too little | on by default |
+| `bing-news-rss` | news, real publisher URLs | on by default |
+| `google-news-rss` | headline discovery only | on by default |
+| `searxng` | locally hosted news engines | `DETHROTTLED_SEARXNG_URL` |
+
+The October 2026 szbox probes found the old general-web fallbacks blocked or
+unreliable. Direct Google and `auto` are the current defaults. When both return
+no web rows, the default news sources remain available to existing callers.
+
+News feeds remain in default search. A fixed five-question
+research probe found off-topic current stories in general searches when the
+web engines were blocked. A MiniLM cross-encoder still gave some of those
+stories high scores (for example, 0.993 for a proposed UK policy rather than
+the Act's actual requirements), so using it as an unconditional first-stage
+gate was rejected. Relevance improvements must preserve the news results that
+existing callers use.
+
+An October 2026 probe found that browser discovery is fast for general web
+queries, but its news searches often surfaced official pages and evergreen
+guides ahead of articles. With the old source ordering, 46 of 48 slots in
+twelve four-result `categories: "news"` responses were browser web results.
+Explicit news searches now interleave browser context, Bing News RSS, and
+SearXNG news before applying the result limit. In a fresh twelve-query check,
+the first four slots held 25 web and 23 news rows. This is a source-diversity
+measure, not proof that every article is relevant. Default searches keep their
+existing ordering and news sources. Google News headline resolution is skipped
+when the usable pool already fills the full return window and no domain
+preference could reorder it; thin pools still get headline discovery.
 
 ### Which engines actually work
 
-`ddgs` bundles scrapers for a dozen engines. Most of them do not work. Measured
-over 12 queries from one residential connection:
+`ddgs` bundles scrapers for a dozen engines. This older twelve-query benchmark
+used a different network and library state; it is retained as history, not a
+description of the October 2026 defaults:
 
 ```
 engine       results  median ms  unique domains  answered  failures
@@ -138,10 +163,11 @@ Three engines failed **every** query, and still failed with a four-second gap
 between requests — those are hard blocks, not rate limits, and no amount of
 politeness recovers them. They are not in the default list.
 
-Two things are worth noticing. `duckduckgo` at 96ms is by a distance the
-fastest source in the stack. And the built-in RSS sources have the **highest
-unique-domain count and zero failures** — they are the reliable floor, which is
-why the scraped engines were added alongside them rather than instead of them.
+On szbox in October 2026, DDGS Brave, Startpage and Mojeek failed all three
+new probe questions; SearXNG Google, Brave, Startpage and Mojeek returned no
+rows, while its Bing web engine returned unrelated pages. The news engines
+still work for default searches, but they are not a reliable fallback
+for an evergreen factual query.
 
 ### Why RSS at all
 
@@ -207,7 +233,7 @@ Three tiers. Only the first is required.
 
 ### `direct` — ~2.1s, needs nothing
 
-`requests` with an honest User-Agent, robots.txt honoured, a 10MB ceiling.
+`requests` with an honest User-Agent, no robots.txt check, a 10MB ceiling.
 Solves most pages. This is also where content routing happens (§6).
 
 The 10MB ceiling is not the obvious 3MB, and the reason is instructive: **a
@@ -334,9 +360,7 @@ the rest of the process, invisibly. `/stats` surfaces what has been spent.
 
 ### Politeness
 
-- **robots.txt honoured at every tier**, and cached 24 hours. A relay is a
-  different route to the same publisher, not permission to ignore what they
-  asked for
+- **robots.txt is not requested or consulted** by any fetch tier
 - **one request per domain at a time, with a 1.5s floor**
 - an honest, contactable User-Agent, overridable but say what you are
 - bounded retries, a 10MB response ceiling
@@ -382,7 +406,7 @@ transcript lookup that could only fail.
 
 **0.9–2.9µs per URL.**
 
-### What are these bytes? — from the signature, not the header
+### What are these bytes? — signature first
 
 Servers mislabel constantly. An HTML error page served as
 `application/vnd.ms-excel` is routine, and handing that to a spreadsheet parser
@@ -421,8 +445,9 @@ csv (hinted)  14800        1.8
 adding five formats cost nothing on the common path.
 
 CSV is the one format with no signature, and it is detected only when the
-content type or extension says so. Guessing would make every HTML page a
-one-column CSV.
+content type or extension says so. Legacy OLE2 needs a header or extension to
+distinguish XLS from DOC and PPT; DOC and PPT remain unsupported. Guessing would
+make every HTML page a one-column CSV.
 
 ---
 
@@ -632,39 +657,13 @@ already earned a relevance score, and may **never promote an irrelevant one**.
 Undated rows count as neutral rather than old, because the single most useful
 result in the case this was built for was undated.
 
-### Cross-encoder
+### Retired cross-encoder
 
-Reads query and document together with attention across both, which is why it
-beats a bag of words and why it costs per document. It therefore **never sees
-the whole pool** — reranking all 189 rows of a real pool cost eleven times as
-much as reranking the top forty, for the same answer.
-
-Does it earn its place? Measured on pools where one document is right and the
-rest are plausible neighbours — same vocabulary, same subject, wrong document:
-
-```
-query                                          bm25    +rerank
-how does BM25 handle document length           1.00       1.00
-why does a headless browser get detected       0.25       1.00   ← 4th to 1st
-what makes a TLS fingerprint identifiable      0.33       0.33
-how do I stop one slow page costing a run      1.00       1.00
-                            MEAN RECIPROCAL   0.646      0.833
-                            cost per query   0.07ms     16.4ms
-```
-
-**+0.188 MRR for 16ms.** It earns it.
-
-It is English-only, for two separate reasons. Licensing: the obvious
-multilingual cross-encoder is CC-BY-NC-4.0, and a non-commercial component has
-no place in an MIT repository even as an optional one. Weight: this is an
-English-first tool and a second model is half a gigabyte.
-
-BM25 is language-agnostic, so a non-English pool is still ordered. It is the
-second stage, and only that, which is English-only.
-
-Every response reports **which stages actually ran** — asking for a reranker
-you have not installed gets you lexical ordering, and you should see that
-rather than infer it from disappointing results.
+Dethrottled no longer bundles or runs the FlashRank MiniLM cross-encoder.
+A four-query synthetic probe favored it, but broader live web and corpus
+comparisons found worse source ordering and added latency. The embedding
+model for the corpus remains. A request with `rerank: true` returns HTTP 422
+until a replacement is deliberately integrated and tested.
 
 ---
 
@@ -819,7 +818,6 @@ SQLite. One lock, commits inside it.
 | --- | --- |
 | search results | 6 hours |
 | page bodies | 21 days |
-| robots.txt | 24 hours |
 
 ### Keyed on the URL alone
 
@@ -959,9 +957,10 @@ the model download.
 
 | variable | default | |
 | --- | --- | --- |
-| `DETHROTTLED_WEB_ENGINES` | `duckduckgo,bing` | the two that answer reliably |
+| `DETHROTTLED_WEB_ENGINES` | `google,auto` | current direct general-web defaults; engine health rests failures |
+| `DETHROTTLED_BROWSER_SEARCH_URL` | `""` | private Docker worker; empty = direct DDGS only |
 | `DETHROTTLED_SEARXNG_URL` | `""` | empty = tier skipped |
-| `DETHROTTLED_SEARXNG_ENGINES` | broad list | keep it broad |
+| `DETHROTTLED_SEARXNG_ENGINES` | `duckduckgo news,bing news` | tested news engines; Bing News RSS and Google News headlines remain separate sources |
 | `DETHROTTLED_ENGINE_REST_SECONDS` | `1800` | how long a refusing engine rests |
 | `DETHROTTLED_PROBE_QUERY` | `technology` | health probe query |
 
@@ -997,7 +996,6 @@ the model download.
 | `DETHROTTLED_CORPUS_RETENTION_DAYS` | `180` | |
 | `DETHROTTLED_CORPUS_AUTOINDEX` | `1` | index every fetched page |
 | `DETHROTTLED_CORPUS_INDEX_CHARS` | `4000` | less than `/fetch` returns |
-| `DETHROTTLED_XENC_SHORTLIST` | `40` | rows the cross-encoder sees |
 | `DETHROTTLED_EMBED_THREADS` | `4` | also used by OCR |
 
 ### Domain health
@@ -1108,8 +1106,8 @@ Measured as unnecessary and probably harmful. See §16.
 6. **Fetching many URLs from one domain is slow by design.** 1.5s between
    requests to the same host. 8 URLs from one domain: 12.7s.
 
-7. **English-first.** BM25 and the fetch stack are language-agnostic, but
-   reranking is English-only and cross-language corpus retrieval was dropped.
+7. **English-first corpus.** BM25 and the fetch stack are language-agnostic,
+   but the MiniLM corpus model does not offer cross-language retrieval.
 
 8. **Legacy `.doc` and `.ppt` are not read.** Refused by name rather than
    silently.
@@ -1122,7 +1120,9 @@ Measured as unnecessary and probably harmful. See §16.
 
 ## 20. Reproducing every number
 
-Every measurement above comes from a script in this repository.
+The current benchmark and core probes are in this repository. Historical
+reranker experiments were archived separately and are not needed to run the
+stack.
 
 | script | what it measures |
 | --- | --- |
@@ -1132,7 +1132,6 @@ Every measurement above comes from a script in this repository.
 | `scripts/probe_extract.py` | extractor quality and speed |
 | `scripts/probe_search.py` | every keyless search engine |
 | `scripts/probe_embed.py` | embedding models, accuracy and margin |
-| `scripts/probe_rerank.py` | does reranking actually help |
 | `scripts/probe_routing.py` | routing correctness and cost |
 | `scripts/probe_wayback.py` | the archive as a relay substitute |
 | `scripts/ab_extract.py` | fixed-URL A/B between two servers |

@@ -66,10 +66,11 @@ def test_capabilities_reports_only_what_is_configured(client):
     # be advertised unless they are actually configured.
     assert "direct" in body["fetch_tiers"]
     assert "bing-news-rss" in body["search"]
-    # One embedding model and one reranker, both permissively licensed. No
-    # non-commercial component appears anywhere in this list.
+    # Corpus embeddings remain installed; the cross-encoder was removed.
     assert set(body["ranking"]) == {
         "bm25", "corpus", "rerank"}
+    assert isinstance(body["ranking"]["corpus"], bool)
+    assert body["ranking"]["rerank"] is False
 
 
 def test_status_distinguishes_unconfigured_from_down(client, monkeypatch):
@@ -99,25 +100,19 @@ def test_search_telemetry_is_on_the_first_row_only(client):
 def test_search_reports_which_ranking_stages_ran(client):
     rows = client.post("/search", json={"query": "anything", "rank": True}).json()
     assert "bm25" in rows[0]["ranking"]
-    # Both stages have to be switched off explicitly to get an empty list,
-    # which is the case this test exists to pin: the response reports what
-    # RAN, not what was asked for. Leaving rerank at its default here would
-    # make the assertion depend on whether a reranker happens to be installed
-    # -- true where the model is baked in, false in CI.
+    # The response reports what ran. The explicit flags keep this check
+    # independent of operator defaults and whether a model is installed.
     rows = client.post("/search", json={"query": "anything", "rank": False,
                                         "rerank": False}).json()
     assert rows[0]["ranking"] == []
 
 
-def test_rerank_is_on_by_default(client):
-    """The default is what protects a caller that does not know to ask.
-
-    Turned on deliberately: a client that omits the field used to get lexical
-    ordering and no way to tell. If this ever flips back, reranking silently
-    disappears for every caller that does not send it.
-    """
-    assert srv.SearchBody(query="anything").rerank is True
-    assert srv.SearchBody(query="anything", rerank=False).rerank is False
+def test_source_order_is_default_and_removed_reranker_is_rejected(client):
+    """Keep the field for callers, but never silently ignore a true value."""
+    body = srv.SearchBody(query="anything")
+    assert body.rank is False and body.rerank is False
+    response = client.post("/search", json={"query": "anything", "rerank": True})
+    assert response.status_code == 422
 
 
 def test_search_respects_the_result_limit(client):

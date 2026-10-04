@@ -8,8 +8,7 @@
 #     ./scripts/fetch-models.sh            # embeddings (needed for the corpus)
 #     ./scripts/fetch-models.sh --all      # + OCR language data
 #
-# The reranker is not here: flashrank downloads ms-marco-MiniLM-L-12-v2
-# (Apache-2.0, 21MB) into the model directory by itself on first use.
+# Only the corpus embedding model is used by Dethrottled.
 set -euo pipefail
 
 MODELS="${DETHROTTLED_MODEL_DIR:-${XDG_CACHE_HOME:-$HOME/.cache}/dethrottled/models}"

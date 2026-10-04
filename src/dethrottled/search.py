@@ -1,30 +1,10 @@
 #!/usr/bin/env python3
-"""Free search. No API keys, no quotas, no shared pools.
+"""Keyless discovery through a private browser worker, news RSS, and SearXNG.
 
-Three sources, ordered by how reliably they yield a *fetchable publisher URL* —
-which turned out to be the property that matters, not raw result count.
-
-1. **Bing News RSS** — `bing.com/news/search?q=...&format=RSS`. The primary.
-   Its links are `apiclick.aspx` redirectors that carry the destination in a
-   `url=` query parameter, so the real publisher URL is recoverable with zero
-   extra requests. Free, keyless, and it kept working throughout testing.
-
-2. **SearXNG** (optional; a self-hosted instance you point it at).
-   Returns real URLs directly. Deliberately given a BROAD engine list rather
-   than a tuned trio: scraped SERP engines rate-limit hard and SearXNG suspends
-   them on CAPTCHA — benchmarking this module knocked out DuckDuckGo, Brave,
-   Mojeek and Google within an hour, leaving only Bing and Yahoo. A broad list
-   degrades gracefully (suspended engines simply contribute nothing) and heals
-   itself as they recover. A narrow list turns one CAPTCHA into an outage.
-
-3. **Google News RSS** — good headline discovery, but since the 2024 URL change
-   its links are JS-redirect shells that resolve back to news.google.com and
-   are disallowed by robots. It is used for *discovery only*: headlines it
-   surfaces are resolved to real URLs through a bounded, cached Bing News
-   lookup, and dropped if that fails.
-
-Nothing here touches a metered provider budget, so nothing else you run can be
-starved of quota by a busy day here.
+SearXNG's scraped general-web engines can silently return unrelated results.
+The browser worker handles general web discovery with direct DDGS as fallback.
+Google News RSS supplies headlines only; a bounded Bing News lookup must
+resolve each headline to a publisher URL before it can enter the result pool.
 """
 
 from __future__ import annotations
@@ -34,6 +14,8 @@ import os
 import re
 import threading
 import time
+from collections import deque
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from urllib.parse import parse_qs, quote_plus, urlparse
 
@@ -48,20 +30,10 @@ from .fetch import USER_AGENT, canonical_url
 # sources carry the search on their own.
 SEARXNG_URL = os.environ.get("DETHROTTLED_SEARXNG_URL", "").rstrip("/")
 
-# Broad on purpose. See the module docstring.
-# Measured 2026-08-28, one engine at a time against the local SearXNG. Of the
-# previous list -- bing, yahoo, duckduckgo, brave, mojeek, qwant, google --
-# only bing and yahoo still answered; the rest returned CAPTCHA, "access
-# denied" or "too many requests". DuckDuckGo alone had been supplying half the
-# pool.
-#
-# The news engines are the ones that survive, presumably because they are not
-# the endpoints anti-bot systems guard most closely. Google News does the heavy
-# lifting: 153 of 211 rows across three test queries.
-#
-# This list WILL rot -- free engines block self-hosted instances as a matter of
-# routine. That is why unresponsive engines are logged rather than silently
-# skipped; see search() below.
+# In October 2026, local SearXNG Bing returned unrelated Outlook, Vietnam-food
+# and Malaysian employer-login results for unrelated queries. Yahoo returned
+# protocol errors. Keep the news engines; direct DDGS handles general web.
+# Free engines still rot, so failures are logged and rested.
 # Engines that have just refused us, and when. Persisted, because the process
 # that learns an engine is blocked is usually not the one that pays for asking
 # it next.
@@ -109,7 +81,7 @@ def _save_health(health: dict) -> None:
         pass
 
 
-def _rested(engines: str) -> str:
+def _rested(engines: str, *, namespace: str = "") -> str:
     """The configured engines, minus any that refused us recently.
 
     Rested rather than removed. Rate limits and CAPTCHAs lift, so an engine is
@@ -119,26 +91,35 @@ def _rested(engines: str) -> str:
     """
     health, now = _load_health(), time.time()
     wanted = [e.strip() for e in engines.split(",") if e.strip()]
+    if not wanted:
+        return ""
+
+    def last_failure(engine):
+        key = f"{namespace}:{engine}" if namespace else engine
+        return float((health.get(key) or {}).get("at", 0))
+
     alive = [e for e in wanted
-             if now - float((health.get(e) or {}).get("at", 0)) > _HEALTH_TTL]
+             if now - last_failure(e) > _HEALTH_TTL]
     # Never rest the last one standing: a wrong health record must not be able
-    # to turn every search into an empty result.
-    return ",".join(alive or wanted)
+    # to turn every search into an empty result. If all are rested, retry only
+    # the one whose failure is oldest; retrying ALL of them defeats resting.
+    return ",".join(alive or [min(wanted, key=last_failure)])
 
 
-def _record_failure(name: str, reason: str) -> None:
+def _record_failure(name: str, reason: str, *, namespace: str = "") -> None:
     """Note that an engine refused us. Held under the lock end to end, because
     read-then-write is only safe if nothing can interleave between the two."""
     with _health_lock:
         health = _load_health()
-        health[name] = {"at": time.time(), "reason": str(reason)[:80],
-                        "fails": int((health.get(name) or {}).get("fails", 0)) + 1}
+        key = f"{namespace}:{name}" if namespace else name
+        health[key] = {"at": time.time(), "reason": str(reason)[:80],
+                       "fails": int((health.get(key) or {}).get("fails", 0)) + 1}
         _save_health(health)
 
 
 DEFAULT_ENGINES = os.environ.get(
     "DETHROTTLED_SEARXNG_ENGINES",
-    "bing,yahoo,google news,duckduckgo news,bing news,reuters")
+    "duckduckgo news,bing news")
 
 # Engine families, for a bundle that wants more than the default web and news.
 # A scientific or technical subject gets far more from crossref and openalex
@@ -153,13 +134,16 @@ GOOGLE_NEWS = "https://news.google.com/rss/search?q={q}&hl=en-US&gl=US&ceid=US:e
 BING_NEWS = "https://www.bing.com/news/search?q={q}&format=RSS"
 
 MAX_GNEWS_RESOLUTIONS = int(os.environ.get("DETHROTTLED_GNEWS_RESOLVE", "3"))
+# A cap on *attempts*, not successes. If Bing cannot resolve any headline,
+# success-only accounting otherwise issues one lookup for every Google result.
+MAX_GNEWS_LOOKUPS = int(os.environ.get("DETHROTTLED_GNEWS_LOOKUPS", "4"))
 
 _GN_SUFFIX = re.compile(r"\s+-\s+[^-]{2,40}$")
 _TAGS = re.compile(r"<[^>]+>")
 
 # Browser-ish UA for the news RSS endpoints specifically; both serve degraded
 # or empty feeds to obviously-automated agents. Article fetching still uses the
-# honest USER_AGENT from fetch.py, where robots.txt governs.
+# identifiable USER_AGENT from fetch.py.
 RSS_UA = ("Mozilla/5.0 (X11; Linux aarch64) AppleWebKit/537.36 (KHTML, like Gecko) "
           "Chrome/128.0 Safari/537.36")
 
@@ -202,7 +186,7 @@ def searxng(query: str, *, max_items: int = 8, categories: str = "",
             language=None) -> list:
     if not SEARXNG_URL:
         return []
-    engines = _rested(engines or DEFAULT_ENGINES)
+    engines = _rested(engines or DEFAULT_ENGINES, namespace="searxng")
     if cache is not None:
         hit = cache.get("search", "sx", query, engines, categories, max_items,
                         language)
@@ -232,7 +216,7 @@ def searxng(query: str, *, max_items: int = 8, categories: str = "",
             for entry in (payload.get("unresponsive_engines") or []):
                 name = entry[0] if entry else "?"
                 reason = entry[1] if len(entry) > 1 else "unresponsive"
-                _record_failure(name, reason)
+                _record_failure(name, reason, namespace="searxng")
                 if name not in _DEAD_ENGINES:
                     _DEAD_ENGINES[name] = reason
                     print("  [dethrottled] engine %r is not answering: %s "
@@ -420,13 +404,72 @@ def reputable_sweep(query: str, domains: list, *, max_per_domain: int = 3,
 # available but off, because an engine that fails two queries in three costs a
 # timeout every time it is asked.
 WEB_ENGINES = [e.strip() for e in os.environ.get(
-    "DETHROTTLED_WEB_ENGINES", "duckduckgo,bing").split(",") if e.strip()]
+    "DETHROTTLED_WEB_ENGINES", "google,auto").split(",") if e.strip()]
 
 WEB_TIMEOUT = int(os.environ.get("DETHROTTLED_WEB_TIMEOUT", "20"))
+BROWSER_SEARCH_URL = os.environ.get("DETHROTTLED_BROWSER_SEARCH_URL", "").rstrip("/")
+# The three discovery sources wait on unrelated network services. Reuse a
+# bounded pool across API requests instead of creating three new threads per
+# call; consume futures in the original source order to preserve ranking and
+# deduplication semantics.
+_SOURCE_POOL = ThreadPoolExecutor(max_workers=12, thread_name_prefix="search-source")
+
+
+def browser_search(query: str, *, max_items: int = 8, cache=None,
+                   diagnostics: dict | None = None) -> list:
+    """Use the private Compose browser worker for validated web discovery.
+
+    A failed, overloaded, or absent worker returns no rows so the existing
+    keyless DDGS path can carry the request. Document reading remains in the
+    normal Dethrottled fetch pipeline.
+    """
+    if not BROWSER_SEARCH_URL:
+        if diagnostics is not None:
+            diagnostics.update(status="not_configured", attempts=[])
+        return []
+    if cache is not None:
+        hit = cache.get("search", "browser", query, max_items)
+        if hit is not None:
+            if diagnostics is not None:
+                diagnostics.update(status="cached", attempts=[])
+            return hit
+    try:
+        response = requests.post(BROWSER_SEARCH_URL + "/search",
+                                 json={"query": query}, timeout=11)
+        payload = response.json()
+        if not isinstance(payload, dict):
+            raise ValueError("browser response is not an object")
+        detail = payload.get("detail") if isinstance(payload.get("detail"), dict) else {}
+        if diagnostics is not None:
+            diagnostics.update(status="ok" if response.ok else "http_" + str(response.status_code),
+                               attempts=payload.get("attempts") or detail.get("attempts") or [],
+                               elapsed_ms=int(1000 * float(payload.get("service_s") or 0)))
+        response.raise_for_status()
+        if not payload.get("ok"):
+            return []
+        rows = []
+        for item in payload.get("results", [])[:max_items]:
+            url = str(item.get("url") or "")
+            parsed = urlparse(url)
+            title = str(item.get("title") or "").strip()
+            snippet = str(item.get("snippet") or "").strip()
+            if parsed.scheme not in ("http", "https") or not parsed.hostname:
+                continue
+            if len(title) < 10 or len(snippet) < 25:
+                continue
+            rows.append(_norm(title=title, url=url, snippet=snippet,
+                              engine="web-browser-" + str(payload.get("engine") or "unknown")))
+        if cache is not None and rows:
+            cache.put("search", "browser", query, max_items, value=rows)
+        return rows
+    except (requests.RequestException, ValueError, KeyError, TypeError) as exc:
+        if diagnostics is not None and "status" not in diagnostics:
+            diagnostics.update(status=type(exc).__name__, attempts=[])
+        return []
 
 
 def web_search(query: str, *, max_items: int = 8, cache=None,
-               engines=None) -> list:
+               engines=None, diagnostics: dict | None = None) -> list:
     """General web results, keyless, via whichever engines still answer.
 
     Each engine is rested by the same health machinery the SearXNG engines
@@ -437,13 +480,20 @@ def web_search(query: str, *, max_items: int = 8, cache=None,
     Never fatal. `ddgs` is an optional dependency; without it this returns
     nothing and the RSS sources carry the search exactly as they did before.
     """
+    # Explicit engine selections keep their old meaning for callers that
+    # benchmark or request particular DDGS backends.
+    if engines is None:
+        found = browser_search(query, max_items=max_items, cache=cache,
+                               diagnostics=diagnostics)
+        if found:
+            return found
     try:
         from ddgs import DDGS
     except ImportError:
         return []
 
     wanted = engines or WEB_ENGINES
-    alive = [e for e in wanted if e in _rested(",".join(wanted)).split(",")]
+    alive = [e for e in wanted if e in _rested(",".join(wanted), namespace="web").split(",")]
     rows = []
     for engine in alive:
         if cache is not None:
@@ -454,7 +504,7 @@ def web_search(query: str, *, max_items: int = 8, cache=None,
         try:
             found = DDGS().text(query, backend=engine, max_results=max_items)
         except Exception as exc:
-            _record_failure(engine, type(exc).__name__)
+            _record_failure(engine, type(exc).__name__, namespace="web")
             continue
         got = []
         for row in found or []:
@@ -472,6 +522,31 @@ def web_search(query: str, *, max_items: int = 8, cache=None,
             cache.put("search", "web", engine, query, max_items, value=got)
         rows.extend(got)
     return rows
+
+
+def _blend_news(rows: list) -> list:
+    """Give explicit news searches web context and two independent news slots.
+
+    Browser web results otherwise fill the whole short result window before
+    the news sources are reached. Preserve each source's ranking and the full
+    result pool; only interleave their existing rows. If a source is empty,
+    the other sources fill its slots.
+    """
+    web, bing, other_news = deque(), deque(), deque()
+    for row in rows:
+        engine = row.get("engine", "")
+        if engine.startswith("web-"):
+            web.append(row)
+        elif engine == "bing-news":
+            bing.append(row)
+        else:
+            other_news.append(row)
+    mixed = []
+    while web or bing or other_news:
+        for source in (web, bing, other_news):
+            if source:
+                mixed.append(source.popleft())
+    return mixed
 
 
 def search(query: str, *, max_items: int = 8, categories: str = "",
@@ -506,29 +581,45 @@ def search(query: str, *, max_items: int = 8, categories: str = "",
             added += 1
         per_source[tag] = per_source.get(tag, 0) + added
 
-    # General web first: it answers the questions that are not news, and
-    # duckduckgo is the fastest source here by a wide margin.
-    add(web_search(query, max_items=max_items, cache=cache), "web")
-    add(bing_news(query, max_items=max_items, cache=cache), "bing-news")
-    add(searxng(query, max_items=max_items * 2, categories=categories,
-                cache=cache, language=language), "searxng")
+    browser_diagnostics = {}
+    web_future = _SOURCE_POOL.submit(
+        web_search, query, max_items=max_items, cache=cache,
+        diagnostics=browser_diagnostics)
+    bing_future = _SOURCE_POOL.submit(
+        bing_news, query, max_items=max_items, cache=cache)
+    searx_future = _SOURCE_POOL.submit(
+        searxng, query, max_items=max_items * 2, categories=categories,
+        cache=cache, language=language)
+    add(web_future.result(), "web")
+    add(bing_future.result(), "bing-news")
+    add(searx_future.result(), "searxng")
 
     # Google News is discovery only: resolve a bounded number of headlines it
     # surfaced that nothing else did, then drop the rest rather than emit URLs
     # that cannot be fetched.
-    known = {_title_key(r.get("title", "")) for r in merged}
-    resolved = 0
-    for headline in google_news_headlines(query, max_items=max_items, cache=cache):
-        if resolved >= MAX_GNEWS_RESOLUTIONS:
-            break
-        key = _title_key(headline["title"])
-        if not key or key in known:
-            continue
-        found = bing_news(headline["title"], max_items=2, cache=cache)
-        if found:
-            add(found[:1], "gnews-resolved")
-            known.add(key)
-            resolved += 1
+    # search() returns at most 2*max_items rows. With a full, non-junk pool
+    # and no preferred domains, Google News can only append rows beyond that
+    # return window. Avoid a headline fetch and up to four Bing resolutions
+    # that no caller could see. Keep the path for thin or preference-ranked
+    # pools, where it can genuinely add coverage.
+    usable_count = sum(_domain(r.get("url", "")) not in JUNK_DOMAINS for r in merged)
+    if usable_count >= max_items * 2 and not prefer_domains:
+        per_source["gnews-resolved"] = "skipped_full_pool"
+    else:
+        resolved, looked_up = 0, 0
+        known = {_title_key(r.get("title", "")) for r in merged}
+        for headline in google_news_headlines(query, max_items=max_items, cache=cache):
+            if resolved >= MAX_GNEWS_RESOLUTIONS or looked_up >= MAX_GNEWS_LOOKUPS:
+                break
+            key = _title_key(headline["title"])
+            if not key or key in known:
+                continue
+            looked_up += 1
+            found = bing_news(headline["title"], max_items=2, cache=cache)
+            if found:
+                add(found[:1], "gnews-resolved")
+                known.add(key)
+                resolved += 1
 
     merged = [r for r in merged if _domain(r.get("url", "")) not in JUNK_DOMAINS]
 
@@ -553,6 +644,8 @@ def search(query: str, *, max_items: int = 8, categories: str = "",
             per_source["reputable-sweep"] = swept
 
     merged = rank(merged, prefer_domains)
+    if categories.strip().lower() == "news":
+        merged = _blend_news(merged)
     dropped = 0
 
     meta = {
@@ -564,6 +657,7 @@ def search(query: str, *, max_items: int = 8, categories: str = "",
         # trustworthy needs to tell those apart.
         "per_source": (per_source if SEARXNG_URL
                        else dict(per_source, searxng="not_configured")),
+        "browser_search": browser_diagnostics,
         "junk_dropped": dropped,
         "swept": swept,
         "elapsed_ms": int((time.time() - started) * 1000),

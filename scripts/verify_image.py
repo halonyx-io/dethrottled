@@ -47,7 +47,7 @@ def main():
                    "resiliparse", "selectolax", "fastapi", "uvicorn",
                    "pymupdf", "openpyxl", "docx", "pptx", "xlrd",
                    "odf", "ebooklib", "striprtf", "youtube_transcript_api",
-                   "numpy", "onnxruntime", "transformers", "flashrank",
+                   "numpy", "onnxruntime", "transformers",
                    "curl_cffi"):
         check(module, lambda m=module: __import__(m) and "")
 
@@ -89,14 +89,21 @@ def main():
     check("extraction cascade", extractors)
     check("bm25", lambda: rank.available()["bm25"] or (_ for _ in ()).throw(
         RuntimeError("unavailable")))
-    check("cross-encoder", lambda: rank.available()["rerank"] or
-          (_ for _ in ()).throw(RuntimeError("flashrank missing")))
-    # The embedding weights are a volume, not a layer -- 87MB does not belong
-    # in an image, and the corpus is optional. Reported, not required.
-    check("corpus (needs mounted model)",
+    check("corpus embedding model",
           lambda: rank.available()["corpus"] or (_ for _ in ()).throw(
-              RuntimeError("model not mounted -- expected in a bare image")),
-          required=False)
+              RuntimeError("embedding model missing")))
+
+    def embed_inference():
+        from dethrottled.corpus import embed
+        vector = embed(["An isolated image can embed this sentence."])[0]
+        if len(vector) != 384:
+            raise RuntimeError("expected 384 dimensions, got %d" % len(vector))
+        norm = sum(value * value for value in vector)
+        if not 0.99 <= norm <= 1.01:
+            raise RuntimeError("non-unit vector norm %f" % norm)
+        return "384-dimensional unit vector"
+
+    check("corpus embedding inference", embed_inference)
 
     print("\nDOCUMENT FORMATS (parsed from bytes built here)")
     from dethrottled import documents as docs

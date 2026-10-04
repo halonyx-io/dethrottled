@@ -74,20 +74,18 @@ documents = [
 # that limitation is an explicit choice rather than something that arrives
 # with a spreadsheet parser.
 media = ["youtube-transcript-api>=1.0"]
-# The semantic corpus and the multilingual reranker. Also needs weights --
+# The semantic corpus. Also needs weights --
 # see scripts/fetch-models.sh.
 semantic = [
     "numpy>=1.24",
     "onnxruntime>=1.17",
     "transformers>=4.40",
 ]
-# The English cross-encoder. flashrank downloads its own model on first use.
-rerank = ["flashrank>=0.2.9"]
 # A real Chrome TLS fingerprint without a browser. Worth its place: it is the
 # only thing that got past one host's blocking in testing, and it is FASTER
 # than plain requests, not slower. aarch64 wheels available.
 tls = ["curl_cffi>=0.7"]
-all = ["dethrottled[documents,media,semantic,rerank,tls]"]
+all = ["dethrottled[documents,media,semantic,tls]"]
 dev = ["pytest>=8.0", "httpx>=0.27", "ruff>=0.4"]
 
 [project.scripts]

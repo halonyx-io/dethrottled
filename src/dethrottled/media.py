@@ -100,12 +100,23 @@ def transcript(url: str, limit: int = 20000) -> tuple:
         return "", "", "not_a_video_url"
 
     try:
-        from youtube_transcript_api import YouTubeTranscriptApi
+        from youtube_transcript_api import NoTranscriptFound, YouTubeTranscriptApi
     except ImportError:
         return "", "", "transcript_api_not_installed"
 
     try:
-        fetched = YouTubeTranscriptApi().fetch(ident, languages=LANGUAGES)
+        available = YouTubeTranscriptApi().list(ident)
+        try:
+            chosen = available.find_transcript(LANGUAGES)
+        except NoTranscriptFound:
+            # The preferred languages are preferences, not an allowlist. A
+            # Spanish-only video still has useful speech. TranscriptList
+            # iterates manual tracks before generated ones, so this picks the
+            # best available original-language track without translation.
+            chosen = next(iter(available), None)
+        if chosen is None:
+            return "", "", "no_transcript_available"
+        fetched = chosen.fetch()
     except Exception as exc:
         name = type(exc).__name__
         # These three are the ones worth telling apart. The rest are reported

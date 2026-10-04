@@ -51,7 +51,10 @@ except Exception:
     HAVE_TRAFILATURA = False
     _TRAF_CONFIG = None
 
-MIN_USEFUL_CHARS = 220
+# A 220-character first-rung fragment can hide a substantially fuller article
+# recovered by the next extractor. The 350-character floor was measured on the
+# live 40-page sample and previously applied by a host-only startup hook.
+MIN_USEFUL_CHARS = 350
 
 # lxml refuses to build a tree containing NULLs or stray control characters and
 # raises deep inside drop_tree(), which surfaced as a noisy traceback during

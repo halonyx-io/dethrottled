@@ -22,13 +22,15 @@ WORKDIR /app
 # reinstall onnxruntime every time.
 COPY pyproject.toml README.md ./
 COPY src/ ./src/
-RUN pip install --no-cache-dir ".[all]"
+COPY scripts/verify_image.py ./verify_image.py
+RUN python -m pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir ".[all]"
 
 # The models, baked in.
 #
-# 120MB on a 1.2GB image, and it is what makes `docker run` mean something: the
-# corpus and the cross-encoder are advertised capabilities, and without weights
-# both report themselves ready and then quietly do nothing useful. An image
+# The 87MB embedding model makes corpus search available in the image: the
+# corpus is an advertised capability, and without weights it cannot answer
+# semantic queries. An image
 # that needs a second, undocumented download is not self-contained.
 #
 # They live in /opt, NOT in /data. /data is a volume, and anything written
@@ -38,18 +40,17 @@ RUN pip install --no-cache-dir ".[all]"
 #
 # Build with --build-arg WITH_MODELS=0 for a smaller image without them.
 ARG WITH_MODELS=1
+ARG MINILM_REVISION=1110a243fdf4706b3f48f1d95db1a4f5529b4d41
 ENV DETHROTTLED_MODEL_DIR=/opt/dethrottled/models \
-    DETHROTTLED_XENC_CACHE=/opt/dethrottled/models/flashrank
+    PYTHONUNBUFFERED=1
 RUN if [ "$WITH_MODELS" = "1" ]; then \
         mkdir -p /opt/dethrottled/models/emb-minilm \
-                 /opt/dethrottled/models/flashrank \
-     && base=https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main \
+     && base=https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/$MINILM_REVISION \
      && curl -fsSL -o /opt/dethrottled/models/emb-minilm/model.onnx "$base/onnx/model.onnx" \
      && for f in tokenizer.json tokenizer_config.json special_tokens_map.json config.json; do \
             curl -fsSL -o "/opt/dethrottled/models/emb-minilm/$f" "$base/$f"; \
-        done \
-     && python -c "from flashrank import Ranker; Ranker(model_name='ms-marco-MiniLM-L-12-v2', cache_dir='/opt/dethrottled/models/flashrank')" \
-     ; fi
+        done; \
+    fi
 
 # Unprivileged. The service fetches URLs chosen by whoever can reach it, which
 # is a good enough reason on its own not to run it as root.

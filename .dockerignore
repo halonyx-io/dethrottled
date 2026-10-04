@@ -33,6 +33,7 @@ htmlcov/
 var/
 models/
 data/
+local/
 *.sqlite
 *.sqlite-shm
 *.sqlite-wal

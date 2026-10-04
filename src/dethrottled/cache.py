@@ -29,7 +29,6 @@ DEFAULT_TTL = {
     # now; the intent was always twenty-one days.
     "extract": 21 * 24 * 3600,
     "fetch": 21 * 24 * 3600,   # an article body essentially never changes
-    "robots": 24 * 3600,
 }
 
 

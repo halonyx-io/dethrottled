@@ -49,10 +49,10 @@ which one it is talking to.
 | `query` | — | required |
 | `limit` | `8` | how many rows to return. The contract name, and the one to use |
 | `num_results` | `8` | the older name for `limit`, still accepted |
-| `categories` | `""` | e.g. `news`. Forwarded to the SearXNG source, which is one of five — the others contribute regardless, so on many queries the top results are unchanged. It tilts the pool, it does not select |
-| `language` | `""` | ISO 639-1, e.g. `fr`. Biases the SearXNG source toward that language — worth about as much as translating the query. The other sources are English-centric and take no such hint, so this tilts the pool rather than constraining it |
-| `rank` | `true` | BM25. Free, so it is on |
-| `rerank` | `false` | cross-encoder over the top 40. Needs `[rerank]` |
+| `categories` | `""` | Default search combines browser-discovered web, Bing News RSS, SearXNG news and resolved Google News headlines; direct DDGS backs up the browser worker. Explicit `"news"` interleaves web context with Bing and SearXNG news before limiting results, including the four-result calls used by SIGINT. Other values are passed through to SearXNG as a category hint. Google News headline resolution is skipped when an existing usable pool already fills the full return window. |
+| `language` | `""` | ISO 639-1, e.g. `fr`. Biases SearXNG; the other sources are English-centric. |
+| `rank` | `false` | opt-in BM25 ordering |
+| `rerank` | `false` | legacy field; `true` returns HTTP 422 because the reranker was removed |
 | `corpus` | `0` | merge this many already-fetched passages into the pool |
 | `recency` | `0.0` | 0 = pure relevance, 1 = freshness dominates |
 | `max_items` | unset | another accepted spelling of `limit`. Precedence is `limit`, then `max_items`, then `num_results` |
@@ -64,9 +64,9 @@ Each row:
 ```json
 {
   "url": "...", "title": "...", "snippet": "...",
-  "publishedDate": null, "engine": "web-duckduckgo",
+  "publishedDate": null, "engine": "web-browser-ddg-lite",
   "cached": false, "from_corpus": false,
-  "ranking": ["bm25", "cross-encoder"],
+  "ranking": [],
   "search_attempts": [
     {"engine": "web", "count": 8, "status": "ok", "elapsed_ms": 412},
     {"engine": "searxng", "count": 0, "status": "not_configured"}
@@ -81,7 +81,9 @@ Two fields most search APIs do not give you:
   tell an honestly empty result from a silently degraded one. An engine that
   has been CAPTCHA-ed out contributes zero rows and no error, which looks
   exactly like a query nobody has written about. `status` distinguishes `ok`
-  from `not_configured`.
+  from `not_configured`. In the Docker stack, `browser-search` also reports
+  each attempted engine's HTTP status and failure reason. An engine canceled
+  after another has won is marked `cancelled_by_winner`.
 - **`ranking`** — which stages actually ran, not which you asked for.
 
 Both appear on the first row only; repeating them per row would multiply a
@@ -143,6 +145,37 @@ text and not source: HTML averages **47× the size of its text**, up to 182×.
 OCR runs here (a URL asked for by name is worth 1.4s a page) but not in
 `/search-and-fetch`, where it would multiply across every result.
 
+### `POST /research`
+
+```json
+{"question":"What changed in Python 3.14 free threading?","max_sources":4}
+```
+
+Searches the question and an official-source variant concurrently (at most two
+search probes per research request), selects diverse public URLs, and reads up
+to six distinct sources. The response has `queries` with search
+telemetry, `sources` with stable `S1`-style IDs, extracted `content`, `quality`,
+`tier`, and short `evidence` excerpts with offsets and matched terms. Its
+`summary` reports candidates, selected and successfully read counts, elapsed
+time, and `model_used: false`. It does not synthesize a report. Optional
+`queries` (up to three) replace the automatic official-source variant with
+your own facets. `max_chars` is 500–6000 per source (default 5000);
+`max_sources` is 1–6 (default 6). `language` and `fresh` are optional.
+Research uses the same default discovery sources as search, including news.
+If a selected page fails to read or its extracted text is a near-duplicate of
+an earlier source, research tries up to four further candidates to fill the
+requested source count. `skipped` lists failed URLs and reasons; duplicate
+entries use `reason: "duplicate_content"` and `duplicate_of` with the retained
+URL. Short pages are not content-deduplicated. This is source diversity, not a
+claim that the remaining pages answer the question;
+`summary.attempted` counts all fetches, including replacements.
+
+The public hosted route uses an API bearer token; the MCP `research` tool uses
+the separate MCP bearer token.
+The hosted REST gateway currently permits `/search`, `/fetch`, `/extract`, and
+`/research`; the combined `/search-and-fetch` route is local/LAN and available
+through the separate MCP `search_and_fetch` tool, not through public REST.
+
 ### `POST /search-and-fetch`
 
 Every field from both. Searches, ranks, then fetches **only the winners** —
@@ -196,7 +229,7 @@ and reports `degraded` when a tier answers but returns nothing usable.
 ```json
 {"search": ["web-duckduckgo", "web-bing", "bing-news-rss", "google-news-rss"],
  "fetch_tiers": ["direct", "tls", "crawl4ai"],
- "ranking": {"bm25": true, "corpus": true, "rerank": true},
+ "ranking": {"bm25": true, "corpus": true, "rerank": false},
  "tiers_resting": {}, "quotas": null, "keys_required": false}
 ```
 
@@ -212,7 +245,7 @@ from dethrottled import fetch as f, rank, search as fs
 from dethrottled.cache import Cache
 
 rows, meta = fs.search("okapi bm25", max_items=8, cache=Cache("cache.sqlite"))
-rows, stages = rank.apply(rows, "okapi bm25", rerank=True, corpus=5)
+rows, stages = rank.apply(rows, "okapi bm25", corpus=5)
 
 result = f.fetch_and_extract("https://example.com/a", max_chars=8000)
 # {ok, text, tier, extractor, title, published, chars, url, reason, cached}
@@ -231,14 +264,16 @@ media.transcript("https://youtu.be/VIDEOID")     # (text, title, reason)
 
 ## What it can read
 
-Content type is decided from the file **signature**, never the server's header.
+PDF, ZIP-based files, OLE2 and RTF are routed by their **signatures** even when
+the server labels them incorrectly. CSV/TSV has no reliable signature and needs
+a MIME or URL hint. A mislabelled HTML page is not passed to a document parser.
 
 | kind | formats |
 | --- | --- |
 | web | HTML |
 | documents | PDF (+OCR), DOCX, XLSX, XLS, PPTX, CSV/TSV |
 | open formats | ODT, ODS, ODP, EPUB, RTF |
-| video | YouTube captions |
+| video | YouTube captions when a track is available from this host; no audio transcription |
 
 Legacy `.doc`/`.ppt` are refused **by name**, not silently — reading them needs
 a ~500MB converter.
@@ -257,6 +292,7 @@ ones people actually change:
 | `DETHROTTLED_DATA_DIR` | `~/.cache/dethrottled` | caches, corpus, health files |
 | `DETHROTTLED_MODEL_DIR` | `<cache>/models` | does **not** follow DATA_DIR |
 | `DETHROTTLED_SEARXNG_URL` | `""` | your instance; empty = skipped |
+| `DETHROTTLED_BROWSER_SEARCH_URL` | `""` | private browser worker; empty = direct DDGS only |
 | `DETHROTTLED_CRAWL4AI_URL` | `""` | your renderer; empty = skipped |
 | `DETHROTTLED_ENABLE_JINA` | `0` | opt-in; **the only tier that leaves your network** |
 | `DETHROTTLED_ENABLE_TLS` | `1` | the curl_cffi tier |
@@ -273,9 +309,11 @@ docker compose up -d
 curl localhost:8787/health
 ```
 
-Brings up dethrottled + SearXNG + Crawl4AI. Nothing leaves your network: the
-external reader is off, because the renderer covers JavaScript locally. SearXNG
-and Crawl4AI are not published to the host at all.
+Brings up dethrottled + browser-search + SearXNG + Crawl4AI. The optional
+`docker-compose.pdf-worker.yml` overlay adds CAIRN's HTML-to-PDF worker. Search queries
+reach the selected public search engines, and fetches reach the requested URLs;
+the external reader is off because the renderer covers JavaScript locally.
+The browser-search worker, SearXNG, and Crawl4AI are not published to the host.
 
 ```bash
 docker compose logs -f dethrottled
@@ -295,8 +333,7 @@ HTTP service.
 ./scripts/fetch-models.sh
 ```
 
-87MB, one model. The reranker downloads itself on first use (21MB). Both are
-Apache-2.0; nothing non-commercial is used anywhere.
+87MB, one Apache-2.0 embedding model. There is no bundled reranker.
 
 OCR language packs are separate:
 

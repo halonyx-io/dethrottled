@@ -5,13 +5,14 @@
 #     docker compose up -d
 #     curl localhost:8787/health
 #
-# Three services, and the reason there are three:
+# Search, fetch and document workers:
 #
 #   dethrottled  the search/fetch/extract API
 #   searxng      real search engines, queried from your machine, not a hosted
 #                aggregator with a quota
 #   crawl4ai     headless Chromium, so a JavaScript page can be read locally
 #                instead of by sending its URL to somebody else's reader
+#   browser-search  a private headed Chromium race for web result discovery
 #
 # That last one is the point of this file. Without a renderer, the only way to
 # read a JS-rendered page is the external r.jina.ai tier -- so `pip install`
@@ -42,11 +43,17 @@ services:
       - "${DETHROTTLED_BIND:-127.0.0.1}:${DETHROTTLED_PORT:-8787}:8787"
     environment:
       DETHROTTLED_SEARXNG_URL: http://searxng:8080
+      DETHROTTLED_BROWSER_SEARCH_URL: http://browser-search:19888
+      # DDG and Bing News answered the frozen news pool; Google News and
+      # Reuters were repeatedly suspended/erroring in the 2026-10-03 probe.
+      DETHROTTLED_SEARXNG_ENGINES: "duckduckgo news,bing news"
       DETHROTTLED_CRAWL4AI_URL: http://crawl4ai:11235
       DETHROTTLED_CRAWL4AI_API: crawl
       DETHROTTLED_CRAWL4AI_TOKEN: "${CRAWL4AI_TOKEN:-dethrottled-compose-local}"
       DETHROTTLED_ENABLE_JINA: "${DETHROTTLED_ENABLE_JINA:-0}"
       DETHROTTLED_DATA_DIR: /data
+      DETHROTTLED_USER_AGENT: "${DETHROTTLED_USER_AGENT:-dethrottled/0.2.0 (automated fetcher)}"
+      DETHROTTLED_EXTRACT_CACHE_CHARS: "${DETHROTTLED_EXTRACT_CACHE_CHARS:-20000}"
       # MODEL_DIR is deliberately NOT set here. The image bakes the weights
       # into /opt/dethrottled/models, and pointing this at /data/models would
       # aim it at the volume instead -- where there are no models, so the
@@ -60,9 +67,21 @@ services:
       crawl4ai:
         condition: service_started
 
+  browser-search:
+    build: ./browser-search
+    image: dethrottled-browser-search:local
+    restart: unless-stopped
+    expose:
+      - "19888"
+    shm_size: 1gb
+    deploy:
+      resources:
+        limits:
+          memory: 4g
+
   searxng:
-    # Pinned. 2026.9.1, the build this stack was last verified against.
-    image: searxng/searxng:2026.9.1-18af21159@sha256:c7cc75852051bf6254afda6ed1b920dd1677d8efe4ab141bf558f02e582f4371
+    # Pinned. 2026.10.2, verified with the current two-engine news config.
+    image: searxng/searxng:2026.10.2-19ffbcd30@sha256:c642712fcedcdaa78fac44f71eada86aff510745826ba1bd1a368211fea2ce7f
     restart: unless-stopped
     volumes:
       - ./docker/searxng:/etc/searxng:ro
@@ -76,8 +95,9 @@ services:
       - "8080"
 
   crawl4ai:
-    # Pinned. 0.9.3, byte-identical to the `latest` this was verified against.
-    image: unclecode/crawl4ai:0.9.3@sha256:84751dab794259db05d5bd4e5c766a8041a65f0554326e4516e620abdf2fa18b
+    # Pinned 0.9.4: fixes the renderer's robots/link-preview egress paths and
+    # improves content pruning. Verified against the JS and missing-page probes.
+    image: unclecode/crawl4ai:0.9.4@sha256:9021b3cb5c6f12570bbcd5395638495e0a06969b3148e377b953d174af2ebc9b
     restart: unless-stopped
     environment:
       # Upstream binds to loopback ONLY unless a credential is present -- its
@@ -90,6 +110,8 @@ services:
       # nothing outside this compose project can reach it either way -- but set
       # CRAWL4AI_TOKEN in .env anyway if you would rather not run a default.
       CRAWL4AI_API_TOKEN: "${CRAWL4AI_TOKEN:-dethrottled-compose-local}"
+      # Set true in .env when callers intentionally fetch trusted LAN sites.
+      CRAWL4AI_ALLOW_INTERNAL_URLS: "${CRAWL4AI_ALLOW_INTERNAL_URLS:-false}"
     volumes:
       # Tuned copy of the image default: a smaller browser pool, a shorter idle
       # cutoff, and a lower memory ceiling. See the header of that file for why

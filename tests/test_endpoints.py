@@ -60,6 +60,22 @@ def test_extract_aliases_are_still_mounted():
     assert "/search-and-extract" in paths
 
 
+def test_capabilities_name_installed_readers_without_promising_video_access(client):
+    read = client.get("/v2/capabilities").json()["read"]
+    assert {"html", "csv", "tsv"} <= set(read["formats"])
+    assert "doc" not in read["formats"] and "ppt" not in read["formats"]
+    assert isinstance(read["pdf_ocr_installed"], bool)
+    assert isinstance(read["youtube_captions_configured"], bool)
+
+
+def test_search_keeps_source_order_by_default_and_accepts_opt_in_bm25(client):
+    default = client.post("/search", json={"query": "One", "limit": 1}).json()
+    lexical = client.post("/search", json={"query": "One", "limit": 1,
+                                            "rank": True}).json()
+    assert default[0]["ranking"] == []
+    assert lexical[0]["ranking"] == ["bm25"]
+
+
 @pytest.mark.parametrize("path", ["/fetch", "/extract"])
 def test_fetch_and_its_alias_behave_identically(client, path):
     rows = client.post(path, json={"urls": ["https://example.com/a"]}).json()
@@ -115,6 +131,13 @@ def test_capabilities_lists_the_web_engines(client):
     wants to know which engines were even asked."""
     body = client.get("/v2/capabilities").json()
     assert any(name.startswith("web-") for name in body["search"])
+
+
+def test_capabilities_lists_configured_browser_worker(client, monkeypatch):
+    monkeypatch.setattr(srv.fs, "BROWSER_SEARCH_URL", "http://browser-search:19888")
+    assert "browser-search" in client.get("/v2/capabilities").json()["search"]
+    monkeypatch.setattr(srv.fs, "BROWSER_SEARCH_URL", "")
+    assert "browser-search" not in client.get("/v2/capabilities").json()["search"]
 
 
 def test_render_always_puts_the_renderer_first(client):

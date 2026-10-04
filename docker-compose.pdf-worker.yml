@@ -4,7 +4,7 @@
 
 services:
   pdf-worker:
-    image: unclecode/crawl4ai:0.9.3@sha256:84751dab794259db05d5bd4e5c766a8041a65f0554326e4516e620abdf2fa18b
+    image: unclecode/crawl4ai:0.9.4@sha256:9021b3cb5c6f12570bbcd5395638495e0a06969b3148e377b953d174af2ebc9b
     restart: unless-stopped
     # PID 1 here is Python, which does not reap children. Without an init process every Chromium helper that
     # exits stays behind as a zombie, one set per PDF. `init: true` runs tini, which reaps them.

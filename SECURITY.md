@@ -100,10 +100,10 @@ Limits exist so one pathological page cannot cost a minute or a gigabyte:
 
 ## Politeness is a security property too
 
-robots.txt is honoured at every tier and cached; one request per domain at a
-time with a 1.5s floor; an honest, contactable User-Agent. A relay is a
-different route to the same publisher, not permission to ignore what they
-asked for.
+The fetch ladder does not request or consult robots.txt. It still permits only
+one request per domain at a time with a 1.5s floor, bounded retries and body
+sizes, and an honest, contactable User-Agent. Operators are responsible for
+how they use fetched content.
 
 If you change the User-Agent, **say what you are and leave a way to be told to
 stop**. The default names the project and points at the repository.

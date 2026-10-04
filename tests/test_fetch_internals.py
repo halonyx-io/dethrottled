@@ -1,4 +1,4 @@
-"""fetch.py: the ladder, the budgets, robots, and the thin-result rule.
+"""fetch.py: the ladder, the budgets, and the thin-result rule.
 
 The central claim of this project is that escalation is driven by recovered
 PROSE and not by HTTP status. That claim lives in `fetch_and_extract`, and until
@@ -38,8 +38,7 @@ THIN = ("<html><head><title>Teaser</title></head><body>"
 
 @pytest.fixture(autouse=True)
 def isolated(monkeypatch):
-    """No robots lookups, no domain throttle, no cooldown leakage."""
-    monkeypatch.setattr(f, "robots_allows", lambda url, cache=None: True)
+    """No domain throttle or cooldown leakage."""
     monkeypatch.setattr(f, "_throttle", lambda domain: None)
     monkeypatch.setattr(f, "CRAWL4AI_URL", "http://renderer.invalid")
     monkeypatch.setattr(f, "ENABLE_JINA", False)
@@ -112,18 +111,9 @@ def test_everything_failing_reports_every_reason(monkeypatch):
     assert "tls" in result["reason"] and "crawl4ai" in result["reason"]
 
 
-# ── robots ───────────────────────────────────────────────────────────────────
-
-def test_robots_disallow_stops_everything(monkeypatch):
-    """A relay is a different route to the same publisher, not permission."""
-    monkeypatch.setattr(f, "robots_allows", lambda url, cache=None: False)
-    tried = []
-    monkeypatch.setattr(f, "_tier_direct",
-                        lambda *a, **k: (tried.append("direct"), ({}, "", "u"))[1])
-    result = f.fetch_and_extract("https://example.com/a")
-    assert result["ok"] is False
-    assert result["reason"] == "robots_disallow"
-    assert tried == []
+def test_fetch_has_no_robots_opt_in():
+    with pytest.raises(TypeError):
+        f.fetch_and_extract("https://example.com/a", obey_robots=True)
 
 
 # ── budgets ──────────────────────────────────────────────────────────────────

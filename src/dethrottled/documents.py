@@ -6,8 +6,9 @@ as a web page. Statistical agencies, trade databases and procurement portals
 put their actual figures in XLSX and their actual terms in DOCX, and a stack
 that cannot read those cannot read its own primary sources.
 
-Format is decided by SIGNATURE first, not by the Content-Type header or the URL
-extension. Servers mislabel these constantly -- an HTML error page served as
+Format is decided by SIGNATURE first when one exists. CSV has no reliable magic
+and needs a Content-Type or URL hint; OLE2 needs a hint to distinguish XLS,
+DOC and PPT. Servers mislabel these constantly -- an HTML error page served as
 application/vnd.ms-excel is common, and handing that to a parser produces
 either a crash or, worse, nonsense that looks like data. OOXML files are zips
 and legacy Office files are OLE2 compound documents, so the bytes settle it.
@@ -107,9 +108,8 @@ def _ooxml_kind(data: bytes) -> str:
 def kind_of(data: bytes, url: str = "", content_type: str = "") -> str:
     """The format of these bytes, or "" if it is not a document we read.
 
-    Signature first, deliberately. The header and the extension are consulted
-    only for formats with no distinguishing magic, which is CSV and nothing
-    else.
+    Signature first, deliberately. CSV needs a header or extension hint because
+    it has no magic; OLE2 needs one to distinguish its legacy subtypes.
     """
     if not data:
         return ""
@@ -227,7 +227,15 @@ def _from_xls(data: bytes, limit: int) -> str:
 
 
 def _from_csv(data: bytes, limit: int) -> str:
-    text = data.decode("utf-8", errors="replace")
+    if data.startswith((b"\xff\xfe", b"\xfe\xff")):
+        text = data.decode("utf-16", errors="replace")
+    else:
+        try:
+            text = data.decode("utf-8-sig")
+        except UnicodeDecodeError:
+            # Older public datasets often export Windows-1252 CSV. Replacing
+            # every accented letter with U+FFFD loses names and citations.
+            text = data.decode("cp1252", errors="replace")
     try:
         dialect = csv.Sniffer().sniff(text[:4096])
     except csv.Error:
@@ -238,23 +246,26 @@ def _from_csv(data: bytes, limit: int) -> str:
 
 def _from_docx(data: bytes, limit: int) -> str:
     import docx
+    from docx.table import Table
     document = docx.Document(io.BytesIO(data))
     parts, size = [], 0
-    for para in document.paragraphs:
+    # A report's prose often explains the table immediately before or after
+    # it. Walking paragraphs and tables separately moves every table to the
+    # end and can attach a number to the wrong explanation. python-docx 1.1+
+    # exposes both kinds of block in their original document order.
+    for block in document.iter_inner_content():
         if size >= limit:
             break
-        text = para.text.strip()
-        if text:
-            parts.append(text)
-            size += len(text) + 1
-    # Tables carry the numbers in most reports, so they are not optional.
-    for table in document.tables:
-        if size >= limit:
-            break
-        rows = ([c.text for c in r.cells] for r in table.rows)
-        lines = _rows_to_text("", rows, limit - size)
-        parts.extend(lines)
-        size += sum(len(x) + 1 for x in lines)
+        if isinstance(block, Table):
+            rows = ([c.text for c in r.cells] for r in block.rows)
+            lines = _rows_to_text("", rows, limit - size)
+            parts.extend(lines)
+            size += sum(len(x) + 1 for x in lines)
+        else:
+            text = block.text.strip()
+            if text:
+                parts.append(text)
+                size += len(text) + 1
     return "\n".join(parts)
 
 
@@ -269,6 +280,9 @@ def _from_pptx(data: bytes, limit: int) -> str:
         for shape in slide.shapes:
             if shape.has_text_frame and shape.text_frame.text.strip():
                 said.append(shape.text_frame.text.strip())
+            if shape.has_table:
+                said.extend(" | ".join(_cell(cell.text) for cell in row.cells)
+                            for row in shape.table.rows)
         if said:
             block = "## Slide %d\n%s" % (number, "\n".join(said))
             parts.append(block)
@@ -282,9 +296,6 @@ def _from_odf(data: bytes, limit: int) -> str:
     One reader for all three, because odfpy exposes them the same way: the
     document is XML and its text lives in <text:p> and <text:h> elements
     wherever they appear, table cells included.
-
-    Tables are read first so that a spreadsheet arrives as rows rather than as
-    a run of loose values -- the same reason XLSX rows keep their line breaks.
     """
     from odf import teletype
     from odf import text as odftext
@@ -292,26 +303,39 @@ def _from_odf(data: bytes, limit: int) -> str:
     from odf.table import TableRow
 
     document = load(io.BytesIO(data))
-    lines, rows = [], 0
+    lines, rows, size = [], 0, 0
+    row_qname = TableRow().qname
+    prose_qnames = {odftext.H(outlinelevel=1).qname, odftext.P().qname}
 
-    for row in document.getElementsByType(TableRow):
-        cells = [_cell(teletype.extractText(cell)) for cell in row.childNodes]
-        cells = [c for c in cells if c]
-        if cells:
-            lines.append(" | ".join(cells))
-            rows += 1
-            if rows >= MAX_ROWS or sum(len(x) for x in lines) > limit:
-                break
+    def visit(element):
+        nonlocal rows, size
+        if size >= limit:
+            return
+        kind = getattr(element, "qname", None)
+        if kind == row_qname:
+            if rows >= MAX_ROWS:
+                return
+            cells = [_cell(teletype.extractText(cell)) for cell in element.childNodes]
+            cells = [cell for cell in cells if cell]
+            if cells:
+                line = " | ".join(cells)
+                lines.append(line)
+                rows += 1
+                size += len(line) + 1
+            return                         # cell paragraphs are already in the row
+        if kind in prose_qnames:
+            line = teletype.extractText(element).strip()
+            if line:
+                lines.append(line)
+                size += len(line) + 1
+            return
+        for child in getattr(element, "childNodes", ()):
+            visit(child)
 
-    if not lines:
-        for element in (list(document.getElementsByType(odftext.H))
-                        + list(document.getElementsByType(odftext.P))):
-            got = teletype.extractText(element).strip()
-            if got:
-                lines.append(got)
-            if sum(len(x) for x in lines) > limit:
-                break
-
+    # Traversal keeps headings, prose and tables in the order the document
+    # author placed them. Collecting each kind separately had moved headings
+    # ahead of paragraphs and every table behind the prose.
+    visit(document.topnode)
     return "\n".join(lines)
 
 

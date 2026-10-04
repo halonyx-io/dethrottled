@@ -142,7 +142,7 @@ def test_present_tessdata_dir_is_exported(monkeypatch, tmp_path):
 
 def test_thread_limit_is_passed_through():
     """OCR is CPU-bound and shares a box with everything else."""
-    assert ocr._environment()["OMP_THREAD_LIMIT"] == ocr.THREADS
+    assert ocr._environment()["OMP_THREAD_LIMIT"] == str(ocr.THREADS)
 
 
 # ── the French heuristic ─────────────────────────────────────────────────────

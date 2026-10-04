@@ -37,10 +37,12 @@ French at 0.981, more than good enough to recognise WHICH language it is even
 though it transcribes it worse. Page one is not OCRed twice unless the answer
 turns out not to be English.
 
-Pages are piped as PNG on stdin, so nothing touches disk. Thread count follows
-DETHROTTLED_EMBED_THREADS rather than introducing a second CPU-pinning
-mechanism: the rest of the stack constrains CPU by thread count, and two ways
-to say the same thing is one more thing to get wrong.
+Pages are piped as PNG on stdin, so nothing touches disk. The thread limit
+follows DETHROTTLED_EMBED_THREADS -- the same knob the embedding path uses, so
+there is one way to constrain CPU rather than two. By default it takes every
+core the host reports: this project runs on machines with very different core
+counts, so the sensible default is the host, never a number picked on one board.
+Set the variable only to cap it.
 """
 import os
 import re
@@ -48,7 +50,12 @@ import subprocess
 
 DPI = int(os.environ.get("DETHROTTLED_OCR_DPI", "150"))
 PAGE_CAP = int(os.environ.get("DETHROTTLED_OCR_PAGE_CAP", "8"))
-THREADS = os.environ.get("DETHROTTLED_EMBED_THREADS", "4")
+# All cores by default, so the same image behaves on an 8-core board and a
+# 16-thread laptop. A bare number here would pin every install to whatever the
+# machine it was written on happened to have. Consistent with the embedding
+# path: 0 or unset means "size to the host", a positive value caps it.
+_EMBED_THREADS = int(os.environ.get("DETHROTTLED_EMBED_THREADS") or 0)
+THREADS = _EMBED_THREADS if _EMBED_THREADS > 0 else (os.cpu_count() or 1)
 PAGE_TIMEOUT = int(os.environ.get("DETHROTTLED_OCR_PAGE_TIMEOUT", "30"))
 
 # Language data installed without root. Tesseract reads TESSDATA_PREFIX, and a
@@ -95,7 +102,7 @@ def _environment() -> dict:
     then failed every page trying to load it.
     """
     environment = dict(os.environ)
-    environment["OMP_THREAD_LIMIT"] = THREADS
+    environment["OMP_THREAD_LIMIT"] = str(THREADS)
     if os.path.isdir(TESSDATA):
         environment["TESSDATA_PREFIX"] = TESSDATA
     return environment

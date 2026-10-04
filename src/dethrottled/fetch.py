@@ -5,7 +5,7 @@ No API keys are bought and no metered quota is consumed, but "free" does not
 mean "one naive GET". Sites block datacentre IPs and render their content with
 JavaScript, and a single tier loses to both:
 
-    1. direct       requests + robots.txt        ~2.1s   most pages
+    1. direct       requests                     ~2.1s   most pages
     2. tls          a real browser TLS handshake  ~0.3s   beats fingerprinting
     3. crawl4ai     headless Chromium you host    ~4.4s   renders JavaScript
 
@@ -27,8 +27,7 @@ article text until the right tier runs. A ladder that stops at "HTTP 200"
 declares victory on an empty shell. Thin results escalate too -- anything under
 THIN_CHARS is treated as a miss.
 
-robots.txt is honoured at every tier, and cached. A relay is a different route
-to the same publisher, not permission to ignore what they asked for.
+The fetch ladder does not request or consult robots.txt.
 """
 
 from __future__ import annotations
@@ -38,8 +37,8 @@ import re
 import threading
 import time
 from collections import defaultdict
+from itertools import chain
 from urllib.parse import urlparse
-from urllib.robotparser import RobotFileParser
 
 import requests
 
@@ -47,9 +46,8 @@ from . import __version__
 
 PROJECT_URL = "https://github.com/zataraine/dethrottled"
 
-# Honest and contactable, because that is the half of politeness robots.txt
-# does not cover. Override it if you are running this as something else --
-# but say what you are, and leave a way to be told to stop.
+# Identify this fetcher and keep a contact URL. Operators can override it for
+# their own deployment. The fetch ladder does not consult robots.txt.
 #
 # Two things here were wrong and both undercut that claim. The URL was still
 # the templating placeholder, so every request we made announced an address
@@ -58,11 +56,11 @@ PROJECT_URL = "https://github.com/zataraine/dethrottled"
 # The version is stated in exactly one place, __init__.py, and read from there.
 USER_AGENT = os.environ.get(
     "DETHROTTLED_USER_AGENT",
-    "dethrottled/%s (+%s; automated fetcher; respects robots.txt)"
+    "dethrottled/%s (+%s; automated fetcher)"
     % (__version__, PROJECT_URL))
 # Used ONLY for the two news RSS endpoints and the optional relay, both of
 # which serve degraded or empty feeds to an obviously-automated agent. Article
-# fetching uses USER_AGENT above, where robots.txt governs. Deliberately not
+# fetching uses USER_AGENT above. Deliberately not
 # arch-specific: the old string said aarch64 and told every server what it was
 # talking to.
 BROWSER_UA = ("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) "
@@ -303,47 +301,12 @@ def _throttle(domain: str) -> None:
 
 
 def valid_url(url: str) -> bool:
-    """Is this something we could fetch at all?
-
-    Checked before robots, because `robots_allows` fails closed -- correct for
-    a robots lookup that errors, and badly wrong as an answer to "not a url".
-    A caller who mistypes an address was told `robots_disallow`, which sends
-    them to look for a rule that does not exist.
-    """
+    """Is this something we could fetch at all?"""
     try:
         parts = urlparse((url or "").strip())
     except ValueError:
         return False
     return parts.scheme in ("http", "https") and bool(parts.netloc)
-
-
-def robots_allows(url: str, cache=None) -> bool:
-    """Honoured at every tier. A relay is a route, not a permission slip."""
-    domain = _domain(url)
-    if not domain:
-        return False
-    parsed = urlparse(url)
-    robots_url = "%s://%s/robots.txt" % (parsed.scheme or "https", parsed.netloc)
-
-    rules = cache.get("robots", domain) if cache else None
-    if rules is None:
-        try:
-            _throttle(domain)
-            response = requests.get(robots_url, timeout=10,
-                                    headers={"User-Agent": USER_AGENT})
-            rules = response.text[:200_000] if response.status_code == 200 else ""
-        except Exception:
-            rules = ""
-        if cache:
-            cache.put("robots", domain, value=rules)
-    if not rules:
-        return True
-    parser = RobotFileParser()
-    parser.parse(rules.splitlines())
-    try:
-        return parser.can_fetch(USER_AGENT, url)
-    except Exception:
-        return True
 
 
 # Below this a result is "thin": technically prose, but too little to be worth
@@ -398,7 +361,11 @@ def _pdf_text(data: bytes, limit: int) -> str:
     parts, total = [], 0
     with pymupdf.open(stream=data, filetype="pdf") as doc:
         for page in doc:
-            chunk = page.get_text()
+            # PDF drawing order is not necessarily reading order. In a page
+            # whose footer was added before its heading, the default returned
+            # footer, body, heading. Position sorting restored the visible
+            # heading, body, footer sequence without another parser or model.
+            chunk = page.get_text(sort=True)
             parts.append(chunk)
             total += len(chunk)
             if total >= limit:
@@ -499,19 +466,41 @@ def _tier_direct(url: str, timeout: int, allow_ocr: bool = False) -> tuple:
                 "Accept-Language": "en-US,en;q=0.9",
             })
         if response.status_code != 200:
+            # The response is streamed specifically to bound memory use. Do
+            # not read ``response.content`` here: an error page can itself be
+            # huge, and checking it would buffer the entire body before the
+            # 8KB challenge detector gets a chance to inspect it.
+            error_head = bytearray()
+            for chunk in response.iter_content(8192):
+                error_head.extend(chunk[:8192 - len(error_head)])
+                if len(error_head) >= 8192:
+                    break
+            response.close()
             return "", _http_reason("", response.status_code,
                                     response.headers,
-                                    response.text[:8192] if response.content else ""), url
+                                    error_head.decode(response.encoding or "utf-8",
+                                                      errors="replace")), url
         ctype = response.headers.get("Content-Type", "")
-        if "pdf" in ctype.lower() or url.lower().split("?")[0].endswith(".pdf"):
+        # Read the first chunk before choosing a parser. A server's header or
+        # the URL can lie in either direction: a PDF may be served as HTML, and
+        # an HTML error page may arrive with a spreadsheet Content-Type.
+        chunks = iter(response.iter_content(65536))
+        first = next(chunks, b"")
+        head = first[:1024].lstrip().lower()
+        is_html = head.startswith((b"<!doctype", b"<html"))
+        is_pdf = first[:1024].lstrip().startswith(b"%PDF-")
+        from . import documents as _docs
+        is_zip = first.startswith(_docs.ZIP_MAGIC)
+        is_ole = first.startswith(_docs.OLE2_MAGIC)
+        is_rtf = first.startswith(b"{\\rtf")
+        suffix = os.path.splitext(url.lower().split("?")[0])[1]
+        csv_hint = "text/csv" in ctype.lower() or suffix in (".csv", ".tsv")
+
+        if is_pdf:
             # Returned as text, not html, so it takes the already-extracted
             # path below and no local extractor re-parses it.
-            declared = int(response.headers.get("Content-Length") or 0)
-            if declared > PDF_MAX_BYTES:
-                return ("", "pdf_too_large:%dMB"
-                        % (declared // (1024 * 1024)), str(response.url))
             data, size = [], 0
-            for chunk in response.iter_content(65536):
+            for chunk in chain((first,), chunks):
                 data.append(chunk)
                 size += len(chunk)
                 if size > PDF_MAX_BYTES:
@@ -535,12 +524,9 @@ def _tier_direct(url: str, timeout: int, allow_ocr: bool = False) -> tuple:
                 return "", why or "pdf_no_text_layer", str(response.url)
             return ({"text": text, "structured": True, "content_type": "pdf"},
                     "", str(response.url))
-        from . import documents as _docs
-        suffix = os.path.splitext(url.lower().split("?")[0])[1]
-        if (any(m in ctype.lower() for m in _docs.CONTENT_TYPES)
-                or suffix in _docs.EXTENSIONS):
+        if is_zip or is_ole or is_rtf or (csv_hint and not is_html):
             data, size = [], 0
-            for chunk in response.iter_content(65536):
+            for chunk in chain((first,), chunks):
                 data.append(chunk)
                 size += len(chunk)
                 if size > DOC_MAX_BYTES:
@@ -556,20 +542,17 @@ def _tier_direct(url: str, timeout: int, allow_ocr: bool = False) -> tuple:
             # Claimed to be a document and is not one. The bytes are already
             # in hand, so treat them as the page they probably are rather than
             # spending another request finding out.
-            html = blob.decode(response.encoding or "utf-8", errors="replace")
-            if _usable(html):
-                return {"html": html}, "", str(response.url)
+            return "", "unsupported_document_signature", str(response.url)
+        if not is_html and "html" not in ctype and "xml" not in ctype:
             return "", "content_type:%s" % ctype[:30], url
-        if "html" not in ctype and "xml" not in ctype:
-            return "", "content_type:%s" % ctype[:30], url
-        chunks, size, clipped = [], 0, False
-        for chunk in response.iter_content(65536):
-            chunks.append(chunk)
+        html_chunks, size, clipped = [], 0, False
+        for chunk in chain((first,), chunks):
+            html_chunks.append(chunk)
             size += len(chunk)
             if size > MAX_BYTES:
                 clipped = True
                 break
-        html = b"".join(chunks).decode(response.encoding or "utf-8", errors="replace")
+        html = b"".join(html_chunks).decode(response.encoding or "utf-8", errors="replace")
         # Truncation used to be invisible. It has to be reported, because the
         # symptom is a short article rather than a failure, and a short article
         # is indistinguishable from a page that was simply short.
@@ -680,6 +663,23 @@ def _crawl4ai_payload(payload: dict, url: str) -> tuple:
     return {}, "crawl4ai_empty", url
 
 
+def _crawl4ai_target_error(payload: dict) -> str:
+    """Report the target page's HTTP failure, even when rendering succeeded.
+
+    Crawl4AI's ``success`` means it produced a page. A rendered 404 can still
+    contain enough prose to pass our extraction threshold. On redirects, the
+    final response status takes precedence over the original response status.
+    """
+    status = payload.get("redirected_status_code")
+    if status is None:
+        status = payload.get("status_code")
+    try:
+        code = int(status)
+    except (TypeError, ValueError):
+        return ""
+    return "crawl4ai_target_http_%d" % code if code >= 400 else ""
+
+
 def _crawl4ai_via_crawl(url: str) -> tuple:
     """Upstream Crawl4AI's Docker API: POST /crawl on :11235.
 
@@ -693,6 +693,7 @@ def _crawl4ai_via_crawl(url: str) -> tuple:
                                  "params": {"headless": True}},
               "crawler_config": {"type": "CrawlerRunConfig",
                                  "params": {"cache_mode": "bypass",
+                                            "check_robots_txt": False,
                                             "page_timeout": CRAWL4AI_RENDER_MS}}},
         headers=_crawl4ai_headers(),
         timeout=CRAWL4AI_TIMEOUT)
@@ -710,6 +711,9 @@ def _crawl4ai_via_crawl(url: str) -> tuple:
     if payload.get("success") is False:
         reason = str(payload.get("error_message") or "render_failed")[:40]
         return {}, "crawl4ai_" + reason, url
+    target_error = _crawl4ai_target_error(payload)
+    if target_error:
+        return {}, target_error, payload.get("redirected_url") or url
     return _crawl4ai_payload(payload, url)
 
 
@@ -728,6 +732,9 @@ def _crawl4ai_via_render(url: str) -> tuple:
         return {"html": response.text}, "", url
     if not isinstance(payload, dict):
         return {}, "crawl4ai_shape", url
+    target_error = _crawl4ai_target_error(payload)
+    if target_error:
+        return {}, target_error, payload.get("redirected_url") or url
     return _crawl4ai_payload(payload, url)
 
 
@@ -766,7 +773,7 @@ _RATE_LIMIT_CODES = (401, 403, 407, 418, 429, 503)
 # and extraction fell from 87% to 67%.
 #
 # A 403 from one host says nothing whatsoever about the next host. Per-host
-# politeness is already handled, by robots.txt and the per-domain request gap.
+# per-host pacing is already handled by the per-domain request gap.
 _RESTABLE_TIERS = frozenset(
     e.strip() for e in os.environ.get(
         "DETHROTTLED_RESTABLE_TIERS", "crawl4ai,jina-reader").split(",")
@@ -940,7 +947,7 @@ def _clip(out: dict, max_chars: int) -> dict:
 
 
 def fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAULT_TIMEOUT,
-                      cache=None, obey_robots: bool = True,
+                      cache=None,
                       allow_render: bool = True,
                       render_first: bool = False,
                       allow_ocr: bool = True,
@@ -981,12 +988,6 @@ def fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAULT
         return {"ok": False, "text": "", "tier": None, "extractor": None,
                 "title": "", "published": "", "chars": 0, "url": url,
                 "reason": "invalid_url", "cached": False}
-
-    if obey_robots and not robots_allows(url, cache=cache):
-        _tier_stats["robots_blocked"] += 1
-        return {"ok": False, "text": "", "tier": None, "extractor": None,
-                "title": "", "published": "", "chars": 0, "url": url,
-                "reason": "robots_disallow", "cached": False}
 
     # Order set by measurement, not intuition -- see tests/test_tier_matrix.py,
     # which forces each tier independently over a fixed URL set and prints the

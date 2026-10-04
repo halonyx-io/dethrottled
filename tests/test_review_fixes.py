@@ -83,17 +83,10 @@ def test_real_urls_pass(good):
     assert f.valid_url(good) is True
 
 
-def test_a_malformed_url_says_so_rather_than_blaming_robots(monkeypatch):
-    """robots_allows fails closed -- correct for a lookup that errors, and
-    badly wrong as an answer to "that is not a URL". It sent people looking
-    for a rule that did not exist."""
-    called = []
-    monkeypatch.setattr(f, "robots_allows",
-                        lambda url, cache=None: called.append(url) or True)
+def test_a_malformed_url_says_so():
     result = f.fetch_and_extract("not a url")
     assert result["ok"] is False
     assert result["reason"] == "invalid_url"
-    assert called == [], "robots must not even be consulted"
 
 
 # ── one version, not three ───────────────────────────────────────────────────

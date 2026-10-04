@@ -1,15 +1,12 @@
 """Ranking: put the answer near the top before anything expensive happens.
 
-Search sources return rows in whatever order they feel like, and merging three
-of them produces an order that means nothing at all. This orders the pool, in
-up to three stages, each optional and each degrading to the one before it:
+Search sources return rows in whatever order they feel like. Optional ranking
+has two local stages:
 
     1. BM25            lexical, no model, no dependencies, microseconds
     2. corpus merge    passages already fetched, added to the pool
-    3. cross-encoder   a real model, but only over a shortlist
 
-The ordering of the stages is the design, and both orderings in it were chosen
-on measurement:
+The ordering of the stages was chosen on measurement:
 
 **Rank before fetching.** Fetching is the expensive step -- seconds per page
 against microseconds to rank -- and ranking does not need page bodies. Titles
@@ -19,11 +16,10 @@ and only the winners are ever fetched.
 **Merge the corpus before ranking**, not after. A corpus passage and a web
 result are both candidate answers, and appending the corpus to the end of a
 ranked list quietly declares every corpus hit worse than every web hit. Merging
-first makes the cross-encoder judge them on equal terms.
+first allows lexical ranking to compare both types of result.
 
-Nothing here is required. With no model installed, ranking is BM25 and the
-service works. With no corpus built, the pool is what the web returned. Each
-stage announces itself once when it cannot run, and then stops mentioning it.
+Nothing here is required. With no corpus built, the pool is what the web
+returned.
 """
 from __future__ import annotations
 
@@ -174,145 +170,20 @@ def add_corpus(rows: list, want: str, *, limit: int = 10) -> list:
     return rows + added
 
 
-# ── stage 3: the cross-encoder ───────────────────────────────────────────────
-
-_MODELS = _paths.model_dir()
-
-# ms-marco-MiniLM-L-12-v2 (Apache-2.0), fetched and cached by flashrank on
-# first use. ~6ms/doc, 21MB.
-#
-# English only, and deliberately so, for two separate reasons.
-#
-# Licensing: the obvious multilingual cross-encoder,
-# jina-reranker-v2-base-multilingual, is CC-BY-NC-4.0. A non-commercial
-# component has no place in an MIT repository even as an optional one --
-# "optional" is not something a licence audit can rely on.
-#
-# Weight: this is an English-first tool. Measured, the smaller English
-# embedding model matched the multilingual one on accuracy and ranking while
-# separating right answers from wrong ones six times more cleanly, at a fifth
-# of the size. Carrying a second model to serve a case this tool does not
-# claim to cover is half a gigabyte for nothing.
-#
-# BM25 is language-agnostic, so a non-English pool is still ordered. It is the
-# second stage, and only that, which is English-only.
-XENC_MODEL = os.environ.get("DETHROTTLED_XENC_MODEL", "ms-marco-MiniLM-L-12-v2")
-XENC_CACHE = os.environ.get("DETHROTTLED_XENC_CACHE", str(_MODELS / "flashrank"))
-
-# How many rows the cross-encoder actually sees. It pays per document, and
-# measured, reranking a whole 189-row pool cost eleven times as much as
-# reranking the top forty for the same answer. BM25 has already ordered the
-# pool; this only fixes the top of it.
-XENC_SHORTLIST = int(os.environ.get("DETHROTTLED_XENC_SHORTLIST", "40"))
-
-_XENC = {}
-_XENC_BROKEN = []
-
-
-def _score_english(want: str, texts: list) -> list:
-    """ms-marco-MiniLM-L-12-v2 via flashrank. Fast, and English only."""
-    # flashrank imports onnxruntime itself, so get it in first -- otherwise the
-    # GPU-discovery warning is printed by flashrank's import instead of being
-    # swallowed by ours.
-    from ._quiet import load as _load_onnxruntime
-    _load_onnxruntime()
-    from flashrank import Ranker, RerankRequest
-    if "en" not in _XENC:
-        _XENC["en"] = Ranker(model_name=XENC_MODEL, cache_dir=XENC_CACHE)
-    ranked = _XENC["en"].rerank(RerankRequest(
-        query=want,
-        passages=[{"id": i, "text": text} for i, text in enumerate(texts)]))
-    scores = [0.0] * len(texts)
-    for row in ranked:
-        scores[row["id"]] = row["score"]
-    return scores
-
-
-def cross_encode(rows: list, want: str, *, shortlist: int = 0) -> list:
-    """Re-order the top `shortlist` rows with a cross-encoder, or return as-is.
-
-    A cross-encoder reads query and document together, with attention across
-    both, which is why it beats a bag of words and why it costs per document.
-    So it never sees the whole pool.
-
-    Silent about being unavailable after the first time. This is an improvement
-    to ranking, not a dependency of it: if the model will not load, ranking
-    stays lexical and the request carries on.
-    """
-    shortlist = shortlist or XENC_SHORTLIST
-    if not rows or not want:
-        return rows
-    if "en" in _XENC_BROKEN:
-        return rows
-
-    head, tail = rows[:shortlist], rows[shortlist:]
-    texts = [("%s %s" % (r.get("title", ""),
-                         (r.get("text") or r.get("snippet") or "")[:400])).strip()
-             for r in head]
-    try:
-        scores = _score_english(want, texts)
-    except Exception as exc:
-        # Written off once, then silent. A missing reranker is a smaller
-        # stack, not a broken one, and saying so on every request would bury
-        # the fact in noise.
-        _XENC_BROKEN.append("en")
-        _log("  cross-encoder unavailable (%s); ranking stays lexical"
-             % str(exc)[:60])
-        return rows
-
-    order = sorted(range(len(head)), key=lambda i: -scores[i])
-    return [head[i] for i in order] + tail
-
-
-# ── what is actually available ───────────────────────────────────────────────
-
 def available() -> dict:
-    """Which ranking stages this installation can actually run.
-
-    Reported by /v2/capabilities so a caller can tell "reranking is off"
-    from "reranking is on and silently doing nothing", which was the failure
-    mode that motivated most of the logging in this module.
-    """
+    """Report the ranking stages supported by this installation."""
     import importlib.util
-    import os.path
     have_ort = importlib.util.find_spec("onnxruntime") is not None
     have_models = have_ort and importlib.util.find_spec("transformers") is not None
     return {
         "bm25": True,
-        # The runtime being installed and the weights being on disk are
-        # separate questions, and only the second one is a download.
-        "corpus": have_models and os.path.isdir(str(_MODELS / "emb-minilm")),
-        # The LIBRARY being importable is not the same as the model being
-        # present, and conflating them is the failure this project exists to
-        # avoid. flashrank downloads its weights on first use, so in an offline
-        # or air-gapped deployment `available()` reported True and the first
-        # rerank then quietly fell back to lexical ordering.
-        #
-        # Reported as ready only when both are true.
-        "rerank": (importlib.util.find_spec("flashrank") is not None
-                   and _rerank_weights_present()),
+        "corpus": have_models and (_paths.model_dir() / "emb-minilm" / "model.onnx").is_file(),
+        "rerank": False,
     }
 
-
-def _rerank_weights_present() -> bool:
-    """Has flashrank's model actually been downloaded?
-
-    It caches under a directory named for the model. Checking for the directory
-    is enough: flashrank writes it only after a successful extraction.
-    """
-    import os
-    return os.path.isdir(os.path.join(XENC_CACHE, XENC_MODEL))
-
-
-def apply(rows: list, want: str, *, bm25: bool = True, rerank: bool = False,
+def apply(rows: list, want: str, *, bm25: bool = True,
           corpus: int = 0, recency: float = 0.0) -> tuple:
-    """The whole ladder, in the one order that makes sense.
-
-    Returns (rows, stages) where `stages` names what actually ran -- not what
-    was asked for. A caller that requested reranking and got lexical ordering
-    because no model was installed should be able to see that in the response
-    rather than infer it from disappointing results.
-    """
+    """Apply optional corpus merge and lexical ranking, reporting each stage."""
     stages = []
     if not want:
         return rows, stages
@@ -324,11 +195,4 @@ def apply(rows: list, want: str, *, bm25: bool = True, rerank: bool = False,
     if bm25:
         rows = rank_rows(rows, want, recency=recency)
         stages.append("bm25+recency" if recency > 0 else "bm25")
-    if rerank:
-        top = rows[0].get("url") if rows else None
-        rows = cross_encode(rows, want)
-        if "en" not in _XENC_BROKEN:
-            stages.append("cross-encoder")
-            if rows and rows[0].get("url") != top:
-                _log("    cross-encoder reordered the top result")
     return rows, stages

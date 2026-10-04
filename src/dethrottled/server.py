@@ -47,11 +47,13 @@ from __future__ import annotations
 
 import argparse
 import os
+import threading
 import time
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
-from fastapi import BackgroundTasks, FastAPI
-from pydantic import BaseModel, ConfigDict, Field
+from fastapi import BackgroundTasks, FastAPI, HTTPException
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 # Read from the package, never restated here.
 #
@@ -67,21 +69,25 @@ from . import extract as fx
 from . import fetch as fetcher
 from . import paths as _paths
 from . import rank as ranker
+from . import research as research_engine
 from . import search as fs
 from .cache import Cache
-from .corpus import index_fetched
+from .corpus import index_fetched, shared_corpus
 
 STARTED = time.time()
 
 _cache = None
+_cache_init_lock = threading.Lock()
 
 
 def cache() -> Cache:
     global _cache
     if _cache is None:
-        _cache = Cache(Path(os.environ.get(
-            "DETHROTTLED_CACHE",
-            str(_paths.data_dir() / "cache.sqlite"))))
+        with _cache_init_lock:
+            if _cache is None:
+                _cache = Cache(Path(os.environ.get(
+                    "DETHROTTLED_CACHE",
+                    str(_paths.data_dir() / "cache.sqlite"))))
     return _cache
 
 
@@ -89,17 +95,18 @@ app = FastAPI(title="dethrottled", version=VERSION,
               description="Zero-API search, fetch and extraction")
 
 
-def _env_flag(name: str, default: bool) -> bool:
-    """A boolean from the environment, spelled the way operators spell booleans."""
-    raw = os.environ.get(name)
-    if raw is None:
-        return default
-    return raw.strip().lower() not in ("0", "false", "no", "off", "")
+# Page reads spend most of their time waiting on different origin servers.
+# Share eight slots across requests and let one request occupy at most four;
+# response rows still come back in the caller's order.
+_FETCH_POOL = ThreadPoolExecutor(max_workers=8, thread_name_prefix="page-fetch")
 
 
-# Reranking is on unless an operator says otherwise. See the note on
-# SearchBody.rerank for why the default is the interesting part.
-_RERANK_BY_DEFAULT = _env_flag("DETHROTTLED_RERANK_DEFAULT", True)
+def _read_batch(items, read):
+    rows = []
+    for start in range(0, len(items), 4):
+        futures = [_FETCH_POOL.submit(read, item) for item in items[start:start + 4]]
+        rows.extend(future.result() for future in futures)
+    return rows
 
 
 class SearchBody(BaseModel):
@@ -113,11 +120,11 @@ class SearchBody(BaseModel):
     limit: int | None = None
     num_results: int = 8
     max_items: int | None = None
+    # Default search includes direct web, Bing News RSS, local SearXNG and
+    # resolved Google News headlines. This preserves existing callers.
     categories: str = ""
-    # Honoured, by the SearXNG source. Worth about as much as translating the
-    # query: with it a French query returns 108 rows and 57 useful against 66
-    # and 28 without. The other sources are English-centric and take no such
-    # hint, so this biases the pool rather than constraining it.
+    # SearXNG uses this hint. Direct web engines are
+    # English-centric and do not take it, so it biases rather than constrains.
     language: str = ""
     engines: str = ""
     # Honoured: bypasses the search cache for this call. It was accepted and
@@ -128,25 +135,18 @@ class SearchBody(BaseModel):
     fresh: bool = False
     profile: str = "balanced"
 
-    # Ranking, both stages on. `rank` is BM25 and free.
-    #
-    # `rerank` loads a model and costs per document, so it began as opt-in --
-    # but a default no caller knows to override is not a default, it is a
-    # trap. A request that omits the field gets lexical ordering, and while
-    # the response does report which stages ran, a client that never sends the
-    # field has no reason to read that line. Measured on a frozen 18-query
-    # pool against this engine's own results, the cross-encoder moved R@1 from
-    # 5.6% to 33.3% and nDCG@10 from 40.6 to 53.6. That is too much quality to
-    # leave behind a field nobody sends.
-    #
-    # So it is opt-OUT: send `rerank: false` for a fast link-only search, or
-    # set DETHROTTLED_RERANK_DEFAULT=0 for the whole deployment.
-    #
-    # BM25 stays on underneath, and the two are not alternatives: BM25 orders
-    # the pool and hands the cross-encoder its shortlist, so switching it off
-    # would remove the reranker's input for no gain.
-    rank: bool = True
-    rerank: bool = _RERANK_BY_DEFAULT
+    # Source order is the measured default; BM25 remains opt-in.
+    rank: bool = False
+    # Accept explicit false for existing callers. Reject true instead of
+    # claiming success when the removed model cannot run.
+    rerank: bool = False
+
+    @field_validator("rerank")
+    @classmethod
+    def reranker_is_retired(cls, value: bool) -> bool:
+        if value:
+            raise ValueError("Dethrottled no longer provides a reranker")
+        return value
     # How many already-fetched corpus passages to merge into the pool before
     # ranking. 0 disables it. These cost no fetch, so they are cheaper than the
     # web rows they compete with, not merely additional.
@@ -210,6 +210,19 @@ class SearchFetchBody(SearchBody):
     max_chars: int = 3000
 
 
+class ResearchBody(BaseModel):
+    """A question and optional facets; returns sources, not a model answer."""
+    model_config = ConfigDict(extra="forbid")
+
+    question: str = Field(min_length=3, max_length=500)
+    queries: list[str] = Field(default_factory=list, max_length=3)
+    max_sources: int = Field(default=6, ge=1, le=6)
+    max_chars: int = Field(default=5000, ge=500, le=6000)
+    language: str = ""
+    fresh: bool = False
+    categories: str = ""
+
+
 def _attempts(meta: dict) -> list:
     """Per-engine telemetry: who answered, with how many rows, how fast.
 
@@ -229,6 +242,19 @@ def _attempts(meta: dict) -> list:
                      "status": "ok" if configured else count,
                      "elapsed_ms": meta.get("elapsed_ms", 0),
                      "unresponsive": []})
+    browser = meta.get("browser_search") or {}
+    if browser:
+        rows.append({"engine": "browser-search", "count": 0,
+                     "status": browser.get("status", "unknown"),
+                     "elapsed_ms": browser.get("elapsed_ms", 0),
+                     "unresponsive": []})
+        for attempt in browser.get("attempts") or []:
+            rows.append({"engine": "browser-" + str(attempt.get("engine") or "unknown"),
+                         "count": attempt.get("count", 0),
+                         "status": attempt.get("status"),
+                         "reason": attempt.get("reason"),
+                         "elapsed_ms": int(1000 * float(attempt.get("elapsed_s") or 0)),
+                         "unresponsive": []})
     return rows
 
 
@@ -245,10 +271,7 @@ def _search_row(row: dict, meta: dict, index: int) -> dict:
         "cached": False,
         "search_attempts": _attempts(meta) if index == 0 else [],
         "search_elapsed_ms": meta.get("elapsed_ms", 0),
-        # Which ranking stages actually ran -- not which were requested. Asking
-        # for a cross-encoder that is not installed gets you lexical ordering,
-        # and you should be able to see that here rather than infer it from
-        # disappointing results.
+        # Which ranking stages actually ran.
         "ranking": meta.get("ranking", []) if index == 0 else [],
         "from_corpus": bool(row.get("from_corpus")),
     }
@@ -374,6 +397,26 @@ def v2_status():
 
 @app.get("/v2/capabilities")
 def v2_capabilities():
+    import importlib.util
+    import shutil
+
+    def installed(name: str) -> bool:
+        return importlib.util.find_spec(name) is not None
+
+    readable = ["html", "csv", "tsv"]
+    for module, formats in (
+        ("pymupdf", ("pdf",)),
+        ("openpyxl", ("xlsx",)),
+        ("xlrd", ("xls",)),
+        ("docx", ("docx",)),
+        ("pptx", ("pptx",)),
+        ("odf", ("odt", "ods", "odp")),
+        ("ebooklib", ("epub",)),
+        ("striprtf", ("rtf",)),
+    ):
+        if installed(module):
+            readable.extend(formats)
+
     return {
         "service": "dethrottled",
         "version": VERSION,
@@ -381,10 +424,10 @@ def v2_capabilities():
         # on a host with no SearXNG is the same class of lie as a health check
         # that reports ok because a socket opened.
         "search": [name for name, on in (
+            ("browser-search", bool(fs.BROWSER_SEARCH_URL)),
             # General web, via whichever keyless engines still answer. Listed
-            # by the engines actually configured, because "web search" is not
-            # one source and a caller debugging an empty result wants to know
-            # which of them was even asked.
+            # by the engines actually configured. Direct DDGS is a fallback
+            # when the private browser worker is configured and responsive.
             *(("web-%s" % e, True) for e in fs.WEB_ENGINES),
             ("searxng-multi-engine", bool(fs.SEARXNG_URL)),
             ("bing-news-rss", True),
@@ -401,17 +444,27 @@ def v2_capabilities():
         "tiers_resting": fetcher.tier_rest_state(),
         "extract": [k for k, v in fx.available().items() if v],
         "ranking": ranker.available(),
+        "research": {"available": True, "model_used": False,
+                     "max_sources": 6, "max_queries": 4},
+        "read": {
+            "formats": readable,
+            "pdf_ocr_installed": installed("pymupdf") and shutil.which("tesseract") is not None,
+            # Installed is not the same as reachable: YouTube may refuse this
+            # host, so this does not promise that a given transcript succeeds.
+            "youtube_captions_configured": (
+                installed("youtube_transcript_api")
+                and _transcripts_enabled()),
+            "pdf_max_bytes": fetcher.PDF_MAX_BYTES,
+            "document_max_bytes": fetcher.DOC_MAX_BYTES,
+        },
         "quotas": None,
         "keys_required": False,
 
         # Policy, so a caller can choose an engine on what it will and will not
         # do rather than discovering it from a refusal.
         #
-        # robots.txt is honoured at every tier and cached, which is a real
-        # difference from engines that do not check it: some URLs that fetch
-        # elsewhere will be refused here, and that is the intended behaviour
-        # rather than a gap.
-        "respects_robots": True,
+        # No tier in the fetch ladder consults robots.txt.
+        "respects_robots": False,
         # Every tier here is free and keyless, so a call costs a caller nothing
         # and no budget can be exhausted on their behalf.
         "metered_tiers": False,
@@ -433,11 +486,16 @@ def v2_capabilities():
             # engines would reach one of five sources, profile is read
             # nowhere -- and a declared field is a promise that sending it
             # does something.
-            "search": ["categories", "language", "rank", "rerank",
+            "search": ["categories", "language", "rank",
                        "corpus", "recency"],
             "fetch": ["raw", "links"],
         },
     }
+
+
+def _transcripts_enabled() -> bool:
+    from . import media
+    return media.ENABLED
 
 
 def _ranked(body) -> tuple:
@@ -453,7 +511,7 @@ def _ranked(body) -> tuple:
     something for the ranker to reject.
     """
     limit = body.limit or body.max_items or body.num_results
-    pool = limit * 3 if (body.rank or body.rerank) else limit
+    pool = limit * 3 if body.rank else limit
     rows, meta = fs.search(body.query, max_items=pool,
                            categories=body.categories,
                            language=body.language or None,
@@ -461,7 +519,7 @@ def _ranked(body) -> tuple:
                            # cache rather than being accepted and ignored.
                            cache=None if body.fresh else cache())
     rows, stages = ranker.apply(
-        rows, body.query, bm25=body.rank, rerank=body.rerank,
+        rows, body.query, bm25=body.rank,
         corpus=body.corpus, recency=body.recency)
     # AFTER ranking, and only here. Relevance order is decided above and is
     # not touched; this moves domains that measurably never yield text to the
@@ -500,12 +558,13 @@ def fetch_urls(body: FetchBody, background: BackgroundTasks):
     mode = _render_mode(body.render)
     want_html = body.format == "html" or (body.format == "text" and body.raw)
     want_links = body.format == "links" or (body.format == "text" and body.links)
-    rows = [_extract_row(u, body.max_chars, allow_ocr=True,
-                         allow_render=mode != "never",
-                         render_first=mode == "always",
-                         raw=want_html, links=want_links,
-                         fresh=body.fresh)
-            for u in body.urls if u]
+    rows = _read_batch(
+        [u for u in body.urls if u],
+        lambda u: _extract_row(u, body.max_chars, allow_ocr=True,
+                               allow_render=mode != "never",
+                               render_first=mode == "always",
+                               raw=want_html, links=want_links,
+                               fresh=body.fresh))
     # Indexed AFTER the response, not during it. Embedding costs ~250ms a page
     # and the caller should not wait for work they did not ask for.
     # Not indexed when links were kept: the corpus is prose to match
@@ -537,8 +596,8 @@ def fetch_with_links(body: FetchBody, background: BackgroundTasks):
 @app.post("/search-and-extract")     # alias
 def search_and_fetch(body: SearchFetchBody, background: BackgroundTasks):
     rows, meta, _limit = _ranked(body)
-    out = []
-    for index, row in enumerate(rows):
+    def read(indexed):
+        index, row = indexed
         merged = _search_row(row, meta, index)
         # Search results: no OCR. N results times 1.4s a page is a different
         # trade from one URL somebody asked for.
@@ -550,11 +609,107 @@ def search_and_fetch(body: SearchFetchBody, background: BackgroundTasks):
                                  render_first=sf_mode == "always",
                                  raw=body.raw)
         merged.update({k: v for k, v in extracted.items() if k != "url"})
-        out.append(merged)
+        return merged
+
+    out = _read_batch(list(enumerate(rows)), read)
     # This is the high-volume route, so it is the one that actually grows the
     # corpus -- and it was growing it by nothing at all.
     background.add_task(index_fetched, _harvest(out))
     return out
+
+
+_RESEARCH_REQUESTS = threading.BoundedSemaphore(2)
+
+
+@app.post("/research")
+def research(body: ResearchBody, background: BackgroundTasks):
+    """Collect a cited, diverse evidence bundle without a language model."""
+    if not _RESEARCH_REQUESTS.acquire(blocking=False):
+        raise HTTPException(status_code=429, detail="research busy")
+    started = time.monotonic()
+    try:
+        if any(not query.strip() or len(query) > 500 for query in body.queries):
+            raise HTTPException(status_code=422, detail="invalid research query")
+        if body.categories not in {"", "news"}:
+            raise HTTPException(status_code=422, detail="invalid research category")
+        queries = research_engine.queries_for(body.question, body.queries or None)
+        def search_one(query):
+            try:
+                rows, meta, _ = _ranked(SearchBody(
+                    query=query, limit=8, language=body.language,
+                    fresh=body.fresh, categories=body.categories))
+                return rows, {"query": query, "found": len(rows),
+                              "elapsed_ms": meta.get("elapsed_ms", 0),
+                              "attempts": _attempts(meta)}
+            except Exception as exc:
+                return [], {"query": query, "found": 0,
+                            "error": type(exc).__name__}
+
+        # Two research requests may run concurrently; at most two discovery
+        # probes from each are active, while map preserves the query order.
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            probed = list(pool.map(search_one, queries))
+        searches = [rows for rows, _ in probed]
+        telemetry = [meta for _, meta in probed]
+
+        selected = research_engine.select_sources(
+            searches, body.max_sources + 4,
+            official_first=not body.queries)
+
+        def read(item):
+            try:
+                row = _extract_row(item["url"], body.max_chars,
+                                   allow_ocr=True,
+                                   page_budget=fetcher.PAGE_BUDGET_BULK,
+                                   fresh=body.fresh)
+            except Exception as exc:
+                row = {"url": item["url"], "quality": "failed", "content": "",
+                       "failure_reason": type(exc).__name__}
+            content = row.get("content", "")
+            return {**item, **row,
+                    "title": row.get("title") or item["title"],
+                    "evidence": research_engine.evidence_windows(
+                        content, body.question)}
+
+        sources, skipped, fingerprints = [], [], []
+        with ThreadPoolExecutor(max_workers=3) as pool:
+            pending = selected[:body.max_sources]
+            offset = len(pending)
+            while pending:
+                for item in pool.map(read, pending):
+                    if item.get("quality") == "ok" and item.get("content"):
+                        fingerprint = research_engine.content_shingles(item["content"])
+                        duplicate_of = research_engine.duplicate_source(
+                            fingerprint, fingerprints)
+                        if duplicate_of:
+                            skipped.append({"url": item["url"],
+                                            "reason": "duplicate_content",
+                                            "duplicate_of": duplicate_of})
+                        else:
+                            sources.append(item)
+                            fingerprints.append((item["url"], fingerprint))
+                    else:
+                        skipped.append({"url": item["url"],
+                                        "reason": item.get("failure_reason")
+                                        or "empty_content"})
+                if len(sources) >= body.max_sources or offset >= len(selected):
+                    break
+                pending = selected[offset:offset + body.max_sources - len(sources)]
+                offset += len(pending)
+        sources = sources[:body.max_sources]
+        for index, item in enumerate(sources, 1):
+            item["id"] = "S%d" % index
+        background.add_task(index_fetched, _harvest(sources))
+        return {"question": body.question, "queries": telemetry,
+                "sources": sources, "skipped": skipped,
+                "summary": {"candidates": sum(len(rows) for rows in searches),
+                            "selected": len(sources),
+                            "read": len(sources),
+                            "attempted": len(sources) + len(skipped),
+                            "elapsed_ms": int((time.monotonic() - started) * 1000),
+                            "model_used": False}}
+    finally:
+        _RESEARCH_REQUESTS.release()
 
 
 @app.get("/corpus/search")
@@ -571,8 +726,7 @@ def corpus_search(q: str, limit: int = 10, floor: float | None = None):
     calibrated for whichever model is in use -- the two do not share a scale.
     """
     try:
-        from .corpus import Corpus
-        hits = Corpus().search(q, limit=limit, floor=floor)
+        hits = shared_corpus().search(q, limit=limit, floor=floor)
     except Exception as exc:
         return {"ok": False, "reason": str(exc)[:200], "results": []}
     return {"ok": True, "count": len(hits), "results": hits}
@@ -581,8 +735,7 @@ def corpus_search(q: str, limit: int = 10, floor: float | None = None):
 @app.get("/corpus/stats")
 def corpus_stats():
     try:
-        from .corpus import Corpus
-        return {"ok": True, "models": Corpus().stats()}
+        return {"ok": True, "models": shared_corpus().stats()}
     except Exception as exc:
         return {"ok": False, "reason": str(exc)[:200], "models": {}}
 

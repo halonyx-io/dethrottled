@@ -107,9 +107,10 @@ def test_failures_are_told_apart(monkeypatch, exc_name, expected):
     import sys
     import types
     fake = types.ModuleType("youtube_transcript_api")
+    fake.NoTranscriptFound = type("NoTranscriptFound", (Exception,), {})
 
     class Api:
-        def fetch(self, *a, **k):
+        def list(self, *a, **k):
             raise type(exc_name, (Exception,), {})("nope")
 
     fake.YouTubeTranscriptApi = Api
@@ -125,14 +126,22 @@ def fake_api(monkeypatch, snippets):
     import sys
     import types
     fake = types.ModuleType("youtube_transcript_api")
+    fake.NoTranscriptFound = type("NoTranscriptFound", (Exception,), {})
 
     class Snippet:
         def __init__(self, text):
             self.text = text
 
     class Api:
-        def fetch(self, *a, **k):
-            return [Snippet(x) for x in snippets]
+        def list(self, *a, **k):
+            class Available:
+                def find_transcript(self, *a, **k):
+                    return self
+
+                def fetch(self):
+                    return [Snippet(x) for x in snippets]
+
+            return Available()
 
     fake.YouTubeTranscriptApi = Api
     monkeypatch.setitem(sys.modules, "youtube_transcript_api", fake)
@@ -168,6 +177,36 @@ def test_captions_of_only_sound_cues_report_empty(monkeypatch):
     text, _title, why = media.transcript("https://youtu.be/" + VIDEO)
     assert text == ""
     assert why == "transcript_empty"
+
+
+def test_other_language_is_used_when_english_is_absent(monkeypatch):
+    import sys
+    import types
+
+    fake = types.ModuleType("youtube_transcript_api")
+    fake.NoTranscriptFound = type("NoTranscriptFound", (Exception,), {})
+
+    class SpanishTrack:
+        def fetch(self):
+            return [{"text": "La capacidad instalada aumentó"}]
+
+    class Available:
+        def find_transcript(self, languages):
+            assert languages[0] == "en"
+            raise fake.NoTranscriptFound()
+
+        def __iter__(self):
+            return iter([SpanishTrack()])
+
+    class Api:
+        def list(self, video_id):
+            return Available()
+
+    fake.YouTubeTranscriptApi = Api
+    monkeypatch.setitem(sys.modules, "youtube_transcript_api", fake)
+    text, _title, why = media.transcript("https://youtu.be/" + VIDEO)
+    assert why == ""
+    assert text == "La capacidad instalada aumentó"
 
 
 # ── the live path ────────────────────────────────────────────────────────────

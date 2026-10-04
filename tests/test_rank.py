@@ -92,13 +92,12 @@ def test_age_days_is_none_when_absent_or_unparseable():
 
 
 def test_apply_reports_the_stages_that_actually_ran():
-    """A caller that asked for reranking and got lexical ordering should be
-    able to see that, rather than infer it from disappointing results."""
+    """Report the lexical stage that actually ran."""
     pool = [row("BM25"), row("Other")]
-    _, stages = apply(pool, "BM25", bm25=True, rerank=False, corpus=0)
+    _, stages = apply(pool, "BM25", bm25=True, corpus=0)
     assert stages == ["bm25"]
 
-    _, stages = apply(pool, "BM25", bm25=True, rerank=False, corpus=0, recency=0.5)
+    _, stages = apply(pool, "BM25", bm25=True, corpus=0, recency=0.5)
     assert stages == ["bm25+recency"]
 
 

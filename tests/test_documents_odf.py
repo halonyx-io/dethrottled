@@ -127,6 +127,56 @@ def test_ods_rows_keep_their_boundaries():
     assert "2024" in text.splitlines()[1]
 
 
+@needs_odf
+def test_odt_keeps_prose_when_it_contains_a_table():
+    from odf.opendocument import OpenDocumentText
+    from odf.table import Table, TableCell, TableRow
+    from odf.text import P
+
+    doc = OpenDocumentText()
+    doc.text.addElement(P(text="Tender closes on Friday."))
+    table = Table(name="Bids")
+    row = TableRow()
+    for value in ("supplier", "price"):
+        cell = TableCell(valuetype="string")
+        cell.addElement(P(text=value))
+        row.addElement(cell)
+    table.addElement(row)
+    doc.text.addElement(table)
+    doc.text.addElement(P(text="Award follows next week."))
+    buf = io.BytesIO()
+    doc.write(buf)
+
+    text, reason = docs.to_text(buf.getvalue(), "odt", 4000)
+    assert not reason
+    assert "Tender closes" in text
+    assert "supplier | price" in text
+    assert "Award follows" in text
+
+
+@needs_odf
+def test_odp_slide_text_is_extracted():
+    from odf import draw
+    from odf.opendocument import OpenDocumentPresentation
+    from odf.text import P
+
+    doc = OpenDocumentPresentation()
+    slide = draw.Page(name="Slide 1", masterpagename="Default")
+    frame = draw.Frame()
+    box = draw.TextBox()
+    box.addElement(P(text="Solar tender briefing"))
+    frame.addElement(box)
+    slide.addElement(frame)
+    doc.presentation.addElement(slide)
+    buf = io.BytesIO()
+    doc.write(buf)
+
+    assert docs.kind_of(buf.getvalue()) == "odp"
+    text, reason = docs.to_text(buf.getvalue(), "odp", 4000)
+    assert reason == ""
+    assert "Solar tender briefing" in text
+
+
 @needs_epub
 def test_epub_chapters_are_extracted(tmp_path):
     from ebooklib import epub

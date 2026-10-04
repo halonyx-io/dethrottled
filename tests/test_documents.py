@@ -1,9 +1,9 @@
-"""Format detection from the file SIGNATURE, never the header.
+"""Format detection prioritises file signatures over server labels.
 
 Servers mislabel these constantly. An HTML error page served as
 application/vnd.ms-excel is routine, and handing that to a spreadsheet parser
 produces either a crash or -- much worse -- nonsense that looks like data.
-So the bytes decide, and the header is not consulted at all when they disagree.
+The bytes decide for signature-bearing formats; CSV and OLE2 subtypes need hints.
 """
 import io
 import zipfile
@@ -74,6 +74,52 @@ def test_csv_round_trips_to_text():
     data = b"country,year,capacity\nDenmark,2024,5120\nDenmark,2023,4560\n"
     text, why = docs.to_text(data, "csv", 4000)
     assert "Denmark" in text and "5120" in text
+
+
+@pytest.mark.parametrize("data", [
+    "city,value\nZürich,42\n".encode("utf-8-sig"),
+    "city,value\nZürich,42\n".encode("utf-16"),
+    "city,value\nZürich,42\n".encode("cp1252"),
+])
+def test_csv_encodings_preserve_names(data):
+    text, reason = docs.to_text(data, "csv", 4000)
+    assert reason == ""
+    assert "Zürich" in text
+
+
+def test_pptx_table_cells_are_read():
+    from pptx import Presentation
+    from pptx.util import Inches
+
+    deck = Presentation()
+    slide = deck.slides.add_slide(deck.slide_layouts[6])
+    table = slide.shapes.add_table(2, 2, Inches(1), Inches(1), Inches(6), Inches(2)).table
+    table.cell(0, 0).text = "country"
+    table.cell(0, 1).text = "megawatts"
+    table.cell(1, 0).text = "Denmark"
+    table.cell(1, 1).text = "5120"
+    buf = io.BytesIO()
+    deck.save(buf)
+
+    text, reason = docs.to_text(buf.getvalue(), "pptx", 4000)
+    assert reason == ""
+    assert "Denmark | 5120" in text
+
+
+def test_legacy_xls_rows_are_read_when_writer_available():
+    xlwt = pytest.importorskip("xlwt")
+    book = xlwt.Workbook()
+    sheet = book.add_sheet("Capacity")
+    for row, values in enumerate((("country", "megawatts"), ("Denmark", 5120))):
+        for col, value in enumerate(values):
+            sheet.write(row, col, value)
+    buf = io.BytesIO()
+    book.save(buf)
+
+    assert docs.kind_of(buf.getvalue(), url="https://example.com/report.xls") == "xls"
+    text, reason = docs.to_text(buf.getvalue(), "xls", 4000)
+    assert reason == ""
+    assert "Denmark | 5120" in text
 
 
 def test_tidy_structured_keeps_row_boundaries():
