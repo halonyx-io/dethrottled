@@ -19,7 +19,8 @@ def test_query_expansion_is_bounded_and_deduplicated():
 def test_selection_deduplicates_and_rejects_local_targets(monkeypatch):
     monkeypatch.setattr(engine, "public_url",
                         lambda url: not url.startswith("http://127."))
-    row = lambda url: {"url": url, "title": url, "snippet": ""}
+    def row(url):
+        return {"url": url, "title": url, "snippet": ""}
     selected = engine.select_sources([
         [row("https://a.example/one"), row("http://127.0.0.1/admin")],
         [row("https://a.example/one"), row("https://b.example/two")],
@@ -39,7 +40,8 @@ def test_default_primary_source_probe_leads_bundle(monkeypatch):
 
 
 def test_evidence_windows_points_back_into_source_text():
-    text = "Unrelated introduction. " * 60 + "In 2025, Denmark had 5120 megawatts of solar capacity. "
+    text = ("Unrelated introduction. " * 60
+            + "In 2025, Denmark had 5120 megawatts of solar capacity. ")
     windows = engine.evidence_windows(text, "Denmark solar capacity 2025")
     assert windows
     assert "5120 megawatts" in windows[0]["excerpt"]

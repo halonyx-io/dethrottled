@@ -20,6 +20,29 @@ model path does not require a host mount. A green `/health` only proves the API
 process is alive. Check `/ready`, `/v2/status`, `/stats`, and an actual search
 and fetch to verify the sources used by your installation.
 
+### x86_64 and ARM64
+
+The Compose file builds the API and headed browser worker for the host's
+architecture. The pinned SearXNG and Crawl4AI digests are multi-platform
+indexes containing both `linux/amd64` and `linux/arm64` images. On either
+architecture, use the same `docker compose up -d --build` command above.
+For a separate architecture build, use Buildx and specify the platform:
+
+```sh
+docker buildx build --platform linux/amd64 -t dethrottled:amd64 --load .
+docker buildx build --platform linux/arm64 -t dethrottled:arm64 --load .
+docker buildx build --platform linux/arm64 -t dethrottled-browser-search:arm64 \
+  --load browser-search
+```
+
+Cross-architecture execution requires QEMU/binfmt on the build host and can be
+slow; a native ARM64 host or CI runner is preferable for verifying browser
+startup. Check the resulting image architecture with
+`docker image inspect -f '{{.Architecture}}' IMAGE` and run the offline
+verifier inside each API image. This repository's CI builds and starts the API
+and browser worker on native x86_64 and ARM64 runners; the Compose sidecars
+must still be checked with real search and render requests in a deployment.
+
 ```sh
 curl -sS http://127.0.0.1:8787/search \
   -H 'content-type: application/json' \

@@ -1,13 +1,14 @@
 """PDF worker for the dethrottled stack: HTML in, PDF out.
 
-Why this exists. crawl4ai's own /pdf endpoint takes only a URL and prints with Playwright's defaults
-(Letter paper, CSS @page rules ignored), which loses A4 and the running page footers a briefing needs.
+Why this exists. crawl4ai's own /pdf endpoint takes only a URL and prints with
+Playwright's defaults (Letter paper, CSS @page rules ignored), which loses A4
+and the running page footers a briefing needs.
 This worker prints with the CSS page size honoured, using the Chromium already in this image.
 
 What it can and cannot do, so it is safe to leave open to the whole LAN:
   * it renders ONLY the HTML it is handed; it is never given a URL to fetch
-  * the browser context is offline and has JavaScript off: nothing in the HTML can reach a network or run
-  * the browser is started for each request and closed after it, so no Chromium is left running between PDFs
+  * the browser context is offline and has JavaScript off: HTML cannot reach a network or run
+  * the browser starts for each request and closes afterward; none is left between PDFs
   * one render at a time; a body larger than MAX_BODY is refused
 
     POST /pdf   {"html": "<!doctype html>...", "format": "A4"}   ->  application/pdf
@@ -29,7 +30,10 @@ LOCK = threading.Lock()
 
 def render(html: str, fmt: str) -> bytes:
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True, args=["--no-sandbox", "--disable-gpu", "--disable-dev-shm-usage"])
+        browser = p.chromium.launch(
+            headless=True,
+            args=["--no-sandbox", "--disable-gpu", "--disable-dev-shm-usage"],
+        )
         try:
             context = browser.new_context(java_script_enabled=False, offline=True)
             page = context.new_page()
@@ -44,7 +48,8 @@ def render(html: str, fmt: str) -> bytes:
 class Handler(BaseHTTPRequestHandler):
     server_version = "pdf-worker/1"
 
-    def log_message(self, fmt, *args):          # never log request bodies; one line per render is logged below
+    def log_message(self, fmt, *args):
+        # Never log request bodies; one line per render is logged below.
         pass
 
     def _send(self, code, body, ctype="application/json"):
@@ -83,7 +88,8 @@ class Handler(BaseHTTPRequestHandler):
             return self._send(500, {"error": "render failed: %s" % type(exc).__name__})
         finally:
             LOCK.release()
-        print("rendered %d KB html -> %d KB pdf in %.1fs" % (length // 1024, len(pdf) // 1024, time.time() - started), flush=True)
+        print("rendered %d KB html -> %d KB pdf in %.1fs" % (
+            length // 1024, len(pdf) // 1024, time.time() - started), flush=True)
         self._send(200, pdf, "application/pdf")
 
 

@@ -1,0 +1,1389 @@
+{
+  "meta": {
+    "mode": "search-parallel",
+    "workers": 3,
+    "started_at_epoch": 1791114273.9481058,
+    "ended_at_epoch": 1791114367.6331518,
+    "duration_s": 93.69,
+    "container_names": [
+      "dethrottled-bench-dethrottled",
+      "dethrottled-bench-browser-search",
+      "dethrottled-bench-searxng",
+      "dethrottled-bench-crawl4ai",
+      "dethrottled-bench-pdf-worker"
+    ]
+  },
+  "cases": [
+    {
+      "number": 1,
+      "category": "news",
+      "query": "EU AI Act enforcement news 2026",
+      "elapsed_ms": 5329.5,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "rich_snippet_count": 3,
+      "useful": true
+    },
+    {
+      "number": 2,
+      "category": "news",
+      "query": "latest NASA Artemis mission updates",
+      "elapsed_ms": 3792.4,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "rich_snippet_count": 3,
+      "useful": true
+    },
+    {
+      "number": 3,
+      "category": "news",
+      "query": "Federal Reserve interest rate latest decision",
+      "elapsed_ms": 5864.0,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "rich_snippet_count": 3,
+      "useful": true
+    },
+    {
+      "number": 4,
+      "category": "news",
+      "query": "semiconductor supply chain news",
+      "elapsed_ms": 4459.2,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "rich_snippet_count": 3,
+      "useful": true
+    },
+    {
+      "number": 5,
+      "category": "news",
+      "query": "UK energy price cap October 2026",
+      "elapsed_ms": 10357.3,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "rich_snippet_count": 3,
+      "useful": true
+    },
+    {
+      "number": 6,
+      "category": "news",
+      "query": "Australia housing policy latest news",
+      "elapsed_ms": 4659.5,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "rich_snippet_count": 3,
+      "useful": true
+    },
+    {
+      "number": 7,
+      "category": "news",
+      "query": "renewable energy storage breakthrough news",
+      "elapsed_ms": 3422.6,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "rich_snippet_count": 3,
+      "useful": true
+    },
+    {
+      "number": 8,
+      "category": "news",
+      "query": "cybersecurity Patch Tuesday latest",
+      "elapsed_ms": 2864.5,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "rich_snippet_count": 3,
+      "useful": true
+    },
+    {
+      "number": 9,
+      "category": "news",
+      "query": "COP31 climate conference preparations",
+      "elapsed_ms": 3453.6,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "rich_snippet_count": 3,
+      "useful": true
+    },
+    {
+      "number": 10,
+      "category": "news",
+      "query": "WHO measles outbreak updates",
+      "elapsed_ms": 4377.3,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "rich_snippet_count": 3,
+      "useful": true
+    },
+    {
+      "number": 11,
+      "category": "government",
+      "query": "Nashville Tennessee zoning ordinance 2026",
+      "elapsed_ms": 6679.1,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "valid_result_count": 1,
+      "rich_snippet_count": 1,
+      "useful": true
+    },
+    {
+      "number": 12,
+      "category": "government",
+      "query": "Davidson County Tennessee property tax rate",
+      "elapsed_ms": 6107.2,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "rich_snippet_count": 3,
+      "useful": true
+    },
+    {
+      "number": 13,
+      "category": "government",
+      "query": "US Census 2025 population estimates",
+      "elapsed_ms": 2955.9,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "rich_snippet_count": 3,
+      "useful": true
+    },
+    {
+      "number": 14,
+      "category": "government",
+      "query": "EU AI Act official regulation text",
+      "elapsed_ms": 4326.9,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "rich_snippet_count": 3,
+      "useful": true
+    },
+    {
+      "number": 15,
+      "category": "government",
+      "query": "California building energy code 2025",
+      "elapsed_ms": 7126.6,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "rich_snippet_count": 3,
+      "useful": true
+    },
+    {
+      "number": 16,
+      "category": "technical",
+      "query": "qBittorrent port forwarding troubleshooting",
+      "elapsed_ms": 6751.3,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "rich_snippet_count": 3,
+      "useful": true
+    },
+    {
+      "number": 17,
+      "category": "technical",
+      "query": "Python asyncio TaskGroup documentation",
+      "elapsed_ms": 3671.9,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "rich_snippet_count": 3,
+      "useful": true
+    },
+    {
+      "number": 18,
+      "category": "technical",
+      "query": "Rust ownership guide examples",
+      "elapsed_ms": 7042.6,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "rich_snippet_count": 3,
+      "useful": true
+    },
+    {
+      "number": 19,
+      "category": "technical",
+      "query": "Kubernetes liveness readiness startup probes configuration",
+      "elapsed_ms": 6706.1,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "rich_snippet_count": 3,
+      "useful": true
+    },
+    {
+      "number": 20,
+      "category": "technical",
+      "query": "PostgreSQL EXPLAIN ANALYZE guide",
+      "elapsed_ms": 6561.4,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "rich_snippet_count": 3,
+      "useful": true
+    },
+    {
+      "number": 21,
+      "category": "technical",
+      "query": "Docker Compose healthcheck syntax",
+      "elapsed_ms": 5195.2,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "rich_snippet_count": 3,
+      "useful": true
+    },
+    {
+      "number": 22,
+      "category": "technical",
+      "query": "React hydration mismatch troubleshooting",
+      "elapsed_ms": 6068.2,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "rich_snippet_count": 3,
+      "useful": true
+    },
+    {
+      "number": 23,
+      "category": "technical",
+      "query": "Linux systemd linger documentation",
+      "elapsed_ms": 4650.4,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "rich_snippet_count": 3,
+      "useful": true
+    },
+    {
+      "number": 24,
+      "category": "technical",
+      "query": "ONNX Runtime Python inference documentation",
+      "elapsed_ms": 5069.6,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "rich_snippet_count": 3,
+      "useful": true
+    },
+    {
+      "number": 25,
+      "category": "technical",
+      "query": "Caddy reverse proxy documentation",
+      "elapsed_ms": 4647.6,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "rich_snippet_count": 3,
+      "useful": true
+    },
+    {
+      "number": 26,
+      "category": "reference",
+      "query": "Okapi BM25 ranking function explained",
+      "elapsed_ms": 5185.8,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "rich_snippet_count": 3,
+      "useful": true
+    },
+    {
+      "number": 27,
+      "category": "reference",
+      "query": "SQLite write ahead logging file format",
+      "elapsed_ms": 4644.2,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "rich_snippet_count": 3,
+      "useful": true
+    },
+    {
+      "number": 28,
+      "category": "reference",
+      "query": "Unicode normalization forms NFC NFKC explanation",
+      "elapsed_ms": 4760.0,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "rich_snippet_count": 3,
+      "useful": true
+    },
+    {
+      "number": 29,
+      "category": "reference",
+      "query": "HTTP 429 Retry-After header semantics",
+      "elapsed_ms": 4963.0,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "rich_snippet_count": 3,
+      "useful": true
+    },
+    {
+      "number": 30,
+      "category": "reference",
+      "query": "PDF A archival standard overview",
+      "elapsed_ms": 6327.0,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "rich_snippet_count": 3,
+      "useful": true
+    },
+    {
+      "number": 31,
+      "category": "science",
+      "query": "genome sequencing read depth explanation",
+      "elapsed_ms": 4598.9,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "rich_snippet_count": 3,
+      "useful": true
+    },
+    {
+      "number": 32,
+      "category": "science",
+      "query": "NASA exoplanet archive API documentation",
+      "elapsed_ms": 4594.4,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "rich_snippet_count": 3,
+      "useful": true
+    },
+    {
+      "number": 33,
+      "category": "science",
+      "query": "lithium ion battery degradation research paper",
+      "elapsed_ms": 3136.8,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "rich_snippet_count": 3,
+      "useful": true
+    },
+    {
+      "number": 34,
+      "category": "science",
+      "query": "IPCC AR6 synthesis report PDF",
+      "elapsed_ms": 7066.1,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "rich_snippet_count": 3,
+      "useful": true
+    },
+    {
+      "number": 35,
+      "category": "science",
+      "query": "global atmospheric carbon dioxide dataset",
+      "elapsed_ms": 5037.2,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "rich_snippet_count": 3,
+      "useful": true
+    },
+    {
+      "number": 36,
+      "category": "documents",
+      "query": "government climate risk report PDF",
+      "elapsed_ms": 6007.1,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "rich_snippet_count": 3,
+      "useful": true
+    },
+    {
+      "number": 37,
+      "category": "documents",
+      "query": "World Bank population data CSV download",
+      "elapsed_ms": 3946.4,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "rich_snippet_count": 3,
+      "useful": true
+    },
+    {
+      "number": 38,
+      "category": "documents",
+      "query": "open electricity data XLSX spreadsheet",
+      "elapsed_ms": 30055.0,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "rich_snippet_count": 3,
+      "useful": true
+    },
+    {
+      "number": 39,
+      "category": "documents",
+      "query": "renewable energy public presentation PPTX",
+      "elapsed_ms": 5812.9,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "rich_snippet_count": 3,
+      "useful": true
+    },
+    {
+      "number": 40,
+      "category": "documents",
+      "query": "Project Gutenberg EPUB download",
+      "elapsed_ms": 5234.4,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "rich_snippet_count": 3,
+      "useful": true
+    },
+    {
+      "number": 41,
+      "category": "community",
+      "query": "Reddit home lab Docker backup discussion",
+      "elapsed_ms": 2863.4,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "rich_snippet_count": 3,
+      "useful": true
+    },
+    {
+      "number": 42,
+      "category": "community",
+      "query": "GitHub FastAPI memory leak issue",
+      "elapsed_ms": 2617.2,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "rich_snippet_count": 3,
+      "useful": true
+    },
+    {
+      "number": 43,
+      "category": "community",
+      "query": "Stack Overflow pandas timezone conversion",
+      "elapsed_ms": 3621.9,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "rich_snippet_count": 3,
+      "useful": true
+    },
+    {
+      "number": 44,
+      "category": "community",
+      "query": "Hacker News SQLite performance discussion",
+      "elapsed_ms": 4517.3,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "rich_snippet_count": 3,
+      "useful": true
+    },
+    {
+      "number": 45,
+      "category": "community",
+      "query": "forum qBittorrent port forwarding discussion",
+      "elapsed_ms": 3098.8,
+      "http_status": 200,
+      "error": null,
+      "result_count": 2,
+      "valid_result_count": 2,
+      "rich_snippet_count": 2,
+      "useful": true
+    },
+    {
+      "number": 46,
+      "category": "web",
+      "query": "React single page app client side rendering",
+      "elapsed_ms": 3190.0,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "rich_snippet_count": 3,
+      "useful": true
+    },
+    {
+      "number": 47,
+      "category": "web",
+      "query": "Cloudflare bot challenge documentation",
+      "elapsed_ms": 2832.2,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "rich_snippet_count": 3,
+      "useful": true
+    },
+    {
+      "number": 48,
+      "category": "web",
+      "query": "YouTube video transcript captions example",
+      "elapsed_ms": 3231.1,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "rich_snippet_count": 3,
+      "useful": true
+    },
+    {
+      "number": 49,
+      "category": "web",
+      "query": "Wikipedia article with large data tables",
+      "elapsed_ms": 4168.4,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "rich_snippet_count": 3,
+      "useful": true
+    },
+    {
+      "number": 50,
+      "category": "web",
+      "query": "laptop specifications comparison Ryzen 5800U 7840U",
+      "elapsed_ms": 3959.3,
+      "http_status": 200,
+      "error": null,
+      "result_count": 3,
+      "valid_result_count": 3,
+      "rich_snippet_count": 3,
+      "useful": true
+    }
+  ],
+  "resource_samples": [
+    {
+      "at": 1791114271.9478898,
+      "name": "dethrottled-bench-dethrottled",
+      "cpu_percent": 0.47,
+      "memory_mib": 520.5
+    },
+    {
+      "at": 1791114271.9478898,
+      "name": "dethrottled-bench-browser-search",
+      "cpu_percent": 7.39,
+      "memory_mib": 424.8
+    },
+    {
+      "at": 1791114271.9478898,
+      "name": "dethrottled-bench-searxng",
+      "cpu_percent": 0.83,
+      "memory_mib": 151.8
+    },
+    {
+      "at": 1791114271.9478898,
+      "name": "dethrottled-bench-crawl4ai",
+      "cpu_percent": 20.39,
+      "memory_mib": 1036.3
+    },
+    {
+      "at": 1791114271.9478898,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 0.02,
+      "memory_mib": 22.6
+    },
+    {
+      "at": 1791114276.0796838,
+      "name": "dethrottled-bench-dethrottled",
+      "cpu_percent": 7.92,
+      "memory_mib": 522.5
+    },
+    {
+      "at": 1791114276.0796838,
+      "name": "dethrottled-bench-browser-search",
+      "cpu_percent": 623.16,
+      "memory_mib": 897.7
+    },
+    {
+      "at": 1791114276.0796838,
+      "name": "dethrottled-bench-searxng",
+      "cpu_percent": 5.5,
+      "memory_mib": 156.7
+    },
+    {
+      "at": 1791114276.0796838,
+      "name": "dethrottled-bench-crawl4ai",
+      "cpu_percent": 23.11,
+      "memory_mib": 1055.7
+    },
+    {
+      "at": 1791114276.0796838,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 0.01,
+      "memory_mib": 22.6
+    },
+    {
+      "at": 1791114280.1632624,
+      "name": "dethrottled-bench-dethrottled",
+      "cpu_percent": 7.08,
+      "memory_mib": 522.6
+    },
+    {
+      "at": 1791114280.1632624,
+      "name": "dethrottled-bench-browser-search",
+      "cpu_percent": 609.28,
+      "memory_mib": 769.4
+    },
+    {
+      "at": 1791114280.1632624,
+      "name": "dethrottled-bench-searxng",
+      "cpu_percent": 2.57,
+      "memory_mib": 157.2
+    },
+    {
+      "at": 1791114280.1632624,
+      "name": "dethrottled-bench-crawl4ai",
+      "cpu_percent": 26.56,
+      "memory_mib": 1074.2
+    },
+    {
+      "at": 1791114280.1632624,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 0.01,
+      "memory_mib": 22.6
+    },
+    {
+      "at": 1791114284.3089395,
+      "name": "dethrottled-bench-dethrottled",
+      "cpu_percent": 8.93,
+      "memory_mib": 524.6
+    },
+    {
+      "at": 1791114284.3089395,
+      "name": "dethrottled-bench-browser-search",
+      "cpu_percent": 502.82,
+      "memory_mib": 668.5
+    },
+    {
+      "at": 1791114284.3089395,
+      "name": "dethrottled-bench-searxng",
+      "cpu_percent": 4.16,
+      "memory_mib": 157.1
+    },
+    {
+      "at": 1791114284.3089395,
+      "name": "dethrottled-bench-crawl4ai",
+      "cpu_percent": 32.03,
+      "memory_mib": 1080.3
+    },
+    {
+      "at": 1791114284.3089395,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 0.01,
+      "memory_mib": 22.6
+    },
+    {
+      "at": 1791114288.3999872,
+      "name": "dethrottled-bench-dethrottled",
+      "cpu_percent": 7.62,
+      "memory_mib": 526.7
+    },
+    {
+      "at": 1791114288.3999872,
+      "name": "dethrottled-bench-browser-search",
+      "cpu_percent": 503.66,
+      "memory_mib": 659.3
+    },
+    {
+      "at": 1791114288.3999872,
+      "name": "dethrottled-bench-searxng",
+      "cpu_percent": 2.53,
+      "memory_mib": 157.0
+    },
+    {
+      "at": 1791114288.3999872,
+      "name": "dethrottled-bench-crawl4ai",
+      "cpu_percent": 15.02,
+      "memory_mib": 1100.8
+    },
+    {
+      "at": 1791114288.3999872,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 0.03,
+      "memory_mib": 22.6
+    },
+    {
+      "at": 1791114292.523412,
+      "name": "dethrottled-bench-dethrottled",
+      "cpu_percent": 12.67,
+      "memory_mib": 526.9
+    },
+    {
+      "at": 1791114292.523412,
+      "name": "dethrottled-bench-browser-search",
+      "cpu_percent": 512.09,
+      "memory_mib": 581.9
+    },
+    {
+      "at": 1791114292.523412,
+      "name": "dethrottled-bench-searxng",
+      "cpu_percent": 0.65,
+      "memory_mib": 156.6
+    },
+    {
+      "at": 1791114292.523412,
+      "name": "dethrottled-bench-crawl4ai",
+      "cpu_percent": 29.69,
+      "memory_mib": 1113.1
+    },
+    {
+      "at": 1791114292.523412,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 0.02,
+      "memory_mib": 22.6
+    },
+    {
+      "at": 1791114296.600554,
+      "name": "dethrottled-bench-dethrottled",
+      "cpu_percent": 5.67,
+      "memory_mib": 526.8
+    },
+    {
+      "at": 1791114296.600554,
+      "name": "dethrottled-bench-browser-search",
+      "cpu_percent": 578.52,
+      "memory_mib": 799.9
+    },
+    {
+      "at": 1791114296.600554,
+      "name": "dethrottled-bench-searxng",
+      "cpu_percent": 0.63,
+      "memory_mib": 158.7
+    },
+    {
+      "at": 1791114296.600554,
+      "name": "dethrottled-bench-crawl4ai",
+      "cpu_percent": 19.57,
+      "memory_mib": 1134.6
+    },
+    {
+      "at": 1791114296.600554,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 0.02,
+      "memory_mib": 22.6
+    },
+    {
+      "at": 1791114300.720714,
+      "name": "dethrottled-bench-dethrottled",
+      "cpu_percent": 53.24,
+      "memory_mib": 528.0
+    },
+    {
+      "at": 1791114300.720714,
+      "name": "dethrottled-bench-browser-search",
+      "cpu_percent": 172.97,
+      "memory_mib": 511.8
+    },
+    {
+      "at": 1791114300.720714,
+      "name": "dethrottled-bench-searxng",
+      "cpu_percent": 3.54,
+      "memory_mib": 159.5
+    },
+    {
+      "at": 1791114300.720714,
+      "name": "dethrottled-bench-crawl4ai",
+      "cpu_percent": 30.09,
+      "memory_mib": 1146.9
+    },
+    {
+      "at": 1791114300.720714,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 0.01,
+      "memory_mib": 22.6
+    },
+    {
+      "at": 1791114304.800996,
+      "name": "dethrottled-bench-dethrottled",
+      "cpu_percent": 0.46,
+      "memory_mib": 526.7
+    },
+    {
+      "at": 1791114304.800996,
+      "name": "dethrottled-bench-browser-search",
+      "cpu_percent": 601.17,
+      "memory_mib": 916.6
+    },
+    {
+      "at": 1791114304.800996,
+      "name": "dethrottled-bench-searxng",
+      "cpu_percent": 0.82,
+      "memory_mib": 158.9
+    },
+    {
+      "at": 1791114304.800996,
+      "name": "dethrottled-bench-crawl4ai",
+      "cpu_percent": 53.47,
+      "memory_mib": 1163.3
+    },
+    {
+      "at": 1791114304.800996,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 0.03,
+      "memory_mib": 22.6
+    },
+    {
+      "at": 1791114308.9092486,
+      "name": "dethrottled-bench-dethrottled",
+      "cpu_percent": 0.23,
+      "memory_mib": 526.6
+    },
+    {
+      "at": 1791114308.9092486,
+      "name": "dethrottled-bench-browser-search",
+      "cpu_percent": 518.78,
+      "memory_mib": 646.5
+    },
+    {
+      "at": 1791114308.9092486,
+      "name": "dethrottled-bench-searxng",
+      "cpu_percent": 10.96,
+      "memory_mib": 159.7
+    },
+    {
+      "at": 1791114308.9092486,
+      "name": "dethrottled-bench-crawl4ai",
+      "cpu_percent": 24.66,
+      "memory_mib": 1180.7
+    },
+    {
+      "at": 1791114308.9092486,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 0.01,
+      "memory_mib": 22.6
+    },
+    {
+      "at": 1791114313.037168,
+      "name": "dethrottled-bench-dethrottled",
+      "cpu_percent": 29.71,
+      "memory_mib": 528.3
+    },
+    {
+      "at": 1791114313.037168,
+      "name": "dethrottled-bench-browser-search",
+      "cpu_percent": 414.19,
+      "memory_mib": 525.8
+    },
+    {
+      "at": 1791114313.037168,
+      "name": "dethrottled-bench-searxng",
+      "cpu_percent": 8.34,
+      "memory_mib": 159.2
+    },
+    {
+      "at": 1791114313.037168,
+      "name": "dethrottled-bench-crawl4ai",
+      "cpu_percent": 19.81,
+      "memory_mib": 1199.1
+    },
+    {
+      "at": 1791114313.037168,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 0.03,
+      "memory_mib": 22.6
+    },
+    {
+      "at": 1791114317.1417067,
+      "name": "dethrottled-bench-dethrottled",
+      "cpu_percent": 1.5,
+      "memory_mib": 527.6
+    },
+    {
+      "at": 1791114317.1417067,
+      "name": "dethrottled-bench-browser-search",
+      "cpu_percent": 571.19,
+      "memory_mib": 771.0
+    },
+    {
+      "at": 1791114317.1417067,
+      "name": "dethrottled-bench-searxng",
+      "cpu_percent": 0.55,
+      "memory_mib": 158.5
+    },
+    {
+      "at": 1791114317.1417067,
+      "name": "dethrottled-bench-crawl4ai",
+      "cpu_percent": 43.15,
+      "memory_mib": 1213.4
+    },
+    {
+      "at": 1791114317.1417067,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 1.72,
+      "memory_mib": 23.3
+    },
+    {
+      "at": 1791114321.2507448,
+      "name": "dethrottled-bench-dethrottled",
+      "cpu_percent": 0.32,
+      "memory_mib": 526.8
+    },
+    {
+      "at": 1791114321.2507448,
+      "name": "dethrottled-bench-browser-search",
+      "cpu_percent": 580.59,
+      "memory_mib": 762.9
+    },
+    {
+      "at": 1791114321.2507448,
+      "name": "dethrottled-bench-searxng",
+      "cpu_percent": 0.67,
+      "memory_mib": 159.0
+    },
+    {
+      "at": 1791114321.2507448,
+      "name": "dethrottled-bench-crawl4ai",
+      "cpu_percent": 13.7,
+      "memory_mib": 1229.8
+    },
+    {
+      "at": 1791114321.2507448,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 0.02,
+      "memory_mib": 22.6
+    },
+    {
+      "at": 1791114325.347224,
+      "name": "dethrottled-bench-dethrottled",
+      "cpu_percent": 9.45,
+      "memory_mib": 527.6
+    },
+    {
+      "at": 1791114325.347224,
+      "name": "dethrottled-bench-browser-search",
+      "cpu_percent": 610.94,
+      "memory_mib": 859.0
+    },
+    {
+      "at": 1791114325.347224,
+      "name": "dethrottled-bench-searxng",
+      "cpu_percent": 0.58,
+      "memory_mib": 159.2
+    },
+    {
+      "at": 1791114325.347224,
+      "name": "dethrottled-bench-crawl4ai",
+      "cpu_percent": 42.46,
+      "memory_mib": 1248.3
+    },
+    {
+      "at": 1791114325.347224,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 0.02,
+      "memory_mib": 22.6
+    },
+    {
+      "at": 1791114329.4503505,
+      "name": "dethrottled-bench-dethrottled",
+      "cpu_percent": 5.73,
+      "memory_mib": 527.8
+    },
+    {
+      "at": 1791114329.4503505,
+      "name": "dethrottled-bench-browser-search",
+      "cpu_percent": 573.29,
+      "memory_mib": 701.6
+    },
+    {
+      "at": 1791114329.4503505,
+      "name": "dethrottled-bench-searxng",
+      "cpu_percent": 8.01,
+      "memory_mib": 159.3
+    },
+    {
+      "at": 1791114329.4503505,
+      "name": "dethrottled-bench-crawl4ai",
+      "cpu_percent": 41.1,
+      "memory_mib": 1264.6
+    },
+    {
+      "at": 1791114329.4503505,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 0.02,
+      "memory_mib": 22.6
+    },
+    {
+      "at": 1791114333.57208,
+      "name": "dethrottled-bench-dethrottled",
+      "cpu_percent": 19.94,
+      "memory_mib": 527.6
+    },
+    {
+      "at": 1791114333.57208,
+      "name": "dethrottled-bench-browser-search",
+      "cpu_percent": 546.62,
+      "memory_mib": 640.1
+    },
+    {
+      "at": 1791114333.57208,
+      "name": "dethrottled-bench-searxng",
+      "cpu_percent": 2.59,
+      "memory_mib": 159.4
+    },
+    {
+      "at": 1791114333.57208,
+      "name": "dethrottled-bench-crawl4ai",
+      "cpu_percent": 8.85,
+      "memory_mib": 974.6
+    },
+    {
+      "at": 1791114333.57208,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 0.01,
+      "memory_mib": 22.6
+    },
+    {
+      "at": 1791114337.6472945,
+      "name": "dethrottled-bench-dethrottled",
+      "cpu_percent": 10.64,
+      "memory_mib": 527.4
+    },
+    {
+      "at": 1791114337.6472945,
+      "name": "dethrottled-bench-browser-search",
+      "cpu_percent": 462.56,
+      "memory_mib": 775.9
+    },
+    {
+      "at": 1791114337.6472945,
+      "name": "dethrottled-bench-searxng",
+      "cpu_percent": 2.04,
+      "memory_mib": 158.9
+    },
+    {
+      "at": 1791114337.6472945,
+      "name": "dethrottled-bench-crawl4ai",
+      "cpu_percent": 32.55,
+      "memory_mib": 990.2
+    },
+    {
+      "at": 1791114337.6472945,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 0.04,
+      "memory_mib": 22.6
+    },
+    {
+      "at": 1791114341.7708683,
+      "name": "dethrottled-bench-dethrottled",
+      "cpu_percent": 39.34,
+      "memory_mib": 527.4
+    },
+    {
+      "at": 1791114341.7708683,
+      "name": "dethrottled-bench-browser-search",
+      "cpu_percent": 87.46,
+      "memory_mib": 514.3
+    },
+    {
+      "at": 1791114341.7708683,
+      "name": "dethrottled-bench-searxng",
+      "cpu_percent": 3.15,
+      "memory_mib": 159.4
+    },
+    {
+      "at": 1791114341.7708683,
+      "name": "dethrottled-bench-crawl4ai",
+      "cpu_percent": 22.04,
+      "memory_mib": 1087.5
+    },
+    {
+      "at": 1791114341.7708683,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 0.02,
+      "memory_mib": 22.6
+    },
+    {
+      "at": 1791114345.88621,
+      "name": "dethrottled-bench-dethrottled",
+      "cpu_percent": 19.3,
+      "memory_mib": 527.8
+    },
+    {
+      "at": 1791114345.88621,
+      "name": "dethrottled-bench-browser-search",
+      "cpu_percent": 435.93,
+      "memory_mib": 488.7
+    },
+    {
+      "at": 1791114345.88621,
+      "name": "dethrottled-bench-searxng",
+      "cpu_percent": 2.02,
+      "memory_mib": 159.2
+    },
+    {
+      "at": 1791114345.88621,
+      "name": "dethrottled-bench-crawl4ai",
+      "cpu_percent": 12.28,
+      "memory_mib": 1097.7
+    },
+    {
+      "at": 1791114345.88621,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 0.03,
+      "memory_mib": 22.6
+    },
+    {
+      "at": 1791114349.9971766,
+      "name": "dethrottled-bench-dethrottled",
+      "cpu_percent": 11.85,
+      "memory_mib": 527.4
+    },
+    {
+      "at": 1791114349.9971766,
+      "name": "dethrottled-bench-browser-search",
+      "cpu_percent": 434.06,
+      "memory_mib": 690.2
+    },
+    {
+      "at": 1791114349.9971766,
+      "name": "dethrottled-bench-searxng",
+      "cpu_percent": 3.16,
+      "memory_mib": 159.1
+    },
+    {
+      "at": 1791114349.9971766,
+      "name": "dethrottled-bench-crawl4ai",
+      "cpu_percent": 14.25,
+      "memory_mib": 1112.1
+    },
+    {
+      "at": 1791114349.9971766,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 0.01,
+      "memory_mib": 22.6
+    },
+    {
+      "at": 1791114354.1158764,
+      "name": "dethrottled-bench-dethrottled",
+      "cpu_percent": 4.15,
+      "memory_mib": 527.6
+    },
+    {
+      "at": 1791114354.1158764,
+      "name": "dethrottled-bench-browser-search",
+      "cpu_percent": 541.87,
+      "memory_mib": 599.2
+    },
+    {
+      "at": 1791114354.1158764,
+      "name": "dethrottled-bench-searxng",
+      "cpu_percent": 2.6,
+      "memory_mib": 159.6
+    },
+    {
+      "at": 1791114354.1158764,
+      "name": "dethrottled-bench-crawl4ai",
+      "cpu_percent": 19.95,
+      "memory_mib": 1123.3
+    },
+    {
+      "at": 1791114354.1158764,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 0.02,
+      "memory_mib": 22.6
+    },
+    {
+      "at": 1791114358.231848,
+      "name": "dethrottled-bench-dethrottled",
+      "cpu_percent": 15.36,
+      "memory_mib": 527.8
+    },
+    {
+      "at": 1791114358.231848,
+      "name": "dethrottled-bench-browser-search",
+      "cpu_percent": 447.02,
+      "memory_mib": 478.4
+    },
+    {
+      "at": 1791114358.231848,
+      "name": "dethrottled-bench-searxng",
+      "cpu_percent": 0.43,
+      "memory_mib": 159.2
+    },
+    {
+      "at": 1791114358.231848,
+      "name": "dethrottled-bench-crawl4ai",
+      "cpu_percent": 20.97,
+      "memory_mib": 1142.8
+    },
+    {
+      "at": 1791114358.231848,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 0.02,
+      "memory_mib": 22.6
+    },
+    {
+      "at": 1791114362.37267,
+      "name": "dethrottled-bench-dethrottled",
+      "cpu_percent": 0.38,
+      "memory_mib": 527.3
+    },
+    {
+      "at": 1791114362.37267,
+      "name": "dethrottled-bench-browser-search",
+      "cpu_percent": 0.62,
+      "memory_mib": 469.0
+    },
+    {
+      "at": 1791114362.37267,
+      "name": "dethrottled-bench-searxng",
+      "cpu_percent": 0.75,
+      "memory_mib": 158.9
+    },
+    {
+      "at": 1791114362.37267,
+      "name": "dethrottled-bench-crawl4ai",
+      "cpu_percent": 17.5,
+      "memory_mib": 1138.7
+    },
+    {
+      "at": 1791114362.37267,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 0.03,
+      "memory_mib": 22.6
+    },
+    {
+      "at": 1791114366.5186968,
+      "name": "dethrottled-bench-dethrottled",
+      "cpu_percent": 5.19,
+      "memory_mib": 527.1
+    },
+    {
+      "at": 1791114366.5186968,
+      "name": "dethrottled-bench-browser-search",
+      "cpu_percent": 37.02,
+      "memory_mib": 469.4
+    },
+    {
+      "at": 1791114366.5186968,
+      "name": "dethrottled-bench-searxng",
+      "cpu_percent": 0.82,
+      "memory_mib": 158.9
+    },
+    {
+      "at": 1791114366.5186968,
+      "name": "dethrottled-bench-crawl4ai",
+      "cpu_percent": 16.17,
+      "memory_mib": 1156.1
+    },
+    {
+      "at": 1791114366.5186968,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 0.03,
+      "memory_mib": 22.6
+    }
+  ],
+  "summary": {
+    "cases": 50,
+    "http_200": 50,
+    "useful_cases": 50,
+    "median_ms": 4649.0,
+    "p95_ms": 7126.6,
+    "mean_ms": 5352.2,
+    "min_ms": 2617.2,
+    "max_ms": 30055.0,
+    "resources": {
+      "dethrottled-bench-browser-search": {
+        "samples": 24,
+        "cpu_mean_percent_one_core": 432.22,
+        "cpu_peak_percent_one_core": 623.16,
+        "memory_mean_mib": 650.9,
+        "memory_peak_mib": 916.6
+      },
+      "dethrottled-bench-crawl4ai": {
+        "samples": 24,
+        "cpu_mean_percent_one_core": 24.97,
+        "cpu_peak_percent_one_core": 53.47,
+        "memory_mean_mib": 1127.7,
+        "memory_peak_mib": 1264.6
+      },
+      "dethrottled-bench-dethrottled": {
+        "samples": 24,
+        "cpu_mean_percent_one_core": 11.55,
+        "cpu_peak_percent_one_core": 53.24,
+        "memory_mean_mib": 526.6,
+        "memory_peak_mib": 528.3
+      },
+      "dethrottled-bench-pdf-worker": {
+        "samples": 24,
+        "cpu_mean_percent_one_core": 0.09,
+        "cpu_peak_percent_one_core": 1.72,
+        "memory_mean_mib": 22.6,
+        "memory_peak_mib": 23.3
+      },
+      "dethrottled-bench-searxng": {
+        "samples": 24,
+        "cpu_mean_percent_one_core": 2.83,
+        "cpu_peak_percent_one_core": 10.96,
+        "memory_mean_mib": 158.4,
+        "memory_peak_mib": 159.7
+      }
+    },
+    "throughput_qps": 0.53,
+    "rich_cases": 49
+  }
+}

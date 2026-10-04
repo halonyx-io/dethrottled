@@ -88,6 +88,7 @@ def test_csv_encodings_preserve_names(data):
 
 
 def test_pptx_table_cells_are_read():
+    pytest.importorskip("pptx")
     from pptx import Presentation
     from pptx.util import Inches
 

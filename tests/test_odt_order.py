@@ -2,14 +2,17 @@
 
 import io
 
-from odf.opendocument import OpenDocumentText
-from odf.table import Table, TableCell, TableRow
-from odf.text import H, P
+import pytest
 
 from dethrottled import documents
 
 
 def test_odt_heading_paragraph_and_table_order():
+    pytest.importorskip("odf")
+    from odf.opendocument import OpenDocumentText
+    from odf.table import Table, TableCell, TableRow
+    from odf.text import H, P
+
     document = OpenDocumentText()
     document.text.addElement(H(outlinelevel=1, text="Capacity report"))
     document.text.addElement(P(text="Fiscal year 2025"))

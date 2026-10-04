@@ -33,10 +33,10 @@ def test_crawl4ai_accepts_rendered_success():
 def test_direct_error_reads_only_challenge_prefix(monkeypatch):
     class Response:
         status_code = 403
-        headers = {}
         encoding = "utf-8"
 
         def __init__(self):
+            self.headers = {}
             self.chunks_read = 0
             self.closed = False
 

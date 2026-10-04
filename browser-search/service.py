@@ -181,8 +181,9 @@ async def _race(browser, query: str) -> dict:
     attempts, winner = [], None
     try:
         while pending and time.monotonic() - started < ENGINE_TIMEOUT + 2:
+            remaining = max(0.1, ENGINE_TIMEOUT + 2 - (time.monotonic() - started))
             done, _ = await asyncio.wait(pending, return_when=asyncio.FIRST_COMPLETED,
-                                         timeout=max(0.1, ENGINE_TIMEOUT + 2 - (time.monotonic() - started)))
+                                         timeout=remaining)
             if not done:
                 break
             for task in done:

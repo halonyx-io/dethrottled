@@ -1,0 +1,635 @@
+{
+  "meta": {
+    "mode": "research",
+    "api": "http://127.0.0.1:18788",
+    "started_at_epoch": 1791112892.6606185,
+    "ended_at_epoch": 1791112953.314782,
+    "duration_s": 60.65,
+    "container_names": [
+      "dethrottled-bench-dethrottled-1",
+      "dethrottled-bench-browser-search-1",
+      "dethrottled-bench-searxng-1",
+      "dethrottled-bench-crawl4ai-1",
+      "dethrottled-bench-pdf-worker"
+    ]
+  },
+  "summary": {
+    "cases": 8,
+    "http_200": 8,
+    "useful_cases": 8,
+    "median_ms": 7542.9,
+    "p95_ms": 9398.7,
+    "mean_ms": 7574.7,
+    "min_ms": 5635.1,
+    "max_ms": 9398.7,
+    "resources": {
+      "dethrottled-bench-browser-search-1": {
+        "samples": 16,
+        "cpu_mean_percent_one_core": 24.22,
+        "cpu_peak_percent_one_core": 109.18,
+        "memory_mean_mib": 326.7,
+        "memory_peak_mib": 369.0
+      },
+      "dethrottled-bench-crawl4ai-1": {
+        "samples": 16,
+        "cpu_mean_percent_one_core": 1.06,
+        "cpu_peak_percent_one_core": 4.38,
+        "memory_mean_mib": 529.1,
+        "memory_peak_mib": 529.6
+      },
+      "dethrottled-bench-dethrottled-1": {
+        "samples": 16,
+        "cpu_mean_percent_one_core": 54.96,
+        "cpu_peak_percent_one_core": 383.81,
+        "memory_mean_mib": 556.8,
+        "memory_peak_mib": 577.7
+      },
+      "dethrottled-bench-pdf-worker": {
+        "samples": 16,
+        "cpu_mean_percent_one_core": 0.19,
+        "cpu_peak_percent_one_core": 2.82,
+        "memory_mean_mib": 22.3,
+        "memory_peak_mib": 22.3
+      },
+      "dethrottled-bench-searxng-1": {
+        "samples": 16,
+        "cpu_mean_percent_one_core": 0.65,
+        "cpu_peak_percent_one_core": 2.27,
+        "memory_mean_mib": 125.6,
+        "memory_peak_mib": 126.0
+      }
+    }
+  },
+  "cases": [
+    {
+      "number": 1,
+      "category": "research",
+      "query": "What changed in the Python 3.12 release?",
+      "elapsed_ms": 5635.1,
+      "http_status": 200,
+      "error": null,
+      "source_count": 4,
+      "evidence_count": 8,
+      "useful": true
+    },
+    {
+      "number": 2,
+      "category": "research",
+      "query": "What are the current EU AI Act implementation dates?",
+      "elapsed_ms": 6657.1,
+      "http_status": 200,
+      "error": null,
+      "source_count": 4,
+      "evidence_count": 6,
+      "useful": true
+    },
+    {
+      "number": 3,
+      "category": "research",
+      "query": "What does the IPCC AR6 synthesis report say about warming?",
+      "elapsed_ms": 9112.6,
+      "http_status": 200,
+      "error": null,
+      "source_count": 4,
+      "evidence_count": 7,
+      "useful": true
+    },
+    {
+      "number": 4,
+      "category": "research",
+      "query": "What are the documented causes of lithium ion battery degradation?",
+      "elapsed_ms": 8864.1,
+      "http_status": 200,
+      "error": null,
+      "source_count": 1,
+      "evidence_count": 2,
+      "useful": true
+    },
+    {
+      "number": 5,
+      "category": "research",
+      "query": "How does PostgreSQL EXPLAIN ANALYZE report query time?",
+      "elapsed_ms": 8132.0,
+      "http_status": 200,
+      "error": null,
+      "source_count": 4,
+      "evidence_count": 8,
+      "useful": true
+    },
+    {
+      "number": 6,
+      "category": "research",
+      "query": "What are NASA's current Artemis mission milestones?",
+      "elapsed_ms": 5844.5,
+      "http_status": 200,
+      "error": null,
+      "source_count": 4,
+      "evidence_count": 7,
+      "useful": true
+    },
+    {
+      "number": 7,
+      "category": "research",
+      "query": "How is the US Census population estimate calculated?",
+      "elapsed_ms": 9398.7,
+      "http_status": 200,
+      "error": null,
+      "source_count": 4,
+      "evidence_count": 8,
+      "useful": true
+    },
+    {
+      "number": 8,
+      "category": "research",
+      "query": "What does the current Caddy reverse proxy documentation recommend?",
+      "elapsed_ms": 6953.8,
+      "http_status": 200,
+      "error": null,
+      "source_count": 4,
+      "evidence_count": 7,
+      "useful": true
+    }
+  ],
+  "resource_samples": [
+    {
+      "at": 1791112890.660369,
+      "name": "dethrottled-bench-dethrottled-1",
+      "cpu_percent": 0.25,
+      "memory_mib": 497.8
+    },
+    {
+      "at": 1791112890.660369,
+      "name": "dethrottled-bench-browser-search-1",
+      "cpu_percent": 1.58,
+      "memory_mib": 313.0
+    },
+    {
+      "at": 1791112890.660369,
+      "name": "dethrottled-bench-searxng-1",
+      "cpu_percent": 1.16,
+      "memory_mib": 123.7
+    },
+    {
+      "at": 1791112890.660369,
+      "name": "dethrottled-bench-crawl4ai-1",
+      "cpu_percent": 0.95,
+      "memory_mib": 529.1
+    },
+    {
+      "at": 1791112890.660369,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 0.02,
+      "memory_mib": 22.3
+    },
+    {
+      "at": 1791112894.6920087,
+      "name": "dethrottled-bench-dethrottled-1",
+      "cpu_percent": 3.32,
+      "memory_mib": 498.6
+    },
+    {
+      "at": 1791112894.6920087,
+      "name": "dethrottled-bench-browser-search-1",
+      "cpu_percent": 0.46,
+      "memory_mib": 320.2
+    },
+    {
+      "at": 1791112894.6920087,
+      "name": "dethrottled-bench-searxng-1",
+      "cpu_percent": 0.52,
+      "memory_mib": 124.9
+    },
+    {
+      "at": 1791112894.6920087,
+      "name": "dethrottled-bench-crawl4ai-1",
+      "cpu_percent": 0.62,
+      "memory_mib": 529.1
+    },
+    {
+      "at": 1791112894.6920087,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 0.01,
+      "memory_mib": 22.3
+    },
+    {
+      "at": 1791112898.727359,
+      "name": "dethrottled-bench-dethrottled-1",
+      "cpu_percent": 383.81,
+      "memory_mib": 523.8
+    },
+    {
+      "at": 1791112898.727359,
+      "name": "dethrottled-bench-browser-search-1",
+      "cpu_percent": 0.56,
+      "memory_mib": 322.6
+    },
+    {
+      "at": 1791112898.727359,
+      "name": "dethrottled-bench-searxng-1",
+      "cpu_percent": 0.48,
+      "memory_mib": 125.7
+    },
+    {
+      "at": 1791112898.727359,
+      "name": "dethrottled-bench-crawl4ai-1",
+      "cpu_percent": 0.81,
+      "memory_mib": 529.1
+    },
+    {
+      "at": 1791112898.727359,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 2.82,
+      "memory_mib": 22.3
+    },
+    {
+      "at": 1791112902.7961326,
+      "name": "dethrottled-bench-dethrottled-1",
+      "cpu_percent": 2.98,
+      "memory_mib": 533.2
+    },
+    {
+      "at": 1791112902.7961326,
+      "name": "dethrottled-bench-browser-search-1",
+      "cpu_percent": 0.16,
+      "memory_mib": 320.9
+    },
+    {
+      "at": 1791112902.7961326,
+      "name": "dethrottled-bench-searxng-1",
+      "cpu_percent": 0.35,
+      "memory_mib": 125.7
+    },
+    {
+      "at": 1791112902.7961326,
+      "name": "dethrottled-bench-crawl4ai-1",
+      "cpu_percent": 0.68,
+      "memory_mib": 529.1
+    },
+    {
+      "at": 1791112902.7961326,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 0.02,
+      "memory_mib": 22.3
+    },
+    {
+      "at": 1791112906.830909,
+      "name": "dethrottled-bench-dethrottled-1",
+      "cpu_percent": 3.02,
+      "memory_mib": 559.3
+    },
+    {
+      "at": 1791112906.830909,
+      "name": "dethrottled-bench-browser-search-1",
+      "cpu_percent": 0.35,
+      "memory_mib": 321.4
+    },
+    {
+      "at": 1791112906.830909,
+      "name": "dethrottled-bench-searxng-1",
+      "cpu_percent": 0.51,
+      "memory_mib": 125.7
+    },
+    {
+      "at": 1791112906.830909,
+      "name": "dethrottled-bench-crawl4ai-1",
+      "cpu_percent": 0.76,
+      "memory_mib": 529.3
+    },
+    {
+      "at": 1791112906.830909,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 0.02,
+      "memory_mib": 22.3
+    },
+    {
+      "at": 1791112910.86677,
+      "name": "dethrottled-bench-dethrottled-1",
+      "cpu_percent": 2.65,
+      "memory_mib": 559.4
+    },
+    {
+      "at": 1791112910.86677,
+      "name": "dethrottled-bench-browser-search-1",
+      "cpu_percent": 0.21,
+      "memory_mib": 321.2
+    },
+    {
+      "at": 1791112910.86677,
+      "name": "dethrottled-bench-searxng-1",
+      "cpu_percent": 0.53,
+      "memory_mib": 125.7
+    },
+    {
+      "at": 1791112910.86677,
+      "name": "dethrottled-bench-crawl4ai-1",
+      "cpu_percent": 1.06,
+      "memory_mib": 529.6
+    },
+    {
+      "at": 1791112910.86677,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 0.02,
+      "memory_mib": 22.3
+    },
+    {
+      "at": 1791112914.9022622,
+      "name": "dethrottled-bench-dethrottled-1",
+      "cpu_percent": 4.36,
+      "memory_mib": 562.7
+    },
+    {
+      "at": 1791112914.9022622,
+      "name": "dethrottled-bench-browser-search-1",
+      "cpu_percent": 109.18,
+      "memory_mib": 328.4
+    },
+    {
+      "at": 1791112914.9022622,
+      "name": "dethrottled-bench-searxng-1",
+      "cpu_percent": 0.5,
+      "memory_mib": 125.8
+    },
+    {
+      "at": 1791112914.9022622,
+      "name": "dethrottled-bench-crawl4ai-1",
+      "cpu_percent": 0.7,
+      "memory_mib": 529.1
+    },
+    {
+      "at": 1791112914.9022622,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 0.02,
+      "memory_mib": 22.3
+    },
+    {
+      "at": 1791112918.9340596,
+      "name": "dethrottled-bench-dethrottled-1",
+      "cpu_percent": 10.34,
+      "memory_mib": 562.8
+    },
+    {
+      "at": 1791112918.9340596,
+      "name": "dethrottled-bench-browser-search-1",
+      "cpu_percent": 0.22,
+      "memory_mib": 321.9
+    },
+    {
+      "at": 1791112918.9340596,
+      "name": "dethrottled-bench-searxng-1",
+      "cpu_percent": 0.47,
+      "memory_mib": 125.8
+    },
+    {
+      "at": 1791112918.9340596,
+      "name": "dethrottled-bench-crawl4ai-1",
+      "cpu_percent": 0.94,
+      "memory_mib": 529.1
+    },
+    {
+      "at": 1791112918.9340596,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 0.02,
+      "memory_mib": 22.3
+    },
+    {
+      "at": 1791112922.9714563,
+      "name": "dethrottled-bench-dethrottled-1",
+      "cpu_percent": 6.86,
+      "memory_mib": 574.7
+    },
+    {
+      "at": 1791112922.9714563,
+      "name": "dethrottled-bench-browser-search-1",
+      "cpu_percent": 83.53,
+      "memory_mib": 330.6
+    },
+    {
+      "at": 1791112922.9714563,
+      "name": "dethrottled-bench-searxng-1",
+      "cpu_percent": 0.39,
+      "memory_mib": 125.8
+    },
+    {
+      "at": 1791112922.9714563,
+      "name": "dethrottled-bench-crawl4ai-1",
+      "cpu_percent": 0.67,
+      "memory_mib": 529.1
+    },
+    {
+      "at": 1791112922.9714563,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 0.01,
+      "memory_mib": 22.3
+    },
+    {
+      "at": 1791112927.026714,
+      "name": "dethrottled-bench-dethrottled-1",
+      "cpu_percent": 14.93,
+      "memory_mib": 574.7
+    },
+    {
+      "at": 1791112927.026714,
+      "name": "dethrottled-bench-browser-search-1",
+      "cpu_percent": 0.29,
+      "memory_mib": 322.3
+    },
+    {
+      "at": 1791112927.026714,
+      "name": "dethrottled-bench-searxng-1",
+      "cpu_percent": 0.47,
+      "memory_mib": 125.8
+    },
+    {
+      "at": 1791112927.026714,
+      "name": "dethrottled-bench-crawl4ai-1",
+      "cpu_percent": 0.8,
+      "memory_mib": 529.1
+    },
+    {
+      "at": 1791112927.026714,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 0.02,
+      "memory_mib": 22.3
+    },
+    {
+      "at": 1791112931.061806,
+      "name": "dethrottled-bench-dethrottled-1",
+      "cpu_percent": 0.57,
+      "memory_mib": 575.6
+    },
+    {
+      "at": 1791112931.061806,
+      "name": "dethrottled-bench-browser-search-1",
+      "cpu_percent": 56.12,
+      "memory_mib": 324.0
+    },
+    {
+      "at": 1791112931.061806,
+      "name": "dethrottled-bench-searxng-1",
+      "cpu_percent": 0.48,
+      "memory_mib": 125.9
+    },
+    {
+      "at": 1791112931.061806,
+      "name": "dethrottled-bench-crawl4ai-1",
+      "cpu_percent": 1.5,
+      "memory_mib": 529.3
+    },
+    {
+      "at": 1791112931.061806,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 0.02,
+      "memory_mib": 22.3
+    },
+    {
+      "at": 1791112935.1151984,
+      "name": "dethrottled-bench-dethrottled-1",
+      "cpu_percent": 326.37,
+      "memory_mib": 576.4
+    },
+    {
+      "at": 1791112935.1151984,
+      "name": "dethrottled-bench-browser-search-1",
+      "cpu_percent": 39.62,
+      "memory_mib": 369.0
+    },
+    {
+      "at": 1791112935.1151984,
+      "name": "dethrottled-bench-searxng-1",
+      "cpu_percent": 2.27,
+      "memory_mib": 126.0
+    },
+    {
+      "at": 1791112935.1151984,
+      "name": "dethrottled-bench-crawl4ai-1",
+      "cpu_percent": 0.76,
+      "memory_mib": 529.0
+    },
+    {
+      "at": 1791112935.1151984,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 0.02,
+      "memory_mib": 22.3
+    },
+    {
+      "at": 1791112939.1628122,
+      "name": "dethrottled-bench-dethrottled-1",
+      "cpu_percent": 6.26,
+      "memory_mib": 576.3
+    },
+    {
+      "at": 1791112939.1628122,
+      "name": "dethrottled-bench-browser-search-1",
+      "cpu_percent": 20.17,
+      "memory_mib": 326.5
+    },
+    {
+      "at": 1791112939.1628122,
+      "name": "dethrottled-bench-searxng-1",
+      "cpu_percent": 0.68,
+      "memory_mib": 125.9
+    },
+    {
+      "at": 1791112939.1628122,
+      "name": "dethrottled-bench-crawl4ai-1",
+      "cpu_percent": 0.78,
+      "memory_mib": 529.0
+    },
+    {
+      "at": 1791112939.1628122,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 0.03,
+      "memory_mib": 22.3
+    },
+    {
+      "at": 1791112943.2002635,
+      "name": "dethrottled-bench-dethrottled-1",
+      "cpu_percent": 47.26,
+      "memory_mib": 577.7
+    },
+    {
+      "at": 1791112943.2002635,
+      "name": "dethrottled-bench-browser-search-1",
+      "cpu_percent": 0.18,
+      "memory_mib": 325.6
+    },
+    {
+      "at": 1791112943.2002635,
+      "name": "dethrottled-bench-searxng-1",
+      "cpu_percent": 0.5,
+      "memory_mib": 125.9
+    },
+    {
+      "at": 1791112943.2002635,
+      "name": "dethrottled-bench-crawl4ai-1",
+      "cpu_percent": 4.38,
+      "memory_mib": 529.1
+    },
+    {
+      "at": 1791112943.2002635,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 0.01,
+      "memory_mib": 22.3
+    },
+    {
+      "at": 1791112947.2350104,
+      "name": "dethrottled-bench-dethrottled-1",
+      "cpu_percent": 8.42,
+      "memory_mib": 577.6
+    },
+    {
+      "at": 1791112947.2350104,
+      "name": "dethrottled-bench-browser-search-1",
+      "cpu_percent": 74.2,
+      "memory_mib": 333.5
+    },
+    {
+      "at": 1791112947.2350104,
+      "name": "dethrottled-bench-searxng-1",
+      "cpu_percent": 0.53,
+      "memory_mib": 125.9
+    },
+    {
+      "at": 1791112947.2350104,
+      "name": "dethrottled-bench-crawl4ai-1",
+      "cpu_percent": 0.74,
+      "memory_mib": 529.0
+    },
+    {
+      "at": 1791112947.2350104,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 0.02,
+      "memory_mib": 22.3
+    },
+    {
+      "at": 1791112951.2687485,
+      "name": "dethrottled-bench-dethrottled-1",
+      "cpu_percent": 57.91,
+      "memory_mib": 577.6
+    },
+    {
+      "at": 1791112951.2687485,
+      "name": "dethrottled-bench-browser-search-1",
+      "cpu_percent": 0.71,
+      "memory_mib": 325.8
+    },
+    {
+      "at": 1791112951.2687485,
+      "name": "dethrottled-bench-searxng-1",
+      "cpu_percent": 0.55,
+      "memory_mib": 125.9
+    },
+    {
+      "at": 1791112951.2687485,
+      "name": "dethrottled-bench-crawl4ai-1",
+      "cpu_percent": 0.75,
+      "memory_mib": 529.0
+    },
+    {
+      "at": 1791112951.2687485,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 0.02,
+      "memory_mib": 22.3
+    }
+  ]
+}

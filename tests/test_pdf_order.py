@@ -1,11 +1,12 @@
 """PDF drawing order should not place the footer before the heading."""
 
-import pymupdf
+import pytest
 
 from dethrottled import fetch
 
 
 def test_pdf_text_follows_visible_page_order():
+    pymupdf = pytest.importorskip("pymupdf")
     document = pymupdf.open()
     page = document.new_page()
     page.insert_text((50, 700), "Footer: page one")

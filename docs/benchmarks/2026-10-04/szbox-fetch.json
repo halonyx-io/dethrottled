@@ -1,0 +1,1157 @@
+{
+  "meta": {
+    "mode": "fetch",
+    "api": "http://127.0.0.1:18788",
+    "started_at_epoch": 1791112834.0061448,
+    "ended_at_epoch": 1791112862.6777494,
+    "duration_s": 28.67,
+    "container_names": [
+      "dethrottled-bench-dethrottled-1",
+      "dethrottled-bench-browser-search-1",
+      "dethrottled-bench-searxng-1",
+      "dethrottled-bench-crawl4ai-1",
+      "dethrottled-bench-pdf-worker"
+    ]
+  },
+  "summary": {
+    "cases": 50,
+    "http_200": 50,
+    "useful_cases": 42,
+    "median_ms": 505.95,
+    "p95_ms": 1420.2,
+    "mean_ms": 573.2,
+    "min_ms": 69.2,
+    "max_ms": 1688.4,
+    "resources": {
+      "dethrottled-bench-browser-search-1": {
+        "samples": 8,
+        "cpu_mean_percent_one_core": 0.21,
+        "cpu_peak_percent_one_core": 0.29,
+        "memory_mean_mib": 312.6,
+        "memory_peak_mib": 312.8
+      },
+      "dethrottled-bench-crawl4ai-1": {
+        "samples": 8,
+        "cpu_mean_percent_one_core": 0.89,
+        "cpu_peak_percent_one_core": 2.09,
+        "memory_mean_mib": 529.7,
+        "memory_peak_mib": 533.1
+      },
+      "dethrottled-bench-dethrottled-1": {
+        "samples": 8,
+        "cpu_mean_percent_one_core": 26.44,
+        "cpu_peak_percent_one_core": 58.9,
+        "memory_mean_mib": 498.0,
+        "memory_peak_mib": 498.3
+      },
+      "dethrottled-bench-pdf-worker": {
+        "samples": 8,
+        "cpu_mean_percent_one_core": 0.02,
+        "cpu_peak_percent_one_core": 0.03,
+        "memory_mean_mib": 22.3,
+        "memory_peak_mib": 22.5
+      },
+      "dethrottled-bench-searxng-1": {
+        "samples": 8,
+        "cpu_mean_percent_one_core": 0.45,
+        "cpu_peak_percent_one_core": 0.59,
+        "memory_mean_mib": 123.2,
+        "memory_peak_mib": 123.2
+      }
+    }
+  },
+  "cases": [
+    {
+      "number": 1,
+      "category": "fixed-url",
+      "url": "https://presenc.ai/research/eu-ai-act-enforcement-tracker-2026",
+      "elapsed_ms": 209.8,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 1,
+      "thin_count": 0,
+      "failed_count": 0,
+      "chars_total": 4000,
+      "tiers": [
+        "direct/trafilatura"
+      ],
+      "useful": true
+    },
+    {
+      "number": 2,
+      "category": "fixed-url",
+      "url": "https://www.nasa.gov/artemis-iii-news-and-updates/",
+      "elapsed_ms": 299.5,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 1,
+      "thin_count": 0,
+      "failed_count": 0,
+      "chars_total": 2640,
+      "tiers": [
+        "direct/trafilatura"
+      ],
+      "useful": true
+    },
+    {
+      "number": 3,
+      "category": "fixed-url",
+      "url": "https://www.cnbc.com/2026/09/16/fed-rate-decision-september-2026.html",
+      "elapsed_ms": 517.3,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 1,
+      "thin_count": 0,
+      "failed_count": 0,
+      "chars_total": 4000,
+      "tiers": [
+        "direct/trafilatura"
+      ],
+      "useful": true
+    },
+    {
+      "number": 4,
+      "category": "fixed-url",
+      "url": "https://www.semiconductors.org/news-events/latest-news/",
+      "elapsed_ms": 1162.4,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 1,
+      "thin_count": 0,
+      "failed_count": 0,
+      "chars_total": 4000,
+      "tiers": [
+        "direct/trafilatura"
+      ],
+      "useful": true
+    },
+    {
+      "number": 5,
+      "category": "fixed-url",
+      "url": "https://www.ofgem.gov.uk/press-release/energy-price-cap-will-rise-4-october-2026",
+      "elapsed_ms": 97.5,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 1,
+      "thin_count": 0,
+      "failed_count": 0,
+      "chars_total": 4000,
+      "tiers": [
+        "direct/trafilatura"
+      ],
+      "useful": true
+    },
+    {
+      "number": 6,
+      "category": "fixed-url",
+      "url": "https://7news.com.au/business/housing",
+      "elapsed_ms": 573.6,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 1,
+      "thin_count": 0,
+      "failed_count": 0,
+      "chars_total": 1226,
+      "tiers": [
+        "direct/trafilatura"
+      ],
+      "useful": true
+    },
+    {
+      "number": 7,
+      "category": "fixed-url",
+      "url": "https://renewablesnow.com/news/energy-storage/",
+      "elapsed_ms": 761.1,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 1,
+      "thin_count": 0,
+      "failed_count": 0,
+      "chars_total": 1386,
+      "tiers": [
+        "direct/trafilatura"
+      ],
+      "useful": true
+    },
+    {
+      "number": 8,
+      "category": "fixed-url",
+      "url": "https://cybersecuritynews.com/microsoft-patch-tuesday-update-september-2026/",
+      "elapsed_ms": 1688.4,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 1,
+      "thin_count": 0,
+      "failed_count": 0,
+      "chars_total": 4000,
+      "tiers": [
+        "direct/trafilatura"
+      ],
+      "useful": true
+    },
+    {
+      "number": 9,
+      "category": "fixed-url",
+      "url": "https://unfccc.int/cop31",
+      "elapsed_ms": 1038.3,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 0,
+      "thin_count": 0,
+      "failed_count": 1,
+      "chars_total": 0,
+      "tiers": [
+        "crawl4ai"
+      ],
+      "useful": false
+    },
+    {
+      "number": 10,
+      "category": "fixed-url",
+      "url": "https://www.cdc.gov/global-measles-vaccination/data-research/global-measles-outbreaks/index.html",
+      "elapsed_ms": 69.2,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 1,
+      "thin_count": 0,
+      "failed_count": 0,
+      "chars_total": 2106,
+      "tiers": [
+        "direct/trafilatura"
+      ],
+      "useful": true
+    },
+    {
+      "number": 11,
+      "category": "fixed-url",
+      "url": "https://www.propertyzoned.com/city/tennessee/nashville",
+      "elapsed_ms": 626.6,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 1,
+      "thin_count": 0,
+      "failed_count": 0,
+      "chars_total": 3826,
+      "tiers": [
+        "tls/trafilatura"
+      ],
+      "useful": true
+    },
+    {
+      "number": 12,
+      "category": "fixed-url",
+      "url": "https://www.padctn.org/resources/tax-rates-and-calculator/",
+      "elapsed_ms": 1284.3,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 1,
+      "thin_count": 0,
+      "failed_count": 0,
+      "chars_total": 4000,
+      "tiers": [
+        "direct/trafilatura"
+      ],
+      "useful": true
+    },
+    {
+      "number": 13,
+      "category": "fixed-url",
+      "url": "https://www.census.gov/newsroom/press-kits/2026/national-state-population-estimates.html",
+      "elapsed_ms": 1100.5,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 1,
+      "thin_count": 0,
+      "failed_count": 0,
+      "chars_total": 1442,
+      "tiers": [
+        "direct/trafilatura"
+      ],
+      "useful": true
+    },
+    {
+      "number": 14,
+      "category": "fixed-url",
+      "url": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng",
+      "elapsed_ms": 924.9,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 0,
+      "thin_count": 0,
+      "failed_count": 1,
+      "chars_total": 0,
+      "tiers": [
+        "crawl4ai"
+      ],
+      "useful": false
+    },
+    {
+      "number": 15,
+      "category": "fixed-url",
+      "url": "https://www.energy.ca.gov/programs-and-topics/programs/building-energy-efficiency-standards/2025-building-energy-efficiency",
+      "elapsed_ms": 1340.0,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 1,
+      "thin_count": 0,
+      "failed_count": 0,
+      "chars_total": 2754,
+      "tiers": [
+        "direct/trafilatura"
+      ],
+      "useful": true
+    },
+    {
+      "number": 16,
+      "category": "fixed-url",
+      "url": "https://www.flippendo.com/troubleshoot/qbittorrent/port-forwarding",
+      "elapsed_ms": 91.4,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 1,
+      "thin_count": 0,
+      "failed_count": 0,
+      "chars_total": 4000,
+      "tiers": [
+        "direct/trafilatura"
+      ],
+      "useful": true
+    },
+    {
+      "number": 17,
+      "category": "fixed-url",
+      "url": "https://docs.python.org/3.11/library/asyncio-task.html",
+      "elapsed_ms": 456.2,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 1,
+      "thin_count": 0,
+      "failed_count": 0,
+      "chars_total": 4000,
+      "tiers": [
+        "direct/trafilatura"
+      ],
+      "useful": true
+    },
+    {
+      "number": 18,
+      "category": "fixed-url",
+      "url": "https://doc.rust-lang.org/book/ch04-00-understanding-ownership.html",
+      "elapsed_ms": 205.8,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 0,
+      "thin_count": 1,
+      "failed_count": 0,
+      "chars_total": 396,
+      "tiers": [
+        "direct/trafilatura"
+      ],
+      "useful": false
+    },
+    {
+      "number": 19,
+      "category": "fixed-url",
+      "url": "https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/",
+      "elapsed_ms": 233.6,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 1,
+      "thin_count": 0,
+      "failed_count": 0,
+      "chars_total": 4000,
+      "tiers": [
+        "direct/trafilatura"
+      ],
+      "useful": true
+    },
+    {
+      "number": 20,
+      "category": "fixed-url",
+      "url": "https://www.postgresql.org/docs/current/sql-explain.html",
+      "elapsed_ms": 738.1,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 1,
+      "thin_count": 0,
+      "failed_count": 0,
+      "chars_total": 4000,
+      "tiers": [
+        "direct/trafilatura"
+      ],
+      "useful": true
+    },
+    {
+      "number": 21,
+      "category": "fixed-url",
+      "url": "https://dockerbuild.com/reference/healthcheck",
+      "elapsed_ms": 170.8,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 1,
+      "thin_count": 0,
+      "failed_count": 0,
+      "chars_total": 4000,
+      "tiers": [
+        "direct/trafilatura"
+      ],
+      "useful": true
+    },
+    {
+      "number": 22,
+      "category": "fixed-url",
+      "url": "https://nerdleveltech.com/react-hydration-mismatch",
+      "elapsed_ms": 553.9,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 1,
+      "thin_count": 0,
+      "failed_count": 0,
+      "chars_total": 4000,
+      "tiers": [
+        "direct/trafilatura"
+      ],
+      "useful": true
+    },
+    {
+      "number": 23,
+      "category": "fixed-url",
+      "url": "https://etbe.coker.com.au/2026/07/24/systemd-linger/",
+      "elapsed_ms": 880.2,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 1,
+      "thin_count": 0,
+      "failed_count": 0,
+      "chars_total": 3391,
+      "tiers": [
+        "direct/trafilatura"
+      ],
+      "useful": true
+    },
+    {
+      "number": 24,
+      "category": "fixed-url",
+      "url": "https://onnxruntime.ai/docs/api/python/api_summary.html",
+      "elapsed_ms": 732.9,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 1,
+      "thin_count": 0,
+      "failed_count": 0,
+      "chars_total": 4000,
+      "tiers": [
+        "direct/trafilatura"
+      ],
+      "useful": true
+    },
+    {
+      "number": 25,
+      "category": "fixed-url",
+      "url": "https://caddyserver.com/docs/caddyfile/directives/reverse_proxy",
+      "elapsed_ms": 817.0,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 1,
+      "thin_count": 0,
+      "failed_count": 0,
+      "chars_total": 4000,
+      "tiers": [
+        "direct/trafilatura"
+      ],
+      "useful": true
+    },
+    {
+      "number": 26,
+      "category": "fixed-url",
+      "url": "https://en.wikipedia.org/wiki/Okapi_BM25",
+      "elapsed_ms": 113.0,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 1,
+      "thin_count": 0,
+      "failed_count": 0,
+      "chars_total": 4000,
+      "tiers": [
+        "direct/trafilatura"
+      ],
+      "useful": true
+    },
+    {
+      "number": 27,
+      "category": "fixed-url",
+      "url": "https://sqlite.org/wal.html",
+      "elapsed_ms": 1420.2,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 1,
+      "thin_count": 0,
+      "failed_count": 0,
+      "chars_total": 4000,
+      "tiers": [
+        "direct/trafilatura"
+      ],
+      "useful": true
+    },
+    {
+      "number": 28,
+      "category": "fixed-url",
+      "url": "https://www.unicode.org/reports/tr15/",
+      "elapsed_ms": 842.3,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 1,
+      "thin_count": 0,
+      "failed_count": 0,
+      "chars_total": 4000,
+      "tiers": [
+        "direct/trafilatura"
+      ],
+      "useful": true
+    },
+    {
+      "number": 29,
+      "category": "fixed-url",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Retry-After",
+      "elapsed_ms": 92.0,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 1,
+      "thin_count": 0,
+      "failed_count": 0,
+      "chars_total": 1540,
+      "tiers": [
+        "direct/trafilatura"
+      ],
+      "useful": true
+    },
+    {
+      "number": 30,
+      "category": "fixed-url",
+      "url": "https://en.wikipedia.org/wiki/PDF/A",
+      "elapsed_ms": 180.5,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 1,
+      "thin_count": 0,
+      "failed_count": 0,
+      "chars_total": 4000,
+      "tiers": [
+        "direct/trafilatura"
+      ],
+      "useful": true
+    },
+    {
+      "number": 31,
+      "category": "fixed-url",
+      "url": "https://bioinfo.cd-genomics.com/sequencing-depth-coverage-read-types.html",
+      "elapsed_ms": 1123.3,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 1,
+      "thin_count": 0,
+      "failed_count": 0,
+      "chars_total": 4000,
+      "tiers": [
+        "direct/trafilatura"
+      ],
+      "useful": true
+    },
+    {
+      "number": 32,
+      "category": "fixed-url",
+      "url": "https://exoplanetarchive.ipac.caltech.edu/docs/program_interfaces.html",
+      "elapsed_ms": 836.5,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 1,
+      "thin_count": 0,
+      "failed_count": 0,
+      "chars_total": 4000,
+      "tiers": [
+        "direct/trafilatura"
+      ],
+      "useful": true
+    },
+    {
+      "number": 33,
+      "category": "fixed-url",
+      "url": "https://www.researchgate.net/publication/381681019_Exploring_Lithium-Ion_Battery_Degradation_A_Concise_Review_of_Critical_Factors_Impacts_Data-Driven_Degradation_Estimation_Techniques_and_Sustainable_Directions_for_Energy_Storage_Systems",
+      "elapsed_ms": 96.9,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 0,
+      "thin_count": 0,
+      "failed_count": 1,
+      "chars_total": 0,
+      "tiers": [
+        "crawl4ai"
+      ],
+      "useful": false
+    },
+    {
+      "number": 34,
+      "category": "fixed-url",
+      "url": "https://www.ipcc.ch/synthesis-report/",
+      "elapsed_ms": 1672.7,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 1,
+      "thin_count": 0,
+      "failed_count": 0,
+      "chars_total": 3441,
+      "tiers": [
+        "direct/trafilatura"
+      ],
+      "useful": true
+    },
+    {
+      "number": 35,
+      "category": "fixed-url",
+      "url": "https://earth.gov/ghgcenter/data-catalog/noaa-gggrn-co2-concentrations",
+      "elapsed_ms": 88.0,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 0,
+      "thin_count": 0,
+      "failed_count": 1,
+      "chars_total": 0,
+      "tiers": [
+        "crawl4ai"
+      ],
+      "useful": false
+    },
+    {
+      "number": 36,
+      "category": "fixed-url",
+      "url": "https://toolkit.climate.gov/NCA5",
+      "elapsed_ms": 136.9,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 1,
+      "thin_count": 0,
+      "failed_count": 0,
+      "chars_total": 3214,
+      "tiers": [
+        "direct/trafilatura"
+      ],
+      "useful": true
+    },
+    {
+      "number": 37,
+      "category": "fixed-url",
+      "url": "https://nationdata.org/downloads/population",
+      "elapsed_ms": 98.4,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 1,
+      "thin_count": 0,
+      "failed_count": 0,
+      "chars_total": 1847,
+      "tiers": [
+        "direct/resiliparse"
+      ],
+      "useful": true
+    },
+    {
+      "number": 38,
+      "category": "fixed-url",
+      "url": "https://www.eia.gov/electricity/data.php",
+      "elapsed_ms": 492.2,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 1,
+      "thin_count": 0,
+      "failed_count": 0,
+      "chars_total": 4000,
+      "tiers": [
+        "direct/trafilatura"
+      ],
+      "useful": true
+    },
+    {
+      "number": 39,
+      "category": "fixed-url",
+      "url": "https://www.slideshare.net/slideshow/renewable-energy-79579205/79579205",
+      "elapsed_ms": 494.6,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 1,
+      "thin_count": 0,
+      "failed_count": 0,
+      "chars_total": 4000,
+      "tiers": [
+        "direct/trafilatura"
+      ],
+      "useful": true
+    },
+    {
+      "number": 40,
+      "category": "fixed-url",
+      "url": "https://www.gutenberg.org/",
+      "elapsed_ms": 874.1,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 1,
+      "thin_count": 0,
+      "failed_count": 0,
+      "chars_total": 1784,
+      "tiers": [
+        "direct/trafilatura"
+      ],
+      "useful": true
+    },
+    {
+      "number": 41,
+      "category": "fixed-url",
+      "url": "https://www.reddit.com/r/homelab/comments/199yy6t/best_practice_for_docker_backupfall_back/",
+      "elapsed_ms": 132.4,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 0,
+      "thin_count": 0,
+      "failed_count": 1,
+      "chars_total": 0,
+      "tiers": [
+        "crawl4ai"
+      ],
+      "useful": false
+    },
+    {
+      "number": 42,
+      "category": "fixed-url",
+      "url": "https://github.com/fastapi/fastapi/discussions/11079",
+      "elapsed_ms": 643.5,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 1,
+      "thin_count": 0,
+      "failed_count": 0,
+      "chars_total": 4000,
+      "tiers": [
+        "direct/trafilatura"
+      ],
+      "useful": true
+    },
+    {
+      "number": 43,
+      "category": "fixed-url",
+      "url": "https://stackoverflow.com/questions/22800079/converting-time-zone-pandas-dataframe",
+      "elapsed_ms": 82.1,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 0,
+      "thin_count": 0,
+      "failed_count": 1,
+      "chars_total": 0,
+      "tiers": [
+        "crawl4ai"
+      ],
+      "useful": false
+    },
+    {
+      "number": 44,
+      "category": "fixed-url",
+      "url": "https://news.ycombinator.com/item?id=35547819",
+      "elapsed_ms": 1076.2,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 1,
+      "thin_count": 0,
+      "failed_count": 0,
+      "chars_total": 4000,
+      "tiers": [
+        "direct/trafilatura"
+      ],
+      "useful": true
+    },
+    {
+      "number": 45,
+      "category": "fixed-url",
+      "url": "https://www.reddit.com/r/qBittorrent/comments/18lzros/port_forwarding/",
+      "elapsed_ms": 131.5,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 0,
+      "thin_count": 0,
+      "failed_count": 1,
+      "chars_total": 0,
+      "tiers": [
+        "crawl4ai"
+      ],
+      "useful": false
+    },
+    {
+      "number": 46,
+      "category": "fixed-url",
+      "url": "https://dev.to/kkr0423/react-design-pattern-client-side-rendering-c3b",
+      "elapsed_ms": 76.6,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 1,
+      "thin_count": 0,
+      "failed_count": 0,
+      "chars_total": 4000,
+      "tiers": [
+        "direct/trafilatura"
+      ],
+      "useful": true
+    },
+    {
+      "number": 47,
+      "category": "fixed-url",
+      "url": "https://developers.cloudflare.com/bots/",
+      "elapsed_ms": 97.6,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 1,
+      "thin_count": 0,
+      "failed_count": 0,
+      "chars_total": 2062,
+      "tiers": [
+        "direct/trafilatura"
+      ],
+      "useful": true
+    },
+    {
+      "number": 48,
+      "category": "fixed-url",
+      "url": "https://transcriptmagic.com/youtube/",
+      "elapsed_ms": 196.8,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 1,
+      "thin_count": 0,
+      "failed_count": 0,
+      "chars_total": 4000,
+      "tiers": [
+        "direct/trafilatura"
+      ],
+      "useful": true
+    },
+    {
+      "number": 49,
+      "category": "fixed-url",
+      "url": "https://en.wikipedia.org/wiki/Big_data",
+      "elapsed_ms": 491.1,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 1,
+      "thin_count": 0,
+      "failed_count": 0,
+      "chars_total": 4000,
+      "tiers": [
+        "direct/trafilatura"
+      ],
+      "useful": true
+    },
+    {
+      "number": 50,
+      "category": "fixed-url",
+      "url": "https://www.cpu-monkey.com/en/compare_cpu-amd_ryzen_7_7840u-vs-amd_ryzen_7_5800u",
+      "elapsed_ms": 598.5,
+      "http_status": 200,
+      "error": null,
+      "result_count": 1,
+      "good_count": 1,
+      "thin_count": 0,
+      "failed_count": 0,
+      "chars_total": 2311,
+      "tiers": [
+        "direct/trafilatura"
+      ],
+      "useful": true
+    }
+  ],
+  "resource_samples": [
+    {
+      "at": 1791112832.0057392,
+      "name": "dethrottled-bench-dethrottled-1",
+      "cpu_percent": 0.53,
+      "memory_mib": 498.3
+    },
+    {
+      "at": 1791112832.0057392,
+      "name": "dethrottled-bench-browser-search-1",
+      "cpu_percent": 0.28,
+      "memory_mib": 312.7
+    },
+    {
+      "at": 1791112832.0057392,
+      "name": "dethrottled-bench-searxng-1",
+      "cpu_percent": 0.54,
+      "memory_mib": 123.2
+    },
+    {
+      "at": 1791112832.0057392,
+      "name": "dethrottled-bench-crawl4ai-1",
+      "cpu_percent": 0.83,
+      "memory_mib": 529.2
+    },
+    {
+      "at": 1791112832.0057392,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 0.02,
+      "memory_mib": 22.3
+    },
+    {
+      "at": 1791112836.0372798,
+      "name": "dethrottled-bench-dethrottled-1",
+      "cpu_percent": 9.65,
+      "memory_mib": 497.9
+    },
+    {
+      "at": 1791112836.0372798,
+      "name": "dethrottled-bench-browser-search-1",
+      "cpu_percent": 0.29,
+      "memory_mib": 312.7
+    },
+    {
+      "at": 1791112836.0372798,
+      "name": "dethrottled-bench-searxng-1",
+      "cpu_percent": 0.48,
+      "memory_mib": 123.2
+    },
+    {
+      "at": 1791112836.0372798,
+      "name": "dethrottled-bench-crawl4ai-1",
+      "cpu_percent": 0.92,
+      "memory_mib": 529.2
+    },
+    {
+      "at": 1791112836.0372798,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 0.02,
+      "memory_mib": 22.3
+    },
+    {
+      "at": 1791112840.069837,
+      "name": "dethrottled-bench-dethrottled-1",
+      "cpu_percent": 1.31,
+      "memory_mib": 497.8
+    },
+    {
+      "at": 1791112840.069837,
+      "name": "dethrottled-bench-browser-search-1",
+      "cpu_percent": 0.22,
+      "memory_mib": 312.8
+    },
+    {
+      "at": 1791112840.069837,
+      "name": "dethrottled-bench-searxng-1",
+      "cpu_percent": 0.59,
+      "memory_mib": 123.2
+    },
+    {
+      "at": 1791112840.069837,
+      "name": "dethrottled-bench-crawl4ai-1",
+      "cpu_percent": 0.86,
+      "memory_mib": 529.2
+    },
+    {
+      "at": 1791112840.069837,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 0.03,
+      "memory_mib": 22.5
+    },
+    {
+      "at": 1791112844.106326,
+      "name": "dethrottled-bench-dethrottled-1",
+      "cpu_percent": 16.49,
+      "memory_mib": 497.9
+    },
+    {
+      "at": 1791112844.106326,
+      "name": "dethrottled-bench-browser-search-1",
+      "cpu_percent": 0.21,
+      "memory_mib": 312.7
+    },
+    {
+      "at": 1791112844.106326,
+      "name": "dethrottled-bench-searxng-1",
+      "cpu_percent": 0.44,
+      "memory_mib": 123.2
+    },
+    {
+      "at": 1791112844.106326,
+      "name": "dethrottled-bench-crawl4ai-1",
+      "cpu_percent": 0.68,
+      "memory_mib": 529.2
+    },
+    {
+      "at": 1791112844.106326,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 0.02,
+      "memory_mib": 22.3
+    },
+    {
+      "at": 1791112848.1413264,
+      "name": "dethrottled-bench-dethrottled-1",
+      "cpu_percent": 44.26,
+      "memory_mib": 497.9
+    },
+    {
+      "at": 1791112848.1413264,
+      "name": "dethrottled-bench-browser-search-1",
+      "cpu_percent": 0.14,
+      "memory_mib": 312.7
+    },
+    {
+      "at": 1791112848.1413264,
+      "name": "dethrottled-bench-searxng-1",
+      "cpu_percent": 0.33,
+      "memory_mib": 123.2
+    },
+    {
+      "at": 1791112848.1413264,
+      "name": "dethrottled-bench-crawl4ai-1",
+      "cpu_percent": 0.54,
+      "memory_mib": 529.5
+    },
+    {
+      "at": 1791112848.1413264,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 0.02,
+      "memory_mib": 22.3
+    },
+    {
+      "at": 1791112852.1704319,
+      "name": "dethrottled-bench-dethrottled-1",
+      "cpu_percent": 25.61,
+      "memory_mib": 498.2
+    },
+    {
+      "at": 1791112852.1704319,
+      "name": "dethrottled-bench-browser-search-1",
+      "cpu_percent": 0.23,
+      "memory_mib": 312.7
+    },
+    {
+      "at": 1791112852.1704319,
+      "name": "dethrottled-bench-searxng-1",
+      "cpu_percent": 0.57,
+      "memory_mib": 123.2
+    },
+    {
+      "at": 1791112852.1704319,
+      "name": "dethrottled-bench-crawl4ai-1",
+      "cpu_percent": 2.09,
+      "memory_mib": 533.1
+    },
+    {
+      "at": 1791112852.1704319,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 0.02,
+      "memory_mib": 22.3
+    },
+    {
+      "at": 1791112856.2017317,
+      "name": "dethrottled-bench-dethrottled-1",
+      "cpu_percent": 54.8,
+      "memory_mib": 497.9
+    },
+    {
+      "at": 1791112856.2017317,
+      "name": "dethrottled-bench-browser-search-1",
+      "cpu_percent": 0.16,
+      "memory_mib": 312.7
+    },
+    {
+      "at": 1791112856.2017317,
+      "name": "dethrottled-bench-searxng-1",
+      "cpu_percent": 0.37,
+      "memory_mib": 123.2
+    },
+    {
+      "at": 1791112856.2017317,
+      "name": "dethrottled-bench-crawl4ai-1",
+      "cpu_percent": 0.64,
+      "memory_mib": 529.2
+    },
+    {
+      "at": 1791112856.2017317,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 0.02,
+      "memory_mib": 22.3
+    },
+    {
+      "at": 1791112860.2322018,
+      "name": "dethrottled-bench-dethrottled-1",
+      "cpu_percent": 58.9,
+      "memory_mib": 498.2
+    },
+    {
+      "at": 1791112860.2322018,
+      "name": "dethrottled-bench-browser-search-1",
+      "cpu_percent": 0.17,
+      "memory_mib": 312.2
+    },
+    {
+      "at": 1791112860.2322018,
+      "name": "dethrottled-bench-searxng-1",
+      "cpu_percent": 0.31,
+      "memory_mib": 123.2
+    },
+    {
+      "at": 1791112860.2322018,
+      "name": "dethrottled-bench-crawl4ai-1",
+      "cpu_percent": 0.52,
+      "memory_mib": 529.2
+    },
+    {
+      "at": 1791112860.2322018,
+      "name": "dethrottled-bench-pdf-worker",
+      "cpu_percent": 0.02,
+      "memory_mib": 22.3
+    }
+  ]
+}

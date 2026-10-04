@@ -105,6 +105,9 @@ def test_the_last_engine_standing_is_never_rested():
 def test_when_all_engines_are_rested_only_the_oldest_is_retried():
     fs._record_failure("auto", "blocked", namespace="web")
     fs._record_failure("google", "blocked", namespace="web")
+    health = fs._load_health()
+    health["web:auto"]["at"] = health["web:google"]["at"] - 1
+    fs._save_health(health)
     assert fs._rested("google,auto", namespace="web") == "auto"
 
 
@@ -255,9 +258,11 @@ def test_explicit_news_blends_browser_and_two_news_sources(monkeypatch):
                 "url": f"https://example.org/{engine}/{index}",
                 "snippet": "Substantial article text", "engine": engine}
 
-    monkeypatch.setattr(fs, "web_search", lambda *a, **k: [result("web-browser", i) for i in range(5)])
+    monkeypatch.setattr(fs, "web_search",
+                        lambda *a, **k: [result("web-browser", i) for i in range(5)])
     monkeypatch.setattr(fs, "bing_news", lambda *a, **k: [result("bing-news", i) for i in range(5)])
-    monkeypatch.setattr(fs, "searxng", lambda *a, **k: [result("duckduckgo news", i) for i in range(5)])
+    monkeypatch.setattr(fs, "searxng",
+                        lambda *a, **k: [result("duckduckgo news", i) for i in range(5)])
     monkeypatch.setattr(fs, "google_news_headlines", lambda *a, **k: [])
 
     news, _ = fs.search("a current event", categories="news", max_items=4)
@@ -283,7 +288,8 @@ def test_full_pool_skips_unreturnable_google_news(monkeypatch):
 
     monkeypatch.setattr(fs, "web_search", lambda *a, **k: [row("web-browser", i) for i in range(4)])
     monkeypatch.setattr(fs, "bing_news", lambda *a, **k: [row("bing-news", i) for i in range(4)])
-    monkeypatch.setattr(fs, "searxng", lambda *a, **k: [row("duckduckgo news", i) for i in range(4)])
+    monkeypatch.setattr(fs, "searxng",
+                        lambda *a, **k: [row("duckduckgo news", i) for i in range(4)])
 
     def unexpected(*a, **k):
         raise AssertionError("Google News cannot enter the returned pool")

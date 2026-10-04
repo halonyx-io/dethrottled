@@ -2,10 +2,12 @@
 
 import io
 
-import openpyxl
-import pymupdf
+import pytest
 
 from dethrottled import fetch
+
+openpyxl = pytest.importorskip("openpyxl")
+pymupdf = pytest.importorskip("pymupdf")
 
 
 class Response:
