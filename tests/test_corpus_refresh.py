@@ -1,9 +1,12 @@
 """Refetches refresh the vector corpus without rebuilding it per request."""
 
+import pytest
+
 from dethrottled import corpus as c
 
 
 def test_changed_page_replaces_text_and_cached_matrix(tmp_path, monkeypatch):
+    pytest.importorskip("numpy")
     monkeypatch.setattr(c, "embed", lambda texts: [[float(len(x)), 1.0] for x in texts])
     corpus = c.Corpus(tmp_path / "corpus.sqlite")
     prefix = "National statistics office capacity report. " * 4
@@ -22,6 +25,7 @@ def test_changed_page_replaces_text_and_cached_matrix(tmp_path, monkeypatch):
 
 
 def test_shortened_page_removes_old_tail_passages(tmp_path, monkeypatch):
+    pytest.importorskip("numpy")
     monkeypatch.setattr(c, "embed", lambda texts: [[float(len(x)), 1.0] for x in texts])
     corpus = c.Corpus(tmp_path / "corpus.sqlite")
     url = "https://example.org/report"
@@ -39,6 +43,7 @@ def test_shared_corpus_reuses_one_instance(tmp_path, monkeypatch):
 
 
 def test_other_sqlite_writer_invalidates_resident_matrix(tmp_path, monkeypatch):
+    pytest.importorskip("numpy")
     monkeypatch.setattr(c, "embed", lambda texts: [[float(len(x)), 1.0] for x in texts])
     path = tmp_path / "corpus.sqlite"
     reader = c.Corpus(path)

@@ -255,9 +255,11 @@ def test_explicit_news_blends_browser_and_two_news_sources(monkeypatch):
                 "url": f"https://example.org/{engine}/{index}",
                 "snippet": "Substantial article text", "engine": engine}
 
-    monkeypatch.setattr(fs, "web_search", lambda *a, **k: [result("web-browser", i) for i in range(5)])
+    monkeypatch.setattr(fs, "web_search",
+                        lambda *a, **k: [result("web-browser", i) for i in range(5)])
     monkeypatch.setattr(fs, "bing_news", lambda *a, **k: [result("bing-news", i) for i in range(5)])
-    monkeypatch.setattr(fs, "searxng", lambda *a, **k: [result("duckduckgo news", i) for i in range(5)])
+    monkeypatch.setattr(fs, "searxng",
+                        lambda *a, **k: [result("duckduckgo news", i) for i in range(5)])
     monkeypatch.setattr(fs, "google_news_headlines", lambda *a, **k: [])
 
     news, _ = fs.search("a current event", categories="news", max_items=4)
@@ -283,7 +285,8 @@ def test_full_pool_skips_unreturnable_google_news(monkeypatch):
 
     monkeypatch.setattr(fs, "web_search", lambda *a, **k: [row("web-browser", i) for i in range(4)])
     monkeypatch.setattr(fs, "bing_news", lambda *a, **k: [row("bing-news", i) for i in range(4)])
-    monkeypatch.setattr(fs, "searxng", lambda *a, **k: [row("duckduckgo news", i) for i in range(4)])
+    monkeypatch.setattr(fs, "searxng",
+                        lambda *a, **k: [row("duckduckgo news", i) for i in range(4)])
 
     def unexpected(*a, **k):
         raise AssertionError("Google News cannot enter the returned pool")

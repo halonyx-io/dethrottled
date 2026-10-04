@@ -89,8 +89,8 @@ jobs:
       - run: ruff check .
 
   no-secrets:
-    # A leak removed in a later commit is still in the history, so this looks at
-    # the whole tree rather than the diff.
+    # Scan all tracked checkout files rather than only the changed lines.
+    # Published history requires a separate audit; this job cannot unpublish it.
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -104,14 +104,30 @@ jobs:
           echo "clean"
 
   docker:
-    runs-on: ubuntu-latest
+    name: containers · ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, ubuntu-24.04-arm]
     steps:
       - uses: actions/checkout@v4
       - name: Compose file is valid
         run: docker compose config --quiet
-      - name: Image builds
-        run: docker build -t dethrottled:ci .
-      - name: Image runs and answers
+      - name: Build API and browser images natively
+        run: |
+          docker build -t dethrottled:ci .
+          docker build -t dethrottled-browser-search:ci browser-search
+          case "$(uname -m)" in
+            x86_64) expected=amd64 ;;
+            aarch64) expected=arm64 ;;
+            *) exit 1 ;;
+          esac
+          test "$(docker image inspect -f '{{.Architecture}}' dethrottled:ci)" = "$expected"
+          test "$(docker image inspect -f '{{.Architecture}}' dethrottled-browser-search:ci)" = "$expected"
+      - name: Verify API image offline
+        run: docker run --rm --network none dethrottled:ci python /app/verify_image.py
+      - name: API image runs and answers
         run: |
           docker run -d --name dethrottled-ci -p 8787:8787 dethrottled:ci
           for i in $(seq 1 60); do
@@ -119,3 +135,14 @@ jobs:
           done
           curl -fsS http://127.0.0.1:8787/health
           docker rm -f dethrottled-ci
+      - name: Browser image starts headed Chromium
+        run: |
+          docker run -d --shm-size=1g --name dethrottled-browser-ci dethrottled-browser-search:ci
+          for i in $(seq 1 60); do
+            if [ "$(docker inspect -f '{{.State.Health.Status}}' dethrottled-browser-ci)" = healthy ]; then
+              break
+            fi
+            sleep 2
+          done
+          test "$(docker inspect -f '{{.State.Health.Status}}' dethrottled-browser-ci)" = healthy
+          docker rm -f dethrottled-browser-ci

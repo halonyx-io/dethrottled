@@ -14,7 +14,9 @@ from urllib.parse import urlsplit
 from .fetch import canonical_url
 
 _WORDS = re.compile(r"[\w-]+", re.UNICODE)
-_STOP = frozenset("a an and are as at be by can did do does for from how in into is it of on or the to was were what when where which who why with".split())
+_STOP = frozenset(
+    "a an and are as at be by can did do does for from how in into is it "
+    "of on or the to was were what when where which who why with".split())
 
 
 def content_shingles(text: str) -> set[tuple[str, ...]]:

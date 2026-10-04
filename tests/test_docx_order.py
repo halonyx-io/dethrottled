@@ -2,9 +2,11 @@
 
 import io
 
-import docx
+import pytest
 
 from dethrottled import documents
+
+docx = pytest.importorskip("docx")
 
 
 def test_docx_paragraphs_and_tables_follow_source_order():
