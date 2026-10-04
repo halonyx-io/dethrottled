@@ -174,7 +174,7 @@ def available() -> dict:
     """Report the ranking stages supported by this installation."""
     import importlib.util
     have_ort = importlib.util.find_spec("onnxruntime") is not None
-    have_models = have_ort and importlib.util.find_spec("transformers") is not None
+    have_models = have_ort and importlib.util.find_spec("tokenizers") is not None
     return {
         "bm25": True,
         "corpus": have_models and (_paths.model_dir() / "emb-minilm" / "model.onnx").is_file(),

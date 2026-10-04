@@ -314,6 +314,12 @@ Brings up dethrottled + browser-search + SearXNG + Crawl4AI. The optional
 reach the selected public search engines, and fetches reach the requested URLs;
 the external reader is off because the renderer covers JavaScript locally.
 The browser-search worker, SearXNG, and Crawl4AI are not published to the host.
+The API image includes its one MiniLM ONNX model and tokenizer; the named
+volume stores mutable cache/corpus state. No host model mount, API key, or
+machine-specific path is needed. Edit `.env` for local ports and optional
+features; it is ignored by git. The images have no CPU affinity or CPU/RAM
+quota in Compose. Browser `shm_size` reserves Chromium shared memory, not an
+overall memory limit.
 
 ```bash
 docker compose logs -f dethrottled

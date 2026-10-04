@@ -20,6 +20,7 @@ venv/
 *.sqlite-wal
 var/
 models/
+testing/
 .cf-worker-token
 engine-health.json
 

@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
-# Download the ONNX weights for the semantic features.
+# Download the one ONNX embedding model used by the semantic corpus.
 #
-# Nothing here ships in the repo: one of these is 465MB and none of them belong
-# in git. All three are permissively licensed -- Apache-2.0 and MIT -- and no
-# non-commercially-licensed model is used anywhere in this project.
+# Weights and tokenizer stay out of git. The image build bakes in the same
+# pinned revision; this script supports source installs.
 #
 #     ./scripts/fetch-models.sh            # embeddings (needed for the corpus)
 #     ./scripts/fetch-models.sh --all      # + OCR language data
@@ -18,23 +17,19 @@ WITH_OCR=0
 mkdir -p "$MODELS"
 echo "model directory: $MODELS"
 
-# HuggingFace serves these over plain HTTPS with no token. Each model needs
-# model.onnx plus its tokenizer files beside it -- the tokenizer is not
-# optional, and a directory holding only the .onnx fails at load time with an
-# error that does not mention the missing files.
+# The runtime needs model.onnx and tokenizer.json from the same revision.
+MINILM_REVISION=1110a243fdf4706b3f48f1d95db1a4f5529b4d41
 fetch_model() {
     local dir="$1" repo="$2" onnx_path="$3"
-    if [ -f "$MODELS/$dir/model.onnx" ]; then
+    if [ -s "$MODELS/$dir/model.onnx" ] && [ -s "$MODELS/$dir/tokenizer.json" ]; then
         echo "  $dir already present, skipping"
         return
     fi
     echo "  fetching $dir from $repo"
     mkdir -p "$MODELS/$dir"
-    local base="https://huggingface.co/$repo/resolve/main"
+    local base="https://huggingface.co/$repo/resolve/$MINILM_REVISION"
     curl -fsSL -o "$MODELS/$dir/model.onnx" "$base/$onnx_path"
-    for f in tokenizer.json tokenizer_config.json special_tokens_map.json config.json; do
-        curl -fsSL -o "$MODELS/$dir/$f" "$base/$f"
-    done
+    curl -fsSL -o "$MODELS/$dir/tokenizer.json" "$base/tokenizer.json"
 }
 
 echo

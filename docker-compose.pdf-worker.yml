@@ -34,7 +34,3 @@ services:
     cap_drop: [ALL]
     security_opt: ["no-new-privileges:true"]
     shm_size: 1gb
-    deploy:
-      resources:
-        limits:
-          memory: 1g

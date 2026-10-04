@@ -47,7 +47,7 @@ def main():
                    "resiliparse", "selectolax", "fastapi", "uvicorn",
                    "pymupdf", "openpyxl", "docx", "pptx", "xlrd",
                    "odf", "ebooklib", "striprtf", "youtube_transcript_api",
-                   "numpy", "onnxruntime", "transformers",
+                   "numpy", "onnxruntime", "tokenizers",
                    "curl_cffi"):
         check(module, lambda m=module: __import__(m) and "")
 

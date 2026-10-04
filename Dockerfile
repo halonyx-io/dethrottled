@@ -5,8 +5,8 @@
 FROM python:3.12-slim
 
 # tesseract is the only system binary, and only the OCR path uses it. eng and
-# osd live in the system tessdata directory; extra language packs are mounted
-# in at runtime -- see scripts/fetch-models.sh.
+# osd live in the system tessdata directory; optional extra language packs
+# can be downloaded separately -- see scripts/fetch-models.sh.
 #
 # --no-install-recommends because the recommended set drags in a large chunk of
 # X11 for a command-line binary that never opens a window.
@@ -47,16 +47,14 @@ RUN if [ "$WITH_MODELS" = "1" ]; then \
         mkdir -p /opt/dethrottled/models/emb-minilm \
      && base=https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/$MINILM_REVISION \
      && curl -fsSL -o /opt/dethrottled/models/emb-minilm/model.onnx "$base/onnx/model.onnx" \
-     && for f in tokenizer.json tokenizer_config.json special_tokens_map.json config.json; do \
-            curl -fsSL -o "/opt/dethrottled/models/emb-minilm/$f" "$base/$f"; \
-        done; \
+     && curl -fsSL -o /opt/dethrottled/models/emb-minilm/tokenizer.json "$base/tokenizer.json"; \
     fi
 
 # Unprivileged. The service fetches URLs chosen by whoever can reach it, which
 # is a good enough reason on its own not to run it as root.
 RUN useradd --create-home --uid 10001 dethrottled \
     && mkdir -p /data \
-    && chown -R dethrottled:dethrottled /data /opt/dethrottled
+    && chown dethrottled:dethrottled /data
 USER dethrottled
 
 ENV DETHROTTLED_DATA_DIR=/data \

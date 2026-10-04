@@ -74,10 +74,6 @@ services:
     expose:
       - "19888"
     shm_size: 1gb
-    deploy:
-      resources:
-        limits:
-          memory: 4g
 
   searxng:
     # Pinned. 2026.10.2, verified with the current two-engine news config.
@@ -124,12 +120,6 @@ services:
     # fail in ways that look like timeouts rather than like out-of-memory,
     # which is a slow afternoon if you have not seen it before.
     shm_size: 1gb
-    # A persistent headless browser accumulates memory over days. The cap keeps
-    # one runaway page from taking the host down with it.
-    deploy:
-      resources:
-        limits:
-          memory: 2g
 
 volumes:
   dethrottled-data:

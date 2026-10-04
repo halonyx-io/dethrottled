@@ -81,7 +81,7 @@ RETENTION_DAYS = int(os.environ.get("DETHROTTLED_CORPUS_RETENTION_DAYS", "180"))
 #      200,000       307 MB  419 MB   1009ms   13.8ms
 #
 # 200,000 asks for 307MB of resident memory before Python, the ONNX runtime and
-# two embedding models have taken their share, which is most of a 2GB Pi. The
+# the embedding model has taken its share, which is most of a 2GB Pi. The
 # search was never the problem -- it is 14ms even at the top of that table --
 # the resident matrix is. 50,000 passages is about 12,000 pages, holds in
 # 77MB, and rebuilds in a quarter of a second.
@@ -101,7 +101,7 @@ def _model():
     with _LOCK:
         if "en" not in _LOADED:
             import numpy
-            from transformers import AutoTokenizer
+            from tokenizers import Tokenizer
 
             from ._quiet import load as _load_onnxruntime
             onnxruntime = _load_onnxruntime()
@@ -119,10 +119,14 @@ def _model():
             session = onnxruntime.InferenceSession(
                 ENGLISH_MODEL + "/model.onnx", options,
                 providers=["CPUExecutionProvider"])
+            tokenizer = Tokenizer.from_file(ENGLISH_MODEL + "/tokenizer.json")
+            tokenizer.no_padding()
+            tokenizer.no_truncation()
+            tokenizer.enable_truncation(max_length=256)
+            tokenizer.enable_padding(pad_id=0, pad_token="[PAD]", pad_type_id=0)
             _LOADED["en"] = {
                 "np": numpy,
-                "tok": AutoTokenizer.from_pretrained(ENGLISH_MODEL,
-                                                     trust_remote_code=False),
+                "tok": tokenizer,
                 "sess": session,
                 "inputs": {i.name for i in session.get_inputs()},
             }
@@ -144,15 +148,18 @@ def embed(texts: list, *, batch: int = 32) -> list:
     out = []
     for start in range(0, len(texts), batch):
         chunk = list(texts[start:start + batch])
-        encoded = model["tok"](chunk, padding=True, truncation=True,
-                               max_length=256, return_tensors="np")
-        feed = {k: np.asarray(v).astype(np.int64)
-                for k, v in encoded.items() if k in model["inputs"]}
-        if "token_type_ids" in model["inputs"] and "token_type_ids" not in feed:
-            feed["token_type_ids"] = np.zeros_like(feed["input_ids"])
+        encoded = model["tok"].encode_batch(chunk)
+        arrays = {
+            "input_ids": np.asarray([row.ids for row in encoded], dtype=np.int64),
+            "attention_mask": np.asarray(
+                [row.attention_mask for row in encoded], dtype=np.int64),
+            "token_type_ids": np.asarray(
+                [row.type_ids for row in encoded], dtype=np.int64),
+        }
+        feed = {k: v for k, v in arrays.items() if k in model["inputs"]}
 
         hidden = model["sess"].run(None, feed)[0]
-        mask = np.asarray(encoded["attention_mask"])[..., None].astype(np.float32)
+        mask = arrays["attention_mask"][..., None].astype(np.float32)
         pooled = (hidden * mask).sum(1) / np.maximum(mask.sum(1), 1e-9)
         pooled /= np.maximum(np.linalg.norm(pooled, axis=1, keepdims=True), 1e-9)
         out.extend(pooled.tolist())

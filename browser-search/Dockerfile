@@ -10,7 +10,8 @@ RUN python -m pip install --no-cache-dir --upgrade pip \
     && pip install --no-cache-dir -r requirements.txt \
     && apt-get update \
     && apt-get install -y --no-install-recommends xvfb xauth \
-    && python -m patchright install --with-deps chromium \
+    && python -m patchright install --with-deps --no-shell chromium \
+    && rm -rf /ms-playwright/ffmpeg-* \
     && rm -rf /var/lib/apt/lists/* \
     && useradd --create-home --uid 10002 browsersearch \
     && chmod -R a+rX /ms-playwright

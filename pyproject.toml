@@ -24,7 +24,7 @@ classifiers = [
 
 # The base install fetches, extracts and searches. Everything past that is an
 # extra, because the heavy pieces are exactly the ones most callers never use:
-# onnxruntime and transformers are a few hundred megabytes to make a feature
+# onnxruntime and tokenizers are sizable dependencies to make a feature
 # optional, and pymupdf is not free either. Every optional import in the source
 # is guarded, so an absent extra removes a capability rather than breaking one.
 dependencies = [
@@ -79,7 +79,7 @@ media = ["youtube-transcript-api>=1.0"]
 semantic = [
     "numpy>=1.24",
     "onnxruntime>=1.17",
-    "transformers>=4.40",
+    "tokenizers>=0.20",
 ]
 # A real Chrome TLS fingerprint without a browser. Worth its place: it is the
 # only thing that got past one host's blocking in testing, and it is FASTER
