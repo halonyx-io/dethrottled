@@ -105,6 +105,9 @@ def test_the_last_engine_standing_is_never_rested():
 def test_when_all_engines_are_rested_only_the_oldest_is_retried():
     fs._record_failure("auto", "blocked", namespace="web")
     fs._record_failure("google", "blocked", namespace="web")
+    health = fs._load_health()
+    health["web:auto"]["at"] = health["web:google"]["at"] - 1
+    fs._save_health(health)
     assert fs._rested("google,auto", namespace="web") == "auto"
 
 
