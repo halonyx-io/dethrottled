@@ -6,6 +6,7 @@ at it and it works:
 
     POST /search              free search across every configured source
     POST /fetch               URLs -> their prose (raw=true for the source)
+    POST /drive               drive the private browser: click, fill, read
     POST /search-and-fetch    both at once, fetching only the winners
     GET  /corpus/search       what has already been fetched, no network
     GET  /health              is the process alive
@@ -33,6 +34,14 @@ spend four seconds of Chromium on pages `direct` serves in two hundred
 milliseconds. Where forcing the question is genuinely useful, that is the
 `render` parameter, not a route.
 
+`/drive` is the one place that rule bends, and on purpose. `/fetch` READS a
+page; `/drive` OPERATES one -- click, type, hold a session, read what rendered.
+That is not a strategy the ladder could have chosen for you, because the caller
+is not asking for a page, it is asking for a sequence of actions against one.
+It is proxied straight to the private browser worker, which owns the single
+warm, headed, stealth browser this stack already runs; the caller never
+launches a browser, sets a DISPLAY, or picks a Chromium build.
+
 `/extract` and `/search-and-extract` remain as aliases: they are what earlier
 callers were written against, and renaming for tidiness is a poor trade. So is
 `/extract-with-links`, which is `/fetch` with `links: true` -- the anchors kept
@@ -51,9 +60,10 @@ import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
+from typing import Literal
 
 from fastapi import BackgroundTasks, FastAPI, HTTPException
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 # Read from the package, never restated here.
 #
@@ -221,6 +231,61 @@ class ResearchBody(BaseModel):
     language: str = ""
     fresh: bool = False
     categories: str = ""
+
+
+class DriveStep(BaseModel):
+    """One action for the browser to take. `action` selects which fields matter."""
+    model_config = ConfigDict(extra="forbid")
+
+    # goto      navigate to `url`
+    # click     click `selector`
+    # fill      type `value` into `selector`
+    # press     press `value` (a key) at `selector` (defaults to the page body)
+    # wait      sleep `ms`
+    # wait_for  wait for `selector` to appear, up to `ms`
+    # text      read the text of `selector` (or the whole body)
+    action: str = Field(min_length=1, max_length=20)
+    selector: str = Field(default="", max_length=1000)
+    value: str = Field(default="", max_length=4000)
+    url: str = Field(default="", max_length=2048)
+    ms: int = Field(default=1000, ge=0, le=30000)
+    delay_ms: int = Field(default=0, ge=0, le=1000)
+    name: str = Field(default="", max_length=200)
+    index: int = Field(default=0, ge=0, le=500)
+    limit: int = Field(default=100, ge=1, le=200)
+
+
+class DriveBody(BaseModel):
+    """A scripted sequence for the private browser worker to perform.
+
+    The manipulation twin of FetchBody: /fetch READS a page, /drive OPERATES
+    one. Steps run in order and the run stops at the first failure -- an agent
+    that has to click through an app gets asked to, and told exactly which step
+    failed and why, rather than being handed a page and left to guess.
+    """
+    model_config = ConfigDict(extra="forbid")
+
+    url: str = Field(default="", max_length=2048)
+    steps: list[DriveStep] = Field(default_factory=list, max_length=40)
+    # Whole-run budget. The worker also caps each step; this is the backstop
+    # that stops one slow selector holding a browser forever.
+    timeout_ms: int = Field(default=45000, ge=1000, le=180000)
+    session: str = Field(default="", max_length=64, pattern=r"^[A-Za-z0-9._-]*$")
+    close_session: bool = False
+    allowed_hosts: list[str] = Field(default_factory=list, max_length=32)
+    canaries: list[str] = Field(default_factory=list, max_length=20)
+    include_events: bool = True
+    screenshot: bool | Literal["never", "failure", "canary", "always"] = "failure"
+    screenshot_full_page: bool = False
+
+    @model_validator(mode="after")
+    def _need_something(self):
+        # Reject an empty request here rather than round-tripping to the worker
+        # to be told the same thing. Same refusal, one less hop, and the caller
+        # gets a 422 from the API it is actually talking to.
+        if not self.url and not self.steps and not (self.session and self.close_session):
+            raise ValueError("nothing to do: supply url and/or steps")
+        return self
 
 
 def _attempts(meta: dict) -> list:
@@ -441,6 +506,24 @@ def v2_capabilities():
             ("crawl4ai", bool(fetcher.CRAWL4AI_URL)),
             ("jina-reader", fetcher.ENABLE_JINA),
         ) if on],
+        # Browser MANIPULATION, as distinct from the fetch ladder above. /fetch
+        # reads a page; /drive operates one. Present only when the private
+        # worker that owns the headed browser is configured -- /drive is a
+        # straight proxy to it, so with no worker the capability is absent, not
+        # degraded. Same rule the fetch tiers follow: never advertise a rung
+        # that cannot answer.
+        "manipulation": {
+            "available": bool(fs.BROWSER_SEARCH_URL),
+            "endpoint": "/drive",
+            "actions": list(fs.DRIVE_ACTIONS),
+            "persistent_sessions": True,
+            "session_ttl_seconds": fs.DRIVE_SESSION_TTL,
+            "max_sessions": fs.DRIVE_MAX_SESSIONS,
+            "screenshot_modes": ["never", "failure", "canary", "always"],
+            "event_telemetry": ["dialogs", "console", "page_errors",
+                                "request_failures", "http_errors"],
+            "navigation_allowlist": True,
+        },
         "tiers_resting": fetcher.tier_rest_state(),
         "extract": [k for k, v in fx.available().items() if v],
         "ranking": ranker.available(),
@@ -590,6 +673,38 @@ def fetch_with_links(body: FetchBody, background: BackgroundTasks):
     """
     body.links = True
     return fetch_urls(body, background)
+
+
+@app.post("/drive")
+def drive(body: DriveBody):
+    """Operate the private browser: navigate, click, fill, read, screenshot.
+
+    The manipulation twin of /fetch. /fetch READS a page; /drive OPERATES one,
+    holding a real session the way an agent driving an app has to. Proxied
+    straight to the private browser worker, which owns the single warm, headed,
+    stealth browser this stack already runs -- so a caller never launches a
+    browser, picks a Chromium build, or sets a DISPLAY.
+
+    Steps run in order and the run STOPS at the first failure, reporting which
+    step failed and why. A driver that presses on after a failed click is
+    describing a page it is no longer looking at.
+
+    The worker being absent, overloaded, or refusing is a 502 here, not an
+    empty 200: a caller that asked a browser to click something must never be
+    told "ok, nothing happened".
+    """
+    payload = body.model_dump()
+    try:
+        return fs.browser_drive(payload)
+    except fs.BrowserWorkerError as exc:
+        # A client-side refusal from the worker (4xx) is the caller's fault and
+        # should reach them as-is; only an unreachable or failing worker is a
+        # 502. Flattening "your step was malformed" into "bad gateway" is how a
+        # caller ends up debugging the wrong machine.
+        code = exc.status if 400 <= (exc.status or 0) < 500 else 502
+        raise HTTPException(status_code=code, detail=exc.detail) from exc
+    except RuntimeError as exc:
+        raise HTTPException(status_code=502, detail=str(exc)[:300]) from exc
 
 
 @app.post("/search-and-fetch")

@@ -44,6 +44,8 @@ services:
     environment:
       DETHROTTLED_SEARXNG_URL: http://searxng:8080
       DETHROTTLED_BROWSER_SEARCH_URL: http://browser-search:19888
+      DETHROTTLED_DRIVE_SESSION_TTL: "${DETHROTTLED_DRIVE_SESSION_TTL:-1800}"
+      DETHROTTLED_DRIVE_MAX_SESSIONS: "${DETHROTTLED_DRIVE_MAX_SESSIONS:-8}"
       # DDG and Bing News answered the frozen news pool; Google News and
       # Reuters were repeatedly suspended/erroring in the 2026-10-03 probe.
       DETHROTTLED_SEARXNG_ENGINES: "duckduckgo news,bing news"
@@ -71,6 +73,9 @@ services:
     build: ./browser-search
     image: dethrottled-browser-search:local
     restart: unless-stopped
+    environment:
+      DETHROTTLED_DRIVE_SESSION_TTL: "${DETHROTTLED_DRIVE_SESSION_TTL:-1800}"
+      DETHROTTLED_DRIVE_MAX_SESSIONS: "${DETHROTTLED_DRIVE_MAX_SESSIONS:-8}"
     expose:
       - "19888"
     shm_size: 1gb

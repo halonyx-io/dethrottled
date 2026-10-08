@@ -20,6 +20,7 @@ error for the whole batch. A search that finds nothing returns `[]`.
 | `POST /search-and-fetch` | Search, rank, then read selected URLs |
 | `POST /search-and-extract` | Alias for `/search-and-fetch` |
 | `POST /research` | Collect a cited evidence bundle without generating an answer |
+| `POST /drive` | Run bounded browser actions, optionally in a reusable session |
 | `GET /corpus/search` | Search locally stored extracted passages |
 | `GET /corpus/stats` | Count locally stored corpus material |
 | `GET /health` | Process liveness |
@@ -126,6 +127,60 @@ and removes near-duplicate content. `summary.model_used` is `false`: no prose
 answer or citations are invented by a model. At most two research requests run
 at once; excess requests receive HTTP 429. Invalid research input receives
 HTTP 422.
+
+## Browser drive
+
+`/drive` gives an agent a bounded browser primitive without exposing arbitrary
+JavaScript evaluation. Prefer `snapshot`, `text`, `attr`, and event telemetry
+over screenshots; request pixels only when visual layout matters.
+See [DRIVE.md](DRIVE.md) for the recommended agent loop and complete action
+reference.
+
+```sh
+curl -sS http://127.0.0.1:8787/drive \
+  -H 'content-type: application/json' \
+  -d '{
+    "session":"airtable-check",
+    "url":"https://staging.airtable.com/",
+    "allowed_hosts":["staging.airtable.com"],
+    "screenshot":"canary",
+    "canaries":["DRIVE_CANARY_7f13"],
+    "steps":[
+      {"action":"snapshot","limit":100},
+      {"action":"fill","selector":"input[name=q]","value":"test"},
+      {"action":"press","selector":"input[name=q]","value":"Enter"},
+      {"action":"wait_for","selector":"main"},
+      {"action":"text","selector":"main","limit":4000}
+    ]
+  }'
+```
+
+Supported actions are `goto`, `click`, `fill`, `type`, `press`, `select`,
+`check`, `uncheck`, `hover`, `wait`, `wait_for`, `text`, `html`, `attr`,
+`count`, `snapshot`, `url`, and `title`. Each response records per-step timing,
+the final URL and title, failed requests, HTTP errors, console messages, page
+errors, and automatically dismissed dialogs. A matched canary is returned in
+`canary_matches`; matches in dialogs, console output, or page errors are marked
+as execution signals.
+
+Set `session` to reuse cookies, storage, tabs, and DOM state between calls.
+Named sessions are serialized, kept only in worker memory, and expire after 30
+minutes by default; the default limit is eight live sessions. Send
+`{"session":"airtable-check","close_session":true,"steps":[]}` to release
+one immediately. Omitting `session` creates a fresh context and closes it after
+the request.
+
+`screenshot` accepts `never`, `failure` (default), `canary`, or `always`.
+Legacy booleans map to `always` and `never`. Screenshots are returned as base64
+PNG. `allowed_hosts` restricts top-level navigation for a session and should be
+set for autonomous work; subdomains of an allowed host are included. A named
+session's allowlist cannot be changed while it is live. `timeout_ms` bounds the
+whole run, and each step can set a smaller `timeout_ms` and `delay_ms`.
+
+The local API has no authentication and `/drive` controls a real browser. Keep
+it on a trusted network or place an authenticated, policy-enforcing gateway in
+front of it. Target allowlists and programme authorization still belong to the
+calling agent; this endpoint does not decide whether a target is in scope.
 
 ## Corpus and diagnostics
 
