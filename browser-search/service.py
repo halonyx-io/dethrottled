@@ -281,6 +281,14 @@ INTERACTIVE_SELECTOR = (
 )
 
 
+class DriveActionFailure(RuntimeError):
+    """A concise failure reason plus machine-readable browser diagnostics."""
+
+    def __init__(self, reason: str, diagnostics: dict):
+        super().__init__(reason)
+        self.diagnostics = diagnostics
+
+
 class DriveStep(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -480,9 +488,120 @@ def _events_since_start(events: dict[str, deque]) -> dict[str, list]:
     return {name: list(items) for name, items in events.items()}
 
 
+async def _locator_diagnostics(page, locator) -> dict:
+    """Explain why an already-resolved locator may not be actionable."""
+    try:
+        count = await locator.count()
+    except Exception as exc:
+        return {
+            "count": None,
+            "timeout_stage": "locator_resolution",
+            "diagnostic_error": type(exc).__name__ + ": " + str(exc)[:240],
+        }
+    diagnostics = {
+        "count": count,
+        "timeout_stage": "actionability" if count else "locator_resolution",
+    }
+    if not count:
+        diagnostics["actionability"] = "detached"
+        return diagnostics
+    try:
+        first = await locator.evaluate("""el => {
+          const rect = el.getBoundingClientRect();
+          const style = getComputedStyle(el);
+          const inViewport = rect.bottom > 0 && rect.right > 0
+            && rect.top < innerHeight && rect.left < innerWidth;
+          const cx = Math.max(0, Math.min(innerWidth - 1, rect.left + rect.width / 2));
+          const cy = Math.max(0, Math.min(innerHeight - 1, rect.top + rect.height / 2));
+          const hit = inViewport ? document.elementFromPoint(cx, cy) : null;
+          const describe = node => {
+            if (!node) return null;
+            let value = node.tagName.toLowerCase();
+            if (node.id) value += '#' + node.id;
+            if (node.classList.length) value += '.' + [...node.classList].slice(0, 3).join('.');
+            const label = node.getAttribute('aria-label');
+            return label ? value + '[aria-label="' + label.slice(0, 80) + '"]' : value;
+          };
+          return {
+            attached: el.isConnected,
+            visible: style.display !== 'none' && style.visibility !== 'hidden'
+              && Number(style.opacity) > 0 && rect.width > 0 && rect.height > 0,
+            enabled: !(el.disabled || el.getAttribute('aria-disabled') === 'true'),
+            pointer_events: style.pointerEvents,
+            box: {x: rect.x, y: rect.y, width: rect.width, height: rect.height},
+            viewport: {width: innerWidth, height: innerHeight},
+            in_viewport: inViewport,
+            receives_events: !!hit && (hit === el || el.contains(hit)),
+            hit_target: describe(hit)
+          };
+        }""", timeout=1000)
+        diagnostics.update(first)
+        await asyncio.sleep(0.1)
+        second_box = await locator.evaluate("""el => {
+          const r = el.getBoundingClientRect();
+          return {x: r.x, y: r.y, width: r.width, height: r.height};
+        }""", timeout=1000)
+        diagnostics["movement_px"] = round(max(
+            abs(first["box"][key] - second_box[key])
+            for key in ("x", "y", "width", "height")
+        ), 2)
+        diagnostics["stable"] = diagnostics["movement_px"] <= 1
+    except Exception as exc:
+        diagnostics["diagnostic_error"] = type(exc).__name__ + ": " + str(exc)[:240]
+    return diagnostics
+
+
+def _actionability_reason(diagnostics: dict, browser_error: str = "") -> str:
+    message = browser_error.lower()
+    for fragment, reason in (
+        ("intercepts pointer events", "covered"),
+        ("not stable", "unstable"),
+        ("outside of the viewport", "out_of_viewport"),
+        ("not visible", "hidden"),
+        ("not enabled", "disabled"),
+        ("not attached", "detached"),
+    ):
+        if fragment in message:
+            return reason
+    if diagnostics.get("count") is None:
+        return "selector_error"
+    if not diagnostics.get("count") or diagnostics.get("attached") is False:
+        return "detached"
+    if diagnostics.get("visible") is False:
+        return "hidden"
+    if diagnostics.get("enabled") is False:
+        return "disabled"
+    if diagnostics.get("pointer_events") == "none":
+        return "not_receiving_events"
+    if diagnostics.get("in_viewport") is False:
+        return "out_of_viewport"
+    if diagnostics.get("receives_events") is False:
+        return "covered"
+    if diagnostics.get("stable") is False:
+        return "unstable"
+    return "unknown"
+
+
 async def _snapshot(page, selector: str, limit: int) -> list[dict]:
     locator = page.locator(selector or INTERACTIVE_SELECTOR)
-    return await locator.evaluate_all("""(elements, limit) => elements.slice(0, limit).map((el) => {
+    return await locator.evaluate_all("""(roots, options) => {
+      const seen = new Set();
+      const elements = [];
+      const add = el => {
+        if (!seen.has(el)) { seen.add(el); elements.push(el); }
+      };
+      for (const root of roots) {
+        add(root);
+        if (options.expand) root.querySelectorAll(options.interactive).forEach(add);
+      }
+      const visible = elements.filter(el => {
+        const rect = el.getBoundingClientRect();
+        const style = getComputedStyle(el);
+        return el.isConnected && style.display !== 'none'
+          && style.visibility !== 'hidden' && Number(style.opacity) > 0
+          && rect.width > 0 && rect.height > 0;
+      });
+      return visible.slice(0, options.limit).map((el) => {
       const text = (
         el.innerText || el.value || el.getAttribute('aria-label') || ''
       ).trim().slice(0, 240);
@@ -505,7 +624,9 @@ async def _snapshot(page, selector: str, limit: int) -> list[dict]:
         visible: !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length),
         disabled: !!el.disabled, selector: hint
       };
-    })""", limit)
+    });
+    }""", {"limit": limit, "expand": bool(selector),
+             "interactive": INTERACTIVE_SELECTOR})
 
 
 async def _canary_matches(page, events: dict[str, deque], canaries: list[str]) -> list[dict]:
@@ -629,6 +750,9 @@ async def _drive(state: dict, body: DriveRequest) -> dict:
         except asyncio.CancelledError:
             step["reason"] = "cancelled"
             raise
+        except DriveActionFailure as exc:
+            step["reason"] = str(exc)
+            step["diagnostics"] = exc.diagnostics
         except Exception as exc:
             step["reason"] = type(exc).__name__ + ": " + str(exc)[:160]
         step["elapsed_ms"] = int((time.monotonic() - t) * 1000)
@@ -640,6 +764,19 @@ async def _drive(state: dict, body: DriveRequest) -> dict:
             raise ValueError("navigation outside allowed_hosts")
         response = await page.goto(url, wait_until="domcontentloaded", timeout=timeout)
         return {"url": page.url, "status": response.status if response else None}
+
+    async def diagnosed_failure(action: str, target, exc: Exception, stage: str):
+        diagnostics = await _locator_diagnostics(page, target)
+        if diagnostics.get("count"):
+            diagnostics["timeout_stage"] = stage
+        browser_error = str(exc)
+        diagnostics["browser_error"] = browser_error[-1200:]
+        reason = _actionability_reason(diagnostics, browser_error)
+        if type(exc).__name__ == "TimeoutError":
+            prefix = "%s_actionability_timeout" % action
+        else:
+            prefix = "%s_failed" % action
+        raise DriveActionFailure(prefix + ":" + reason, diagnostics) from exc
 
     if body.url:
         results.append(await _run("goto", lambda: navigate(
@@ -654,7 +791,11 @@ async def _drive(state: dict, body: DriveRequest) -> dict:
                 return await navigate(s.url, min(30000, s.ms or 20000))
         elif action == "click":
             async def call(s=s):
-                await locator(s).click(timeout=s.ms or 8000)
+                target = locator(s)
+                try:
+                    await target.click(timeout=s.ms or 8000)
+                except Exception as exc:
+                    await diagnosed_failure("click", target, exc, "actionability")
                 return True
         elif action == "fill":
             async def call(s=s):
@@ -708,7 +849,10 @@ async def _drive(state: dict, body: DriveRequest) -> dict:
         elif action == "html":
             async def call(s=s):
                 target = locator(s) if s.selector else page.locator("html")
-                return (await target.evaluate("el => el.outerHTML"))[:20000]
+                try:
+                    return (await target.evaluate("el => el.outerHTML"))[:20000]
+                except Exception as exc:
+                    await diagnosed_failure("html", target, exc, "dom_read")
         elif action == "attr":
             async def call(s=s):
                 if not s.name:
@@ -719,7 +863,14 @@ async def _drive(state: dict, body: DriveRequest) -> dict:
                 return await page.locator(s.selector).count()
         elif action == "snapshot":
             async def call(s=s):
-                return await _snapshot(page, s.selector, s.limit)
+                try:
+                    return await _snapshot(page, s.selector, s.limit)
+                except Exception as exc:
+                    target = (
+                        page.locator(s.selector).first
+                        if s.selector else page.locator("body")
+                    )
+                    await diagnosed_failure("snapshot", target, exc, "dom_snapshot")
         elif action == "url":
             async def call():
                 return page.url

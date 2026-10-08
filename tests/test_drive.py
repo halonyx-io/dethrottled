@@ -74,6 +74,9 @@ def test_capabilities_advertise_power_without_arbitrary_evaluate(client):
     assert {"snapshot", "html", "attr", "count", "title"} <= set(manipulation["actions"])
     assert "evaluate" not in manipulation["actions"]
     assert manipulation["screenshot_modes"] == ["never", "failure", "canary", "always"]
+    assert {"hidden", "unstable", "covered", "out_of_viewport"} <= set(
+        manipulation["failure_diagnostics"]
+    )
 
 
 def test_browser_proxy_timeout_tracks_requested_run_budget(monkeypatch):

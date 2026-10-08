@@ -62,7 +62,7 @@ silently creating a new `about:blank` context.
 
 | Action | Important fields | Result |
 | --- | --- | --- |
-| `snapshot` | `selector`, `limit` | Visible interactive elements and selector hints |
+| `snapshot` | `selector`, `limit` | Visible interactive elements and selector hints; a selector scopes the snapshot and includes matching descendants |
 | `goto` | `url`, `ms` | Final URL and HTTP status when available |
 | `click` | `selector`, `index`, `ms` | Click outcome |
 | `fill` | `selector`, `value` | Replace a value and emit `input` plus `change` |
@@ -82,6 +82,19 @@ silently creating a new `about:blank` context.
 Steps stop at the first failure. Every step reports `ok`, `reason`,
 `elapsed_ms`, and `data`, so the caller should repair or re-plan instead of
 continuing from an assumed page state.
+
+Failed `click`, `html`, and `snapshot` steps also return `diagnostics`. For a
+click timeout, `reason` distinguishes `hidden`, `unstable`, `covered`,
+`out_of_viewport`, `disabled`, `detached`, `selector_error`, and `unknown`;
+diagnostics include the timeout stage, bounding box, viewport, pointer-events
+value, hit-test target, and a bounded browser error log. This tells an agent
+whether to scroll, wait, dismiss an overlay, choose another control, or stop
+guessing.
+
+The default snapshot filters invisible nodes before applying `limit`. Supplying
+a container selector such as `#grid` or `[role=grid]` treats it as a scope and
+returns the visible container plus interactive descendants. This is useful for
+virtualized React grids whose controls occur after substantial page chrome.
 
 `fill` uses the browser's native editing path. Patchright emits `input` while
 setting the value, and Dethrottled emits `change` immediately afterward. This
