@@ -22,6 +22,23 @@ def test_drive_defaults_to_failure_only_screenshots(client):
     body = client.post("/drive", json={"url": "https://example.com"}).json()
     assert body["echo"]["screenshot"] == "failure"
     assert body["echo"]["include_events"] is True
+    assert body["echo"]["session"].startswith("auto-")
+
+
+def test_drive_navigation_without_name_returns_reusable_session(client):
+    body = client.post("/drive", json={
+        "steps": [{"action": "goto", "url": "https://example.com"}],
+    }).json()
+    assert body["session"]["id"].startswith("auto-")
+    assert body["session"]["persistent"] is True
+
+
+def test_drive_stateful_steps_without_session_fail_actionably(client):
+    response = client.post("/drive", json={
+        "steps": [{"action": "snapshot", "limit": 10}],
+    })
+    assert response.status_code == 422
+    assert "reuse the returned session.id" in response.json()["detail"]
 
 
 def test_drive_accepts_agent_inspection_and_session_fields(client):
@@ -53,6 +70,7 @@ def test_drive_rejects_empty_or_unsafe_session_name(client):
 def test_capabilities_advertise_power_without_arbitrary_evaluate(client):
     manipulation = client.get("/v2/capabilities").json()["manipulation"]
     assert manipulation["persistent_sessions"] is True
+    assert manipulation["automatic_sessions"] is True
     assert {"snapshot", "html", "attr", "count", "title"} <= set(manipulation["actions"])
     assert "evaluate" not in manipulation["actions"]
     assert manipulation["screenshot_modes"] == ["never", "failure", "canary", "always"]
