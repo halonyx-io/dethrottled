@@ -1,13 +1,17 @@
 # Dethrottled
 
-**Keyless web search, fetch, and document extraction for agents and local
-tooling.** No paid API keys, metered tiers, or purchased provider quotas.
-Search queries go to public engines and fetches go to the URLs you name. No
-language model writes answers; results stay traceable to their sources.
+**Keyless web search, stateful browser operation, fetch, and document
+extraction for agents and local tooling.** No paid API keys, metered tiers, or
+purchased provider quotas. Agents can discover pages, read them cheaply, or
+operate a real browser through one local API. No language model writes answers;
+results stay traceable to their sources.
 
 - **Keyless.** No paid search API, no per-query cost, no account.
 - **Local-first.** Runs as a single container. The Compose project adds a
   private browser search worker, SearXNG, and a local JavaScript renderer.
+- **Agent-operable browser.** `/drive` provides persistent sessions, structured
+  DOM snapshots, bounded interactions, execution canaries, and event telemetry
+  without requiring agents to launch Chromium or interpret every screenshot.
 - **Self-contained.** The API image bakes in its Python dependencies,
   Tesseract, ONNX Runtime, and the one MiniLM corpus model it uses.
 - **Evidence, not prose.** `/research` returns a cited source bundle you can
@@ -41,6 +45,10 @@ curl -sS http://127.0.0.1:8787/fetch \
 curl -sS http://127.0.0.1:8787/research \
   -H 'content-type: application/json' \
   -d '{"question":"What changed in Python 3.12?","max_sources":4}'
+
+curl -sS http://127.0.0.1:8787/drive \
+  -H 'content-type: application/json' \
+  -d '{"url":"https://example.com/","screenshot":"never","steps":[{"action":"snapshot"}]}'
 ```
 
 ## What it does
@@ -52,11 +60,12 @@ curl -sS http://127.0.0.1:8787/research \
 | Links | `POST /extract-with-links` | Fetch with outbound links kept |
 | Search + read | `POST /search-and-fetch` (alias `/search-and-extract`) | Rank, then read the kept results |
 | Research | `POST /research` | A cited, diverse evidence bundle — no model answer |
+| Browser drive | `POST /drive` | Bounded, optionally stateful browser actions with DOM and event telemetry |
 | Corpus | `GET /corpus/search`, `GET /corpus/stats` | Local semantic index of everything fetched |
 | Status | `GET /health`, `/ready`, `/v2/status`, `/v2/capabilities`, `/stats` | Liveness and real configuration |
 
-`/search` finds; `/fetch` reads; `/research` assembles evidence. A search that
-finds nothing returns `[]`, and a failed fetch is a row with
+`/search` finds; `/fetch` reads; `/drive` operates; `/research` assembles
+evidence. A search that finds nothing returns `[]`, and a failed fetch is a row with
 `quality: "failed"` — HTTP 200 alone does not prove a useful result.
 
 **Reading:** HTML, CSV/TSV, PDF (with OCR for scans), XLS/XLSX, DOCX, PPTX,
@@ -99,6 +108,7 @@ The report and raw JSON are also copied into the API image at
 | --- | --- |
 | [Features](docs/FEATURES.md) | Every current feature and the shortest way to use it |
 | [HTTP API](docs/API.md) | All local endpoints, fields, response shapes, examples |
+| [Browser drive](docs/DRIVE.md) | Efficient agent workflow, sessions, actions, canaries, and safety boundaries |
 | [Python API](docs/PYTHON.md) | Direct imports, source-install extras, and examples |
 | [Pipeline](docs/PIPELINE.md) | Search, rendering, extraction, ranking, research, corpus |
 | [Configuration](docs/CONFIGURATION.md) | Compose settings and local performance choices |
@@ -115,6 +125,7 @@ client ──▶ dethrottled API (:8787) ──▶ search engines (keyless)
                     │                  └─ news RSS
                     ├─▶ fetch ladder ──▶ direct ▸ tls ▸ crawl4ai (JS render)
                     ├─▶ extraction ───▶ trafilatura ▸ resiliparse ▸ selectolax
+                    ├─▶ /drive ───────▶ isolated Patchright browser sessions
                     └─▶ corpus (SQLite + ONNX MiniLM embeddings)
 ```
 

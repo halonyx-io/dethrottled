@@ -20,6 +20,8 @@ request fields and responses.
 | Return source HTML | `/fetch` with `format: "html"` | This refetches because source HTML is not stored in the text cache |
 | Search then read | `POST /search-and-fetch` | Search rows merged with per-URL fetch status; bulk results skip OCR |
 | Evidence research | `POST /research` with `question` | Source IDs, content, evidence windows, skipped sources; no model answer |
+| Stateful browser operation | `POST /drive` with a named `session` and bounded `steps` | Structured snapshots, per-step results, browser events, and final URL/title |
+| Execution-canary detection | Add unique `canaries` and use `screenshot: "canary"` | Dialog, console, page-error, title, URL, and visible-text matches; check `execution_signal` |
 | Local semantic corpus | `GET /corpus/search?q=...` | Search happens locally; `/corpus/stats` shows indexed pages/passages |
 | Health and diagnostics | `/health`, `/ready`, `/v2/status`, `/v2/capabilities`, `/stats` | Liveness differs from real source health; use functional probes too |
 | Functional health command | Run `dethrottled-health --json` in the API container | Makes real search/fetch probes; can take time and reach public sites |

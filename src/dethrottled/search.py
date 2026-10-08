@@ -408,6 +408,31 @@ WEB_ENGINES = [e.strip() for e in os.environ.get(
 
 WEB_TIMEOUT = int(os.environ.get("DETHROTTLED_WEB_TIMEOUT", "20"))
 BROWSER_SEARCH_URL = os.environ.get("DETHROTTLED_BROWSER_SEARCH_URL", "").rstrip("/")
+DRIVE_SESSION_TTL = int(os.environ.get("DETHROTTLED_DRIVE_SESSION_TTL", "1800"))
+DRIVE_MAX_SESSIONS = int(os.environ.get("DETHROTTLED_DRIVE_MAX_SESSIONS", "8"))
+
+# The actions the private browser worker will perform. The worker is the
+# enforcer and owns the same list in its service.py; this copy exists so the
+# API can advertise the capability without a live round-trip to a status route.
+# A caller reading /v2/capabilities gets the truth whether or not the worker is
+# answering at that instant.
+DRIVE_ACTIONS = (
+    "goto", "click", "fill", "type", "press", "select", "check", "uncheck", "hover",
+    "wait", "wait_for", "text", "html", "attr", "count", "snapshot", "url", "title",
+)
+
+
+class BrowserWorkerError(RuntimeError):
+    """The private browser worker refused or could not be reached.
+
+    Carries the worker's own HTTP status so the API can pass a 4xx back to the
+    caller unchanged instead of laundering every worker refusal into a 502.
+    """
+
+    def __init__(self, status: int | None, detail):
+        self.status = status
+        self.detail = detail if detail is not None else "browser worker error"
+        super().__init__("browser worker refused (%s): %s" % (status, self.detail))
 # The three discovery sources wait on unrelated network services. Reuse a
 # bounded pool across API requests instead of creating three new threads per
 # call; consume futures in the original source order to preserve ranking and
@@ -466,6 +491,42 @@ def browser_search(query: str, *, max_items: int = 8, cache=None,
         if diagnostics is not None and "status" not in diagnostics:
             diagnostics.update(status=type(exc).__name__, attempts=[])
         return []
+
+
+def browser_drive(payload: dict, *, timeout: int | None = None) -> dict:
+    """Drive the private browser worker: navigate, click, fill, read.
+
+    The worker owns the one warm, headed, stealth browser. This hands a bounded
+    scripted sequence to it and returns the worker's own step-by-step report.
+
+    Deliberately different from browser_search(): that path treats the worker
+    as an optional discovery source and degrades to no rows when it is absent.
+    This one is a request to *do work*, so an absent or failing worker is a
+    raised error, not an empty result. A caller asking a browser to click
+    something must never be told "ok, nothing happened".
+    """
+    if not BROWSER_SEARCH_URL:
+        raise BrowserWorkerError(None, "browser worker not configured "
+                                 "(DETHROTTLED_BROWSER_SEARCH_URL is unset)")
+    try:
+        if timeout is None:
+            timeout = max(90, int(payload.get("timeout_ms", 45000) / 1000) + 15)
+        response = requests.post(BROWSER_SEARCH_URL + "/drive",
+                                 json=payload, timeout=timeout)
+    except requests.RequestException as exc:
+        raise BrowserWorkerError(None, "browser worker unreachable: %s" % exc) from exc
+    if response.status_code >= 400:
+        detail = None
+        try:
+            body = response.json()
+            detail = body.get("detail") if isinstance(body, dict) else body
+        except ValueError:
+            detail = response.text[:300]
+        raise BrowserWorkerError(response.status_code, detail)
+    out = response.json()
+    if not isinstance(out, dict):
+        raise BrowserWorkerError(None, "browser worker response is not an object")
+    return out
 
 
 def web_search(query: str, *, max_items: int = 8, cache=None,
