@@ -163,6 +163,13 @@ errors, and automatically dismissed dialogs. A matched canary is returned in
 `canary_matches`; matches in dialogs, console output, or page errors are marked
 as execution signals.
 
+On `click`, `html`, or `snapshot` failure, the step can include structured
+`diagnostics`. Click timeouts classify hidden, unstable, covered,
+out-of-viewport, disabled, detached, and malformed-selector failures and report
+the timeout stage, geometry, hit-test target, pointer-events value, and bounded
+browser error. For `snapshot`, a supplied selector is a scope: the response
+includes that visible node and its visible interactive descendants.
+
 `fill` follows the browser-native value path, emits `input`, and then explicitly
 emits `change`, so React-controlled inputs and commit-on-change forms observe
 the update in the same step.
