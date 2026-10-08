@@ -434,6 +434,7 @@ async def _reap_drive_sessions() -> None:
 async def _get_drive_state(browser, body: DriveRequest) -> tuple[dict, bool]:
     if not body.session:
         return await _make_drive_state(browser, body.allowed_hosts), True
+    evicted = None
     async with DRIVE_SESSIONS_LOCK:
         existing = DRIVE_SESSIONS.get(body.session)
         if existing is not None:
@@ -441,11 +442,38 @@ async def _get_drive_state(browser, body: DriveRequest) -> tuple[dict, bool]:
                 raise HTTPException(409, "allowed_hosts cannot change within a session")
             existing["last_used"] = time.monotonic()
             return existing, False
+        has_navigation = bool(body.url) or any(
+            step.action.lower() == "goto" and bool(step.url) for step in body.steps
+        )
+        if not has_navigation:
+            # A missing, expired, or evicted session must not masquerade as a
+            # successful call against a new about:blank context. The caller
+            # has lost state and needs to navigate/login again.
+            raise HTTPException(
+                409,
+                "drive session not found; navigate first to create it, then reuse "
+                "the returned session.id",
+            )
         if len(DRIVE_SESSIONS) >= MAX_DRIVE_SESSIONS:
-            raise HTTPException(429, "drive session limit reached")
+            # Generated sessions are a convenience and must not permanently
+            # consume the finite pool if a caller forgets to close one. Never
+            # evict an explicitly named workflow; only the least-recently-used
+            # auto session is disposable.
+            candidates = [
+                (sid, item) for sid, item in DRIVE_SESSIONS.items()
+                if sid.startswith("auto-") and not item["lock"].locked()
+            ]
+            if not candidates:
+                raise HTTPException(429, "drive session limit reached")
+            evicted_id, evicted = min(
+                candidates, key=lambda pair: pair[1]["last_used"]
+            )
+            DRIVE_SESSIONS.pop(evicted_id, None)
         state = await _make_drive_state(browser, body.allowed_hosts)
         DRIVE_SESSIONS[body.session] = state
-        return state, False
+    if evicted is not None:
+        await _close_drive_state(evicted)
+    return state, False
 
 
 def _events_since_start(events: dict[str, deque]) -> dict[str, list]:

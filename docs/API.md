@@ -171,8 +171,14 @@ Set `session` to reuse cookies, storage, tabs, and DOM state between calls.
 Named sessions are serialized, kept only in worker memory, and expire after 30
 minutes by default; the default limit is eight live sessions. Send
 `{"session":"airtable-check","close_session":true,"steps":[]}` to release
-one immediately. Omitting `session` creates a fresh context and closes it after
-the request.
+one immediately. If a navigation omits `session`, Dethrottled creates a
+persistent `auto-*` session and returns its ID in `session.id`; reuse that ID
+for follow-up inspection and interaction. A stateful request such as
+`snapshot` without a session or navigation returns `422`. Set
+`"close_session":true` on an unnamed navigation to make it a one-shot request.
+Auto-created sessions are evicted before explicitly named sessions if the
+session pool fills. An unknown, expired, or evicted session ID returns `409`
+for a stateful call instead of creating a blank replacement context.
 
 `screenshot` accepts `never`, `failure` (default), `canary`, or `always`.
 Legacy booleans map to `always` and `never`. Screenshots are returned as base64

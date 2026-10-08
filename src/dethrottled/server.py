@@ -56,6 +56,7 @@ from __future__ import annotations
 
 import argparse
 import os
+import secrets
 import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
@@ -517,6 +518,7 @@ def v2_capabilities():
             "endpoint": "/drive",
             "actions": list(fs.DRIVE_ACTIONS),
             "persistent_sessions": True,
+            "automatic_sessions": True,
             "session_ttl_seconds": fs.DRIVE_SESSION_TTL,
             "max_sessions": fs.DRIVE_MAX_SESSIONS,
             "screenshot_modes": ["never", "failure", "canary", "always"],
@@ -693,6 +695,24 @@ def drive(body: DriveBody):
     empty 200: a caller that asked a browser to click something must never be
     told "ok, nothing happened".
     """
+    has_navigation = bool(body.url) or any(
+        step.action.lower() == "goto" and bool(step.url) for step in body.steps
+    )
+    if not body.session:
+        if has_navigation:
+            # Navigation starts a workflow. Persist it automatically so the
+            # caller can inspect or interact with the same page in a later
+            # request instead of being handed an unusable null session ID.
+            body.session = f"auto-{secrets.token_hex(8)}"
+        elif body.steps:
+            raise HTTPException(
+                status_code=422,
+                detail=(
+                    "session is required for stateful drive steps; navigate first "
+                    "and reuse the returned session.id"
+                ),
+            )
+
     payload = body.model_dump()
     try:
         return fs.browser_drive(payload)

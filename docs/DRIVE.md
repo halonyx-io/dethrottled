@@ -46,7 +46,17 @@ curl -sS http://127.0.0.1:8787/drive \
   -d '{"session":"target-workflow-01","close_session":true,"steps":[]}'
 ```
 
-Omit `session` for an isolated one-shot context that is closed automatically.
+If the first navigation omits `session`, Dethrottled creates a persistent
+`auto-*` session and returns its ID in `session.id`. Reuse that exact ID for
+later `snapshot`, `text`, or interaction calls. A stateful call without either
+a navigation or a session is rejected with an actionable `422` instead of
+silently operating on a disposable `about:blank` page.
+
+For a true one-shot navigation, set `"close_session":true` in that request.
+Automatically named sessions are also the first sessions evicted if the
+session pool is full; explicitly named sessions are never evicted this way. A
+follow-up using an unknown, expired, or evicted ID returns `409` rather than
+silently creating a new `about:blank` context.
 
 ## Actions
 

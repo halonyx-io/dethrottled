@@ -9,7 +9,8 @@ results stay traceable to their sources.
 - **Keyless.** No paid search API, no per-query cost, no account.
 - **Local-first.** Runs as a single container. The Compose project adds a
   private browser search worker, SearXNG, and a local JavaScript renderer.
-- **Agent-operable browser.** `/drive` provides persistent sessions, structured
+- **Agent-operable browser.** `/drive` provides persistent sessions (including
+  a returned `auto-*` session when navigation omits a name), structured
   DOM snapshots, bounded interactions, execution canaries, and event telemetry
   without requiring agents to launch Chromium or interpret every screenshot.
 - **Self-contained.** The API image bakes in its Python dependencies,
