@@ -455,15 +455,24 @@ def _events_since_start(events: dict[str, deque]) -> dict[str, list]:
 async def _snapshot(page, selector: str, limit: int) -> list[dict]:
     locator = page.locator(selector or INTERACTIVE_SELECTOR)
     return await locator.evaluate_all("""(elements, limit) => elements.slice(0, limit).map((el) => {
-      const text = (el.innerText || el.value || el.getAttribute('aria-label') || '').trim().slice(0, 240);
+      const text = (
+        el.innerText || el.value || el.getAttribute('aria-label') || ''
+      ).trim().slice(0, 240);
       const esc = (s) => String(s || '').replace(/\\\\/g, '\\\\\\\\').replace(/"/g, '\\\\"');
       let hint = el.id ? '#' + CSS.escape(el.id) : '';
-      if (!hint && el.getAttribute('data-testid')) hint = '[data-testid="' + esc(el.getAttribute('data-testid')) + '"]';
-      if (!hint && el.getAttribute('name')) hint = el.tagName.toLowerCase() + '[name="' + esc(el.getAttribute('name')) + '"]';
+      if (!hint && el.getAttribute('data-testid')) {
+        hint = '[data-testid="' + esc(el.getAttribute('data-testid')) + '"]';
+      }
+      if (!hint && el.getAttribute('name')) {
+        hint = el.tagName.toLowerCase()
+          + '[name="' + esc(el.getAttribute('name')) + '"]';
+      }
       return {
-        tag: el.tagName.toLowerCase(), role: el.getAttribute('role') || '', type: el.getAttribute('type') || '',
+        tag: el.tagName.toLowerCase(), role: el.getAttribute('role') || '',
+        type: el.getAttribute('type') || '',
         text, name: el.getAttribute('name') || '', id: el.id || '',
-        aria_label: el.getAttribute('aria-label') || '', placeholder: el.getAttribute('placeholder') || '',
+        aria_label: el.getAttribute('aria-label') || '',
+        placeholder: el.getAttribute('placeholder') || '',
         href: (el.href || '').slice(0, 1000), testid: el.getAttribute('data-testid') || '',
         visible: !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length),
         disabled: !!el.disabled, selector: hint
@@ -613,7 +622,8 @@ async def _drive(state: dict, body: DriveRequest) -> dict:
             break
         action = s.action.lower()
         if action == "goto":
-            call = lambda s=s: navigate(s.url, min(30000, s.ms or 20000))
+            async def call(s=s):
+                return await navigate(s.url, min(30000, s.ms or 20000))
         elif action == "click":
             async def call(s=s):
                 await locator(s).click(timeout=s.ms or 8000)
@@ -655,7 +665,9 @@ async def _drive(state: dict, body: DriveRequest) -> dict:
             async def call(s=s):
                 state_name = s.value or "visible"
                 if state_name not in ("attached", "detached", "visible", "hidden"):
-                    raise ValueError("wait_for value must be attached, detached, visible, or hidden")
+                    raise ValueError(
+                        "wait_for value must be attached, detached, visible, or hidden"
+                    )
                 await page.wait_for_selector(s.selector, state=state_name,
                                              timeout=s.ms or 8000)
                 return True
@@ -673,9 +685,11 @@ async def _drive(state: dict, body: DriveRequest) -> dict:
                     raise ValueError("attr requires name")
                 return await locator(s).get_attribute(s.name, timeout=s.ms or 8000)
         elif action == "count":
-            call = lambda s=s: page.locator(s.selector).count()
+            async def call(s=s):
+                return await page.locator(s.selector).count()
         elif action == "snapshot":
-            call = lambda s=s: _snapshot(page, s.selector, s.limit)
+            async def call(s=s):
+                return await _snapshot(page, s.selector, s.limit)
         elif action == "url":
             async def call():
                 return page.url
