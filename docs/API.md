@@ -163,6 +163,10 @@ errors, and automatically dismissed dialogs. A matched canary is returned in
 `canary_matches`; matches in dialogs, console output, or page errors are marked
 as execution signals.
 
+`fill` follows the browser-native value path, emits `input`, and then explicitly
+emits `change`, so React-controlled inputs and commit-on-change forms observe
+the update in the same step.
+
 Set `session` to reuse cookies, storage, tabs, and DOM state between calls.
 Named sessions are serialized, kept only in worker memory, and expire after 30
 minutes by default; the default limit is eight live sessions. Send

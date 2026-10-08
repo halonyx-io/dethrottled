@@ -55,7 +55,7 @@ Omit `session` for an isolated one-shot context that is closed automatically.
 | `snapshot` | `selector`, `limit` | Visible interactive elements and selector hints |
 | `goto` | `url`, `ms` | Final URL and HTTP status when available |
 | `click` | `selector`, `index`, `ms` | Click outcome |
-| `fill` | `selector`, `value` | Replace an input's value |
+| `fill` | `selector`, `value` | Replace a value and emit `input` plus `change` |
 | `type` | `selector`, `value`, `delay_ms` | Type sequentially when key events matter |
 | `press` | `selector`, `value` | Press a key such as `Enter` |
 | `select` | `selector`, `value` | Select an option |
@@ -72,6 +72,11 @@ Omit `session` for an isolated one-shot context that is closed automatically.
 Steps stop at the first failure. Every step reports `ok`, `reason`,
 `elapsed_ms`, and `data`, so the caller should repair or re-plan instead of
 continuing from an assumed page state.
+
+`fill` uses the browser's native editing path. Patchright emits `input` while
+setting the value, and Dethrottled emits `change` immediately afterward. This
+makes React-controlled fields and forms that wait for a committed change
+deterministic without requiring a separate blur or arbitrary JavaScript.
 
 ## Canary evidence
 

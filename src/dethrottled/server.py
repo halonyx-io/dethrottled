@@ -239,7 +239,7 @@ class DriveStep(BaseModel):
 
     # goto      navigate to `url`
     # click     click `selector`
-    # fill      type `value` into `selector`
+    # fill      set `value` and emit input/change events at `selector`
     # press     press `value` (a key) at `selector` (defaults to the page body)
     # wait      sleep `ms`
     # wait_for  wait for `selector` to appear, up to `ms`

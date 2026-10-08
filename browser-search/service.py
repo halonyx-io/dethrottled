@@ -630,7 +630,9 @@ async def _drive(state: dict, body: DriveRequest) -> dict:
                 return True
         elif action == "fill":
             async def call(s=s):
-                await locator(s).fill(s.value, timeout=s.ms or 8000)
+                target = locator(s)
+                await target.fill(s.value, timeout=s.ms or 8000)
+                await target.dispatch_event("change")
                 return True
         elif action == "type":
             async def call(s=s):
