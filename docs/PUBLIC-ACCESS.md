@@ -58,3 +58,11 @@ An edge WAF can reject requests before either adapter sees them. Use a
 clear client User-Agent (for example `my-research-client/1.0`) in examples;
 change edge rules narrowly for the authenticated API paths if needed. Adapter
 changes cannot fix an upstream WAF block.
+
+## Retained evidence and jobs
+
+Public wrappers force evidence_namespace from the verified caller identity on
+fetch, research, browser downloads, document reads and jobs. A token used across
+REST/MCP sees the same scoped documents/jobs. Another token cannot retrieve them
+by supplying a forged namespace. This does not change the existing shared-corpus
+policy. Per-caller HTTP admission and background-job admission are separate.

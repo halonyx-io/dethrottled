@@ -1,12 +1,12 @@
 # Dethrottled
 
 
-The October 31 pipeline upgrade adds selectable source profiles, cache refresh
-and age controls, explicit JavaScript readiness, image-content warnings,
-answer-focused research passages, and lexical corpus search. See
-[API.md](docs/API.md) and [PUBLIC-ACCESS.md](docs/PUBLIC-ACCESS.md) for controls
-and the shared public-adapter runtime. The existing headed DDG race remains
-the main discovery fallback; neural reranking stays disabled.
+Version 0.4 adds focused reads of known sources, versioned retained evidence,
+PDF page selection and mixed-page OCR, broader file coverage, browser-generated
+download reading, and progressive read jobs. Detailed evidence remains the
+default. See [API.md](docs/API.md), [DRIVE.md](docs/DRIVE.md), and
+[PUBLIC-ACCESS.md](docs/PUBLIC-ACCESS.md). The headed DDG race is preserved;
+neural reranking remains disabled.
 
 **Keyless web search, stateful browser operation, fetch, and document
 extraction for agents and local tooling.** No paid API keys, metered tiers, or

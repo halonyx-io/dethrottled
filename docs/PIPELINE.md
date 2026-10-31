@@ -75,8 +75,8 @@ five-row table can be useful even though it is short.
 File detection uses bytes first for PDF, Office ZIP/OLE, EPUB, OpenDocument,
 and RTF. Some formats, especially CSV, need a URL or server-header hint after
 sanity checks. The page extractor then uses local parsers and preserves table
-row breaks. A named `/fetch` can OCR a scanned PDF; bulk
-`/search-and-fetch` skips OCR for each search hit.
+row breaks. Named and combined search/read calls can OCR scanned sources;
+callers can disable OCR explicitly. Mixed PDFs record extraction method by page.
 
 Canonical prose is indexed independently of the requested representation;
 image-only and navigation-only rows are excluded. Fetched successful prose is indexed into the corpus in a background task.
@@ -118,3 +118,15 @@ corpus search. The full browser-backed pipeline requires the Compose sidecars.
 The image includes the MiniLM weights and tokenizer in
 `/opt/dethrottled/models/emb-minilm`; the named `/data` volume contains only
 mutable state. No unused reranker or decision-model weights are shipped.
+
+## Retained evidence and source files
+
+Focused URL reads retain up to one million extracted characters independently
+of response length. Scoped document handles support new questions and sequential
+continuations. Progressive jobs publish sources in completion order and retain
+completed results across client disconnects. Browser downloads are parsed using
+the same readers; their scoped source bytes permit later page/row reads and
+image inspection without repeating browser actions. OCR-derived content retains
+warnings. Native text from mixed documents can enter the prose corpus; OCR
+pages/supplements are excluded until that index can preserve their verification
+provenance.

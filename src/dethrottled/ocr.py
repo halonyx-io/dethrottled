@@ -136,7 +136,7 @@ def installed() -> list:
                           if line.strip() and " " not in line.strip()}
         except Exception:
             _available = set()
-    wanted = os.environ.get("DETHROTTLED_OCR_LANGS", "eng+fra+ara").split("+")
+    wanted = os.environ.get("DETHROTTLED_OCR_LANGS", "eng+fra+ara+msa+chi_sim+chi_tra").split("+")
     return [lang for lang in wanted if lang in _available] or ["eng"]
 
 
@@ -211,6 +211,10 @@ def _choose(png: bytes, options: list) -> tuple:
     if "ara" in options and not _looks_latin(probe):
         if _script(png) == "Arabic":
             return "ara", None
+
+    if not _looks_latin(probe) and any(lang in options for lang in ("chi_sim", "chi_tra")):
+        if _script(png) in {"Han", "HanS", "HanT", "Chinese"}:
+            return ("chi_sim" if "chi_sim" in options else "chi_tra"), None
 
     if "fra" in latin and _looks_french(probe):
         return "fra", None                            # worth re-reading page 1

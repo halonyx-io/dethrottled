@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "dethrottled"
-version = "0.3.0"
+version = "0.4.0"
 description = "Zero-API web search, fetch and extraction. No keys, no quota, no metered pool."
 readme = "README.md"
 license = { text = "MIT" }
@@ -30,6 +30,7 @@ classifiers = [
 dependencies = [
     "requests>=2.31",
     "feedparser>=6.0",
+    "defusedxml>=0.7",
     # Search: one pure-Python dependency covering a dozen keyless engines.
     "ddgs>=9.0",
     # Extraction cascade, in order. All three ship aarch64 wheels, so a
@@ -52,6 +53,8 @@ dependencies = [
 # dependencies we already have. File typing here is forty lines of signature
 # comparison and costs under a microsecond on the common path.
 documents = [
+    "olefile>=0.47",
+    "Pillow>=10",
     "pymupdf>=1.24",
     "openpyxl>=3.1",
     "python-docx>=1.1",

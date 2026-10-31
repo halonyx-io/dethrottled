@@ -481,6 +481,39 @@ def _usable(html: str) -> bool:
 
 # ── tiers ────────────────────────────────────────────────────────────────────
 
+def _filename_hint(headers, fallback):
+    from email.message import Message
+    message = Message()
+    message["content-disposition"] = headers.get("Content-Disposition", "")
+    return message.get_filename() or fallback
+
+
+def _binary_payload(blob, url, ctype, allow_ocr, filename=""):
+    from . import formats
+    kind = formats.kind_of(blob, filename or url, ctype)
+    if not kind:
+        return None
+    try:
+        options = dict(_READ_OPTIONS.get(), filename=(filename or url.rsplit("/", 1)[-1]))
+        text, metadata = formats.read_blob(blob, kind, CACHE_CHARS,
+                                           allow_ocr=(allow_ocr
+                                                      and options.get("ocr_mode") != "never"),
+                                           options=options)
+        import hashlib
+        metadata.update(source_sha256=hashlib.sha256(blob).hexdigest(), source_bytes=len(blob))
+        if not text.strip():
+            raise ValueError("document_empty:" + kind)
+        if metadata.get("partial"):
+            metadata.setdefault("warnings", []).append(
+                "Partial extraction; inspect page/member metadata or request another range.")
+        return ({"text": text, "structured": True, "content_type": kind,
+                 "extraction": metadata, "warnings": metadata.get("warnings", []),
+                 "content_status": "partial" if metadata.get("partial") else "complete"},
+                "", url)
+    except Exception as exc:
+        return ({}, "document_parse_failed:" + str(exc)[:120], url)
+
+
 def _tier_direct(url: str, timeout: int, allow_ocr: bool = False) -> tuple:
     domain = _domain(url)
     try:
@@ -515,61 +548,20 @@ def _tier_direct(url: str, timeout: int, allow_ocr: bool = False) -> tuple:
         first = next(chunks, b"")
         head = first[:1024].lstrip().lower()
         is_html = head.startswith((b"<!doctype", b"<html"))
-        is_pdf = first[:1024].lstrip().startswith(b"%PDF-")
-        from . import documents as _docs
-        is_zip = first.startswith(_docs.ZIP_MAGIC)
-        is_ole = first.startswith(_docs.OLE2_MAGIC)
-        is_rtf = first.startswith(b"{\\rtf")
-        suffix = os.path.splitext(url.lower().split("?")[0])[1]
-        csv_hint = "text/csv" in ctype.lower() or suffix in (".csv", ".tsv")
-
-        if is_pdf:
-            # Returned as text, not html, so it takes the already-extracted
-            # path below and no local extractor re-parses it.
+        from . import formats
+        filename = _filename_hint(response.headers, str(response.url))
+        binary_kind = formats.kind_of(first, filename, ctype)
+        if binary_kind and not is_html:
             data, size = [], 0
+            ceiling = PDF_MAX_BYTES if binary_kind == "pdf" else DOC_MAX_BYTES
             for chunk in chain((first,), chunks):
-                data.append(chunk)
                 size += len(chunk)
-                if size > PDF_MAX_BYTES:
-                    # Whole or nothing: a partial buffer is not parseable.
-                    return "", "pdf_too_large", str(response.url)
-            blob = b"".join(data)
-            text = _pdf_text(blob, CACHE_CHARS)
-            if text.strip():
-                return ({"text": text, "structured": True,
-                         "content_type": "pdf"}, "", str(response.url))
-            if not allow_ocr:
-                return "", "pdf_no_text_layer", str(response.url)
-            # Scanned. Tender documents, older yearbooks and municipal
-            # filings arrive this way, and without OCR they are unreachable.
-            # Measured at 1.4s a page, which is why this sits in the normal
-            # path rather than behind a flag -- but only for single-URL
-            # fetches, see allow_ocr.
-            from .ocr import ocr_pdf
-            text, why = ocr_pdf(blob, CACHE_CHARS)
-            if not text.strip():
-                return "", why or "pdf_no_text_layer", str(response.url)
-            return ({"text": text, "structured": True, "content_type": "pdf"},
-                    "", str(response.url))
-        if is_zip or is_ole or is_rtf or (csv_hint and not is_html):
-            data, size = [], 0
-            for chunk in chain((first,), chunks):
+                if size > ceiling:
+                    if hasattr(response, "close"):
+                        response.close()
+                    return {}, "document_too_large", str(response.url)
                 data.append(chunk)
-                size += len(chunk)
-                if size > DOC_MAX_BYTES:
-                    return "", "document_too_large", str(response.url)
-            blob = b"".join(data)
-            kind = _docs.kind_of(blob, str(response.url), ctype)
-            if kind:
-                text, why = _docs.to_text(blob, kind, CACHE_CHARS)
-                if text:
-                    return ({"text": text, "structured": True,
-                             "content_type": kind}, "", str(response.url))
-                return "", why, str(response.url)
-            # Claimed to be a document and is not one. The bytes are already
-            # in hand, so treat them as the page they probably are rather than
-            # spending another request finding out.
-            return "", "unsupported_document_signature", str(response.url)
+            return _binary_payload(b"".join(data), str(response.url), ctype, allow_ocr, filename)
         if not is_html and "html" not in ctype and "xml" not in ctype:
             return "", "content_type:%s" % ctype[:30], url
         html_chunks, size, clipped = [], 0, False
@@ -902,20 +894,34 @@ def _tier_tls(url: str) -> tuple:
         with quiet_fd2():
             response = _get_with_policy(tls_requests.get,
                 url, impersonate=TLS_IMPERSONATE, timeout=TLS_TIMEOUT,
-                allow_redirects=True)
+                allow_redirects=True, stream=True)
     except Exception as exc:
         return {}, "tls_" + type(exc).__name__, url
-    if response.status_code >= 400:
-        return {}, _http_reason("tls_", response.status_code,
-                                response.headers, response.text or ""), str(response.url)
-    # Same size ceiling as the direct tier: a browser fingerprint is not a
-    # reason to accept an unbounded download.
-    text = response.text or ""
-    if "anomaly.js" in text[:20000].lower():
-        return {}, "tls_challenge", str(response.url)
-    if len(text) > MAX_BYTES:
-        text = text[:MAX_BYTES]
-    return {"html": text}, "", str(response.url)
+    try:
+        chunks, size = [], 0
+        for chunk in response.iter_content(65536):
+            size += len(chunk)
+            if size > max(DOC_MAX_BYTES, PDF_MAX_BYTES):
+                return {}, "tls_document_too_large", str(response.url)
+            chunks.append(chunk)
+        blob = b"".join(chunks)
+        text = decode_html(blob[:MAX_BYTES], response.headers.get("Content-Type", ""))
+        if response.status_code >= 400:
+            return {}, _http_reason("tls_", response.status_code, response.headers,
+                                    text[:8192]), str(response.url)
+        if "anomaly.js" in text[:20000].lower():
+            return {}, "tls_challenge", str(response.url)
+        parsed = _binary_payload(blob, str(response.url),
+                                 response.headers.get("Content-Type", ""),
+                                 _READ_OPTIONS.get().get("allow_ocr", True),
+                                 _filename_hint(response.headers, str(response.url)))
+        if parsed is not None:
+            return parsed
+        return {"html": text}, "", str(response.url)
+    except Exception as exc:
+        return {}, "tls_" + type(exc).__name__, str(response.url)
+    finally:
+        response.close()
 
 
 def _tier_crawl4ai(url: str) -> tuple:
@@ -964,11 +970,10 @@ def _tier_crawl4ai(url: str) -> tuple:
 # targets are exactly the ones that fail. That is a bad property: it makes
 # tuning a cap quietly expensive, so caps do not get tuned.
 #
-# So extract once, generously, and clip on the way out. One entry per page, and
-# a cap change costs nothing. 20k is well past any cap worth setting; pages
-# longer than this are truncated in the cache too, which is the same trade the
-# old code made at 3500.
-CACHE_CHARS = int(os.environ.get("DETHROTTLED_EXTRACT_CACHE_CHARS", "20000"))
+# Retain a generous extraction independently of the requested response size.
+# Focused reads and document continuations can reach later sections without
+# requiring the agent to ingest the entire source. Provenance marks bounded reads.
+CACHE_CHARS = int(os.environ.get("DETHROTTLED_EXTRACT_CACHE_CHARS", "1000000"))
 
 
 def _clip(out: dict, max_chars: int) -> dict:
@@ -978,7 +983,7 @@ def _clip(out: dict, max_chars: int) -> dict:
         return out
     clipped = dict(out)
     clipped["text"] = text[:max_chars]
-    clipped["_index_text"] = text[:20000]
+    clipped["_index_text"] = text
     clipped["chars"] = len(clipped["text"])
     clipped["content_chars"] = len(text)
     clipped["truncated"] = True
@@ -1017,7 +1022,28 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
         # Keyed on the url alone. The stored copy is the generous one; what
         # this caller wanted is a clip of it.
         hit = cache.get("extract", url)
-        if hit is not None:
+        acquisition = (hit or {}).get("acquisition", {})
+        compatible = not render_first or acquisition.get("rendered", False)
+        requested_wait = _READ_OPTIONS.get().get("wait_for", "")
+        if requested_wait:
+            compatible = compatible and acquisition.get("wait_for") == requested_wait
+        compatible = compatible and acquisition.get("page_start", 1) == (
+            _READ_OPTIONS.get().get("page_start", 1)) and acquisition.get("page_end") == (
+            _READ_OPTIONS.get().get("page_end"))
+        compatible = compatible and acquisition.get("ocr_mode", "auto") == (
+            _READ_OPTIONS.get().get("ocr_mode", "auto"))
+        for option, default in (("row_start", 1), ("row_end", None), ("sheet", ""),
+                                ("max_cell_chars", None)):
+            compatible = compatible and acquisition.get(option, default) == (
+                _READ_OPTIONS.get().get(option, default))
+        compatible = compatible and acquisition.get("ocr_language", "") == (
+            _READ_OPTIONS.get().get("ocr_language", ""))
+        if _READ_OPTIONS.get().get("allow_ocr", True):
+            compatible = compatible and acquisition.get("ocr_allowed", True)
+        if render_first or requested_wait:
+            compatible = compatible and (acquisition.get("render_delay") or 0) >= (
+                _READ_OPTIONS.get().get("render_delay", 0.5))
+        if hit is not None and compatible:
             hit["cached"] = True
             _tier_stats["cache"] += 1
             return _clip(hit, max_chars)
@@ -1081,11 +1107,27 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
     budget_started = time.time()
 
     def finish(out):
-        out["schema_version"] = 2
+        out["schema_version"] = 3
+        rendered = out.get("tier") in {"crawl4ai", "headed"}
+        out["acquisition"] = {"rendered": rendered,
+                              "wait_for": (_READ_OPTIONS.get().get("wait_for", "")
+                                           if rendered else ""),
+                              "render_delay": _READ_OPTIONS.get().get("render_delay") if rendered
+                              else None,
+                              "extraction_limit": CACHE_CHARS,
+                              "page_start": _READ_OPTIONS.get().get("page_start", 1),
+                              "page_end": _READ_OPTIONS.get().get("page_end"),
+                              "ocr_language": _READ_OPTIONS.get().get("ocr_language", ""),
+                              "ocr_mode": _READ_OPTIONS.get().get("ocr_mode", "auto"),
+                              "ocr_allowed": _READ_OPTIONS.get().get("allow_ocr", True),
+                              "row_start": _READ_OPTIONS.get().get("row_start", 1),
+                              "row_end": _READ_OPTIONS.get().get("row_end"),
+                              "sheet": _READ_OPTIONS.get().get("sheet", ""),
+                              "max_cell_chars": _READ_OPTIONS.get().get("max_cell_chars")}
         out.setdefault("retrieved_at", datetime.now(timezone.utc).isoformat())
         out.setdefault("cache_age_seconds", 0)
         out.setdefault("content_chars", len(out.get("text", "")))
-        out.setdefault("truncated", False)
+        out.setdefault("truncated", bool(out.get("extraction", {}).get("partial")))
         # Store the full extraction, hand back only what was asked for.
         #
         # The source, when a caller asked for it, is deliberately NOT cached.
@@ -1179,7 +1221,10 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
                          "extractor": "%s-native" % name, "title": "",
                          "published": "", "chars": len(text), "url": final,
                          "reason": "", "cached": False,
-                         "content_type": payload.get("content_type", "")}
+                         "content_type": payload.get("content_type", ""),
+                         "extraction": payload.get("extraction", {}),
+                         "warnings": payload.get("warnings", []),
+                         "content_status": payload.get("content_status", "complete")}
         else:
             html = payload.get("html") or ""
             if not html or _challenge_document(html):
@@ -1282,10 +1327,17 @@ def fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAULT
                       allow_ocr: bool = True, page_budget: float | None = None,
                       keep_html: bool = False, format: str = "text", wait_for: str = "",
                       render_delay: float = 0.5, headed_fallback: bool = False,
-                      public_only: bool = False) -> dict:
+                      public_only: bool = False, ocr_language: str = "", ocr_mode: str = "auto",
+                      page_start: int = 1, page_end: int | None = None,
+                      row_start: int = 1, row_end: int | None = None, sheet: str = "",
+                      max_cell_chars: int | None = None) -> dict:
     """Read a URL with request-local rendering/target policy and bounded output."""
     options = dict(format=format, wait_for=wait_for, render_delay=render_delay,
-                   headed_fallback=headed_fallback, public_only=public_only)
+                   headed_fallback=headed_fallback, public_only=public_only,
+                   ocr_language=ocr_language, ocr_mode=ocr_mode,
+                   page_start=page_start, page_end=page_end,
+                   allow_ocr=allow_ocr, row_start=row_start, row_end=row_end,
+                   sheet=sheet, max_cell_chars=max_cell_chars)
     token = _READ_OPTIONS.set(options)
     try:
         if options.get("public_only"):

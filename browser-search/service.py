@@ -8,12 +8,15 @@ from __future__ import annotations
 
 import asyncio
 import base64
+import hashlib
 import ipaddress
+import json
 import os
 import re
 import time
 from collections import Counter, deque
-from contextlib import asynccontextmanager
+from contextlib import asynccontextmanager, suppress
+from pathlib import Path
 from typing import Literal
 from urllib.parse import parse_qs, quote_plus, unquote, urljoin, urlparse
 
@@ -226,8 +229,10 @@ async def _watch_browser(app):
 
 @asynccontextmanager
 async def lifespan(app):
+    DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)
     async with async_playwright() as playwright:
-        app.state.browser = await playwright.chromium.launch(headless=False)
+        app.state.browser = await playwright.chromium.launch(
+            headless=False, downloads_path=str(DOWNLOAD_DIR))
         watcher = asyncio.create_task(_watch_browser(app))
         session_reaper = asyncio.create_task(_reap_drive_sessions())
         try:
@@ -271,9 +276,14 @@ DRIVE_SESSIONS: dict[str, dict] = {}
 DRIVE_SESSIONS_LOCK = asyncio.Lock()
 
 # Actions this worker will perform, and nothing else.
+DOWNLOAD_DIR = Path("/tmp/dethrottled-downloads")
+DOWNLOAD_LIMIT = 32 * 1024 * 1024
+DOWNLOAD_LOCK = asyncio.Lock()
+
 DRIVE_ACTIONS = (
     "goto", "click", "fill", "type", "press", "select", "check", "uncheck", "hover",
     "wait", "wait_for", "text", "html", "attr", "count", "snapshot", "url", "title",
+    "download",
 )
 SCREENSHOT_MODES = ("never", "failure", "canary", "always")
 INTERACTIVE_SELECTOR = (
@@ -301,6 +311,7 @@ class DriveStep(BaseModel):
     name: str = Field(default="", max_length=200)
     index: int = Field(default=0, ge=0, le=500)
     limit: int = Field(default=100, ge=1, le=200)
+    max_chars: int | None = Field(default=None, ge=1, le=120000)
 
 
 class DriveRequest(BaseModel):
@@ -315,6 +326,7 @@ class DriveRequest(BaseModel):
     # A named session retains cookies, local storage and its current page.
     # Empty means an ephemeral context that is closed after this request.
     session: str = Field(default="", max_length=64, pattern=r"^[A-Za-z0-9._-]*$")
+    operation_id: str = Field(default="", max_length=100, pattern=r"^[A-Za-z0-9._-]*$")
     close_session: bool = False
     allowed_hosts: list[str] = Field(default_factory=list, max_length=32)
     public_only: bool = False
@@ -409,7 +421,7 @@ async def _public_network_target(url: str) -> bool:
 
 
 async def _make_drive_state(browser, allowed_hosts: list[str], public_only=False) -> dict:
-    context = await browser.new_context()
+    context = await browser.new_context(accept_downloads=True)
     if public_only:
         async def public_route(route, request):
             if await _public_network_target(request.url):
@@ -632,6 +644,10 @@ async def _snapshot(page, selector: str, limit: int) -> list[dict]:
           && style.visibility !== 'hidden' && Number(style.opacity) > 0
           && rect.width > 0 && rect.height > 0;
       });
+      const roleOf = el => el.getAttribute('role') || (
+        {button:'button',a:'link',textarea:'textbox',select:'combobox'}[
+          el.tagName.toLowerCase()] || '');
+      const nameOf = el => (el.getAttribute('aria-label') || el.innerText || el.value || '').trim();
       return visible.slice(0, options.limit).map((el) => {
       const text = (
         el.innerText || el.value || el.getAttribute('aria-label') || ''
@@ -645,8 +661,18 @@ async def _snapshot(page, selector: str, limit: int) -> list[dict]:
         hint = el.tagName.toLowerCase()
           + '[name="' + esc(el.getAttribute('name')) + '"]';
       }
+      if (!hint && text && ['BUTTON','A'].includes(el.tagName)) {
+        const role = el.getAttribute('role') || (el.tagName === 'BUTTON' ? 'button' : 'link');
+        hint = 'role=' + role + '[name=' + JSON.stringify(
+          el.getAttribute('aria-label') || text) + ']';
+      }
+      const matching = hint.startsWith('role=')
+        ? visible.filter(other => roleOf(other) === roleOf(el) && nameOf(other) === nameOf(el))
+        : (hint ? Array.from(document.querySelectorAll(hint)) : []);
       return {
-        tag: el.tagName.toLowerCase(), role: el.getAttribute('role') || '',
+        tag: el.tagName.toLowerCase(), role: roleOf(el),
+        selector_count: matching.length, selector_index: matching.indexOf(el),
+        ambiguous: matching.length > 1,
         type: el.getAttribute('type') || '',
         text, name: el.getAttribute('name') || '', id: el.id || '',
         aria_label: el.getAttribute('aria-label') || '',
@@ -666,7 +692,7 @@ async def _canary_matches(page, events: dict[str, deque], canaries: list[str]) -
     title = await page.title()
     url = page.url
     try:
-        body_text = (await page.locator("body").inner_text(timeout=1000))[:20000]
+        body_text = (await page.locator("body").inner_text(timeout=1000))[:16000]
     except Exception:
         body_text = ""
     event_text = {name: str(list(items)) for name, items in events.items()}
@@ -753,6 +779,32 @@ async def search(body: SearchRequest):
         SEMAPHORE.release()
 
 
+async def _download(page, target, timeout):
+    async with DOWNLOAD_LOCK:
+        async with page.expect_download(timeout=timeout) as event:
+            await target.click(timeout=timeout)
+        download = await event.value
+        pending = asyncio.create_task(download.path())
+        try:
+            while not pending.done():
+                size = sum(path.stat().st_size for path in DOWNLOAD_DIR.iterdir() if path.is_file())
+                if size > DOWNLOAD_LIMIT:
+                    raise ValueError("download_too_large")
+                await asyncio.wait({pending}, timeout=0.05)
+            path = await pending
+            if path.stat().st_size > DOWNLOAD_LIMIT:
+                raise ValueError("download_too_large")
+            blob = await asyncio.to_thread(path.read_bytes)
+            return {"filename": download.suggested_filename, "source_url": download.url,
+                    "download_b64": base64.b64encode(blob).decode(), "size_bytes": len(blob)}
+        finally:
+            if not pending.done():
+                await download.cancel()
+                pending.cancel()
+            with suppress(Exception):
+                await download.delete()
+
+
 async def _drive(state: dict, body: DriveRequest) -> dict:
     """Run a bounded sequence against an ephemeral or named persistent page.
 
@@ -824,6 +876,7 @@ async def _drive(state: dict, body: DriveRequest) -> dict:
         if results and not results[-1]["ok"]:
             break
         action = s.action.lower()
+        read_metadata = {}
         if action == "goto":
             async def call(s=s):
                 return await navigate(s.url, min(30000, s.ms or 20000))
@@ -835,6 +888,9 @@ async def _drive(state: dict, body: DriveRequest) -> dict:
                 except Exception as exc:
                     await diagnosed_failure("click", target, exc, "actionability")
                 return True
+        elif action == "download":
+            async def call(s=s):
+                return await _download(page, locator(s), s.ms or 20000)
         elif action == "fill":
             async def call(s=s):
                 target = locator(s)
@@ -881,14 +937,20 @@ async def _drive(state: dict, body: DriveRequest) -> dict:
                                              timeout=s.ms or 8000)
                 return True
         elif action == "text":
-            async def call(s=s):
+            async def call(s=s, read_metadata=read_metadata):
                 target = locator(s) if s.selector else page.locator("body")
-                return (await target.inner_text(timeout=s.ms or 8000))[:16000]
+                text = await target.inner_text(timeout=s.ms or 8000)
+                cap = s.max_chars or 16000
+                read_metadata.update(content_chars=len(text), truncated=len(text) > cap)
+                return text[:cap]
         elif action == "html":
-            async def call(s=s):
+            async def call(s=s, read_metadata=read_metadata):
                 target = locator(s) if s.selector else page.locator("html")
                 try:
-                    return (await target.evaluate("el => el.outerHTML"))[:20000]
+                    text = await target.evaluate("el => el.outerHTML")
+                    cap = s.max_chars or 20000
+                    read_metadata.update(content_chars=len(text), truncated=len(text) > cap)
+                    return text[:cap]
                 except Exception as exc:
                     await diagnosed_failure("html", target, exc, "dom_read")
         elif action == "attr":
@@ -919,6 +981,7 @@ async def _drive(state: dict, body: DriveRequest) -> dict:
                             "elapsed_ms": 0, "data": None})
             break
         results.append(await _run(action, call))
+        results[-1].update(read_metadata)
         if results[-1]["ok"] and state["allowed_hosts"]:
             if page.url != "about:blank" and not _host_allowed(page.url, state["allowed_hosts"]):
                 results[-1].update(ok=False, reason="navigation_outside_allowed_hosts")
@@ -948,8 +1011,32 @@ async def _drive(state: dict, body: DriveRequest) -> dict:
     return out
 
 
+DRIVE_OPERATIONS = {}
+
+
+def _operation_lookup(body):
+    if not body.operation_id:
+        return None
+    key = (body.session, body.operation_id)
+    fingerprint = hashlib.sha256(json.dumps(body.model_dump(exclude={"operation_id"}),
+                                            sort_keys=True).encode()).hexdigest()
+    previous = DRIVE_OPERATIONS.get(key)
+    if previous is None:
+        return None
+    if previous["fingerprint"] != fingerprint:
+        raise HTTPException(409, "operation_id_payload_conflict")
+    if previous["state"] != "completed":
+        raise HTTPException(409, "operation_" + previous["state"] + "_inspect_session")
+    return {**previous["result"], "operation_replayed": True}
+
+
 @app.post("/drive")
 async def drive(body: DriveRequest):
+    if body.operation_id and not body.session:
+        raise HTTPException(422, "operation_id requires an explicit named session")
+    replay = _operation_lookup(body)
+    if replay is not None:
+        return replay
     if not body.url and not body.steps and not (body.session and body.close_session):
         raise HTTPException(422, "nothing to do: supply url and/or steps")
     if any(not h or len(h) > 253 or "/" in h or ":" in h for h in body.allowed_hosts):
@@ -978,10 +1065,37 @@ async def drive(body: DriveRequest):
         state, ephemeral = await _get_drive_state(app.state.browser, body)
         try:
             async with state["lock"]:
-                result = await _drive(state, body)
+                replay = _operation_lookup(body)
+                if replay is not None:
+                    return replay
+                if body.operation_id:
+                    cutoff = time.monotonic() - DRIVE_SESSION_TTL
+                    for key, operation in list(DRIVE_OPERATIONS.items()):
+                        if operation["created"] < cutoff and operation["state"] != "running":
+                            DRIVE_OPERATIONS.pop(key, None)
+                    if len(DRIVE_OPERATIONS) >= 256:
+                        raise HTTPException(429, "operation_journal_full")
+                    key = (body.session, body.operation_id)
+                    fingerprint = hashlib.sha256(json.dumps(
+                        body.model_dump(exclude={"operation_id"}),
+                        sort_keys=True).encode()).hexdigest()
+                    DRIVE_OPERATIONS[key] = {"fingerprint": fingerprint, "state": "running",
+                                             "created": time.monotonic()}
+                try:
+                    result = await _drive(state, body)
+                except BaseException:
+                    if body.operation_id:
+                        DRIVE_OPERATIONS[key]["state"] = "outcome_unknown"
+                    raise
                 if body.close_session and body.session:
                     await _drop_drive_session(body.session, expected=state)
                     result["session"]["closed"] = True
+                if body.operation_id:
+                    result.update(operation_id=body.operation_id, operation_replayed=False)
+                    if len(json.dumps(result)) > 1_000_000:
+                        DRIVE_OPERATIONS[key].update(state="completed_evidence_unavailable")
+                    else:
+                        DRIVE_OPERATIONS[key].update(state="completed", result=result)
         finally:
             if ephemeral:
                 await _close_drive_state(state)

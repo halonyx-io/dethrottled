@@ -4,15 +4,17 @@
 # this image builds on a laptop and on a single-board ARM machine alike.
 FROM python:3.12-slim
 
-# tesseract is the only system binary, and only the OCR path uses it. eng and
-# osd live in the system tessdata directory; optional extra language packs
-# can be downloaded separately -- see scripts/fetch-models.sh.
+# OCR and legacy Office converters are local command-line tools. English,
+# Malay and Chinese OCR data ship in the image; select a known language for
+# better results rather than indiscriminately combining language packs.
 #
 # --no-install-recommends because the recommended set drags in a large chunk of
 # X11 for a command-line binary that never opens a window.
 RUN apt-get update && apt-get install -y --no-install-recommends \
         tesseract-ocr \
         tesseract-ocr-osd \
+        tesseract-ocr-msa tesseract-ocr-chi-sim tesseract-ocr-chi-tra \
+        antiword catdoc \
         curl \
     && rm -rf /var/lib/apt/lists/*
 

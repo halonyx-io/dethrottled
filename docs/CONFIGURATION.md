@@ -23,7 +23,7 @@ keyless engines and news feeds; capabilities differ from full Compose.
 | `DETHROTTLED_PORT` | `8787` | Host port; container still listens on 8787 |
 | `DETHROTTLED_ENABLE_JINA` | `0` | Enable external reader tier if set to `1` |
 | `DETHROTTLED_USER_AGENT` | `dethrottled/0.2.0 (automated fetcher)` | Article-fetch User-Agent override |
-| `DETHROTTLED_EXTRACT_CACHE_CHARS` | `20000` | Characters kept in extraction cache |
+| `DETHROTTLED_EXTRACT_CACHE_CHARS` | `1000000` | Characters kept in extraction cache |
 | `CRAWL4AI_TOKEN` | `dethrottled-compose-local` | Private API-to-renderer credential |
 | `CRAWL4AI_ALLOW_INTERNAL_URLS` | `false` | Let the renderer visit private/LAN addresses when intentionally needed |
 | `COMPOSE_FILE` | Base Compose file | Add the optional PDF worker overlay |
@@ -112,3 +112,15 @@ model is needed. The browser worker owns pacing for both paths.
 Public-adapter settings and shared token/admission storage are documented in
 [PUBLIC-ACCESS.md](PUBLIC-ACCESS.md). These do not add authentication to the
 raw internal API.
+
+The 0.4 image adds antiword/catppt and Malay, simplified-Chinese and traditional-
+Chinese Tesseract data. Select OCR language explicitly when known. No new model
+service is needed. Document and job SQLite stores live under the data directory;
+back them up along with cache/corpus if retaining agent work matters. See API.md
+for TTLs, capacity eviction, job recovery and PDF/embedded-image caps.
+
+`DETHROTTLED_DOC_MAX_ROWS` defaults to 2000 per table window; larger exports
+can be read with successive row ranges. `DETHROTTLED_DOC_MAX_CELL` now defaults
+to 32767, with an explicit per-request max_cell_chars override and truncation
+metadata. Empty/covered OpenDocument cells retain their column positions;
+repeated cells/rows are expanded within the extraction budget.

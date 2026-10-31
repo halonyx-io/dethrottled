@@ -55,8 +55,8 @@ services:
       DETHROTTLED_CRAWL4AI_TOKEN: "${CRAWL4AI_TOKEN:-dethrottled-compose-local}"
       DETHROTTLED_ENABLE_JINA: "${DETHROTTLED_ENABLE_JINA:-0}"
       DETHROTTLED_DATA_DIR: /data
-      DETHROTTLED_USER_AGENT: "${DETHROTTLED_USER_AGENT:-dethrottled/0.3.0 (automated fetcher)}"
-      DETHROTTLED_EXTRACT_CACHE_CHARS: "${DETHROTTLED_EXTRACT_CACHE_CHARS:-20000}"
+      DETHROTTLED_USER_AGENT: "${DETHROTTLED_USER_AGENT:-dethrottled/0.4.0 (automated fetcher)}"
+      DETHROTTLED_EXTRACT_CACHE_CHARS: "${DETHROTTLED_EXTRACT_CACHE_CHARS:-1000000}"
       # MODEL_DIR is deliberately NOT set here. The image bakes the weights
       # into /opt/dethrottled/models, and pointing this at /data/models would
       # aim it at the volume instead -- where there are no models, so the

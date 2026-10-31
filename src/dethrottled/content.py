@@ -157,3 +157,22 @@ def passage_excerpt(text: str, question: str, budget: int) -> tuple[str, list[di
         if len(selected) >= 4:
             break
     return "\n\n".join(selected), evidence
+
+
+def compact_row(row: dict) -> dict:
+    """Opt-in removal of duplicate representations, retaining evidence text once."""
+    row = dict(row)
+    if row.get("html") == row.get("content"):
+        row.pop("html", None)
+    if row.get("evidence"):
+        evidence = []
+        for item in row["evidence"]:
+            item = dict(item)
+            excerpt = item.get("excerpt", "")
+            start = row.get("content", "").find(excerpt) if excerpt else -1
+            if start >= 0:
+                item.pop("excerpt", None)
+                item.update(content_start=start, content_end=start + len(excerpt))
+            evidence.append(item)
+        row["evidence"] = evidence
+    return row

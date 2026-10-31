@@ -24,6 +24,7 @@ MAX_URLS = 10
 MAX_QUERY = 500
 SLOTS = asyncio.Semaphore(8)
 POST_PATHS = {
+    '/documents/read', '/documents/image', '/jobs/fetch', '/jobs/read', '/jobs/cancel',
     '/drive',
     '/extract',
     '/extract-with-links',
@@ -43,7 +44,7 @@ GET_PATHS = {
     '/v2/capabilities',
     '/v2/status',
 }
-FETCH_PATHS = {'/fetch', '/extract', '/extract-with-links'}
+FETCH_PATHS = {'/jobs/fetch', '/fetch', '/extract', '/extract-with-links'}
 SEARCH_PATHS = {'/search', '/v2/search', '/search-and-fetch', '/search-and-extract'}
 
 
@@ -233,7 +234,7 @@ async def dispatch(path: str, request: Request):
         if any(not isinstance(url, str) or len(url) > 2048 or not public_url(url) for url in urls):
             return JSONResponse({'error': 'public HTTP(S) URLs required'}, status_code=400)
     elif route == '/drive':
-        payload = dict(payload, public_only=True)
+        payload = dict(payload, public_only=True, evidence_namespace=namespace)
         error = validate_drive(payload)
         if error:
             return JSONResponse({'error': error}, status_code=400)
@@ -261,4 +262,8 @@ async def dispatch(path: str, request: Request):
             )
     if route in FETCH_PATHS:
         payload = dict(payload, public_only=True)
+    if route in FETCH_PATHS or route in {
+            '/documents/read', '/documents/image', '/jobs/read', '/jobs/cancel', '/research',
+            '/search-and-fetch', '/search-and-extract'}:
+        payload = dict(payload, evidence_namespace=namespace)
     return await upstream('POST', route, payload)

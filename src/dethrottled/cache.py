@@ -139,8 +139,8 @@ class CacheView:
         if hit is None:
             return None
         value, retrieved = hit
-        if kind == "extract" and value.get("schema_version") != 2:
-            return None  # Refresh legacy entries that may contain misdecoded HTML.
+        if kind == "extract" and value.get("schema_version") != 3:
+            return None  # Refresh old representations lacking current coverage/provenance.
         from datetime import datetime, timezone
         metadata = {"cached": True, "cache_age_seconds": round(time.time() - retrieved, 3),
                     "retrieved_at": datetime.fromtimestamp(retrieved, timezone.utc).isoformat(),

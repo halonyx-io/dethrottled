@@ -20,15 +20,15 @@ def test_html_charset_does_not_inherit_requests_latin1_default():
 
 def test_refresh_replaces_cached_content_and_bypass_does_not(tmp_path):
     store = Cache(tmp_path / "cache.sqlite")
-    store.put("extract", "url", value={"text": "old", "schema_version": 2})
+    store.put("extract", "url", value={"text": "old", "schema_version": 3})
     refresh = CacheView(store, mode="refresh")
     assert refresh.get("extract", "url") is None
-    refresh.put("extract", "url", value={"text": "new", "schema_version": 2})
+    refresh.put("extract", "url", value={"text": "new", "schema_version": 3})
     hit = CacheView(store).get("extract", "url")
     assert hit["text"] == "new" and hit["cached"] is True
     assert hit["retrieved_at"] and hit["cache_age_seconds"] >= 0
     bypass = CacheView(store, mode="bypass")
-    bypass.put("extract", "url", value={"text": "must not persist", "schema_version": 2})
+    bypass.put("extract", "url", value={"text": "must not persist", "schema_version": 3})
     assert CacheView(store).get("extract", "url")["text"] == "new"
     assert CacheView(store, max_age=0).get("extract", "url") is None
 

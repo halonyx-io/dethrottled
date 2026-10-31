@@ -32,5 +32,5 @@ def test_odt_heading_paragraph_and_table_order():
     text, reason = documents.to_text(buffer.getvalue(), "odt", 20000)
     assert reason == ""
     assert text.splitlines() == [
-        "Capacity report", "Fiscal year 2025", "Country | Megawatts",
-        "Denmark | 5120", "Excludes offshore capacity"]
+        "Capacity report", "Fiscal year 2025", "| Country | Megawatts |",
+        "| Denmark | 5120 |", "Excludes offshore capacity"]

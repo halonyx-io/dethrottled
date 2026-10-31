@@ -5,19 +5,20 @@ Dethrottled. It is designed for agents that need to interact with a page,
 preserve state across turns, and collect machine-readable evidence without
 starting their own browser or taking a screenshot after every action.
 
-## Efficient agent loop
+## Evidence-led agent loop
 
 1. Create one named session for one target and task.
 2. Set `allowed_hosts` before the first navigation.
 3. Request a `snapshot` to discover useful controls and selectors.
 4. Perform the smallest next interaction and inspect its structured result.
 5. Use a unique canary when testing whether controlled text executes.
-6. Request screenshots only for failures, canary matches, or genuinely visual
-   questions.
+6. Inspect screenshots or retained source pixels whenever layout, charts,
+   OCR uncertainty, or visual content could change the answer.
 7. Close the session as soon as the task is finished.
 
-This keeps the normal loop text-only and cheap. A screenshot is evidence, not
-the browser's primary control protocol.
+Use structured text for navigation and source pixels when they help establish
+what the source actually says. Evidence coverage and correctness take priority
+over minimizing calls or context.
 
 ## Start or continue a session
 
@@ -73,8 +74,9 @@ silently creating a new `about:blank` context.
 | `hover` | `selector` | Trigger hover behavior |
 | `wait` | `ms` | Bounded delay |
 | `wait_for` | `selector`, `value`, `ms` | Wait for `visible`, `hidden`, `attached`, or `detached` |
-| `text` | `selector` | Read visible text |
-| `html` | `selector` | Read bounded outer HTML |
+| `text` | `selector`, `max_chars` | Read visible text with an explicit budget |
+| `html` | `selector`, `max_chars` | Read bounded outer HTML |
+| `download` | `selector`, `ms` | Capture an actual browser download, extract it, and retain its scoped source bytes |
 | `attr` | `selector`, `name` | Read an HTML attribute |
 | `count` | `selector` | Count matches |
 | `url`, `title` | none | Read current page identity |
@@ -153,3 +155,26 @@ they do not determine whether a target or test is authorized.
 The raw local API has no caller authentication. Keep it on a trusted network
 or put an authenticated, policy-enforcing gateway in front of it before any
 external exposure.
+
+## Reading downloads and replaying operations
+
+Use `download` with a selector for a control that actually creates a file:
+
+```json
+{"session":"source-export","steps":[
+  {"action":"download","selector":"role=button[name=\"Export CSV\"]","ms":20000}
+],"screenshot":"never"}
+```
+
+The API returns parsed file content, provenance and a retained document handle.
+Unsupported formats produce a download-parse failure rather than decoded binary.
+Inspect warnings for OCR, formulas, partial archives and limited page ranges.
+
+For retries of a potentially mutating sequence, use an explicit session and an
+`operation_id`. Repeat the identical payload to obtain a retained result rather
+than clicking again. A 409 unknown/in-progress outcome requires inspection.
+Replay protection is bounded to the current worker lifetime and journal capacity.
+
+Text and HTML steps accept `max_chars`; `limit` continues to mean the snapshot
+entry count. Snapshot selector_count, selector_index and ambiguous fields help
+identify duplicate targets. Semantic hints supplement explicit CSS selectors.

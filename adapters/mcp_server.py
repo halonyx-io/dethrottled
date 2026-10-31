@@ -3,17 +3,20 @@ from __future__ import annotations
 import contextvars
 import hashlib
 import ipaddress
+import json
 import os
 import secrets
 import socket
 from pathlib import Path
-from typing import Any
+from typing import Annotated, Any, Literal
 from urllib.parse import urlsplit
 
 import httpx
 from dethrottled_access import CLAIMS, REQUEST_ID, AccessMiddleware, require_scope
 from mcp.server.fastmcp import FastMCP
 from mcp.server.transport_security import TransportSecuritySettings
+from mcp.types import CallToolResult, ImageContent, TextContent, ToolAnnotations
+from pydantic import BaseModel, ConfigDict, Field
 from starlette.responses import JSONResponse
 
 # The bridge and dethrottled run on szbox. Keep the fallback local too, so a
@@ -23,7 +26,7 @@ KEYS_PATH = Path(os.getenv("MCP_KEYS_PATH", "/etc/dethrottled-mcp/keys.json"))
 REQUEST_TIMEOUT = float(os.getenv("MCP_REQUEST_TIMEOUT", "90"))
 MAX_URLS = int(os.getenv("MCP_MAX_URLS", "10"))
 MAX_RESULTS = int(os.getenv("MCP_MAX_RESULTS", "10"))
-MAX_CHARS = int(os.getenv("MCP_MAX_CHARS", "50000"))
+MAX_CHARS = int(os.getenv("MCP_MAX_CHARS", "120000"))
 ALLOWED_HOSTS = [
     host.strip()
     for host in os.getenv(
@@ -165,7 +168,13 @@ def _backend_result(response):
                 ".".join(map(str, item.get("loc", []))) + ": " + item.get("msg", "invalid")
                 for item in detail if isinstance(item, dict))
         raise ValueError("Invalid tool input: " + str(detail)[:1000])
-    response.raise_for_status()
+    if response.status_code >= 400:
+        try:
+            detail = response.json()
+        except ValueError:
+            detail = {"detail": "backend request failed"}
+        raise ValueError(json.dumps({"http_status": response.status_code,
+            "detail": detail, "retry_after": response.headers.get("Retry-After")})[:2000])
     return response.json()
 
 
@@ -183,8 +192,12 @@ async def _backend_post(
     timeout: float | None = None,
 ) -> Any:
     require_scope("drive" if path == "/drive" else "web")
-    if path in {"/fetch", "/extract-with-links", "/drive"}:
+    if path in {"/fetch", "/extract-with-links", "/drive", "/jobs/fetch"}:
         payload = dict(payload, public_only=True)
+    if path in {"/fetch", "/extract-with-links", "/research", "/search-and-fetch",
+                "/documents/read", "/documents/image", "/jobs/fetch", "/jobs/read",
+                "/jobs/cancel", "/drive"}:
+        payload = dict(payload, evidence_namespace=CLAIMS.get()["namespace"])
     if path in {"/fetch", "/extract-with-links", "/research", "/search-and-fetch"}:
         timeout = max(timeout or REQUEST_TIMEOUT, 240)
     async with httpx.AsyncClient(
@@ -219,7 +232,7 @@ mcp = FastMCP(
 
 
 
-@mcp.tool()
+@mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, openWorldHint=True))
 async def search(
     query: str,
     limit: int = 10,
@@ -229,18 +242,19 @@ async def search(
     recency: float = 0.0,
     categories: str = "",
     language: str = "",
-    profile: str = "web",
+    profile: Literal["fast", "web", "balanced", "thorough", "news", "academic"] = "web",
     engines: str = "",
-    ranking: str = "source",
+    ranking: Literal["source", "bm25", "fusion"] = "source",
     prefer_domains: list[str] | None = None,
     diagnostics: bool = False,
-    cache_mode: str = "use",
+    cache_mode: Literal["use", "refresh", "bypass"] = "use",
     max_age: float | None = None,
 ) -> Any:
     """Find pages. Returns ranked results with url, title and snippet.
 
-    To read the results as well, prefer search_and_fetch: one call instead of
-    two, and the engine reads only what its own ranking kept.
+    Use web for general discovery, news for reporting, academic for papers,
+    or thorough for web plus Mwmbl. Prefer search then selected fetches when
+    source authority matters; search_and_fetch combines discovery and reading.
     """
     return await _backend_post("/v2/search" if diagnostics else "/search", {
         "query": query,
@@ -256,20 +270,35 @@ async def search(
     })
 
 
-@mcp.tool()
+@mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, openWorldHint=True))
 async def fetch(
     urls: list[str],
     max_chars: int = 12000,
-    format: str = "text",
-    render: str = "auto",
+    format: Literal["text", "links", "html"] = "text",
+    render: Literal["auto", "always", "never"] = "auto",
     fresh: bool = False,
-    cache_mode: str = "use",
+    cache_mode: Literal["use", "refresh", "bypass"] = "use",
     max_age: float | None = None,
     wait_for: str = "",
-    render_delay: float = 0.5,
+    render_delay: Annotated[float, Field(ge=0, le=5)] = 0.5,
     headed_fallback: bool = False,
+    focus: str = "",
+    response_format: Literal["detailed", "concise"] = "detailed",
+    ocr_language: str = "",
+    ocr_mode: Literal["auto", "always", "never"] = "auto",
+    page_start: Annotated[int, Field(ge=1)] = 1,
+    page_end: Annotated[int | None, Field(ge=1)] = None,
+    row_start: Annotated[int, Field(ge=1)] = 1,
+    row_end: Annotated[int | None, Field(ge=1)] = None,
+    sheet: str = "",
+    max_cell_chars: Annotated[int | None, Field(ge=1, le=1000000)] = None,
 ) -> Any:
     """Read pages you already have URLs for.
+
+    Known URLs can skip search. focus selects passages relevant to a question
+    while retaining a versioned document_id for follow-up reads. page_start/end
+    select PDF pages; ocr_language selects installed Tesseract language data.
+    OCR and partial-read warnings must be preserved when answering.
 
     format  text  article prose (default)
             links prose with anchors kept as markdown, for link discovery
@@ -286,14 +315,18 @@ async def fetch(
         "fresh": fresh,
         "cache_mode": cache_mode, "max_age": max_age, "wait_for": wait_for,
         "render_delay": render_delay, "headed_fallback": headed_fallback,
+        "focus": focus, "response_format": response_format, "ocr_language": ocr_language,
+        "page_start": page_start, "page_end": page_end, "ocr_mode": ocr_mode,
+        "row_start": row_start, "row_end": row_end, "sheet": sheet,
+        "max_cell_chars": max_cell_chars,
     })
 
 
-@mcp.tool()
+@mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, openWorldHint=True))
 async def extract_with_links(
     urls: list[str],
     max_chars: int = 12000,
-    render: str = "auto",
+    render: Literal["auto", "always", "never"] = "auto",
     fresh: bool = False,
 ) -> Any:
     """Read public URLs while retaining resolved outbound links."""
@@ -305,19 +338,21 @@ async def extract_with_links(
     })
 
 
-@mcp.tool()
+@mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, openWorldHint=True))
 async def search_and_fetch(
     query: str,
     limit: int = 5,
     max_chars: int = 3000,
     rank: bool = False,
-    render: str = "auto",
+    render: Literal["auto", "always", "never"] = "auto",
     fresh: bool = False,
-    profile: str = "web",
+    ocr_mode: Literal["auto", "always", "never"] = "auto",
+    ocr_language: str = "",
+    profile: Literal["fast", "web", "balanced", "thorough", "news", "academic"] = "web",
     engines: str = "",
-    ranking: str = "source",
+    ranking: Literal["source", "bm25", "fusion"] = "source",
     prefer_domains: list[str] | None = None,
-    cache_mode: str = "use",
+    cache_mode: Literal["use", "refresh", "bypass"] = "use",
     max_age: float | None = None,
 ) -> Any:
     """Find pages and read them in one call.
@@ -331,20 +366,23 @@ async def search_and_fetch(
         "max_chars": _bounded_int(max_chars, 1, MAX_CHARS),
         "rank": rank,
         "render": render,
-        "fresh": fresh,
+        "fresh": fresh, "ocr_mode": ocr_mode, "ocr_language": ocr_language,
         "profile": profile, "engines": engines, "ranking": ranking,
         "prefer_domains": prefer_domains or [], "cache_mode": cache_mode, "max_age": max_age,
     })
 
 
-@mcp.tool()
+@mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, openWorldHint=True))
 async def research(
     question: str,
     queries: list[str] | None = None,
     max_sources: int = 6,
     max_chars: int = 5000,
     fresh: bool = False,
-) -> Any:
+    follow_assets: bool = True,
+    categories: Literal["", "news", "academic"] = "",
+    response_format: Literal["detailed", "concise"] = "detailed",
+) -> dict[str, Any]:
     """Gather cited sources and relevant excerpts across multiple searches.
 
     Returns an evidence bundle for the caller to assess and synthesize. No
@@ -357,23 +395,44 @@ async def research(
         "queries": queries or [],
         "max_sources": _bounded_int(max_sources, 1, 6),
         "max_chars": _bounded_int(max_chars, 500, 6000),
-        "fresh": fresh,
+        "fresh": fresh, "follow_assets": follow_assets,
+        "categories": categories, "response_format": response_format,
     })
 
 
-@mcp.tool()
+class BrowserStep(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    action: Literal["goto", "click", "fill", "type", "press", "select", "check", "uncheck",
+                    "hover", "wait", "wait_for", "text", "html", "attr", "count", "snapshot",
+                    "url", "title", "download"]
+    selector: str = Field(default="", max_length=1000)
+    value: str = Field(default="", max_length=4000)
+    url: str = Field(default="", max_length=2048)
+    ms: int = Field(default=1000, ge=0, le=30000)
+    delay_ms: int = Field(default=0, ge=0, le=1000)
+    name: str = Field(default="", max_length=200)
+    index: int = Field(default=0, ge=0, le=500)
+    limit: int = Field(default=100, ge=1, le=200, description="Snapshot element limit")
+    max_chars: int | None = Field(default=None, ge=1, le=120000,
+                                 description="Text/HTML output limit; preserves existing defaults")
+
+
+@mcp.tool(annotations=ToolAnnotations(readOnlyHint=False, destructiveHint=True,
+                                      idempotentHint=False, openWorldHint=True))
 async def drive(
-    steps: list[dict[str, Any]] | None = None,
+    steps: list[BrowserStep] | None = None,
     session: str = "",
     url: str = "",
     allowed_hosts: list[str] | None = None,
     canaries: list[str] | None = None,
-    screenshot: str = "failure",
+    screenshot: Literal["never", "failure", "canary", "always"] = "failure",
     screenshot_full_page: bool = False,
     include_events: bool = True,
     close_session: bool = False,
-    timeout_ms: int = 45000,
-) -> Any:
+    timeout_ms: Annotated[int, Field(ge=1000, le=180000)] = 45000,
+    operation_id: str = "",
+    ocr_language: str = "",
+) -> dict[str, Any]:
     """Operate a stateful browser using bounded steps and structured evidence.
 
     Use one session per target. If navigation omits a name, reuse the returned
@@ -382,7 +441,10 @@ async def drive(
     fill emits input and change. Close the session when done. Only public
     HTTP(S) navigation is accepted.
     """
-    clean_steps = steps or []
+    if operation_id and not session:
+        raise ValueError("operation_id requires an explicit named session")
+    clean_steps = [step.model_dump(exclude_none=True) if isinstance(step, BrowserStep)
+                   else step for step in (steps or [])]
     if len(clean_steps) > 40 or any(not isinstance(step, dict) for step in clean_steps):
         raise ValueError("steps must contain at most 40 objects")
     hosts = allowed_hosts or []
@@ -422,6 +484,7 @@ async def drive(
         "include_events": include_events,
         "close_session": close_session,
         "timeout_ms": bounded_timeout,
+        "operation_id": operation_id, "ocr_language": ocr_language,
     }
     result = await _backend_post(
         "/drive", payload, timeout=max(REQUEST_TIMEOUT, bounded_timeout / 1000 + 20)
@@ -433,9 +496,89 @@ async def drive(
     return result
 
 
+@mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, openWorldHint=False))
+async def read_document(document_id: str, focus: str = "", offset: int = 0,
+                        max_chars: Annotated[int, Field(ge=1, le=120000)] = 12000,
+                        response_format: Literal["detailed", "concise"] = "detailed",
+                        reparse: bool = False, row_start: int = 1, row_end: int | None = None,
+                        sheet: str = "", max_cell_chars: int | None = None,
+                        page_start: int = 1, page_end: int | None = None,
+                        ocr_mode: Literal["auto", "always", "never"] = "auto",
+                        ocr_language: str = ""
+                        ) -> dict[str, Any]:
+    """Reopen retained source evidence without another origin request.
+
+    Use focus for a new question or offset/next_offset to continue reading.
+    The document hash identifies the retained version, not current web freshness.
+    """
+    return await _backend_post("/documents/read", {"document_id": document_id,
+        "focus": focus, "offset": offset, "max_chars": max_chars,
+        "response_format": response_format, "reparse": reparse, "row_start": row_start,
+        "row_end": row_end, "sheet": sheet, "max_cell_chars": max_cell_chars,
+        "page_start": page_start, "page_end": page_end, "ocr_mode": ocr_mode,
+        "ocr_language": ocr_language})
+
+
+@mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, openWorldHint=False))
+async def view_document_image(document_id: str, page: int = 1,
+                              crop: tuple[int,int,int,int] | None = None,
+                              max_dimension: int = 2400) -> CallToolResult:
+    """Inspect retained PDF/image pixels to verify OCR, charts and numeric tables.
+
+    Requires source bytes retained by a browser download. Crop coordinates refer
+    to the original rendered image before scaling; PDF pages render at 200 DPI.
+    """
+    result = await _backend_post("/documents/image", {"document_id": document_id,
+        "page": page, "crop": crop, "max_dimension": max_dimension})
+    pixels = result.pop("image_b64")
+    return CallToolResult(content=[TextContent(type="text",text=json.dumps(result)),
+                                  ImageContent(type="image",data=pixels,mimeType="image/png")])
+
+
+@mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, openWorldHint=True))
+async def start_fetch_job(urls: list[str], operation_id: str = "", focus: str = "",
+                           render: Literal["auto", "always", "never"] = "auto",
+                           max_chars: Annotated[int, Field(ge=1, le=120000)] = 12000,
+                           wait_for: str = "", fresh: bool = False,
+                           ocr_language: str = "", page_start: int = 1,
+                           ocr_mode: Literal["auto", "always", "never"] = "auto",
+                           page_end: int | None = None,
+                           headed_fallback: bool = False,
+                           row_start: int = 1, row_end: int | None = None, sheet: str = "",
+                           max_cell_chars: int | None = None) -> dict[str, Any]:
+    """Start durable page reads and receive sources as they finish via read_fetch_job.
+
+    Reuse an operation_id only for retrying the identical request. Continue
+    polling to read every source; an early useful source need not end coverage.
+    """
+    return await _backend_post("/jobs/fetch", {"urls": _bounded_urls(urls),
+        "operation_id": operation_id, "focus": focus, "render": render,
+        "max_chars": max_chars, "wait_for": wait_for, "fresh": fresh,
+        "ocr_language": ocr_language, "page_start": page_start, "page_end": page_end,
+        "ocr_mode": ocr_mode,
+        "headed_fallback": headed_fallback, "row_start": row_start,
+        "row_end": row_end, "sheet": sheet, "max_cell_chars": max_cell_chars})
+
+
+@mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, openWorldHint=False))
+async def read_fetch_job(job_id: str, cursor: int = 0) -> dict[str, Any]:
+    """Read new completed sources; reuse next_cursor and respect poll_after_ms.
+
+    Results persist for 24 hours across client disconnects. A server restart
+    marks unfinished jobs interrupted; already completed sources remain readable.
+    """
+    return await _backend_post("/jobs/read", {"job_id": job_id, "cursor": cursor})
+
+
+@mcp.tool(annotations=ToolAnnotations(readOnlyHint=False, idempotentHint=True))
+async def cancel_fetch_job(job_id: str) -> dict[str, Any]:
+    """Stop scheduling new reads. In-flight network/OCR calls may still finish."""
+    return await _backend_post("/jobs/cancel", {"job_id": job_id})
+
+
 @mcp.tool()
 async def corpus_search(query: str, limit: int = 5, floor: float | None = None,
-                        mode: str = "auto") -> Any:
+                        mode: Literal["auto", "semantic", "lexical"] = "auto") -> Any:
     """Search passages already stored in the local semantic corpus."""
     params: dict[str, Any] = {"q": query, "limit": _bounded_int(limit, 1, 50), "mode": mode}
     if floor is not None:
@@ -444,31 +587,31 @@ async def corpus_search(query: str, limit: int = 5, floor: float | None = None,
 
 
 @mcp.tool()
-async def corpus_stats() -> Any:
+async def corpus_stats() -> dict[str, Any]:
     """Return local corpus page and passage counts."""
     return await _backend_get("/corpus/stats")
 
 
 @mcp.tool()
-async def ready() -> Any:
+async def ready() -> dict[str, Any]:
     """Return search-source readiness, distinct from process liveness."""
     return await _backend_get("/ready")
 
 
 @mcp.tool()
-async def capabilities() -> Any:
+async def capabilities() -> dict[str, Any]:
     """List installed search, read, browser-drive, and extraction capabilities."""
     return await _backend_get("/v2/capabilities")
 
 
 @mcp.tool()
-async def status() -> Any:
+async def status() -> dict[str, Any]:
     """Return configured components, providers, and profiles."""
     return await _backend_get("/v2/status")
 
 
 @mcp.tool()
-async def stats() -> Any:
+async def stats() -> dict[str, Any]:
     """Return cache, fetch-tier, budget, and domain-health counters."""
     return await _backend_get("/stats")
 

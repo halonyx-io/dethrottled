@@ -122,8 +122,8 @@ curl -sS http://127.0.0.1:8787/search-and-fetch \
 
 This accepts search fields plus `render`, `raw`, and `max_chars` (default 3000).
 It orders results before reading them and returns an array combining search
-metadata with fetch fields. It does not OCR each search hit; use `/fetch` for a
-specific scanned document. Page reads use a shared worker pool and preserve
+metadata with fetch fields. Selected scanned sources can use OCR by default; set `ocr_mode: "never"`
+when OCR is unwanted. Use `/fetch` for specific page/row ranges. Page reads use a shared worker pool and preserve
 row order in the response.
 
 ## Research evidence bundle
@@ -154,7 +154,8 @@ HTTP 422.
 
 `/drive` gives an agent a bounded browser primitive without exposing arbitrary
 JavaScript evaluation. Prefer `snapshot`, `text`, `attr`, and event telemetry
-over screenshots; request pixels only when visual layout matters.
+for navigation; inspect source pixels whenever layout, charts, or OCR uncertainty
+could change the answer.
 See [DRIVE.md](DRIVE.md) for the recommended agent loop and complete action
 reference.
 
@@ -179,7 +180,7 @@ curl -sS http://127.0.0.1:8787/drive \
 
 Supported actions are `goto`, `click`, `fill`, `type`, `press`, `select`,
 `check`, `uncheck`, `hover`, `wait`, `wait_for`, `text`, `html`, `attr`,
-`count`, `snapshot`, `url`, and `title`. Each response records per-step timing,
+`count`, `snapshot`, `url`, `title`, and `download`. Each response records per-step timing,
 the final URL and title, failed requests, HTTP errors, console messages, page
 errors, and automatically dismissed dialogs. A matched canary is returned in
 `canary_matches`; matches in dialogs, console output, or page errors are marked
@@ -239,3 +240,123 @@ default semantic relevance floor for that call. A successful response has
 `ok: false` and `reason` in the JSON body. `/health` is liveness; use
 `/ready`, `/v2/status`, `/v2/capabilities`, and real queries to judge whether
 the configured pipeline is serving useful results.
+
+## Coverage and agent reads in 0.4
+
+`/fetch` now supports `focus` for a question about a known URL. It examines the
+retained extraction before selecting returned passages. Successful reads return
+`document_id`, `document_sha256`, `document_chars` and `document_expires_at`.
+`POST /documents/read` accepts that ID plus `focus`, or `offset` and `max_chars`.
+`next_offset` continues a sequential read. Retained text is versioned and scoped;
+it does not assert that the current website is unchanged. Re-fetch with the
+appropriate freshness policy when current information matters.
+
+The default retained extraction ceiling is 1,000,000 characters. Individual
+responses still obey their requested cap. Existing extraction-cache entries are
+lazily refreshed for the new representation/provenance schema. Full source files
+are not retained by the document-text store. Its retention is up to seven days,
+subject to a 200 MB storage budget and earlier eviction.
+
+Explicit rendered/readiness requests reject incompatible cached extractions.
+`page_start` and `page_end` select a PDF range of at most 100 pages. Extraction
+reports page numbers, total pages, OCR/native method, next_page and partial
+coverage. `ocr_mode` is `auto`, `always`, or `never`: always renders PDF pages
+for OCR and keeps native text too; never forbids OCR. `ocr_language` selects
+installed Tesseract data, such as eng, msa, chi_sim or chi_tra. Confidence values
+are OCR word scores, not probabilities that a fact or table is correct.
+
+Additional formats include plain text/Markdown, JSON/JSONL, XML (including SVG
+text/data), EML, ZIP/TAR/GZIP, raster images through OCR, and legacy DOC/PPT when
+local converters are installed. Native OOXML/OpenDocument/EPUB readers remain;
+embedded raster images can also be OCRed, with explicit caps and provenance.
+XLSX cached values are preferred; an uncached formula is returned as a formula,
+never silently turned into a missing numeric result. EPUB short chapters follow
+spine order and no longer depend on article-length heuristics.
+
+For archives, inspect member names, skipped_members and partial. Files are read
+without extracting archive paths to disk; expansion, nesting and member counts
+are bounded. Unsupported/encrypted files fail explicitly. Image OCR and SVG XML
+are not reliable reconstructions of visual charts or table relationships.
+
+`response_format: "concise"` is optional on fetch, research and document reads.
+It removes duplicate representations: HTML source appears once, and evidence
+can refer to source-content ranges. Detailed remains the default. Source and
+text hashes, extraction warnings and source_partial help distinguish a successful
+read from complete source coverage.
+
+## Progressive read jobs
+
+`POST /jobs/fetch` accepts fetch controls plus an optional `operation_id`.
+`POST /jobs/read` takes `job_id` and `cursor`; consume results and reuse
+`next_cursor`, respecting `poll_after_ms`. Results arrive in completion order;
+`source_index` maps them to the original URL list. Continue polling for full
+coverage even if an early source already appears useful.
+
+Identical submissions with the same operation ID and identity reuse the job;
+changed payloads conflict with 409. `POST /jobs/cancel` stops scheduling new
+work. In-flight HTTP, renderer and OCR work may still finish. Jobs persist across
+client disconnects; a server restart marks unfinished jobs interrupted while
+keeping completed rows. Resubmit remaining URLs explicitly after interruption.
+
+Results are scoped by caller and retained for up to 24 hours, with a 200 MB
+storage budget that can evict older terminal jobs. Defaults permit two active
+jobs per identity and four globally. These are workload limits, not paid quotas.
+Public wrappers inject identity; caller-provided namespaces cannot override it.
+
+## Browser target hints, downloads and retry behavior
+
+Snapshots now include semantic selector hints, implicit roles and ambiguity
+counts/indexes for supported controls. Existing CSS, XPath and role selectors
+remain available. Duplicate labels require contextual inspection or scoping.
+Text/HTML steps accept `max_chars` and report content_chars/truncated; default
+limits preserve existing behavior.
+
+A `download` step clicks its selector and waits for an actual browser download,
+including a browser-generated blob. The worker monitors a 32 MB download budget;
+the API parses the file using the same format readers and returns source text,
+filename, source/file hashes, warnings and a document handle. Binary transport
+is private between worker and API. Closing the browser session removes its
+browser files; retained extracted text remains accessible until expiry/eviction.
+
+An explicit named session plus `operation_id` enables replay of an identical
+completed drive request within the live worker. Changed payloads conflict;
+in-progress/unknown outcomes must be inspected rather than blindly retried.
+The bounded journal is in memory and does not survive worker restart. Very large
+responses can preserve the known outcome without retaining replayable evidence.
+This is not an exactly-once guarantee across process crashes or external systems.
+
+### Spreadsheet and CSV ranges
+
+Use `sheet` for XLS/XLSX and `row_start`/`row_end` for CSV/XLS/XLSX. Row numbers
+are physical, one-based source positions, including any header row. A request
+selects at most 2,000 rows; `extraction.tables[].next_row` continues the source.
+A later range includes source row 1 as explicitly labeled context. Sheet names,
+returned rows, physical extent and partial flags remain visible. Worksheet
+extent can include formatted/empty rows; it is not a count of nonempty records.
+
+Empty cells are preserved between explicit table boundaries. Pipe characters
+and ampersands inside cells use reversible HTML entity escapes. The default
+cell cap is 32,767 characters; `max_cell_chars` can request up to one million.
+Truncated cells set partial/truncated_cells, so the agent can request a larger
+cell budget instead of accepting a silently shortened value. Range selection
+rejects non-table formats rather than claiming to have applied an ignored option.
+
+Retained browser downloads also preserve source bytes (up to the download cap)
+in a separate scoped 200 MB artifact budget. `/documents/read` can reparse a
+download with PDF page/OCR or table row/sheet controls without another export.
+HTTP reads retain extracted text, not their original files; requesting a reparse
+without retained bytes returns an explicit 410 instead of ignoring the controls.
+
+`POST /documents/image` returns a PNG rendering of a retained PDF page or raster
+image, with the source-file hash, page number, original/output sizes and optional
+crop. PDF coordinates use a 200-DPI rendered image. The MCP `view_document_image`
+tool returns native image content, so vision-capable agents can inspect charts
+and check OCR rather than trusting numeric transcriptions. Crops refer to the
+original pixels before scaling. These views require retained browser-download
+bytes and preserve caller isolation.
+
+Browser captures remain available for image inspection even when text conversion
+fails. Check capture_succeeded separately from the step's parse status. File
+versions with identical extracted text still receive different document handles
+when their source-file hashes differ. The text hash remains a hash of the
+returned retained text, not the original binary artifact.
