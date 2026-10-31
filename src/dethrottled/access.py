@@ -6,6 +6,7 @@ MCP bridge and a REST gateway can share it without installing the web engine.
 
 from __future__ import annotations
 
+import asyncio
 import contextvars
 import hashlib
 import hmac
@@ -69,13 +70,15 @@ class Admission:
             per_client, global_limit, per_minute)
         self.initialized = False
         self.lock = threading.Lock()
+        self.keeper = None
 
     def connection(self):
-        db = sqlite3.connect(self.path, timeout=0.1)
         with self.lock:
             if not self.initialized:
-                db.execute("PRAGMA journal_mode=WAL")
-                db.executescript("""
+                keeper = sqlite3.connect(self.path, timeout=0.5, check_same_thread=False)
+                keeper.execute("PRAGMA journal_mode=WAL")
+                keeper.execute("PRAGMA synchronous=NORMAL")
+                keeper.executescript("""
                     CREATE TABLE IF NOT EXISTS leases (
                         id TEXT PRIMARY KEY, client TEXT NOT NULL, expires REAL NOT NULL);
                     CREATE INDEX IF NOT EXISTS lease_client ON leases(client);
@@ -83,8 +86,21 @@ class Admission:
                         client TEXT NOT NULL, minute INTEGER NOT NULL, used INTEGER NOT NULL,
                         PRIMARY KEY(client,minute));
                 """)
+                keeper.commit()
+                # Keep WAL open between requests. Closing the last connection
+                # forces a checkpoint and disk sync even for temporary leases.
+                self.keeper = keeper
                 self.initialized = True
+        db = sqlite3.connect(self.path, timeout=0.5)
+        # Admission leases are ephemeral; evidence and jobs retain their own
+        # durability settings. Transactions still serialize quota decisions.
+        db.execute("PRAGMA synchronous=NORMAL")
         return db
+
+    def __del__(self):
+        keeper = getattr(self, "keeper", None)
+        if keeper is not None:
+            keeper.close()
 
     def acquire(self, namespace):
         now = time.time()
@@ -145,13 +161,27 @@ class AccessMiddleware:
         request_id = uuid.uuid4().hex
         lease = None
         try:
-            claims = self.registry.verify(headers.get(b"authorization", b"").decode())
+            claims = await asyncio.to_thread(
+                self.registry.verify, headers.get(b"authorization", b"").decode())
             path = scope.get("path", "")
             required = "drive" if path == "/drive" else (
                 "corpus" if path.startswith("/corpus/") else "web")
             if not path.startswith("/mcp") and required not in claims["scopes"]:
                 raise AccessError("insufficient_scope", 403)
-            lease = self.admission.acquire(claims["namespace"])
+            admission_started = time.monotonic()
+            acquiring = asyncio.create_task(asyncio.to_thread(
+                self.admission.acquire, claims["namespace"]))
+            try:
+                lease = await asyncio.shield(acquiring)
+            except asyncio.CancelledError:
+                # A cancelled caller must not strand a lease created by its thread.
+                try:
+                    abandoned = await acquiring
+                    await asyncio.to_thread(self.admission.release, abandoned)
+                except AccessError:
+                    pass
+                raise
+            admission_ms = (time.monotonic() - admission_started) * 1000
         except AccessError as exc:
             body = json.dumps({"error": exc.code, "request_id": request_id}).encode()
             response_headers = [(b"content-type", b"application/json"),
@@ -170,12 +200,14 @@ class AccessMiddleware:
         async def traced_send(message):
             if message["type"] == "http.response.start":
                 message = dict(message, headers=[*message.get("headers", []),
-                                                (b"x-request-id", request_id.encode())])
+                                                (b"x-request-id", request_id.encode()),
+                                                (b"server-timing",
+                                                 f"admission;dur={admission_ms:.2f}".encode())])
             await send(message)
 
         try:
             await self.app(scope, receive, traced_send)
         finally:
-            self.admission.release(lease)
+            await asyncio.to_thread(self.admission.release, lease)
             CLAIMS.reset(claims_token)
             REQUEST_ID.reset(trace_token)

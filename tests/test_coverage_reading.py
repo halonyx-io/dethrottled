@@ -343,7 +343,8 @@ def test_restart_marks_unfinished_jobs_interrupted_and_retains_completed_rows(tm
     path = tmp_path / "jobs.sqlite"
     first = Jobs(path)
     first.db.execute(
-        "INSERT INTO jobs VALUES(?,?,?,?,?,?,?,?)",
+        "INSERT INTO jobs (id,namespace,operation,fingerprint,status,total,created,expires) "
+        "VALUES(?,?,?,?,?,?,?,?)",
         ("job_old", "alice", None, "digest", "running", 2, time.time(), time.time() + 100),
     )
     first.db.execute(

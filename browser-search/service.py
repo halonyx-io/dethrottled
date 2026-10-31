@@ -13,6 +13,7 @@ import ipaddress
 import json
 import os
 import re
+import secrets
 import time
 from collections import Counter, deque
 from contextlib import asynccontextmanager, suppress
@@ -283,7 +284,7 @@ DOWNLOAD_LOCK = asyncio.Lock()
 DRIVE_ACTIONS = (
     "goto", "click", "fill", "type", "press", "select", "check", "uncheck", "hover",
     "wait", "wait_for", "text", "html", "attr", "count", "snapshot", "url", "title",
-    "download",
+    "download", "network", "checkpoint",
 )
 SCREENSHOT_MODES = ("never", "failure", "canary", "always")
 INTERACTIVE_SELECTOR = (
@@ -420,8 +421,10 @@ async def _public_network_target(url: str) -> bool:
         return False
 
 
-async def _make_drive_state(browser, allowed_hosts: list[str], public_only=False) -> dict:
-    context = await browser.new_context(accept_downloads=True)
+async def _make_drive_state(browser, allowed_hosts: list[str], public_only=False,
+                            storage_state=None) -> dict:
+    options = {"storage_state": storage_state} if storage_state else {}
+    context = await browser.new_context(accept_downloads=True, **options)
     if public_only:
         async def public_route(route, request):
             if await _public_network_target(request.url):
@@ -434,7 +437,12 @@ async def _make_drive_state(browser, allowed_hosts: list[str], public_only=False
     events = _new_event_store()
     _install_event_capture(page, events)
     await _install_scope_route(page, allowed_hosts, public_only=public_only)
-    return {"context": context, "page": page, "events": events,
+    responses = deque(maxlen=50)
+    def capture_response(response):
+        if response.request.resource_type in {"xhr", "fetch"}:
+            responses.append({"response_id": secrets.token_hex(12), "response": response})
+    page.on("response", capture_response)
+    return {"context": context, "page": page, "events": events, "responses": responses,
             "allowed_hosts": list(allowed_hosts), "public_only": public_only,
             "lock": asyncio.Lock(),
             "last_used": time.monotonic()}
@@ -495,6 +503,13 @@ async def _get_drive_state(browser, body: DriveRequest) -> tuple[dict, bool]:
         has_navigation = bool(body.url) or any(
             step.action.lower() == "goto" and bool(step.url) for step in body.steps
         )
+        checkpoint = _load_checkpoint(body.session)
+        if checkpoint:
+            if ((body.allowed_hosts and checkpoint["allowed_hosts"] != body.allowed_hosts)
+                    or checkpoint["public_only"] != body.public_only):
+                raise HTTPException(409, "checkpoint scope must match original session")
+            body.allowed_hosts = checkpoint["allowed_hosts"]
+            has_navigation = True
         if not has_navigation:
             # A missing, expired, or evicted session must not masquerade as a
             # successful call against a new about:blank context. The caller
@@ -520,7 +535,21 @@ async def _get_drive_state(browser, body: DriveRequest) -> tuple[dict, bool]:
             )
             DRIVE_SESSIONS.pop(evicted_id, None)
         state = await _make_drive_state(browser, body.allowed_hosts,
-                                       **({"public_only": True} if body.public_only else {}))
+                                       **({"public_only": True} if body.public_only else {}),
+                                       **({"storage_state": checkpoint["storage"]}
+                                          if checkpoint else {}))
+        if checkpoint:
+            state["restored"] = True
+            if not body.url:
+                target = checkpoint["url"]
+                if not _host_allowed(target, body.allowed_hosts):
+                    await _close_drive_state(state)
+                    raise HTTPException(409, "checkpoint navigation scope mismatch")
+                try:
+                    await state["page"].goto(target, wait_until="domcontentloaded", timeout=15000)
+                except BaseException:
+                    await _close_drive_state(state)
+                    raise
         DRIVE_SESSIONS[body.session] = state
     if evicted is not None:
         await _close_drive_state(evicted)
@@ -971,6 +1000,43 @@ async def _drive(state: dict, body: DriveRequest) -> dict:
                         if s.selector else page.locator("body")
                     )
                     await diagnosed_failure("snapshot", target, exc, "dom_snapshot")
+        elif action == "checkpoint":
+            async def call():
+                if not body.session:
+                    raise ValueError("checkpoint_requires_named_session")
+                _save_checkpoint(body.session, {
+                    "url": page.url, "allowed_hosts": state["allowed_hosts"],
+                    "public_only": state.get("public_only", False),
+                    "storage": await state["context"].storage_state(),
+                    "expires": time.time() + 86400})
+                return {"saved": True, "retention_seconds": 86400,
+                        "includes": ["cookies", "local_storage"],
+                        "excludes": ["session_storage", "indexed_db", "live_dom"]}
+        elif action == "network":
+            async def call(s=s):
+                responses = [r for r in state.get("responses", [])
+                             if _host_allowed(r["response"].url, state["allowed_hosts"])
+                             and (not s.value or s.value in r["response"].url)]
+                listing = [{"index": i, "response_id": entry["response_id"],
+                            "url": entry["response"].url, "status": entry["response"].status,
+                            "content_type": entry["response"].headers.get("content-type", "")}
+                           for i, entry in enumerate(responses)]
+                if s.name != "body":
+                    return {"responses": listing[-s.limit:], "captured": len(responses)}
+                index = s.index
+                if s.selector:
+                    index = next((i for i, r in enumerate(responses)
+                                  if r["response_id"] == s.selector), -1)
+                if index < 0 or index >= len(responses):
+                    raise ValueError("network_response_missing; list responses first")
+                response = responses[index]["response"]
+                size = response.headers.get("content-length", "")
+                if not size.isdigit() or int(size) > 2_000_000:
+                    raise ValueError("network_body_requires_content_length_at_most_2MB")
+                text = await response.text()
+                cap = s.max_chars or 16000
+                return {**listing[index], "content": text[:cap],
+                        "truncated": len(text) > cap, "content_chars": len(text)}
         elif action == "url":
             async def call():
                 return page.url
@@ -993,7 +1059,9 @@ async def _drive(state: dict, body: DriveRequest) -> dict:
         "steps": results,
         "final": {"url": page.url, "title": await page.title()},
         "session": {"id": body.session or None, "persistent": bool(body.session),
-                    "closed": False, "ttl_seconds": DRIVE_SESSION_TTL if body.session else 0},
+                    "closed": False, "ttl_seconds": DRIVE_SESSION_TTL if body.session else 0,
+                    "allowed_hosts": state["allowed_hosts"],
+                    "restored_from_checkpoint": state.get("restored", False)},
         "canary_matches": matches,
         "service_s": round(time.monotonic() - started, 3),
     }
@@ -1011,7 +1079,83 @@ async def _drive(state: dict, body: DriveRequest) -> dict:
     return out
 
 
-DRIVE_OPERATIONS = {}
+STATE_DIR = Path(os.getenv("DETHROTTLED_BROWSER_STATE_DIR", "/tmp/dethrottled-browser-state"))
+OPERATION_TTL = 86400
+
+
+def _checkpoint_path(session):
+    STATE_DIR.mkdir(parents=True, exist_ok=True, mode=0o700)
+    return STATE_DIR / (hashlib.sha256(session.encode()).hexdigest() + ".json")
+
+
+def _save_checkpoint(session, value):
+    path = _checkpoint_path(session)
+    for old in STATE_DIR.glob("*.json"):
+        try:
+            if json.loads(old.read_text()).get("expires", 0) <= time.time():
+                old.unlink(missing_ok=True)
+        except (OSError, ValueError):
+            continue
+    if not path.exists() and len(list(STATE_DIR.glob("*.json"))) >= 128:
+        raise ValueError("checkpoint_capacity_reached; close unused sessions")
+    encoded = json.dumps(value)
+    if len(encoded) > 2_000_000:
+        raise ValueError("checkpoint_too_large")
+    temporary = path.with_suffix(".tmp")
+    fd = os.open(temporary, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+    with os.fdopen(fd, "w") as stream:
+        stream.write(encoded)
+    temporary.replace(path)
+
+
+def _load_checkpoint(session):
+    path = _checkpoint_path(session)
+    try:
+        value = json.loads(path.read_text())
+        if value["expires"] > time.time():
+            return value
+        path.unlink(missing_ok=True)
+    except (OSError, ValueError, KeyError):
+        pass
+    return None
+
+
+def _operation_db():
+    import sqlite3
+    STATE_DIR.mkdir(parents=True, exist_ok=True, mode=0o700)
+    db = sqlite3.connect(STATE_DIR / "operations.sqlite")
+    db.execute("CREATE TABLE IF NOT EXISTS operations (key TEXT PRIMARY KEY, value TEXT)")
+    return db
+
+
+def _persist_operation(key, value):
+    from contextlib import closing
+    with closing(_operation_db()) as db, db:
+        db.execute("INSERT OR REPLACE INTO operations VALUES (?,?)",
+                   (json.dumps(key), json.dumps(value)))
+        db.execute("DELETE FROM operations WHERE CAST(json_extract(value, '$.created') "
+                   "AS REAL) < ?", (time.time() - OPERATION_TTL,))
+
+
+def _load_operations():
+    db = _operation_db()
+    try:
+        records = {}
+        for key, raw in db.execute("SELECT key,value FROM operations"):
+            value = json.loads(raw)
+            if value["created"] < time.time() - OPERATION_TTL:
+                db.execute("DELETE FROM operations WHERE key=?", (key,))
+                continue
+            if value["state"] == "running":
+                value["state"] = "outcome_unknown"
+            records[tuple(json.loads(key))] = value
+        db.commit()
+        return records
+    finally:
+        db.close()
+
+
+DRIVE_OPERATIONS = _load_operations()
 
 
 def _operation_lookup(body):
@@ -1059,6 +1203,7 @@ async def drive(body: DriveRequest):
     try:
         if body.session and body.close_session and not body.url and not body.steps:
             closed = await _drop_drive_session(body.session)
+            _checkpoint_path(body.session).unlink(missing_ok=True)
             return {"ok": True, "steps": [], "session": {"id": body.session,
                     "persistent": True, "closed": closed}, "canary_matches": [],
                     "service_s": 0.0}
@@ -1069,7 +1214,7 @@ async def drive(body: DriveRequest):
                 if replay is not None:
                     return replay
                 if body.operation_id:
-                    cutoff = time.monotonic() - DRIVE_SESSION_TTL
+                    cutoff = time.time() - OPERATION_TTL
                     for key, operation in list(DRIVE_OPERATIONS.items()):
                         if operation["created"] < cutoff and operation["state"] != "running":
                             DRIVE_OPERATIONS.pop(key, None)
@@ -1080,22 +1225,26 @@ async def drive(body: DriveRequest):
                         body.model_dump(exclude={"operation_id"}),
                         sort_keys=True).encode()).hexdigest()
                     DRIVE_OPERATIONS[key] = {"fingerprint": fingerprint, "state": "running",
-                                             "created": time.monotonic()}
+                                             "created": time.time()}
+                    _persist_operation(key, DRIVE_OPERATIONS[key])
                 try:
                     result = await _drive(state, body)
                 except BaseException:
                     if body.operation_id:
                         DRIVE_OPERATIONS[key]["state"] = "outcome_unknown"
+                        _persist_operation(key, DRIVE_OPERATIONS[key])
                     raise
                 if body.close_session and body.session:
                     await _drop_drive_session(body.session, expected=state)
                     result["session"]["closed"] = True
+                    _checkpoint_path(body.session).unlink(missing_ok=True)
                 if body.operation_id:
                     result.update(operation_id=body.operation_id, operation_replayed=False)
                     if len(json.dumps(result)) > 1_000_000:
                         DRIVE_OPERATIONS[key].update(state="completed_evidence_unavailable")
                     else:
                         DRIVE_OPERATIONS[key].update(state="completed", result=result)
+                    _persist_operation(key, DRIVE_OPERATIONS[key])
         finally:
             if ephemeral:
                 await _close_drive_state(state)

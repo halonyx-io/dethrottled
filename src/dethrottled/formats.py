@@ -45,6 +45,13 @@ def kind_of(data, url="", content_type=""):
         return native
     suffix = PurePosixPath(url.split("?")[0].lower()).suffix
     ctype = content_type.split(";")[0].strip().lower()
+    if head.startswith(b"WEBVTT") or suffix in {".vtt", ".srt"} or ctype == "text/vtt":
+        return "captions"
+    if (ctype.startswith(("audio/", "video/")) or suffix in {
+        ".mp3", ".wav", ".flac", ".ogg", ".m4a", ".mp4", ".webm", ".mov"
+    } or data.startswith((b"ID3", b"fLaC", b"OggS"))
+        or (data.startswith(b"RIFF") and data[8:12] == b"WAVE")):
+        return "media"
     if (
         head.startswith((b"{", b"["))
         and ctype in {"application/octet-stream", ""}
@@ -175,7 +182,13 @@ def pdf_text(data, limit, allow_ocr, options):
             elif not text.strip():
                 warnings.append(f"Page {number + 1} has no text layer; OCR was not performed.")
             parts.append(f"## Page {number + 1}\n{text}")
-            pages.append({"page": number + 1, "method": method, "text_chars": len(text)})
+            layout = [{"bbox": list(block[:4]), "text": block[4][:500],
+                       "text_truncated": len(block[4]) > 500}
+                      for block in page.get_text("blocks", sort=True)[:30] if block[6] == 0]
+            pages.append({"page": number + 1, "method": method, "text_chars": len(text),
+                          "text_layer_blocks": layout,
+                          "layout_coordinate_space": "PDF points, origin top-left",
+                          "layout_may_be_incomplete": True})
             if sum(map(len, parts)) >= limit:
                 break
         joined = "\n\n".join(parts)
@@ -200,6 +213,9 @@ def read_blob(data, kind, limit, *, allow_ocr=True, options=None, depth=0):
     from . import documents
 
     options = options or {}
+    if kind in {"captions", "media"}:
+        from . import timed
+        return timed.captions(data, limit) if kind == "captions" else timed.transcribe(data, limit)
     metadata = {"warnings": [], "partial": False}
     if kind == "pdf":
         return pdf_text(data, limit, allow_ocr, options)

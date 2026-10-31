@@ -24,7 +24,8 @@ MAX_URLS = 10
 MAX_QUERY = 500
 SLOTS = asyncio.Semaphore(8)
 POST_PATHS = {
-    '/documents/read', '/documents/image', '/jobs/fetch', '/jobs/read', '/jobs/cancel',
+    '/documents/read', '/documents/image', '/documents/structure', '/site/crawl',
+    '/jobs/fetch', '/jobs/read', '/jobs/cancel', '/jobs/resume',
     '/drive',
     '/extract',
     '/extract-with-links',
@@ -228,7 +229,7 @@ async def dispatch(path: str, request: Request):
             if (type(sources) is not int or not 1 <= sources <= 6 or
                     type(chars) is not int or not 500 <= chars <= 6000):
                 return JSONResponse({'error': 'invalid research limits'}, status_code=400)
-    elif route in FETCH_PATHS:
+    elif route in FETCH_PATHS | {'/site/crawl'}:
         urls = payload.get('urls')
         if not isinstance(urls, list) or not 1 <= len(urls) <= MAX_URLS:
             return JSONResponse({'error': 'invalid URLs'}, status_code=400)
@@ -261,10 +262,11 @@ async def dispatch(path: str, request: Request):
                 'POST', route, payload,
                 session_alias=(internal_session, logical_session),
             )
-    if route in FETCH_PATHS or route in {'/documents/read', '/documents/image'}:
+    if route in FETCH_PATHS or route in {'/documents/read', '/documents/image', '/site/crawl'}:
         payload = dict(payload, public_only=True)
     if route in FETCH_PATHS or route in {
-            '/documents/read', '/documents/image', '/jobs/read', '/jobs/cancel', '/research',
+            '/documents/read', '/documents/image', '/documents/structure', '/site/crawl',
+            '/jobs/read', '/jobs/cancel', '/jobs/resume', '/research',
             '/search-and-fetch', '/search-and-extract'}:
         payload = dict(payload, evidence_namespace=namespace)
     return await upstream('POST', route, payload)

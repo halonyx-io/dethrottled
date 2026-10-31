@@ -1,5 +1,10 @@
 # Dethrottled
 
+Version 0.6 adds site coverage ledgers, exact citation selectors, application-response
+inspection, browser restart checkpoints, resumable read jobs, timed captions and
+optional local speech recognition. See [agent upgrades](docs/AGENT-UPGRADES.md)
+for workflow, MCP compatibility checks, portable deployment and limits.
+
 
 Version 0.4 adds focused reads of known sources, versioned retained evidence,
 PDF page selection and mixed-page OCR, broader file coverage, browser-generated

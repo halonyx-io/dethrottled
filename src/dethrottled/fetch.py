@@ -1156,12 +1156,14 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
     # to the ladder having spent no network at all.
     from . import media as _media
     if _media.is_video(url):
-        text, _title, why = _media.transcript(url, limit=CACHE_CHARS)
+        caption_metadata = {}
+        text, _title, why = _media.transcript(url, limit=CACHE_CHARS, metadata=caption_metadata)
         if text:
             out = {"ok": True, "text": text, "tier": "transcript",
                    "extractor": "captions", "title": "", "published": "",
                    "chars": len(text), "url": url, "reason": "",
-                   "cached": False, "content_type": "transcript"}
+                   "cached": False, "content_type": "transcript",
+                   "extraction": caption_metadata}
             return finish(out)
         # No captions, or blocked. Reported under its own name rather than
         # falling through to a ladder that would spend four tiers proving it

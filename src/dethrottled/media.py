@@ -86,7 +86,7 @@ def is_video(url: str) -> bool:
     return bool(video_id(url))
 
 
-def transcript(url: str, limit: int = 20000) -> tuple:
+def transcript(url: str, limit: int = 20000, metadata: dict | None = None) -> tuple:
     """(text, title, reason) for a video URL.
 
     Never raises. Every failure has a name, because "no transcript" and "this
@@ -132,7 +132,7 @@ def transcript(url: str, limit: int = 20000) -> tuple:
     # Captions arrive as timed fragments, often mid-sentence. Joined into
     # continuous prose, because every consumer of this -- an extractor, an
     # embedder, a reader -- wants sentences rather than a subtitle file.
-    pieces = []
+    pieces, segments = [], []
     size = 0
     for snippet in fetched:
         text = (getattr(snippet, "text", None)
@@ -142,6 +142,13 @@ def transcript(url: str, limit: int = 20000) -> tuple:
             # Bracketed cues are sound descriptions ("[Music]"), not speech.
             continue
         pieces.append(text)
+        start = getattr(snippet, "start", None)
+        duration = getattr(snippet, "duration", None)
+        if isinstance(snippet, dict):
+            start, duration = snippet.get("start"), snippet.get("duration")
+        if start is not None and duration is not None:
+            segments.append({"text": text, "start_seconds": float(start),
+                             "end_seconds": float(start) + float(duration)})
         size += len(text) + 1
         if size >= limit:
             break
@@ -150,4 +157,10 @@ def transcript(url: str, limit: int = 20000) -> tuple:
     joined = re.sub(r"\s+", " ", joined).strip()
     if not joined:
         return "", "", "transcript_empty"
+    if metadata is not None:
+        metadata.update(segments=segments, method="youtube_captions",
+                        language=getattr(chosen, "language_code", None),
+                        generated=getattr(chosen, "is_generated", None),
+                        partial=size >= limit, warnings=["Captions may contain errors; "
+                        "they do not establish what is visible in the video."])
     return joined[:limit], "", ""

@@ -433,7 +433,7 @@ DRIVE_MAX_SESSIONS = int(os.environ.get("DETHROTTLED_DRIVE_MAX_SESSIONS", "8"))
 # A caller reading /v2/capabilities gets the truth whether or not the worker is
 # answering at that instant.
 DRIVE_ACTIONS = (
-    "download",
+    "download", "network", "checkpoint",
     "goto", "click", "fill", "type", "press", "select", "check", "uncheck", "hover",
     "wait", "wait_for", "text", "html", "attr", "count", "snapshot", "url", "title",
 )

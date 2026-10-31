@@ -389,6 +389,39 @@ class JobReadBody(BaseModel):
     evidence_namespace: str = Field(default="local", max_length=100)
 
 
+class StructureBody(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    document_id: str = Field(min_length=1, max_length=100)
+    offset: int = Field(default=0, ge=0)
+    limit: int = Field(default=30, ge=1, le=100)
+    focus: str = Field(default="", max_length=1000)
+    evidence_namespace: str = Field(default="local", max_length=100)
+
+
+class SiteBody(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    urls: list[str] = Field(min_length=1, max_length=10)
+    max_pages: int = Field(default=10, ge=1, le=50)
+    max_depth: int = Field(default=2, ge=0, le=5)
+    path_prefix: str = Field(default="/", max_length=1000, pattern=r"^/")
+    render: Literal["auto", "always", "never"] = "auto"
+    public_only: bool = False
+    evidence_namespace: str = Field(default="local", max_length=100)
+
+    @model_validator(mode="after")
+    def site_scope(self):
+        from urllib.parse import urlsplit
+
+        from .site import canonical
+        self.urls = [canonical(u) for u in self.urls]
+        origins = {(urlsplit(u).scheme, urlsplit(u).netloc) for u in self.urls}
+        if len(origins) != 1 or any(
+            not urlsplit(u).path.startswith(self.path_prefix) for u in self.urls
+        ):
+            raise ValueError("seeds must share one origin and match path_prefix")
+        return self
+
+
 class DriveStep(BaseModel):
     """One action for the browser to take. `action` selects which fields matter."""
     model_config = ConfigDict(extra="forbid")
@@ -514,6 +547,7 @@ def _search_row(row: dict, meta: dict, index: int) -> dict:
 
 
 MIME = {
+    "captions": "text/vtt", "media": "text/plain", "transcript": "text/plain",
     "text": "text/plain", "json": "application/json", "jsonl": "application/x-ndjson",
     "xml": "application/xml", "eml": "message/rfc822", "zip": "application/zip",
     "gzip": "application/gzip", "tar": "application/x-tar", "image": "application/octet-stream",
@@ -748,13 +782,14 @@ def v2_status():
 
 @app.get("/v2/capabilities")
 def v2_capabilities():
+    import hashlib
     import importlib.util
     import shutil
 
     def installed(name: str) -> bool:
         return importlib.util.find_spec(name) is not None
 
-    readable = ["html", "csv", "tsv", "text", "markdown", "json", "jsonl", "xml",
+    readable = ["html", "csv", "tsv", "text", "markdown", "json", "jsonl", "xml", "vtt", "srt",
                 "svg-text", "eml", "zip", "tar", "gzip"]
     if installed("PIL") and shutil.which("tesseract"):
         readable.extend(["png", "jpeg", "webp", "tiff", "gif", "bmp"])
@@ -778,6 +813,15 @@ def v2_capabilities():
     return {
         "service": "dethrottled",
         "version": VERSION,
+        "client_contract": {
+            "workflow_sha256": hashlib.sha256(INSTRUCTIONS.encode()).hexdigest(),
+            "preserve_fields": ["document_id", "document_sha256", "workflow", "warnings",
+                                "source_partial", "truncated", "extraction", "next_offset"],
+            "mcp_images": "forward native image content blocks to vision-capable models",
+            "startup_check": "Compare initialize.instructions hash with workflow_sha256; "
+                             "refresh tools/list after service upgrades.",
+            "client_activation": "Server version does not prove a remote plugin revision loaded.",
+        },
         # What is CONFIGURED, not what the code is capable of. Listing searxng
         # on a host with no SearXNG is the same class of lie as a health check
         # that reports ok because a socket opened.
@@ -820,7 +864,12 @@ def v2_capabilities():
                                     "out_of_viewport", "disabled", "detached",
                                     "selector_error"],
             "navigation_allowlist": True,
-            "operation_replay": "within the live worker; unknown outcomes never auto-repeat",
+            "operation_replay": "durable journal; unknown outcomes never auto-repeat",
+            "operation_retention_seconds": 86400,
+            "checkpoint": {"action": "checkpoint", "retention_seconds": 86400,
+                           "state": ["cookies", "local_storage"],
+                           "restore": "same session and original allowed_hosts"},
+            "network_response_inspection": True,
             "download_reading": True,
             "text_max_chars": 120000,
         },
@@ -837,6 +886,8 @@ def v2_capabilities():
             "youtube_captions_configured": (
                 installed("youtube_transcript_api")
                 and _transcripts_enabled()),
+            "speech_worker_configured": bool(os.getenv("DETHROTTLED_MEDIA_WORKER_URL")),
+            "timed_caption_evidence": True,
             "pdf_page_selection": True,
             "pdf_mixed_page_ocr": True,
             "image_ocr_installed": installed("PIL") and shutil.which("tesseract") is not None,
@@ -851,10 +902,15 @@ def v2_capabilities():
             "next_actions": "Each read returns tool, endpoint, arguments, reason and prerequisites",
             "manual_control": "fetch recovery=manual; explicit render/OCR/ranges remain available"},
         "documents": {"read_endpoint": "/documents/read", "versioned": True,
-                      "retention_seconds": 604800, "scoped": True},
+                      "retention_seconds": 604800, "scoped": True,
+                      "structure_endpoint": "/documents/structure",
+                      "citation_selectors": "exact text offsets and version hash"},
+        "site": {"endpoint": "/site/crawl", "max_pages": 50,
+                 "scope": "same origin and caller path prefix", "coverage_ledger": True},
         "jobs": {"submit_endpoint": "/jobs/fetch", "read_endpoint": "/jobs/read",
                  "cancel_endpoint": "/jobs/cancel", "retention_seconds": 86400,
-                 "progressive": True, "restart_policy": "unfinished jobs become interrupted"},
+                 "progressive": True, "restart_policy": "unfinished jobs become interrupted",
+                 "resume_endpoint": "/jobs/resume", "resume": "explicit; missing sources only"},
         "quotas": None,
         "keys_required": False,
 
@@ -1078,6 +1134,43 @@ def cancel_fetch_job(body: JobReadBody):
         raise HTTPException(status_code=exc.status, detail=str(exc)) from exc
 
 
+@app.post("/jobs/resume")
+def resume_fetch_job(body: JobReadBody):
+    def reader(payload):
+        payload = dict(payload, evidence_namespace=body.evidence_namespace)
+        saved = FetchBody(**payload)
+        return lambda url: _job_read(saved, url)
+    try:
+        return jobs().resume(body.evidence_namespace, body.job_id, reader, _FETCH_POOL)
+    except JobError as exc:
+        raise HTTPException(status_code=exc.status, detail=str(exc)) from exc
+
+
+@app.post("/site/crawl")
+def crawl_site(body: SiteBody):
+    from .site import crawl
+    result = crawl(body.urls, lambda url: _extract_row(
+        url, 120000, raw=True, public_only=body.public_only, page_budget=30,
+        evidence_namespace=body.evidence_namespace, recovery="manual",
+        allow_render=body.render != "never", render_first=body.render == "always"),
+        max_pages=body.max_pages, max_depth=body.max_depth, path_prefix=body.path_prefix)
+    result["workflow"] = {"next_actions": [
+        {"tool": "read_document", "endpoint": "/documents/read",
+         "arguments": {"document_id": row["document_id"]},
+         "reason": "Inspect retained evidence before synthesizing site findings."}
+        for row in result["sources"] if row.get("document_id")][:6]}
+    return result
+
+
+@app.post("/documents/structure")
+def document_structure(body: StructureBody):
+    from .structure import select
+    record = documents().get(body.evidence_namespace, body.document_id)
+    if record is None:
+        raise HTTPException(404, "document_missing_or_expired")
+    return select(record, offset=body.offset, limit=body.limit, focus=body.focus)
+
+
 def _source_artifact(record, namespace, public_only):
     """Acquire source bytes on demand, verifying the retained source version."""
     metadata = record["metadata"]
@@ -1274,6 +1367,17 @@ def drive(body: DriveBody):
         result = fs.browser_drive(payload)
         for step in result.get("steps", []):
             data = step.get("data")
+            if (step.get("action") == "network" and step.get("ok")
+                    and isinstance(data, dict) and isinstance(data.get("content"), str)):
+                metadata = {"quality": "ok", "content_type": data.get("content_type", ""),
+                            "http_status": data.get("status"),
+                            "source_partial": bool(data.get("truncated")),
+                            "acquisition": {"method": "browser_network_response"},
+                            "warnings": ["Captured application response; HTTP status and "
+                                         "content must be assessed before using its claims."]}
+                data.update(documents().put(body.evidence_namespace, data["url"],
+                                             data["content"], metadata))
+                data["workflow"] = guidance({**metadata, **data})
             if step.get("action") != "download" or not isinstance(data, dict):
                 continue
             encoded = data.pop("download_b64", None)
