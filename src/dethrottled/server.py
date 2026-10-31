@@ -59,6 +59,7 @@ import os
 import secrets
 import threading
 import time
+import uuid
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Literal
@@ -82,7 +83,8 @@ from . import paths as _paths
 from . import rank as ranker
 from . import research as research_engine
 from . import search as fs
-from .cache import Cache
+from .cache import Cache, CacheView
+from .content import constrained, passage_excerpt
 from .corpus import index_fetched, shared_corpus
 
 STARTED = time.time()
@@ -106,6 +108,17 @@ app = FastAPI(title="dethrottled", version=VERSION,
               description="Zero-API search, fetch and extraction")
 
 
+@app.middleware("http")
+async def request_trace(request, call_next):
+    incoming = request.headers.get("x-request-id", "")
+    valid = len(incoming) == 32 and all(c in "0123456789abcdef" for c in incoming)
+    trace = incoming if valid else (
+        uuid.uuid4().hex)
+    response = await call_next(request)
+    response.headers["X-Request-ID"] = trace
+    return response
+
+
 # Page reads spend most of their time waiting on different origin servers.
 # Share eight slots across requests and let one request occupy at most four;
 # response rows still come back in the caller's order.
@@ -125,29 +138,50 @@ class SearchBody(BaseModel):
     # one hears about it instead of silently getting the default.
     model_config = ConfigDict(extra="forbid")
 
-    query: str
+    query: str = Field(min_length=1, max_length=500)
     # The contract's name for result count. num_results and max_items remain
     # accepted for callers already written against them; limit wins.
-    limit: int | None = None
-    num_results: int = 8
-    max_items: int | None = None
+    limit: int | None = Field(default=None, ge=1, le=10)
+    num_results: int = Field(default=8, ge=1, le=10)
+    max_items: int | None = Field(default=None, ge=1, le=10)
     # Default search includes direct web, Bing News RSS, local SearXNG and
     # resolved Google News headlines. This preserves existing callers.
-    categories: str = ""
+    categories: Literal["", "news", "academic"] = ""
     # SearXNG uses this hint. Direct web engines are
     # English-centric and do not take it, so it biases rather than constrains.
     language: str = ""
     engines: str = ""
+
+    @field_validator("engines")
+    @classmethod
+    def validate_sources(cls, value):
+        allowed = {"auto", "web", "news", "mwmbl", "crossref", "openalex", "arxiv"}
+        if any(x.strip() not in allowed for x in value.split(",") if x.strip()):
+            raise ValueError("supported sources: " + ", ".join(sorted(allowed)))
+        return ",".join("web" if x.strip() == "auto" else x.strip()
+                        for x in value.split(",") if x.strip())
+
+    @field_validator("query")
+    @classmethod
+    def query_not_blank(cls, value):
+        if not value.strip():
+            raise ValueError("query must not be blank")
+        return value.strip()
+
     # Honoured: bypasses the search cache for this call. It was accepted and
     # ignored until an external benchmark set it, measured this engine's cache
     # against another engine doing live work, and published the wrong
     # conclusion. Accepting a field costs nothing right up until someone
     # believes it.
     fresh: bool = False
-    profile: str = "balanced"
+    cache_mode: Literal["use", "refresh", "bypass"] = "use"
+    max_age: float | None = Field(default=None, ge=0, le=1814400)
+    profile: Literal["fast", "web", "balanced", "thorough", "news", "academic"] = "web"
 
     # Source order is the measured default; BM25 remains opt-in.
     rank: bool = False
+    ranking: Literal["source", "bm25", "fusion"] = "source"
+    prefer_domains: list[str] = Field(default_factory=list, max_length=10)
     # Accept explicit false for existing callers. Reject true instead of
     # claiming success when the removed model cannot run.
     rerank: bool = False
@@ -161,17 +195,17 @@ class SearchBody(BaseModel):
     # How many already-fetched corpus passages to merge into the pool before
     # ranking. 0 disables it. These cost no fetch, so they are cheaper than the
     # web rows they compete with, not merely additional.
-    corpus: int = 0
+    corpus: int = Field(default=0, ge=0, le=20)
     # 0.0 = pure relevance, 1.0 = freshness dominates. Bounded and
     # multiplicative: it may reorder relevant results and may never promote an
     # irrelevant one.
-    recency: float = 0.0
+    recency: float = Field(default=0.0, ge=0, le=1)
 
 
 class FetchBody(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    urls: list[str] = Field(default_factory=list)
+    urls: list[str] = Field(min_length=1, max_length=10)
     # What the ladder is ALLOWED to do, not what it must do. "never" keeps it
     # on the cheap local tiers for callers to whom latency matters more than
     # coverage.
@@ -182,14 +216,14 @@ class FetchBody(BaseModel):
     # callers were written against one -- and because typing this field
     # differently on two engines is what returned 422 on every fetch through a
     # bridge for a day. The enum is canonical; True means always, False auto.
-    render: str | bool = "auto"
+    render: Literal["auto", "always", "never"] | bool = "auto"
     # text   article prose (default)
     # links  prose with anchors kept as markdown, for link discovery
     # html   the source, for callers doing their own parsing
     #
     # Replaces the raw/links booleans, which could contradict each other and
     # left a caller no way to say "either one" without knowing which won.
-    format: str = "text"
+    format: Literal["text", "links", "html"] = "text"
     # The prose is the point; `raw` is for callers doing their own parsing, and
     # is the only reason this is a distinct verb rather than a rename. Kept
     # because callers send it; `format` wins when both appear.
@@ -202,9 +236,15 @@ class FetchBody(BaseModel):
     # is 500 to 800 -- this endpoint was truncating typical articles. Not
     # 10,000, because past roughly eight thousand most sites are into
     # related-articles and footer.
-    max_chars: int = 8000
+    max_chars: int = Field(default=8000, ge=1, le=120000)
     fresh: bool = False
-    profile: str = "balanced"
+    cache_mode: Literal["use", "refresh", "bypass"] = "use"
+    max_age: float | None = Field(default=None, ge=0, le=1814400)
+    wait_for: str = Field(default="", max_length=500)
+    render_delay: float = Field(default=0.5, ge=0, le=5)
+    headed_fallback: bool = False
+    public_only: bool = False
+    profile: Literal["fast", "balanced", "thorough"] = "balanced"
 
 
 class SearchFetchBody(SearchBody):
@@ -212,13 +252,13 @@ class SearchFetchBody(SearchBody):
     # callers were written against one -- and because typing this field
     # differently on two engines is what returned 422 on every fetch through a
     # bridge for a day. The enum is canonical; True means always, False auto.
-    render: str | bool = "auto"
+    render: Literal["auto", "always", "never"] | bool = "auto"
     raw: bool = False
     # 3000. Leaner than /extract on purpose: this path multiplies by the number
     # of results, and it is the ranking path, where measurement says less text
     # ranks better -- titles plus 240 characters beat 3,000 characters of body.
     # 3000 is the measured sweet spot for the ranking path.
-    max_chars: int = 3000
+    max_chars: int = Field(default=3000, ge=1, le=120000)
 
 
 class ResearchBody(BaseModel):
@@ -274,6 +314,7 @@ class DriveBody(BaseModel):
     session: str = Field(default="", max_length=64, pattern=r"^[A-Za-z0-9._-]*$")
     close_session: bool = False
     allowed_hosts: list[str] = Field(default_factory=list, max_length=32)
+    public_only: bool = False
     canaries: list[str] = Field(default_factory=list, max_length=20)
     include_events: bool = True
     screenshot: bool | Literal["never", "failure", "canary", "always"] = "failure"
@@ -307,12 +348,19 @@ def _attempts(meta: dict) -> list:
                      "count": count if configured else 0,
                      "status": "ok" if configured else count,
                      "elapsed_ms": meta.get("elapsed_ms", 0),
-                     "unresponsive": []})
+                     "unresponsive": [],
+                     **(meta.get("source_reports") or {}).get(name, {})})
     browser = meta.get("browser_search") or {}
-    if browser:
+    if browser.get("direct"):
+        direct = browser["direct"]
+        rows.append({"engine": "tls-ddg-lite", "count": direct.get("count", 0),
+                     "status": direct.get("status"), "reason": direct.get("reason"),
+                     "elapsed_ms": direct.get("elapsed_ms", 0), "unresponsive": []})
+    if browser and browser.get("attempts"):
         rows.append({"engine": "browser-search", "count": 0,
                      "status": browser.get("status", "unknown"),
                      "elapsed_ms": browser.get("elapsed_ms", 0),
+                     "queue_ms": browser.get("queue_ms", 0),
                      "unresponsive": []})
         for attempt in browser.get("attempts") or []:
             rows.append({"engine": "browser-" + str(attempt.get("engine") or "unknown"),
@@ -333,8 +381,11 @@ def _search_row(row: dict, meta: dict, index: int) -> dict:
         "engine": row.get("engine", "dethrottled"),
         "engines": [row.get("engine", "dethrottled")],
         "category": None,
-        "score": None,
-        "cached": False,
+        "score": row.get("score"),
+        "cached": bool(row.get("cached")),
+        "retrieved_at": row.get("retrieved_at"),
+        "cache_age_seconds": row.get("cache_age_seconds"),
+        "upstream_rank": row.get("upstream_rank"),
         "search_attempts": _attempts(meta) if index == 0 else [],
         "search_elapsed_ms": meta.get("elapsed_ms", 0),
         # Which ranking stages actually ran.
@@ -372,7 +423,9 @@ def _render_mode(render) -> str:
 def _extract_row(url: str, max_chars: int, allow_ocr: bool = True,
                  page_budget: float | None = None, allow_render: bool = True,
                  raw: bool = False, render_first: bool = False,
-                 links: bool = False, fresh: bool = False) -> dict:
+                 links: bool = False, fresh: bool = False, cache_mode: str = "use",
+                 max_age: float | None = None, wait_for: str = "", render_delay: float = 0.5,
+                 headed_fallback: bool = False, public_only: bool = False) -> dict:
     # allow_ocr is the one-URL-versus-many split. OCR costs about 1.4s a page,
     # which is worth it for a page somebody asked for by name and is not worth
     # it multiplied across a page of search results.
@@ -380,12 +433,17 @@ def _extract_row(url: str, max_chars: int, allow_ocr: bool = True,
     # not passing one -- and a field that says it bypasses the cache must, or
     # a caller cannot tell what they measured.
     result = fetcher.fetch_and_extract(url, max_chars=max_chars,
-                                       cache=None if fresh else cache(),
+                                       cache=CacheView(cache(),
+                                                       mode="refresh" if fresh else cache_mode,
+                                                       max_age=max_age),
                                        allow_ocr=allow_ocr,
                                        page_budget=page_budget,
                                        allow_render=allow_render,
                                        render_first=render_first,
-                                       keep_html=raw or links)
+                                       keep_html=raw or links,
+                                       format="html" if raw else "links" if links else "text",
+                                       wait_for=wait_for, render_delay=render_delay,
+                                       headed_fallback=headed_fallback, public_only=public_only)
     # Record what happened, per domain. A cache hit is not evidence about the
     # site -- it says the cache worked, which is a different fact -- so only
     # live attempts count.
@@ -413,7 +471,16 @@ def _extract_row(url: str, max_chars: int, allow_ocr: bool = True,
         "published": result.get("published", ""),
         # Only present when the caller asked for it. Absent, not empty, so a
         # client can distinguish did-not-ask from asked-and-got-nothing.
-        **({"html": result.get("html", "")} if raw else {}),
+        **({"html": result.get("html", "")[:max_chars]} if raw else {}),
+        "retrieved_at": result.get("retrieved_at"),
+        "cache_age_seconds": result.get("cache_age_seconds", 0),
+        "cache_expires_at": result.get("cache_expires_at"),
+        "truncated": bool(result.get("truncated")),
+        "content_chars": result.get("content_chars", len(result.get("text", ""))),
+        "content_status": result.get("content_status", "complete"),
+        "assets": result.get("assets", []),
+        "warnings": result.get("warnings", []),
+        "_index_text": result.get("_index_text", result.get("text", "")),
     }
     if links:
         # Falls back to the prose on an empty result rather than handing
@@ -426,6 +493,8 @@ def _extract_row(url: str, max_chars: int, allow_ocr: bool = True,
         # format=html asked for the source, so the source is the content. It is
         # still echoed in `html` for callers written against raw=true.
         row["content"] = result["html"][:max_chars]
+        row["content_chars"] = len(result["html"])
+        row["truncated"] = len(result["html"]) > max_chars
     return row
 
 
@@ -455,7 +524,7 @@ def v2_status():
         },
         "providers": {k: {"configured": v}
                       for k, v in fx.available().items()},
-        "profiles": {p: {"ready": True} for p in ("fast", "balanced", "thorough")},
+        "profiles": {p: {"sources": list(v)} for p, v in fs.SOURCE_PROFILES.items()},
         "cost": {"api_calls": 0, "daily_caps": None, "keys_required": False},
         "uptime_seconds": int(time.time() - STARTED),
     }
@@ -574,9 +643,11 @@ def v2_capabilities():
             # engines would reach one of five sources, profile is read
             # nowhere -- and a declared field is a promise that sending it
             # does something.
-            "search": ["categories", "language", "rank",
+            "search": ["categories", "language", "rank", "engines", "profile",
+                       "cache_mode", "max_age",
                        "corpus", "recency"],
-            "fetch": ["raw", "links"],
+            "fetch": ["raw", "links", "wait_for", "render_delay", "headed_fallback",
+                      "cache_mode", "max_age"],
         },
     }
 
@@ -599,22 +670,32 @@ def _ranked(body) -> tuple:
     something for the ranker to reject.
     """
     limit = body.limit or body.max_items or body.num_results
-    pool = limit * 3 if body.rank else limit
+    pool = limit * 3 if body.rank or body.ranking != "source" else limit
     rows, meta = fs.search(body.query, max_items=pool,
                            categories=body.categories,
                            language=body.language or None,
                            # Same again: fresh bypasses the six-hour search
                            # cache rather than being accepted and ignored.
-                           cache=None if body.fresh else cache())
+                           cache=CacheView(cache(),
+                                           mode="refresh" if body.fresh else body.cache_mode,
+                                           max_age=body.max_age),
+                           profile=body.profile, engines=body.engines)
     rows, stages = ranker.apply(
-        rows, body.query, bm25=body.rank,
+        rows, body.query, bm25=body.rank or body.ranking == "bm25",
         corpus=body.corpus, recency=body.recency)
+    if body.ranking == "fusion":
+        rows = ranker.fuse_rows(rows, body.query, recency=body.recency)
+        stages.append("rank_fusion")
+    if body.prefer_domains:
+        rows = fs.rank(rows, body.prefer_domains)
+        stages.append("preferred_domains")
+    rows = [r for r in rows if constrained(body.query, r)]
     # AFTER ranking, and only here. Relevance order is decided above and is
     # not touched; this moves domains that measurably never yield text to the
     # back of the queue, so the fetches about to be spent land on results that
     # can actually be read. Nothing is dropped -- if the whole pool is poor
     # domains, they are still what comes back.
-    ordered = domain_health.order_for_fetching(rows)
+    ordered = domain_health.order_for_fetching(rows) if isinstance(body, SearchFetchBody) else rows
     if ordered[:limit] != rows[:limit]:
         stages.append("fetchability")
     rows = ordered
@@ -629,10 +710,24 @@ def search(body: SearchBody):
     return [_search_row(r, meta, i) for i, r in enumerate(rows)]
 
 
+@app.post("/v2/search")
+def search_envelope(body: SearchBody):
+    rows, meta, _ = _ranked(body)
+    return {"results": [_search_row(r, meta, i) for i, r in enumerate(rows)],
+            "status": "ok" if rows else "no_results_or_degraded",
+            "attempts": _attempts(meta), "elapsed_ms": meta.get("elapsed_ms"),
+            "ranking": meta.get("ranking", []), "profile": body.profile}
+
+
 def _harvest(rows) -> list:
     """(url, row) pairs worth indexing, from API rows."""
-    return [(r.get("url", ""), r) for r in rows
-            if r.get("quality") == "ok" and r.get("content")]
+    harvested = []
+    for row in rows:
+        canonical = row.pop("_index_text", row.get("content", ""))
+        if (row.get("quality") == "ok" and canonical
+                and row.get("content_status") not in {"navigation_only", "image_content"}):
+            harvested.append((row.get("url", ""), dict(row, content=canonical)))
+    return harvested
 
 
 @app.post("/fetch")
@@ -649,17 +744,20 @@ def fetch_urls(body: FetchBody, background: BackgroundTasks):
     rows = _read_batch(
         [u for u in body.urls if u],
         lambda u: _extract_row(u, body.max_chars, allow_ocr=True,
-                               allow_render=mode != "never",
+                               allow_render=mode != "never" and body.profile != "fast",
                                render_first=mode == "always",
                                raw=want_html, links=want_links,
-                               fresh=body.fresh))
+                               fresh=body.fresh, cache_mode=body.cache_mode,
+                               max_age=body.max_age, wait_for=body.wait_for,
+                               render_delay=body.render_delay,
+                               headed_fallback=body.headed_fallback or body.profile == "thorough",
+                               public_only=body.public_only))
     # Indexed AFTER the response, not during it. Embedding costs ~250ms a page
     # and the caller should not wait for work they did not ask for.
     # Not indexed when links were kept: the corpus is prose to match
     # against later, and this output has markdown link syntax woven
     # through it. Feeding it in makes every future match slightly worse.
-    if not body.links:
-        background.add_task(index_fetched, _harvest(rows))
+    background.add_task(index_fetched, _harvest(rows))
     return rows
 
 
@@ -745,7 +843,8 @@ def search_and_fetch(body: SearchFetchBody, background: BackgroundTasks):
                                  page_budget=fetcher.PAGE_BUDGET_BULK,
                                  allow_render=sf_mode != "never",
                                  render_first=sf_mode == "always",
-                                 raw=body.raw)
+                                 raw=body.raw, fresh=body.fresh, cache_mode=body.cache_mode,
+                                 max_age=body.max_age, public_only=True)
         merged.update({k: v for k, v in extracted.items() if k != "url"})
         return merged
 
@@ -768,7 +867,7 @@ def research(body: ResearchBody, background: BackgroundTasks):
     try:
         if any(not query.strip() or len(query) > 500 for query in body.queries):
             raise HTTPException(status_code=422, detail="invalid research query")
-        if body.categories not in {"", "news"}:
+        if body.categories not in {"", "news", "academic"}:
             raise HTTPException(status_code=422, detail="invalid research category")
         queries = research_engine.queries_for(body.question, body.queries or None)
         def search_one(query):
@@ -796,18 +895,22 @@ def research(body: ResearchBody, background: BackgroundTasks):
 
         def read(item):
             try:
-                row = _extract_row(item["url"], body.max_chars,
+                read_budget = max(body.max_chars, min(fetcher.CACHE_CHARS, 120000))
+                row = _extract_row(item["url"], read_budget,
                                    allow_ocr=True,
                                    page_budget=fetcher.PAGE_BUDGET_BULK,
-                                   fresh=body.fresh)
+                                   fresh=body.fresh, public_only=True)
             except Exception as exc:
                 row = {"url": item["url"], "quality": "failed", "content": "",
                        "failure_reason": type(exc).__name__}
             content = row.get("content", "")
+            selected_content, evidence = passage_excerpt(content, body.question, body.max_chars)
+            row["content"] = selected_content
+            row["full_extraction_chars"] = len(content)
+            row["truncated"] = len(content) > len(selected_content)
             return {**item, **row,
                     "title": row.get("title") or item["title"],
-                    "evidence": research_engine.evidence_windows(
-                        content, body.question)}
+                    "evidence": evidence}
 
         sources, skipped, fingerprints = [], [], []
         with ThreadPoolExecutor(max_workers=3) as pool:
@@ -851,7 +954,8 @@ def research(body: ResearchBody, background: BackgroundTasks):
 
 
 @app.get("/corpus/search")
-def corpus_search(q: str, limit: int = 10, floor: float | None = None):
+def corpus_search(q: str, limit: int = 10, floor: float | None = None,
+                  mode: Literal["auto", "semantic", "lexical"] = "auto"):
     """Search what has already been fetched, without fetching anything.
 
     The index was being written on every extraction and read by nothing over
@@ -864,7 +968,7 @@ def corpus_search(q: str, limit: int = 10, floor: float | None = None):
     calibrated for whichever model is in use -- the two do not share a scale.
     """
     try:
-        hits = shared_corpus().search(q, limit=limit, floor=floor)
+        hits = shared_corpus().search(q, limit=max(1, min(limit, 50)), floor=floor, mode=mode)
     except Exception as exc:
         return {"ok": False, "reason": str(exc)[:200], "results": []}
     return {"ok": True, "count": len(hits), "results": hits}

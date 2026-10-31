@@ -226,5 +226,5 @@ def test_language_is_declared_because_it_is_honoured(client):
     declared precisely because they are accepted and change nothing."""
     declared = client.get("/v2/capabilities").json()["optional_fields"]
     assert "language" in declared["search"]
-    assert "engines" not in declared["search"]
-    assert "profile" not in declared["search"]
+    assert "engines" in declared["search"]
+    assert "profile" in declared["search"]

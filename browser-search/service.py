@@ -317,6 +317,7 @@ class DriveRequest(BaseModel):
     session: str = Field(default="", max_length=64, pattern=r"^[A-Za-z0-9._-]*$")
     close_session: bool = False
     allowed_hosts: list[str] = Field(default_factory=list, max_length=32)
+    public_only: bool = False
     canaries: list[str] = Field(default_factory=list, max_length=20)
     include_events: bool = True
     # bool remains accepted for clients written against v1: true=always,
@@ -375,7 +376,7 @@ def _install_event_capture(page, events: dict[str, deque]) -> None:
         if response.status >= 400 else None)
 
 
-async def _install_scope_route(page, allowed_hosts: list[str]) -> None:
+async def _install_scope_route(page, allowed_hosts: list[str], public_only=False) -> None:
     if not allowed_hosts:
         return
 
@@ -384,20 +385,46 @@ async def _install_scope_route(page, allowed_hosts: list[str]) -> None:
             if not _host_allowed(request.url, allowed_hosts):
                 await route.abort("blockedbyclient")
                 return
-        await route.continue_()
+        if public_only:
+            await route.fallback()
+        else:
+            await route.continue_()
 
     await page.route("**/*", scoped)
 
 
-async def _make_drive_state(browser, allowed_hosts: list[str]) -> dict:
+async def _public_network_target(url: str) -> bool:
+    import socket
+    parsed = urlparse(url)
+    host = (parsed.hostname or "").lower().rstrip(".")
+    if parsed.scheme not in {"http", "https"} or not host or parsed.username:
+        return False
+    try:
+        addresses = await asyncio.to_thread(socket.getaddrinfo, host, parsed.port or (
+            443 if parsed.scheme == "https" else 80), 0, socket.SOCK_STREAM)
+        return bool(addresses) and all(ipaddress.ip_address(row[4][0]).is_global
+                                       for row in addresses)
+    except (OSError, ValueError):
+        return False
+
+
+async def _make_drive_state(browser, allowed_hosts: list[str], public_only=False) -> dict:
     context = await browser.new_context()
+    if public_only:
+        async def public_route(route, request):
+            if await _public_network_target(request.url):
+                await route.continue_()
+            else:
+                await route.abort("blockedbyclient")
+        await context.route("**/*", public_route)
     page = await context.new_page()
     page.set_default_timeout(8000)
     events = _new_event_store()
     _install_event_capture(page, events)
-    await _install_scope_route(page, allowed_hosts)
+    await _install_scope_route(page, allowed_hosts, public_only=public_only)
     return {"context": context, "page": page, "events": events,
-            "allowed_hosts": list(allowed_hosts), "lock": asyncio.Lock(),
+            "allowed_hosts": list(allowed_hosts), "public_only": public_only,
+            "lock": asyncio.Lock(),
             "last_used": time.monotonic()}
 
 
@@ -441,11 +468,14 @@ async def _reap_drive_sessions() -> None:
 
 async def _get_drive_state(browser, body: DriveRequest) -> tuple[dict, bool]:
     if not body.session:
-        return await _make_drive_state(browser, body.allowed_hosts), True
+        return await _make_drive_state(browser, body.allowed_hosts,
+                                       **({"public_only": True} if body.public_only else {})), True
     evicted = None
     async with DRIVE_SESSIONS_LOCK:
         existing = DRIVE_SESSIONS.get(body.session)
         if existing is not None:
+            if body.public_only and not existing.get("public_only"):
+                raise HTTPException(409, "public target policy cannot change within a session")
             if body.allowed_hosts and body.allowed_hosts != existing["allowed_hosts"]:
                 raise HTTPException(409, "allowed_hosts cannot change within a session")
             existing["last_used"] = time.monotonic()
@@ -477,7 +507,8 @@ async def _get_drive_state(browser, body: DriveRequest) -> tuple[dict, bool]:
                 candidates, key=lambda pair: pair[1]["last_used"]
             )
             DRIVE_SESSIONS.pop(evicted_id, None)
-        state = await _make_drive_state(browser, body.allowed_hosts)
+        state = await _make_drive_state(browser, body.allowed_hosts,
+                                       **({"public_only": True} if body.public_only else {}))
         DRIVE_SESSIONS[body.session] = state
     if evicted is not None:
         await _close_drive_state(evicted)
@@ -668,6 +699,13 @@ async def metrics():
     return {"active":ACTIVE,"waiting":WAITING,"max_active":3,
             "max_waiting":MAX_WAITING,"counts":dict(STATS),
             "recent_latency_s":list(LATENCIES)}
+
+
+@app.post("/pace")
+async def pace():
+    """Share upstream pacing with the API's cheap static discovery adapter."""
+    await _pace_ddg()
+    return {"ok": True}
 
 
 @app.post("/search")

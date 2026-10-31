@@ -1,5 +1,13 @@
 # Dethrottled
 
+
+The October 31 pipeline upgrade adds selectable source profiles, cache refresh
+and age controls, explicit JavaScript readiness, image-content warnings,
+answer-focused research passages, and lexical corpus search. See
+[API.md](docs/API.md) and [PUBLIC-ACCESS.md](docs/PUBLIC-ACCESS.md) for controls
+and the shared public-adapter runtime. The existing headed DDG race remains
+the main discovery fallback; neural reranking stays disabled.
+
 **Keyless web search, stateful browser operation, fetch, and document
 extraction for agents and local tooling.** No paid API keys, metered tiers, or
 purchased provider quotas. Agents can discover pages, read them cheaply, or

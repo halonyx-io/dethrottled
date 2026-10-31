@@ -37,12 +37,39 @@ import re
 import threading
 import time
 from collections import defaultdict
+from contextvars import ContextVar
+from datetime import datetime, timezone
 from itertools import chain
-from urllib.parse import urlparse
+from types import MappingProxyType
+from urllib.parse import urljoin, urlparse
 
 import requests
 
 from . import __version__
+from .content import decode_html, page_details, short_text
+
+_READ_OPTIONS = ContextVar("read_options", default=MappingProxyType({}))
+_HEADED_READS = threading.BoundedSemaphore(1)
+
+
+def _get_with_policy(get, url, **kwargs):
+    """Validate every redirect target for reads made through a public adapter."""
+    if not _READ_OPTIONS.get().get("public_only"):
+        return get(url, **kwargs)
+    from .research import public_url
+    for _ in range(6):
+        if not public_url(url):
+            raise ValueError("public_target_required")
+        response = get(url, **dict(kwargs, allow_redirects=False))
+        if response.status_code not in {301, 302, 303, 307, 308}:
+            return response
+        location = response.headers.get("Location")
+        if hasattr(response, "close"):
+            response.close()
+        if not location:
+            raise ValueError("redirect_without_location")
+        url = urljoin(url, location)
+    raise ValueError("too_many_redirects")
 
 PROJECT_URL = "https://github.com/zataraine/dethrottled"
 
@@ -458,7 +485,7 @@ def _tier_direct(url: str, timeout: int, allow_ocr: bool = False) -> tuple:
     domain = _domain(url)
     try:
         _throttle(domain)
-        response = requests.get(
+        response = _get_with_policy(requests.get,
             url, timeout=timeout, stream=True, allow_redirects=True,
             headers={
                 "User-Agent": USER_AGENT,
@@ -552,7 +579,7 @@ def _tier_direct(url: str, timeout: int, allow_ocr: bool = False) -> tuple:
             if size > MAX_BYTES:
                 clipped = True
                 break
-        html = b"".join(html_chunks).decode(response.encoding or "utf-8", errors="replace")
+        html = decode_html(b"".join(html_chunks), ctype)
         # Truncation used to be invisible. It has to be reported, because the
         # symptom is a short article rather than a failure, and a short article
         # is indistinguishable from a page that was simply short.
@@ -694,7 +721,12 @@ def _crawl4ai_via_crawl(url: str) -> tuple:
               "crawler_config": {"type": "CrawlerRunConfig",
                                  "params": {"cache_mode": "bypass",
                                             "check_robots_txt": False,
-                                            "page_timeout": CRAWL4AI_RENDER_MS}}},
+                                            "page_timeout": CRAWL4AI_RENDER_MS,
+                                            "delay_before_return_html": _READ_OPTIONS.get().get(
+                                                "render_delay", 0.5),
+                                            **({"wait_for": "css:" +
+                                                _READ_OPTIONS.get()["wait_for"]}
+                                               if _READ_OPTIONS.get().get("wait_for") else {})}}},
         headers=_crawl4ai_headers(),
         timeout=CRAWL4AI_TIMEOUT)
     if response.status_code != 200:
@@ -709,7 +741,9 @@ def _crawl4ai_via_crawl(url: str) -> tuple:
     if not isinstance(payload, dict):
         return {}, "crawl4ai_shape", url
     if payload.get("success") is False:
-        reason = str(payload.get("error_message") or "render_failed")[:40]
+        reason = str(payload.get("error_message") or "render_failed")[:240]
+        if "Structural:" in reason:
+            reason = "incomplete_render: " + reason
         return {}, "crawl4ai_" + reason, url
     target_error = _crawl4ai_target_error(payload)
     if target_error:
@@ -866,7 +900,7 @@ def _tier_tls(url: str) -> tuple:
         # complaint from Rust on some hosts, after the response has already
         # arrived intact. Nothing actionable, and noisy on every such fetch.
         with quiet_fd2():
-            response = tls_requests.get(
+            response = _get_with_policy(tls_requests.get,
                 url, impersonate=TLS_IMPERSONATE, timeout=TLS_TIMEOUT,
                 allow_redirects=True)
     except Exception as exc:
@@ -877,6 +911,8 @@ def _tier_tls(url: str) -> tuple:
     # Same size ceiling as the direct tier: a browser fingerprint is not a
     # reason to accept an unbounded download.
     text = response.text or ""
+    if "anomaly.js" in text[:20000].lower():
+        return {}, "tls_challenge", str(response.url)
     if len(text) > MAX_BYTES:
         text = text[:MAX_BYTES]
     return {"html": text}, "", str(response.url)
@@ -942,11 +978,14 @@ def _clip(out: dict, max_chars: int) -> dict:
         return out
     clipped = dict(out)
     clipped["text"] = text[:max_chars]
+    clipped["_index_text"] = text[:20000]
     clipped["chars"] = len(clipped["text"])
+    clipped["content_chars"] = len(text)
+    clipped["truncated"] = True
     return clipped
 
 
-def fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAULT_TIMEOUT,
+def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAULT_TIMEOUT,
                       cache=None,
                       allow_render: bool = True,
                       render_first: bool = False,
@@ -1016,6 +1055,8 @@ def fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAULT
         tiers.append(("tls", lambda: _tier_tls(url)))
     if allow_render and CRAWL4AI_URL and CRAWL4AI_BUDGET > 0:
         tiers.append(("crawl4ai", lambda: _tier_crawl4ai(url)))
+    if allow_render and _READ_OPTIONS.get().get("headed_fallback"):
+        tiers.append(("headed", lambda: _tier_headed(url)))
     if ENABLE_JINA:
         tiers.append(("jina-reader", lambda: _tier_jina_reader(url)))
 
@@ -1040,6 +1081,11 @@ def fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAULT
     budget_started = time.time()
 
     def finish(out):
+        out["schema_version"] = 2
+        out.setdefault("retrieved_at", datetime.now(timezone.utc).isoformat())
+        out.setdefault("cache_age_seconds", 0)
+        out.setdefault("content_chars", len(out.get("text", "")))
+        out.setdefault("truncated", False)
         # Store the full extraction, hand back only what was asked for.
         #
         # The source, when a caller asked for it, is deliberately NOT cached.
@@ -1047,7 +1093,7 @@ def fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAULT
         # caching it would trade the whole point of a page cache -- many pages
         # cheaply -- for a few pages expensively.
         source = out.pop("html", None)
-        if cache is not None:
+        if cache is not None and out.get("text"):
             cache.put("extract", url, value=out)
         out = _clip(out, max_chars)
         if source is not None:
@@ -1136,10 +1182,15 @@ def fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAULT
                          "content_type": payload.get("content_type", "")}
         else:
             html = payload.get("html") or ""
-            if not _usable(html):
+            if not html or _challenge_document(html):
                 reasons.append("%s:%s" % (name, reason or "empty"))
                 continue
             result = _fx.extract(html, url=final, max_chars=CACHE_CHARS)
+            if not result["ok"]:
+                small = short_text(html)
+                if small or (_READ_OPTIONS.get().get("format") in {"html", "links"}):
+                    result = {"ok": True, "text": small, "tier": "short",
+                              "title": "", "published": "", "chars": len(small)}
             if result["ok"]:
                 # The source, only when asked for. finish() strips it before
                 # the cache write, so this never bloats the page cache.
@@ -1152,7 +1203,8 @@ def fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAULT
                              "chars": result["chars"], "url": final,
                              "reason": ("html_truncated"
                                         if payload.get("clipped") else ""),
-                             "cached": False, "content_type": "html"}
+                             "cached": False, "content_type": "html",
+                             **page_details(html, final)}
             else:
                 # Fetched fine, but no prose -- almost always a JS shell.
                 reasons.append("%s:fetched_but_%s" % (name, result["reason"]))
@@ -1162,7 +1214,9 @@ def fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAULT
         # gave up only a teaser, which is a question about HTML -- no later
         # tier is going to read a spreadsheet or a scan better than the parser
         # that already read it, so trying them only burns the page budget.
-        if candidate["chars"] >= THIN_CHARS or payload.get("structured"):
+        if (candidate["chars"] >= THIN_CHARS or payload.get("structured")
+                or _READ_OPTIONS.get().get("format") in {"html", "links"}
+                or candidate.get("content_status") == "image_content"):
             _tier_stats[name] += 1
             return finish(candidate)
 
@@ -1185,3 +1239,69 @@ def fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAULT
     return {"ok": False, "text": "", "tier": name, "extractor": None,
             "title": "", "published": "", "chars": 0, "url": url,
             "reason": " | ".join(reasons), "cached": False}
+
+
+def _challenge_document(html: str) -> bool:
+    head = html[:20000].lower()
+    # Structural vendor markers, not a broad ban on articles discussing CAPTCHA.
+    return ("anomaly.js" in head or "challenge-platform" in head
+            or "cf-challenge" in head or "<title>just a moment" in head
+            or ("verify you are human" in head and len(short_text(html)) < 350))
+
+
+def _tier_headed(url: str) -> tuple:
+    backend = os.environ.get("DETHROTTLED_BROWSER_SEARCH_URL", "").rstrip("/")
+    if not backend or not _HEADED_READS.acquire(timeout=0.1):
+        return {}, "headed_unavailable_or_busy", url
+    try:
+        response = requests.post(backend + "/drive", json={
+            "url": url, "close_session": True, "screenshot": "never",
+            "public_only": _READ_OPTIONS.get().get("public_only", False),
+            "allowed_hosts": [urlparse(url).hostname], "timeout_ms": 12000,
+            "steps": ([{"action": "wait_for", "selector": _READ_OPTIONS.get()["wait_for"],
+                         "ms": 5000}] if _READ_OPTIONS.get().get("wait_for") else
+                        [{"action": "wait", "ms": 700}]) +
+                       [{"action": "html", "selector": "body", "limit": 200}],
+        }, timeout=15)
+        response.raise_for_status()
+        data = response.json()
+        if not data.get("ok"):
+            return {}, "headed_read_failed", url
+        html = data["steps"][-1].get("data") or ""
+        if isinstance(html, dict):
+            html = html.get("html", "")
+        return {"html": html}, "", data.get("final", {}).get("url") or url
+    except (requests.RequestException, ValueError, KeyError, TypeError) as exc:
+        return {}, "headed_" + type(exc).__name__, url
+    finally:
+        _HEADED_READS.release()
+
+
+def fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAULT_TIMEOUT,
+                      cache=None, allow_render: bool = True, render_first: bool = False,
+                      allow_ocr: bool = True, page_budget: float | None = None,
+                      keep_html: bool = False, format: str = "text", wait_for: str = "",
+                      render_delay: float = 0.5, headed_fallback: bool = False,
+                      public_only: bool = False) -> dict:
+    """Read a URL with request-local rendering/target policy and bounded output."""
+    options = dict(format=format, wait_for=wait_for, render_delay=render_delay,
+                   headed_fallback=headed_fallback, public_only=public_only)
+    token = _READ_OPTIONS.set(options)
+    try:
+        if options.get("public_only"):
+            from .research import public_url
+            if not public_url(url):
+                return {"ok": False, "text": "", "reason": "public_target_required",
+                        "cached": False, "tier": None}
+        result = _fetch_and_extract(url, max_chars=max_chars, timeout=timeout, cache=cache,
+                                    allow_render=allow_render, render_first=render_first,
+                                    allow_ocr=allow_ocr, page_budget=page_budget,
+                                    keep_html=keep_html)
+        if options.get("public_only") and result.get("url"):
+            from .research import public_url
+            if not public_url(result["url"]):
+                return {"ok": False, "text": "", "reason": "redirect_target_not_public",
+                        "cached": False, "tier": None}
+        return result
+    finally:
+        _READ_OPTIONS.reset(token)

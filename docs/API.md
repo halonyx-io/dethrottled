@@ -13,6 +13,7 @@ error for the whole batch. A search that finds nothing returns `[]`.
 
 | Route | Purpose |
 | --- | --- |
+| `POST /v2/search` | Search with diagnostics even for empty results |
 | `POST /search` | Discover and order URLs; no page bodies are fetched |
 | `POST /fetch` | Read one or more URLs and extract content |
 | `POST /extract` | Alias for `/fetch` |
@@ -40,21 +41,31 @@ curl -sS http://127.0.0.1:8787/search \
 `query` is required. Result count defaults to 8; `limit` takes precedence over
 the older `max_items` and `num_results` names. `categories: "news"` interleaves
 web and news results. `language` is a SearXNG hint, not a strict filter.
-`fresh: true` bypasses the search cache. `rank: true` widens the candidate pool
-and applies local BM25 before choosing results. `corpus` requests that many
-already-fetched passages for the candidate pool; `0` disables the merge.
-`recency` is intended for values from 0 to 1 and influences BM25 ordering
-when ranking is on; the current request model does not enforce that range.
-`rerank: true` is rejected: no reranker is installed or used.
+`fresh: true` refreshes the cache and replaces stored results. `cache_mode`
+is `use` (default), `refresh`, or `bypass` (neither read nor write); `max_age`
+sets the maximum acceptable cache age in seconds.
 
-The accepted `engines` and `profile` fields currently do not select a source or
-execution mode. Do not use them as tuning controls.
+`profile` selects `web` (default), `fast` (web), `balanced` (web/news),
+`news` (web/news), `thorough` (web/Mwmbl), or `academic`
+(web/Crossref/OpenAlex/arXiv). Explicit comma-separated `engines` overrides
+that selection: `web`, `news`, `mwmbl`, `crossref`, `openalex`, `arxiv`.
+Legacy `engines: "auto"` selects web. News is no longer fetched for every
+ordinary web query. `site:` and `-site:` constraints apply after all merges.
+
+Source order is retained by default. `rank: true` or `ranking: "bm25"`
+uses title/snippet lexical ranking; `ranking: "fusion"` combines source and
+lexical order. `prefer_domains` is an explicit list of preferred hosts.
+`corpus` adds up to 20 already-fetched passages; `0` disables the merge.
+`recency` is bounded to 0–1. `rerank: true` is rejected: neural reranking
+remains disabled because the local evaluation did not show a quality gain.
+Search limits are 1–10; invalid controls receive 422.
 
 The response is an array of rows with `url`, `title`, `snippet`,
 `publishedDate`, `engine`, `from_corpus`, and related metadata. The **first**
 row carries `search_attempts`, `search_elapsed_ms`, and `ranking` telemetry.
-If the array is empty, there is no first row carrying telemetry. An HTTP 200
-alone does not prove that any engine supplied useful results.
+Use `POST /v2/search` with the same body for an envelope with `results`,
+`attempts`, `status`, and `elapsed_ms`, including when no results survive.
+An HTTP 200 alone does not prove that a source supplied useful results.
 
 ## Fetch and extraction
 
@@ -64,11 +75,12 @@ curl -sS http://127.0.0.1:8787/fetch \
   -d '{"urls":["https://example.com/"],"format":"text"}'
 ```
 
-`urls` is an array. `format` is `text` (default), `links`, or `html`.
+`urls` holds 1–10 URLs. `format` is `text` (default), `links`, or `html`.
 `max_chars` defaults to 8000. `render` is `auto` (escalate when needed),
 `always` (try the renderer first), or `never` (skip rendering). Boolean
 `true` and `false` are accepted as older aliases for `always` and `auto`.
-`fresh: true` bypasses the extraction cache. Older `raw` and `links` booleans
+`fresh: true` refreshes and replaces the extraction cache; `cache_mode` and
+`max_age` have the same semantics as search. Older `raw` and `links` booleans
 are accepted; `format` takes precedence when set to `links` or `html`.
 
 Successful rows have `quality: "ok"`, `content`, `content_type`, `tier`,
@@ -79,9 +91,18 @@ fetch and extraction path, such as `direct/trafilatura` or
 does not mean every URL was read. Fetch may return a short best-available
 result when every tier yields only thin content.
 
-The raw API can request HTTP or HTTPS URLs, including local network URLs. It
-does not enforce the public-address filter used by `/research`; an external
-gateway must enforce its own target policy before exposing fetch publicly.
+Successful rows also report `retrieved_at`, `cache_age_seconds`, `content_chars`,
+`truncated`, `content_status`, `assets`, and `warnings` when available. HTML and
+prose fields each obey `max_chars`. Small valid pages can succeed without
+meeting an article-length threshold. Image-based timetables expose their asset
+URLs and a warning; these are not reliable OCR transcriptions.
+
+`wait_for` is a CSS selector for Crawl4AI readiness; `render_delay` is 0–5
+seconds (default 0.5). `headed_fallback: true` permits an ephemeral read through
+the existing headed browser after the headless tier fails. It is opt-in.
+The raw API permits trusted LAN targets. Public adapters set `public_only`
+and validate redirects; headed public sessions also filter subrequests. These
+checks do not provide complete renderer network isolation or DNS pinning.
 
 The API reads HTML; PDF (with OCR available for scans); XLSX/XLS; CSV/TSV;
 DOCX/PPTX; ODT/ODS/ODP; EPUB; and RTF when the relevant dependencies are
@@ -121,8 +142,9 @@ queries. Without facets, Dethrottled adds an `official source` probe.
 
 The response has `question`, per-query `queries` telemetry, `sources`,
 `skipped`, and `summary`. Each accepted source gets an `id` such as `S1`, its
-URL and extracted content, and up to two `evidence` windows with offsets and
-matched terms. It favors diverse hosts, rejects private/local source targets,
+URL and extracted content, and selected `evidence` windows with offsets and matched terms. Passage
+selection examines the full bounded extraction before applying `max_chars`;
+`offset_in: "full_extraction"` identifies the offset coordinate system. It favors diverse hosts, rejects private/local source targets,
 and removes near-duplicate content. `summary.model_used` is `false`: no prose
 answer or citations are invented by a model. At most two research requests run
 at once; excess requests receive HTTP 429. Invalid research input receives
@@ -150,7 +172,7 @@ curl -sS http://127.0.0.1:8787/drive \
       {"action":"fill","selector":"input[name=q]","value":"test"},
       {"action":"press","selector":"input[name=q]","value":"Enter"},
       {"action":"wait_for","selector":"main"},
-      {"action":"text","selector":"main","limit":4000}
+      {"action":"text","selector":"main","limit":200}
     ]
   }'
 ```
@@ -208,7 +230,10 @@ curl http://127.0.0.1:8787/corpus/stats
 curl http://127.0.0.1:8787/stats
 ```
 
-`/corpus/search` does not fetch the web. Its optional `floor` overrides the
+`/corpus/search` does not fetch the web. `mode` is `auto` (default),
+`semantic`, or `lexical`. Auto uses lexical FTS for opaque identifiers rather
+than returning unrelated semantic neighbors. Only canonical prose is indexed;
+HTML/link representations do not replace it. Its optional `floor` overrides the
 default semantic relevance floor for that call. A successful response has
 `ok`, `count`, and `results`; an internal corpus error is reported with
 `ok: false` and `reason` in the JSON body. `/health` is liveness; use

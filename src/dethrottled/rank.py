@@ -29,7 +29,7 @@ import re
 
 from . import paths as _paths
 
-_TOKEN = re.compile(r"[a-z0-9]+")
+_TOKEN = re.compile(r"[^\W_]+", re.UNICODE)
 
 
 def _log(message: str) -> None:
@@ -72,10 +72,11 @@ def rank_rows(rows: list, want: str, *, recency: float = 0.0,
     #
     # This is only what RANKING sees. Whatever wins is still returned in full.
     docs = [_TOKEN.findall(
-        ("%s %s" % (r.get("title", ""), (r.get("text") or "")[:240])).lower())
+        ("%s %s" % (r.get("title", ""),
+         (r.get("text") or r.get("snippet") or "")[:600])).casefold())
         for r in rows]
     count = len(docs)
-    average = sum(len(d) for d in docs) / (count or 1)
+    average = max(1.0, sum(len(d) for d in docs) / (count or 1))
     seen_in = {t: sum(1 for d in docs if t in d) or 1 for t in terms}
 
     scored = []
@@ -96,7 +97,7 @@ def rank_rows(rows: list, want: str, *, recency: float = 0.0,
         scored.append((score, index))
 
     scored.sort(key=lambda pair: -pair[0])
-    return [rows[i] for _, i in scored]
+    return [dict(rows[i], score=round(score, 6), upstream_rank=i + 1) for score, i in scored]
 
 
 def age_days(row: dict):
@@ -121,6 +122,18 @@ def age_days(row: dict):
         except (ValueError, TypeError):
             continue
     return None
+
+
+def fuse_rows(rows: list, want: str, *, recency: float = 0.0) -> list:
+    """Retain the upstream order as the stronger prior in optional rank fusion."""
+    lexical = rank_rows(rows, want, recency=recency)
+    positions = {r.get("url", str(i)): i + 1 for i, r in enumerate(rows)}
+    scored = []
+    for index, row in enumerate(lexical):
+        upstream = positions.get(row.get("url"), index + 1)
+        score = 1 / (60 + upstream) + 0.4 / (61 + index)
+        scored.append(dict(row, score=round(score, 8), upstream_rank=upstream))
+    return sorted(scored, key=lambda row: -row["score"])
 
 
 # ── stage 2: the corpus ──────────────────────────────────────────────────────

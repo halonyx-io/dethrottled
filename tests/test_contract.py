@@ -139,8 +139,8 @@ def test_extract_reports_failure_without_raising(client, monkeypatch):
     assert rows[0]["content"] == ""
 
 
-def test_extract_of_nothing_is_an_empty_list(client):
-    assert client.post("/extract", json={"urls": []}).json() == []
+def test_extract_requires_a_nonempty_bounded_batch(client):
+    assert client.post("/extract", json={"urls": []}).status_code == 422
 
 
 def test_search_and_extract_carries_both_shapes(client):

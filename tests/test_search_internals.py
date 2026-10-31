@@ -270,7 +270,7 @@ def test_explicit_news_blends_browser_and_two_news_sources(monkeypatch):
         "web-browser", "bing-news", "duckduckgo news", "web-browser"]
     assert len({row["url"] for row in news}) == len(news)
 
-    default, _ = fs.search("a current event", max_items=4)
+    default, _ = fs.search("a current event", max_items=4, profile="web")
     assert [row["engine"] for row in default[:4]] == ["web-browser"] * 4
 
 

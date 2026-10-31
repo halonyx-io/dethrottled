@@ -216,6 +216,7 @@ class Corpus:
         self._cached = None            # (matrix, meta), dropped when rows change
         with self._lock:
             self._db.execute("PRAGMA journal_mode=WAL")
+            self._db.execute("PRAGMA recursive_triggers=ON")
             self._db.execute("""
                 CREATE TABLE IF NOT EXISTS passages (
                     id     TEXT PRIMARY KEY,
@@ -229,6 +230,34 @@ class Corpus:
             self._db.execute(
                 "CREATE INDEX IF NOT EXISTS idx_url ON passages(url)")
             self._db.commit()
+            self._fts = False
+            try:
+                exists = self._db.execute(
+                    "SELECT 1 FROM sqlite_master WHERE name='passages_fts'").fetchone()
+                self._db.executescript("""
+                    CREATE VIRTUAL TABLE IF NOT EXISTS passages_fts USING fts5(
+                        title, text, content='passages', content_rowid='rowid');
+                    CREATE TRIGGER IF NOT EXISTS passages_ai AFTER INSERT ON passages BEGIN
+                        INSERT INTO passages_fts(rowid,title,text)
+                            VALUES(new.rowid,new.title,new.text);
+                    END;
+                    CREATE TRIGGER IF NOT EXISTS passages_ad AFTER DELETE ON passages BEGIN
+                        INSERT INTO passages_fts(passages_fts,rowid,title,text)
+                            VALUES('delete',old.rowid,old.title,old.text);
+                    END;
+                    CREATE TRIGGER IF NOT EXISTS passages_au AFTER UPDATE ON passages BEGIN
+                        INSERT INTO passages_fts(passages_fts,rowid,title,text)
+                            VALUES('delete',old.rowid,old.title,old.text);
+                        INSERT INTO passages_fts(rowid,title,text)
+                            VALUES(new.rowid,new.title,new.text);
+                    END;
+                """)
+                if not exists:
+                    self._db.execute("INSERT INTO passages_fts(passages_fts) VALUES('rebuild')")
+                    self._db.commit()
+                self._fts = True
+            except sqlite3.OperationalError:
+                pass  # SQLite builds without FTS retain semantic/exact retrieval.
             self._data_version = self._db.execute(
                 "PRAGMA data_version").fetchone()[0]
 
@@ -352,7 +381,8 @@ class Corpus:
         return removed
 
     def search(self, query: str, *, limit: int = 10, per_url: int = 2,
-               floor: float | None = None, domains: list | None = None) -> list:
+               floor: float | None = None, domains: list | None = None,
+               mode: str = "auto") -> list:
         """The passages closest to a query, at most `per_url` from any one page.
 
         Capped per page because a long article about the right subject will
@@ -372,6 +402,47 @@ class Corpus:
         return pages about semiconductor foundries, which is useful about as
         often as it is misleading.
         """
+        import re
+        opaque = [w for w in re.findall(r"[\w.-]{12,}", query)
+                  if any(c.isdigit() for c in w) and any(c in w for c in "-_.")]
+        if mode == "lexical" or (mode == "auto" and opaque):
+            from urllib.parse import urlsplit
+            with self._lock:
+                if self._fts and not opaque:
+                    words = re.findall(r"\w+", query)[:30]
+                    if not words:
+                        return []
+                    expression = " AND ".join('"' + w + '"' for w in words)
+                    records = self._db.execute(
+                        "SELECT p.url,p.title,p.text,bm25(passages_fts) FROM passages_fts "
+                        "JOIN passages p ON p.rowid=passages_fts.rowid "
+                        "WHERE passages_fts MATCH ? AND p.model=? "
+                        "ORDER BY bm25(passages_fts) LIMIT 200",
+                        (expression, self.model_name)).fetchall()
+                else:
+                    records = self._db.execute(
+                        "SELECT url,title,text,0 FROM passages WHERE model=?",
+                        (self.model_name,)).fetchall()
+            out, seen = [], {}
+            for url, title, text, score in records:
+                if opaque and not all(w.casefold() in ((title or "") + " " + text).casefold()
+                                      for w in opaque):
+                    continue
+                if not self._fts and not opaque and not all(
+                        word.casefold() in ((title or "") + " " + text).casefold()
+                        for word in re.findall(r"\w+", query)):
+                    continue
+                host = (urlsplit(url).hostname or "").lower()
+                if domains and not any(host == d or host.endswith("." + d) for d in domains):
+                    continue
+                if seen.get(url, 0) >= per_url:
+                    continue
+                seen[url] = seen.get(url, 0) + 1
+                out.append({"url": url, "title": title, "text": text,
+                            "score": -float(score), "retrieval": "lexical"})
+                if len(out) >= limit:
+                    break
+            return out
         import numpy as np
         if floor is None:
             floor = FLOOR

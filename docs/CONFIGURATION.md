@@ -101,3 +101,14 @@ RAM cap. There are still application-level queues, page budgets, timeouts,
 per-domain pacing, and the renderer's own pool safeguards. These keep a broken
 page or blocked engine from consuming every worker; they are not metered API
 limits. The fetch ladder does not consult `robots.txt`.
+
+## October 31 controls
+
+`DETHROTTLED_CHEAP_DISCOVERY=1` enables the bounded static DDG Lite probe
+before the existing browser race (Compose default; standalone code default 0).
+Set 0 if challenges make its extra latency undesirable. No new service or
+model is needed. The browser worker owns pacing for both paths.
+
+Public-adapter settings and shared token/admission storage are documented in
+[PUBLIC-ACCESS.md](PUBLIC-ACCESS.md). These do not add authentication to the
+raw internal API.
