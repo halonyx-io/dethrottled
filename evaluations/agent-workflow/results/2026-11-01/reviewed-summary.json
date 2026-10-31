@@ -1,0 +1,20 @@
+{
+  "baseline": {
+    "runs": 16,
+    "automatic_passes": 9,
+    "reviewed_passes": 14,
+    "turn_budget_exhaustions": 2,
+    "tool_calls": 102,
+    "mean_tool_calls": 6.375,
+    "median_elapsed_s": 8.3085
+  },
+  "candidate": {
+    "runs": 16,
+    "automatic_passes": 12,
+    "reviewed_passes": 16,
+    "turn_budget_exhaustions": 0,
+    "tool_calls": 62,
+    "mean_tool_calls": 3.875,
+    "median_elapsed_s": 9.392
+  }
+}

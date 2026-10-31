@@ -494,6 +494,9 @@ def _binary_payload(blob, url, ctype, allow_ocr, filename=""):
     if not kind:
         return None
     try:
+        sink = _READ_OPTIONS.get().get("source_sink")
+        if sink is not None:
+            sink(blob, filename or url.rsplit("/", 1)[-1])
         options = dict(_READ_OPTIONS.get(), filename=(filename or url.rsplit("/", 1)[-1]))
         text, metadata = formats.read_blob(blob, kind, CACHE_CHARS,
                                            allow_ocr=(allow_ocr
@@ -1330,14 +1333,14 @@ def fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAULT
                       public_only: bool = False, ocr_language: str = "", ocr_mode: str = "auto",
                       page_start: int = 1, page_end: int | None = None,
                       row_start: int = 1, row_end: int | None = None, sheet: str = "",
-                      max_cell_chars: int | None = None) -> dict:
+                      max_cell_chars: int | None = None, source_sink=None) -> dict:
     """Read a URL with request-local rendering/target policy and bounded output."""
     options = dict(format=format, wait_for=wait_for, render_delay=render_delay,
                    headed_fallback=headed_fallback, public_only=public_only,
                    ocr_language=ocr_language, ocr_mode=ocr_mode,
                    page_start=page_start, page_end=page_end,
                    allow_ocr=allow_ocr, row_start=row_start, row_end=row_end,
-                   sheet=sheet, max_cell_chars=max_cell_chars)
+                   sheet=sheet, max_cell_chars=max_cell_chars, source_sink=source_sink)
     token = _READ_OPTIONS.set(options)
     try:
         if options.get("public_only"):

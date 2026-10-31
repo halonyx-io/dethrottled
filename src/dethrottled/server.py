@@ -91,6 +91,7 @@ from .content import compact_row, constrained, passage_excerpt
 from .corpus import index_fetched, shared_corpus
 from .evidence import Documents
 from .jobs import JobError, Jobs
+from .workflow import INSTRUCTIONS, guidance
 
 _jobs = None
 _jobs_lock = threading.Lock()
@@ -283,6 +284,7 @@ class FetchBody(BaseModel):
     max_cell_chars: int | None = Field(default=None, ge=1, le=1000000)
     page_start: int = Field(default=1, ge=1, le=100000)
     page_end: int | None = Field(default=None, ge=1, le=100000)
+    recovery: Literal["auto", "manual"] = "auto"
     profile: Literal["fast", "balanced", "thorough"] = "balanced"
 
 
@@ -337,6 +339,7 @@ class ResearchBody(BaseModel):
 class DocumentReadBody(BaseModel):
     model_config = ConfigDict(extra="forbid")
     document_id: str = Field(min_length=1, max_length=100)
+    public_only: bool = False
     focus: str = Field(default="", max_length=1000)
     reparse: bool = False
     row_start: int = Field(default=1, ge=1, le=1048576)
@@ -366,6 +369,7 @@ class DocumentReadBody(BaseModel):
 
 class DocumentImageBody(BaseModel):
     model_config = ConfigDict(extra="forbid")
+    public_only: bool = False
     document_id: str = Field(min_length=1, max_length=100)
     page: int = Field(default=1, ge=1)
     max_dimension: int = Field(default=2400, ge=512, le=6000)
@@ -540,7 +544,7 @@ def _render_mode(render) -> str:
     return render
 
 
-def _extract_row(url: str, max_chars: int, allow_ocr: bool = True,
+def _extract_once(url: str, max_chars: int, allow_ocr: bool = True,
                  page_budget: float | None = None, allow_render: bool = True,
                  raw: bool = False, render_first: bool = False,
                  links: bool = False, fresh: bool = False, cache_mode: str = "use",
@@ -642,6 +646,71 @@ def _extract_row(url: str, max_chars: int, allow_ocr: bool = True,
         row["content"] = result["html"][:max_chars]
         row["content_chars"] = len(result["html"])
         row["truncated"] = len(result["html"]) > max_chars
+    return row
+
+
+def _extract_row(url, max_chars, *, recovery="auto", **options):
+    """Recover known evidence gaps without guessing UI actions or hiding attempts."""
+    row = _extract_once(url, max_chars, **options)
+    attempts = []
+    if recovery == "auto" and not options.get("raw") and not options.get("links"):
+        if (
+            row.get("content_status") == "navigation_only"
+            and options.get("allow_render", True)
+            and not row.get("acquisition", {}).get("rendered")
+        ):
+            retry_options = dict(options, render_first=True, headed_fallback=True)
+            stronger = _extract_once(url, max_chars, **retry_options)
+            attempts.append(
+                {
+                    "action": "render",
+                    "url": url,
+                    "quality": stronger.get("quality"),
+                    "reason": "navigation_only",
+                }
+            )
+            if (
+                stronger.get("quality") == "ok"
+                and stronger.get("content_status") != "navigation_only"
+            ):
+                row = stronger
+        if row.get("content_status") == "image_content":
+            for asset in row.get("assets", [])[:2]:
+                if asset.get("kind") not in {"image", "document"}:
+                    continue
+                child_options = {
+                    k: v
+                    for k, v in options.items()
+                    if k
+                    not in {
+                        "wait_for",
+                        "render_first",
+                        "row_start",
+                        "row_end",
+                        "sheet",
+                        "max_cell_chars",
+                        "page_start",
+                        "page_end",
+                    }
+                }
+                child = _extract_once(asset["url"], max_chars, **child_options)
+                attempts.append(
+                    {
+                        "action": "read_asset",
+                        "url": asset["url"],
+                        "quality": child.get("quality"),
+                        "reason": "image_content",
+                    }
+                )
+                if child.get("quality") == "ok" and child.get("content"):
+                    child.update(parent_url=url, parent_document_id=row.get("document_id"))
+                    row = child
+                    break
+    if attempts:
+        row["recovery_attempts"] = attempts
+    row["workflow"] = guidance(
+        row, focused=bool(options.get("focus")), rendered_allowed=options.get("allow_render", True)
+    )
     return row
 
 
@@ -776,6 +845,11 @@ def v2_capabilities():
             "pdf_max_bytes": fetcher.PDF_MAX_BYTES,
             "document_max_bytes": fetcher.DOC_MAX_BYTES,
         },
+        "workflow": {"instructions": INSTRUCTIONS, "automatic_recovery": [
+            "transport/format/OCR ladder", "navigation-only rendered retry",
+            "up to two image/document asset attempts"],
+            "next_actions": "Each read returns tool, endpoint, arguments, reason and prerequisites",
+            "manual_control": "fetch recovery=manual; explicit render/OCR/ranges remain available"},
         "documents": {"read_endpoint": "/documents/read", "versioned": True,
                       "retention_seconds": 604800, "scoped": True},
         "jobs": {"submit_endpoint": "/jobs/fetch", "read_endpoint": "/jobs/read",
@@ -816,7 +890,7 @@ def v2_capabilities():
             "fetch": ["raw", "links", "wait_for", "render_delay", "headed_fallback",
                       "cache_mode", "max_age", "focus", "response_format", "ocr_language",
                       "page_start", "page_end", "ocr_mode", "row_start", "row_end",
-                      "sheet", "max_cell_chars"],
+                      "sheet", "max_cell_chars", "recovery"],
         },
     }
 
@@ -947,7 +1021,8 @@ def fetch_urls(body: FetchBody, background: BackgroundTasks):
                                page_start=body.page_start,
                                page_end=body.page_end, row_start=body.row_start,
                                row_end=body.row_end, sheet=body.sheet,
-                               max_cell_chars=body.max_cell_chars))
+                               max_cell_chars=body.max_cell_chars,
+                               recovery=body.recovery))
     # Indexed AFTER the response, not during it. Embedding costs ~250ms a page
     # and the caller should not wait for work they did not ask for.
     # Not indexed when links were kept: the corpus is prose to match
@@ -971,7 +1046,7 @@ def _job_read(body, url):
                        ocr_mode=body.ocr_mode,
                        page_start=body.page_start, page_end=body.page_end,
                        row_start=body.row_start, row_end=body.row_end, sheet=body.sheet,
-                       max_cell_chars=body.max_cell_chars)
+                       max_cell_chars=body.max_cell_chars, recovery=body.recovery)
     index_fetched(_harvest([row]))
     return compact_row(row) if body.response_format == "concise" else row
 
@@ -1003,6 +1078,50 @@ def cancel_fetch_job(body: JobReadBody):
         raise HTTPException(status_code=exc.status, detail=str(exc)) from exc
 
 
+def _source_artifact(record, namespace, public_only):
+    """Acquire source bytes on demand, verifying the retained source version."""
+    metadata = record["metadata"]
+    artifact = documents().get_artifact(namespace, metadata.get("artifact_id", ""))
+    if artifact is not None:
+        return artifact
+    expected = (
+        metadata.get("file_sha256")
+        or metadata.get("source_sha256")
+        or metadata.get("extraction", {}).get("source_sha256")
+    )
+    if not expected:
+        raise HTTPException(
+            status_code=410, detail="source_bytes_missing_and_no_version_hash; refetch URL"
+        )
+    captured = []
+    fetcher.fetch_and_extract(
+        record["url"],
+        cache=None,
+        max_chars=1,
+        allow_ocr=False,
+        allow_render=False,
+        public_only=public_only,
+        ocr_mode="never",
+        source_sink=lambda blob, filename: captured.append((blob, filename)),
+    )
+    if not captured:
+        raise HTTPException(
+            status_code=410,
+            detail="source_bytes_unavailable; capture the source through browser download",
+        )
+    blob, filename = captured[-1]
+    import hashlib
+
+    if hashlib.sha256(blob).hexdigest() != expected:
+        raise HTTPException(
+            status_code=409, detail="source_version_changed; fetch current source before inspection"
+        )
+    identifier = documents().put_artifact(namespace, filename, blob)
+    metadata["artifact_id"] = identifier
+    documents().put(namespace, record["url"], record["text"], metadata)
+    return documents().get_artifact(namespace, identifier)
+
+
 @app.post("/documents/read")
 def read_document(body: DocumentReadBody):
     record = documents().get(body.evidence_namespace, body.document_id)
@@ -1015,11 +1134,8 @@ def read_document(body: DocumentReadBody):
                    or body.page_end is not None or body.ocr_mode != "auto" or body.ocr_language)
     if needs_parse:
         from . import formats
-        artifact = documents().get_artifact(body.evidence_namespace,
-                                            metadata.get("artifact_id", ""))
-        if artifact is None:
-            raise HTTPException(status_code=410,
-                                detail="source_bytes_not_retained_or_expired; refetch URL")
+        artifact = _source_artifact({**record, "text": text, "metadata": metadata},
+                                    body.evidence_namespace, body.public_only)
         try:
             options = body.model_dump()
             kind = formats.kind_of(artifact["data"], artifact["filename"])
@@ -1040,6 +1156,7 @@ def read_document(body: DocumentReadBody):
         end = min(len(text), body.offset + body.max_chars)
         row.update(content=text[body.offset:end], offset=body.offset,
                    truncated=end < len(text), next_offset=end if end < len(text) else None)
+    row["workflow"] = guidance(row, offset=body.offset, focused=bool(body.focus))
     return compact_row(row) if body.response_format == "concise" else row
 
 
@@ -1051,10 +1168,7 @@ def document_image(body: DocumentImageBody):
     record = documents().get(body.evidence_namespace, body.document_id)
     if record is None:
         raise HTTPException(status_code=404, detail="document_missing_or_expired")
-    artifact = documents().get_artifact(body.evidence_namespace,
-                                        record["metadata"].get("artifact_id", ""))
-    if artifact is None:
-        raise HTTPException(status_code=410, detail="source_bytes_not_retained_or_expired")
+    artifact = _source_artifact(record, body.evidence_namespace, body.public_only)
     from . import formats
     kind = formats.kind_of(artifact["data"], artifact["filename"])
     try:
@@ -1185,6 +1299,7 @@ def drive(body: DriveBody):
                     data.get("source_url", result.get("final", {}).get("url", "")), text,
                     {"filename": data.get("filename"), "extraction": extraction,
                      "file_sha256": data["file_sha256"], "artifact_id": data["artifact_id"]}))
+                data["workflow"] = guidance(data)
             except Exception as exc:
                 if data.get("artifact_id"):
                     data.update(documents().put(body.evidence_namespace,
@@ -1281,7 +1396,7 @@ def research(body: ResearchBody, background: BackgroundTasks):
                                    allow_ocr=True,
                                    page_budget=fetcher.PAGE_BUDGET_BULK,
                                    fresh=body.fresh, public_only=True,
-                                   evidence_namespace=body.evidence_namespace)
+                                   evidence_namespace=body.evidence_namespace, recovery="manual")
             except Exception as exc:
                 row = {"url": item["url"], "quality": "failed", "content": "",
                        "failure_reason": type(exc).__name__}

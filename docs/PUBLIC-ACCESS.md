@@ -66,3 +66,16 @@ fetch, research, browser downloads, document reads and jobs. A token used across
 REST/MCP sees the same scoped documents/jobs. Another token cannot retrieve them
 by supplying a forged namespace. This does not change the existing shared-corpus
 policy. Per-caller HTTP admission and background-job admission are separate.
+
+The REST gateway resolves hostnames while validating public targets. If its
+systemd unit uses `IPAddressDeny=any`, permit the configured DNS resolvers in
+addition to loopback; otherwise valid public fetch/drive URLs can be rejected
+before the backend sees them. Keep resolver permissions aligned with the host's
+`/etc/resolv.conf`. This does not require allowing general external gateway
+egress: actual source retrieval remains in the API/browser services.
+
+MCP clients must pass the server's initialize instructions and tool descriptions
+to their model, and support native image blocks for visual inspection. REST
+clients can obtain the same workflow policy from capabilities and follow each
+read result's `workflow.next_actions`. A capability list alone is insufficient
+integration guidance.

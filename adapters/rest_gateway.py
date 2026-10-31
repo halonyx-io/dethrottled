@@ -129,11 +129,12 @@ def validate_drive(payload: dict) -> str | None:
         step.get('url') for step in steps
         if step.get('action', '').lower() == 'goto' and step.get('url')
     )
-    if navigation_urls and not allowed_hosts:
-        return 'allowed_hosts required for public browser navigation'
     if any(not isinstance(url, str) or len(url) > 2048 or not public_url(url)
            for url in navigation_urls):
         return 'public HTTP(S) navigation URLs required'
+    if navigation_urls and not allowed_hosts:
+        allowed_hosts = sorted({urlsplit(url).hostname.lower() for url in navigation_urls})
+        payload['allowed_hosts'] = allowed_hosts
     if any(not hostname_allowed(url, allowed_hosts) for url in navigation_urls):
         return 'navigation URL must match allowed_hosts'
     return None
@@ -260,7 +261,7 @@ async def dispatch(path: str, request: Request):
                 'POST', route, payload,
                 session_alias=(internal_session, logical_session),
             )
-    if route in FETCH_PATHS:
+    if route in FETCH_PATHS or route in {'/documents/read', '/documents/image'}:
         payload = dict(payload, public_only=True)
     if route in FETCH_PATHS or route in {
             '/documents/read', '/documents/image', '/jobs/read', '/jobs/cancel', '/research',

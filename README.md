@@ -166,3 +166,5 @@ separate deployment; they are not implemented by this Compose project.
 MIT — see [LICENSE](LICENSE).
 
 Maintained by [Halonyx](https://github.com/halonyx-io).
+
+Agent integrations receive an evidence-led workflow, concrete follow-up calls, and bounded automatic recovery. See [the API workflow](docs/API.md#evidence-led-agent-workflow-05) and [cold-agent evaluation](evaluations/agent-workflow/README.md) for behavior and validation limits.

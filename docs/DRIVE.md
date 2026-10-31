@@ -8,7 +8,8 @@ starting their own browser or taking a screenshot after every action.
 ## Evidence-led agent loop
 
 1. Create one named session for one target and task.
-2. Set `allowed_hosts` before the first navigation.
+2. Set `allowed_hosts` before the first navigation, or let the public adapter
+   derive it from validated navigation URLs. Hostnames omit ports.
 3. Request a `snapshot` to discover useful controls and selectors.
 4. Perform the smallest next interaction and inspect its structured result.
 5. Use a unique canary when testing whether controlled text executes.
@@ -178,3 +179,6 @@ Replay protection is bounded to the current worker lifetime and journal capacity
 Text and HTML steps accept `max_chars`; `limit` continues to mean the snapshot
 entry count. Snapshot selector_count, selector_index and ambiguous fields help
 identify duplicate targets. Semantic hints supplement explicit CSS selectors.
+
+MCP browser screenshots are native image blocks with structured metadata. REST
+and the internal API retain their base64 image fields for existing clients.

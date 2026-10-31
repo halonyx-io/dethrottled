@@ -130,3 +130,10 @@ image inspection without repeating browser actions. OCR-derived content retains
 warnings. Native text from mixed documents can enter the prose corpus; OCR
 pages/supplements are excluded until that index can preserve their verification
 provenance.
+
+Agent workflow policy is published at MCP initialization and in capabilities.
+Read results include prerequisite-aware next actions, and bounded automatic
+recovery can retry navigation-only reads with rendering or follow relevant
+image/document assets. Original HTTP file bytes can be reacquired for reparsing
+or pixel inspection only after verifying their hash against the retained version;
+changed bytes are never silently substituted.

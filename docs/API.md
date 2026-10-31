@@ -344,19 +344,73 @@ rejects non-table formats rather than claiming to have applied an ignored option
 Retained browser downloads also preserve source bytes (up to the download cap)
 in a separate scoped 200 MB artifact budget. `/documents/read` can reparse a
 download with PDF page/OCR or table row/sheet controls without another export.
-HTTP reads retain extracted text, not their original files; requesting a reparse
-without retained bytes returns an explicit 410 instead of ignoring the controls.
+HTTP reads initially retain extracted text. A later reparse or image inspection
+can reacquire source bytes on demand when their hash matches the retained version.
+Unavailable bytes return 410; a changed source returns 409.
 
 `POST /documents/image` returns a PNG rendering of a retained PDF page or raster
 image, with the source-file hash, page number, original/output sizes and optional
 crop. PDF coordinates use a 200-DPI rendered image. The MCP `view_document_image`
 tool returns native image content, so vision-capable agents can inspect charts
 and check OCR rather than trusting numeric transcriptions. Crops refer to the
-original pixels before scaling. These views require retained browser-download
-bytes and preserve caller isolation.
+original pixels before scaling. These views use retained or freshly hash-verified
+source bytes and preserve caller isolation.
 
 Browser captures remain available for image inspection even when text conversion
 fails. Check capture_succeeded separately from the step's parse status. File
 versions with identical extracted text still receive different document handles
 when their source-file hashes differ. The text hash remains a hash of the
 returned retained text, not the original binary artifact.
+
+## Evidence-led agent workflow (0.5)
+
+MCP `initialize` publishes the service workflow; clients should forward its
+`instructions` to their model along with the tool descriptions and input schemas.
+REST clients can read the same policy from `/v2/capabilities.workflow`. A client
+that lists tools but drops both descriptions and instructions loses this guidance.
+
+Known URLs can go directly to `fetch`, preferably with `focus` set to the question.
+Discovery can use `search` or `research`; corpus lookup is optional. Reading
+performs normal transport/format/OCR escalation. Default `recovery: "auto"` adds
+one rendered retry for navigation-only content and up to two image/document asset
+attempts for an image-content page. It never guesses which UI button to click.
+Set `recovery: "manual"` for explicit acquisition control. Rendering prohibitions,
+OCR choices, and caller-selected ranges remain effective.
+
+Read results include a `workflow` object:
+
+- `state` describes observed extraction gaps, not answer correctness.
+- `answer_verified` is always false: the caller must judge whether evidence
+  supports the question.
+- `source_complete` is false for known gaps and otherwise null; successful
+  extraction does not establish that every relevant part of a source was read.
+- `next_actions` provides `tool`, REST `endpoint`, `arguments`, `reason`, and
+  `automatic: false`. Choose the suggestions relevant to the question.
+- `source_bytes_retained` and `source_bytes_reacquirable` distinguish stored
+  artifacts from sources whose bytes can potentially be reacquired by hash.
+
+For example, a truncated text result may suggest `read_document` with its exact
+`document_id` and next `offset`. A partial table or PDF suggests a later row/page
+range. Read errors, no focus matches, navigation-only content, and OCR uncertainty
+provide appropriate inspection or stronger-acquisition suggestions. Acquisition
+retries are reported in `recovery_attempts`; recovered assets preserve their
+`parent_url` and `parent_document_id`.
+
+`read_document` reparsing and `view_document_image` first use retained source bytes.
+If bytes are absent but an original file hash exists, they can reacquire the source
+through the HTTP/TLS readers, checking public-target policy on public adapters and
+verifying the exact hash. A changed source returns HTTP 409 instead of silently
+substituting a newer document. Unavailable or unhashed sources return HTTP 410;
+refetch the current source or capture an export through browser `download`.
+A plain retained-text read needs no origin request.
+
+MCP browser screenshots now use native image content with structured metadata,
+like `view_document_image`, so vision-capable clients can inspect actual pixels.
+Drive can derive an omitted `allowed_hosts` list from validated navigation URLs;
+explicit lists are still enforced. Host entries contain names without ports.
+
+See `evaluations/agent-workflow/` for the cold-agent evaluation harness, synthetic
+fixture generation, scoring rules and evidence-recording methodology. This
+workflow is intended to guide autonomous agents, while preserving direct tools
+for deliberate shortcuts and recovery. Its presence is not proof that every
+model/client will follow it successfully.
