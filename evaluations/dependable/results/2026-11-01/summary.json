@@ -1,0 +1,58 @@
+{
+  "baseline": {
+    "parsers": {
+      "passed": 21,
+      "total": 22
+    },
+    "search": {
+      "passed": 38,
+      "total": 40
+    },
+    "read": {
+      "passed": 39,
+      "total": 40
+    },
+    "browser": {
+      "passed": 1,
+      "total": 8
+    },
+    "total": {
+      "passed": 99,
+      "total": 110
+    }
+  },
+  "candidate": {
+    "parsers": {
+      "passed": 22,
+      "total": 22
+    },
+    "search": {
+      "passed": 40,
+      "total": 40
+    },
+    "read": {
+      "passed": 39,
+      "total": 40
+    },
+    "browser": {
+      "passed": 8,
+      "total": 8
+    },
+    "total": {
+      "passed": 109,
+      "total": 110
+    }
+  },
+  "limits": [
+    "110 mechanical checks, including 40 paired source tasks; not 110 independent research questions.",
+    "Single sequential observation per build; discovery differences are not causal accuracy evidence.",
+    "Web read checks deliberately disable rendering/recovery; PyTorch succeeds in separate thorough recovery.",
+    "Baseline initial not-ready run is retained as web-startup-invalid.json and excluded.",
+    "Browser benchmarking and private cold-agent fixtures are controlled; fixture exceptions never deployed."
+  ],
+  "anonymous_jina_reader": {
+    "passed": 8,
+    "total": 8,
+    "limits": "Anonymous reader phrase checks; no paid account, cache/freshness parity or search comparison."
+  }
+}

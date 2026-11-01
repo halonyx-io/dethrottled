@@ -55,10 +55,13 @@ Run:
 from __future__ import annotations
 
 import argparse
+import base64
 import os
 import secrets
+import sqlite3
 import threading
 import time
+import uuid
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Literal
@@ -78,12 +81,41 @@ from . import __version__ as VERSION
 from . import domains as domain_health
 from . import extract as fx
 from . import fetch as fetcher
+from . import ocr as ocr_engine
 from . import paths as _paths
+from . import providers, workers
 from . import rank as ranker
 from . import research as research_engine
 from . import search as fs
-from .cache import Cache
+from .cache import Cache, CacheView
+from .content import compact_row, constrained, passage_excerpt
 from .corpus import index_fetched, shared_corpus
+from .evidence import Documents
+from .jobs import JobError, Jobs
+from .workflow import INSTRUCTIONS, guidance
+
+_jobs = None
+_jobs_lock = threading.Lock()
+
+_documents = None
+_documents_lock = threading.Lock()
+
+
+def documents():
+    global _documents
+    with _documents_lock:
+        if _documents is None:
+            _documents = Documents(_paths.data_dir() / "evidence.sqlite")
+        return _documents
+
+
+def jobs():
+    global _jobs
+    with _jobs_lock:
+        if _jobs is None:
+            _jobs = Jobs(_paths.data_dir() / "jobs.sqlite")
+        return _jobs
+
 
 STARTED = time.time()
 
@@ -106,6 +138,17 @@ app = FastAPI(title="dethrottled", version=VERSION,
               description="Zero-API search, fetch and extraction")
 
 
+@app.middleware("http")
+async def request_trace(request, call_next):
+    incoming = request.headers.get("x-request-id", "")
+    valid = len(incoming) == 32 and all(c in "0123456789abcdef" for c in incoming)
+    trace = incoming if valid else (
+        uuid.uuid4().hex)
+    response = await call_next(request)
+    response.headers["X-Request-ID"] = trace
+    return response
+
+
 # Page reads spend most of their time waiting on different origin servers.
 # Share eight slots across requests and let one request occupy at most four;
 # response rows still come back in the caller's order.
@@ -125,29 +168,51 @@ class SearchBody(BaseModel):
     # one hears about it instead of silently getting the default.
     model_config = ConfigDict(extra="forbid")
 
-    query: str
+    query: str = Field(min_length=1, max_length=500)
     # The contract's name for result count. num_results and max_items remain
     # accepted for callers already written against them; limit wins.
-    limit: int | None = None
-    num_results: int = 8
-    max_items: int | None = None
+    limit: int | None = Field(default=None, ge=1, le=10)
+    num_results: int = Field(default=8, ge=1, le=10)
+    max_items: int | None = Field(default=None, ge=1, le=10)
     # Default search includes direct web, Bing News RSS, local SearXNG and
     # resolved Google News headlines. This preserves existing callers.
-    categories: str = ""
+    categories: Literal["", "news", "academic"] = ""
     # SearXNG uses this hint. Direct web engines are
     # English-centric and do not take it, so it biases rather than constrains.
     language: str = ""
     engines: str = ""
+
+    @field_validator("engines")
+    @classmethod
+    def validate_sources(cls, value):
+        allowed = {"auto", "web", "news", "mwmbl", "crossref", "openalex", "arxiv",
+                   "exa", "tavily", "parallel"}
+        if any(x.strip() not in allowed for x in value.split(",") if x.strip()):
+            raise ValueError("supported sources: " + ", ".join(sorted(allowed)))
+        return ",".join("web" if x.strip() == "auto" else x.strip()
+                        for x in value.split(",") if x.strip())
+
+    @field_validator("query")
+    @classmethod
+    def query_not_blank(cls, value):
+        if not value.strip():
+            raise ValueError("query must not be blank")
+        return value.strip()
+
     # Honoured: bypasses the search cache for this call. It was accepted and
     # ignored until an external benchmark set it, measured this engine's cache
     # against another engine doing live work, and published the wrong
     # conclusion. Accepting a field costs nothing right up until someone
     # believes it.
     fresh: bool = False
-    profile: str = "balanced"
+    cache_mode: Literal["use", "refresh", "bypass"] = "use"
+    max_age: float | None = Field(default=None, ge=0, le=1814400)
+    profile: Literal["fast", "web", "balanced", "thorough", "news", "academic"] = "web"
 
     # Source order is the measured default; BM25 remains opt-in.
     rank: bool = False
+    ranking: Literal["source", "bm25", "fusion"] = "source"
+    prefer_domains: list[str] = Field(default_factory=list, max_length=10)
     # Accept explicit false for existing callers. Reject true instead of
     # claiming success when the removed model cannot run.
     rerank: bool = False
@@ -161,17 +226,17 @@ class SearchBody(BaseModel):
     # How many already-fetched corpus passages to merge into the pool before
     # ranking. 0 disables it. These cost no fetch, so they are cheaper than the
     # web rows they compete with, not merely additional.
-    corpus: int = 0
+    corpus: int = Field(default=0, ge=0, le=20)
     # 0.0 = pure relevance, 1.0 = freshness dominates. Bounded and
     # multiplicative: it may reorder relevant results and may never promote an
     # irrelevant one.
-    recency: float = 0.0
+    recency: float = Field(default=0.0, ge=0, le=1)
 
 
 class FetchBody(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    urls: list[str] = Field(default_factory=list)
+    urls: list[str] = Field(min_length=1, max_length=10)
     # What the ladder is ALLOWED to do, not what it must do. "never" keeps it
     # on the cheap local tiers for callers to whom latency matters more than
     # coverage.
@@ -182,14 +247,14 @@ class FetchBody(BaseModel):
     # callers were written against one -- and because typing this field
     # differently on two engines is what returned 422 on every fetch through a
     # bridge for a day. The enum is canonical; True means always, False auto.
-    render: str | bool = "auto"
+    render: Literal["auto", "always", "never"] | bool = "auto"
     # text   article prose (default)
     # links  prose with anchors kept as markdown, for link discovery
     # html   the source, for callers doing their own parsing
     #
     # Replaces the raw/links booleans, which could contradict each other and
     # left a caller no way to say "either one" without knowing which won.
-    format: str = "text"
+    format: Literal["text", "links", "html"] = "text"
     # The prose is the point; `raw` is for callers doing their own parsing, and
     # is the only reason this is a distinct verb rather than a rename. Kept
     # because callers send it; `format` wins when both appear.
@@ -202,23 +267,61 @@ class FetchBody(BaseModel):
     # is 500 to 800 -- this endpoint was truncating typical articles. Not
     # 10,000, because past roughly eight thousand most sites are into
     # related-articles and footer.
-    max_chars: int = 8000
+    max_chars: int = Field(default=8000, ge=1, le=120000)
     fresh: bool = False
-    profile: str = "balanced"
+    cache_mode: Literal["use", "refresh", "bypass"] = "use"
+    max_age: float | None = Field(default=None, ge=0, le=1814400)
+    wait_for: str = Field(default="", max_length=500)
+    render_delay: float = Field(default=0.5, ge=0, le=5)
+    headed_fallback: bool = False
+    public_only: bool = False
+    focus: str = Field(default="", max_length=1000)
+    response_format: Literal["detailed", "concise"] = "detailed"
+    evidence_namespace: str = Field(default="local", max_length=100)
+    ocr_language: str = Field(default="", pattern=r"^[a-z_]*(?:\+[a-z_]+)*$", max_length=100)
+    document_mode: Literal["auto", "native", "layout"] = "auto"
+    ocr_mode: Literal["auto", "always", "never"] = "auto"
+    row_start: int = Field(default=1, ge=1, le=1048576)
+    row_end: int | None = Field(default=None, ge=1, le=1048576)
+    sheet: str = Field(default="", max_length=200)
+    max_cell_chars: int | None = Field(default=None, ge=1, le=1000000)
+    page_start: int = Field(default=1, ge=1, le=100000)
+    page_end: int | None = Field(default=None, ge=1, le=100000)
+    recovery: Literal["auto", "manual"] = "auto"
+    profile: Literal["fast", "balanced", "thorough"] = "balanced"
+
+
+    @model_validator(mode="after")
+    def read_constraints(self):
+        if self.page_end is not None and (self.page_end < self.page_start
+                                          or self.page_end - self.page_start >= 100):
+            raise ValueError("page range must contain 1 to 100 pages")
+        if self.row_end is not None and (self.row_end < self.row_start
+                                         or self.row_end - self.row_start >= 2000):
+            raise ValueError("row range must contain 1 to 2000 rows")
+        if self.focus and (self.format != "text" or self.raw or self.links):
+            raise ValueError("focus requires text format")
+        if self.wait_for and (self.render == "never" or self.profile == "fast"):
+            raise ValueError("wait_for requires rendering")
+        return self
 
 
 class SearchFetchBody(SearchBody):
+    document_mode: Literal["auto", "native", "layout"] = "auto"
+    ocr_mode: Literal["auto", "always", "never"] = "auto"
+    ocr_language: str = Field(default="", pattern=r"^[a-z_]*(?:\+[a-z_]+)*$", max_length=100)
+    evidence_namespace: str = Field(default="local", max_length=100)
     # auto | always | never. A bool is also accepted and mapped, because
     # callers were written against one -- and because typing this field
     # differently on two engines is what returned 422 on every fetch through a
     # bridge for a day. The enum is canonical; True means always, False auto.
-    render: str | bool = "auto"
+    render: Literal["auto", "always", "never"] | bool = "auto"
     raw: bool = False
     # 3000. Leaner than /extract on purpose: this path multiplies by the number
     # of results, and it is the ranking path, where measurement says less text
     # ranks better -- titles plus 240 characters beat 3,000 characters of body.
     # 3000 is the measured sweet spot for the ranking path.
-    max_chars: int = 3000
+    max_chars: int = Field(default=3000, ge=1, le=120000)
 
 
 class ResearchBody(BaseModel):
@@ -231,7 +334,105 @@ class ResearchBody(BaseModel):
     max_chars: int = Field(default=5000, ge=500, le=6000)
     language: str = ""
     fresh: bool = False
+    follow_assets: bool = True
+    engines: str = ""
+    profile: Literal["web", "balanced", "thorough", "academic", "news"] = "thorough"
     categories: str = ""
+    response_format: Literal["detailed", "concise"] = "detailed"
+    evidence_namespace: str = Field(default="local", max_length=100)
+
+
+    @field_validator("engines")
+    @classmethod
+    def validate_engines(cls, value):
+        return SearchBody.validate_sources(value)
+
+
+class DocumentReadBody(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    document_id: str = Field(min_length=1, max_length=100)
+    public_only: bool = False
+    focus: str = Field(default="", max_length=1000)
+    reparse: bool = False
+    row_start: int = Field(default=1, ge=1, le=1048576)
+    row_end: int | None = Field(default=None, ge=1, le=1048576)
+    sheet: str = Field(default="", max_length=200)
+    max_cell_chars: int | None = Field(default=None, ge=1, le=1000000)
+    page_start: int = Field(default=1, ge=1, le=100000)
+    page_end: int | None = Field(default=None, ge=1, le=100000)
+    document_mode: Literal["auto", "native", "layout"] = "auto"
+    ocr_mode: Literal["auto", "always", "never"] = "auto"
+    ocr_language: str = Field(default="", pattern=r"^[a-z_]*(?:\+[a-z_]+)*$", max_length=100)
+    offset: int = Field(default=0, ge=0)
+    max_chars: int = Field(default=12000, ge=1, le=120000)
+    response_format: Literal["detailed", "concise"] = "detailed"
+    evidence_namespace: str = Field(default="local", max_length=100)
+
+
+    @model_validator(mode="after")
+    def bounded_ranges(self):
+        if self.row_end is not None and (self.row_end < self.row_start
+                                        or self.row_end - self.row_start >= 2000):
+            raise ValueError("row range must contain 1 to 2000 rows")
+        if self.page_end is not None and (self.page_end < self.page_start
+                                         or self.page_end - self.page_start >= 100):
+            raise ValueError("page range must contain 1 to 100 pages")
+        return self
+
+
+class DocumentImageBody(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    public_only: bool = False
+    document_id: str = Field(min_length=1, max_length=100)
+    page: int = Field(default=1, ge=1)
+    max_dimension: int = Field(default=2400, ge=512, le=6000)
+    crop: tuple[int, int, int, int] | None = None
+    evidence_namespace: str = Field(default="local", max_length=100)
+
+
+class FetchJobBody(FetchBody):
+    operation_id: str = Field(default="", max_length=100, pattern=r"^[A-Za-z0-9._-]*$")
+
+
+class JobReadBody(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    job_id: str = Field(min_length=1, max_length=100)
+    cursor: int = Field(default=0, ge=0)
+    limit: int = Field(default=10, ge=1, le=10)
+    evidence_namespace: str = Field(default="local", max_length=100)
+
+
+class StructureBody(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    document_id: str = Field(min_length=1, max_length=100)
+    offset: int = Field(default=0, ge=0)
+    limit: int = Field(default=30, ge=1, le=100)
+    focus: str = Field(default="", max_length=1000)
+    evidence_namespace: str = Field(default="local", max_length=100)
+
+
+class SiteBody(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    urls: list[str] = Field(min_length=1, max_length=10)
+    max_pages: int = Field(default=10, ge=1, le=50)
+    max_depth: int = Field(default=2, ge=0, le=5)
+    path_prefix: str = Field(default="/", max_length=1000, pattern=r"^/")
+    render: Literal["auto", "always", "never"] = "auto"
+    public_only: bool = False
+    evidence_namespace: str = Field(default="local", max_length=100)
+
+    @model_validator(mode="after")
+    def site_scope(self):
+        from urllib.parse import urlsplit
+
+        from .site import canonical
+        self.urls = [canonical(u) for u in self.urls]
+        origins = {(urlsplit(u).scheme, urlsplit(u).netloc) for u in self.urls}
+        if len(origins) != 1 or any(
+            not urlsplit(u).path.startswith(self.path_prefix) for u in self.urls
+        ):
+            raise ValueError("seeds must share one origin and match path_prefix")
+        return self
 
 
 class DriveStep(BaseModel):
@@ -246,6 +447,8 @@ class DriveStep(BaseModel):
     # wait_for  wait for `selector` to appear, up to `ms`
     # text      read the text of `selector` (or the whole body)
     action: str = Field(min_length=1, max_length=20)
+    frame: str = Field(default="", max_length=1000,
+                       description="CSS selector for an allowed iframe")
     selector: str = Field(default="", max_length=1000)
     value: str = Field(default="", max_length=4000)
     url: str = Field(default="", max_length=2048)
@@ -254,6 +457,7 @@ class DriveStep(BaseModel):
     name: str = Field(default="", max_length=200)
     index: int = Field(default=0, ge=0, le=500)
     limit: int = Field(default=100, ge=1, le=200)
+    max_chars: int | None = Field(default=None, ge=1, le=120000)
 
 
 class DriveBody(BaseModel):
@@ -272,12 +476,16 @@ class DriveBody(BaseModel):
     # that stops one slow selector holding a browser forever.
     timeout_ms: int = Field(default=45000, ge=1000, le=180000)
     session: str = Field(default="", max_length=64, pattern=r"^[A-Za-z0-9._-]*$")
+    operation_id: str = Field(default="", max_length=100, pattern=r"^[A-Za-z0-9._-]*$")
     close_session: bool = False
     allowed_hosts: list[str] = Field(default_factory=list, max_length=32)
+    public_only: bool = False
     canaries: list[str] = Field(default_factory=list, max_length=20)
     include_events: bool = True
     screenshot: bool | Literal["never", "failure", "canary", "always"] = "failure"
     screenshot_full_page: bool = False
+    evidence_namespace: str = Field(default="local", max_length=100)
+    ocr_language: str = Field(default="", pattern=r"^[a-z_]*(?:\+[a-z_]+)*$", max_length=100)
 
     @model_validator(mode="after")
     def _need_something(self):
@@ -307,12 +515,20 @@ def _attempts(meta: dict) -> list:
                      "count": count if configured else 0,
                      "status": "ok" if configured else count,
                      "elapsed_ms": meta.get("elapsed_ms", 0),
-                     "unresponsive": []})
+                     "unresponsive": [],
+                     **(meta.get("source_reports") or {}).get(name, {}),
+                     **(meta.get("source_reports") or {}).get("providers", {}).get(name, {})})
     browser = meta.get("browser_search") or {}
-    if browser:
+    if browser.get("direct"):
+        direct = browser["direct"]
+        rows.append({"engine": "tls-ddg-lite", "count": direct.get("count", 0),
+                     "status": direct.get("status"), "reason": direct.get("reason"),
+                     "elapsed_ms": direct.get("elapsed_ms", 0), "unresponsive": []})
+    if browser and browser.get("attempts"):
         rows.append({"engine": "browser-search", "count": 0,
                      "status": browser.get("status", "unknown"),
                      "elapsed_ms": browser.get("elapsed_ms", 0),
+                     "queue_ms": browser.get("queue_ms", 0),
                      "unresponsive": []})
         for attempt in browser.get("attempts") or []:
             rows.append({"engine": "browser-" + str(attempt.get("engine") or "unknown"),
@@ -332,9 +548,13 @@ def _search_row(row: dict, meta: dict, index: int) -> dict:
         "publishedDate": row.get("publishedDate") or None,
         "engine": row.get("engine", "dethrottled"),
         "engines": [row.get("engine", "dethrottled")],
+        "discovery": row.get("discovery", []),
         "category": None,
-        "score": None,
-        "cached": False,
+        "score": row.get("score"),
+        "cached": bool(row.get("cached")),
+        "retrieved_at": row.get("retrieved_at"),
+        "cache_age_seconds": row.get("cache_age_seconds"),
+        "upstream_rank": row.get("upstream_rank"),
         "search_attempts": _attempts(meta) if index == 0 else [],
         "search_elapsed_ms": meta.get("elapsed_ms", 0),
         # Which ranking stages actually ran.
@@ -344,7 +564,14 @@ def _search_row(row: dict, meta: dict, index: int) -> dict:
 
 
 MIME = {
-    "pdf": "application/pdf",
+    "captions": "text/vtt", "media": "text/plain", "transcript": "text/plain",
+    "text": "text/plain", "json": "application/json", "jsonl": "application/x-ndjson",
+    "xml": "application/xml", "eml": "message/rfc822", "zip": "application/zip",
+    "gzip": "application/gzip", "tar": "application/x-tar", "image": "application/octet-stream",
+    "doc": "application/msword", "ppt": "application/vnd.ms-powerpoint",
+    "epub": "application/epub+zip", "rtf": "application/rtf",
+    "pdf": "application/pdf", "msg": "application/vnd.ms-outlook",
+    "xlsb": "application/vnd.ms-excel.sheet.binary.macroEnabled.12",
     "xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     "xls": "application/vnd.ms-excel",
     "csv": "text/csv",
@@ -369,23 +596,42 @@ def _render_mode(render) -> str:
     return render
 
 
-def _extract_row(url: str, max_chars: int, allow_ocr: bool = True,
+def _extract_once(url: str, max_chars: int, allow_ocr: bool = True,
                  page_budget: float | None = None, allow_render: bool = True,
                  raw: bool = False, render_first: bool = False,
-                 links: bool = False, fresh: bool = False) -> dict:
+                 links: bool = False, fresh: bool = False, cache_mode: str = "use",
+                 max_age: float | None = None, wait_for: str = "", render_delay: float = 0.5,
+                 headed_fallback: bool = False, public_only: bool = False,
+                 focus: str = "", evidence_namespace: str = "local",
+                 ocr_language: str = "", ocr_mode: str = "auto", page_start: int = 1,
+                 page_end: int | None = None, row_start: int = 1,
+                 row_end: int | None = None, sheet: str = "",
+                 max_cell_chars: int | None = None, document_mode: str = "auto") -> dict:
     # allow_ocr is the one-URL-versus-many split. OCR costs about 1.4s a page,
     # which is worth it for a page somebody asked for by name and is not worth
     # it multiplied across a page of search results.
     # fresh means fresh. The cache is a parameter, so bypassing it is simply
     # not passing one -- and a field that says it bypasses the cache must, or
     # a caller cannot tell what they measured.
-    result = fetcher.fetch_and_extract(url, max_chars=max_chars,
-                                       cache=None if fresh else cache(),
+    result = fetcher.fetch_and_extract(url, max_chars=max(max_chars, fetcher.CACHE_CHARS)
+                                       if focus else max_chars,
+                                       cache=CacheView(cache(),
+                                                       mode="refresh" if fresh else cache_mode,
+                                                       max_age=max_age),
                                        allow_ocr=allow_ocr,
                                        page_budget=page_budget,
                                        allow_render=allow_render,
                                        render_first=render_first,
-                                       keep_html=raw or links)
+                                       keep_html=raw or links,
+                                       format="html" if raw else "links" if links else "text",
+                                       wait_for=wait_for, render_delay=render_delay,
+                                       headed_fallback=headed_fallback, public_only=public_only,
+                                       ocr_language=ocr_language, ocr_mode=ocr_mode,
+                                       page_start=page_start,
+                                       page_end=page_end, row_start=row_start, row_end=row_end,
+                                       sheet=sheet, max_cell_chars=max_cell_chars,
+                                       document_mode=document_mode,
+                                       admission_key=evidence_namespace)
     # Record what happened, per domain. A cache hit is not evidence about the
     # site -- it says the cache worked, which is a different fact -- so only
     # live attempts count.
@@ -398,12 +644,13 @@ def _extract_row(url: str, max_chars: int, allow_ocr: bool = True,
                 # fetch_and_extract now reports which tier it was last
                 # standing on when it gave up; a hardcoded None here would
                 # throw that away and leave a tier-only consumer with nothing.
-                "tier": result.get("tier"), "cached": result.get("cached", False)}
+                "tier": result.get("tier"), "cached": result.get("cached", False),
+                "acquisition_attempts": result.get("acquisition_attempts", [])}
     row = {
         "url": url,
         "content": result["text"],
         "content_type": MIME.get(result.get("content_type", ""), "text/html"),
-        "quality": "ok",
+        "quality": result.get("quality", "ok"),
         # `tier` says HOW the content was obtained: which fetch tier, which
         # extractor. "It worked" and "it worked on the fourth try through a
         # renderer" are different levels of confidence in the same text.
@@ -413,8 +660,36 @@ def _extract_row(url: str, max_chars: int, allow_ocr: bool = True,
         "published": result.get("published", ""),
         # Only present when the caller asked for it. Absent, not empty, so a
         # client can distinguish did-not-ask from asked-and-got-nothing.
-        **({"html": result.get("html", "")} if raw else {}),
+        **({"html": result.get("html", "")[:max_chars]} if raw else {}),
+        "retrieved_at": result.get("retrieved_at"),
+        "cache_age_seconds": result.get("cache_age_seconds", 0),
+        "cache_expires_at": result.get("cache_expires_at"),
+        "truncated": bool(result.get("truncated")),
+        "content_chars": result.get("content_chars", len(result.get("text", ""))),
+        "content_status": result.get("content_status", "complete"),
+        "assets": result.get("assets", []),
+        "warnings": result.get("warnings", []),
+        "_index_text": result.get("_index_text", result.get("text", "")),
+        "acquisition": result.get("acquisition", {}),
+        "browser_recovery": result.get("browser_recovery"),
+        "acquisition_attempts": result.get("acquisition_attempts", []),
+        "extraction": result.get("extraction", {}),
+        "source_partial": bool(result.get("extraction", {}).get("partial")),
+        "final_url": result.get("url", url),
+        "source_sha256": result.get("extraction", {}).get("source_sha256"),
     }
+    canonical = row["_index_text"]
+    try:
+        metadata = {k: v for k, v in row.items() if k not in {"content", "html", "_index_text"}}
+        row.update(documents().put(evidence_namespace, url, canonical, metadata))
+    except (OSError, ValueError, sqlite3.Error) as exc:
+        row["warnings"] = [*row["warnings"], "Document retention unavailable: "
+                           + type(exc).__name__]
+    if focus:
+        selected, evidence = passage_excerpt(canonical, focus, max_chars)
+        row.update(content=selected, evidence=evidence, focus=focus,
+                   focus_status="term_matches" if evidence else "no_term_matches",
+                   content_chars=len(canonical), truncated=len(selected) < len(canonical))
     if links:
         # Falls back to the prose on an empty result rather than handing
         # back nothing: a page whose anchors could not be parsed is still
@@ -426,7 +701,90 @@ def _extract_row(url: str, max_chars: int, allow_ocr: bool = True,
         # format=html asked for the source, so the source is the content. It is
         # still echoed in `html` for callers written against raw=true.
         row["content"] = result["html"][:max_chars]
+        row["content_chars"] = len(result["html"])
+        row["truncated"] = len(result["html"]) > max_chars
     return row
+
+
+def _extract_row(url, max_chars, *, recovery="auto", **options):
+    """Recover known evidence gaps without guessing UI actions or hiding attempts."""
+    row = _extract_once(url, max_chars, **options)
+    attempts = []
+    if recovery == "auto" and not options.get("raw") and not options.get("links"):
+        if (
+            row.get("content_status") == "navigation_only"
+            and options.get("allow_render", True)
+            and not row.get("acquisition", {}).get("rendered")
+        ):
+            retry_options = dict(options, render_first=True, headed_fallback=True)
+            stronger = _extract_once(url, max_chars, **retry_options)
+            attempts.append(
+                {
+                    "action": "render",
+                    "url": url,
+                    "quality": stronger.get("quality"),
+                    "reason": "navigation_only",
+                }
+            )
+            if (
+                stronger.get("quality") == "ok"
+                and stronger.get("content_status") != "navigation_only"
+            ):
+                row = stronger
+        if row.get("content_status") == "image_content":
+            for asset in row.get("assets", [])[:2]:
+                if asset.get("kind") not in {"image", "document"}:
+                    continue
+                child_options = {
+                    k: v
+                    for k, v in options.items()
+                    if k
+                    not in {
+                        "wait_for",
+                        "render_first",
+                        "row_start",
+                        "row_end",
+                        "sheet",
+                        "max_cell_chars",
+                        "page_start",
+                        "page_end",
+                    }
+                }
+                child = _extract_once(asset["url"], max_chars, **child_options)
+                attempts.append(
+                    {
+                        "action": "read_asset",
+                        "url": asset["url"],
+                        "quality": child.get("quality"),
+                        "reason": "image_content",
+                    }
+                )
+                if child.get("quality") == "ok" and child.get("content"):
+                    child.update(parent_url=url, parent_document_id=row.get("document_id"))
+                    row = child
+                    break
+    if attempts:
+        row["recovery_attempts"] = attempts
+    row["workflow"] = guidance(
+        row, focused=bool(options.get("focus")), rendered_allowed=options.get("allow_render", True)
+    )
+    return row
+
+
+from .backfill import BackfillJob  # noqa: E402
+
+_BACKFILL_JOB = BackfillJob()
+
+
+@app.on_event("startup")
+def start_multilingual_backfill():
+    if os.getenv("DETHROTTLED_MULTILINGUAL_CORPUS") == "1":
+        _BACKFILL_JOB.start()
+
+
+@app.on_event("shutdown")
+def stop_multilingual_backfill():
+    _BACKFILL_JOB.stop()
 
 
 @app.get("/health")
@@ -443,8 +801,14 @@ def ready():
 @app.get("/v2/status")
 def v2_status():
     report = fs.health()
+    worker_status = workers.status()
     return {
-        "status": "ok" if report["ok"] else "degraded",
+        "status": "ok" if report["ok"] and all(
+            row["status"] in {"ready", "not_configured"} for row in worker_status.values())
+            and _BACKFILL_JOB.state["status"] in {"disabled", "running", "complete"}
+            else "degraded",
+        "workers": worker_status,
+        "multilingual_backfill": dict(_BACKFILL_JOB.state),
         "components": {
             # An unconfigured source is not a down source: "down" sends you
             # looking for a broken service, "not_configured" sends you to the
@@ -455,21 +819,33 @@ def v2_status():
         },
         "providers": {k: {"configured": v}
                       for k, v in fx.available().items()},
-        "profiles": {p: {"ready": True} for p in ("fast", "balanced", "thorough")},
-        "cost": {"api_calls": 0, "daily_caps": None, "keys_required": False},
+        "profiles": {p: {"sources": list(v)} for p, v in fs.SOURCE_PROFILES.items()},
+        "cost": {"api_calls": None, "daily_caps": None, "keys_required": False,
+                 "default_search": "keyless", "optional_metered": providers.configured(),
+                 "accounting": "per_request_attempts; cumulative_usage_unavailable"},
         "uptime_seconds": int(time.time() - STARTED),
     }
 
 
 @app.get("/v2/capabilities")
 def v2_capabilities():
+    import hashlib
     import importlib.util
     import shutil
 
     def installed(name: str) -> bool:
         return importlib.util.find_spec(name) is not None
 
-    readable = ["html", "csv", "tsv"]
+    readable = ["html", "csv", "tsv", "text", "markdown", "json", "jsonl", "xml", "vtt", "srt",
+                "svg-text", "eml", "zip", "tar", "gzip"]
+    if os.getenv("DETHROTTLED_FORMAT_WORKER_URL"):
+        readable.extend(["msg", "xlsb"])
+    if installed("PIL") and shutil.which("tesseract"):
+        readable.extend(["png", "jpeg", "webp", "tiff", "gif", "bmp"])
+    if shutil.which("antiword"):
+        readable.append("doc")
+    if shutil.which("catppt"):
+        readable.append("ppt")
     for module, formats in (
         ("pymupdf", ("pdf",)),
         ("openpyxl", ("xlsx",)),
@@ -485,7 +861,18 @@ def v2_capabilities():
 
     return {
         "service": "dethrottled",
+        "optional_search_providers": providers.configured(),
         "version": VERSION,
+        "client_contract": {
+            "workflow_sha256": hashlib.sha256(INSTRUCTIONS.encode()).hexdigest(),
+            "preserve_fields": ["document_id", "document_sha256", "workflow", "warnings",
+                                "source_partial", "truncated", "extraction", "next_offset",
+                                "acquisition_attempts"],
+            "mcp_images": "forward native image content blocks to vision-capable models",
+            "startup_check": "Compare initialize.instructions hash with workflow_sha256; "
+                             "refresh tools/list after service upgrades.",
+            "client_activation": "Server version does not prove a remote plugin revision loaded.",
+        },
         # What is CONFIGURED, not what the code is capable of. Listing searxng
         # on a host with no SearXNG is the same class of lie as a health check
         # that reports ok because a socket opened.
@@ -505,6 +892,7 @@ def v2_capabilities():
             ("direct", True),
             ("tls", fetcher.ENABLE_TLS),
             ("crawl4ai", bool(fetcher.CRAWL4AI_URL)),
+            ("headed", bool(fs.BROWSER_SEARCH_URL)),
             ("jina-reader", fetcher.ENABLE_JINA),
         ) if on],
         # Browser MANIPULATION, as distinct from the fetch ladder above. /fetch
@@ -528,10 +916,23 @@ def v2_capabilities():
                                     "out_of_viewport", "disabled", "detached",
                                     "selector_error"],
             "navigation_allowlist": True,
+            "operation_replay": "durable journal; unknown outcomes never auto-repeat",
+            "operation_retention_seconds": 86400,
+            "checkpoint": {"action": "checkpoint", "retention_seconds": 86400,
+                           "state": ["cookies", "local_storage", "indexed_db", "session_storage"],
+                           "restore": "same session and original allowed_hosts"},
+            "network_response_inspection": True,
+            "frames": "CSS frame selector within allowed_hosts",
+            "tabs": ["tabs", "switch_tab"],
+            "action_history": "bounded outcome history; checkpoint persists it",
+            "download_reading": True,
+            "text_max_chars": 120000,
         },
         "tiers_resting": fetcher.tier_rest_state(),
         "extract": [k for k, v in fx.available().items() if v],
         "ranking": ranker.available(),
+        "corpus": {"multilingual": os.getenv("DETHROTTLED_MULTILINGUAL_CORPUS") == "1",
+                   "fusion": "reciprocal_rank", "separate_model_thresholds": True},
         "research": {"available": True, "model_used": False,
                      "max_sources": 6, "max_queries": 4},
         "read": {
@@ -542,9 +943,36 @@ def v2_capabilities():
             "youtube_captions_configured": (
                 installed("youtube_transcript_api")
                 and _transcripts_enabled()),
+            "layout_worker_configured": bool(os.getenv("DETHROTTLED_LAYOUT_WORKER_URL")),
+            "format_worker_configured": bool(os.getenv("DETHROTTLED_FORMAT_WORKER_URL")),
+            "document_modes": ["auto", "native", "layout"],
+            "speech_worker_configured": bool(os.getenv("DETHROTTLED_MEDIA_WORKER_URL")),
+            "timed_caption_evidence": True,
+            "pdf_page_selection": True,
+            "pdf_mixed_page_ocr": True,
+            "image_ocr_installed": installed("PIL") and shutil.which("tesseract") is not None,
+            "ocr_language_selection": True,
+            "ocr_languages": ocr_engine.languages(),
             "pdf_max_bytes": fetcher.PDF_MAX_BYTES,
             "document_max_bytes": fetcher.DOC_MAX_BYTES,
         },
+        "workflow": {"instructions": INSTRUCTIONS, "automatic_recovery": [
+            "transport/format/OCR ladder", "scoped headed challenge recovery",
+            "script-only shell recovery",
+            "navigation-only rendered retry",
+            "up to two image/document asset attempts"],
+            "next_actions": "Each read returns tool, endpoint, arguments, reason and prerequisites",
+            "manual_control": "fetch recovery=manual; explicit render/OCR/ranges remain available"},
+        "documents": {"read_endpoint": "/documents/read", "versioned": True,
+                      "retention_seconds": 604800, "scoped": True,
+                      "structure_endpoint": "/documents/structure",
+                      "citation_selectors": "exact text offsets and version hash"},
+        "site": {"endpoint": "/site/crawl", "max_pages": 50,
+                 "scope": "same origin and caller path prefix", "coverage_ledger": True},
+        "jobs": {"submit_endpoint": "/jobs/fetch", "read_endpoint": "/jobs/read",
+                 "cancel_endpoint": "/jobs/cancel", "retention_seconds": 86400,
+                 "progressive": True, "restart_policy": "unfinished jobs become interrupted",
+                 "resume_endpoint": "/jobs/resume", "resume": "explicit; missing sources only"},
         "quotas": None,
         "keys_required": False,
 
@@ -568,15 +996,17 @@ def v2_capabilities():
         # Every field accepted beyond the core, and nothing that is not. An
         # under-declared field is as bad as an over-declared one: a client that
         # trusts this drops a refinement the engine would have used.
+        "compatibility_fields": {"rest_fetch_aliases": ["raw", "links"],
+                                 "mcp_fetch": "Use format=html or format=links"},
         "optional_fields": {
-            # Only fields this engine actually honours. `engines` and
-            # `profile` are accepted for compatibility but change nothing --
-            # engines would reach one of five sources, profile is read
-            # nowhere -- and a declared field is a promise that sending it
-            # does something.
-            "search": ["categories", "language", "rank",
+            # Canonical cross-transport names; REST aliases are listed separately.
+            "search": ["categories", "language", "rank", "engines", "profile",
+                       "cache_mode", "max_age", "ranking", "prefer_domains",
                        "corpus", "recency"],
-            "fetch": ["raw", "links"],
+            "fetch": ["format", "document_mode", "wait_for", "render_delay", "headed_fallback",
+                      "cache_mode", "max_age", "focus", "response_format", "ocr_language",
+                      "page_start", "page_end", "ocr_mode", "row_start", "row_end",
+                      "sheet", "max_cell_chars", "recovery"],
         },
     }
 
@@ -599,22 +1029,32 @@ def _ranked(body) -> tuple:
     something for the ranker to reject.
     """
     limit = body.limit or body.max_items or body.num_results
-    pool = limit * 3 if body.rank else limit
+    pool = limit * 3 if body.rank or body.ranking != "source" else limit
     rows, meta = fs.search(body.query, max_items=pool,
                            categories=body.categories,
                            language=body.language or None,
                            # Same again: fresh bypasses the six-hour search
                            # cache rather than being accepted and ignored.
-                           cache=None if body.fresh else cache())
+                           cache=CacheView(cache(),
+                                           mode="refresh" if body.fresh else body.cache_mode,
+                                           max_age=body.max_age),
+                           profile=body.profile, engines=body.engines)
     rows, stages = ranker.apply(
-        rows, body.query, bm25=body.rank,
+        rows, body.query, bm25=body.rank or body.ranking == "bm25",
         corpus=body.corpus, recency=body.recency)
+    if body.ranking == "fusion":
+        rows = ranker.fuse_rows(rows, body.query, recency=body.recency)
+        stages.append("rank_fusion")
+    if body.prefer_domains:
+        rows = fs.rank(rows, body.prefer_domains)
+        stages.append("preferred_domains")
+    rows = [r for r in rows if constrained(body.query, r)]
     # AFTER ranking, and only here. Relevance order is decided above and is
     # not touched; this moves domains that measurably never yield text to the
     # back of the queue, so the fetches about to be spent land on results that
     # can actually be read. Nothing is dropped -- if the whole pool is poor
     # domains, they are still what comes back.
-    ordered = domain_health.order_for_fetching(rows)
+    ordered = domain_health.order_for_fetching(rows) if isinstance(body, SearchFetchBody) else rows
     if ordered[:limit] != rows[:limit]:
         stages.append("fetchability")
     rows = ordered
@@ -629,10 +1069,45 @@ def search(body: SearchBody):
     return [_search_row(r, meta, i) for i, r in enumerate(rows)]
 
 
+@app.post("/v2/search")
+def search_envelope(body: SearchBody):
+    rows, meta, _ = _ranked(body)
+    return {"results": [_search_row(r, meta, i) for i, r in enumerate(rows)],
+            "status": "ok" if rows else "no_results_or_degraded",
+            "attempts": _attempts(meta), "elapsed_ms": meta.get("elapsed_ms"),
+            "ranking": meta.get("ranking", []), "profile": body.profile}
+
+
 def _harvest(rows) -> list:
     """(url, row) pairs worth indexing, from API rows."""
-    return [(r.get("url", ""), r) for r in rows
-            if r.get("quality") == "ok" and r.get("content")]
+    harvested = []
+    for row in rows:
+        canonical = row.pop("_index_text", row.get("content", ""))
+        extraction = row.get("extraction", {})
+        if extraction.get("embedded_images") and "## Embedded image:" in canonical:
+            canonical = canonical.split("## Embedded image:", 1)[0].rstrip()
+        pages = extraction.get("pages", [])
+        has_pdf_ocr = any("ocr" in page.get("method", "") for page in pages)
+        if has_pdf_ocr and row.get("content_type") == "application/pdf":
+            native = []
+            for index, page in enumerate(pages):
+                if page.get("method") not in {"text", "text+ocr"}:
+                    continue
+                marker = "## Page " + str(page["page"]) + "\n"
+                start = canonical.find(marker)
+                if start < 0:
+                    continue
+                end = (canonical.find("## Page " + str(pages[index + 1]["page"]) + "\n", start)
+                       if index + 1 < len(pages) else len(canonical))
+                part = canonical[start:end if end >= 0 else len(canonical)]
+                native.append(part.split("[OCR reading]", 1)[0].rstrip())
+            canonical = "\n\n".join(native)
+            has_pdf_ocr = not bool(canonical)
+        ocr_derived = extraction.get("ocr_word_confidence") is not None or has_pdf_ocr
+        if (row.get("quality") == "ok" and canonical and not ocr_derived
+                and row.get("content_status") not in {"navigation_only", "image_content"}):
+            harvested.append((row.get("url", ""), dict(row, content=canonical)))
+    return harvested
 
 
 @app.post("/fetch")
@@ -649,18 +1124,248 @@ def fetch_urls(body: FetchBody, background: BackgroundTasks):
     rows = _read_batch(
         [u for u in body.urls if u],
         lambda u: _extract_row(u, body.max_chars, allow_ocr=True,
-                               allow_render=mode != "never",
+                               allow_render=mode != "never" and body.profile != "fast",
                                render_first=mode == "always",
                                raw=want_html, links=want_links,
-                               fresh=body.fresh))
+                               fresh=body.fresh, cache_mode=body.cache_mode,
+                               max_age=body.max_age, wait_for=body.wait_for,
+                               render_delay=body.render_delay,
+                               headed_fallback=body.headed_fallback or body.profile == "thorough",
+                               public_only=body.public_only, focus=body.focus,
+                               evidence_namespace=body.evidence_namespace,
+                               ocr_language=body.ocr_language, ocr_mode=body.ocr_mode,
+                               document_mode=body.document_mode,
+                               page_start=body.page_start,
+                               page_end=body.page_end, row_start=body.row_start,
+                               row_end=body.row_end, sheet=body.sheet,
+                               max_cell_chars=body.max_cell_chars,
+                               recovery=body.recovery))
     # Indexed AFTER the response, not during it. Embedding costs ~250ms a page
     # and the caller should not wait for work they did not ask for.
     # Not indexed when links were kept: the corpus is prose to match
     # against later, and this output has markdown link syntax woven
     # through it. Feeding it in makes every future match slightly worse.
-    if not body.links:
-        background.add_task(index_fetched, _harvest(rows))
-    return rows
+    background.add_task(index_fetched, _harvest(rows))
+    return [compact_row(row) for row in rows] if body.response_format == "concise" else rows
+
+
+def _job_read(body, url):
+    mode = _render_mode(body.render)
+    row = _extract_row(url, body.max_chars, allow_ocr=True,
+                       allow_render=mode != "never" and body.profile != "fast",
+                       render_first=mode == "always", raw=body.format == "html" or body.raw,
+                       links=body.format == "links" or body.links,
+                       fresh=body.fresh, cache_mode=body.cache_mode, max_age=body.max_age,
+                       wait_for=body.wait_for, render_delay=body.render_delay,
+                       headed_fallback=body.headed_fallback or body.profile == "thorough",
+                       public_only=body.public_only, focus=body.focus,
+                       evidence_namespace=body.evidence_namespace, ocr_language=body.ocr_language,
+                       ocr_mode=body.ocr_mode, document_mode=body.document_mode,
+                       page_start=body.page_start, page_end=body.page_end,
+                       row_start=body.row_start, row_end=body.row_end, sheet=body.sheet,
+                       max_cell_chars=body.max_cell_chars, recovery=body.recovery)
+    index_fetched(_harvest([row]))
+    return compact_row(row) if body.response_format == "concise" else row
+
+
+@app.post("/jobs/fetch")
+def start_fetch_job(body: FetchJobBody):
+    try:
+        identifier = jobs().submit(body.evidence_namespace,
+                                   body.model_dump(exclude={"operation_id"}), body.operation_id,
+                                   lambda url: _job_read(body, url), _FETCH_POOL)
+        return jobs().get(body.evidence_namespace, identifier)
+    except JobError as exc:
+        raise HTTPException(status_code=exc.status, detail=str(exc)) from exc
+
+
+@app.post("/jobs/read")
+def read_fetch_job(body: JobReadBody):
+    try:
+        return jobs().get(body.evidence_namespace, body.job_id, body.cursor, body.limit)
+    except JobError as exc:
+        raise HTTPException(status_code=exc.status, detail=str(exc)) from exc
+
+
+@app.post("/jobs/cancel")
+def cancel_fetch_job(body: JobReadBody):
+    try:
+        return jobs().cancel(body.evidence_namespace, body.job_id)
+    except JobError as exc:
+        raise HTTPException(status_code=exc.status, detail=str(exc)) from exc
+
+
+@app.post("/jobs/resume")
+def resume_fetch_job(body: JobReadBody):
+    def reader(payload):
+        payload = dict(payload, evidence_namespace=body.evidence_namespace)
+        saved = FetchBody(**payload)
+        return lambda url: _job_read(saved, url)
+    try:
+        return jobs().resume(body.evidence_namespace, body.job_id, reader, _FETCH_POOL)
+    except JobError as exc:
+        raise HTTPException(status_code=exc.status, detail=str(exc)) from exc
+
+
+@app.post("/site/crawl")
+def crawl_site(body: SiteBody):
+    from .site import crawl
+    result = crawl(body.urls, lambda url: _extract_row(
+        url, 120000, raw=True, public_only=body.public_only, page_budget=30,
+        evidence_namespace=body.evidence_namespace, recovery="manual",
+        allow_render=body.render != "never", render_first=body.render == "always"),
+        max_pages=body.max_pages, max_depth=body.max_depth, path_prefix=body.path_prefix)
+    result["workflow"] = {"next_actions": [
+        {"tool": "read_document", "endpoint": "/documents/read",
+         "arguments": {"document_id": row["document_id"]},
+         "reason": "Inspect retained evidence before synthesizing site findings."}
+        for row in result["sources"] if row.get("document_id")][:6]}
+    return result
+
+
+@app.post("/documents/structure")
+def document_structure(body: StructureBody):
+    from .structure import select
+    record = documents().get(body.evidence_namespace, body.document_id)
+    if record is None:
+        raise HTTPException(404, "document_missing_or_expired")
+    return select(record, offset=body.offset, limit=body.limit, focus=body.focus)
+
+
+def _source_artifact(record, namespace, public_only):
+    """Acquire source bytes on demand, verifying the retained source version."""
+    metadata = record["metadata"]
+    artifact = documents().get_artifact(namespace, metadata.get("artifact_id", ""))
+    if artifact is not None:
+        return artifact
+    expected = (
+        metadata.get("file_sha256")
+        or metadata.get("source_sha256")
+        or metadata.get("extraction", {}).get("source_sha256")
+    )
+    if not expected:
+        raise HTTPException(
+            status_code=410, detail="source_bytes_missing_and_no_version_hash; refetch URL"
+        )
+    captured = []
+    fetcher.fetch_and_extract(
+        record["url"],
+        cache=None,
+        max_chars=1,
+        allow_ocr=False,
+        allow_render=False,
+        public_only=public_only,
+        ocr_mode="never",
+        source_sink=lambda blob, filename: captured.append((blob, filename)),
+    )
+    if not captured:
+        raise HTTPException(
+            status_code=410,
+            detail="source_bytes_unavailable; capture the source through browser download",
+        )
+    blob, filename = captured[-1]
+    import hashlib
+
+    if hashlib.sha256(blob).hexdigest() != expected:
+        raise HTTPException(
+            status_code=409, detail="source_version_changed; fetch current source before inspection"
+        )
+    identifier = documents().put_artifact(namespace, filename, blob)
+    metadata["artifact_id"] = identifier
+    documents().put(namespace, record["url"], record["text"], metadata)
+    return documents().get_artifact(namespace, identifier)
+
+
+@app.post("/documents/read")
+def read_document(body: DocumentReadBody):
+    record = documents().get(body.evidence_namespace, body.document_id)
+    if record is None:
+        raise HTTPException(status_code=404, detail="document_missing_or_expired")
+    text = record.pop("text")
+    metadata = record.pop("metadata")
+    needs_parse = (body.reparse or body.row_start != 1 or body.row_end is not None
+                   or body.sheet or body.max_cell_chars is not None or body.page_start != 1
+                   or body.page_end is not None or body.ocr_mode != "auto" or body.ocr_language
+                   or body.document_mode != "auto")
+    if needs_parse:
+        from . import formats
+        artifact = _source_artifact({**record, "text": text, "metadata": metadata},
+                                    body.evidence_namespace, body.public_only)
+        try:
+            options = body.model_dump()
+            kind = formats.kind_of(artifact["data"], artifact["filename"])
+            text, extraction = formats.read_blob(artifact["data"], kind, fetcher.CACHE_CHARS,
+                allow_ocr=body.ocr_mode != "never", options=options)
+            metadata.update(extraction=extraction, warnings=extraction.get("warnings", []),
+                            source_partial=extraction.get("partial", False))
+            record.update(documents().put(body.evidence_namespace, record["url"], text, metadata))
+        except (ValueError, OSError) as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
+    row = {**metadata, **record, "document_chars": len(text)}
+    if body.focus:
+        selected, evidence = passage_excerpt(text, body.focus, body.max_chars)
+        row.update(content=selected, evidence=evidence, focus=body.focus,
+                   focus_status="term_matches" if evidence else "no_term_matches",
+                   truncated=len(selected) < len(text), next_offset=None)
+    else:
+        end = min(len(text), body.offset + body.max_chars)
+        row.update(content=text[body.offset:end], offset=body.offset,
+                   truncated=end < len(text), next_offset=end if end < len(text) else None)
+    row["workflow"] = guidance(row, offset=body.offset, focused=bool(body.focus))
+    return compact_row(row) if body.response_format == "concise" else row
+
+
+@app.post("/documents/image")
+def document_image(body: DocumentImageBody):
+    import io
+
+    from PIL import Image
+    record = documents().get(body.evidence_namespace, body.document_id)
+    if record is None:
+        raise HTTPException(status_code=404, detail="document_missing_or_expired")
+    artifact = _source_artifact(record, body.evidence_namespace, body.public_only)
+    from . import formats
+    kind = formats.kind_of(artifact["data"], artifact["filename"])
+    try:
+        if kind == "pdf":
+            import pymupdf
+            with pymupdf.open(stream=artifact["data"], filetype="pdf") as pdf:
+                if body.page > len(pdf):
+                    raise ValueError("page_out_of_range")
+                page = pdf[body.page - 1]
+                if page.rect.width * page.rect.height * (200 / 72) ** 2 > 40_000_000:
+                    raise ValueError("image_pixel_limit")
+                pix = page.get_pixmap(dpi=200)
+                image = Image.open(io.BytesIO(pix.tobytes("png"))).convert("RGB")
+        elif kind == "image":
+            image = Image.open(io.BytesIO(artifact["data"]))
+            if body.page > getattr(image, "n_frames", 1):
+                raise ValueError("page_out_of_range")
+            image.seek(body.page - 1)
+            if image.width * image.height > 40_000_000:
+                raise ValueError("image_pixel_limit")
+            image = image.convert("RGB")
+        else:
+            raise ValueError("image_view_requires_pdf_or_raster_image")
+        original_size = image.size
+        if image.width * image.height > 40_000_000:
+            raise ValueError("image_pixel_limit")
+        if body.crop:
+            left, top, right, bottom = body.crop
+            if not (0 <= left < right <= image.width and 0 <= top < bottom <= image.height):
+                raise ValueError("crop_out_of_range")
+            image = image.crop(body.crop)
+        image.thumbnail((body.max_dimension, body.max_dimension))
+        output = io.BytesIO()
+        image.save(output, format="PNG")
+        if output.tell() > 12_000_000:
+            raise ValueError("image_output_too_large; use a crop")
+        return {"document_id": body.document_id, "source_sha256": artifact["file_sha256"],
+                "page": body.page, "original_size": original_size, "output_size": image.size,
+                "crop": body.crop, "mime_type": "image/png",
+                "image_b64": base64.b64encode(output.getvalue()).decode()}
+    except (ValueError, OSError) as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
 
 
 @app.post("/extract-with-links")
@@ -698,6 +1403,9 @@ def drive(body: DriveBody):
     empty 200: a caller that asked a browser to click something must never be
     told "ok, nothing happened".
     """
+    if body.operation_id and not body.session:
+        raise HTTPException(status_code=422,
+                            detail="operation_id requires an explicit named session")
     has_navigation = bool(body.url) or any(
         step.action.lower() == "goto" and bool(step.url) for step in body.steps
     )
@@ -716,9 +1424,59 @@ def drive(body: DriveBody):
                 ),
             )
 
-    payload = body.model_dump()
+    payload = body.model_dump(exclude={"evidence_namespace", "ocr_language"})
     try:
-        return fs.browser_drive(payload)
+        result = fs.browser_drive(payload)
+        for step in result.get("steps", []):
+            data = step.get("data")
+            if (step.get("action") == "network" and step.get("ok")
+                    and isinstance(data, dict) and isinstance(data.get("content"), str)):
+                metadata = {"quality": "ok", "content_type": data.get("content_type", ""),
+                            "http_status": data.get("status"),
+                            "source_partial": bool(data.get("truncated")),
+                            "acquisition": {"method": "browser_network_response"},
+                            "warnings": ["Captured application response; HTTP status and "
+                                         "content must be assessed before using its claims."]}
+                data.update(documents().put(body.evidence_namespace, data["url"],
+                                             data["content"], metadata))
+                data["workflow"] = guidance({**metadata, **data})
+            if step.get("action") != "download" or not isinstance(data, dict):
+                continue
+            encoded = data.pop("download_b64", None)
+            if encoded is None:
+                continue
+            from . import formats
+            try:
+                blob = base64.b64decode(encoded, validate=True)
+                data["artifact_id"] = documents().put_artifact(
+                    body.evidence_namespace, data.get("filename", "download"), blob)
+                data["capture_succeeded"] = True
+                data["file_sha256"] = __import__("hashlib").sha256(blob).hexdigest()
+                kind = formats.kind_of(blob, data.get("filename", ""))
+                if not kind:
+                    raise ValueError("unsupported_download_format")
+                text, extraction = formats.read_blob(blob, kind, fetcher.CACHE_CHARS,
+                    options={"ocr_language": body.ocr_language,
+                             "filename": data.get("filename", "download")})
+                data.update(content=text, content_type=kind, extraction=extraction,
+                            file_sha256=__import__("hashlib").sha256(blob).hexdigest(),
+                            warnings=extraction.get("warnings", []))
+                data.update(documents().put(body.evidence_namespace,
+                    data.get("source_url", result.get("final", {}).get("url", "")), text,
+                    {"filename": data.get("filename"), "extraction": extraction,
+                     "file_sha256": data["file_sha256"], "artifact_id": data["artifact_id"]}))
+                data["workflow"] = guidance(data)
+            except Exception as exc:
+                if data.get("artifact_id"):
+                    data.update(documents().put(body.evidence_namespace,
+                        data.get("source_url", result.get("final", {}).get("url", "")), "",
+                        {"artifact_id": data["artifact_id"], "file_sha256": data.get("file_sha256"),
+                         "filename": data.get("filename"),
+                         "warnings": ["File captured; text conversion failed. "
+                                      "Inspect PDF/image pixels or retry parsing."]}))
+                step.update(ok=False, reason="download_parse_failed:" + str(exc)[:150])
+                result["ok"] = False
+        return result
     except fs.BrowserWorkerError as exc:
         # A client-side refusal from the worker (4xx) is the caller's fault and
         # should reach them as-is; only an unreachable or failing worker is a
@@ -737,15 +1495,19 @@ def search_and_fetch(body: SearchFetchBody, background: BackgroundTasks):
     def read(indexed):
         index, row = indexed
         merged = _search_row(row, meta, index)
-        # Search results: no OCR. N results times 1.4s a page is a different
-        # trade from one URL somebody asked for.
+        # Coverage is the default: selected scanned sources can use OCR.
+        # Callers may explicitly disable it when their task does not need it.
         sf_mode = _render_mode(body.render)
         extracted = _extract_row(row.get("url", ""), body.max_chars,
-                                 allow_ocr=False,
+                                 allow_ocr=body.ocr_mode != "never",
+                                 ocr_mode=body.ocr_mode, document_mode=body.document_mode,
+                                 ocr_language=body.ocr_language,
                                  page_budget=fetcher.PAGE_BUDGET_BULK,
                                  allow_render=sf_mode != "never",
                                  render_first=sf_mode == "always",
-                                 raw=body.raw)
+                                 raw=body.raw, fresh=body.fresh, cache_mode=body.cache_mode,
+                                 max_age=body.max_age, public_only=True,
+                                 evidence_namespace=body.evidence_namespace)
         merged.update({k: v for k, v in extracted.items() if k != "url"})
         return merged
 
@@ -763,19 +1525,22 @@ _RESEARCH_REQUESTS = threading.BoundedSemaphore(2)
 def research(body: ResearchBody, background: BackgroundTasks):
     """Collect a cited, diverse evidence bundle without a language model."""
     if not _RESEARCH_REQUESTS.acquire(blocking=False):
-        raise HTTPException(status_code=429, detail="research busy")
+        raise HTTPException(status_code=429, detail={"reason": "research_busy",
+                            "limiter": "research", "retryable": True},
+                            headers={"Retry-After": "2", "X-Dethrottled-Limiter": "research"})
     started = time.monotonic()
     try:
         if any(not query.strip() or len(query) > 500 for query in body.queries):
             raise HTTPException(status_code=422, detail="invalid research query")
-        if body.categories not in {"", "news"}:
+        if body.categories not in {"", "news", "academic"}:
             raise HTTPException(status_code=422, detail="invalid research category")
         queries = research_engine.queries_for(body.question, body.queries or None)
         def search_one(query):
             try:
                 rows, meta, _ = _ranked(SearchBody(
                     query=query, limit=8, language=body.language,
-                    fresh=body.fresh, categories=body.categories))
+                    fresh=body.fresh, categories=body.categories,
+                    profile=body.profile, engines=body.engines))
                 return rows, {"query": query, "found": len(rows),
                               "elapsed_ms": meta.get("elapsed_ms", 0),
                               "attempts": _attempts(meta)}
@@ -796,18 +1561,41 @@ def research(body: ResearchBody, background: BackgroundTasks):
 
         def read(item):
             try:
-                row = _extract_row(item["url"], body.max_chars,
+                read_budget = max(body.max_chars, min(fetcher.CACHE_CHARS, 1000000))
+                row = _extract_row(item["url"], read_budget,
                                    allow_ocr=True,
                                    page_budget=fetcher.PAGE_BUDGET_BULK,
-                                   fresh=body.fresh)
+                                   fresh=body.fresh, public_only=True,
+                                   evidence_namespace=body.evidence_namespace, recovery="manual")
             except Exception as exc:
                 row = {"url": item["url"], "quality": "failed", "content": "",
                        "failure_reason": type(exc).__name__}
+            if body.follow_assets and row.get("content_status") == "image_content":
+                asset_attempts = []
+                for asset in row.get("assets", [])[:2]:
+                    if asset.get("kind") not in {"image", "document"}:
+                        continue
+                    try:
+                        attachment = _extract_row(asset["url"], read_budget, allow_ocr=True,
+                            fresh=body.fresh, public_only=True,
+                            evidence_namespace=body.evidence_namespace)
+                        asset_attempts.append({"url": asset["url"],
+                                               "quality": attachment.get("quality")})
+                        if attachment.get("quality") == "ok" and attachment.get("content"):
+                            attachment.update(parent_url=item["url"], asset_attempts=asset_attempts)
+                            row = attachment
+                            break
+                    except Exception as exc:
+                        asset_attempts.append({"url": asset["url"], "error": type(exc).__name__})
+                row["asset_attempts"] = asset_attempts
             content = row.get("content", "")
-            return {**item, **row,
+            selected_content, evidence = passage_excerpt(content, body.question, body.max_chars)
+            row["content"] = selected_content
+            row["full_extraction_chars"] = len(content)
+            row["truncated"] = len(content) > len(selected_content)
+            return {**item, **row, "requested_url": item["url"],
                     "title": row.get("title") or item["title"],
-                    "evidence": research_engine.evidence_windows(
-                        content, body.question)}
+                    "evidence": evidence}
 
         sources, skipped, fingerprints = [], [], []
         with ThreadPoolExecutor(max_workers=3) as pool:
@@ -815,12 +1603,17 @@ def research(body: ResearchBody, background: BackgroundTasks):
             offset = len(pending)
             while pending:
                 for item in pool.map(read, pending):
-                    if item.get("quality") == "ok" and item.get("content"):
+                    if (item.get("quality") == "ok" and item.get("content")
+                            and item.get("content_status") not in {
+                                "image_content", "navigation_only"}):
                         fingerprint = research_engine.content_shingles(item["content"])
                         duplicate_of = research_engine.duplicate_source(
                             fingerprint, fingerprints)
                         if duplicate_of:
                             skipped.append({"url": item["url"],
+                                            **({"requested_url": item["requested_url"]}
+                                               if item.get("requested_url", item["url"])
+                                               != item["url"] else {}),
                                             "reason": "duplicate_content",
                                             "duplicate_of": duplicate_of})
                         else:
@@ -828,8 +1621,13 @@ def research(body: ResearchBody, background: BackgroundTasks):
                             fingerprints.append((item["url"], fingerprint))
                     else:
                         skipped.append({"url": item["url"],
+                                            **({"requested_url": item["requested_url"]}
+                                               if item.get("requested_url", item["url"])
+                                               != item["url"] else {}),
                                         "reason": item.get("failure_reason")
-                                        or "empty_content"})
+                                        or (item.get("content_status") if item.get("content_status")
+                                            in {"image_content", "navigation_only"}
+                                            else "empty_content")})
                 if len(sources) >= body.max_sources or offset >= len(selected):
                     break
                 pending = selected[offset:offset + body.max_sources - len(sources)]
@@ -838,7 +1636,10 @@ def research(body: ResearchBody, background: BackgroundTasks):
         for index, item in enumerate(sources, 1):
             item["id"] = "S%d" % index
         background.add_task(index_fetched, _harvest(sources))
-        return {"question": body.question, "queries": telemetry,
+        coverage = research_engine.coverage_ledger(queries, searches, sources, skipped)
+        if body.response_format == "concise":
+            sources = [compact_row(row) for row in sources]
+        return {"coverage": coverage, "question": body.question, "queries": telemetry,
                 "sources": sources, "skipped": skipped,
                 "summary": {"candidates": sum(len(rows) for rows in searches),
                             "selected": len(sources),
@@ -851,7 +1652,8 @@ def research(body: ResearchBody, background: BackgroundTasks):
 
 
 @app.get("/corpus/search")
-def corpus_search(q: str, limit: int = 10, floor: float | None = None):
+def corpus_search(q: str, limit: int = 10, floor: float | None = None,
+                  mode: Literal["auto", "semantic", "lexical"] = "auto"):
     """Search what has already been fetched, without fetching anything.
 
     The index was being written on every extraction and read by nothing over
@@ -864,7 +1666,7 @@ def corpus_search(q: str, limit: int = 10, floor: float | None = None):
     calibrated for whichever model is in use -- the two do not share a scale.
     """
     try:
-        hits = shared_corpus().search(q, limit=limit, floor=floor)
+        hits = shared_corpus().search(q, limit=max(1, min(limit, 50)), floor=floor, mode=mode)
     except Exception as exc:
         return {"ok": False, "reason": str(exc)[:200], "results": []}
     return {"ok": True, "count": len(hits), "results": hits}
@@ -884,7 +1686,9 @@ def stats():
     # they were lifetime counters that nothing reset, so crawl4ai stopped
     # rendering after 8 pages and jina after 25, silently, for the rest of the
     # process. They refill hourly now, and you can see how much is spent.
-    return {"cache": cache().stats(), "version": VERSION,
+    return {"renderer_admission": fetcher._RENDER_QUEUE.stats(),
+            "headed_admission": fetcher._HEADED_QUEUE.stats(),
+            "cache": cache().stats(), "version": VERSION,
             "tiers_resting": fetcher.tier_rest_state(),
             "domain_health": domain_health.stats(),
             "uptime_seconds": int(time.time() - STARTED),

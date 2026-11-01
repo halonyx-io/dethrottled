@@ -1,0 +1,162 @@
+[
+  {
+    "path": "/slow",
+    "elapsed_ms": 1104,
+    "fact": true,
+    "result": {
+      "ok": true,
+      "text": "The allocation is 7341 tonnes. Verified source material. The allocation is 7341 tonnes. Verified source material. The allocation is 7341 tonnes. Verified source material. The allocation is 7341 tonnes. Verified source material. The allocation is 7341 tonnes. Verified source material. The allocation is 7341 tonnes. Verified source material. The allocation is 7341 tonnes. Verified source material. The allocation is 7341 tonnes. Verified source material. The allocation is 7341 tonnes. Verified source material. The allocation is 7341 tonnes. Verified source material. The allocation is 7341 tonnes. Verified source material. The allocation is 7341 tonnes. Verified source material. The allocation is 7341 tonnes. Verified source material. The allocation is 7341 tonnes. Verified source material. The allocation is 7341 tonnes. Verified source material. The allocation is 7341 tonnes. Verified source material. The allocation is 7341 tonnes. Verified source material. The allocation is 7341 tonnes. Verified source material. The allocation is 7341 tonnes. Verified source material. The allocation is 7341 tonnes. Verified source material. The allocation is 7341 tonnes. Verified source material. The allocation is 7341 tonnes. Verified source material. The allocation is 7341 tonnes. Verified source material. The allocation is 7341 tonnes. Verified source material. The allocation is 7341 tonnes. Verified source material. The allocation is 7341 tonnes. Verified source material. The allocation is 7341 tonnes. Verified source material. The allocation is 7341 tonnes. Verified source material. The allocation is 7341 tonnes. Verified source material. The allocation is 7341 tonnes. Verified source material. The allocation is 7341 tonnes. Verified source material. The allocation is 7341 tonnes. Verified source material. The allocation is 7341 tonnes. Verified source material. The allocation is 7341 tonnes. Verified source material. The allocation is 7341 tonnes. Verified source material.",
+      "tier": "headed",
+      "extractor": "trafilatura",
+      "title": "",
+      "published": "",
+      "chars": 1994,
+      "url": "http://dethrottled-recovery-fixture:19890/slow",
+      "reason": "",
+      "cached": false,
+      "content_type": "html",
+      "assets": [],
+      "content_status": "complete",
+      "warnings": [
+        "browser_document_loading"
+      ],
+      "browser_recovery": {
+        "restored_from_checkpoint": false,
+        "challenge_polls": 0,
+        "loading_polls": 0,
+        "document_ready_state": "loading",
+        "initial_navigation": {
+          "url": "http://dethrottled-recovery-fixture:19890/slow",
+          "status": 200,
+          "wait_until": "commit",
+          "challenge_headers": {}
+        },
+        "checkpointed": true,
+        "elapsed_ms": 751,
+        "queue_ms": 0
+      },
+      "extraction": {
+        "partial": true,
+        "partial_reason": "browser_document_loading"
+      },
+      "acquisition_attempts": [
+        {
+          "tier": "direct",
+          "reason": "",
+          "outcome": "response"
+        },
+        {
+          "tier": "tls",
+          "reason": "",
+          "outcome": "response"
+        },
+        {
+          "tier": "headed",
+          "reason": "",
+          "outcome": "extracted"
+        }
+      ],
+      "schema_version": 3,
+      "acquisition": {
+        "rendered": true,
+        "wait_for": "",
+        "render_delay": 0.5,
+        "extraction_limit": 1000000,
+        "page_start": 1,
+        "page_end": null,
+        "ocr_language": "",
+        "ocr_mode": "auto",
+        "ocr_allowed": true,
+        "row_start": 1,
+        "row_end": null,
+        "sheet": "",
+        "max_cell_chars": null,
+        "document_mode": "auto",
+        "scan_layout_revision": 1,
+        "format_worker_configured": false,
+        "layout_worker_configured": false
+      },
+      "retrieved_at": "2026-11-01T12:31:30.138433+00:00",
+      "cache_age_seconds": 0,
+      "content_chars": 1994,
+      "truncated": true
+    }
+  },
+  {
+    "path": "/webgl",
+    "elapsed_ms": 1246,
+    "fact": true,
+    "result": {
+      "ok": true,
+      "text": "Rendered allocation is 7341 tonnes. Actual canvas readback verified. Actual canvas readback verified. Actual canvas readback verified. Actual canvas readback verified. Actual canvas readback verified. Actual canvas readback verified. Actual canvas readback verified. Actual canvas readback verified. Actual canvas readback verified. Actual canvas readback verified. Actual canvas readback verified. Actual canvas readback verified. Actual canvas readback verified. Actual canvas readback verified. Actual canvas readback verified. Actual canvas readback verified. Actual canvas readback verified. Actual canvas readback verified. Actual canvas readback verified. Actual canvas readback verified. Actual canvas readback verified. Actual canvas readback verified. Actual canvas readback verified. Actual canvas readback verified. Actual canvas readback verified. Actual canvas readback verified. Actual canvas readback verified. Actual canvas readback verified. Actual canvas readback verified. Actual canvas readback verified. Actual canvas readback verified. Actual canvas readback verified. Actual canvas readback verified. Actual canvas readback verified. Actual canvas readback verified. Actual canvas readback verified. Actual canvas readback verified. Actual canvas readback verified. Actual canvas readback verified. Actual canvas readback verified.",
+      "tier": "headed",
+      "extractor": "trafilatura",
+      "title": "",
+      "published": "",
+      "chars": 1355,
+      "url": "http://dethrottled-recovery-fixture:19890/webgl",
+      "reason": "",
+      "cached": false,
+      "content_type": "html",
+      "assets": [],
+      "content_status": "complete",
+      "warnings": [],
+      "browser_recovery": {
+        "restored_from_checkpoint": false,
+        "challenge_polls": 0,
+        "loading_polls": 0,
+        "document_ready_state": "complete",
+        "initial_navigation": {
+          "url": "http://dethrottled-recovery-fixture:19890/webgl",
+          "status": 200,
+          "wait_until": "commit",
+          "challenge_headers": {}
+        },
+        "checkpointed": true,
+        "elapsed_ms": 754,
+        "queue_ms": 0
+      },
+      "acquisition_attempts": [
+        {
+          "tier": "direct",
+          "reason": "",
+          "outcome": "response"
+        },
+        {
+          "tier": "tls",
+          "reason": "",
+          "outcome": "response"
+        },
+        {
+          "tier": "headed",
+          "reason": "",
+          "outcome": "extracted"
+        }
+      ],
+      "schema_version": 3,
+      "acquisition": {
+        "rendered": true,
+        "wait_for": "",
+        "render_delay": 0.5,
+        "extraction_limit": 1000000,
+        "page_start": 1,
+        "page_end": null,
+        "ocr_language": "",
+        "ocr_mode": "auto",
+        "ocr_allowed": true,
+        "row_start": 1,
+        "row_end": null,
+        "sheet": "",
+        "max_cell_chars": null,
+        "document_mode": "auto",
+        "scan_layout_revision": 1,
+        "format_worker_configured": false,
+        "layout_worker_configured": false
+      },
+      "retrieved_at": "2026-11-01T12:31:31.384498+00:00",
+      "cache_age_seconds": 0,
+      "content_chars": 1355,
+      "truncated": false
+    }
+  }
+]

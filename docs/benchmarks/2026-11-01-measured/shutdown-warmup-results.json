@@ -1,0 +1,16 @@
+[
+  {
+    "build": "threaded",
+    "migrated_before_stop": 0,
+    "stop_ms": 1290,
+    "exit_code": 0,
+    "oom_killed": false
+  },
+  {
+    "build": "isolated",
+    "migrated_before_stop": 0,
+    "stop_ms": 1172,
+    "exit_code": 0,
+    "oom_killed": false
+  }
+]

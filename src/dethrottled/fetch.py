@@ -32,17 +32,45 @@ The fetch ladder does not request or consult robots.txt.
 
 from __future__ import annotations
 
+import hashlib
 import os
 import re
 import threading
 import time
 from collections import defaultdict
+from contextvars import ContextVar
+from datetime import datetime, timezone
 from itertools import chain
-from urllib.parse import urlparse
+from types import MappingProxyType
+from urllib.parse import urljoin, urlparse
 
 import requests
 
 from . import __version__
+from .challenges import classify as challenge_kind
+from .content import decode_html, page_details, short_text
+
+_READ_OPTIONS = ContextVar("read_options", default=MappingProxyType({}))
+
+
+def _get_with_policy(get, url, **kwargs):
+    """Validate every redirect target for reads made through a public adapter."""
+    if not _READ_OPTIONS.get().get("public_only"):
+        return get(url, **kwargs)
+    from .research import public_url
+    for _ in range(6):
+        if not public_url(url):
+            raise ValueError("public_target_required")
+        response = get(url, **dict(kwargs, allow_redirects=False))
+        if response.status_code not in {301, 302, 303, 307, 308}:
+            return response
+        location = response.headers.get("Location")
+        if hasattr(response, "close"):
+            response.close()
+        if not location:
+            raise ValueError("redirect_without_location")
+        url = urljoin(url, location)
+    raise ValueError("too_many_redirects")
 
 PROJECT_URL = "https://github.com/zataraine/dethrottled"
 
@@ -221,16 +249,16 @@ CRAWL4AI_RENDER_MS = int(os.environ.get("DETHROTTLED_CRAWL4AI_RENDER_MS", "20000
 #
 # It earns its slot in the ladder: DIGITIMES yields 432 chars through the CF
 # Worker and 21,896 through the renderer.
-# 40 an hour, up from 8. The 8 was sized for crawl4ai being the LAST resort,
-# reached only by pages nothing else could solve. It is second now, so it is
-# offered most pages that direct cannot parse, and 8 would have been spent by
-# the second search of the hour -- turning the promotion into a demotion.
-#
-# The cost is local: about 4.7s of rendering each, so 40 is roughly three
-# minutes of rendering per hour on your own hardware. jina-reader stays
-# at 25 because it is external, it is now third so it is reached less, and
-# being conservative with someone else's service is the right default.
-CRAWL4AI_BUDGET = int(os.environ.get("DETHROTTLED_CRAWL4AI_BUDGET", "40"))
+# Local rendering is bounded by concurrent work and a fair queue. A positive
+# legacy budget remains an explicit operator ceiling; zero disables rendering.
+CRAWL4AI_BUDGET = int(os.environ.get("DETHROTTLED_CRAWL4AI_BUDGET", "-1"))
+from .admission import AdmissionError, FairQueue  # noqa: E402
+
+_RENDER_QUEUE = FairQueue(
+    capacity=int(os.getenv("DETHROTTLED_RENDER_CONCURRENCY", "2")),
+    max_waiting=int(os.getenv("DETHROTTLED_RENDER_MAX_WAITING", "32")),
+    per_client=int(os.getenv("DETHROTTLED_RENDER_PER_CLIENT", "8")))
+_HEADED_QUEUE = FairQueue(capacity=1, max_waiting=32, per_client=8)
 
 _locks = defaultdict(threading.Lock)
 _last_hit = {}
@@ -395,56 +423,18 @@ def _reader_reported_error(text: str) -> str:
     return match.group(1) if match else ""
 
 
-# Markers of an interactive challenge, as opposed to a refusal.
-#
-# The distinction matters more than it looks. A 403 reads as "you are not
-# allowed", and callers act on that: they stop asking, or they go looking for a
-# block that is not there. A managed challenge is a different fact -- the site
-# is willing to serve the page to whoever can run its JavaScript and, at the
-# end of it, tick a box.
-#
-# Measured on four sites that were previously recorded as flat 403s: every one
-# returned a `cf-mitigated: challenge` header, a "Just a moment..." document
-# and challenge-platform script. A real Chrome on the same address got exactly
-# the same 403 -- the only difference was that it could execute the challenge,
-# and even then it ended at an interactive checkbox.
-#
-# So this is not something to defeat. It is something to REPORT accurately, so
-# nobody spends an afternoon tuning header order at a problem that was never
-# about headers.
-_CHALLENGE_MARKERS = (
-    "just a moment",
-    "cf-challenge",
-    "challenge-platform",
-    "verifying you are human",
-    "performing security verification",
-    "enable javascript and cookies to continue",
-)
-
-
+# Classify the interstitial, then attempt browser recovery within the read policy.
 def _is_challenge(status: int, headers, body: str) -> bool:
-    """Is this an interactive challenge rather than a refusal?
-
-    The `cf-mitigated` header is authoritative when present; the body markers
-    catch vendors that do not set it. Bounded to the first 8KB because a
-    challenge document is small and scanning a whole page would be wasteful.
-    """
-    try:
-        mitigated = (headers or {}).get("cf-mitigated", "")
-    except Exception:
-        mitigated = ""
-    if "challenge" in str(mitigated).lower():
+    if status in {403, 429, 503} and (body or "")[:200].lower().lstrip().startswith(
+            "just a moment"):
         return True
-    if status not in (403, 429, 503):
-        return False
-    head = (body or "")[:8192].lower()
-    return any(marker in head for marker in _CHALLENGE_MARKERS)
+    return bool(challenge_kind(body, headers))
 
 
 def _http_reason(prefix: str, status: int, headers, body: str) -> str:
     """The reason string for a non-200, told apart properly."""
     if _is_challenge(status, headers, body):
-        return "%schallenge_needs_a_human" % prefix
+        return "%schallenge_detected" % prefix
     return "%shttp_%d" % (prefix, status)
 
 
@@ -454,11 +444,47 @@ def _usable(html: str) -> bool:
 
 # ── tiers ────────────────────────────────────────────────────────────────────
 
+def _filename_hint(headers, fallback):
+    from email.message import Message
+    message = Message()
+    message["content-disposition"] = headers.get("Content-Disposition", "")
+    return message.get_filename() or fallback
+
+
+def _binary_payload(blob, url, ctype, allow_ocr, filename=""):
+    from . import formats
+    kind = formats.kind_of(blob, filename or url, ctype)
+    if not kind:
+        return None
+    try:
+        sink = _READ_OPTIONS.get().get("source_sink")
+        if sink is not None:
+            sink(blob, filename or url.rsplit("/", 1)[-1])
+        options = dict(_READ_OPTIONS.get(), filename=(filename or url.rsplit("/", 1)[-1]))
+        text, metadata = formats.read_blob(blob, kind, CACHE_CHARS,
+                                           allow_ocr=(allow_ocr
+                                                      and options.get("ocr_mode") != "never"),
+                                           options=options)
+        import hashlib
+        metadata.update(source_sha256=hashlib.sha256(blob).hexdigest(), source_bytes=len(blob))
+        if not text.strip():
+            raise ValueError("document_empty:" + kind)
+        if metadata.get("partial"):
+            metadata.setdefault("warnings", []).append(
+                "Partial extraction; inspect page/member metadata or request another range.")
+        return ({"text": text, "structured": True, "content_type": kind,
+                 "extraction": metadata, "warnings": metadata.get("warnings", []),
+                 "content_status": "partial" if metadata.get("partial") else "complete"},
+                "", url)
+    except Exception as exc:
+        return ({}, "document_parse_failed:" + str(exc)[:120], url)
+
+
 def _tier_direct(url: str, timeout: int, allow_ocr: bool = False) -> tuple:
     domain = _domain(url)
     try:
         _throttle(domain)
-        response = requests.get(
+        response = _get_with_policy(requests.get,
             url, timeout=timeout, stream=True, allow_redirects=True,
             headers={
                 "User-Agent": USER_AGENT,
@@ -488,61 +514,20 @@ def _tier_direct(url: str, timeout: int, allow_ocr: bool = False) -> tuple:
         first = next(chunks, b"")
         head = first[:1024].lstrip().lower()
         is_html = head.startswith((b"<!doctype", b"<html"))
-        is_pdf = first[:1024].lstrip().startswith(b"%PDF-")
-        from . import documents as _docs
-        is_zip = first.startswith(_docs.ZIP_MAGIC)
-        is_ole = first.startswith(_docs.OLE2_MAGIC)
-        is_rtf = first.startswith(b"{\\rtf")
-        suffix = os.path.splitext(url.lower().split("?")[0])[1]
-        csv_hint = "text/csv" in ctype.lower() or suffix in (".csv", ".tsv")
-
-        if is_pdf:
-            # Returned as text, not html, so it takes the already-extracted
-            # path below and no local extractor re-parses it.
+        from . import formats
+        filename = _filename_hint(response.headers, str(response.url))
+        binary_kind = formats.kind_of(first, filename, ctype)
+        if binary_kind and not is_html:
             data, size = [], 0
+            ceiling = PDF_MAX_BYTES if binary_kind == "pdf" else DOC_MAX_BYTES
             for chunk in chain((first,), chunks):
-                data.append(chunk)
                 size += len(chunk)
-                if size > PDF_MAX_BYTES:
-                    # Whole or nothing: a partial buffer is not parseable.
-                    return "", "pdf_too_large", str(response.url)
-            blob = b"".join(data)
-            text = _pdf_text(blob, CACHE_CHARS)
-            if text.strip():
-                return ({"text": text, "structured": True,
-                         "content_type": "pdf"}, "", str(response.url))
-            if not allow_ocr:
-                return "", "pdf_no_text_layer", str(response.url)
-            # Scanned. Tender documents, older yearbooks and municipal
-            # filings arrive this way, and without OCR they are unreachable.
-            # Measured at 1.4s a page, which is why this sits in the normal
-            # path rather than behind a flag -- but only for single-URL
-            # fetches, see allow_ocr.
-            from .ocr import ocr_pdf
-            text, why = ocr_pdf(blob, CACHE_CHARS)
-            if not text.strip():
-                return "", why or "pdf_no_text_layer", str(response.url)
-            return ({"text": text, "structured": True, "content_type": "pdf"},
-                    "", str(response.url))
-        if is_zip or is_ole or is_rtf or (csv_hint and not is_html):
-            data, size = [], 0
-            for chunk in chain((first,), chunks):
+                if size > ceiling:
+                    if hasattr(response, "close"):
+                        response.close()
+                    return {}, "document_too_large", str(response.url)
                 data.append(chunk)
-                size += len(chunk)
-                if size > DOC_MAX_BYTES:
-                    return "", "document_too_large", str(response.url)
-            blob = b"".join(data)
-            kind = _docs.kind_of(blob, str(response.url), ctype)
-            if kind:
-                text, why = _docs.to_text(blob, kind, CACHE_CHARS)
-                if text:
-                    return ({"text": text, "structured": True,
-                             "content_type": kind}, "", str(response.url))
-                return "", why, str(response.url)
-            # Claimed to be a document and is not one. The bytes are already
-            # in hand, so treat them as the page they probably are rather than
-            # spending another request finding out.
-            return "", "unsupported_document_signature", str(response.url)
+            return _binary_payload(b"".join(data), str(response.url), ctype, allow_ocr, filename)
         if not is_html and "html" not in ctype and "xml" not in ctype:
             return "", "content_type:%s" % ctype[:30], url
         html_chunks, size, clipped = [], 0, False
@@ -552,7 +537,7 @@ def _tier_direct(url: str, timeout: int, allow_ocr: bool = False) -> tuple:
             if size > MAX_BYTES:
                 clipped = True
                 break
-        html = b"".join(html_chunks).decode(response.encoding or "utf-8", errors="replace")
+        html = decode_html(b"".join(html_chunks), ctype)
         # Truncation used to be invisible. It has to be reported, because the
         # symptom is a short article rather than a failure, and a short article
         # is indistinguishable from a page that was simply short.
@@ -694,7 +679,12 @@ def _crawl4ai_via_crawl(url: str) -> tuple:
               "crawler_config": {"type": "CrawlerRunConfig",
                                  "params": {"cache_mode": "bypass",
                                             "check_robots_txt": False,
-                                            "page_timeout": CRAWL4AI_RENDER_MS}}},
+                                            "page_timeout": CRAWL4AI_RENDER_MS,
+                                            "delay_before_return_html": _READ_OPTIONS.get().get(
+                                                "render_delay", 0.5),
+                                            **({"wait_for": "css:" +
+                                                _READ_OPTIONS.get()["wait_for"]}
+                                               if _READ_OPTIONS.get().get("wait_for") else {})}}},
         headers=_crawl4ai_headers(),
         timeout=CRAWL4AI_TIMEOUT)
     if response.status_code != 200:
@@ -709,7 +699,9 @@ def _crawl4ai_via_crawl(url: str) -> tuple:
     if not isinstance(payload, dict):
         return {}, "crawl4ai_shape", url
     if payload.get("success") is False:
-        reason = str(payload.get("error_message") or "render_failed")[:40]
+        reason = str(payload.get("error_message") or "render_failed")[:240]
+        if "Structural:" in reason:
+            reason = "incomplete_render: " + reason
         return {}, "crawl4ai_" + reason, url
     target_error = _crawl4ai_target_error(payload)
     if target_error:
@@ -866,24 +858,40 @@ def _tier_tls(url: str) -> tuple:
         # complaint from Rust on some hosts, after the response has already
         # arrived intact. Nothing actionable, and noisy on every such fetch.
         with quiet_fd2():
-            response = tls_requests.get(
+            response = _get_with_policy(tls_requests.get,
                 url, impersonate=TLS_IMPERSONATE, timeout=TLS_TIMEOUT,
-                allow_redirects=True)
+                allow_redirects=True, stream=True)
     except Exception as exc:
         return {}, "tls_" + type(exc).__name__, url
-    if response.status_code >= 400:
-        return {}, _http_reason("tls_", response.status_code,
-                                response.headers, response.text or ""), str(response.url)
-    # Same size ceiling as the direct tier: a browser fingerprint is not a
-    # reason to accept an unbounded download.
-    text = response.text or ""
-    if len(text) > MAX_BYTES:
-        text = text[:MAX_BYTES]
-    return {"html": text}, "", str(response.url)
+    try:
+        chunks, size = [], 0
+        for chunk in response.iter_content(65536):
+            size += len(chunk)
+            if size > max(DOC_MAX_BYTES, PDF_MAX_BYTES):
+                return {}, "tls_document_too_large", str(response.url)
+            chunks.append(chunk)
+        blob = b"".join(chunks)
+        text = decode_html(blob[:MAX_BYTES], response.headers.get("Content-Type", ""))
+        if response.status_code >= 400:
+            return {}, _http_reason("tls_", response.status_code, response.headers,
+                                    text[:8192]), str(response.url)
+        if "anomaly.js" in text[:20000].lower():
+            return {}, "tls_challenge", str(response.url)
+        parsed = _binary_payload(blob, str(response.url),
+                                 response.headers.get("Content-Type", ""),
+                                 _READ_OPTIONS.get().get("allow_ocr", True),
+                                 _filename_hint(response.headers, str(response.url)))
+        if parsed is not None:
+            return parsed
+        return {"html": text}, "", str(response.url)
+    except Exception as exc:
+        return {}, "tls_" + type(exc).__name__, str(response.url)
+    finally:
+        response.close()
 
 
 def _tier_crawl4ai(url: str) -> tuple:
-    """Headless Chromium you host. Renders JavaScript. Slow, strictly budgeted.
+    """Headless Chromium you host. Renders JavaScript with bounded, fair admission.
 
     Optional. With DETHROTTLED_CRAWL4AI_URL unset this never runs and the ladder
     is one tier shorter, which is a smaller stack rather than a broken one.
@@ -893,12 +901,21 @@ def _tier_crawl4ai(url: str) -> tuple:
     plain fetcher, and a renderer you run yourself is the only way to read it
     without telling somebody else which URL you wanted.
     """
-    global _crawl4ai_dialect
     if not CRAWL4AI_URL:
         return {}, "crawl4ai_not_configured", url
-    if not _spend("crawl4ai", CRAWL4AI_BUDGET):
+    if CRAWL4AI_BUDGET >= 0 and not _spend("crawl4ai", CRAWL4AI_BUDGET):
         return {}, "crawl4ai_budget_spent", url
 
+    try:
+        with _RENDER_QUEUE.slot(_READ_OPTIONS.get().get("admission_key", "local"),
+                               timeout=float(os.getenv("DETHROTTLED_RENDER_QUEUE_SECONDS", "60"))):
+            return _crawl4ai_admitted(url)
+    except AdmissionError as exc:
+        return {}, str(exc), url
+
+
+def _crawl4ai_admitted(url):
+    global _crawl4ai_dialect
     order = ([_crawl4ai_dialect] if _crawl4ai_dialect
              else ["crawl", "render"])
     last = "crawl4ai_empty"
@@ -928,11 +945,10 @@ def _tier_crawl4ai(url: str) -> tuple:
 # targets are exactly the ones that fail. That is a bad property: it makes
 # tuning a cap quietly expensive, so caps do not get tuned.
 #
-# So extract once, generously, and clip on the way out. One entry per page, and
-# a cap change costs nothing. 20k is well past any cap worth setting; pages
-# longer than this are truncated in the cache too, which is the same trade the
-# old code made at 3500.
-CACHE_CHARS = int(os.environ.get("DETHROTTLED_EXTRACT_CACHE_CHARS", "20000"))
+# Retain a generous extraction independently of the requested response size.
+# Focused reads and document continuations can reach later sections without
+# requiring the agent to ingest the entire source. Provenance marks bounded reads.
+CACHE_CHARS = int(os.environ.get("DETHROTTLED_EXTRACT_CACHE_CHARS", "1000000"))
 
 
 def _clip(out: dict, max_chars: int) -> dict:
@@ -942,11 +958,14 @@ def _clip(out: dict, max_chars: int) -> dict:
         return out
     clipped = dict(out)
     clipped["text"] = text[:max_chars]
+    clipped["_index_text"] = text
     clipped["chars"] = len(clipped["text"])
+    clipped["content_chars"] = len(text)
+    clipped["truncated"] = True
     return clipped
 
 
-def fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAULT_TIMEOUT,
+def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAULT_TIMEOUT,
                       cache=None,
                       allow_render: bool = True,
                       render_first: bool = False,
@@ -978,7 +997,45 @@ def fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAULT
         # Keyed on the url alone. The stored copy is the generous one; what
         # this caller wanted is a clip of it.
         hit = cache.get("extract", url)
-        if hit is not None:
+        acquisition = (hit or {}).get("acquisition", {})
+        compatible = not render_first or acquisition.get("rendered", False)
+        if hit is not None and (challenge_kind(hit.get("text", "")) or
+                                not hit.get("text", "").strip()):
+            compatible = False
+        requested_wait = _READ_OPTIONS.get().get("wait_for", "")
+        if requested_wait:
+            compatible = compatible and acquisition.get("wait_for") == requested_wait
+        compatible = compatible and acquisition.get("page_start", 1) == (
+            _READ_OPTIONS.get().get("page_start", 1)) and acquisition.get("page_end") == (
+            _READ_OPTIONS.get().get("page_end"))
+        compatible = compatible and acquisition.get("ocr_mode", "auto") == (
+            _READ_OPTIONS.get().get("ocr_mode", "auto"))
+        for option, default in (("document_mode", "auto"), ("row_start", 1),
+                                ("row_end", None), ("sheet", ""),
+                                ("max_cell_chars", None)):
+            compatible = compatible and acquisition.get(option, default) == (
+                _READ_OPTIONS.get().get(option, default))
+        compatible = compatible and acquisition.get("ocr_language", "") == (
+            _READ_OPTIONS.get().get("ocr_language", ""))
+        if _READ_OPTIONS.get().get("allow_ocr", True):
+            compatible = compatible and acquisition.get("ocr_allowed", True)
+        if render_first or requested_wait:
+            compatible = compatible and (acquisition.get("render_delay") or 0) >= (
+                _READ_OPTIONS.get().get("render_delay", 0.5))
+        compatible = compatible and acquisition.get("layout_worker_configured", False) == bool(
+            os.getenv("DETHROTTLED_LAYOUT_WORKER_URL"))
+        # Old archive XML / flat scan OCR must not hide newly enabled readers.
+        if urlparse(url).path.lower().endswith((".msg", ".xlsb")):
+            compatible = compatible and acquisition.get("format_worker_configured", False) == bool(
+                os.getenv("DETHROTTLED_FORMAT_WORKER_URL"))
+        scanned = any("ocr" in page.get("method", "")
+                      for page in (hit or {}).get("extraction", {}).get("pages", []))
+        if scanned and os.getenv("DETHROTTLED_LAYOUT_WORKER_URL"):
+            compatible = compatible and acquisition.get("scan_layout_revision") == 1
+        if hit is not None and compatible:
+            if hit.get("reason", "").startswith("thin, best available"):
+                hit["quality"] = "thin"
+            hit["acquisition_attempts"] = [{"tier": "cache", "outcome": "hit", "reason": ""}]
             hit["cached"] = True
             _tier_stats["cache"] += 1
             return _clip(hit, max_chars)
@@ -1014,8 +1071,12 @@ def fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAULT
     # failed -- faster than direct in measurement, and it needs no service.
     if ENABLE_TLS:
         tiers.append(("tls", lambda: _tier_tls(url)))
-    if allow_render and CRAWL4AI_URL and CRAWL4AI_BUDGET > 0:
+    if allow_render and CRAWL4AI_URL and CRAWL4AI_BUDGET != 0:
         tiers.append(("crawl4ai", lambda: _tier_crawl4ai(url)))
+    if allow_render and os.getenv("DETHROTTLED_BROWSER_SEARCH_URL"):
+        tiers.append(("headed", lambda: _tier_headed(url)))
+    elif allow_render and _READ_OPTIONS.get().get("headed_fallback"):
+        tiers.append(("headed", lambda: _tier_headed(url)))
     if ENABLE_JINA:
         tiers.append(("jina-reader", lambda: _tier_jina_reader(url)))
 
@@ -1039,7 +1100,38 @@ def fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAULT
     budget = PAGE_BUDGET if page_budget is None else page_budget
     budget_started = time.time()
 
+    attempts = []
+
     def finish(out):
+        # Recheck old cached interstitials on the read path as well.
+        out["acquisition_attempts"] = [dict(a) for a in attempts]
+        out["schema_version"] = 3
+        rendered = out.get("tier") in {"crawl4ai", "headed"}
+        out["acquisition"] = {"rendered": rendered,
+                              "wait_for": (_READ_OPTIONS.get().get("wait_for", "")
+                                           if rendered else ""),
+                              "render_delay": _READ_OPTIONS.get().get("render_delay") if rendered
+                              else None,
+                              "extraction_limit": CACHE_CHARS,
+                              "page_start": _READ_OPTIONS.get().get("page_start", 1),
+                              "page_end": _READ_OPTIONS.get().get("page_end"),
+                              "ocr_language": _READ_OPTIONS.get().get("ocr_language", ""),
+                              "ocr_mode": _READ_OPTIONS.get().get("ocr_mode", "auto"),
+                              "ocr_allowed": _READ_OPTIONS.get().get("allow_ocr", True),
+                              "row_start": _READ_OPTIONS.get().get("row_start", 1),
+                              "row_end": _READ_OPTIONS.get().get("row_end"),
+                              "sheet": _READ_OPTIONS.get().get("sheet", ""),
+                              "max_cell_chars": _READ_OPTIONS.get().get("max_cell_chars"),
+                              "document_mode": _READ_OPTIONS.get().get("document_mode", "auto"),
+                              "scan_layout_revision": 1,
+                              "format_worker_configured": bool(
+                                  os.getenv("DETHROTTLED_FORMAT_WORKER_URL")),
+                              "layout_worker_configured": bool(
+                                  os.getenv("DETHROTTLED_LAYOUT_WORKER_URL"))}
+        out.setdefault("retrieved_at", datetime.now(timezone.utc).isoformat())
+        out.setdefault("cache_age_seconds", 0)
+        out.setdefault("content_chars", len(out.get("text", "")))
+        out.setdefault("truncated", bool(out.get("extraction", {}).get("partial")))
         # Store the full extraction, hand back only what was asked for.
         #
         # The source, when a caller asked for it, is deliberately NOT cached.
@@ -1047,7 +1139,7 @@ def fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAULT
         # caching it would trade the whole point of a page cache -- many pages
         # cheaply -- for a few pages expensively.
         source = out.pop("html", None)
-        if cache is not None:
+        if cache is not None and out.get("text"):
             cache.put("extract", url, value=out)
         out = _clip(out, max_chars)
         if source is not None:
@@ -1065,12 +1157,14 @@ def fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAULT
     # to the ladder having spent no network at all.
     from . import media as _media
     if _media.is_video(url):
-        text, _title, why = _media.transcript(url, limit=CACHE_CHARS)
+        caption_metadata = {}
+        text, _title, why = _media.transcript(url, limit=CACHE_CHARS, metadata=caption_metadata)
         if text:
             out = {"ok": True, "text": text, "tier": "transcript",
                    "extractor": "captions", "title": "", "published": "",
                    "chars": len(text), "url": url, "reason": "",
-                   "cached": False, "content_type": "transcript"}
+                   "cached": False, "content_type": "transcript",
+                   "extraction": caption_metadata}
             return finish(out)
         # No captions, or blocked. Reported under its own name rather than
         # falling through to a ladder that would spend four tiers proving it
@@ -1083,7 +1177,13 @@ def fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAULT
     # Kept bound past the loop so a total failure can report which tier
     # it was last standing on, rather than reporting nothing at all.
     name = None
+    challenged = False
+    script_shell = False
+    last_attempted = None
     for name, run in tiers:
+        if name == "headed" and not (
+                challenged or script_shell or _READ_OPTIONS.get().get("headed_fallback")):
+            continue
         # A resting tier is skipped without being asked. This is the smooth
         # transition: the ladder simply gets shorter for a while and the rungs
         # that still work carry the load.
@@ -1094,13 +1194,30 @@ def fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAULT
         # already running is allowed to finish, because killing a fetch that is
         # about to succeed wastes everything spent on it. This stops the NEXT
         # attempt, which is where a runaway page actually costs its minute.
-        if time.time() - budget_started > budget:
+        if (time.time() - budget_started > budget
+                and not (name == "headed" and (challenged or script_shell))):
             if best is None:
-                reasons.append("%s: skipped, page budget of %.0fs spent"
-                               % (name, budget))
-            break
+                reasons.append("%s: skipped, page budget of %.0fs spent" % (name, budget))
+            continue
+        last_attempted = name
         payload, reason, final = run()
+        attempt = {"tier": name, "reason": reason, "outcome": "response" if payload else "failed"}
+        attempts.append(attempt)
         payload = payload if isinstance(payload, dict) else {}
+        html = payload.get("html") or ""
+        if (html and re.search(r"<(?:script|iframe)\b", html, re.I)
+                and len(short_text(html).strip()) < 40):
+            script_shell = True
+        detected = challenge_kind(payload.get("html") or (
+            "" if payload.get("structured") else payload.get("text") or ""))
+        reported_block = "anti-bot" in reason.lower() and "http 429" not in reason.lower()
+        if detected or "challenge" in reason or reported_block:
+            challenged = True
+            attempt.update(outcome="challenge", provider=detected or "unspecified")
+            if detected:
+                attempt["reason"] = reason or "challenge_detected:" + detected
+                reasons.append(name + ":" + attempt["reason"])
+                continue
         if _is_refusal(reason):
             tier_refused(name, reason)
         elif payload:
@@ -1133,14 +1250,23 @@ def fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAULT
                          "extractor": "%s-native" % name, "title": "",
                          "published": "", "chars": len(text), "url": final,
                          "reason": "", "cached": False,
-                         "content_type": payload.get("content_type", "")}
+                         "content_type": payload.get("content_type", ""),
+                         "extraction": payload.get("extraction", {}),
+                         "warnings": payload.get("warnings", []),
+                         "content_status": payload.get("content_status", "complete")}
         else:
             html = payload.get("html") or ""
-            if not _usable(html):
+            if not html or _challenge_document(html):
                 reasons.append("%s:%s" % (name, reason or "empty"))
                 continue
             result = _fx.extract(html, url=final, max_chars=CACHE_CHARS)
-            if result["ok"]:
+            if not result["ok"]:
+                small = short_text(html).strip()
+                if len(small) >= 40 or (_READ_OPTIONS.get().get("format") in {"html", "links"}):
+                    result = {"ok": True, "text": small, "tier": "short",
+                              "title": "", "published": "", "chars": len(small)}
+            if result["ok"] and (result.get("text", "").strip() or
+                                 _READ_OPTIONS.get().get("format") in {"html", "links"}):
                 # The source, only when asked for. finish() strips it before
                 # the cache write, so this never bloats the page cache.
                 source = {"html": html} if keep_html else {}
@@ -1152,28 +1278,43 @@ def fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAULT
                              "chars": result["chars"], "url": final,
                              "reason": ("html_truncated"
                                         if payload.get("clipped") else ""),
-                             "cached": False, "content_type": "html"}
+                             "cached": False, "content_type": "html",
+                             **page_details(html, final)}
             else:
                 # Fetched fine, but no prose -- almost always a JS shell.
                 reasons.append("%s:fetched_but_%s" % (name, result["reason"]))
                 continue
 
+        if payload.get("browser_recovery"):
+            candidate["browser_recovery"] = payload["browser_recovery"]
+        pending = (payload.get("browser_recovery") or {}).get("document_ready_state") == "loading"
+        if candidate.get("content_type") == "html" and (pending or payload.get("clipped")):
+            partial_reason = "browser_document_loading" if pending else "html_capture_limit"
+            candidate["extraction"] = {**candidate.get("extraction", {}),
+                                       "partial": True, "partial_reason": partial_reason}
+            candidate["warnings"] = [*candidate.get("warnings", []), partial_reason]
         # Structured payloads are never "thin". THIN_CHARS asks whether a page
         # gave up only a teaser, which is a question about HTML -- no later
         # tier is going to read a spreadsheet or a scan better than the parser
         # that already read it, so trying them only burns the page budget.
-        if candidate["chars"] >= THIN_CHARS or payload.get("structured"):
+        if (candidate["chars"] >= THIN_CHARS or payload.get("structured")
+                or _READ_OPTIONS.get().get("format") in {"html", "links"}
+                or candidate.get("content_status") == "image_content"):
+            attempt["outcome"] = "extracted"
             _tier_stats[name] += 1
             return finish(candidate)
 
         # Thin: keep it as a floor and let a later tier try to beat it, rather
         # than either discarding a real result or stopping on a teaser.
+        attempt["outcome"] = "thin"
         reasons.append("%s:thin/%d" % (name, candidate["chars"]))
         if best is None or candidate["chars"] > best["chars"]:
             best = candidate
 
     if best is not None:
         _tier_stats[best["tier"] + "-thin"] += 1
+        best["quality"] = "thin"
+        best["warnings"] = [*best.get("warnings", []), "thin_content; coverage_not_verified"]
         best["reason"] = "thin, best available: " + ", ".join(reasons)
         return finish(best)
 
@@ -1182,6 +1323,146 @@ def fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAULT
     # branch above already returned). `name` is the last tier the loop tried
     # before giving up -- the same "how far did it get" fact `tier` reports on
     # success, so a caller checking only `tier` is not left with nothing.
-    return {"ok": False, "text": "", "tier": name, "extractor": None,
+    return {"ok": False, "text": "", "tier": last_attempted, "extractor": None,
             "title": "", "published": "", "chars": 0, "url": url,
-            "reason": " | ".join(reasons), "cached": False}
+            "reason": " | ".join(reasons), "cached": False,
+            "acquisition_attempts": attempts}
+
+
+def _challenge_document(html: str) -> bool:
+    return bool(challenge_kind(html))
+
+
+class _HeadedReadFailure(ValueError):
+    pass
+
+
+def _tier_headed(url: str) -> tuple:
+    backend = os.environ.get("DETHROTTLED_BROWSER_SEARCH_URL", "").rstrip("/")
+    if not backend:
+        return {}, "headed_unavailable", url
+    try:
+        queue_timeout = float(os.getenv("DETHROTTLED_HEADED_QUEUE_SECONDS", "60"))
+        with _HEADED_QUEUE.slot(_READ_OPTIONS.get().get("admission_key", "local"),
+                                timeout=queue_timeout) as ms:
+            payload, reason, final = _headed_read(url, backend)
+            if "browser_recovery" in payload:
+                payload["browser_recovery"]["queue_ms"] = ms
+            return payload, reason, final
+    except AdmissionError as exc:
+        return {}, str(exc).replace("renderer_", "headed_"), url
+
+
+def _headed_read(url: str, backend: str) -> tuple:
+    # Exact-host, caller-scoped browser identity. Never export cookies to another
+    # transport or share clearance state across public clients.
+    options = _READ_OPTIONS.get()
+    host = urlparse(url).hostname
+    key = "|".join((str(options.get("admission_key", "local")), host or "",
+                    str(options.get("public_only", False))))
+    session = "auto-reader-" + hashlib.sha256(key.encode()).hexdigest()[:32]
+    started = time.monotonic()
+    deadline = started + float(os.getenv("DETHROTTLED_CHALLENGE_WAIT_SECONDS", "15"))
+    body = {"session": session, "screenshot": "never", "allowed_hosts": [host],
+            "public_only": options.get("public_only", False), "timeout_ms": 12000,
+            "navigation_wait": "commit"}
+    read = {"action": "html", "selector": "html", "max_chars": 120000}
+
+    def drive(steps, navigate=False):
+        response = requests.post(backend + "/drive", json={**body,
+            **({"url": url} if navigate else {}), "steps": steps}, timeout=15)
+        response.raise_for_status()
+        value = response.json()
+        if not value.get("ok"):
+            failed = next((step for step in value.get("steps", []) if not step.get("ok")), {})
+            raise _HeadedReadFailure("headed_step_failed:" + str(failed.get("action", "unknown"))
+                                     + ":" + str(failed.get("reason") or "drive_failed")[:200])
+        return value
+
+    try:
+        wait_for = options.get("wait_for")
+        steps = ([{"action": "wait_for", "selector": wait_for, "ms": 5000}]
+                 if wait_for else [{"action": "wait", "ms": 700}]) + [read]
+        data = drive(steps, navigate=True)
+        navigation = next((step.get("data") or {} for step in data.get("steps", [])
+                           if step.get("action") == "goto"), {})
+        restored = bool(data.get("session", {}).get("restored_from_checkpoint"))
+        polls = 0
+        loading_polls = 0
+        while True:
+            html = data["steps"][-1].get("data") or ""
+            if isinstance(html, dict):
+                html = html.get("html", "")
+            headers = navigation.get("challenge_headers") if polls == 0 else None
+            vendor = challenge_kind(html, headers)
+            loading = (data["steps"][-1].get("document_ready_state") == "loading"
+                       and len(short_text(html).strip()) < 40)
+            if not vendor and not loading:
+                break
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                return {}, ("headed_challenge_unresolved:" + vendor if vendor
+                            else "headed_document_still_loading"), url
+            data = drive([{"action": "wait", "ms": min(1000, max(1, int(remaining * 1000)))},
+                          read])
+            polls += 1
+            loading_polls += int(loading and not vendor)
+        # Checkpoints retain same-browser state across worker restarts. A failed
+        # checkpoint must not discard acquired evidence or export credentials.
+        checkpointed = True
+        try:
+            drive([{"action": "checkpoint"}])
+        except (requests.RequestException, ValueError):
+            checkpointed = False
+        return {"html": html,
+                "clipped": bool(data["steps"][-1].get("truncated")),
+                "browser_recovery": {
+            "restored_from_checkpoint": restored,
+            "challenge_polls": polls - loading_polls, "loading_polls": loading_polls,
+            "document_ready_state": data["steps"][-1].get("document_ready_state"),
+            "initial_navigation": navigation, "checkpointed": checkpointed,
+            "elapsed_ms": int((time.monotonic() - started) * 1000)}}, "", (
+                data.get("final", {}).get("url") or url)
+    except _HeadedReadFailure as exc:
+        return {}, str(exc), url
+    except (requests.RequestException, ValueError, KeyError, TypeError) as exc:
+        return {}, "headed_" + type(exc).__name__, url
+
+
+def fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAULT_TIMEOUT,
+                      cache=None, allow_render: bool = True, render_first: bool = False,
+                      allow_ocr: bool = True, page_budget: float | None = None,
+                      keep_html: bool = False, format: str = "text", wait_for: str = "",
+                      render_delay: float = 0.5, headed_fallback: bool = False,
+                      public_only: bool = False, ocr_language: str = "", ocr_mode: str = "auto",
+                      page_start: int = 1, page_end: int | None = None,
+                      row_start: int = 1, row_end: int | None = None, sheet: str = "",
+                      max_cell_chars: int | None = None, document_mode: str = "auto",
+                      source_sink=None, admission_key="local") -> dict:
+    """Read a URL with request-local rendering/target policy and bounded output."""
+    options = dict(format=format, wait_for=wait_for, render_delay=render_delay,
+                   headed_fallback=headed_fallback, public_only=public_only,
+                   ocr_language=ocr_language, ocr_mode=ocr_mode,
+                   page_start=page_start, page_end=page_end,
+                   allow_ocr=allow_ocr, row_start=row_start, row_end=row_end,
+                   sheet=sheet, max_cell_chars=max_cell_chars, document_mode=document_mode,
+                   source_sink=source_sink, admission_key=admission_key)
+    token = _READ_OPTIONS.set(options)
+    try:
+        if options.get("public_only"):
+            from .research import public_url
+            if not public_url(url):
+                return {"ok": False, "text": "", "reason": "public_target_required",
+                        "cached": False, "tier": None}
+        result = _fetch_and_extract(url, max_chars=max_chars, timeout=timeout, cache=cache,
+                                    allow_render=allow_render, render_first=render_first,
+                                    allow_ocr=allow_ocr, page_budget=page_budget,
+                                    keep_html=keep_html)
+        if options.get("public_only") and result.get("url"):
+            from .research import public_url
+            if not public_url(result["url"]):
+                return {"ok": False, "text": "", "reason": "redirect_target_not_public",
+                        "cached": False, "tier": None}
+        return result
+    finally:
+        _READ_OPTIONS.reset(token)

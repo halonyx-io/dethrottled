@@ -1,0 +1,162 @@
+[
+  {
+    "requests": 1,
+    "results": [
+      {
+        "status": 200,
+        "detail": null,
+        "retry_after": null,
+        "limiter_header": null
+      }
+    ],
+    "renderer_admission": {
+      "started": 0,
+      "completed": 0,
+      "rejected": 0,
+      "timed_out": 0,
+      "active": 0,
+      "waiting": 0,
+      "clients_waiting": 0,
+      "capacity": 2,
+      "max_waiting": 32,
+      "per_client_waiting": 8
+    }
+  },
+  {
+    "requests": 2,
+    "results": [
+      {
+        "status": 200,
+        "detail": null,
+        "retry_after": null,
+        "limiter_header": null
+      },
+      {
+        "status": 200,
+        "detail": null,
+        "retry_after": null,
+        "limiter_header": null
+      }
+    ],
+    "renderer_admission": {
+      "started": 0,
+      "completed": 0,
+      "rejected": 0,
+      "timed_out": 0,
+      "active": 0,
+      "waiting": 0,
+      "clients_waiting": 0,
+      "capacity": 2,
+      "max_waiting": 32,
+      "per_client_waiting": 8
+    }
+  },
+  {
+    "requests": 3,
+    "results": [
+      {
+        "status": 429,
+        "detail": {
+          "reason": "research_busy",
+          "limiter": "research",
+          "retryable": true
+        },
+        "retry_after": "2",
+        "limiter_header": "research"
+      },
+      {
+        "status": 200,
+        "detail": null,
+        "retry_after": null,
+        "limiter_header": null
+      },
+      {
+        "status": 200,
+        "detail": null,
+        "retry_after": null,
+        "limiter_header": null
+      }
+    ],
+    "renderer_admission": {
+      "started": 0,
+      "completed": 0,
+      "rejected": 0,
+      "timed_out": 0,
+      "active": 0,
+      "waiting": 0,
+      "clients_waiting": 0,
+      "capacity": 2,
+      "max_waiting": 32,
+      "per_client_waiting": 8
+    }
+  },
+  {
+    "requests": 6,
+    "results": [
+      {
+        "status": 200,
+        "detail": null,
+        "retry_after": null,
+        "limiter_header": null
+      },
+      {
+        "status": 200,
+        "detail": null,
+        "retry_after": null,
+        "limiter_header": null
+      },
+      {
+        "status": 429,
+        "detail": {
+          "reason": "research_busy",
+          "limiter": "research",
+          "retryable": true
+        },
+        "retry_after": "2",
+        "limiter_header": "research"
+      },
+      {
+        "status": 429,
+        "detail": {
+          "reason": "research_busy",
+          "limiter": "research",
+          "retryable": true
+        },
+        "retry_after": "2",
+        "limiter_header": "research"
+      },
+      {
+        "status": 429,
+        "detail": {
+          "reason": "research_busy",
+          "limiter": "research",
+          "retryable": true
+        },
+        "retry_after": "2",
+        "limiter_header": "research"
+      },
+      {
+        "status": 429,
+        "detail": {
+          "reason": "research_busy",
+          "limiter": "research",
+          "retryable": true
+        },
+        "retry_after": "2",
+        "limiter_header": "research"
+      }
+    ],
+    "renderer_admission": {
+      "started": 0,
+      "completed": 0,
+      "rejected": 0,
+      "timed_out": 0,
+      "active": 0,
+      "waiting": 0,
+      "clients_waiting": 0,
+      "capacity": 2,
+      "max_waiting": 32,
+      "per_client_waiting": 8
+    }
+  }
+]

@@ -1,160 +1,92 @@
 # Dethrottled
 
-**Keyless web search, stateful browser operation, fetch, and document
-extraction for agents and local tooling.** No paid API keys, metered tiers, or
-purchased provider quotas. Agents can discover pages, read them cheaply, or
-operate a real browser through one local API. No language model writes answers;
-results stay traceable to their sources.
+Dethrottled gives agents one interface for web discovery, source reading and
+browser interaction. It returns traceable evidence and concrete continuation
+steps, rather than writing an answer on the agent's behalf.
 
-- **Keyless.** No paid search API, no per-query cost, no account.
-- **Local-first.** Runs as a single container. The Compose project adds a
-  private browser search worker, SearXNG, and a local JavaScript renderer.
-- **Agent-operable browser.** `/drive` provides persistent sessions (including
-  a returned `auto-*` session when navigation omits a name), structured
-  DOM snapshots, bounded interactions, execution canaries, and event telemetry
-  without requiring agents to launch Chromium or interpret every screenshot.
-- **Self-contained.** The API image bakes in its Python dependencies,
-  Tesseract, ONNX Runtime, and the one MiniLM corpus model it uses.
-- **Evidence, not prose.** `/research` returns a cited source bundle you can
-  read and verify; nothing is summarised by a model.
+The default search and reading stack is self-hosted and keyless. There are no
+purchased search quotas or required model APIs. Public websites can still block
+requests, and local queues, timeouts and storage limits apply. Optional metered
+discovery providers are available only when an operator configures keys and a
+caller explicitly selects them.
 
-## Quick start
+## What agents can do
+
+- Discover sources through web, news and academic search, or a bounded site crawl.
+- Read pages, documents, tables, archives, captions and direct media files.
+- Continue retained documents by question, text offset, PDF page or table row.
+- Inspect source structure and retained source pixels where available.
+- Operate a headed browser: navigate, use controls, inspect frames and popups,
+  read application responses, collect downloads and restore checkpoints.
+- Assemble research evidence with source references and explicit coverage gaps.
+
+Recovery escalates from direct HTTP through TLS, rendering and the headed
+browser when appropriate. Challenges and script-only shells can trigger browser
+recovery automatically. A failed or partial read remains visible in the result;
+HTTP 200 and extracted text alone do not establish answer accuracy.
+
+## Run locally
 
 ```sh
 cp .env.example .env
 docker compose up -d --build
-curl http://127.0.0.1:8787/health
-curl http://127.0.0.1:8787/v2/capabilities
+curl -fsS http://127.0.0.1:8787/health
+curl -fsS http://127.0.0.1:8787/v2/capabilities
 ```
 
-The default host bind is `127.0.0.1:8787`. The local API has **no caller
-authentication**; put an authenticated gateway in front of it if you expose it
-beyond a trusted host. Mutable cache and corpus state live in the
-`dethrottled-data` volume.
-
-### First requests
+Base Compose runs the API, headed browser worker, SearXNG and Crawl4AI. The API
+binds to `127.0.0.1:8787` and has no caller authentication. Use the optional
+[public adapters](docs/PUBLIC-ACCESS.md) and an authenticated TLS deployment for
+remote clients. Speech, PDF layout and MSG/XLSB parsing have optional local
+workers; see [configuration](docs/CONFIGURATION.md).
 
 ```sh
-curl -sS http://127.0.0.1:8787/search \
-  -H 'content-type: application/json' \
-  -d '{"query":"Python 3.12 documentation","limit":3}'
-
 curl -sS http://127.0.0.1:8787/fetch \
-  -H 'content-type: application/json' \
-  -d '{"urls":["https://example.com/"]}'
-
-curl -sS http://127.0.0.1:8787/research \
-  -H 'content-type: application/json' \
-  -d '{"question":"What changed in Python 3.12?","max_sources":4}'
-
-curl -sS http://127.0.0.1:8787/drive \
-  -H 'content-type: application/json' \
-  -d '{"url":"https://example.com/","screenshot":"never","steps":[{"action":"snapshot"}]}'
+  -H 'Content-Type: application/json' \
+  -d '{"urls":["https://docs.python.org/3/library/sqlite3.html"],"focus":"in-memory database"}'
 ```
 
-## What it does
-
-| Verb | Endpoint | Purpose |
-| --- | --- | --- |
-| Search | `POST /search` | Discover URLs; no page bodies fetched |
-| Fetch | `POST /fetch` (alias `/extract`) | Read named URLs and extract content |
-| Links | `POST /extract-with-links` | Fetch with outbound links kept |
-| Search + read | `POST /search-and-fetch` (alias `/search-and-extract`) | Rank, then read the kept results |
-| Research | `POST /research` | A cited, diverse evidence bundle — no model answer |
-| Browser drive | `POST /drive` | Bounded, optionally stateful browser actions with DOM and event telemetry |
-| Corpus | `GET /corpus/search`, `GET /corpus/stats` | Local semantic index of everything fetched |
-| Status | `GET /health`, `/ready`, `/v2/status`, `/v2/capabilities`, `/stats` | Liveness and real configuration |
-
-`/search` finds; `/fetch` reads; `/drive` operates; `/research` assembles
-evidence. A search that finds nothing returns `[]`, and a failed fetch is a row with
-`quality: "failed"` — HTTP 200 alone does not prove a useful result.
-
-**Reading:** HTML, CSV/TSV, PDF (with OCR for scans), XLS/XLSX, DOCX, PPTX,
-ODT/ODS/ODP, EPUB, and RTF.
-
-**Fetch tiers:** a local escalation ladder — direct HTTP → TLS → a
-containerised JavaScript renderer (Crawl4AI) — so a page is only rendered when
-the cheaper tiers cannot read it.
-
-## Measured performance
-
-On 4 October 2026 we ran the same 50 English queries through native x86_64
-and ARM64 builds. szbox is an AMD Ryzen 7 5800U (8 cores / 16 threads,
-30 GiB usable RAM); q6a is a Radxa Dragon Q6A (4 Cortex-A55 + 4 Cortex-A78
-cores, 11 GiB usable RAM). Both builds used the same source commit and Python
-package set. These are client-observed medians with normal services running,
-not latency guarantees for the public web.
-
-| Workload | szbox useful; median | q6a useful; median |
-| --- | ---: | ---: |
-| `/search`, 50 queries | 50/50; **1.43 s** | 50/50; **2.66 s** |
-| `/search-and-fetch`, 50 queries | 47/50; **3.60 s** | 47/50; **5.56 s** |
-| `/fetch`, the same 50 fixed URLs | 42/50; **0.51 s** | 42/50; **0.73 s** |
-| `/research`, eight evidence bundles | 8/8; **7.54 s** | 7/8; **9.26 s** |
-
-A useful fetched page had `quality: ok` and at least 600 extracted characters;
-HTTP 200 alone did not pass. With eight concurrent search callers, szbox
-returned 50/50 useful results at 1.48 queries/s, while q6a returned 48/50
-at 0.71 queries/s. Controlled document fixtures passed 39/39 expected
-outcomes on each host. The browser search worker was the main search CPU
-consumer; the [full report](docs/BENCHMARKS.md) has p95 latency, individual
-failures, per-component CPU/RAM samples, methods, and raw results.
-
-The report and raw JSON are also copied into the API image at
-`/app/docs/BENCHMARKS.md` and `/app/docs/benchmarks/2026-10-04/`.
+An agent should inspect `quality`, `warnings`, `source_partial`, `truncated`,
+`document_id` and `workflow.next_actions`. The [agent guide](docs/AGENT-UPGRADES.md)
+explains the workflow and what an MCP client must forward to its model.
 
 ## Documentation
 
-| Guide | What it covers |
-| --- | --- |
-| [Features](docs/FEATURES.md) | Every current feature and the shortest way to use it |
-| [HTTP API](docs/API.md) | All local endpoints, fields, response shapes, examples |
-| [Browser drive](docs/DRIVE.md) | Efficient agent workflow, sessions, actions, canaries, and safety boundaries |
-| [Python API](docs/PYTHON.md) | Direct imports, source-install extras, and examples |
-| [Pipeline](docs/PIPELINE.md) | Search, rendering, extraction, ranking, research, corpus |
-| [Configuration](docs/CONFIGURATION.md) | Compose settings and local performance choices |
-| [Operations](docs/OPERATIONS.md) | Verification, backups, upgrades, network exposure |
-| [PDF worker](docs/PDF_WORKER.md) | Optional HTML-to-PDF service |
-| [Benchmarks](docs/BENCHMARKS.md) | Paired x86_64/ARM64 endpoint, quality, and resource measurements |
+Start at the [documentation home](docs/README.md).
 
-## Architecture
+| Page | Use it for |
+|---|---|
+| [Agent integration](docs/AGENT-UPGRADES.md) | Autonomous workflow, tool selection and client contracts |
+| [Reading and evidence](docs/DEPENDABLE-WORKFLOWS.md) | Formats, OCR, tables, media, citations and resumable jobs |
+| [HTTP API](docs/API.md) | Routes, examples, response semantics and generated request reference |
+| [Browser operation](docs/DRIVE.md) | Actions, sessions, scope, checkpoints, screenshots and downloads |
+| [Configuration](docs/CONFIGURATION.md) | Base stack, optional workers, models and workload controls |
+| [Operations](docs/OPERATIONS.md) | Build, verification, backups, updates and remote deployment |
+| [Architecture](docs/PIPELINE.md) | Search/read/research paths, corpus models and service boundaries |
+| [Evidence and limits](docs/EVIDENCE.md) | Dated measurements, raw results and unresolved failures |
 
-```
-client ──▶ dethrottled API (:8787) ──▶ search engines (keyless)
-                    │                  ├─ private browser-search worker
-                    │                  ├─ SearXNG (news)
-                    │                  └─ news RSS
-                    ├─▶ fetch ladder ──▶ direct ▸ tls ▸ crawl4ai (JS render)
-                    ├─▶ extraction ───▶ trafilatura ▸ resiliparse ▸ selectolax
-                    ├─▶ /drive ───────▶ isolated Patchright browser sessions
-                    └─▶ corpus (SQLite + ONNX MiniLM embeddings)
-```
+## Deployment and limits
 
-The API is a single FastAPI service. The Compose project runs it alongside the
-browser-search worker, SearXNG, Crawl4AI, and an optional HTML-to-PDF worker,
-all on a private bridge network. The API is published to host loopback by
-default; the optional PDF worker publishes host port 8788 as currently
-configured. The browser-search, SearXNG, and Crawl4AI services remain private.
+The API image includes document libraries, Tesseract and MiniLM/E5 corpus
+models. Mutable evidence, jobs, cache and corpus live in a named data volume;
+browser checkpoints use a separate volume. Source installs require Python 3.10+
+and explicitly installed optional dependencies and services.
 
-## Requirements
+Dethrottled does not guarantee access to every website or file. OCR and speech
+can be wrong, scans and charts may require visual inspection, and interactive
+challenges may remain unresolved. The latest recovery evaluation fixed software
+WebGL and demonstrated better controlled JavaScript recovery; its four hostile
+live sources remained unreadable. See the [recorded evidence](docs/EVIDENCE.md)
+for methods and limits. Neural live-web reranking remains disabled.
 
-- Docker with Compose v2 for the full stack, **or** Python 3.10+ for the API alone.
-- No external API keys. The default engine set is keyless.
+The fetch ladder does not consult `robots.txt`. The raw API can access trusted
+LAN targets; public adapters enforce a narrower policy, which is not a substitute
+for deployment-level network isolation.
 
-This repository provides the raw HTTP API. A public REST gateway or MCP bridge
-can build on it, but public bearer tokens and MCP tool schemas belong to that
-separate deployment; they are not implemented by this Compose project.
-
-## Notes
-
-- The fetch ladder does not request or honour `robots.txt`. It uses no paid API
-  keys or metered search tier. Local timeouts, queues, render budgets, and
-  per-domain pacing still apply — see the configuration guide.
-- The Compose services set no CPU affinity, CPU quota, or overall RAM cap; they
-  size themselves to the host.
+This branch documents package **0.9.1**. Check `/health` and `/v2/capabilities`
+on the installation you use; a repository branch or remote plugin may differ
+from the deployed service. Historical reports describe their recorded versions.
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
-
-Maintained by [Halonyx](https://github.com/halonyx-io).
+[MIT](LICENSE). Maintained by [Halonyx](https://github.com/halonyx-io).

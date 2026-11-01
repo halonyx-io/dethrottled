@@ -4,15 +4,17 @@
 # this image builds on a laptop and on a single-board ARM machine alike.
 FROM python:3.12-slim
 
-# tesseract is the only system binary, and only the OCR path uses it. eng and
-# osd live in the system tessdata directory; optional extra language packs
-# can be downloaded separately -- see scripts/fetch-models.sh.
+# OCR and legacy Office converters are local command-line tools. English,
+# Malay and Chinese OCR data ship in the image; select a known language for
+# better results rather than indiscriminately combining language packs.
 #
 # --no-install-recommends because the recommended set drags in a large chunk of
 # X11 for a command-line binary that never opens a window.
 RUN apt-get update && apt-get install -y --no-install-recommends \
         tesseract-ocr \
         tesseract-ocr-osd \
+        tesseract-ocr-msa tesseract-ocr-chi-sim tesseract-ocr-chi-tra \
+        antiword catdoc \
         curl \
     && rm -rf /var/lib/apt/lists/*
 
@@ -40,6 +42,7 @@ RUN python -m pip install --no-cache-dir --upgrade pip \
 #
 # Build with --build-arg WITH_MODELS=0 for a smaller image without them.
 ARG WITH_MODELS=1
+ARG E5_REVISION=614241f622f53c4eeff9890bdc4f31cfecc418b3
 ARG MINILM_REVISION=1110a243fdf4706b3f48f1d95db1a4f5529b4d41
 ENV DETHROTTLED_MODEL_DIR=/opt/dethrottled/models \
     PYTHONUNBUFFERED=1
@@ -50,6 +53,15 @@ RUN if [ "$WITH_MODELS" = "1" ]; then \
      && curl -fsSL -o /opt/dethrottled/models/emb-minilm/tokenizer.json "$base/tokenizer.json"; \
     fi
 
+# Separate multilingual index; the model revision is part of stored vector IDs.
+ENV DETHROTTLED_E5_REVISION=$E5_REVISION
+RUN if [ "$WITH_MODELS" = "1" ]; then \
+        mkdir -p /opt/dethrottled/models/emb-e5 \
+     && base=https://huggingface.co/intfloat/multilingual-e5-small/resolve/$E5_REVISION \
+     && curl -fsSL -o /opt/dethrottled/models/emb-e5/model.onnx "$base/onnx/model.onnx" \
+     && curl -fsSL -o /opt/dethrottled/models/emb-e5/tokenizer.json "$base/tokenizer.json"; \
+    fi
+
 # Unprivileged. The service fetches URLs chosen by whoever can reach it, which
 # is a good enough reason on its own not to run it as root.
 RUN useradd --create-home --uid 10001 dethrottled \
@@ -57,6 +69,11 @@ RUN useradd --create-home --uid 10001 dethrottled \
     && chown dethrottled:dethrottled /data
 # Keep documentation changes out of the dependency and model-download layers.
 COPY docs/ ./docs/
+COPY evaluations/ ./evaluations/
+COPY adapters/ ./adapters/
+COPY scripts/ ./scripts/
+COPY README.md LICENSE ./
+RUN chmod -R a+rX /app/docs /app/evaluations
 USER dethrottled
 
 ENV DETHROTTLED_DATA_DIR=/data \

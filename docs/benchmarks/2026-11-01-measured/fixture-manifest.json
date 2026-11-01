@@ -1,0 +1,51 @@
+[
+  {
+    "file": "jfk.wav",
+    "bytes": 352078,
+    "sha256": "59dfb9a4acb36fe2a2affc14bacbee2920ff435cb13cc314a08c13f66ba7860e",
+    "source": "https://raw.githubusercontent.com/ggml-org/whisper.cpp/master/samples/jfk.wav",
+    "license": "See whisper.cpp repository; speech is JFK inaugural address"
+  },
+  {
+    "file": "ruled-table.pdf",
+    "bytes": 2913,
+    "sha256": "b823e61452751f77558bf766a84822d8d70676bdc334d80f254b7256f78bbdcf",
+    "source": "Synthetic fixture; known table facts described in report",
+    "license": "Created for this evaluation"
+  },
+  {
+    "file": "scanned-table.pdf",
+    "bytes": 5043568,
+    "sha256": "e8e58f6118b08397787e62dfb20b5702d76cfc924c02be37ceb38e154dc8b29e",
+    "source": "Synthetic fixture; known table facts described in report",
+    "license": "Created for this evaluation"
+  },
+  {
+    "file": "test-columnar.xlsb",
+    "bytes": 9691,
+    "sha256": "653e17a2a9e77eda56aaeadcd164ed1eae0ae8897dbefecfb8d96d97878af74e",
+    "source": "https://raw.githubusercontent.com/apache/tika/main/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/test-columnar.xlsb",
+    "license": "Apache-2.0 (Apache Tika)"
+  },
+  {
+    "file": "test-outlook.msg",
+    "bytes": 19968,
+    "sha256": "ba546a434638c46fc6f1edd802c9084b95752afef2fa0aee8301388ab1f8131e",
+    "source": "https://raw.githubusercontent.com/apache/tika/main/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/test-outlook.msg",
+    "license": "Apache-2.0 (Apache Tika)"
+  },
+  {
+    "file": "testEXCEL.xlsb",
+    "bytes": 9161,
+    "sha256": "41b0c82bfa682f968d69e05e23137232d6c89ea4f24439786f0b779be319929b",
+    "source": "https://raw.githubusercontent.com/apache/tika/main/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testEXCEL.xlsb",
+    "license": "Apache-2.0 (Apache Tika)"
+  },
+  {
+    "file": "testMSG.msg",
+    "bytes": 20480,
+    "sha256": "972901d1a0049ed54dc993ba57f6612db4c370acea818601b2133423885070cf",
+    "source": "https://raw.githubusercontent.com/apache/tika/main/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testMSG.msg",
+    "license": "Apache-2.0 (Apache Tika)"
+  }
+]

@@ -1,0 +1,58 @@
+[
+  {
+    "label": "rest-unknown-category",
+    "input": {
+      "query": "Python",
+      "category": "general"
+    },
+    "status": 422,
+    "wall_ms": 163.53,
+    "response": {
+      "detail": [
+        {
+          "type": "extra_forbidden",
+          "loc": [
+            "body",
+            "category"
+          ],
+          "msg": "Extra inputs are not permitted",
+          "input": "general"
+        }
+      ]
+    }
+  },
+  {
+    "label": "public-hostile-diagnostic",
+    "input": {
+      "jsonrpc": "2.0",
+      "id": 1,
+      "method": "tools/call",
+      "params": {
+        "name": "fetch",
+        "arguments": {
+          "urls": [
+            "https://www.cargurus.com/"
+          ],
+          "fresh": true,
+          "max_chars": 2000,
+          "recovery": "manual"
+        }
+      }
+    },
+    "status": 200,
+    "wall_ms": 1271.52,
+    "response": {
+      "jsonrpc": "2.0",
+      "id": 1,
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\n  \"url\": \"https://www.cargurus.com/\",\n  \"content\": \"\",\n  \"content_type\": null,\n  \"quality\": \"failed\",\n  \"failure_reason\": \"direct:http_406 | tls:tls_http_406 | crawl4ai:challenge_detected:generic | headed:headed_step_failed:goto:Error: Page.goto: net::ERR_HTTP_RESPONSE_CODE_FAILURE \",\n  \"tier\": \"headed\",\n  \"cached\": false,\n  \"acquisition_attempts\": [\n    {\n      \"tier\": \"direct\",\n      \"reason\": \"http_406\",\n      \"outcome\": \"failed\"\n    },\n    {\n      \"tier\": \"tls\",\n      \"reason\": \"tls_http_406\",\n      \"outcome\": \"failed\"\n    },\n    {\n      \"tier\": \"crawl4ai\",\n      \"reason\": \"challenge_detected:generic\",\n      \"outcome\": \"challenge\",\n      \"provider\": \"generic\"\n    },\n    {\n      \"tier\": \"headed\",\n      \"reason\": \"headed_step_failed:goto:Error: Page.goto: net::ERR_HTTP_RESPONSE_CODE_FAILURE at https://www.cargurus.com/\\nCall log:\\n  - navigating to \\\"https://www.cargurus.com/\\\", waiting until \\\"domcontentlo\",\n      \"outcome\": \"failed\"\n    }\n  ],\n  \"workflow\": {\n    \"state\": \"failed\",\n    \"answer_verified\": false,\n    \"source_complete\": false,\n    \"response_truncated\": false,\n    \"source_bytes_retained\": false,\n    \"source_bytes_reacquirable\": false,\n    \"next_actions\": [\n      {\n        \"tool\": \"drive\",\n        \"endpoint\": \"/drive\",\n        \"arguments\": {\n          \"url\": \"https://www.cargurus.com/\",\n          \"steps\": [\n            {\n              \"action\": \"snapshot\"\n            }\n          ],\n          \"screenshot\": \"always\",\n          \"allowed_hosts\": [\n            \"www.cargurus.com\"\n          ]\n        },\n        \"reason\": \"Inspect the source interactively if reading cannot acquire it.\",\n        \"automatic\": false\n      }\n    ],\n    \"instruction\": \"Use relevant follow-ups until the question is supported; extraction success is not answer verification.\"\n  }\n}"
+          }
+        ],
+        "isError": false
+      }
+    }
+  }
+]

@@ -1,0 +1,7 @@
+FROM dethrottled:local
+USER root
+COPY pyproject.toml README.md /app/
+COPY src/ /app/src/
+COPY docs/ /app/docs/
+RUN pip install --no-deps /app
+USER dethrottled

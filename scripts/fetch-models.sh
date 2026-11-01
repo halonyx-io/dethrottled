@@ -1,18 +1,26 @@
 #!/usr/bin/env bash
-# Download the one ONNX embedding model used by the semantic corpus.
+# Download pinned ONNX embedding models for the semantic corpus.
 #
 # Weights and tokenizer stay out of git. The image build bakes in the same
 # pinned revision; this script supports source installs.
 #
 #     ./scripts/fetch-models.sh            # embeddings (needed for the corpus)
-#     ./scripts/fetch-models.sh --all      # + OCR language data
+#     ./scripts/fetch-models.sh --multilingual  # + multilingual E5
+#     ./scripts/fetch-models.sh --all      # + E5 and OCR language data
 #
-# Only the corpus embedding model is used by Dethrottled.
+# These are corpus models, not live-web rerankers.
 set -euo pipefail
 
 MODELS="${DETHROTTLED_MODEL_DIR:-${XDG_CACHE_HOME:-$HOME/.cache}/dethrottled/models}"
 WITH_OCR=0
-[ "${1:-}" = "--all" ] && WITH_OCR=1
+WITH_MULTILINGUAL=0
+for arg in "$@"; do
+    case "$arg" in
+        --all) WITH_OCR=1; WITH_MULTILINGUAL=1 ;;
+        --multilingual) WITH_MULTILINGUAL=1 ;;
+        *) echo "unknown option: $arg" >&2; exit 2 ;;
+    esac
+done
 
 mkdir -p "$MODELS"
 echo "model directory: $MODELS"
@@ -20,28 +28,27 @@ echo "model directory: $MODELS"
 # The runtime needs model.onnx and tokenizer.json from the same revision.
 MINILM_REVISION=1110a243fdf4706b3f48f1d95db1a4f5529b4d41
 fetch_model() {
-    local dir="$1" repo="$2" onnx_path="$3"
+    local dir="$1" repo="$2" onnx_path="$3" revision="$4"
     if [ -s "$MODELS/$dir/model.onnx" ] && [ -s "$MODELS/$dir/tokenizer.json" ]; then
         echo "  $dir already present, skipping"
         return
     fi
     echo "  fetching $dir from $repo"
     mkdir -p "$MODELS/$dir"
-    local base="https://huggingface.co/$repo/resolve/$MINILM_REVISION"
+    local base="https://huggingface.co/$repo/resolve/$revision"
     curl -fsSL -o "$MODELS/$dir/model.onnx" "$base/$onnx_path"
     curl -fsSL -o "$MODELS/$dir/tokenizer.json" "$base/tokenizer.json"
 }
 
 echo
 echo "embedding model:"
-# 87MB, 384 dimensions, and the only embedding model this uses.
-#
-# multilingual-e5-small was dropped after measurement: on ten documents with
-# ten known-answer queries both scored 1.00 accuracy and 1.000 MRR, but MiniLM
-# separated the right answer from the best wrong one by 0.242 against e5's
-# 0.037 -- six times the headroom for setting a relevance floor -- at a fifth
-# of the size. Cross-language retrieval is what that trade gives up.
-fetch_model emb-minilm sentence-transformers/all-MiniLM-L6-v2 onnx/model.onnx
+# MiniLM remains the original English index; E5 has a separate version/floor.
+fetch_model emb-minilm sentence-transformers/all-MiniLM-L6-v2 onnx/model.onnx "$MINILM_REVISION"
+if [ "$WITH_MULTILINGUAL" = "1" ]; then
+    E5_REVISION=614241f622f53c4eeff9890bdc4f31cfecc418b3
+    fetch_model emb-e5 intfloat/multilingual-e5-small onnx/model.onnx "$E5_REVISION"
+    echo "  set DETHROTTLED_MULTILINGUAL_CORPUS=1 DETHROTTLED_E5_REVISION=$E5_REVISION"
+fi
 
 if [ "$WITH_OCR" = "1" ]; then
     echo

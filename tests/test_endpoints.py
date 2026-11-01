@@ -9,6 +9,8 @@ milliseconds. Forcing the question is the `render` parameter instead.
 The aliases matter just as much: callers already exist that were written
 against `/extract`, and a rename for tidiness would break them for nothing.
 """
+import shutil
+
 import pytest
 
 fastapi_testclient = pytest.importorskip("fastapi.testclient")
@@ -63,7 +65,8 @@ def test_extract_aliases_are_still_mounted():
 def test_capabilities_name_installed_readers_without_promising_video_access(client):
     read = client.get("/v2/capabilities").json()["read"]
     assert {"html", "csv", "tsv"} <= set(read["formats"])
-    assert "doc" not in read["formats"] and "ppt" not in read["formats"]
+    assert ("doc" in read["formats"]) == bool(shutil.which("antiword"))
+    assert ("ppt" in read["formats"]) == bool(shutil.which("catppt"))
     assert isinstance(read["pdf_ocr_installed"], bool)
     assert isinstance(read["youtube_captions_configured"], bool)
 
@@ -226,5 +229,5 @@ def test_language_is_declared_because_it_is_honoured(client):
     declared precisely because they are accepted and change nothing."""
     declared = client.get("/v2/capabilities").json()["optional_fields"]
     assert "language" in declared["search"]
-    assert "engines" not in declared["search"]
-    assert "profile" not in declared["search"]
+    assert "engines" in declared["search"]
+    assert "profile" in declared["search"]

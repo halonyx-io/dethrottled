@@ -1,0 +1,288 @@
+[
+  {
+    "file": "testMSG.msg",
+    "elapsed_ms": 2335,
+    "response": [
+      {
+        "url": "https://raw.githubusercontent.com/apache/tika/main/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testMSG.msg",
+        "content": "MIME registry use cases\nFrom\nJukka Zitting\nTo\ntika-dev@lucene.apache.org\nRecipients\ntika-dev@lucene.apache.org\n\nHi,\n\nAs discussed, I've been working on making the type detection code more\nmodular and extensible. This work has progressed pretty well, and now\nI'd like to start integrating the results with the rest of Tika. To do\nthis, I'll need to modify the current MIME type classes. However, I\ndon't know all the ways in which this code is being used out there.\n\nIf you're directly using the classes in org.apache.tika.mime, please\nlet me know about your use cases and the classes/methods you're\naccessing. Otherwise I might end up breaking your application.\n\nBR,\n\nJukka Zitting",
+        "content_type": "application/vnd.ms-outlook",
+        "quality": "ok",
+        "tier": "direct/direct-native",
+        "cached": false,
+        "title": "",
+        "published": "",
+        "retrieved_at": "2026-11-01T03:26:35.153587+00:00",
+        "cache_age_seconds": 0,
+        "cache_expires_at": null,
+        "truncated": false,
+        "content_chars": 681,
+        "content_status": "complete",
+        "assets": [],
+        "warnings": [
+          "Fallback parser text; attachment completeness and physical table cells are not verified."
+        ],
+        "acquisition": {
+          "rendered": false,
+          "wait_for": "",
+          "render_delay": null,
+          "extraction_limit": 1000000,
+          "page_start": 1,
+          "page_end": null,
+          "ocr_language": "",
+          "ocr_mode": "auto",
+          "ocr_allowed": true,
+          "row_start": 1,
+          "row_end": null,
+          "sheet": "",
+          "max_cell_chars": null,
+          "document_mode": "auto",
+          "scan_layout_revision": 1,
+          "format_worker_configured": true,
+          "layout_worker_configured": true
+        },
+        "extraction": {
+          "parser": "apache-tika",
+          "parser_version": "3.3.3",
+          "partial": false,
+          "warnings": [
+            "Fallback parser text; attachment completeness and physical table cells are not verified."
+          ],
+          "mime": "application/vnd.ms-outlook",
+          "source_sha256": "972901d1a0049ed54dc993ba57f6612db4c370acea818601b2133423885070cf",
+          "source_bytes": 20480
+        },
+        "source_partial": false,
+        "final_url": "https://raw.githubusercontent.com/apache/tika/main/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testMSG.msg",
+        "source_sha256": "972901d1a0049ed54dc993ba57f6612db4c370acea818601b2133423885070cf",
+        "document_id": "doc_35955ad891354e23b804ef3cd724b7b9",
+        "document_sha256": "eff81711267953d226f52fc5a4f53e4970c569010d4799018de91134a64ae2fd",
+        "document_chars": 681,
+        "document_expires_at": 1794108395.1619747,
+        "workflow": {
+          "state": "evidence_available",
+          "answer_verified": false,
+          "source_complete": null,
+          "response_truncated": false,
+          "source_bytes_retained": false,
+          "source_bytes_reacquirable": true,
+          "next_actions": [],
+          "instruction": "Use relevant follow-ups until the question is supported; extraction success is not answer verification."
+        }
+      }
+    ],
+    "retained": {
+      "url": "https://raw.githubusercontent.com/apache/tika/main/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testMSG.msg",
+      "content_type": "application/vnd.ms-outlook",
+      "quality": "ok",
+      "tier": "direct/direct-native",
+      "cached": false,
+      "title": "",
+      "published": "",
+      "retrieved_at": "2026-11-01T03:26:35.153587+00:00",
+      "cache_age_seconds": 0,
+      "cache_expires_at": null,
+      "truncated": false,
+      "content_chars": 681,
+      "content_status": "complete",
+      "assets": [],
+      "warnings": [
+        "Fallback parser text; attachment completeness and physical table cells are not verified."
+      ],
+      "acquisition": {
+        "rendered": false,
+        "wait_for": "",
+        "render_delay": null,
+        "extraction_limit": 1000000,
+        "page_start": 1,
+        "page_end": null,
+        "ocr_language": "",
+        "ocr_mode": "auto",
+        "ocr_allowed": true,
+        "row_start": 1,
+        "row_end": null,
+        "sheet": "",
+        "max_cell_chars": null,
+        "document_mode": "auto",
+        "scan_layout_revision": 1,
+        "format_worker_configured": true,
+        "layout_worker_configured": true
+      },
+      "extraction": {
+        "parser": "apache-tika",
+        "parser_version": "3.3.3",
+        "partial": false,
+        "warnings": [
+          "Fallback parser text; attachment completeness and physical table cells are not verified."
+        ],
+        "mime": "application/vnd.ms-outlook",
+        "source_sha256": "972901d1a0049ed54dc993ba57f6612db4c370acea818601b2133423885070cf",
+        "source_bytes": 20480
+      },
+      "source_partial": false,
+      "final_url": "https://raw.githubusercontent.com/apache/tika/main/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testMSG.msg",
+      "source_sha256": "972901d1a0049ed54dc993ba57f6612db4c370acea818601b2133423885070cf",
+      "document_id": "doc_35955ad891354e23b804ef3cd724b7b9",
+      "document_sha256": "eff81711267953d226f52fc5a4f53e4970c569010d4799018de91134a64ae2fd",
+      "document_expires_at": 1794108395.1619747,
+      "document_chars": 681,
+      "content": "MIME registry use cases\nFrom\nJukka Zitting\nTo\ntika-dev@lucene.apache.org\nRecipients\ntika-dev@lucene.apache.org\n\nHi,\n\nAs discussed, I've been working on making the type detection code more\nmodular and extensible. This work has progressed pretty well, and now\nI'd like to start integrating the results with the rest of Tika. To do\nthis, I'll need to modify the current MIME type classes. However, I\ndon't know all the ways in which this code is being used out there.\n\nIf you're directly using the classes in org.apache.tika.mime, please\nlet me know about your use cases and the classes/methods you're\naccessing. Otherwise I might end up breaking your application.\n\nBR,\n\nJukka Zitting",
+      "offset": 0,
+      "next_offset": null,
+      "workflow": {
+        "state": "evidence_available",
+        "answer_verified": false,
+        "source_complete": null,
+        "response_truncated": false,
+        "source_bytes_retained": false,
+        "source_bytes_reacquirable": true,
+        "next_actions": [],
+        "instruction": "Use relevant follow-ups until the question is supported; extraction success is not answer verification."
+      }
+    },
+    "pass": true
+  },
+  {
+    "file": "testEXCEL.xlsb",
+    "elapsed_ms": 216,
+    "response": [
+      {
+        "url": "https://raw.githubusercontent.com/apache/tika/main/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testEXCEL.xlsb",
+        "content": "Sheet1\nThis is an example spreadsheet created with Microsoft Excel 2007 Beta 2.\n\nSheet2\n\nSheet3",
+        "content_type": "application/vnd.ms-excel.sheet.binary.macroEnabled.12",
+        "quality": "ok",
+        "tier": "direct/direct-native",
+        "cached": true,
+        "title": "",
+        "published": "",
+        "retrieved_at": "2026-11-01T03:26:32.306763+00:00",
+        "cache_age_seconds": 3.084,
+        "cache_expires_at": "2026-11-22T03:26:32.306763+00:00",
+        "truncated": false,
+        "content_chars": 95,
+        "content_status": "complete",
+        "assets": [],
+        "warnings": [
+          "Fallback parser text; attachment completeness and physical table cells are not verified."
+        ],
+        "acquisition": {
+          "rendered": false,
+          "wait_for": "",
+          "render_delay": null,
+          "extraction_limit": 1000000,
+          "page_start": 1,
+          "page_end": null,
+          "ocr_language": "",
+          "ocr_mode": "auto",
+          "ocr_allowed": true,
+          "row_start": 1,
+          "row_end": null,
+          "sheet": "",
+          "max_cell_chars": null,
+          "document_mode": "auto",
+          "scan_layout_revision": 1,
+          "format_worker_configured": true,
+          "layout_worker_configured": true
+        },
+        "extraction": {
+          "parser": "apache-tika",
+          "parser_version": "3.3.3",
+          "partial": false,
+          "warnings": [
+            "Fallback parser text; attachment completeness and physical table cells are not verified."
+          ],
+          "mime": "application/vnd.ms-excel.sheet.binary.macroEnabled.12",
+          "source_sha256": "41b0c82bfa682f968d69e05e23137232d6c89ea4f24439786f0b779be319929b",
+          "source_bytes": 9161
+        },
+        "source_partial": false,
+        "final_url": "https://raw.githubusercontent.com/apache/tika/main/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testEXCEL.xlsb",
+        "source_sha256": "41b0c82bfa682f968d69e05e23137232d6c89ea4f24439786f0b779be319929b",
+        "document_id": "doc_d02c97fb2e1b4580ad0abe393f1854d8",
+        "document_sha256": "9a9993bd97127d828d194b261637b9e789651e977e0b18fb9f9cc34a0194a9bf",
+        "document_chars": 95,
+        "document_expires_at": 1794108395.3917878,
+        "workflow": {
+          "state": "evidence_available",
+          "answer_verified": false,
+          "source_complete": null,
+          "response_truncated": false,
+          "source_bytes_retained": false,
+          "source_bytes_reacquirable": true,
+          "next_actions": [],
+          "instruction": "Use relevant follow-ups until the question is supported; extraction success is not answer verification."
+        }
+      }
+    ],
+    "retained": {
+      "url": "https://raw.githubusercontent.com/apache/tika/main/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testEXCEL.xlsb",
+      "content_type": "application/vnd.ms-excel.sheet.binary.macroEnabled.12",
+      "quality": "ok",
+      "tier": "direct/direct-native",
+      "cached": true,
+      "title": "",
+      "published": "",
+      "retrieved_at": "2026-11-01T03:26:32.306763+00:00",
+      "cache_age_seconds": 3.084,
+      "cache_expires_at": "2026-11-22T03:26:32.306763+00:00",
+      "truncated": false,
+      "content_chars": 95,
+      "content_status": "complete",
+      "assets": [],
+      "warnings": [
+        "Fallback parser text; attachment completeness and physical table cells are not verified."
+      ],
+      "acquisition": {
+        "rendered": false,
+        "wait_for": "",
+        "render_delay": null,
+        "extraction_limit": 1000000,
+        "page_start": 1,
+        "page_end": null,
+        "ocr_language": "",
+        "ocr_mode": "auto",
+        "ocr_allowed": true,
+        "row_start": 1,
+        "row_end": null,
+        "sheet": "",
+        "max_cell_chars": null,
+        "document_mode": "auto",
+        "scan_layout_revision": 1,
+        "format_worker_configured": true,
+        "layout_worker_configured": true
+      },
+      "extraction": {
+        "parser": "apache-tika",
+        "parser_version": "3.3.3",
+        "partial": false,
+        "warnings": [
+          "Fallback parser text; attachment completeness and physical table cells are not verified."
+        ],
+        "mime": "application/vnd.ms-excel.sheet.binary.macroEnabled.12",
+        "source_sha256": "41b0c82bfa682f968d69e05e23137232d6c89ea4f24439786f0b779be319929b",
+        "source_bytes": 9161
+      },
+      "source_partial": false,
+      "final_url": "https://raw.githubusercontent.com/apache/tika/main/tika-parsers/tika-parsers-standard/tika-parsers-standard-modules/tika-parser-microsoft-module/src/test/resources/test-documents/testEXCEL.xlsb",
+      "source_sha256": "41b0c82bfa682f968d69e05e23137232d6c89ea4f24439786f0b779be319929b",
+      "document_id": "doc_d02c97fb2e1b4580ad0abe393f1854d8",
+      "document_sha256": "9a9993bd97127d828d194b261637b9e789651e977e0b18fb9f9cc34a0194a9bf",
+      "document_expires_at": 1794108395.3917878,
+      "document_chars": 95,
+      "content": "Sheet1\nThis is an example spreadsheet created with Microsoft Excel 2007 Beta 2.\n\nSheet2\n\nSheet3",
+      "offset": 0,
+      "next_offset": null,
+      "workflow": {
+        "state": "evidence_available",
+        "answer_verified": false,
+        "source_complete": null,
+        "response_truncated": false,
+        "source_bytes_retained": false,
+        "source_bytes_reacquirable": true,
+        "next_actions": [],
+        "instruction": "Use relevant follow-ups until the question is supported; extraction success is not answer verification."
+      }
+    },
+    "pass": true
+  }
+]

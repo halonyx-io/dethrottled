@@ -1,0 +1,502 @@
+[
+  {
+    "build": "baseline",
+    "kind": "search",
+    "query": "Python sqlite3 official documentation",
+    "elapsed_ms": 1123,
+    "response": {
+      "ok": true,
+      "engine": "ddg-lite",
+      "results": [
+        {
+          "title": "sqlite3 \u2014 DB-API 2.0 interface for SQLite databases - Python",
+          "url": "https://docs.python.org/3/library/sqlite3.html",
+          "snippet": "sqlite3 \u2014 DB-API 2.0 interface for SQLite databases \u00b6 Source code: Lib/sqlite3/ SQLite is a C library that provides a lightweight disk-based database that doesn't require a separate server process and allows accessing the database using a nonstandard variant of the SQL query language. Some applications can use SQLite for internal data storage. It's also possible to prototype an ..."
+        },
+        {
+          "title": "Documentation - SQLite",
+          "url": "https://sqlite.org/docs.html",
+          "snippet": "The SQLite File Format \u2192 A description of the format used for SQLite database and journal files, and other details required to create software to read and write SQLite databases without using SQLite."
+        },
+        {
+          "title": "sqlite3 \u2014 DB-API 2.0 interface for SQLite databases \u2014 Python documentation",
+          "url": "https://getdocs.org/Python/docs/3.7/library/sqlite3",
+          "snippet": "sqlite3 \u2014 DB-API 2.0 interface for SQLite databases Source code: :source:`Lib/sqlite3/` SQLite is a C library that provides a lightweight disk-based database that doesn't require a separate server process and allows accessing the database using a nonstandard variant of the SQL query language."
+        },
+        {
+          "title": "sqlite3 \u2014 DB-API 2.0 interface for SQLite databases \u2014 pysqlite 2.7.0 ...",
+          "url": "https://pysqlite.readthedocs.io/en/latest/sqlite3.html",
+          "snippet": "sqlite3 \u2014 DB-API 2.0 interface for SQLite databases \u00b6 SQLite is a C library that provides a lightweight disk-based database that doesn't require a separate server process and allows accessing the database using a nonstandard variant of the SQL query language. Some applications can use SQLite for internal data storage."
+        },
+        {
+          "title": "Python sqlite3 Module - W3Schools",
+          "url": "https://www.w3schools.com/python/ref_module_sqlite3.asp",
+          "snippet": "The sqlite3 module provides an interface to SQLite, a lightweight disk-based database. Use it to create, query, and manage SQLite databases without needing a separate database server."
+        },
+        {
+          "title": "sqlite3 | Python Standard Library - Real Python",
+          "url": "https://realpython.com/ref/stdlib/sqlite3/",
+          "snippet": "The Python sqlite3 module provides an interface for interacting with SQLite databases, which are lightweight, serverless, and self-contained. This module allows you to effortlessly create, manage, and query SQLite databases from Python code."
+        },
+        {
+          "title": "sqlite3 \u2014 DB-API 2.0 interface for SQLite databases \u2014 Python documentation",
+          "url": "https://getdocs.org/Python/docs/3.10/library/sqlite3",
+          "snippet": "It's also possible to prototype an application using SQLite and then port the code to a larger database such as PostgreSQL or Oracle. The sqlite3 module was written by Gerhard H\u00e4ring. It provides a SQL interface compliant with the DB-API 2.0 specification described by PEP 249, and requires SQLite 3.7.15 or newer."
+        },
+        {
+          "title": "SQLite Home Page",
+          "url": "https://sqlite.org/",
+          "snippet": "SQLite is a C-language library that implements a small, fast, self-contained, high-reliability, full-featured, SQL database engine. SQLite is the most used database engine in the world."
+        },
+        {
+          "title": "Python SQLite - GeeksforGeeks",
+          "url": "https://www.geeksforgeeks.org/python/python-sqlite/",
+          "snippet": "Python SQLite3 module is used to integrate the SQLite database with Python. It is a standardized Python DBI API 2.0 and provides a straightforward and simple-to-use interface for interacting with SQLite databases."
+        },
+        {
+          "title": "SQLite Python",
+          "url": "https://www.sqlitetutorial.net/sqlite-python/",
+          "snippet": "This tutorial series guides you step-by-step on how to work with the SQLite database using Python sqlite3 module."
+        }
+      ],
+      "attempts": [
+        {
+          "engine": "ddg-lite",
+          "status": 200,
+          "reason": null,
+          "elapsed_s": 1.005,
+          "count": 10
+        },
+        {
+          "engine": "ddg-html",
+          "status": null,
+          "reason": "cancelled_by_winner",
+          "count": 0
+        },
+        {
+          "engine": "bing",
+          "status": null,
+          "reason": "cancelled_by_winner",
+          "count": 0
+        }
+      ],
+      "service_s": 1.112,
+      "queue_s": 0.0
+    }
+  },
+  {
+    "build": "baseline",
+    "kind": "search",
+    "query": "llvmpipe Mesa documentation",
+    "elapsed_ms": 1194,
+    "response": {
+      "ok": true,
+      "engine": "ddg-lite",
+      "results": [
+        {
+          "title": "LLVMpipe \u2014 The Mesa 3D Graphics Library latest documentation",
+          "url": "https://docs.mesa3d.org/drivers/llvmpipe.html",
+          "snippet": "The Gallium LLVMpipe driver is a software rasterizer that uses LLVM to do runtime code generation. Shaders, point/line/triangle rasterization and vertex processing are implemented with LLVM IR which is translated to x86, x86-64, or ppc64le machine code. Also, the driver is multithreaded to take advantage of multiple CPU cores (up to 32 at this ..."
+        },
+        {
+          "title": "llvmpipe \u2014 Mesa 12.0 documentation - Read the Docs",
+          "url": "https://mesa-docs.readthedocs.io/en/latest/llvmpipe.html",
+          "snippet": "llvmpipe \u00b6 The Gallium llvmpipe driver is a software rasterizer that uses LLVM to do runtime code generation. Shaders, point/line/triangle rasterization and vertex processing are implemented with LLVM IR which is translated to x86 or x86-64 machine code. Also, the driver is multithreaded to take advantage of multiple CPU cores (up to 8 at this ..."
+        },
+        {
+          "title": "Gallium LLVMPipe Driver \u2014 The Mesa 3D Graphics Library latest documentation",
+          "url": "https://ldeks.pages.freedesktop.org/mesa/llvmpipe.html",
+          "snippet": "The Gallium llvmpipe driver is a software rasterizer that uses LLVM to do runtime code generation. Shaders, point/line/triangle rasterization and vertex processing are implemented with LLVM IR which is translated to x86, x86-64, or ppc64le machine code. Also, the driver is multithreaded to take advantage of multiple CPU cores (up to 8 at this ..."
+        },
+        {
+          "title": "Home \u2014 The Mesa 3D Graphics Library",
+          "url": "https://mesa3d.org/",
+          "snippet": "More information\u2026 Software rendering LLVMPipe The LLVMPipe driver is a high-performance software renderer. It's useful for systems without a dedicated GPU, or in the process of bringing up a platform. It uses LLVM as a code-generator to dynamically compile efficient machine code for the CPU. More information\u2026 Softpipe"
+        },
+        {
+          "title": "mesa/docs/llvmpipe.html at master \u00b7 DirectFB/mesa \u00b7 GitHub",
+          "url": "https://github.com/DirectFB/mesa/blob/master/docs/llvmpipe.html",
+          "snippet": "DFB Mesa. Contribute to DirectFB/mesa development by creating an account on GitHub."
+        },
+        {
+          "title": "mesa-docs/docs/llvmpipe.rst at master - GitHub",
+          "url": "https://github.com/nicholasbishop/mesa-docs/blob/master/docs/llvmpipe.rst",
+          "snippet": "Documentation experiment. Contribute to nicholasbishop/mesa-docs development by creating an account on GitHub."
+        },
+        {
+          "title": "LLVMPipe | Qt Creator Documentation",
+          "url": "https://doc.qt.io/qtcreator/qtcreator-binary-attribution-llvmpipe.html",
+          "snippet": "Mesa is a 3D graphics library with an API which is very similar to that of OpenGL. The llvmpipe software renderer enables the running of OpenGL applications without any hardware or driver support."
+        },
+        {
+          "title": "Mesa llvmpipe | Qt 6.12",
+          "url": "https://doc.qt.io/qt-6/qt-attribution-llvmpipe.html",
+          "snippet": "Mesa is a 3-D graphics library with an API which is very similar to that of OpenGL. The llvmpipe software renderer allows running of OpenGL applications without any hardware / driver support. Shipped as part of the binary packages for Windows (opengl32sw.dll)."
+        },
+        {
+          "title": "llvmpipe.html \u00ab docs - ~olv/mesa - olv's Mesa repository",
+          "url": "https://cgit.freedesktop.org/~olv/mesa/tree/docs/llvmpipe.html",
+          "snippet": "olv's Mesa repository olv summary refs log tree commit diff log msg author committer range path: root / docs / llvmpipe.html blob: 28d7411d4347e7a56ba33960d78fd33e39b9c1bf (plain)"
+        }
+      ],
+      "attempts": [
+        {
+          "engine": "ddg-lite",
+          "status": 200,
+          "reason": null,
+          "elapsed_s": 1.097,
+          "count": 9
+        },
+        {
+          "engine": "ddg-html",
+          "status": null,
+          "reason": "cancelled_by_winner",
+          "count": 0
+        },
+        {
+          "engine": "bing",
+          "status": null,
+          "reason": "cancelled_by_winner",
+          "count": 0
+        }
+      ],
+      "service_s": 1.192,
+      "queue_s": -0.0
+    }
+  },
+  {
+    "build": "baseline",
+    "kind": "search",
+    "query": "Cloudflare challenge clearance documentation",
+    "elapsed_ms": 1113,
+    "response": {
+      "ok": true,
+      "engine": "ddg-lite",
+      "results": [
+        {
+          "title": "Clearance \u00b7 Cloudflare challenges docs",
+          "url": "https://developers.cloudflare.com/cloudflare-challenges/concepts/clearance/",
+          "snippet": "How cf_clearance cookies prove a visitor passed a Cloudflare Challenge."
+        },
+        {
+          "title": "Challenges - Cloudflare Docs",
+          "url": "https://developers.cloudflare.com/cloudflare-challenges/",
+          "snippet": "Verify visitors are human using challenge pages, Turnstile, and JavaScript detections."
+        },
+        {
+          "title": "Clearance\uff08\u901a\u8fc7\u8bc1\u660e\uff09 \u00b7 Cloudflare challenges docs",
+          "url": "https://cloudflaredoc.ubitools.com/cloudflare-challenges/concepts/clearance/",
+          "snippet": "Challenge clearance\uff08\u8d28\u8be2\u901a\u8fc7\u8bc1\u660e\uff09\uff1a\u5f53\u8bbf\u5ba2\u89e3\u51b3\u8d28\u8be2\uff08\u4f8b\u5982\uff0c\u63d2\u9875\u5f0f\u8d28\u8be2\u9875\u9762\u6216\u542f\u7528\u4e86\u9884\u5148\u8bc1\u660e\u7684 Turnstile\uff09\u65f6\u6388\u4e88\u3002 Precursor clearance\uff08Precursor \u901a\u8fc7\u8bc1\u660e\uff09\uff1a\u6839\u636e\u4f1a\u8bdd\u884c\u4e3a\u4e0d\u65ad\u66f4\u65b0\u3002"
+        },
+        {
+          "title": "Cloudflare Challenge \u2014 SolverCF Documentation",
+          "url": "https://solvercf.com/docs/cloudflare-challenge",
+          "snippet": "Cloudflare Challenge Cloudflare Challenge (also known as the \"5-second shield\", \"Just a moment...\" interstitial, or Cloudflare Under Attack mode) is an interactive or background verification flow protecting websites against bots and DDoS attacks. SolverCF can solve Cloudflare Challenges and return either: Clearance Cookie (cf_clearance): Use this cookie alongside the matching User-Agent and ..."
+        },
+        {
+          "title": "Cf_clearance cookie purpose - SSL / TLS - Cloudflare Community",
+          "url": "https://community.cloudflare.com/t/cf-clearance-cookie-purpose/739657",
+          "snippet": "According to Cloudflare's docs, this cookie is strictly necessary because it stores the proof of Cloudflare bot challenge passed. However, I have added a Cookie Banner from OneTrust on the site and it says that the cf_clearance cookie is actually a functional one, meaning that it should not generate unless the user has consented."
+        },
+        {
+          "title": "CF-Clearance-Scraper - GitHub",
+          "url": "https://github.com/Xewdy444/CF-Clearance-Scraper",
+          "snippet": "A simple program for scraping Cloudflare clearance (cf_clearance) cookies from websites issuing Cloudflare challenges to visitors. This program works on all Cloudflare challenge types (JavaScript, managed, and interactive)."
+        },
+        {
+          "title": "GitHub - B00H0O/Cloudflare-challenge: Solves the Cloudflare managed ...",
+          "url": "https://github.com/B00H0O/Cloudflare-challenge",
+          "snippet": "Solves the Cloudflare managed challenge in 2.5s with headless Chrome over raw CDP, Returns cf_clearance. - B00H0O/Cloudflare-challenge"
+        },
+        {
+          "title": "Cloudflare's cf_clearance cookie: issuance, scope, and lifetime",
+          "url": "https://blog.crawlex.net/blog/cloudflare-cf-clearance-cookie/",
+          "snippet": "A reference on Cloudflare's cf_clearance cookie: when a passed challenge issues it, what it is bound to, its zone scope and partitioned cross-site behaviour, its configurable lifetime, and why a stolen copy does not travel."
+        },
+        {
+          "title": "cf_clearance Cookie Explained - Cloudflare Challenge Sessions",
+          "url": "https://blog.captcharank.com/cloudflare-cf-clearance-cookie-explained",
+          "snippet": "In practical terms, cloudflare cf clearance cookie explained is a piece of context that connects the browser-side challenge to the server-side verification decision."
+        },
+        {
+          "title": "NullFlare \u2014 Turnstile and WAFv3 solving",
+          "url": "https://www.nullflare.com/",
+          "snippet": "Overview Pricing Docs Cloudflare challenge solving Turnstile tokens and WAFv3 clearance. Send one request, get the token or clearance back on the same connection. No task IDs, no polling, and failed solves are free."
+        }
+      ],
+      "attempts": [
+        {
+          "engine": "ddg-lite",
+          "status": 200,
+          "reason": null,
+          "elapsed_s": 1.03,
+          "count": 10
+        },
+        {
+          "engine": "ddg-html",
+          "status": null,
+          "reason": "cancelled_by_winner",
+          "count": 0
+        },
+        {
+          "engine": "bing",
+          "status": null,
+          "reason": "cancelled_by_winner",
+          "count": 0
+        }
+      ],
+      "service_s": 1.111,
+      "queue_s": 0.0
+    }
+  },
+  {
+    "build": "candidate",
+    "kind": "search",
+    "query": "Python sqlite3 official documentation",
+    "elapsed_ms": 965,
+    "response": {
+      "ok": true,
+      "engine": "ddg-lite",
+      "results": [
+        {
+          "title": "sqlite3 \u2014 DB-API 2.0 interface for SQLite databases - Python",
+          "url": "https://docs.python.org/3/library/sqlite3.html",
+          "snippet": "sqlite3 \u2014 DB-API 2.0 interface for SQLite databases \u00b6 Source code: Lib/sqlite3/ SQLite is a C library that provides a lightweight disk-based database that doesn't require a separate server process and allows accessing the database using a nonstandard variant of the SQL query language. Some applications can use SQLite for internal data storage. It's also possible to prototype an ..."
+        },
+        {
+          "title": "Documentation - SQLite",
+          "url": "https://sqlite.org/docs.html",
+          "snippet": "The SQLite File Format \u2192 A description of the format used for SQLite database and journal files, and other details required to create software to read and write SQLite databases without using SQLite."
+        },
+        {
+          "title": "sqlite3 \u2014 DB-API 2.0 interface for SQLite databases \u2014 Python documentation",
+          "url": "https://getdocs.org/Python/docs/3.7/library/sqlite3",
+          "snippet": "sqlite3 \u2014 DB-API 2.0 interface for SQLite databases Source code: :source:`Lib/sqlite3/` SQLite is a C library that provides a lightweight disk-based database that doesn't require a separate server process and allows accessing the database using a nonstandard variant of the SQL query language."
+        },
+        {
+          "title": "sqlite3 \u2014 DB-API 2.0 interface for SQLite databases \u2014 pysqlite 2.7.0 ...",
+          "url": "https://pysqlite.readthedocs.io/en/latest/sqlite3.html",
+          "snippet": "sqlite3 \u2014 DB-API 2.0 interface for SQLite databases \u00b6 SQLite is a C library that provides a lightweight disk-based database that doesn't require a separate server process and allows accessing the database using a nonstandard variant of the SQL query language. Some applications can use SQLite for internal data storage."
+        },
+        {
+          "title": "Python sqlite3 Module - W3Schools",
+          "url": "https://www.w3schools.com/python/ref_module_sqlite3.asp",
+          "snippet": "The sqlite3 module provides an interface to SQLite, a lightweight disk-based database. Use it to create, query, and manage SQLite databases without needing a separate database server."
+        },
+        {
+          "title": "sqlite3 | Python Standard Library - Real Python",
+          "url": "https://realpython.com/ref/stdlib/sqlite3/",
+          "snippet": "The Python sqlite3 module provides an interface for interacting with SQLite databases, which are lightweight, serverless, and self-contained. This module allows you to effortlessly create, manage, and query SQLite databases from Python code."
+        },
+        {
+          "title": "sqlite3 \u2014 DB-API 2.0 interface for SQLite databases \u2014 Python documentation",
+          "url": "https://getdocs.org/Python/docs/3.10/library/sqlite3",
+          "snippet": "It's also possible to prototype an application using SQLite and then port the code to a larger database such as PostgreSQL or Oracle. The sqlite3 module was written by Gerhard H\u00e4ring. It provides a SQL interface compliant with the DB-API 2.0 specification described by PEP 249, and requires SQLite 3.7.15 or newer."
+        },
+        {
+          "title": "SQLite Home Page",
+          "url": "https://sqlite.org/",
+          "snippet": "SQLite is a C-language library that implements a small, fast, self-contained, high-reliability, full-featured, SQL database engine. SQLite is the most used database engine in the world."
+        },
+        {
+          "title": "Python SQLite - GeeksforGeeks",
+          "url": "https://www.geeksforgeeks.org/python/python-sqlite/",
+          "snippet": "Python SQLite3 module is used to integrate the SQLite database with Python. It is a standardized Python DBI API 2.0 and provides a straightforward and simple-to-use interface for interacting with SQLite databases."
+        },
+        {
+          "title": "SQLite Python",
+          "url": "https://www.sqlitetutorial.net/sqlite-python/",
+          "snippet": "This tutorial series guides you step-by-step on how to work with the SQLite database using Python sqlite3 module."
+        }
+      ],
+      "attempts": [
+        {
+          "engine": "ddg-lite",
+          "status": 200,
+          "reason": null,
+          "elapsed_s": 0.784,
+          "count": 10
+        },
+        {
+          "engine": "ddg-html",
+          "status": null,
+          "reason": "cancelled_by_winner",
+          "count": 0
+        },
+        {
+          "engine": "bing",
+          "status": null,
+          "reason": "cancelled_by_winner",
+          "count": 0
+        }
+      ],
+      "service_s": 0.963,
+      "queue_s": -0.0
+    }
+  },
+  {
+    "build": "candidate",
+    "kind": "search",
+    "query": "llvmpipe Mesa documentation",
+    "elapsed_ms": 924,
+    "response": {
+      "ok": true,
+      "engine": "ddg-lite",
+      "results": [
+        {
+          "title": "LLVMpipe \u2014 The Mesa 3D Graphics Library latest documentation",
+          "url": "https://docs.mesa3d.org/drivers/llvmpipe.html",
+          "snippet": "The Gallium LLVMpipe driver is a software rasterizer that uses LLVM to do runtime code generation. Shaders, point/line/triangle rasterization and vertex processing are implemented with LLVM IR which is translated to x86, x86-64, or ppc64le machine code. Also, the driver is multithreaded to take advantage of multiple CPU cores (up to 32 at this ..."
+        },
+        {
+          "title": "llvmpipe \u2014 Mesa 12.0 documentation - Read the Docs",
+          "url": "https://mesa-docs.readthedocs.io/en/latest/llvmpipe.html",
+          "snippet": "llvmpipe \u00b6 The Gallium llvmpipe driver is a software rasterizer that uses LLVM to do runtime code generation. Shaders, point/line/triangle rasterization and vertex processing are implemented with LLVM IR which is translated to x86 or x86-64 machine code. Also, the driver is multithreaded to take advantage of multiple CPU cores (up to 8 at this ..."
+        },
+        {
+          "title": "Gallium LLVMPipe Driver \u2014 The Mesa 3D Graphics Library latest documentation",
+          "url": "https://ldeks.pages.freedesktop.org/mesa/llvmpipe.html",
+          "snippet": "The Gallium llvmpipe driver is a software rasterizer that uses LLVM to do runtime code generation. Shaders, point/line/triangle rasterization and vertex processing are implemented with LLVM IR which is translated to x86, x86-64, or ppc64le machine code. Also, the driver is multithreaded to take advantage of multiple CPU cores (up to 8 at this ..."
+        },
+        {
+          "title": "Home \u2014 The Mesa 3D Graphics Library",
+          "url": "https://mesa3d.org/",
+          "snippet": "More information\u2026 Software rendering LLVMPipe The LLVMPipe driver is a high-performance software renderer. It's useful for systems without a dedicated GPU, or in the process of bringing up a platform. It uses LLVM as a code-generator to dynamically compile efficient machine code for the CPU. More information\u2026 Softpipe"
+        },
+        {
+          "title": "mesa/docs/llvmpipe.html at master \u00b7 DirectFB/mesa \u00b7 GitHub",
+          "url": "https://github.com/DirectFB/mesa/blob/master/docs/llvmpipe.html",
+          "snippet": "DFB Mesa. Contribute to DirectFB/mesa development by creating an account on GitHub."
+        },
+        {
+          "title": "mesa-docs/docs/llvmpipe.rst at master - GitHub",
+          "url": "https://github.com/nicholasbishop/mesa-docs/blob/master/docs/llvmpipe.rst",
+          "snippet": "Documentation experiment. Contribute to nicholasbishop/mesa-docs development by creating an account on GitHub."
+        },
+        {
+          "title": "llvmpipe.html \u00ab docs - ~olv/mesa - olv's Mesa repository",
+          "url": "https://cgit.freedesktop.org/~olv/mesa/tree/docs/llvmpipe.html",
+          "snippet": "olv's Mesa repository olv summary refs log tree commit diff log msg author committer range path: root / docs / llvmpipe.html blob: 28d7411d4347e7a56ba33960d78fd33e39b9c1bf (plain)"
+        },
+        {
+          "title": "LLVMPipe | Qt Creator Documentation",
+          "url": "https://doc.qt.io/qtcreator/qtcreator-binary-attribution-llvmpipe.html",
+          "snippet": "Mesa is a 3D graphics library with an API which is very similar to that of OpenGL. The llvmpipe software renderer enables the running of OpenGL applications without any hardware or driver support."
+        },
+        {
+          "title": "Environment Variables \u2014 The Mesa 3D Graphics Library latest documentation",
+          "url": "https://docs.mesa3d.org/envvars.html",
+          "snippet": "Environment Variables \u00b6 Normally, no environment variables need to be set. Most of the environment variables used by Mesa/Gallium are for debugging purposes, but they can sometimes be useful for debugging end-user issues. Android System Properties \u00b6 Android (generally) uses system properties rather than environment variables to control Mesa/Gallium behavior, although there are some ..."
+        }
+      ],
+      "attempts": [
+        {
+          "engine": "ddg-lite",
+          "status": 200,
+          "reason": null,
+          "elapsed_s": 0.804,
+          "count": 9
+        },
+        {
+          "engine": "ddg-html",
+          "status": null,
+          "reason": "cancelled_by_winner",
+          "count": 0
+        },
+        {
+          "engine": "bing",
+          "status": null,
+          "reason": "cancelled_by_winner",
+          "count": 0
+        }
+      ],
+      "service_s": 0.922,
+      "queue_s": 0.0
+    }
+  },
+  {
+    "build": "candidate",
+    "kind": "search",
+    "query": "Cloudflare challenge clearance documentation",
+    "elapsed_ms": 900,
+    "response": {
+      "ok": true,
+      "engine": "ddg-lite",
+      "results": [
+        {
+          "title": "Clearance \u00b7 Cloudflare challenges docs",
+          "url": "https://developers.cloudflare.com/cloudflare-challenges/concepts/clearance/",
+          "snippet": "How cf_clearance cookies prove a visitor passed a Cloudflare Challenge."
+        },
+        {
+          "title": "Challenge Passage \u00b7 Cloudflare challenges docs",
+          "url": "https://developers.cloudflare.com/cloudflare-challenges/challenge-types/challenge-pages/challenge-passage/",
+          "snippet": "When a visitor successfully solves a challenge, Cloudflare sets a cf_clearance cookie in their browser. This cookie specifies the duration your website is accessible to that visitor. When that visitor tries to access other parts of your website, Cloudflare evaluates the cookie before presenting ..."
+        },
+        {
+          "title": "CF-Clearance-Scraper - GitHub",
+          "url": "https://github.com/Xewdy444/CF-Clearance-Scraper",
+          "snippet": "A simple program for scraping Cloudflare clearance (cf_clearance) cookies from websites issuing Cloudflare challenges to visitors. This program works on all Cloudflare challenge types (JavaScript, managed, and interactive)."
+        },
+        {
+          "title": "GitHub - B00H0O/Cloudflare-challenge: Solves the Cloudflare managed ...",
+          "url": "https://github.com/B00H0O/Cloudflare-challenge",
+          "snippet": "Solves the Cloudflare managed challenge in 2.5s with headless Chrome over raw CDP, Returns cf_clearance. - B00H0O/Cloudflare-challenge"
+        },
+        {
+          "title": "Cloudflare Challenge \u2014 SolverCF Documentation",
+          "url": "https://solvercf.com/docs/cloudflare-challenge",
+          "snippet": "Cloudflare Challenge Cloudflare Challenge (also known as the \"5-second shield\", \"Just a moment...\" interstitial, or Cloudflare Under Attack mode) is an interactive or background verification flow protecting websites against bots and DDoS attacks. SolverCF can solve Cloudflare Challenges and return either: Clearance Cookie (cf_clearance): Use this cookie alongside the matching User-Agent and ..."
+        },
+        {
+          "title": "Challenge Detection & Solving | Xewdy444/CF-Clearance-Scraper - DeepWiki",
+          "url": "https://deepwiki.com/Xewdy444/CF-Clearance-Scraper/3.2-challenge-detection-and-solving",
+          "snippet": "This document explains how CF-Clearance-Scraper detects and solves Cloudflare challenges to obtain the cf_clearance cookie. The process involves identifying the type of challenge presented by Cloudflare and implementing appropriate strategies to navigate and solve it. For details about the main CloudflareSolver class, see CloudflareSolver Class."
+        },
+        {
+          "title": "Cf_clearance cookie purpose - SSL / TLS - Cloudflare Community",
+          "url": "https://community.cloudflare.com/t/cf-clearance-cookie-purpose/739657",
+          "snippet": "According to Cloudflare's docs, this cookie is strictly necessary because it stores the proof of Cloudflare bot challenge passed. However, I have added a Cookie Banner from OneTrust on the site and it says that the cf_clearance cookie is actually a functional one, meaning that it should not generate unless the user has consented."
+        },
+        {
+          "title": "Cloudflare Challenge: cf_clearance Cookie API | Capzy",
+          "url": "https://capzy.ai/solvers/cloudflare-challenge",
+          "snippet": "Cloudflare Challenge Get past the waiting page with session clearance. Start with the full-page Cloudflare check and the network your client will continue using. This task needs a protected URL and proxy, rather than a widget site key."
+        },
+        {
+          "title": "Cloudflare's cf_clearance cookie: issuance, scope, and lifetime",
+          "url": "https://blog.crawlex.net/blog/cloudflare-cf-clearance-cookie/",
+          "snippet": "A reference on Cloudflare's cf_clearance cookie: when a passed challenge issues it, what it is bound to, its zone scope and partitioned cross-site behaviour, its configurable lifetime, and why a stolen copy does not travel."
+        },
+        {
+          "title": "Cloudflare Challenge - ScrapingCourse.com",
+          "url": "https://www.zenrows.com/blog/cf-clearance.md",
+          "snippet": "The cf_clearance cookie isn't just any cookie, it's the access key to Cloudflare-protected websites. You only need to obtain that cookie and use it in your scraping request to bypass Cloudflare. But how can you go about it? We'll show you how to extract the cf_clearance cookie from a Cloudflare-protected site with the CF-Clearance-Scraper. You'll then learn how to use this cookie to bypass ..."
+        }
+      ],
+      "attempts": [
+        {
+          "engine": "ddg-lite",
+          "status": 200,
+          "reason": null,
+          "elapsed_s": 0.681,
+          "count": 10
+        },
+        {
+          "engine": "ddg-html",
+          "status": null,
+          "reason": "cancelled_by_winner",
+          "count": 0
+        },
+        {
+          "engine": "bing",
+          "status": null,
+          "reason": "cancelled_by_winner",
+          "count": 0
+        }
+      ],
+      "service_s": 0.898,
+      "queue_s": 0.0
+    }
+  }
+]

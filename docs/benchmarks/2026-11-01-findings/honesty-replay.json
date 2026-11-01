@@ -1,0 +1,7 @@
+{
+  "recorded_text": "  Verification Required  Please wait while we verify your request...    ",
+  "baseline_ok": true,
+  "baseline_expected_markers": false,
+  "candidate_classification": "generic",
+  "expected_classification": "interstitial; do not label article content"
+}

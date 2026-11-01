@@ -1,0 +1,13 @@
+{
+  "ok": true,
+  "models": {
+    "e5-614241f622f5": {
+      "passages": 10355,
+      "pages": 3652
+    },
+    "minilm": {
+      "passages": 10355,
+      "pages": 3652
+    }
+  }
+}

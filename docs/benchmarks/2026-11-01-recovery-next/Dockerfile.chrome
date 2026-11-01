@@ -1,0 +1,4 @@
+FROM dethrottled-browser-search:gpu-experiment
+USER root
+RUN python -m patchright install chrome
+USER browsersearch

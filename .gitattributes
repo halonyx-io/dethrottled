@@ -1,3 +1,6 @@
 * text=auto eol=lf
 *.png binary
 *.onnx binary
+
+# Preserve byte-exact document fixtures and avoid text diffs/line-ending conversion.
+*.pdf binary

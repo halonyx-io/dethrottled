@@ -50,3 +50,5 @@ is `A4`. `POST /pdf` returns `application/pdf`. Requests larger than 20 MB
 receive 413. The worker renders one request at a time; an overfull wait can
 return 503. `GET /health` checks its process. Keep the PDF worker image pin in
 step with Crawl4AI's pin in `docker-compose.yml` when upgrading.
+
+[Documentation home](README.md) · [Configuration](CONFIGURATION.md) · [Operations](OPERATIONS.md)

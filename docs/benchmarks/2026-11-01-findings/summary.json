@@ -1,0 +1,43 @@
+{
+  "version": "0.9.0",
+  "baseline_commit": "5bd95f5",
+  "controlled_challenge_expected_fact": {
+    "baseline": 0,
+    "candidate": 4,
+    "cases": 4
+  },
+  "plain_control": "passed both",
+  "cross_host_challenge_iframe": {
+    "baseline": "failed",
+    "candidate": "expected fact recovered",
+    "private_subframe": "blocked both",
+    "foreign_top_and_popup": "blocked both"
+  },
+  "live_hostile_reads": {
+    "baseline": 0,
+    "candidate": 0,
+    "sites": 4,
+    "causal_attribution": "not established; sequential upstream requests"
+  },
+  "tests": {
+    "passed": 568,
+    "skipped": 15,
+    "network_deselected": 2
+  },
+  "mcp_strict_schemas": 20,
+  "public_smoke_passed": true,
+  "public_sdk_completed": true,
+  "all_workers_ready": true,
+  "D6": "excluded by user",
+  "rollout_limitation": "Temporary caller_busy while preexisting admission leases expire; first attempt retained",
+  "corpus": {
+    "e5-614241f622f5": {
+      "passages": 10355,
+      "pages": 3652
+    },
+    "minilm": {
+      "passages": 10355,
+      "pages": 3652
+    }
+  }
+}

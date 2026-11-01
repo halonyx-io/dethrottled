@@ -1,0 +1,4 @@
+FROM dethrottled-browser-search:local
+USER root
+RUN apt-get update && apt-get install -y --no-install-recommends libegl1 libgles2 mesa-utils && rm -rf /var/lib/apt/lists/*
+USER browsersearch

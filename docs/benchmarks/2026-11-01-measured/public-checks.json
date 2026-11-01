@@ -1,0 +1,15 @@
+{
+  "version": "0.8.0",
+  "tools": 20,
+  "all_assertions_passed": true,
+  "checks": [
+    "workflow hash",
+    "new tool schemas",
+    "scoped quote selectors",
+    "MCP-to-REST evidence continuity",
+    "site coverage ledger",
+    "fresh discovery",
+    "local speech through public MCP",
+    "public browser checkpoint and cleanup"
+  ]
+}

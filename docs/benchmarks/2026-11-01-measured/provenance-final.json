@@ -1,0 +1,17 @@
+{
+  "core_package_matches": true,
+  "speech_sources_match": true,
+  "speech_core_dump_disabled": true,
+  "layout_sources_match": true,
+  "layout_core_dump_disabled": true,
+  "formats_sources_match": true,
+  "formats_core_dump_disabled": true,
+  "live_mcp_matches": true,
+  "registry_unchanged": true,
+  "changed_environment_fields": [
+    "DETHROTTLED_CRAWL4AI_BUDGET",
+    "DETHROTTLED_FORMAT_WORKER_URL",
+    "DETHROTTLED_MULTILINGUAL_CORPUS"
+  ],
+  "evidence_contains_bearer": false
+}

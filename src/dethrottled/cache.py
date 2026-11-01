@@ -64,7 +64,7 @@ class Cache:
         digest = hashlib.blake2b(raw.encode("utf-8"), digest_size=16)
         return "%s:%s" % (kind, digest.hexdigest())
 
-    def get(self, kind: str, *parts, ttl: float | None = None):
+    def get(self, kind: str, *parts, ttl: float | None = None, with_meta: bool = False):
         ttl = DEFAULT_TTL.get(kind, 3600) if ttl is None else ttl
         key = self.key(kind, *parts)
         with self._lock:
@@ -79,7 +79,8 @@ class Cache:
             return None
         self.hits += 1
         try:
-            return json.loads(value)
+            decoded = json.loads(value)
+            return (decoded, ts) if with_meta else decoded
         except json.JSONDecodeError:
             return None
 
@@ -120,3 +121,37 @@ class Cache:
             self._db.close()
         except Exception:
             pass
+
+
+class CacheView:
+    """Request-local cache policy; never mutate the shared cache's behavior."""
+
+    def __init__(self, cache, *, mode="use", max_age=None):
+        self.cache, self.mode, self.max_age = cache, mode, max_age
+
+    def get(self, kind, *parts, ttl=None):
+        if self.mode != "use":
+            return None
+        age = DEFAULT_TTL.get(kind, 3600) if ttl is None else ttl
+        if self.max_age is not None:
+            age = min(age, self.max_age)
+        hit = self.cache.get(kind, *parts, ttl=age, with_meta=True)
+        if hit is None:
+            return None
+        value, retrieved = hit
+        if kind == "extract" and value.get("schema_version") != 3:
+            return None  # Refresh old representations lacking current coverage/provenance.
+        from datetime import datetime, timezone
+        metadata = {"cached": True, "cache_age_seconds": round(time.time() - retrieved, 3),
+                    "retrieved_at": datetime.fromtimestamp(retrieved, timezone.utc).isoformat(),
+                    "cache_expires_at": datetime.fromtimestamp(
+                        retrieved + age, timezone.utc).isoformat()}
+        if isinstance(value, dict):
+            value.update(metadata)
+        elif isinstance(value, list):
+            value = [dict(row, **metadata) if isinstance(row, dict) else row for row in value]
+        return value
+
+    def put(self, kind, *parts, value):
+        if self.mode != "bypass":
+            self.cache.put(kind, *parts, value=value)

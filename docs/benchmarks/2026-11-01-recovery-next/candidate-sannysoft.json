@@ -1,0 +1,29 @@
+{
+  "ok": true,
+  "checks": [
+    [
+      "WebDriver (New)",
+      "missing (passed)"
+    ],
+    [
+      "Chrome (New)",
+      "present (passed)"
+    ],
+    [
+      "Plugins Length (Old)",
+      "5"
+    ],
+    [
+      "Languages (Old)",
+      "en-US,en"
+    ],
+    [
+      "WebGL Vendor",
+      "Google Inc. (Mesa)"
+    ],
+    [
+      "WebGL Renderer",
+      "ANGLE (Mesa, llvmpipe (LLVM 19.1.7 256 bits), OpenGL 4.5)"
+    ]
+  ]
+}

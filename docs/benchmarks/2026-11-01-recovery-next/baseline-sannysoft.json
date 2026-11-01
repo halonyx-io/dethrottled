@@ -1,0 +1,29 @@
+{
+  "ok": true,
+  "checks": [
+    [
+      "WebDriver (New)",
+      "missing (passed)"
+    ],
+    [
+      "Chrome (New)",
+      "present (passed)"
+    ],
+    [
+      "Plugins Length (Old)",
+      "5"
+    ],
+    [
+      "Languages (Old)",
+      "en-US,en"
+    ],
+    [
+      "WebGL Vendor",
+      "Canvas has no webgl context"
+    ],
+    [
+      "WebGL Renderer",
+      "Canvas has no webgl context"
+    ]
+  ]
+}

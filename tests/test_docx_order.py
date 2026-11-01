@@ -24,5 +24,5 @@ def test_docx_paragraphs_and_tables_follow_source_order():
     text, reason = documents.to_text(buffer.getvalue(), "docx", 20000)
     assert reason == ""
     assert text.splitlines() == [
-        "Fiscal year 2025", "Country | Megawatts", "Denmark | 5120",
+        "Fiscal year 2025", "| Country | Megawatts |", "| Denmark | 5120 |",
         "Excludes offshore capacity"]

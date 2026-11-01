@@ -1,0 +1,42 @@
+[
+  {
+    "name": "cargurus",
+    "url": "https://www.cargurus.com/",
+    "markers": [
+      "used",
+      "cars"
+    ]
+  },
+  {
+    "name": "crunchbase",
+    "url": "https://www.crunchbase.com/organization/openai",
+    "markers": [
+      "OpenAI",
+      "San Francisco"
+    ]
+  },
+  {
+    "name": "g2",
+    "url": "https://www.g2.com/products/notion/reviews",
+    "markers": [
+      "Notion",
+      "reviews"
+    ]
+  },
+  {
+    "name": "expedia",
+    "url": "https://www.expedia.com/",
+    "markers": [
+      "hotels",
+      "flights"
+    ]
+  },
+  {
+    "name": "python-control",
+    "url": "https://docs.python.org/3/library/sqlite3.html",
+    "markers": [
+      "sqlite3",
+      "connect"
+    ]
+  }
+]

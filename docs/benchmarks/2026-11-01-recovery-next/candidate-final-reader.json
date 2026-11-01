@@ -1,0 +1,223 @@
+{
+  "build": "candidate-final",
+  "reads": [
+    {
+      "path": "/plain",
+      "elapsed_ms": 986,
+      "expected_fact": true,
+      "reason": "",
+      "recovery": {
+        "restored_from_checkpoint": false,
+        "challenge_polls": 0,
+        "loading_polls": 0,
+        "document_ready_state": "complete",
+        "initial_navigation": {
+          "url": "http://dethrottled-recovery-fixture:19890/plain",
+          "status": 200,
+          "wait_until": "commit",
+          "challenge_headers": {}
+        },
+        "checkpointed": true,
+        "elapsed_ms": 986,
+        "queue_ms": 0
+      }
+    },
+    {
+      "path": "/slow",
+      "elapsed_ms": 1837,
+      "expected_fact": true,
+      "reason": "",
+      "recovery": {
+        "restored_from_checkpoint": false,
+        "challenge_polls": 0,
+        "loading_polls": 0,
+        "document_ready_state": "loading",
+        "initial_navigation": {
+          "url": "http://dethrottled-recovery-fixture:19890/slow",
+          "status": 200,
+          "wait_until": "commit",
+          "challenge_headers": {}
+        },
+        "checkpointed": true,
+        "elapsed_ms": 1836,
+        "queue_ms": 0
+      }
+    },
+    {
+      "path": "/loading",
+      "elapsed_ms": 2779,
+      "expected_fact": true,
+      "reason": "",
+      "recovery": {
+        "restored_from_checkpoint": false,
+        "challenge_polls": 0,
+        "loading_polls": 2,
+        "document_ready_state": "complete",
+        "initial_navigation": {
+          "url": "http://dethrottled-recovery-fixture:19890/loading",
+          "status": 200,
+          "wait_until": "commit",
+          "challenge_headers": {}
+        },
+        "checkpointed": true,
+        "elapsed_ms": 2779,
+        "queue_ms": 0
+      }
+    },
+    {
+      "path": "/webgl",
+      "elapsed_ms": 758,
+      "expected_fact": true,
+      "reason": "",
+      "recovery": {
+        "restored_from_checkpoint": false,
+        "challenge_polls": 0,
+        "loading_polls": 0,
+        "document_ready_state": "complete",
+        "initial_navigation": {
+          "url": "http://dethrottled-recovery-fixture:19890/webgl",
+          "status": 200,
+          "wait_until": "commit",
+          "challenge_headers": {}
+        },
+        "checkpointed": true,
+        "elapsed_ms": 757,
+        "queue_ms": 0
+      }
+    }
+  ],
+  "concurrent": [
+    {
+      "id": 0,
+      "fact": true,
+      "reason": "",
+      "recovery": {
+        "restored_from_checkpoint": false,
+        "challenge_polls": 0,
+        "loading_polls": 0,
+        "document_ready_state": "complete",
+        "initial_navigation": {
+          "url": "http://dethrottled-recovery-fixture:19890/plain",
+          "status": 200,
+          "wait_until": "commit",
+          "challenge_headers": {}
+        },
+        "checkpointed": true,
+        "elapsed_ms": 851,
+        "queue_ms": 0
+      }
+    },
+    {
+      "id": 1,
+      "fact": true,
+      "reason": "",
+      "recovery": {
+        "restored_from_checkpoint": false,
+        "challenge_polls": 0,
+        "loading_polls": 0,
+        "document_ready_state": "complete",
+        "initial_navigation": {
+          "url": "http://dethrottled-recovery-fixture:19890/plain",
+          "status": 200,
+          "wait_until": "commit",
+          "challenge_headers": {}
+        },
+        "checkpointed": true,
+        "elapsed_ms": 839,
+        "queue_ms": 850
+      }
+    },
+    {
+      "id": 2,
+      "fact": true,
+      "reason": "",
+      "recovery": {
+        "restored_from_checkpoint": false,
+        "challenge_polls": 0,
+        "loading_polls": 0,
+        "document_ready_state": "complete",
+        "initial_navigation": {
+          "url": "http://dethrottled-recovery-fixture:19890/plain",
+          "status": 200,
+          "wait_until": "commit",
+          "challenge_headers": {}
+        },
+        "checkpointed": true,
+        "elapsed_ms": 826,
+        "queue_ms": 1690
+      }
+    },
+    {
+      "id": 3,
+      "fact": true,
+      "reason": "",
+      "recovery": {
+        "restored_from_checkpoint": false,
+        "challenge_polls": 0,
+        "loading_polls": 0,
+        "document_ready_state": "complete",
+        "initial_navigation": {
+          "url": "http://dethrottled-recovery-fixture:19890/plain",
+          "status": 200,
+          "wait_until": "commit",
+          "challenge_headers": {}
+        },
+        "checkpointed": true,
+        "elapsed_ms": 836,
+        "queue_ms": 2516
+      }
+    },
+    {
+      "id": 4,
+      "fact": true,
+      "reason": "",
+      "recovery": {
+        "restored_from_checkpoint": false,
+        "challenge_polls": 0,
+        "loading_polls": 0,
+        "document_ready_state": "complete",
+        "initial_navigation": {
+          "url": "http://dethrottled-recovery-fixture:19890/plain",
+          "status": 200,
+          "wait_until": "commit",
+          "challenge_headers": {}
+        },
+        "checkpointed": true,
+        "elapsed_ms": 842,
+        "queue_ms": 3352
+      }
+    },
+    {
+      "id": 5,
+      "fact": true,
+      "reason": "",
+      "recovery": {
+        "restored_from_checkpoint": false,
+        "challenge_polls": 0,
+        "loading_polls": 0,
+        "document_ready_state": "complete",
+        "initial_navigation": {
+          "url": "http://dethrottled-recovery-fixture:19890/plain",
+          "status": 200,
+          "wait_until": "commit",
+          "challenge_headers": {}
+        },
+        "checkpointed": true,
+        "elapsed_ms": 876,
+        "queue_ms": 4195
+      }
+    }
+  ],
+  "admission": {
+    "started": 10,
+    "completed": 10,
+    "rejected": 0,
+    "timed_out": 0,
+    "active": 0,
+    "waiting": 0,
+    "clients_waiting": 0,
+    "capacity": 1,
+    "max_waiting": 32,
+    "per_client_waiting": 8
+  }
+}

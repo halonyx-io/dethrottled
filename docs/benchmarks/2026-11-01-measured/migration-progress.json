@@ -1,0 +1,155 @@
+[
+  {
+    "at": "2026-11-01T03:17:18.782468+00:00",
+    "backfill": {
+      "status": "running",
+      "passages": 0
+    },
+    "models": {
+      "e5-614241f622f5": {
+        "passages": 4262,
+        "pages": 1492
+      },
+      "minilm": {
+        "passages": 10188,
+        "pages": 3604
+      }
+    }
+  },
+  {
+    "at": "2026-11-01T03:17:49.369197+00:00",
+    "backfill": {
+      "status": "running",
+      "passages": 0
+    },
+    "models": {
+      "e5-614241f622f5": {
+        "passages": 4580,
+        "pages": 1604
+      },
+      "minilm": {
+        "passages": 10188,
+        "pages": 3604
+      }
+    }
+  },
+  {
+    "at": "2026-11-01T03:26:14.078596+00:00",
+    "backfill": {
+      "status": "running",
+      "passages": 0
+    },
+    "models": {
+      "e5-614241f622f5": {
+        "passages": 8424,
+        "pages": 2964
+      },
+      "minilm": {
+        "passages": 10188,
+        "pages": 3604
+      }
+    }
+  },
+  {
+    "at": "2026-11-01T03:26:44.718618+00:00",
+    "backfill": {
+      "status": "running",
+      "passages": 0
+    },
+    "models": {
+      "e5-614241f622f5": {
+        "passages": 8737,
+        "pages": 3076
+      },
+      "minilm": {
+        "passages": 10188,
+        "pages": 3604
+      }
+    }
+  },
+  {
+    "at": "2026-11-01T03:27:15.296165+00:00",
+    "backfill": {
+      "status": "running",
+      "passages": 0
+    },
+    "models": {
+      "e5-614241f622f5": {
+        "passages": 9069,
+        "pages": 3188
+      },
+      "minilm": {
+        "passages": 10188,
+        "pages": 3604
+      }
+    }
+  },
+  {
+    "at": "2026-11-01T03:27:46.059031+00:00",
+    "backfill": {
+      "status": "running",
+      "passages": 0
+    },
+    "models": {
+      "e5-614241f622f5": {
+        "passages": 9397,
+        "pages": 3300
+      },
+      "minilm": {
+        "passages": 10188,
+        "pages": 3604
+      }
+    }
+  },
+  {
+    "at": "2026-11-01T03:28:16.661481+00:00",
+    "backfill": {
+      "status": "running",
+      "passages": 0
+    },
+    "models": {
+      "e5-614241f622f5": {
+        "passages": 9765,
+        "pages": 3444
+      },
+      "minilm": {
+        "passages": 10188,
+        "pages": 3604
+      }
+    }
+  },
+  {
+    "at": "2026-11-01T03:28:47.292792+00:00",
+    "backfill": {
+      "status": "running",
+      "passages": 0
+    },
+    "models": {
+      "e5-614241f622f5": {
+        "passages": 10098,
+        "pages": 3572
+      },
+      "minilm": {
+        "passages": 10188,
+        "pages": 3604
+      }
+    }
+  },
+  {
+    "at": "2026-11-01T03:29:17.918277+00:00",
+    "backfill": {
+      "status": "complete",
+      "passages": 2147
+    },
+    "models": {
+      "e5-614241f622f5": {
+        "passages": 10188,
+        "pages": 3604
+      },
+      "minilm": {
+        "passages": 10188,
+        "pages": 3604
+      }
+    }
+  }
+]

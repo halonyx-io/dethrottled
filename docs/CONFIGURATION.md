@@ -1,103 +1,121 @@
-# Configuration and local tuning
+# Configuration
 
-## Compose versus a source install
+Base Compose runs four services: API, browser-search, SearXNG and Crawl4AI.
+Optional profiles add authenticated adapters, local speech, PDF layout or
+MSG/XLSB fallback. The API image already contains native readers, Tesseract and
+corpus weights; a source install requires explicit dependencies and setup.
 
-For the portable stack, copy `.env.example` to `.env` and run Docker Compose.
-The `.env` file is ignored by git. Compose uses it for **interpolation**: a
-variable written there reaches a container only where `docker-compose.yml` or
-an enabled overlay maps it into `environment:`. The image's built-in defaults
-apply otherwise. Check the effective setup with `docker compose config`.
+## Base installation
 
-For a source install, `pip install '.[all]'` installs the Python features but
-does not start SearXNG, the browser-search worker, or Crawl4AI. Run
-`./scripts/fetch-models.sh` for the one corpus model. Set any
-`DETHROTTLED_*` variables in that process's environment, then start
-`dethrottled`. A plain source install can still search through its direct
-keyless engines and news feeds; capabilities differ from full Compose.
-
-## Settings wired into the provided Compose files
-
-| `.env` name | Default | Effect |
-| --- | --- | --- |
-| `DETHROTTLED_BIND` | `127.0.0.1` | Host address publishing API port 8787 |
-| `DETHROTTLED_PORT` | `8787` | Host port; container still listens on 8787 |
-| `DETHROTTLED_ENABLE_JINA` | `0` | Enable external reader tier if set to `1` |
-| `DETHROTTLED_USER_AGENT` | `dethrottled/0.2.0 (automated fetcher)` | Article-fetch User-Agent override |
-| `DETHROTTLED_EXTRACT_CACHE_CHARS` | `20000` | Characters kept in extraction cache |
-| `CRAWL4AI_TOKEN` | `dethrottled-compose-local` | Private API-to-renderer credential |
-| `CRAWL4AI_ALLOW_INTERNAL_URLS` | `false` | Let the renderer visit private/LAN addresses when intentionally needed |
-| `COMPOSE_FILE` | Base Compose file | Add the optional PDF worker overlay |
-
-The Compose file sets its internal service URLs, the Crawl4AI API dialect,
-and SearXNG's two news engines. The API's data directory is `/data` and its
-model directory is baked into the image at `/opt/dethrottled/models`. Do not
-point `DETHROTTLED_MODEL_DIR` at `/data/models` unless you actually put weights
-there; a volume mount would otherwise hide the image's working model.
-
-The optional PDF worker is enabled with:
-
-```env
-COMPOSE_FILE=docker-compose.yml:docker-compose.pdf-worker.yml
+```sh
+cp .env.example .env
+docker compose up -d --build
 ```
 
-It publishes `8788` on the host as currently written in its overlay. It is a
-different service from the Dethrottled API. Check and change that bind for
-your environment before enabling it.
+`.env` is Compose interpolation, not an automatic container environment export.
+Only names mapped by the selected Compose files reach their services. Other
+application settings need an `environment` entry in a local override. Inspect
+`docker compose config` locally; its output can contain secrets.
 
-## Useful application controls
+| Interpolated name | Default | Purpose |
+|---|---|---|
+| `DETHROTTLED_BIND`, `DETHROTTLED_PORT` | `127.0.0.1`, `8787` | Host API publication |
+| `CRAWL4AI_TOKEN` | `dethrottled-compose-local` | Private renderer credential, not caller authentication |
+| `CRAWL4AI_ALLOW_INTERNAL_URLS` | `false` | Renderer access to private addresses |
+| `DETHROTTLED_CHEAP_DISCOVERY` | `1` in Compose | Static DDG Lite probe before browser fallback; standalone default 0 |
+| `DETHROTTLED_ENABLE_JINA` | `0` in Compose | Optional external reader |
+| `DETHROTTLED_MULTILINGUAL_CORPUS` | `1` in Compose | Separate E5 corpus retrieval/backfill; standalone opt-in |
+| `DETHROTTLED_EXTRACT_CACHE_CHARS` | `1000000` | Retained extraction budget |
+| `DETHROTTLED_CRAWL4AI_BUDGET` | `-1` | No hourly renderer quota; 0 disables; positive values cap/window |
+| `DETHROTTLED_RENDER_CONCURRENCY` | `2` | API-side active renderer work |
+| `DETHROTTLED_DRIVE_SESSION_TTL`, `DETHROTTLED_DRIVE_MAX_SESSIONS` | `1800`, `8` | Browser session expiry and capacity |
+| `DETHROTTLED_BROWSER_GRAPHICS` | `mesa` in Compose | EGL/ANGLE GL with compatibility-blocklist override; `default` keeps original browser args |
+| `DETHROTTLED_USER_AGENT` | `dethrottled/0.9.1 (automated fetcher)` | Article-fetch identity |
 
-These are read by the Python process. For Compose deployments, add the chosen
-value to a container `environment:` mapping or to a local Compose overlay;
-placing an unreferenced name in `.env` alone will not pass it through.
+The base file maps internal worker URLs and optional worker/key variables.
+The complete interpolation map is in `docker-compose.yml` and the agents overlay;
+this table covers the main controls. Keep mutable data in named volumes. Do not
+point the model directory at an empty mounted path that hides the baked weights.
 
-| Variable | Default | When to change it |
-| --- | --- | --- |
-| `DETHROTTLED_THIN_CHARS` | `600` | Raise to reject more short HTML, lower for terse sites |
-| `DETHROTTLED_PAGE_BUDGET` | `60` seconds | Named fetch total-ladder budget |
-| `DETHROTTLED_PAGE_BUDGET_BULK` | `25` seconds | Per-result budget in bulk paths |
-| `DETHROTTLED_TLS_TIMEOUT` | `8` seconds | Time allowed for the TLS-fingerprint tier |
-| `DETHROTTLED_CRAWL4AI_TIMEOUT` | `25` seconds | API wait for renderer |
-| `DETHROTTLED_CRAWL4AI_RENDER_MS` | `20000` ms | Requested browser render time; keep below renderer timeout |
-| `DETHROTTLED_CRAWL4AI_BUDGET` | `40` per window | Rolling local-render attempt budget |
-| `DETHROTTLED_TIER_BUDGET_WINDOW` | `3600` seconds | Window shared by tier budgets |
-| `DETHROTTLED_ENGINE_REST_SECONDS` | `1800` seconds | How long failing search engines rest |
-| `DETHROTTLED_ENABLE_TLS` | `1` | Disable TLS tier only for diagnosis |
-| `DETHROTTLED_ENABLE_TRANSCRIPTS` | `1` | Disable YouTube caption lookup |
-| `DETHROTTLED_MAX_HTML_BYTES` | `10000000` | HTML download ceiling |
-| `DETHROTTLED_PDF_MAX_BYTES` | `25 MiB` | PDF download ceiling |
-| `DETHROTTLED_DOC_MAX_BYTES` | `50 MiB` | Other document download ceiling |
-| `DETHROTTLED_OCR_PAGE_CAP` | `8` | Maximum pages OCR examines |
-| `DETHROTTLED_OCR_PAGE_TIMEOUT` | `30` seconds | OCR time per page |
-| `DETHROTTLED_CORPUS_FLOOR` | `0.22` | Semantic match floor; measure before changing |
-| `DETHROTTLED_CORPUS_MAX_PASSAGES` | `50000` | Corpus passage retention cap |
-| `DETHROTTLED_CORPUS_RETENTION_DAYS` | `180` | Corpus age retention |
-| `DETHROTTLED_EMBED_THREADS` | `0` | ONNX Runtime chooses host threads; set only to cap it |
+## Optional local workers
 
-This is a practical tuning list, not every internal setting. Search and fetch
-source files hold the full set and defaults. `/stats` reports tier usage and
-budgets; `/v2/capabilities` reports which optional features are active.
+Set the worker URLs in `.env` and enable the matching profiles together:
 
-## How to tune without hiding failures
+```env
+DETHROTTLED_MEDIA_WORKER_URL=http://media-worker:19889
+DETHROTTLED_LAYOUT_WORKER_URL=http://docling-worker:19891
+DETHROTTLED_FORMAT_WORKER_URL=http://format-worker:19892
+```
 
-1. Run representative queries with `fresh: true` to avoid measuring a cache
-   hit. Record elapsed time, result URLs, `search_attempts`, and fetch
-   `quality`/`tier`, not just HTTP status.
-2. Change one setting at a time. `render: "never"` is useful for latency
-   sensitive reads; `render: "always"` is useful when static HTML hides the
-   desired article behind JavaScript.
-3. For a thin result, inspect the source and `failure_reason` before lowering
-   `DETHROTTLED_THIN_CHARS`; a lower threshold can accept paywall teasers.
-4. For corpus changes, compare known-answer queries before changing the floor
-   or retention. The bundled MiniLM model is used only for corpus retrieval;
-   it does not rerank fresh web results by default.
-5. Raise renderer concurrency only with memory and quality measurements. The
-   browser-search worker currently has one browser, three active query races,
-   and at most three tabs per race. Crawl4AI has its own browser-pool settings
-   in `docker/crawl4ai/config.yml`.
+```sh
+docker compose -f docker-compose.yml -f docker-compose.agents.yml \
+  --profile media --profile layout --profile formats up -d --build
+```
 
-Compose sets **no CPU affinity, CPU quota, or overall RAM limit** on its
-services. Chromium `shm_size: 1gb` is shared-memory allocation, not an overall
-RAM cap. There are still application-level queues, page budgets, timeouts,
-per-domain pacing, and the renderer's own pool safeguards. These keep a broken
-page or blocked engine from consuming every worker; they are not metered API
-limits. The fetch ladder does not consult `robots.txt`.
+| Worker | Defaults and prerequisites |
+|---|---|
+| Media | Faster-Whisper `small`, CPU int8, 3 GiB container cap, one active conversion, 50 MiB input, 30 minutes audio, 570-second supervisor deadline; cached weights in media-models |
+| Layout | Docling 2.145.0/CPU PyTorch, 8 GiB/four CPUs, one active conversion, 50 MiB, up to 100 selected pages, 180-second deadline; layout-models volume |
+| Formats | Tika 3.3.3 for MSG/XLSB only, 2 GiB/two CPUs, 1 GiB Java heap, 50 MiB, one conversion, 60-second deadline |
+
+Media/layout can need an initial model download. Their `/ready` and `/metrics`
+are private; `/v2/status.workers` probes them with a ten-second cache. Cancellation
+or deadline kills and reaps supervised conversion children before releasing
+admission. Reloading models per job can increase latency. Optional workers have
+resource caps; the base API/browser services have no explicit Compose CPU quota
+or overall memory cap. `shm_size` is not a total RAM limit.
+
+`WHISPER_MODEL` and `MEDIA_MAX_SECONDS` are mapped by the media overlay. Larger
+speech models need separate memory/quality measurements. ARM64 runtime evaluation
+of the base stack does not certify every newer optional worker or graphics profile.
+
+## Corpus models
+
+MiniLM and E5 are corpus retrievers, not live-web neural rerankers. E5 uses a
+separate model-versioned index and reciprocal-rank fusion. MiniLM's floor is
+0.22; E5's is 0.77. These are calibrated retrieval cutoffs, not truth scores.
+`DETHROTTLED_EMBED_THREADS` defaults to 4. A supervised backfill resumes committed
+progress; check `/v2/status.multilingual_backfill`. Disabling E5 preserves MiniLM.
+
+For source installs, use `pip install '.[all]'` and
+`./scripts/fetch-models.sh --multilingual`, then set the printed model/revision
+variables. Optional extras do not start Docker workers. See [Python](PYTHON.md).
+
+## Application workload controls
+
+These process settings need explicit Compose mappings/overrides when not already
+mapped. Change them against recorded coverage and failure cases, not just latency.
+
+| Variable | Default | Meaning |
+|---|---|---|
+| `DETHROTTLED_THIN_CHARS` | `600` | HTML threshold; structured short documents differ |
+| `DETHROTTLED_PAGE_BUDGET`, `DETHROTTLED_PAGE_BUDGET_BULK` | `60`, `25` seconds | Soft ladder budgets; a known recovery case can receive a bounded headed attempt afterward |
+| `DETHROTTLED_TLS_TIMEOUT` | `8` seconds | TLS tier |
+| `DETHROTTLED_CRAWL4AI_TIMEOUT`, `DETHROTTLED_CRAWL4AI_RENDER_MS` | `25` seconds, `20000` ms | Renderer transport/browser timing |
+| `DETHROTTLED_RENDER_MAX_WAITING`, `DETHROTTLED_RENDER_PER_CLIENT` | `32`, `8` | Renderer waiting bounds |
+| `DETHROTTLED_RENDER_QUEUE_SECONDS` | `60` | Renderer admission wait |
+| `DETHROTTLED_HEADED_QUEUE_SECONDS` | `60` | Headed admission wait; one active, 32 total/eight per caller waiting |
+| `DETHROTTLED_CHALLENGE_WAIT_SECONDS` | `15` | Headed polling deadline, separate from queue and request timeouts |
+| `DETHROTTLED_MAX_HTML_BYTES`, `DETHROTTLED_PDF_MAX_BYTES`, `DETHROTTLED_DOC_MAX_BYTES` | 10,000,000; 25 MiB; 50 MiB | Input limits |
+| `DETHROTTLED_OCR_PAGE_CAP`, `DETHROTTLED_OCR_PAGE_TIMEOUT` | `8`, `30` seconds | OCR work bounds |
+| `DETHROTTLED_DOC_MAX_ROWS`, `DETHROTTLED_DOC_MAX_CELL` | `2000`, `32767` | Table window/cell defaults; request overrides remain bounded |
+| `DETHROTTLED_CORPUS_MAX_PASSAGES`, `DETHROTTLED_CORPUS_RETENTION_DAYS` | `50000`, `180` | Corpus retention |
+
+Mesa exposes its actual llvmpipe software renderer. It needs no GPU passthrough,
+fingerprint injection or unsafe SwiftShader opt-in. Graphics-heavy sites can use
+more CPU; select `default` if the compatibility override causes trouble.
+
+## Remote access and external options
+
+Use [public adapters](PUBLIC-ACCESS.md) for remote authentication, namespace and
+admission setup. Base Compose does not install a reverse proxy or public TLS.
+The [HTML-to-PDF overlay](PDF_WORKER.md) is separate and currently publishes host
+port 8788 on all interfaces.
+
+Optional `DETHROTTLED_EXA_API_KEY`, `DETHROTTLED_TAVILY_API_KEY` and
+`DETHROTTLED_PARALLEL_API_KEY` stay server-side and require explicit `engines`
+selection. Default profiles never spend them. No model API is required for the
+standard workflow. The fetch ladder ignores robots.txt but retains local
+pacing, deadlines and storage limits.
+
+[Documentation home](README.md) · [Agent guide](AGENT-UPGRADES.md) · [API](API.md) · [Evidence](EVIDENCE.md)

@@ -1,0 +1,7 @@
+public-initialize 429 152.86
+public-tools-list 429 111.47
+Traceback (most recent call last):
+  File "/home/adminion/Documents/Codex/2026-10-31/hi/work/dethrottled-findings/public_smoke.py", line 40, in <module>
+    listing=rpc(public,'public-tools-list','tools/list',{});names={t['name'] for t in listing['tools']}
+                                                                                      ~~~~~~~^^^^^^^^^
+KeyError: 'tools'

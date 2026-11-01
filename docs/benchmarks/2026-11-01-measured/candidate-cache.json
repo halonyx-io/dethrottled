@@ -1,0 +1,20 @@
+[
+  {
+    "format": "xlsb",
+    "scan": false,
+    "text": "upgraded extraction",
+    "cached": false
+  },
+  {
+    "format": "pdf",
+    "scan": true,
+    "text": "upgraded extraction",
+    "cached": false
+  },
+  {
+    "format": "html",
+    "scan": false,
+    "text": "old extraction",
+    "cached": true
+  }
+]

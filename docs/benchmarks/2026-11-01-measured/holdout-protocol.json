@@ -1,0 +1,70 @@
+{
+  "queries": [
+    [
+      "shipping",
+      "港口运出了多少箱机器零件？",
+      "zh"
+    ],
+    [
+      "museum",
+      "成人参观历史博物馆要付多少欧元？",
+      "zh"
+    ],
+    [
+      "penguin",
+      "企鹅在什么地方的冰上繁殖？",
+      "zh"
+    ],
+    [
+      "library",
+      "图书馆星期六几点关门？",
+      "zh"
+    ],
+    [
+      "water",
+      "Berapakah kandungan arsenik dalam bekalan air minuman?",
+      "ms"
+    ],
+    [
+      "solar",
+      "Berapakah kapasiti penjanaan tenaga suria yang dipasang?",
+      "ms"
+    ],
+    [
+      "shipping",
+      "Berapakah jumlah peti komponen mesin dalam penghantaran itu?",
+      "ms"
+    ],
+    [
+      "museum",
+      "Berapakah harga tiket dewasa untuk masuk muzium?",
+      "ms"
+    ],
+    [
+      "rail",
+      "À quelle heure part le dernier train vers le nord ?",
+      "fr"
+    ],
+    [
+      "solar",
+      "Quelle est la puissance solaire installée en mégawatts ?",
+      "fr"
+    ],
+    [
+      "hospital",
+      "Combien de lits compte le nouveau service pour enfants ?",
+      "fr"
+    ],
+    [
+      "water",
+      "Quelle concentration d'arsenic a été mesurée dans l'eau potable ?",
+      "fr"
+    ]
+  ],
+  "negative": [
+    "What is the capital city of Peru?",
+    "火星表面温度是多少？",
+    "Apakah nombor telefon kedutaan?",
+    "Quelle est la recette du gâteau au chocolat ?"
+  ]
+}

@@ -1,0 +1,76 @@
+[
+  {
+    "name": "sannysoft",
+    "url": "https://bot.sannysoft.com/",
+    "ok": true,
+    "checks": [
+      {
+        "check": "WebDriver (New)",
+        "value": "missing (passed)",
+        "class": "result passed"
+      },
+      {
+        "check": "WebDriver Advanced",
+        "value": "passed",
+        "class": "result passed"
+      },
+      {
+        "check": "Chrome (New)",
+        "value": "present (passed)",
+        "class": "result passed"
+      },
+      {
+        "check": "Plugins Length (Old)",
+        "value": "5",
+        "class": "result passed"
+      },
+      {
+        "check": "Plugins is of type PluginArray",
+        "value": "passed",
+        "class": "result passed"
+      },
+      {
+        "check": "Languages (Old)",
+        "value": "en-US,en",
+        "class": "result passed"
+      },
+      {
+        "check": "WebGL Vendor",
+        "value": "Canvas has no webgl context",
+        "class": "failed"
+      },
+      {
+        "check": "WebGL Renderer",
+        "value": "Canvas has no webgl context",
+        "class": "failed"
+      },
+      {
+        "check": "HEADCHR_CHROME_OBJ",
+        "value": "ok",
+        "class": "passed"
+      },
+      {
+        "check": "HEADCHR_PLUGINS",
+        "value": "ok",
+        "class": "passed"
+      },
+      {
+        "check": "navigator.plugins",
+        "value": "document.write(JSON.stringify(navigator.plugins));\n            {\"0\":{\"0\":{},\"1\":{}},\"1\":{\"0\":{},\"1\":{}},\"2\":{\"0\":{},\"1\":{}},\"3\":{\"0\":{},\"1\":{}},\"4\":{\"0\":{},\"1\":{}}}",
+        "class": ""
+      }
+    ],
+    "html_chars": 38807,
+    "note": "Fingerprint identifiers and full HTML remain local; no profile changes made.",
+    "elapsed_ms": 5681
+  },
+  {
+    "name": "creepjs",
+    "url": "https://abrahamjuliot.github.io/creepjs/",
+    "ok": true,
+    "checks": [],
+    "html_chars": 120000,
+    "note": "Fingerprint identifiers and full HTML remain local; no profile changes made.",
+    "elapsed_ms": 4563
+  }
+]

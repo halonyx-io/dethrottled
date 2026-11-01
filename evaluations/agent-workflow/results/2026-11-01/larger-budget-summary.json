@@ -1,0 +1,12 @@
+{
+  "baseline": {
+    "runs": 4,
+    "passes": 4,
+    "tool_calls": 48
+  },
+  "candidate": {
+    "runs": 4,
+    "passes": 4,
+    "tool_calls": 18
+  }
+}

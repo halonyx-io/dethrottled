@@ -23,6 +23,9 @@ import feedparser
 import requests
 
 from . import paths as _paths
+from . import providers
+from .content import constrained
+from .discovery import SOURCE_PROFILES, tls_search
 from .fetch import USER_AGENT, canonical_url
 
 # Empty by default: a SearXNG instance is something you host, and pointing at
@@ -183,14 +186,19 @@ def _unwrap_bing(link: str) -> str:
 
 def searxng(query: str, *, max_items: int = 8, categories: str = "",
             engines: str = "", timeout: int = 40, cache=None,
-            language=None) -> list:
+            language=None, diagnostics=None) -> list:
+    started = time.monotonic()
     if not SEARXNG_URL:
+        if diagnostics is not None:
+            diagnostics.update(status="not_configured")
         return []
     engines = _rested(engines or DEFAULT_ENGINES, namespace="searxng")
     if cache is not None:
         hit = cache.get("search", "sx", query, engines, categories, max_items,
                         language)
         if hit is not None:
+            if diagnostics is not None:
+                diagnostics.update(status="cached", elapsed_ms=0)
             return hit
 
     params = {"q": query, "format": "json", "engines": engines}
@@ -208,6 +216,9 @@ def searxng(query: str, *, max_items: int = 8, categories: str = "",
                                 timeout=timeout, headers={"User-Agent": USER_AGENT})
         if response.status_code == 200:
             payload = response.json()
+            if diagnostics is not None:
+                errors = payload.get("unresponsive_engines") or []
+                diagnostics.update(status="degraded" if errors else "ok", unresponsive=errors)
             # Free engines block self-hosted instances routinely, and SearXNG
             # answers 200 with fewer results rather than failing. That is how
             # DuckDuckGo went from half this pool to nothing without anybody
@@ -229,9 +240,15 @@ def searxng(query: str, *, max_items: int = 8, categories: str = "",
                         snippet=item.get("content", ""),
                         published=item.get("publishedDate") or "",
                         engine=item.get("engine", "searxng")))
-    except Exception:
+        elif diagnostics is not None:
+            diagnostics.update(status="http_" + str(response.status_code))
+    except Exception as exc:
         rows = []
+        if diagnostics is not None:
+            diagnostics.update(status="failed", reason=type(exc).__name__)
 
+    if diagnostics is not None:
+        diagnostics["elapsed_ms"] = int((time.monotonic() - started) * 1000)
     if cache is not None and rows:
         cache.put("search", "sx", query, engines, categories, max_items,
                   language, value=rows)
@@ -404,7 +421,7 @@ def reputable_sweep(query: str, domains: list, *, max_per_domain: int = 3,
 # available but off, because an engine that fails two queries in three costs a
 # timeout every time it is asked.
 WEB_ENGINES = [e.strip() for e in os.environ.get(
-    "DETHROTTLED_WEB_ENGINES", "google,auto").split(",") if e.strip()]
+    "DETHROTTLED_WEB_ENGINES", "auto").split(",") if e.strip()]
 
 WEB_TIMEOUT = int(os.environ.get("DETHROTTLED_WEB_TIMEOUT", "20"))
 BROWSER_SEARCH_URL = os.environ.get("DETHROTTLED_BROWSER_SEARCH_URL", "").rstrip("/")
@@ -417,6 +434,7 @@ DRIVE_MAX_SESSIONS = int(os.environ.get("DETHROTTLED_DRIVE_MAX_SESSIONS", "8"))
 # A caller reading /v2/capabilities gets the truth whether or not the worker is
 # answering at that instant.
 DRIVE_ACTIONS = (
+    "download", "network", "checkpoint", "tabs", "switch_tab", "history",
     "goto", "click", "fill", "type", "press", "select", "check", "uncheck", "hover",
     "wait", "wait_for", "text", "html", "attr", "count", "snapshot", "url", "title",
 )
@@ -460,7 +478,7 @@ def browser_search(query: str, *, max_items: int = 8, cache=None,
             return hit
     try:
         response = requests.post(BROWSER_SEARCH_URL + "/search",
-                                 json={"query": query}, timeout=11)
+                                 json={"query": query}, timeout=18)
         payload = response.json()
         if not isinstance(payload, dict):
             raise ValueError("browser response is not an object")
@@ -468,7 +486,8 @@ def browser_search(query: str, *, max_items: int = 8, cache=None,
         if diagnostics is not None:
             diagnostics.update(status="ok" if response.ok else "http_" + str(response.status_code),
                                attempts=payload.get("attempts") or detail.get("attempts") or [],
-                               elapsed_ms=int(1000 * float(payload.get("service_s") or 0)))
+                               elapsed_ms=int(1000 * float(payload.get("service_s") or 0)),
+                               queue_ms=int(1000 * float(payload.get("queue_s") or 0)))
         response.raise_for_status()
         if not payload.get("ok"):
             return []
@@ -544,6 +563,16 @@ def web_search(query: str, *, max_items: int = 8, cache=None,
     # Explicit engine selections keep their old meaning for callers that
     # benchmark or request particular DDGS backends.
     if engines is None:
+        if os.environ.get("DETHROTTLED_CHEAP_DISCOVERY", "0") == "1":
+            direct = {}
+            found = tls_search(query, max_items=max_items, cache=cache,
+                               diagnostics=direct, worker=BROWSER_SEARCH_URL)
+            if diagnostics is not None:
+                diagnostics["direct"] = direct
+            if found:
+                if diagnostics is not None:
+                    diagnostics.update(status=direct.get("status"), attempts=[])
+                return found
         found = browser_search(query, max_items=max_items, cache=cache,
                                diagnostics=diagnostics)
         if found:
@@ -611,49 +640,69 @@ def _blend_news(rows: list) -> list:
 
 
 def search(query: str, *, max_items: int = 8, categories: str = "",
-           cache=None, log_fn=None, prefer_domains=None, language=None) -> tuple:
+           cache=None, log_fn=None, prefer_domains=None, language=None,
+           profile="balanced", engines="") -> tuple:
     """Query every free source and merge. Returns (rows, meta)."""
     started = time.time()
-    seen, seen_titles, merged, per_source = set(), set(), [], {}
+    sources = set(x.strip() for x in engines.split(",") if x.strip()) if engines else set(
+        SOURCE_PROFILES.get(categories or profile, SOURCE_PROFILES["balanced"]))
+    seen, merged, per_source = {}, [], {}
 
     def add(rows, tag):
         added = 0
         for row in rows:
             url = row.get("url", "")
+            if not constrained(query, row):
+                continue
             # Canonical, so one article is one row whatever query string or
             # mobile host it arrived under.
             key = canonical_url(url)
-            if not key or key in seen:
+            if not key:
                 continue
-
-            # And one story is one row however many sites carried it. A live
-            # run returned a Reuters wire piece from Channel News Asia, Yahoo
-            # Finance and US News: three real URLs, one article. The length
-            # guard is why "Home" and "News" do not collapse unrelated sites --
-            # they reduce to a single short word.
-            title = _title_key(row.get("title", ""))
-            if len(title) >= 25:
-                if title in seen_titles:
-                    continue
-                seen_titles.add(title)
-
-            seen.add(key)
+            row = dict(row)
+            provenance = row.setdefault("discovery", [{"provider": tag, "query": query}])
+            if key in seen:
+                for entry in provenance:
+                    if entry not in seen[key]["discovery"]:
+                        seen[key]["discovery"].append(entry)
+                continue
+            # Titles alone cannot prove syndication. Preserve independent URLs;
+            # research deduplicates mirrors using the actual extracted content.
+            seen[key] = row
             merged.append(row)
             added += 1
         per_source[tag] = per_source.get(tag, 0) + added
 
     browser_diagnostics = {}
-    web_future = _SOURCE_POOL.submit(
-        web_search, query, max_items=max_items, cache=cache,
-        diagnostics=browser_diagnostics)
-    bing_future = _SOURCE_POOL.submit(
-        bing_news, query, max_items=max_items, cache=cache)
-    searx_future = _SOURCE_POOL.submit(
-        searxng, query, max_items=max_items * 2, categories=categories,
-        cache=cache, language=language)
-    add(web_future.result(), "web")
-    add(bing_future.result(), "bing-news")
-    add(searx_future.result(), "searxng")
+    tasks = {}
+    source_reports = {"searxng": {}, "specialist": {}}
+    if "web" in sources:
+        tasks["web"] = _SOURCE_POOL.submit(
+            web_search, query, max_items=max_items, cache=cache, diagnostics=browser_diagnostics)
+    if "news" in sources:
+        tasks["bing-news"] = _SOURCE_POOL.submit(
+            bing_news, query, max_items=max_items, cache=cache)
+        tasks["searxng"] = _SOURCE_POOL.submit(
+            searxng, query, max_items=max_items * 2, categories="news",
+            cache=cache, language=language, timeout=8, diagnostics=source_reports["searxng"])
+    specialists = [e for e in ("mwmbl", "crossref", "openalex", "arxiv") if e in sources]
+    if specialists:
+        tasks["specialist"] = _SOURCE_POOL.submit(
+            searxng, query, max_items=max_items * 2, engines=",".join(specialists),
+            cache=cache, language=language, timeout=8, diagnostics=source_reports["specialist"])
+    source_reports["providers"] = {}
+    for provider in providers.NAMES:
+        if provider in sources:
+            report = source_reports["providers"].setdefault(provider, {})
+            tasks[provider] = _SOURCE_POOL.submit(
+                providers.search, provider, query, max_items, report)
+    for name, task in tasks.items():
+        try:
+            add(task.result(), name)
+        except Exception:
+            per_source[name] = "failed"
+    for name in ("web", "bing-news", "searxng"):
+        per_source.setdefault(name, "not_requested")
 
     # Google News is discovery only: resolve a bounded number of headlines it
     # surfaced that nothing else did, then drop the rest rather than emit URLs
@@ -664,8 +713,9 @@ def search(query: str, *, max_items: int = 8, categories: str = "",
     # that no caller could see. Keep the path for thin or preference-ranked
     # pools, where it can genuinely add coverage.
     usable_count = sum(_domain(r.get("url", "")) not in JUNK_DOMAINS for r in merged)
-    if usable_count >= max_items * 2 and not prefer_domains:
-        per_source["gnews-resolved"] = "skipped_full_pool"
+    if "news" not in sources or (usable_count >= max_items * 2 and not prefer_domains):
+        per_source["gnews-resolved"] = ("not_requested" if "news" not in sources
+                                        else "skipped_full_pool")
     else:
         resolved, looked_up = 0, 0
         known = {_title_key(r.get("title", "")) for r in merged}
@@ -699,14 +749,24 @@ def search(query: str, *, max_items: int = 8, categories: str = "",
             for row in reputable_sweep(query, rotated, cache=cache):
                 key = row.get("url", "").split("?")[0].rstrip("/")
                 if key and key not in seen:
-                    seen.add(key)
+                    seen[key] = row
                     merged.append(row)
                     swept += 1
             per_source["reputable-sweep"] = swept
 
     merged = rank(merged, prefer_domains)
-    if categories.strip().lower() == "news":
+    if "news" in sources:
         merged = _blend_news(merged)
+    elif (specialists or sources.intersection(providers.NAMES)) and "web" in sources:
+        groups = {}
+        for row in merged:
+            key = "web" if row.get("engine", "").startswith("web-") else row.get("engine")
+            groups.setdefault(key, deque()).append(row)
+        merged = []
+        while any(groups.values()):
+            for group in groups.values():
+                if group:
+                    merged.append(group.popleft())
     dropped = 0
 
     meta = {
@@ -719,10 +779,13 @@ def search(query: str, *, max_items: int = 8, categories: str = "",
         "per_source": (per_source if SEARXNG_URL
                        else dict(per_source, searxng="not_configured")),
         "browser_search": browser_diagnostics,
+        "source_reports": source_reports,
+        "profile": categories or profile,
+        "sources": sorted(sources),
         "junk_dropped": dropped,
         "swept": swept,
         "elapsed_ms": int((time.time() - started) * 1000),
-        "cost": "free",
+        "cost": "potentially_metered" if sources.intersection(providers.NAMES) else "free",
     }
     if log_fn:
         log_fn("    free-search '%s': %d results %s"

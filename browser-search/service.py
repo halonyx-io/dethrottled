@@ -8,12 +8,16 @@ from __future__ import annotations
 
 import asyncio
 import base64
+import hashlib
 import ipaddress
+import json
 import os
 import re
+import secrets
 import time
 from collections import Counter, deque
-from contextlib import asynccontextmanager
+from contextlib import asynccontextmanager, suppress
+from pathlib import Path
 from typing import Literal
 from urllib.parse import parse_qs, quote_plus, unquote, urljoin, urlparse
 
@@ -226,8 +230,15 @@ async def _watch_browser(app):
 
 @asynccontextmanager
 async def lifespan(app):
+    DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)
     async with async_playwright() as playwright:
-        app.state.browser = await playwright.chromium.launch(headless=False)
+        graphics = os.environ.get("DETHROTTLED_BROWSER_GRAPHICS", "default")
+        if graphics not in {"default", "mesa"}:
+            raise ValueError("DETHROTTLED_BROWSER_GRAPHICS must be default or mesa")
+        graphics_args = (["--use-gl=angle", "--use-angle=gl", "--ignore-gpu-blocklist"]
+                         if graphics == "mesa" else [])
+        app.state.browser = await playwright.chromium.launch(
+            headless=False, downloads_path=str(DOWNLOAD_DIR), args=graphics_args)
         watcher = asyncio.create_task(_watch_browser(app))
         session_reaper = asyncio.create_task(_reap_drive_sessions())
         try:
@@ -271,9 +282,14 @@ DRIVE_SESSIONS: dict[str, dict] = {}
 DRIVE_SESSIONS_LOCK = asyncio.Lock()
 
 # Actions this worker will perform, and nothing else.
+DOWNLOAD_DIR = Path("/tmp/dethrottled-downloads")
+DOWNLOAD_LIMIT = 32 * 1024 * 1024
+DOWNLOAD_LOCK = asyncio.Lock()
+
 DRIVE_ACTIONS = (
     "goto", "click", "fill", "type", "press", "select", "check", "uncheck", "hover",
     "wait", "wait_for", "text", "html", "attr", "count", "snapshot", "url", "title",
+    "download", "network", "checkpoint", "tabs", "switch_tab", "history",
 )
 SCREENSHOT_MODES = ("never", "failure", "canary", "always")
 INTERACTIVE_SELECTOR = (
@@ -293,6 +309,8 @@ class DriveStep(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     action: str = Field(min_length=1, max_length=20)
+    frame: str = Field(default="", max_length=1000,
+                       description="CSS selector for an allowed iframe")
     selector: str = Field(default="", max_length=1000)
     value: str = Field(default="", max_length=4000)
     url: str = Field(default="", max_length=2048)
@@ -301,6 +319,7 @@ class DriveStep(BaseModel):
     name: str = Field(default="", max_length=200)
     index: int = Field(default=0, ge=0, le=500)
     limit: int = Field(default=100, ge=1, le=200)
+    max_chars: int | None = Field(default=None, ge=1, le=120000)
 
 
 class DriveRequest(BaseModel):
@@ -312,11 +331,15 @@ class DriveRequest(BaseModel):
     # Whole-run budget. Individual actions also have their own ceiling; this is
     # the backstop so one slow selector cannot hold a browser forever.
     timeout_ms: int = Field(default=45000, ge=1000, le=180000)
+    # Internal readers can inspect a committed document while slow scripts load.
+    navigation_wait: Literal["commit", "domcontentloaded"] = "domcontentloaded"
     # A named session retains cookies, local storage and its current page.
     # Empty means an ephemeral context that is closed after this request.
     session: str = Field(default="", max_length=64, pattern=r"^[A-Za-z0-9._-]*$")
+    operation_id: str = Field(default="", max_length=100, pattern=r"^[A-Za-z0-9._-]*$")
     close_session: bool = False
     allowed_hosts: list[str] = Field(default_factory=list, max_length=32)
+    public_only: bool = False
     canaries: list[str] = Field(default_factory=list, max_length=20)
     include_events: bool = True
     # bool remains accepted for clients written against v1: true=always,
@@ -375,7 +398,7 @@ def _install_event_capture(page, events: dict[str, deque]) -> None:
         if response.status >= 400 else None)
 
 
-async def _install_scope_route(page, allowed_hosts: list[str]) -> None:
+async def _install_scope_route(page, allowed_hosts: list[str], public_only=False) -> None:
     if not allowed_hosts:
         return
 
@@ -384,20 +407,80 @@ async def _install_scope_route(page, allowed_hosts: list[str]) -> None:
             if not _host_allowed(request.url, allowed_hosts):
                 await route.abort("blockedbyclient")
                 return
-        await route.continue_()
+        if public_only:
+            await route.fallback()
+        else:
+            await route.continue_()
 
     await page.route("**/*", scoped)
 
 
-async def _make_drive_state(browser, allowed_hosts: list[str]) -> dict:
-    context = await browser.new_context()
+async def _public_network_target(url: str) -> bool:
+    import socket
+    parsed = urlparse(url)
+    host = (parsed.hostname or "").lower().rstrip(".")
+    if parsed.scheme not in {"http", "https"} or not host or parsed.username:
+        return False
+    try:
+        addresses = await asyncio.to_thread(socket.getaddrinfo, host, parsed.port or (
+            443 if parsed.scheme == "https" else 80), 0, socket.SOCK_STREAM)
+        return bool(addresses) and all(ipaddress.ip_address(row[4][0]).is_global
+                                       for row in addresses)
+    except (OSError, ValueError):
+        return False
+
+
+def _top_level_navigation(request):
+    if not request.is_navigation_request():
+        return False
+    try:
+        return request.frame == request.frame.page.main_frame
+    except Exception:
+        # A navigation with no inspectable frame must not weaken origin scope.
+        return True
+
+
+async def _make_drive_state(browser, allowed_hosts: list[str], public_only=False,
+                            storage_state=None, session_storage=None) -> dict:
+    options = {"storage_state": storage_state} if storage_state else {}
+    context = await browser.new_context(accept_downloads=True, **options)
+    if session_storage:
+        await context.add_init_script("""(() => {
+          const saved = %s;
+          const values = saved[location.origin];
+          if (values && !sessionStorage.getItem(saved.__restoreMarker)) {
+            for (const [key, value] of Object.entries(values)) sessionStorage.setItem(key, value);
+            sessionStorage.setItem(saved.__restoreMarker, '1');
+          }
+        })();""" % json.dumps({**session_storage,
+                             "__restoreMarker": "__dth_" + secrets.token_hex(12)}))
+    if public_only or allowed_hosts:
+        async def public_route(route, request):
+            if _top_level_navigation(request) and not _host_allowed(request.url, allowed_hosts):
+                await route.abort("blockedbyclient")
+            elif not public_only or await _public_network_target(request.url):
+                await route.continue_()
+            else:
+                await route.abort("blockedbyclient")
+        await context.route("**/*", public_route)
     page = await context.new_page()
     page.set_default_timeout(8000)
     events = _new_event_store()
     _install_event_capture(page, events)
-    await _install_scope_route(page, allowed_hosts)
-    return {"context": context, "page": page, "events": events,
-            "allowed_hosts": list(allowed_hosts), "lock": asyncio.Lock(),
+    await _install_scope_route(page, allowed_hosts, public_only=public_only)
+    responses = deque(maxlen=50)
+    def capture_response(response):
+        if response.request.resource_type in {"xhr", "fetch"}:
+            responses.append({"response_id": secrets.token_hex(12), "response": response})
+    page.on("response", capture_response)
+    def capture_page(new_page):
+        new_page.set_default_timeout(8000)
+        _install_event_capture(new_page, events)
+        new_page.on("response", capture_response)
+    context.on("page", capture_page)
+    return {"context": context, "page": page, "events": events, "responses": responses,
+            "allowed_hosts": list(allowed_hosts), "public_only": public_only,
+            "lock": asyncio.Lock(), "history": deque(maxlen=200),
             "last_used": time.monotonic()}
 
 
@@ -441,11 +524,14 @@ async def _reap_drive_sessions() -> None:
 
 async def _get_drive_state(browser, body: DriveRequest) -> tuple[dict, bool]:
     if not body.session:
-        return await _make_drive_state(browser, body.allowed_hosts), True
+        return await _make_drive_state(browser, body.allowed_hosts,
+                                       **({"public_only": True} if body.public_only else {})), True
     evicted = None
     async with DRIVE_SESSIONS_LOCK:
         existing = DRIVE_SESSIONS.get(body.session)
         if existing is not None:
+            if body.public_only and not existing.get("public_only"):
+                raise HTTPException(409, "public target policy cannot change within a session")
             if body.allowed_hosts and body.allowed_hosts != existing["allowed_hosts"]:
                 raise HTTPException(409, "allowed_hosts cannot change within a session")
             existing["last_used"] = time.monotonic()
@@ -453,6 +539,13 @@ async def _get_drive_state(browser, body: DriveRequest) -> tuple[dict, bool]:
         has_navigation = bool(body.url) or any(
             step.action.lower() == "goto" and bool(step.url) for step in body.steps
         )
+        checkpoint = _load_checkpoint(body.session)
+        if checkpoint:
+            if ((body.allowed_hosts and checkpoint["allowed_hosts"] != body.allowed_hosts)
+                    or checkpoint["public_only"] != body.public_only):
+                raise HTTPException(409, "checkpoint scope must match original session")
+            body.allowed_hosts = checkpoint["allowed_hosts"]
+            has_navigation = True
         if not has_navigation:
             # A missing, expired, or evicted session must not masquerade as a
             # successful call against a new about:blank context. The caller
@@ -477,7 +570,25 @@ async def _get_drive_state(browser, body: DriveRequest) -> tuple[dict, bool]:
                 candidates, key=lambda pair: pair[1]["last_used"]
             )
             DRIVE_SESSIONS.pop(evicted_id, None)
-        state = await _make_drive_state(browser, body.allowed_hosts)
+        state = await _make_drive_state(browser, body.allowed_hosts,
+                                       **({"public_only": True} if body.public_only else {}),
+                                       **({"storage_state": checkpoint["storage"],
+                                           "session_storage": checkpoint.get("session_storage") }
+                                          if checkpoint else {}))
+        if checkpoint:
+            state["history"] = deque(checkpoint.get("history", []), maxlen=200)
+            state["sequence"] = checkpoint.get("sequence", 0)
+            state["restored"] = True
+            if not body.url:
+                target = checkpoint["url"]
+                if not _host_allowed(target, body.allowed_hosts):
+                    await _close_drive_state(state)
+                    raise HTTPException(409, "checkpoint navigation scope mismatch")
+                try:
+                    await state["page"].goto(target, wait_until="domcontentloaded", timeout=15000)
+                except BaseException:
+                    await _close_drive_state(state)
+                    raise
         DRIVE_SESSIONS[body.session] = state
     if evicted is not None:
         await _close_drive_state(evicted)
@@ -601,6 +712,10 @@ async def _snapshot(page, selector: str, limit: int) -> list[dict]:
           && style.visibility !== 'hidden' && Number(style.opacity) > 0
           && rect.width > 0 && rect.height > 0;
       });
+      const roleOf = el => el.getAttribute('role') || (
+        {button:'button',a:'link',textarea:'textbox',select:'combobox'}[
+          el.tagName.toLowerCase()] || '');
+      const nameOf = el => (el.getAttribute('aria-label') || el.innerText || el.value || '').trim();
       return visible.slice(0, options.limit).map((el) => {
       const text = (
         el.innerText || el.value || el.getAttribute('aria-label') || ''
@@ -614,8 +729,18 @@ async def _snapshot(page, selector: str, limit: int) -> list[dict]:
         hint = el.tagName.toLowerCase()
           + '[name="' + esc(el.getAttribute('name')) + '"]';
       }
+      if (!hint && text && ['BUTTON','A'].includes(el.tagName)) {
+        const role = el.getAttribute('role') || (el.tagName === 'BUTTON' ? 'button' : 'link');
+        hint = 'role=' + role + '[name=' + JSON.stringify(
+          el.getAttribute('aria-label') || text) + ']';
+      }
+      const matching = hint.startsWith('role=')
+        ? visible.filter(other => roleOf(other) === roleOf(el) && nameOf(other) === nameOf(el))
+        : (hint ? Array.from(document.querySelectorAll(hint)) : []);
       return {
-        tag: el.tagName.toLowerCase(), role: el.getAttribute('role') || '',
+        tag: el.tagName.toLowerCase(), role: roleOf(el),
+        selector_count: matching.length, selector_index: matching.indexOf(el),
+        ambiguous: matching.length > 1,
         type: el.getAttribute('type') || '',
         text, name: el.getAttribute('name') || '', id: el.id || '',
         aria_label: el.getAttribute('aria-label') || '',
@@ -635,7 +760,7 @@ async def _canary_matches(page, events: dict[str, deque], canaries: list[str]) -
     title = await page.title()
     url = page.url
     try:
-        body_text = (await page.locator("body").inner_text(timeout=1000))[:20000]
+        body_text = (await page.locator("body").inner_text(timeout=1000))[:16000]
     except Exception:
         body_text = ""
     event_text = {name: str(list(items)) for name, items in events.items()}
@@ -668,6 +793,13 @@ async def metrics():
     return {"active":ACTIVE,"waiting":WAITING,"max_active":3,
             "max_waiting":MAX_WAITING,"counts":dict(STATS),
             "recent_latency_s":list(LATENCIES)}
+
+
+@app.post("/pace")
+async def pace():
+    """Share upstream pacing with the API's cheap static discovery adapter."""
+    await _pace_ddg()
+    return {"ok": True}
 
 
 @app.post("/search")
@@ -715,6 +847,32 @@ async def search(body: SearchRequest):
         SEMAPHORE.release()
 
 
+async def _download(page, target, timeout):
+    async with DOWNLOAD_LOCK:
+        async with page.expect_download(timeout=timeout) as event:
+            await target.click(timeout=timeout)
+        download = await event.value
+        pending = asyncio.create_task(download.path())
+        try:
+            while not pending.done():
+                size = sum(path.stat().st_size for path in DOWNLOAD_DIR.iterdir() if path.is_file())
+                if size > DOWNLOAD_LIMIT:
+                    raise ValueError("download_too_large")
+                await asyncio.wait({pending}, timeout=0.05)
+            path = await pending
+            if path.stat().st_size > DOWNLOAD_LIMIT:
+                raise ValueError("download_too_large")
+            blob = await asyncio.to_thread(path.read_bytes)
+            return {"filename": download.suggested_filename, "source_url": download.url,
+                    "download_b64": base64.b64encode(blob).decode(), "size_bytes": len(blob)}
+        finally:
+            if not pending.done():
+                await download.cancel()
+                pending.cancel()
+            with suppress(Exception):
+                await download.delete()
+
+
 async def _drive(state: dict, body: DriveRequest) -> dict:
     """Run a bounded sequence against an ephemeral or named persistent page.
 
@@ -730,8 +888,10 @@ async def _drive(state: dict, body: DriveRequest) -> dict:
     for items in events.values():
         items.clear()
 
+    scope = page
+
     def locator(step):
-        return page.locator(step.selector).nth(step.index)
+        return scope.locator(step.selector).nth(step.index)
 
     async def _run(action: str, coro_factory) -> dict:
         step = {"action": action, "ok": False, "reason": None,
@@ -762,8 +922,11 @@ async def _drive(state: dict, body: DriveRequest) -> dict:
         allowed = state["allowed_hosts"]
         if allowed and not _host_allowed(url, allowed):
             raise ValueError("navigation outside allowed_hosts")
-        response = await page.goto(url, wait_until="domcontentloaded", timeout=timeout)
-        return {"url": page.url, "status": response.status if response else None}
+        response = await page.goto(url, wait_until=body.navigation_wait, timeout=timeout)
+        return {"url": page.url, "status": response.status if response else None,
+                "wait_until": body.navigation_wait,
+                "challenge_headers": ({"cf-mitigated": response.headers["cf-mitigated"]}
+                                      if response and "cf-mitigated" in response.headers else {})}
 
     async def diagnosed_failure(action: str, target, exc: Exception, stage: str):
         diagnostics = await _locator_diagnostics(page, target)
@@ -786,91 +949,187 @@ async def _drive(state: dict, body: DriveRequest) -> dict:
         if results and not results[-1]["ok"]:
             break
         action = s.action.lower()
+        scope = page
+        if s.frame:
+            async def resolve_frame(s=s):
+                element = await page.locator(s.frame).element_handle(timeout=s.ms or 8000)
+                frame = await element.content_frame() if element else None
+                if not frame or not _host_allowed(frame.url, state["allowed_hosts"]):
+                    raise ValueError("frame_missing_or_outside_allowed_hosts")
+                return frame
+            frame_result = await _run("frame", resolve_frame)
+            if not frame_result["ok"]:
+                frame_result["data"] = None
+                results.append(frame_result)
+                break
+            scope = frame_result["data"]
+        read_metadata = {}
         if action == "goto":
-            async def call(s=s):
+            async def call(s=s, scope=scope):
                 return await navigate(s.url, min(30000, s.ms or 20000))
         elif action == "click":
-            async def call(s=s):
+            async def call(s=s, scope=scope):
                 target = locator(s)
                 try:
                     await target.click(timeout=s.ms or 8000)
                 except Exception as exc:
                     await diagnosed_failure("click", target, exc, "actionability")
                 return True
+        elif action == "download":
+            async def call(s=s, scope=scope):
+                return await _download(page, locator(s), s.ms or 20000)
         elif action == "fill":
-            async def call(s=s):
+            async def call(s=s, scope=scope):
                 target = locator(s)
                 await target.fill(s.value, timeout=s.ms or 8000)
                 await target.dispatch_event("change")
                 return True
         elif action == "type":
-            async def call(s=s):
+            async def call(s=s, scope=scope):
                 await locator(s).press_sequentially(s.value, delay=s.delay_ms,
                                                     timeout=s.ms or 8000)
                 return True
         elif action == "press":
-            async def call(s=s):
-                target = locator(s) if s.selector else page.locator("body")
+            async def call(s=s, scope=scope):
+                target = locator(s) if s.selector else scope.locator("body")
                 await target.press(s.value or "Enter", timeout=s.ms or 8000)
                 return True
         elif action == "select":
-            async def call(s=s):
+            async def call(s=s, scope=scope):
                 return await locator(s).select_option(s.value, timeout=s.ms or 8000)
         elif action == "check":
-            async def call(s=s):
+            async def call(s=s, scope=scope):
                 await locator(s).check(timeout=s.ms or 8000)
                 return True
         elif action == "uncheck":
-            async def call(s=s):
+            async def call(s=s, scope=scope):
                 await locator(s).uncheck(timeout=s.ms or 8000)
                 return True
         elif action == "hover":
-            async def call(s=s):
+            async def call(s=s, scope=scope):
                 await locator(s).hover(timeout=s.ms or 8000)
                 return True
         elif action == "wait":
-            async def call(s=s):
+            async def call(s=s, scope=scope):
                 await asyncio.sleep(min(s.ms, 30000) / 1000.0)
                 return True
         elif action == "wait_for":
-            async def call(s=s):
+            async def call(s=s, scope=scope):
                 state_name = s.value or "visible"
                 if state_name not in ("attached", "detached", "visible", "hidden"):
                     raise ValueError(
                         "wait_for value must be attached, detached, visible, or hidden"
                     )
-                await page.wait_for_selector(s.selector, state=state_name,
+                await scope.wait_for_selector(s.selector, state=state_name,
                                              timeout=s.ms or 8000)
                 return True
         elif action == "text":
-            async def call(s=s):
-                target = locator(s) if s.selector else page.locator("body")
-                return (await target.inner_text(timeout=s.ms or 8000))[:16000]
+            async def call(s=s, scope=scope, read_metadata=read_metadata):
+                target = locator(s) if s.selector else scope.locator("body")
+                text = await target.inner_text(timeout=s.ms or 8000)
+                cap = s.max_chars or 16000
+                read_metadata.update(content_chars=len(text), truncated=len(text) > cap)
+                return text[:cap]
         elif action == "html":
-            async def call(s=s):
-                target = locator(s) if s.selector else page.locator("html")
+            async def call(s=s, scope=scope, read_metadata=read_metadata):
+                target = locator(s) if s.selector else scope.locator("html")
                 try:
-                    return (await target.evaluate("el => el.outerHTML"))[:20000]
+                    text = await target.evaluate("el => el.outerHTML")
+                    cap = s.max_chars or 20000
+                    read_metadata.update(content_chars=len(text), truncated=len(text) > cap)
+                    read_metadata["document_ready_state"] = await page.evaluate(
+                        "document.readyState")
+                    return text[:cap]
                 except Exception as exc:
                     await diagnosed_failure("html", target, exc, "dom_read")
         elif action == "attr":
-            async def call(s=s):
+            async def call(s=s, scope=scope):
                 if not s.name:
                     raise ValueError("attr requires name")
                 return await locator(s).get_attribute(s.name, timeout=s.ms or 8000)
         elif action == "count":
-            async def call(s=s):
-                return await page.locator(s.selector).count()
+            async def call(s=s, scope=scope):
+                return await scope.locator(s.selector).count()
         elif action == "snapshot":
-            async def call(s=s):
+            async def call(s=s, scope=scope):
                 try:
-                    return await _snapshot(page, s.selector, s.limit)
+                    return await _snapshot(scope, s.selector, s.limit)
                 except Exception as exc:
                     target = (
-                        page.locator(s.selector).first
-                        if s.selector else page.locator("body")
+                        scope.locator(s.selector).first
+                        if s.selector else scope.locator("body")
                     )
                     await diagnosed_failure("snapshot", target, exc, "dom_snapshot")
+        elif action == "checkpoint":
+            async def call():
+                if not body.session:
+                    raise ValueError("checkpoint_requires_named_session")
+                _save_checkpoint(body.session, {
+                    "url": page.url, "allowed_hosts": state["allowed_hosts"],
+                    "public_only": state.get("public_only", False),
+                    "storage": await state["context"].storage_state(indexed_db=True),
+                    "history": list(state.get("history", [])),
+                    "sequence": state.get("sequence", 0),
+                    "session_storage": {await frame.evaluate("location.origin"):
+                        await frame.evaluate("Object.fromEntries(Object.entries(sessionStorage))")
+                        for frame in page.frames
+                        if _host_allowed(frame.url, state["allowed_hosts"])},
+                    "expires": time.time() + 86400})
+                return {"saved": True, "retention_seconds": 86400,
+                        "includes": ["cookies", "local_storage", "session_storage", "indexed_db"],
+                        "excludes": ["live_dom", "other_tabs"]}
+        elif action == "network":
+            async def call(s=s, scope=scope):
+                responses = [r for r in state.get("responses", [])
+                             if _host_allowed(r["response"].url, state["allowed_hosts"])
+                             and (not s.value or s.value in r["response"].url)]
+                listing = [{"index": i, "response_id": entry["response_id"],
+                            "url": entry["response"].url, "status": entry["response"].status,
+                            "content_type": entry["response"].headers.get("content-type", "")}
+                           for i, entry in enumerate(responses)]
+                if s.name != "body":
+                    return {"responses": listing[-s.limit:], "captured": len(responses)}
+                index = s.index
+                if s.selector:
+                    index = next((i for i, r in enumerate(responses)
+                                  if r["response_id"] == s.selector), -1)
+                if index < 0 or index >= len(responses):
+                    raise ValueError("network_response_missing; list responses first")
+                response = responses[index]["response"]
+                size = response.headers.get("content-length", "")
+                if size.isdigit() and int(size) > 2_000_000:
+                    raise ValueError("network_body_over_2MB")
+                raw_body = await response.body()
+                if len(raw_body) > 2_000_000:
+                    raise ValueError("network_body_over_2MB")
+                media_type = response.headers.get("content-type", "").lower()
+                if not any(t in media_type for t in ("json", "text/", "xml", "javascript")):
+                    raise ValueError("network_body_not_text; use download for binary files")
+                text = raw_body.decode("utf-8", errors="replace")
+                cap = s.max_chars or 16000
+                return {**listing[index], "content": text[:cap],
+                        "truncated": len(text) > cap, "content_chars": len(text)}
+        elif action == "tabs":
+            async def call():
+                return {"tabs": [{"index": i, "url": tab.url, "active": tab == page,
+                                  "allowed": _host_allowed(tab.url, state["allowed_hosts"])}
+                                 for i, tab in enumerate(state["context"].pages)]}
+        elif action == "switch_tab":
+            async def call(s=s):
+                nonlocal page, scope
+                tabs = state["context"].pages
+                if s.index >= len(tabs) or not _host_allowed(
+                        tabs[s.index].url, state["allowed_hosts"]):
+                    raise ValueError("tab_missing_or_outside_allowed_hosts")
+                page = tabs[s.index]
+                scope = page
+                state["page"] = page
+                return {"index": s.index, "url": page.url}
+        elif action == "history":
+            async def call(s=s, scope=scope):
+                return {"steps": list(state.get("history", []))[-s.limit:],
+                        "retention": "last_200_steps; checkpoint_saves_history",
+                        "replays_actions": False}
         elif action == "url":
             async def call():
                 return page.url
@@ -881,6 +1140,13 @@ async def _drive(state: dict, body: DriveRequest) -> dict:
                             "elapsed_ms": 0, "data": None})
             break
         results.append(await _run(action, call))
+        results[-1].update(read_metadata)
+        # No values, headers, response bodies or selectors in the audit trail.
+        state.setdefault("history", deque(maxlen=200)).append({
+            "sequence": state.get("sequence", 0) + 1, "action": action,
+            "ok": results[-1]["ok"], "elapsed_ms": results[-1]["elapsed_ms"],
+            "timestamp": time.time(), "frame": bool(s.frame)})
+        state["sequence"] = state.get("sequence", 0) + 1
         if results[-1]["ok"] and state["allowed_hosts"]:
             if page.url != "about:blank" and not _host_allowed(page.url, state["allowed_hosts"]):
                 results[-1].update(ok=False, reason="navigation_outside_allowed_hosts")
@@ -892,7 +1158,9 @@ async def _drive(state: dict, body: DriveRequest) -> dict:
         "steps": results,
         "final": {"url": page.url, "title": await page.title()},
         "session": {"id": body.session or None, "persistent": bool(body.session),
-                    "closed": False, "ttl_seconds": DRIVE_SESSION_TTL if body.session else 0},
+                    "closed": False, "ttl_seconds": DRIVE_SESSION_TTL if body.session else 0,
+                    "allowed_hosts": state["allowed_hosts"],
+                    "restored_from_checkpoint": state.get("restored", False)},
         "canary_matches": matches,
         "service_s": round(time.monotonic() - started, 3),
     }
@@ -910,8 +1178,119 @@ async def _drive(state: dict, body: DriveRequest) -> dict:
     return out
 
 
+STATE_DIR = Path(os.getenv("DETHROTTLED_BROWSER_STATE_DIR", "/tmp/dethrottled-browser-state"))
+OPERATION_TTL = 86400
+
+
+def _checkpoint_path(session):
+    STATE_DIR.mkdir(parents=True, exist_ok=True, mode=0o700)
+    return STATE_DIR / (hashlib.sha256(session.encode()).hexdigest() + ".json")
+
+
+def _save_checkpoint(session, value):
+    path = _checkpoint_path(session)
+    for old in STATE_DIR.glob("*.json"):
+        try:
+            if json.loads(old.read_text()).get("expires", 0) <= time.time():
+                old.unlink(missing_ok=True)
+        except (OSError, ValueError):
+            continue
+    if not path.exists() and len(list(STATE_DIR.glob("*.json"))) >= 128:
+        raise ValueError("checkpoint_capacity_reached; close unused sessions")
+    encoded = json.dumps(value)
+    if len(encoded) > 2_000_000:
+        raise ValueError("checkpoint_too_large")
+    temporary = path.with_suffix(".tmp")
+    fd = os.open(temporary, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+    with os.fdopen(fd, "w") as stream:
+        stream.write(encoded)
+    temporary.replace(path)
+
+
+def _load_checkpoint(session):
+    path = _checkpoint_path(session)
+    try:
+        value = json.loads(path.read_text())
+        if value["expires"] > time.time():
+            return value
+        path.unlink(missing_ok=True)
+    except (OSError, ValueError, KeyError):
+        pass
+    return None
+
+
+def _operation_db():
+    import sqlite3
+    STATE_DIR.mkdir(parents=True, exist_ok=True, mode=0o700)
+    db = sqlite3.connect(STATE_DIR / "operations.sqlite")
+    db.execute("CREATE TABLE IF NOT EXISTS operations (key TEXT PRIMARY KEY, value TEXT)")
+    return db
+
+
+def _persist_operation(key, value):
+    from contextlib import closing
+    with closing(_operation_db()) as db, db:
+        db.execute("INSERT OR REPLACE INTO operations VALUES (?,?)",
+                   (json.dumps(key), json.dumps(value)))
+        db.execute("DELETE FROM operations WHERE CAST(json_extract(value, '$.created') "
+                   "AS REAL) < ?", (time.time() - OPERATION_TTL,))
+
+
+def _load_operations():
+    db = _operation_db()
+    try:
+        records = {}
+        for key, raw in db.execute("SELECT key,value FROM operations"):
+            value = json.loads(raw)
+            if value["created"] < time.time() - OPERATION_TTL:
+                db.execute("DELETE FROM operations WHERE key=?", (key,))
+                continue
+            if value["state"] == "running":
+                value["state"] = "outcome_unknown"
+            records[tuple(json.loads(key))] = value
+        db.commit()
+        return records
+    finally:
+        db.close()
+
+
+DRIVE_OPERATIONS = _load_operations()
+
+
+def _operation_fingerprint(body, *, normalize=True):
+    payload = body.model_dump(exclude={"operation_id"})
+    if normalize:
+        if payload.get("navigation_wait") == "domcontentloaded":
+            payload.pop("navigation_wait", None)
+        # Adding an optional selector must not invalidate pre-upgrade retry IDs.
+        for step in payload.get("steps", []):
+            if not step.get("frame"):
+                step.pop("frame", None)
+    return hashlib.sha256(json.dumps(payload, sort_keys=True).encode()).hexdigest()
+
+
+def _operation_lookup(body):
+    if not body.operation_id:
+        return None
+    key = (body.session, body.operation_id)
+    fingerprint = _operation_fingerprint(body)
+    previous = DRIVE_OPERATIONS.get(key)
+    if previous is None:
+        return None
+    if previous["fingerprint"] not in {fingerprint, _operation_fingerprint(body, normalize=False)}:
+        raise HTTPException(409, "operation_id_payload_conflict")
+    if previous["state"] != "completed":
+        raise HTTPException(409, "operation_" + previous["state"] + "_inspect_session")
+    return {**previous["result"], "operation_replayed": True}
+
+
 @app.post("/drive")
 async def drive(body: DriveRequest):
+    if body.operation_id and not body.session:
+        raise HTTPException(422, "operation_id requires an explicit named session")
+    replay = _operation_lookup(body)
+    if replay is not None:
+        return replay
     if not body.url and not body.steps and not (body.session and body.close_session):
         raise HTTPException(422, "nothing to do: supply url and/or steps")
     if any(not h or len(h) > 253 or "/" in h or ":" in h for h in body.allowed_hosts):
@@ -934,16 +1313,46 @@ async def drive(body: DriveRequest):
     try:
         if body.session and body.close_session and not body.url and not body.steps:
             closed = await _drop_drive_session(body.session)
+            _checkpoint_path(body.session).unlink(missing_ok=True)
             return {"ok": True, "steps": [], "session": {"id": body.session,
                     "persistent": True, "closed": closed}, "canary_matches": [],
                     "service_s": 0.0}
         state, ephemeral = await _get_drive_state(app.state.browser, body)
         try:
             async with state["lock"]:
-                result = await _drive(state, body)
+                replay = _operation_lookup(body)
+                if replay is not None:
+                    return replay
+                if body.operation_id:
+                    cutoff = time.time() - OPERATION_TTL
+                    for key, operation in list(DRIVE_OPERATIONS.items()):
+                        if operation["created"] < cutoff and operation["state"] != "running":
+                            DRIVE_OPERATIONS.pop(key, None)
+                    if len(DRIVE_OPERATIONS) >= 256:
+                        raise HTTPException(429, "operation_journal_full")
+                    key = (body.session, body.operation_id)
+                    fingerprint = _operation_fingerprint(body)
+                    DRIVE_OPERATIONS[key] = {"fingerprint": fingerprint, "state": "running",
+                                             "created": time.time()}
+                    _persist_operation(key, DRIVE_OPERATIONS[key])
+                try:
+                    result = await _drive(state, body)
+                except BaseException:
+                    if body.operation_id:
+                        DRIVE_OPERATIONS[key]["state"] = "outcome_unknown"
+                        _persist_operation(key, DRIVE_OPERATIONS[key])
+                    raise
                 if body.close_session and body.session:
                     await _drop_drive_session(body.session, expected=state)
                     result["session"]["closed"] = True
+                    _checkpoint_path(body.session).unlink(missing_ok=True)
+                if body.operation_id:
+                    result.update(operation_id=body.operation_id, operation_replayed=False)
+                    if len(json.dumps(result)) > 1_000_000:
+                        DRIVE_OPERATIONS[key].update(state="completed_evidence_unavailable")
+                    else:
+                        DRIVE_OPERATIONS[key].update(state="completed", result=result)
+                    _persist_operation(key, DRIVE_OPERATIONS[key])
         finally:
             if ephemeral:
                 await _close_drive_state(state)

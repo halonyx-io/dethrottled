@@ -1,0 +1,28 @@
+{
+  "version": "0.6.0",
+  "runtime_source_matches_checkout": true,
+  "api_module_sha256": {
+    "dethrottled.server": "368760fc78e1da24ca3e857ec57a80899bb7d833185895b01892e7616f2c2416",
+    "dethrottled.jobs": "42edb1d4321940ed866b82b034968e4327d1dace44a508dbd27864aac735a989",
+    "dethrottled.formats": "c1ce29c9e0b8172cd78446d6a0e83c003865cfd32e6ec31f6f59828db31d27e4",
+    "dethrottled.workflow": "a588f52566e98ef9a6c3390e2af668c2fc1a47058096db5077b95724a4d7357d",
+    "dethrottled.access": "16ba0ac8956ed34fa1f633f5caf2547f635e199488e094c715e56ac0069b120e",
+    "dethrottled.site": "da54246deb507f44f9a76835ae186b69cc8a1c0fce2952e65518e767ceb94192",
+    "dethrottled.structure": "ea937d5d7245e52035d4f51a80e72af79606ca93c3e49446bd19c34fdeb248e9",
+    "dethrottled.timed": "7f18ca6b56540121265f0b07f3304f25317b30770f553fec6ebb49a95d5bbb63",
+    "dethrottled.media": "c6dd76f625fd9eed8832dbab6da69843891562dc04bcca7407b9962813bd318c"
+  },
+  "images": {
+    "dethrottled-dethrottled-1": "sha256:2f88eebb9645b4616d2954547b91ade385f7a2ab3b3b4d1f67c59db493c97688",
+    "dethrottled-browser-search-1": "sha256:89815c373424058fbbdd4555427fb9c2860c12986a8fe2be4aae441498982a11",
+    "dethrottled-media-worker-1": "sha256:c4a53f5d645b1672be6007b38e2945cb5ecbcf20b3aa951c09d9163f74e0c42d"
+  },
+  "registry_unchanged": true,
+  "environment_changed_fields": [
+    "DETHROTTLED_MEDIA_WORKER_URL"
+  ],
+  "baseline_commit": "e672dc8df4137b37a35b478275bac41541f4b42b",
+  "tests": "510 passed;15 skipped;2 network tests deselected",
+  "fixture_exceptions_deployed": false,
+  "mcp_rest_adapters": "existing systemd services; source hashes match checkout"
+}

@@ -32,19 +32,24 @@ search:
     - html
     - json
 
-# Engines are left at the SearXNG defaults on purpose.
-#
-# The instinct is to pick a tuned handful, and it is the wrong instinct: free
-# search engines rate-limit and CAPTCHA self-hosted instances as a matter of
-# routine, and SearXNG suspends an engine when it gets one. Benchmarking this
-# stack knocked out four engines within an hour and left two answering. A broad
-# default list degrades -- suspended engines simply contribute nothing and heal
-# on their own -- while a narrow one turns a single CAPTCHA into an outage.
-#
-# If you do want to narrow it, prefer the news endpoints: they are consistently
-# the ones that survive, presumably because they are not what anti-bot systems
-# guard most closely.
-#
-# engines:
-#   - name: google
-#     disabled: true
+# General web discovery uses the separate headed DDG worker. These scraped
+# engines failed or returned unrelated rows in the local October 31 evaluation.
+# Retain the working news engines and explicitly enable specialist complements.
+# Select sources per request; do not indiscriminately merge academic/local news.
+engines:
+  - name: google
+    disabled: true
+  - name: brave
+    disabled: true
+  - name: bing
+    disabled: true
+  - name: duckduckgo
+    disabled: true
+  - name: mwmbl
+    disabled: false
+  - name: crossref
+    disabled: false
+  - name: openalex
+    disabled: false
+  - name: arxiv
+    disabled: false

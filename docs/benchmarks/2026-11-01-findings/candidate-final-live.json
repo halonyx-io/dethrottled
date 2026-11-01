@@ -1,0 +1,77 @@
+[
+  {
+    "case": "cargurus",
+    "url": "https://www.cargurus.com/",
+    "elapsed_ms": 1336,
+    "ok": false,
+    "quality": "failed",
+    "expected_markers": false,
+    "tier": "headed",
+    "reason": "direct:http_406 | tls:tls_http_406 | crawl4ai:crawl4ai_incomplete_render: Blocked by anti-bot protection: Structural: minimal_text, no_content_elements (39 bytes, 0 chars visible) | headed:headed_ValueError",
+    "browser_recovery": null,
+    "text": "",
+    "tier_stats": {
+      "failed": 1
+    }
+  },
+  {
+    "case": "crunchbase",
+    "url": "https://www.crunchbase.com/organization/openai",
+    "elapsed_ms": 16485,
+    "ok": false,
+    "quality": "failed",
+    "expected_markers": false,
+    "tier": "headed",
+    "reason": "direct:http_403 | tls:tls_challenge_detected | crawl4ai:crawl4ai_Blocked by anti-bot protection: Cloudflare JS challenge | headed:headed_challenge_unresolved:cloudflare",
+    "browser_recovery": null,
+    "text": "",
+    "tier_stats": {
+      "failed": 1
+    }
+  },
+  {
+    "case": "g2",
+    "url": "https://www.g2.com/products/notion/reviews",
+    "elapsed_ms": 2942,
+    "ok": false,
+    "quality": "failed",
+    "expected_markers": false,
+    "tier": "headed",
+    "reason": "direct:challenge_detected | tls:tls_challenge_detected | crawl4ai:crawl4ai_Blocked by anti-bot protection: DataDome captcha | headed:fetched_but_no_extractor_succeeded",
+    "browser_recovery": null,
+    "text": "",
+    "tier_stats": {
+      "failed": 1
+    }
+  },
+  {
+    "case": "expedia",
+    "url": "https://www.expedia.com/",
+    "elapsed_ms": 1253,
+    "ok": false,
+    "quality": "failed",
+    "expected_markers": false,
+    "tier": "crawl4ai",
+    "reason": "direct:http_429 | tls:tls_http_429 | crawl4ai:crawl4ai_Blocked by anti-bot protection: HTTP 429 Too Many Requests",
+    "browser_recovery": null,
+    "text": "",
+    "tier_stats": {
+      "failed": 1
+    }
+  },
+  {
+    "case": "python-control",
+    "url": "https://docs.python.org/3/library/sqlite3.html",
+    "elapsed_ms": 594,
+    "ok": true,
+    "quality": "ok",
+    "expected_markers": true,
+    "tier": "direct",
+    "reason": "",
+    "browser_recovery": null,
+    "text": "sqlite3 \u2014 DB-API 2.0 interface for SQLite databases\u00b6 Source code: Lib/sqlite3/ SQLite is a C library that provides a lightweight disk-based database that doesn\u2019t require a separate server process and allows accessing the database using a nonstandard variant of the SQL query language. Some applications can use SQLite for internal data storage. It\u2019s also possible to prototype an application using SQLite and then port the code to a larger database such as PostgreSQL or Oracle. The sqlite3 module was written by Gerhard H\u00e4ring. It provides an SQL interface compliant with the DB-API 2.0 specification described by PEP 249, and requires the third-party SQLite library. This is an optional module. If it is missing from your copy of CPython, look for documentation from your distributor (that is, whoever provided Python to you). If you are the distributor, see Requirements for optional modules. This document includes four main sections: - Tutorial teaches how to use the sqlite3 module. - Reference describes the classes and functions this module defines. - How-to guides details how to handle specific tasks. - Explanation provides in-depth background on transaction control. See also - https://www.sqlite.org - The SQLite web page; the documentation describes the syntax and the available data types for the supported SQL dialect. - https://www.w3schools.com/sql/ - Tutorial, reference and examples for learning SQL syntax. - PEP 249 - Database API Specification 2.0 - PEP written by Marc-Andr\u00e9 Lemburg. Tutorial\u00b6 In this tutorial, you will create a database of Monty Python movies using basic sqlite3 functionality. It assumes a fundamental understanding of database concepts, including cursors and transactions. First, we need to create a new database and open a database connection to allow sqlite3 to work with it. Call sqlite3.connect() to create a connection to the database tutorial.db in the current working directory, implicitly creating it if it does not exist: import sqlite3 con = sqlite3.connect(\"tutorial.db\") The returned Connection object con represents the connection to the on-disk database. In order to execute SQL statements and fetch results from SQL queries, we will need to use a database cursor. Call con.cursor() to create the Cursor: cur = con.cursor() Now that we\u2019ve got a database connection and a cursor, we can create a database table movie with columns for title, release year, and review score. For simplicity, we can just use column names in the table declaration \u2013 thanks to the flexible typing feature of SQLite, specifying the data types is optional. Execute the CREATE TABLE statement by calling cur.execute(...): cur.execute(\"CREATE TABLE movie(title, year, score)\") We can verify that the new table has been created by querying the sqlite_master table built-in to SQLite, which should now contain an entry for the movie table definition (see The Schema Table for details). Execute that query by calling cur.execute(...), assign the result to res, and call res.fetchone() to fetch the resulting row: >>> res = cur.execute(\"SELECT name FROM sqlite_master\") >>> res.fetchone() ('movie',) We can see that the table has been created, as the query returns a tuple containing the table\u2019s name. If we query sqlite_master for a non-existent table spam, res.fetchone() will return None: >>> res = cur.execute(\"SELECT name FROM sqlite_master WHERE name='spam'\") >>> res.fetchone() is None True Now, add two rows of data supplied as SQL literals by executing an INSERT statement, once again by calling cur.execute(...): cur.execute(\"\"\" INSERT INTO movie VALUES ('Monty Python and the Holy Grail', 1975, 8.2), ('And Now for Something Completely Different', 1971, 7.5) \"\"\") The INSERT statement implicitly opens a transaction, which needs to be committed before changes are saved in the database (see Transaction control for details). Call con.commit() on the connection object to commit the transaction: con.commit() We can verify that the data was inserted correctly by executing a SELECT query. Use the now-familiar cur.execute(...) to assign the result to res, and call res.fetchall() to return all resulting rows: >>> res = cur.execute(\"SELECT score FROM movie\") >>> res.fetchall() [(8.2,), (7.5,)] The result is a list of two tuples, one per row, each containing that row\u2019s score value. Now, insert three more rows by calling cur.executemany(...): data = [ (\"Monty Python Live at the Hollywood Bowl\", 1982, 7.9), (\"Monty Python's The Meaning of Life\", 1983, 7.5), (\"Monty Python's Life of Brian\", 1979, 8.0), ] cur.executemany(\"INSERT INTO movie VALUES(?, ?, ?)\", data) con.commit() # Remember to commit the transaction after executing INSERT. Notice that ? placeholders are used to bind data to the query. Always use placeholders instead of string formatting to bind Python values to SQL statements, to avoid SQL injection attacks (see How to use placeholders to bind values in SQL queries for more details). We can verify that the new rows were inserted by executing a SELECT query, this time iterating over the results of the query: >>> for row in cur.execute(\"SELECT year, title FROM movie ORDER BY year\"): ... print(row) (1971, 'And Now for Something Completely Different') (1975, 'Monty Python and the Holy Grail') (1979, \"Monty Python's Life of Brian\") (1982, 'Monty Python Live at the Hollywood Bowl') (1983, \"Monty Python's The Meaning of Life\") Each row is a two-item tuple of (year, title), matching the columns selected in the query. Finally, verify that the database has been written to disk by calling con.close() to close the existing connection, opening a new one, creating a new cursor, then querying the database: >>> con.close() >>> new_con = sqlite3.connect(\"tutorial.db\") >>> new_cur = new_con.cursor() >>> res = new_cur.execute(\"SELECT title, year FROM movie ORDER BY score DESC\") >>> title, year = res.fetchone() >>> print(f'The highest scoring Monty Python movie is {title!r}, released in {year}') The highest scoring Monty Python movie is '",
+    "tier_stats": {
+      "direct": 1
+    }
+  }
+]

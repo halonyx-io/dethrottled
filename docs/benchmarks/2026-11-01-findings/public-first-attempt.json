@@ -1,0 +1,67 @@
+[
+  {
+    "label": "public-initialize",
+    "url": "https://api.halonyx.io/mcp",
+    "input": {
+      "jsonrpc": "2.0",
+      "id": "ab79cbb960c24efca4396f193854023b",
+      "method": "initialize",
+      "params": {
+        "protocolVersion": "2025-03-26",
+        "capabilities": {},
+        "clientInfo": {
+          "name": "six-upgrade-smoke",
+          "version": "1"
+        }
+      }
+    },
+    "status": 429,
+    "wall_ms": 152.86,
+    "http_version": "HTTP/1.1",
+    "headers": {
+      "content-type": "application/json",
+      "retry-after": "1",
+      "x-request-id": "4cffdbeec6ed43c69b39eeb195cbe41d",
+      "cf-cache-status": "DYNAMIC",
+      "cf-ray": "a539d1564a891f6e-SIN"
+    },
+    "response": {
+      "error": "caller_busy",
+      "reason": "caller_busy",
+      "limiter": "caller_concurrency",
+      "retryable": true,
+      "retry_after_seconds": 1,
+      "retry_kind": "poll",
+      "request_id": "4cffdbeec6ed43c69b39eeb195cbe41d"
+    }
+  },
+  {
+    "label": "public-tools-list",
+    "url": "https://api.halonyx.io/mcp",
+    "input": {
+      "jsonrpc": "2.0",
+      "id": "9d590638978843f9b238c9423438e8cb",
+      "method": "tools/list",
+      "params": {}
+    },
+    "status": 429,
+    "wall_ms": 111.47,
+    "http_version": "HTTP/1.1",
+    "headers": {
+      "content-type": "application/json",
+      "retry-after": "1",
+      "x-request-id": "7fa00a3e66e54e68bc67365ebada4638",
+      "cf-cache-status": "DYNAMIC",
+      "cf-ray": "a539d1570d0b1f6e-SIN"
+    },
+    "response": {
+      "error": "caller_busy",
+      "reason": "caller_busy",
+      "limiter": "caller_concurrency",
+      "retryable": true,
+      "retry_after_seconds": 1,
+      "retry_kind": "poll",
+      "request_id": "7fa00a3e66e54e68bc67365ebada4638"
+    }
+  }
+]

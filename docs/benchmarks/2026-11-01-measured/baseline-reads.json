@@ -1,0 +1,226 @@
+[
+  {
+    "file": "ruled-table.pdf",
+    "kind": "pdf",
+    "elapsed_ms": 144,
+    "text": "## Page 1\nRegional allocation, units: tonnes\n\n\n\n Region            2024            2025\n\n\n ALPHA            17              7341\n\n\n BETA             291             420\n\n## Page 1 \u2014 detected table\n| Region | 2024 | 2025 |\n| ALPHA | 17 | 7341 |\n| BETA | 291 | 420 |",
+    "metadata": {
+      "pages": [
+        {
+          "page": 1,
+          "method": "text",
+          "text_chars": 158,
+          "text_layer_blocks": [
+            {
+              "bbox": [
+                50.0,
+                30.649999618530273,
+                314.1319885253906,
+                55.38199996948242
+              ],
+              "text": "Regional allocation, units: tonnes\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                62.0,
+                123.6500015258789,
+                442.031982421875,
+                148.3820037841797
+              ],
+              "text": "Region\n2024\n2025\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                62.0,
+                193.64999389648438,
+                442.031982421875,
+                218.3820037841797
+              ],
+              "text": "ALPHA\n17\n7341\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                62.0,
+                263.6499938964844,
+                432.02398681640625,
+                288.3819885253906
+              ],
+              "text": "BETA\n291\n420\n",
+              "text_truncated": false
+            }
+          ],
+          "layout_coordinate_space": "PDF points, origin top-left",
+          "layout_may_be_incomplete": true
+        }
+      ],
+      "total_pages": 1,
+      "next_page": null,
+      "partial": false,
+      "warnings": [
+        "table_structure_is_inferred; verify_critical_cells_against_source"
+      ],
+      "native_pdf_tables": [
+        {
+          "page": 1,
+          "bbox": [
+            50.0,
+            100.0,
+            550.0,
+            310.0
+          ],
+          "coordinate_space": "PDF points, origin top-left",
+          "cells": [
+            [
+              "Region",
+              "2024",
+              "2025"
+            ],
+            [
+              "ALPHA",
+              "17",
+              "7341"
+            ],
+            [
+              "BETA",
+              "291",
+              "420"
+            ]
+          ],
+          "rows_total": 3,
+          "columns_total": 3,
+          "partial": false
+        }
+      ]
+    }
+  },
+  {
+    "file": "scanned-table.pdf",
+    "kind": "pdf",
+    "elapsed_ms": 714,
+    "text": "## Page 1\nRegional allocation, units: tonnes\nRegion 2024 2025\nALPHA 17 7341\nBETA 291 420",
+    "metadata": {
+      "pages": [
+        {
+          "page": 1,
+          "method": "ocr",
+          "text_chars": 78,
+          "text_layer_blocks": [],
+          "layout_coordinate_space": "PDF points, origin top-left",
+          "layout_may_be_incomplete": true
+        }
+      ],
+      "total_pages": 1,
+      "next_page": null,
+      "partial": false,
+      "warnings": [
+        "OCR can misread numbers, layout and tables; verify against the source image. Word confidence is not an accuracy probability."
+      ]
+    }
+  },
+  {
+    "file": "test-columnar.xlsb",
+    "kind": "zip",
+    "elapsed_ms": 2,
+    "text": "## Archive member: [Content_Types].xml\n<ns0:Types xmlns:ns0=\"http://schemas.openxmlformats.org/package/2006/content-types\"><ns0:Default Extension=\"bin\" ContentType=\"application/vnd.ms-excel.sheet.binary.macroEnabled.main\" /><ns0:Default Extension=\"rels\" ContentType=\"application/vnd.openxmlformats-package.relationships+xml\" /><ns0:Default Extension=\"xml\" ContentType=\"application/xml\" /><ns0:Override PartName=\"/xl/worksheets/sheet1.bin\" ContentType=\"application/vnd.ms-excel.worksheet\" /><ns0:Override PartName=\"/xl/worksheets/binaryIndex1.bin\" ContentType=\"application/vnd.ms-excel.binIndexWs\" /><ns0:Override PartName=\"/xl/theme/theme1.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.theme+xml\" /><ns0:Override PartName=\"/xl/styles.bin\" ContentType=\"application/vnd.ms-excel.styles\" /><ns0:Override PartName=\"/xl/sharedStrings.bin\" ContentType=\"application/vnd.ms-excel.sharedStrings\" /><ns0:Override PartName=\"/xl/printerSettings/printerSettings1.bin\" ContentType=\"application/vnd.openxmlformats-officedocument.spreadsheetml.printerSettings\" /><ns0:Override PartName=\"/docProps/core.xml\" ContentType=\"application/vnd.openxmlformats-package.core-properties+xml\" /><ns0:Override PartName=\"/docProps/app.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.extended-properties+xml\" /></ns0:Types>\n\n## Archive member: xl/theme/theme1.xml\n<ns0:theme xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\" name=\"Office Theme\"><ns0:themeElements><ns0:clrScheme name=\"Office\"><ns0:dk1><ns0:sysClr val=\"windowText\" lastClr=\"000000\" /></ns0:dk1><ns0:lt1><ns0:sysClr val=\"window\" lastClr=\"FFFFFF\" /></ns0:lt1><ns0:dk2><ns0:srgbClr val=\"1F497D\" /></ns0:dk2><ns0:lt2><ns0:srgbClr val=\"EEECE1\" /></ns0:lt2><ns0:accent1><ns0:srgbClr val=\"4F81BD\" /></ns0:accent1><ns0:accent2><ns0:srgbClr val=\"C0504D\" /></ns0:accent2><ns0:accent3><ns0:srgbClr val=\"9BBB59\" /></ns0:accent3><ns0:accent4><ns0:srgbClr val=\"8064A2\" /></ns0:accent4><ns0:accent5><ns0:srgbClr val=\"4BACC6\" /></ns0:accent5><ns0:accent6><ns0:srgbClr val=\"F79646\" /></ns0:accent6><ns0:hlink><ns0:srgbClr val=\"0000FF\" /></ns0:hlink><ns0:folHlink><ns0:srgbClr val=\"800080\" /></ns0:folHlink></ns0:clrScheme><ns0:fontScheme name=\"Office\"><ns0:majorFont><ns0:latin typeface=\"Cambria\" /><ns0:ea typeface=\"\" /><ns0:cs typeface=\"\" /><ns0:font script=\"Jpan\" typeface=\"\uff2d\uff33 \uff30\u30b4\u30b7\u30c3\u30af\" /><ns0:font script=\"Hang\" typeface=\"\ub9d1\uc740 \uace0\ub515\" /><ns0:font script=\"Hans\" typeface=\"\u5b8b\u4f53\" /><ns0:font script=\"Hant\" typeface=\"\u65b0\u7d30\u660e\u9ad4\" /><ns0:font script=\"Arab\" typeface=\"Times New Roman\" /><ns0:font script=\"Hebr\" typeface=\"Times New Roman\" /><ns0:font script=\"Thai\" typeface=\"Tahoma\" /><ns0:font script=\"Ethi\" typeface=\"Nyala\" /><ns0:font script=\"Beng\" typeface=\"Vrinda\" /><ns0:font script=\"Gujr\" typeface=\"Shruti\" /><ns0:font script=\"Khmr\" typeface=\"MoolBoran\" /><ns0:font script=\"Knda\" typeface=\"Tunga\" /><ns0:font script=\"Guru\" typeface=\"Raavi\" /><ns0:font script=\"Cans\" typeface=\"Euphemia\" /><ns0:font script=\"Cher\" typeface=\"Plantagenet Cherokee\" /><ns0:font script=\"Yiii\" typeface=\"Microsoft Yi Baiti\" /><ns0:font script=\"Tibt\" typeface=\"Microsoft Himalaya\" /><ns0:font script=\"Thaa\" typeface=\"MV Boli\" /><ns0:font script=\"Deva\" typeface=\"Mangal\" /><ns0:font script=\"Telu\" typeface=\"Gautami\" /><ns0:font script=\"Taml\" typeface=\"Latha\" /><ns0:font script=\"Syrc\" typeface=\"Estrangelo Edessa\" /><ns0:font script=\"Orya\" typeface=\"Kalinga\" /><ns0:font script=\"Mlym\" typeface=\"Kartika\" /><ns0:font script=\"Laoo\" typeface=\"DokChampa\" /><ns0:font script=\"Sinh\" typeface=\"Iskoola Pota\" /><ns0:font script=\"Mong\" typeface=\"Mongolian Baiti\" /><ns0:font script=\"Viet\" typeface=\"Times New Roman\" /><ns0:font script=\"Uigh\" typeface=\"Microsoft Uighur\" /><ns0:font script=\"Geor\" typeface=\"Sylfaen\" /></ns0:majorFont><ns0:minorFont><ns0:latin typeface=\"Calibri\" /><ns0:ea typeface=\"\" /><ns0:cs typeface=\"\" /><ns0:font script=\"Jpan\" typeface=\"\uff2d\uff33 \uff30\u30b4\u30b7\u30c3\u30af\" /><ns0:font script=\"Hang\" typeface=\"\ub9d1\uc740 \uace0\ub515\" /><ns0:font script=\"Hans\" typeface=\"\u5b8b\u4f53\" /><ns0:font script=\"Hant\" typeface=\"\u65b0\u7d30\u660e\u9ad4\" /><ns0:font script=\"Arab\" typeface=\"Arial\" /><ns0:font script=\"Hebr\" typeface=\"Arial\" /><ns0:font script=\"Thai\" typeface=\"Tahoma\" /><ns0:font script=\"Ethi\" typeface=\"Nyala\" /><ns0:font script=\"Beng\" typeface=\"Vrinda\" /><ns0:font script=\"Gujr\" typeface=\"Shruti\" /><ns0:font script=\"Khmr\" typeface=\"DaunPenh\" /><ns0:font script=\"Knda\" typeface=\"Tunga\" /><ns0:font script=\"Guru\" typeface=\"Raavi\" /><ns0:font script=\"Cans\" typeface=\"Euphemia\" /><ns0:font script=\"Cher\" typeface=\"Plantagenet Cherokee\" /><ns0:font script=\"Yiii\" typeface=\"Microsoft Yi Baiti\" /><ns0:font script=\"Tibt\" typeface=\"Microsoft Himalaya\" /><ns0:font script=\"Thaa\" typeface=\"MV Boli\" /><ns0:font script=\"Deva\" typeface=\"Mangal\" /><ns0:font script=\"Telu\" typeface=\"Gautami\" /><ns0:font script=\"Taml\" typeface=\"Latha\" /><ns0:font script=\"Syrc\" typeface=\"Estrangelo Edessa\" /><ns0:font script=\"Orya\" typeface=\"Kalinga\" /><ns0:font script=\"Mlym\" typeface=\"Kartika\" /><ns0:font script=\"Laoo\" typeface=\"DokChampa\" /><ns0:font script=\"Sinh\" typeface=\"Iskoola Pota\" /><ns0:font script=\"Mong\" typeface=\"Mongolian Baiti\" /><ns0:font script=\"Viet\" typeface=\"Arial\" /><ns0:font script=\"Uigh\" typeface=\"Microsoft Uighur\" /><ns0:font script=\"Geor\" typeface=\"Sylfaen\" /></ns0:minorFont></ns0:fontScheme><ns0:fmtScheme name=\"Office\"><ns0:fillStyleLst><ns0:solidFill><ns0:schemeClr val=\"phClr\" /></ns0:solidFill><ns0:gradFill rotWithShape=\"1\"><ns0:gsLst><ns0:gs pos=\"0\"><ns0:schemeClr val=\"phClr\"><ns0:tint val=\"50000\" /><ns0:satMod val=\"300000\" /></ns0:schemeClr></ns0:gs><ns0:gs pos=\"35000\"><ns0:schemeClr val=\"phClr\"><ns0:tint val=\"37000\" /><ns0:satMod val=\"300000\" /></ns0:schemeClr></ns0:gs><ns0:gs pos=\"100000\"><ns0:schemeClr val=\"phClr\"><ns0:tint val=\"15000\" /><ns0:satMod val=\"350000\" /></ns0:schemeClr></ns0:gs></ns0:gsLst><ns0:lin ang=\"16200000\" scaled=\"1\" /></ns0:gradFill><ns0:gradFill rotWithShape=\"1\"><ns0:gsLst><ns0:gs pos=\"0\"><ns0:schemeClr val=\"phClr\"><ns0:shade val=\"51000\" /><ns0:satMod val=\"130000\" /></ns0:schemeClr></ns0:gs><ns0:gs pos=\"80000\"><ns0:schemeClr val=\"phClr\"><ns0:shade val=\"93000\" /><ns0:satMod val=\"130000\" /></ns0:schemeClr></ns0:gs><ns0:gs pos=\"100000\"><ns0:schemeClr val=\"phClr\"><ns0:shade val=\"94000\" /><ns0:satMod val=\"135000\" /></ns0:schemeClr></ns0:gs></ns0:gsLst><ns0:lin ang=\"16200000\" scaled=\"0\" /></ns0:gradFill></ns0:fillStyleLst><ns0:lnStyleLst><ns0:ln w=\"9525\" cap=\"flat\" cmpd=\"sng\" algn=\"ctr\"><ns0:solidFill><ns0:schemeClr val=\"phClr\"><ns0:shade val=\"95000\" /><ns0:satMod val=\"105000\" /></ns0:schemeClr></ns0:solidFill><ns0:prstDash val=\"solid\" /></ns0:ln><ns0:ln w=\"25400\" cap=\"flat\" cmpd=\"sng\" algn=\"ctr\"><ns0:solidFill><ns0:schemeClr val=\"phClr\" /></ns0:solidFill><ns0:prstDash val=\"solid\" /></ns0:ln><ns0:ln w=\"38100\" cap=\"flat\" cmpd=\"sng\" algn=\"ctr\"><ns0:solidFill><ns0:schemeClr val=\"phClr\" /></ns0:solidFill><ns0:prstDash val=\"solid\" /></ns0:ln></ns0:lnStyleLst><ns0:effectStyleLst><ns0:effectStyle><ns0:effectLst><ns0:outerShdw blurRad=\"40000\" dist=\"20000\" dir=\"5400000\" rotWithShape=\"0\"><ns0:srgbClr val=\"000000\"><ns0:alpha val=\"38000\" /></ns0:srgbClr></ns0:outerShdw></ns0:effectLst></ns0:effectStyle><ns0:effectStyle><ns0:effectLst><ns0:outerShdw blurRad=\"40000\" dist=\"23000\" dir=\"5400000\" rotWithShape=\"0\"><ns0:srgbClr val=\"000000\"><ns0:alpha val=\"35000\" /></ns0:srgbClr></ns0:outerShdw></ns0:effectLst></ns0:effectStyle><ns0:effectStyle><ns0:effectLst><ns0:outerShdw blurRad=\"40000\" dist=\"23000\" dir=\"5400000\" rotWithShape=\"0\"><ns0:srgbClr val=\"000000\"><ns0:alpha val=\"35000\" /></ns0:srgbClr></ns0:outerShdw></ns0:effectLst><ns0:scene3d><ns0:camera prst=\"orthographicFront\"><ns0:rot lat=\"0\" lon=\"0\" rev=\"0\" /></ns0:camera><ns0:lightRig rig=\"threePt\" dir=\"t\"><ns0:rot lat=\"0\" lon=\"0\" rev=\"1200000\" /></ns0:lightRig></ns0:scene3d><ns0:sp3d><ns0:bevelT w=\"63500\" h=\"25400\" /></ns0:sp3d></ns0:effectStyle></ns0:effectStyleLst><ns0:bgFillStyleLst><ns0:solidFill><ns0:schemeClr val=\"phClr\" /></ns0:solidFill><ns0:gradFill rotWithShape=\"1\"><ns0:gsLst><ns0:gs pos=\"0\"><ns0:schemeClr val=\"phClr\"><ns0:tint val=\"40000\" /><ns0:satMod val=\"350000\" /></ns0:schemeClr></ns0:gs><ns0:gs pos=\"40000\"><ns0:schemeClr val=\"phClr\"><ns0:tint val=\"45000\" /><ns0:shade val=\"99000\" /><ns0:satMod val=\"350000\" /></ns0:schemeClr></ns0:gs><ns0:gs pos=\"100000\"><ns0:schemeClr val=\"phClr\"><ns0:shade val=\"20000\" /><ns0:satMod val=\"255000\" /></ns0:schemeClr></ns0:gs></ns0:gsLst><ns0:path path=\"circle\"><ns0:fillToRect l=\"50000\" t=\"-80000\" r=\"50000\" b=\"180000\" /></ns0:path></ns0:gradFill><ns0:gradFill rotWithShape=\"1\"><ns0:gsLst><ns0:gs pos=\"0\"><ns0:schemeClr val=\"phClr\"><ns0:tint val=\"80000\" /><ns0:satMod val=\"300000\" /></ns0:schemeClr></ns0:gs><ns0:gs pos=\"100000\"><ns0:schemeClr val=\"phClr\"><ns0:shade val=\"30000\" /><ns0:satMod val=\"200000\" /></ns0:schemeClr></ns0:gs></ns0:gsLst><ns0:path path=\"circle\"><ns0:fillToRect l=\"50000\" t=\"50000\" r=\"50000\" b=\"50000\" /></ns0:path></ns0:gradFill></ns0:bgFillStyleLst></ns0:fmtScheme></ns0:themeElements><ns0:objectDefaults /><ns0:extraClrSchemeLst /></ns0:theme>\n\n## Archive member: docProps/app.xml\n<ns0:Properties xmlns:ns0=\"http://schemas.openxmlformats.org/officeDocument/2006/extended-properties\" xmlns:ns1=\"http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes\"><ns0:Application>Microsoft Excel</ns0:Application><ns0:DocSecurity>0</ns0:DocSecurity><ns0:ScaleCrop>false</ns0:ScaleCrop><ns0:HeadingPairs><ns1:vector size=\"4\" baseType=\"variant\"><ns1:variant><ns1:lpstr>Worksheets</ns1:lpstr></ns1:variant><ns1:variant><ns1:i4>1</ns1:i4></ns1:variant><ns1:variant><ns1:lpstr>Named Ranges</ns1:lpstr></ns1:variant><ns1:variant><ns1:i4>1</ns1:i4></ns1:variant></ns1:vector></ns0:HeadingPairs><ns0:TitlesOfParts><ns1:vector size=\"2\" baseType=\"lpstr\"><ns1:lpstr>testing</ns1:lpstr><ns1:lpstr>testing</ns1:lpstr></ns1:vector></ns0:TitlesOfParts><ns0:Company>SAS Institute Inc</ns0:Company><ns0:LinksUpToDate>false</ns0:LinksUpToDate><ns0:SharedDoc>false</ns0:SharedDoc><ns0:HyperlinksChanged>false</ns0:HyperlinksChanged><ns0:AppVersion>14.0300</ns0:AppVersion></ns0:Properties>\n\n## Archive member: docProps/core.xml\n<ns0:coreProperties xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:ns0=\"http://schemas.openxmlformats.org/package/2006/metadata/core-properties\" xmlns:ns2=\"http://purl.org/dc/terms/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><dc:creator>sas user</dc:creator><ns0:lastModifiedBy>Nick Burch</ns0:lastModifiedBy><ns2:created xsi:type=\"dcterms:W3CDTF\">2011-02-11T15:45:55Z</ns2:created><ns2:modified xsi:type=\"dcterms:W3CDTF\">2018-05-18T13:53:14Z</ns2:modified></ns0:coreProperties>",
+    "metadata": {
+      "warnings": [],
+      "partial": true,
+      "members": [
+        {
+          "name": "[Content_Types].xml",
+          "format": "xml",
+          "partial": false
+        },
+        {
+          "name": "xl/theme/theme1.xml",
+          "format": "xml",
+          "partial": false
+        },
+        {
+          "name": "docProps/app.xml",
+          "format": "xml",
+          "partial": false
+        },
+        {
+          "name": "docProps/core.xml",
+          "format": "xml",
+          "partial": false
+        }
+      ],
+      "skipped_members": [
+        "_rels/.rels: unsupported format",
+        "xl/_rels/workbook.bin.rels: unsupported format",
+        "xl/workbook.bin: unsupported format",
+        "xl/styles.bin: unsupported format",
+        "xl/worksheets/_rels/sheet1.bin.rels: unsupported format",
+        "xl/worksheets/sheet1.bin: unsupported format",
+        "xl/sharedStrings.bin: unsupported format",
+        "xl/printerSettings/printerSettings1.bin: unsupported format",
+        "xl/worksheets/binaryIndex1.bin: unsupported format"
+      ]
+    }
+  },
+  {
+    "file": "test-outlook.msg",
+    "kind": "xls",
+    "elapsed_ms": 31,
+    "error": "ValueError:document_parse_failed:XLRDError"
+  },
+  {
+    "file": "testEXCEL.xlsb",
+    "kind": "zip",
+    "elapsed_ms": 2,
+    "text": "## Archive member: [Content_Types].xml\n<ns0:Types xmlns:ns0=\"http://schemas.openxmlformats.org/package/2006/content-types\"><ns0:Default Extension=\"bin\" ContentType=\"application/vnd.ms-excel.sheet.binary.macroEnabled.main\" /><ns0:Override PartName=\"/xl/worksheets/sheet2.bin\" ContentType=\"application/vnd.ms-excel.worksheet\" /><ns0:Override PartName=\"/xl/worksheets/sheet3.bin\" ContentType=\"application/vnd.ms-excel.worksheet\" /><ns0:Override PartName=\"/xl/theme/theme1.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.theme+xml\" /><ns0:Override PartName=\"/xl/worksheets/sheet1.bin\" ContentType=\"application/vnd.ms-excel.worksheet\" /><ns0:Default Extension=\"rels\" ContentType=\"application/vnd.openxmlformats-package.relationships+xml\" /><ns0:Default Extension=\"xml\" ContentType=\"application/xml\" /><ns0:Override PartName=\"/xl/sharedStrings.bin\" ContentType=\"application/vnd.ms-excel.sharedStrings\" /><ns0:Override PartName=\"/docProps/app.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.extended-properties+xml\" /><ns0:Override PartName=\"/xl/worksheets/binaryIndex3.bin\" ContentType=\"application/vnd.ms-excel.binIndexWs\" /><ns0:Override PartName=\"/xl/worksheets/binaryIndex1.bin\" ContentType=\"application/vnd.ms-excel.binIndexWs\" /><ns0:Override PartName=\"/xl/worksheets/binaryIndex2.bin\" ContentType=\"application/vnd.ms-excel.binIndexWs\" /><ns0:Override PartName=\"/xl/styles.bin\" ContentType=\"application/vnd.ms-excel.styles\" /><ns0:Override PartName=\"/docProps/core.xml\" ContentType=\"application/vnd.openxmlformats-package.core-properties+xml\" /></ns0:Types>\n\n## Archive member: xl/theme/theme1.xml\n<ns0:theme xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/3/main\" name=\"Office Theme\"><ns0:themeElements><ns0:clrScheme name=\"Office\"><ns0:dk1><ns0:sysClr val=\"windowText\" /></ns0:dk1><ns0:lt1><ns0:sysClr val=\"window\" /></ns0:lt1><ns0:dk2><ns0:srgbClr val=\"1F497D\" /></ns0:dk2><ns0:lt2><ns0:srgbClr val=\"EEECE1\" /></ns0:lt2><ns0:accent1><ns0:srgbClr val=\"4F81BD\" /></ns0:accent1><ns0:accent2><ns0:srgbClr val=\"C0504D\" /></ns0:accent2><ns0:accent3><ns0:srgbClr val=\"9BBB59\" /></ns0:accent3><ns0:accent4><ns0:srgbClr val=\"8064A2\" /></ns0:accent4><ns0:accent5><ns0:srgbClr val=\"4BACC6\" /></ns0:accent5><ns0:accent6><ns0:srgbClr val=\"F79646\" /></ns0:accent6><ns0:hlink><ns0:srgbClr val=\"0000FF\" /></ns0:hlink><ns0:folHlink><ns0:srgbClr val=\"800080\" /></ns0:folHlink></ns0:clrScheme><ns0:fontScheme name=\"Office\"><ns0:majorFont><ns0:latin typeface=\"Cambria\" /><ns0:ea typeface=\"\" /><ns0:cs typeface=\"\" /><ns0:font script=\"Grek\" typeface=\"\" /><ns0:font script=\"Cyrl\" typeface=\"\" /><ns0:font script=\"Jpan\" typeface=\"\uff2d\uff33 \uff30\u30b4\u30b7\u30c3\u30af\" /><ns0:font script=\"Hang\" typeface=\"\ub9d1\uc740 \uace0\ub515\" /><ns0:font script=\"Hans\" typeface=\"\u5b8b\u4f53\" /><ns0:font script=\"Hant\" typeface=\"\u5fae\u8edf\u6b63\u9ed1\u9ad4\" /><ns0:font script=\"Arab\" typeface=\"Times New Roman\" /><ns0:font script=\"Hebr\" typeface=\"Times New Roman\" /><ns0:font script=\"Thai\" typeface=\"Angsana New\" /><ns0:font script=\"Ethi\" typeface=\"Nyala\" /><ns0:font script=\"Beng\" typeface=\"Vrinda\" /><ns0:font script=\"Gujr\" typeface=\"Shruti\" /><ns0:font script=\"Khmr\" typeface=\"MoolBoran\" /><ns0:font script=\"Knda\" typeface=\"Tunga\" /><ns0:font script=\"Guru\" typeface=\"Raavi\" /><ns0:font script=\"Cans\" typeface=\"Euphemia\" /><ns0:font script=\"Cher\" typeface=\"Plantagenet Cherokee\" /><ns0:font script=\"Yiii\" typeface=\"Microsoft Yi Baiti\" /><ns0:font script=\"Tibt\" typeface=\"Microsoft Himalaya\" /><ns0:font script=\"Thaa\" typeface=\"MV Boli\" /><ns0:font script=\"Deva\" typeface=\"Mangal\" /><ns0:font script=\"Telu\" typeface=\"Gautami\" /><ns0:font script=\"Taml\" typeface=\"Latha\" /><ns0:font script=\"Syrc\" typeface=\"Estrangelo Edessa\" /><ns0:font script=\"Orya\" typeface=\"Kalinga\" /><ns0:font script=\"Mlym\" typeface=\"Kartika\" /><ns0:font script=\"Laoo\" typeface=\"DokChampa\" /><ns0:font script=\"Sinh\" typeface=\"Iskoola Pota\" /><ns0:font script=\"Mong\" typeface=\"Mongolian Baiti\" /><ns0:font script=\"Viet\" typeface=\"Times New Roman\" /></ns0:majorFont><ns0:minorFont><ns0:latin typeface=\"Calibri\" /><ns0:ea typeface=\"\" /><ns0:cs typeface=\"\" /><ns0:font script=\"Grek\" typeface=\"\" /><ns0:font script=\"Cyrl\" typeface=\"\" /><ns0:font script=\"Jpan\" typeface=\"\uff2d\uff33 \uff30\u30b4\u30b7\u30c3\u30af\" /><ns0:font script=\"Hang\" typeface=\"\ub9d1\uc740 \uace0\ub515\" /><ns0:font script=\"Hans\" typeface=\"\u5b8b\u4f53\" /><ns0:font script=\"Hant\" typeface=\"\u65b0\u7d30\u660e\u9ad4\" /><ns0:font script=\"Arab\" typeface=\"Arial\" /><ns0:font script=\"Hebr\" typeface=\"Arial\" /><ns0:font script=\"Thai\" typeface=\"Cordia New\" /><ns0:font script=\"Ethi\" typeface=\"Nyala\" /><ns0:font script=\"Beng\" typeface=\"Vrinda\" /><ns0:font script=\"Gujr\" typeface=\"Shruti\" /><ns0:font script=\"Khmr\" typeface=\"DaunPenh\" /><ns0:font script=\"Knda\" typeface=\"Tunga\" /><ns0:font script=\"Guru\" typeface=\"Raavi\" /><ns0:font script=\"Cans\" typeface=\"Euphemia\" /><ns0:font script=\"Cher\" typeface=\"Plantagenet Cherokee\" /><ns0:font script=\"Yiii\" typeface=\"Microsoft Yi Baiti\" /><ns0:font script=\"Tibt\" typeface=\"Microsoft Himalaya\" /><ns0:font script=\"Thaa\" typeface=\"MV Boli\" /><ns0:font script=\"Deva\" typeface=\"Mangal\" /><ns0:font script=\"Telu\" typeface=\"Gautami\" /><ns0:font script=\"Taml\" typeface=\"Latha\" /><ns0:font script=\"Syrc\" typeface=\"Estrangelo Edessa\" /><ns0:font script=\"Orya\" typeface=\"Kalinga\" /><ns0:font script=\"Mlym\" typeface=\"Kartika\" /><ns0:font script=\"Laoo\" typeface=\"DokChampa\" /><ns0:font script=\"Sinh\" typeface=\"Iskoola Pota\" /><ns0:font script=\"Mong\" typeface=\"Mongolian Baiti\" /><ns0:font script=\"Viet\" typeface=\"Arial\" /></ns0:minorFont></ns0:fontScheme><ns0:fmtScheme name=\"Office\"><ns0:fillStyleLst><ns0:solidFill><ns0:schemeClr val=\"phClr\" /></ns0:solidFill><ns0:gradFill rotWithShape=\"1\"><ns0:gsLst><ns0:gs pos=\"0\"><ns0:schemeClr val=\"phClr\"><ns0:tint val=\"50000\" /><ns0:shade val=\"98000\" /><ns0:satMod val=\"300000\" /></ns0:schemeClr></ns0:gs><ns0:gs pos=\"25000\"><ns0:schemeClr val=\"phClr\"><ns0:tint val=\"37000\" /><ns0:shade val=\"98000\" /><ns0:satMod val=\"300000\" /></ns0:schemeClr></ns0:gs><ns0:gs pos=\"100000\"><ns0:schemeClr val=\"phClr\"><ns0:tint val=\"5000\" /><ns0:satMod val=\"350000\" /></ns0:schemeClr></ns0:gs></ns0:gsLst><ns0:lin ang=\"16200000\" scaled=\"1\" /></ns0:gradFill><ns0:gradFill rotWithShape=\"1\"><ns0:gsLst><ns0:gs pos=\"0\"><ns0:schemeClr val=\"phClr\"><ns0:shade val=\"75000\" /><ns0:satMod val=\"160000\" /></ns0:schemeClr></ns0:gs><ns0:gs pos=\"62000\"><ns0:schemeClr val=\"phClr\"><ns0:satMod val=\"125000\" /></ns0:schemeClr></ns0:gs><ns0:gs pos=\"100000\"><ns0:schemeClr val=\"phClr\"><ns0:tint val=\"80000\" /><ns0:satMod val=\"140000\" /></ns0:schemeClr></ns0:gs></ns0:gsLst><ns0:lin ang=\"16200000\" scaled=\"0\" /></ns0:gradFill></ns0:fillStyleLst><ns0:lnStyleLst><ns0:ln w=\"6350\" cap=\"rnd\" cmpd=\"sng\" algn=\"ctr\"><ns0:solidFill><ns0:schemeClr val=\"phClr\" /></ns0:solidFill><ns0:prstDash val=\"solid\" /></ns0:ln><ns0:ln w=\"25400\" cap=\"rnd\" cmpd=\"sng\" algn=\"ctr\"><ns0:solidFill><ns0:schemeClr val=\"phClr\" /></ns0:solidFill><ns0:prstDash val=\"solid\" /></ns0:ln><ns0:ln w=\"34925\" cap=\"rnd\" cmpd=\"sng\" algn=\"ctr\"><ns0:solidFill><ns0:schemeClr val=\"phClr\" /></ns0:solidFill><ns0:prstDash val=\"solid\" /></ns0:ln></ns0:lnStyleLst><ns0:effectStyleLst><ns0:effectStyle><ns0:effectLst><ns0:outerShdw blurRad=\"63500\" dist=\"25400\" dir=\"5400000\"><ns0:srgbClr val=\"000000\"><ns0:alpha val=\"43137\" /></ns0:srgbClr></ns0:outerShdw></ns0:effectLst></ns0:effectStyle><ns0:effectStyle><ns0:effectLst><ns0:outerShdw blurRad=\"50800\" dist=\"38100\" dir=\"5400000\"><ns0:srgbClr val=\"000000\"><ns0:alpha val=\"45882\" /></ns0:srgbClr></ns0:outerShdw></ns0:effectLst><ns0:scene3d><ns0:camera prst=\"orthographicFront\" fov=\"0\"><ns0:rot lat=\"0\" lon=\"0\" rev=\"0\" /></ns0:camera><ns0:lightRig rig=\"contrasting\" dir=\"t\"><ns0:rot lat=\"0\" lon=\"0\" rev=\"16500000\" /></ns0:lightRig></ns0:scene3d><ns0:sp3d contourW=\"12700\" prstMaterial=\"powder\"><ns0:bevelT h=\"50800\" /><ns0:contourClr><ns0:schemeClr val=\"phClr\" /></ns0:contourClr></ns0:sp3d></ns0:effectStyle><ns0:effectStyle><ns0:effectLst><ns0:reflection blurRad=\"12700\" stA=\"25000\" endPos=\"28000\" dist=\"38100\" dir=\"5400000\" sy=\"-100000\" /></ns0:effectLst><ns0:scene3d><ns0:camera prst=\"orthographicFront\" fov=\"0\"><ns0:rot lat=\"0\" lon=\"0\" rev=\"0\" /></ns0:camera><ns0:lightRig rig=\"threePt\" dir=\"t\"><ns0:rot lat=\"0\" lon=\"0\" rev=\"0\" /></ns0:lightRig></ns0:scene3d><ns0:sp3d><ns0:bevelT w=\"139700\" h=\"38100\" /><ns0:contourClr><ns0:schemeClr val=\"phClr\" /></ns0:contourClr></ns0:sp3d></ns0:effectStyle></ns0:effectStyleLst><ns0:bgFillStyleLst><ns0:solidFill><ns0:schemeClr val=\"phClr\" /></ns0:solidFill><ns0:gradFill rotWithShape=\"1\"><ns0:gsLst><ns0:gs pos=\"0\"><ns0:schemeClr val=\"phClr\"><ns0:shade val=\"75000\" /><ns0:satMod val=\"250000\" /></ns0:schemeClr></ns0:gs><ns0:gs pos=\"20000\"><ns0:schemeClr val=\"phClr\"><ns0:shade val=\"85000\" /><ns0:satMod val=\"175000\" /></ns0:schemeClr></ns0:gs><ns0:gs pos=\"100000\"><ns0:schemeClr val=\"phClr\"><ns0:tint val=\"70000\" /><ns0:satMod val=\"175000\" /></ns0:schemeClr></ns0:gs></ns0:gsLst><ns0:lin ang=\"16200000\" scaled=\"1\" /></ns0:gradFill><ns0:gradFill rotWithShape=\"1\"><ns0:gsLst><ns0:gs pos=\"0\"><ns0:schemeClr val=\"phClr\"><ns0:shade val=\"50000\" /><ns0:satMod val=\"145000\" /></ns0:schemeClr></ns0:gs><ns0:gs pos=\"30000\"><ns0:schemeClr val=\"phClr\"><ns0:shade val=\"65000\" /><ns0:satMod val=\"155000\" /></ns0:schemeClr></ns0:gs><ns0:gs pos=\"100000\"><ns0:schemeClr val=\"phClr\"><ns0:tint val=\"60000\" /><ns0:satMod val=\"170000\" /></ns0:schemeClr></ns0:gs></ns0:gsLst><ns0:lin ang=\"16200000\" scaled=\"1\" /></ns0:gradFill></ns0:bgFillStyleLst></ns0:fmtScheme></ns0:themeElements><ns0:objectDefaults /><ns0:extraClrSchemeLst /></ns0:theme>\n\n## Archive member: docProps/core.xml\n<ns0:coreProperties xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:ns0=\"http://schemas.openxmlformats.org/package/2006/metadata/core-properties\" xmlns:ns2=\"http://purl.org/dc/terms/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><dc:title>Example document</dc:title><dc:subject>testing document extractors</dc:subject><dc:creator>Microsoft</dc:creator><ns0:keywords>extractor, test, rdf</ns0:keywords><dc:description>These are some sample comments.</dc:description><ns0:lastModifiedBy>Christiaan Fluit</ns0:lastModifiedBy><ns2:created xsi:type=\"dcterms:W3CDTF\">2006-03-30T19:39:22Z</ns2:created><ns2:modified xsi:type=\"dcterms:W3CDTF\">2006-07-13T13:48:56Z</ns2:modified><ns0:category>myCategory</ns0:category><ns0:contentStatus>myStatus</ns0:contentStatus></ns0:coreProperties>\n\n## Archive member: docProps/app.xml\n<ns0:Properties xmlns:ns0=\"http://schemas.openxmlformats.org/officeDocument/2006/extended-properties\" xmlns:ns1=\"http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes\"><ns0:Application>Microsoft Excel</ns0:Application><ns0:DocSecurity>0</ns0:DocSecurity><ns0:ScaleCrop>false</ns0:ScaleCrop><ns0:HeadingPairs><ns1:vector size=\"2\" baseType=\"variant\"><ns1:variant><ns1:lpstr>Worksheets</ns1:lpstr></ns1:variant><ns1:variant><ns1:i4>3</ns1:i4></ns1:variant></ns1:vector></ns0:HeadingPairs><ns0:TitlesOfParts><ns1:vector size=\"3\" baseType=\"lpstr\"><ns1:lpstr>Sheet1</ns1:lpstr><ns1:lpstr>Sheet2</ns1:lpstr><ns1:lpstr>Sheet3</ns1:lpstr></ns1:vector></ns0:TitlesOfParts><ns0:Company>Microsoft</ns0:Company><ns0:LinksUpToDate>false</ns0:LinksUpToDate><ns0:SharedDoc>false</ns0:SharedDoc><ns0:HyperlinksChanged>false</ns0:HyperlinksChanged><ns0:AppVersion>12.0000</ns0:AppVersion></ns0:Properties>",
+    "metadata": {
+      "warnings": [],
+      "partial": true,
+      "members": [
+        {
+          "name": "[Content_Types].xml",
+          "format": "xml",
+          "partial": false
+        },
+        {
+          "name": "xl/theme/theme1.xml",
+          "format": "xml",
+          "partial": false
+        },
+        {
+          "name": "docProps/core.xml",
+          "format": "xml",
+          "partial": false
+        },
+        {
+          "name": "docProps/app.xml",
+          "format": "xml",
+          "partial": false
+        }
+      ],
+      "skipped_members": [
+        "_rels/.rels: unsupported format",
+        "xl/_rels/workbook.bin.rels: unsupported format",
+        "xl/workbook.bin: unsupported format",
+        "xl/worksheets/sheet2.bin: unsupported format",
+        "xl/worksheets/_rels/sheet2.bin.rels: unsupported format",
+        "xl/worksheets/sheet1.bin: unsupported format",
+        "xl/sharedStrings.bin: unsupported format",
+        "xl/styles.bin: unsupported format",
+        "xl/worksheets/_rels/sheet3.bin.rels: unsupported format",
+        "xl/worksheets/sheet3.bin: unsupported format",
+        "xl/worksheets/_rels/sheet1.bin.rels: unsupported format",
+        "xl/worksheets/binaryIndex2.bin: unsupported format",
+        "xl/worksheets/binaryIndex3.bin: unsupported format",
+        "xl/worksheets/binaryIndex1.bin: unsupported format"
+      ]
+    }
+  },
+  {
+    "file": "testMSG.msg",
+    "kind": "xls",
+    "elapsed_ms": 0,
+    "error": "ValueError:document_parse_failed:XLRDError"
+  }
+]

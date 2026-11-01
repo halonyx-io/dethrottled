@@ -1,0 +1,38 @@
+[
+  {
+    "file": "test-columnar.xlsb",
+    "elapsed_ms": 879,
+    "text": "testing\n\tRecord Number\tSquare of the Record Number\tDescription of the Row\tPercent Done\tPercent Increment\tdate\tdatetime\ttime\n\t0\t0\tThis is row            0 of           10\t0.00%\t\t01-01-1960\t01Jan60 00:00:01\t0:00:01\n\t1\t1\tThis is row            1 of           10\t10.00%\t0.00%\t02-01-1960\t01Jan60 00:00:10\t0:00:03\n\t2\t4\tThis is row            2 of           10\t20.00%\t50.00%\t17-01-1960\t01Jan60 00:01:40\t0:00:09\n\t3\t9\tThis is row            3 of           10\t30.00%\t66.67%\t22-03-1960\t01Jan60 00:16:40\t0:00:27\n\t4\t16\tThis is row            4 of           10\t40.00%\t75.00%\t13-09-1960\t01Jan60 02:46:40\t0:01:21\n\t5\t25\tThis is row            5 of           10\t50.00%\t80.00%\t17-09-1961\t02Jan60 03:46:40\t0:04:03\n\t6\t36\tThis is row            6 of           10\t60.00%\t83.33%\t20-07-1963\t12Jan60 13:46:40\t0:12:09\n\t7\t49\tThis is row            7 of           10\t70.00%\t85.71%\t29-07-1966\t25Apr60 17:46:40\t0:36:27\n\t8\t64\tThis is row            8 of           10\t80.00%\t87.50%\t20-03-1971\t03Mar63 09:46:40\t1:49:21\n\t9\t81\tThis is row            9 of           10\t90.00%\t88.89%\t18-12-1977\t09Sep91 01:46:40\t5:28:03\n\t10\t100\tThis is row           10 of           10\t100.00%\t90.00%\t19-05-1987\t19Nov76 17:46:40\t16:24:09\n\n\n",
+    "partial": false,
+    "mime": "application/vnd.ms-excel.sheet.binary.macroEnabled.12",
+    "engine": "apache-tika",
+    "version": "3.3.3"
+  },
+  {
+    "file": "test-outlook.msg",
+    "elapsed_ms": 801,
+    "text": "Microsoft Outlook Express 6\n\tFrom\n\tL'\u00c9quipe Microsoft Outlook Express\n\tTo\n\tNouvel utilisateur de Outlook Express\n\tRecipients\n\tNouvel utilisateur de Outlook Express\n\n \t\u00a0\t \n \tLa r\u00e9ponse \u00e0 vos attentes en mati\u00e8re de messagerie\t \n\u00a0\t \n\u00a0Fonctionnalit\u00e9\t \u00a0\t \n\t\n\t Messagerie et groupes de discussion\t \n Comptes et identit\u00e9s multiples\t \n Prise en charge du format HTML\t \n Carnets d'adresses et annuaires\t \n Synchronisation hors connexion\t \n R\u00e8gles am\u00e9lior\u00e9es\t \n\t\n\u00a0Plus d'informations\t \u00a0\t \n\t\n\tPour obtenir les derni\u00e8res informations sur Outlook Express, acc\u00e9dez au menu d'aide et cliquez sur Lisez-moi.\n\nPour soumettre vos probl\u00e8mes, consulter les questions fr\u00e9quemment pos\u00e9es et obtenir des astuces d'utilisation, visitez notre groupe de discussion.\n\nPour obtenir les mises \u00e0 jour et des informations sur Outlook Express 6, visitez Microsoft sur le Web.\n\nPour obtenir de l'aide et pour le d\u00e9pannage, acc\u00e9dez au menu d'aide, cliquez sur une rubrique ou parcourez l'index. La rubrique D\u00e9pannage est accessible dans l'index.\n\u00a0 \t\n\u00a0 _____ \u00a0\n\nMerci d'avoir choisi Microsoft Internet Explorer et Outlook Express 6.\nL'\u00e9quipe Microsoft Outlook Express \n\nLe lien vers http://digitalid.verisign.com est fourni pour votre commodit\u00e9 et Microsoft n'est pas responsable de son contenu ou des services fournis par ce site. \n\t \n\nVous ne souhaitez plus partager votre compte de messagerie avec les autres membres de votre foyer\u00a0? Ouvrez un compte gratuit sur Hotmail\u00a0! Vous pourrez ainsi lire vos messages depuis le monde entier. Cliquez ici pour vous enregistrer d\u00e8s maintenant\u00a0! \n \n\nObtenez un identificateur num\u00e9rique personnel d'essai gratuit chez VeriSign. Utilisez cet identificateur afin de vous identifier positivement lorsque vous envoyez un courrier \u00e9lectronique s\u00e9curis\u00e9. Obtenez votre ID num\u00e9rique aujourd'hui !\n\n",
+    "partial": false,
+    "mime": "application/vnd.ms-outlook",
+    "engine": "apache-tika",
+    "version": "3.3.3"
+  },
+  {
+    "file": "testEXCEL.xlsb",
+    "elapsed_ms": 856,
+    "text": "Sheet1\n\tThis is an example spreadsheet created with Microsoft Excel 2007 Beta 2.\n\n\nSheet2\n\n\nSheet3\n\n\n",
+    "partial": false,
+    "mime": "application/vnd.ms-excel.sheet.binary.macroEnabled.12",
+    "engine": "apache-tika",
+    "version": "3.3.3"
+  },
+  {
+    "file": "testMSG.msg",
+    "elapsed_ms": 781,
+    "text": "MIME registry use cases\n\tFrom\n\tJukka Zitting\n\tTo\n\ttika-dev@lucene.apache.org\n\tRecipients\n\ttika-dev@lucene.apache.org\n\nHi,\n\nAs discussed, I've been working on making the type detection code more\nmodular and extensible. This work has progressed pretty well, and now\nI'd like to start integrating the results with the rest of Tika. To do\nthis, I'll need to modify the current MIME type classes. However, I\ndon't know all the ways in which this code is being used out there.\n\nIf you're directly using the classes in org.apache.tika.mime, please\nlet me know about your use cases and the classes/methods you're\naccessing. Otherwise I might end up breaking your application.\n\nBR,\n\nJukka Zitting\n\n",
+    "partial": false,
+    "mime": "application/vnd.ms-outlook",
+    "engine": "apache-tika",
+    "version": "3.3.3"
+  }
+]

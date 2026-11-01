@@ -1,0 +1,83 @@
+[
+  {
+    "case": "default-alice",
+    "elapsed_ms": 3095,
+    "ok": true,
+    "quality": "ok",
+    "expected_fact": true,
+    "tier": "headed",
+    "reason": "",
+    "browser_recovery": {
+      "challenge_polls": 2,
+      "checkpointed": true,
+      "elapsed_ms": 2911
+    },
+    "tier_stats": {
+      "headed": 1
+    }
+  },
+  {
+    "case": "repeat-alice",
+    "elapsed_ms": 762,
+    "ok": true,
+    "quality": "ok",
+    "expected_fact": true,
+    "tier": "headed",
+    "reason": "",
+    "browser_recovery": {
+      "challenge_polls": 0,
+      "checkpointed": true,
+      "elapsed_ms": 756
+    },
+    "tier_stats": {
+      "headed": 1
+    }
+  },
+  {
+    "case": "separate-bob",
+    "elapsed_ms": 3651,
+    "ok": true,
+    "quality": "ok",
+    "expected_fact": true,
+    "tier": "headed",
+    "reason": "",
+    "browser_recovery": {
+      "challenge_polls": 2,
+      "checkpointed": true,
+      "elapsed_ms": 2904
+    },
+    "tier_stats": {
+      "headed": 1
+    }
+  },
+  {
+    "case": "explicit-charlie",
+    "elapsed_ms": 2942,
+    "ok": true,
+    "quality": "ok",
+    "expected_fact": true,
+    "tier": "headed",
+    "reason": "",
+    "browser_recovery": {
+      "challenge_polls": 2,
+      "checkpointed": true,
+      "elapsed_ms": 2936
+    },
+    "tier_stats": {
+      "headed": 1
+    }
+  },
+  {
+    "case": "plain-control",
+    "elapsed_ms": 20,
+    "ok": true,
+    "quality": "ok",
+    "expected_fact": true,
+    "tier": "direct",
+    "reason": "",
+    "browser_recovery": null,
+    "tier_stats": {
+      "direct": 1
+    }
+  }
+]

@@ -1,0 +1,16 @@
+{
+  "baseline_commit": "df6278e0e7b11cfb4288a27f0b8d3d3e166314a5",
+  "candidate_source_sha256": {
+    "src/dethrottled/server.py": "227324ac42868306813258512c47390572e63ede07a372a7fb29e98ec4c0f033",
+    "src/dethrottled/fetch.py": "12a020918badb952b58026f732d0ce01987b2ba28a63a5fecbdcaed682fd9729",
+    "src/dethrottled/workflow.py": "c5892a48b86cf814aa4dda2fcf0de9e316f2f54d97bec2ba424c05407fff6365",
+    "adapters/mcp_server.py": "c4a3dc837807285e4713802c15de727fea636a1fbe8659724e98ee406ec55591",
+    "adapters/rest_gateway.py": "9c0dcfa3feb1920ac5273e3fe0f22f9658d15eddad2d115fb17e6ba91a28724b",
+    "evaluations/agent-workflow/run.py": "483a8bc4b4e3f50ee6be6b01c69d17fbee2dee6e603d820aa507fe85af0d32f0"
+  },
+  "images": {
+    "dethrottled:workflow-base-20261031": "sha256:c098613430ac140ce0b019b5d2d17a8c70b2e19c4105eb84ff5848ae53c97c45",
+    "dethrottled:workflow-candidate": "sha256:65d74525f6db8bbce0e43cb2bc1e61d4012918eb1992c2b50245b97d0df1ba2e",
+    "dethrottled-browser-search:local": "sha256:c70466276f41a9faa062706e6c5a52a35b4f3ca139045e6e6d3cb70bfb5c5075"
+  }
+}

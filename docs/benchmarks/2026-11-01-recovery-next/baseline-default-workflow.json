@@ -1,0 +1,60 @@
+[
+  {
+    "path": "/slow",
+    "elapsed_ms": 306,
+    "fact": false,
+    "result": {
+      "ok": false,
+      "text": "",
+      "tier": "tls",
+      "extractor": null,
+      "title": "",
+      "published": "",
+      "chars": 0,
+      "url": "http://dethrottled-recovery-fixture:19890/slow",
+      "reason": "direct:fetched_but_no_extractor_succeeded | tls:fetched_but_no_extractor_succeeded",
+      "cached": false,
+      "acquisition_attempts": [
+        {
+          "tier": "direct",
+          "reason": "",
+          "outcome": "response"
+        },
+        {
+          "tier": "tls",
+          "reason": "",
+          "outcome": "response"
+        }
+      ]
+    }
+  },
+  {
+    "path": "/webgl",
+    "elapsed_ms": 1274,
+    "fact": false,
+    "result": {
+      "ok": false,
+      "text": "",
+      "tier": "tls",
+      "extractor": null,
+      "title": "",
+      "published": "",
+      "chars": 0,
+      "url": "http://dethrottled-recovery-fixture:19890/webgl",
+      "reason": "direct:fetched_but_no_extractor_succeeded | tls:fetched_but_no_extractor_succeeded",
+      "cached": false,
+      "acquisition_attempts": [
+        {
+          "tier": "direct",
+          "reason": "",
+          "outcome": "response"
+        },
+        {
+          "tier": "tls",
+          "reason": "",
+          "outcome": "response"
+        }
+      ]
+    }
+  }
+]

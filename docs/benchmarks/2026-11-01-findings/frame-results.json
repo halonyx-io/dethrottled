@@ -1,0 +1,374 @@
+[
+  {
+    "build": "baseline",
+    "case": "challenge-frame",
+    "http": 200,
+    "expected_fact": false,
+    "private_blocked": false,
+    "ok": true,
+    "response": {
+      "ok": true,
+      "steps": [
+        {
+          "action": "goto",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 30,
+          "data": {
+            "url": "http://dethrottled-findings-fixture:19890/framed",
+            "status": 403
+          }
+        },
+        {
+          "action": "wait",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 3501,
+          "data": true
+        },
+        {
+          "action": "html",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 54,
+          "data": "<body>Verification Required. Please wait while we verify your request<iframe src=\"http://dethrottled-findings-frame:19890/frame\"></iframe><script>addEventListener('message',e=>{if(e.data==='fixture-ready'){document.cookie='fixture_frame_clearance=1; path=/';location.reload()}})</script></body>",
+          "content_chars": 294,
+          "truncated": false
+        }
+      ],
+      "final": {
+        "url": "http://dethrottled-findings-fixture:19890/framed",
+        "title": "Verification Required"
+      },
+      "session": {
+        "id": null,
+        "persistent": false,
+        "closed": false,
+        "ttl_seconds": 0,
+        "allowed_hosts": [
+          "dethrottled-findings-fixture"
+        ],
+        "restored_from_checkpoint": false
+      },
+      "canary_matches": [],
+      "service_s": 3.587,
+      "events": {
+        "dialogs": [],
+        "console": [
+          {
+            "type": "error",
+            "text": "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+          }
+        ],
+        "page_errors": [],
+        "request_failures": [
+          {
+            "url": "http://dethrottled-findings-frame:19890/frame",
+            "method": "GET",
+            "reason": "net::ERR_BLOCKED_BY_CLIENT"
+          }
+        ],
+        "http_errors": [
+          {
+            "url": "http://dethrottled-findings-fixture:19890/framed",
+            "status": 403
+          }
+        ]
+      }
+    }
+  },
+  {
+    "build": "baseline",
+    "case": "private-frame",
+    "http": 200,
+    "expected_fact": false,
+    "private_blocked": true,
+    "ok": true,
+    "response": {
+      "ok": true,
+      "steps": [
+        {
+          "action": "goto",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 26,
+          "data": {
+            "url": "http://dethrottled-findings-fixture:19890/private-frame",
+            "status": 200
+          }
+        },
+        {
+          "action": "wait",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 3500,
+          "data": true
+        },
+        {
+          "action": "html",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 34,
+          "data": "<body><h1>Private frame must be blocked</h1><iframe src=\"http://127.0.0.1:19888/health\"></iframe></body>",
+          "content_chars": 104,
+          "truncated": false
+        }
+      ],
+      "final": {
+        "url": "http://dethrottled-findings-fixture:19890/private-frame",
+        "title": ""
+      },
+      "session": {
+        "id": null,
+        "persistent": false,
+        "closed": false,
+        "ttl_seconds": 0,
+        "allowed_hosts": [
+          "dethrottled-findings-fixture"
+        ],
+        "restored_from_checkpoint": false
+      },
+      "canary_matches": [],
+      "service_s": 3.563,
+      "events": {
+        "dialogs": [],
+        "console": [],
+        "page_errors": [],
+        "request_failures": [
+          {
+            "url": "http://127.0.0.1:19888/health",
+            "method": "GET",
+            "reason": "net::ERR_BLOCKED_BY_CLIENT"
+          }
+        ],
+        "http_errors": []
+      }
+    }
+  },
+  {
+    "build": "baseline",
+    "case": "foreign-top",
+    "http": 200,
+    "expected_fact": false,
+    "private_blocked": false,
+    "ok": false,
+    "response": {
+      "ok": false,
+      "steps": [
+        {
+          "action": "goto",
+          "ok": false,
+          "reason": "ValueError: navigation outside allowed_hosts",
+          "elapsed_ms": 0,
+          "data": null
+        }
+      ],
+      "final": {
+        "url": "about:blank",
+        "title": ""
+      },
+      "session": {
+        "id": null,
+        "persistent": false,
+        "closed": false,
+        "ttl_seconds": 0,
+        "allowed_hosts": [
+          "dethrottled-findings-fixture"
+        ],
+        "restored_from_checkpoint": false
+      },
+      "canary_matches": [],
+      "service_s": 0.004,
+      "events": {
+        "dialogs": [],
+        "console": [],
+        "page_errors": [],
+        "request_failures": [],
+        "http_errors": []
+      }
+    }
+  },
+  {
+    "build": "candidate",
+    "case": "challenge-frame",
+    "http": 200,
+    "expected_fact": true,
+    "private_blocked": false,
+    "ok": true,
+    "response": {
+      "ok": true,
+      "steps": [
+        {
+          "action": "goto",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 75,
+          "data": {
+            "url": "http://dethrottled-findings-fixture:19890/framed",
+            "status": 403
+          }
+        },
+        {
+          "action": "wait",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 3500,
+          "data": true
+        },
+        {
+          "action": "html",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 38,
+          "data": "<body><article><h1>Regional allocation</h1><p>ALPHA received 7341 tonnes in 2025.</p><p>This published allocation is measured in tonnes, with source evidence and a stated reporting year.</p><p>This published allocation is measured in tonnes, with source evidence and a stated reporting year.</p><p>This published allocation is measured in tonnes, with source evidence and a stated reporting year.</p><p>This published allocation is measured in tonnes, with source evidence and a stated reporting year.</p><p>This published allocation is measured in tonnes, with source evidence and a stated reporting year.</p><p>This published allocation is measured in tonnes, with source evidence and a stated reporting year.</p><p>This published allocation is measured in tonnes, with source evidence and a stated reporting year.</p><p>This published allocation is measured in tonnes, with source evidence and a stated reporting year.</p><p>This published allocation is measured in tonnes, with source evidence and a stated reporting year.</p><p>This published allocation is measured in tonnes, with source evidence and a stated reporting year.</p><p>This published allocation is measured in tonnes, with source evidence and a stated reporting year.</p><p>This published allocation is measured in tonnes, with source evidence and a stated reporting year.</p><p>This published allocation is measured in tonnes, with source evidence and a stated reporting year.</p><p>This published allocation is measured in tonnes, with source evidence and a stated reporting year.</p><p>This published allocation is measured in tonnes, with source evidence and a stated reporting year.</p><p>This published allocation is measured in tonnes, with source evidence and a stated reporting year.</p><p>This published allocation is measured in tonnes, with source evidence and a stated reporting year.</p><p>This published allocation is measured in tonnes, with source evidence and a stated reporting year.</p><p>This published allocation is measured in tonnes, with source evidence and a stated reporting year.</p><p>This published allocation is measured in tonnes, with source evidence and a stated reporting year.</p></article></body>",
+          "content_chars": 2202,
+          "truncated": false
+        }
+      ],
+      "final": {
+        "url": "http://dethrottled-findings-fixture:19890/framed",
+        "title": "Regional report"
+      },
+      "session": {
+        "id": null,
+        "persistent": false,
+        "closed": false,
+        "ttl_seconds": 0,
+        "allowed_hosts": [
+          "dethrottled-findings-fixture"
+        ],
+        "restored_from_checkpoint": false
+      },
+      "canary_matches": [],
+      "service_s": 3.615,
+      "events": {
+        "dialogs": [],
+        "console": [
+          {
+            "type": "error",
+            "text": "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+          }
+        ],
+        "page_errors": [],
+        "request_failures": [],
+        "http_errors": [
+          {
+            "url": "http://dethrottled-findings-fixture:19890/framed",
+            "status": 403
+          }
+        ]
+      }
+    }
+  },
+  {
+    "build": "candidate",
+    "case": "private-frame",
+    "http": 200,
+    "expected_fact": false,
+    "private_blocked": true,
+    "ok": true,
+    "response": {
+      "ok": true,
+      "steps": [
+        {
+          "action": "goto",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 62,
+          "data": {
+            "url": "http://dethrottled-findings-fixture:19890/private-frame",
+            "status": 200
+          }
+        },
+        {
+          "action": "wait",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 3500,
+          "data": true
+        },
+        {
+          "action": "html",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 41,
+          "data": "<body><h1>Private frame must be blocked</h1><iframe src=\"http://127.0.0.1:19888/health\"></iframe></body>",
+          "content_chars": 104,
+          "truncated": false
+        }
+      ],
+      "final": {
+        "url": "http://dethrottled-findings-fixture:19890/private-frame",
+        "title": ""
+      },
+      "session": {
+        "id": null,
+        "persistent": false,
+        "closed": false,
+        "ttl_seconds": 0,
+        "allowed_hosts": [
+          "dethrottled-findings-fixture"
+        ],
+        "restored_from_checkpoint": false
+      },
+      "canary_matches": [],
+      "service_s": 3.606,
+      "events": {
+        "dialogs": [],
+        "console": [],
+        "page_errors": [],
+        "request_failures": [
+          {
+            "url": "http://127.0.0.1:19888/health",
+            "method": "GET",
+            "reason": "net::ERR_BLOCKED_BY_CLIENT"
+          }
+        ],
+        "http_errors": []
+      }
+    }
+  },
+  {
+    "build": "candidate",
+    "case": "foreign-top",
+    "http": 200,
+    "expected_fact": false,
+    "private_blocked": false,
+    "ok": false,
+    "response": {
+      "ok": false,
+      "steps": [
+        {
+          "action": "goto",
+          "ok": false,
+          "reason": "ValueError: navigation outside allowed_hosts",
+          "elapsed_ms": 0,
+          "data": null
+        }
+      ],
+      "final": {
+        "url": "about:blank",
+        "title": ""
+      },
+      "session": {
+        "id": null,
+        "persistent": false,
+        "closed": false,
+        "ttl_seconds": 0,
+        "allowed_hosts": [
+          "dethrottled-findings-fixture"
+        ],
+        "restored_from_checkpoint": false
+      },
+      "canary_matches": [],
+      "service_s": 0.004,
+      "events": {
+        "dialogs": [],
+        "console": [],
+        "page_errors": [],
+        "request_failures": [],
+        "http_errors": []
+      }
+    }
+  }
+]

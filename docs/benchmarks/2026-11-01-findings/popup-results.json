@@ -1,0 +1,158 @@
+[
+  {
+    "build": "baseline",
+    "popup_blocked": true,
+    "response": {
+      "ok": true,
+      "steps": [
+        {
+          "action": "goto",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 24,
+          "data": {
+            "url": "http://dethrottled-findings-fixture:19890/popup",
+            "status": 200
+          }
+        },
+        {
+          "action": "click",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 94,
+          "data": true
+        },
+        {
+          "action": "wait",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 500,
+          "data": true
+        },
+        {
+          "action": "tabs",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 0,
+          "data": {
+            "tabs": [
+              {
+                "index": 0,
+                "url": "http://dethrottled-findings-fixture:19890/popup",
+                "active": true,
+                "allowed": true
+              },
+              {
+                "index": 1,
+                "url": "chrome-error://chromewebdata/",
+                "active": false,
+                "allowed": false
+              }
+            ]
+          }
+        }
+      ],
+      "final": {
+        "url": "http://dethrottled-findings-fixture:19890/popup",
+        "title": ""
+      },
+      "session": {
+        "id": null,
+        "persistent": false,
+        "closed": false,
+        "ttl_seconds": 0,
+        "allowed_hosts": [
+          "dethrottled-findings-fixture"
+        ],
+        "restored_from_checkpoint": false
+      },
+      "canary_matches": [],
+      "service_s": 0.622,
+      "events": {
+        "dialogs": [],
+        "console": [],
+        "page_errors": [],
+        "request_failures": [],
+        "http_errors": []
+      }
+    }
+  },
+  {
+    "build": "candidate",
+    "popup_blocked": true,
+    "response": {
+      "ok": true,
+      "steps": [
+        {
+          "action": "goto",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 18,
+          "data": {
+            "url": "http://dethrottled-findings-fixture:19890/popup",
+            "status": 200
+          }
+        },
+        {
+          "action": "click",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 62,
+          "data": true
+        },
+        {
+          "action": "wait",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 500,
+          "data": true
+        },
+        {
+          "action": "tabs",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 0,
+          "data": {
+            "tabs": [
+              {
+                "index": 0,
+                "url": "http://dethrottled-findings-fixture:19890/popup",
+                "active": true,
+                "allowed": true
+              },
+              {
+                "index": 1,
+                "url": "chrome-error://chromewebdata/",
+                "active": false,
+                "allowed": false
+              }
+            ]
+          }
+        }
+      ],
+      "final": {
+        "url": "http://dethrottled-findings-fixture:19890/popup",
+        "title": ""
+      },
+      "session": {
+        "id": null,
+        "persistent": false,
+        "closed": false,
+        "ttl_seconds": 0,
+        "allowed_hosts": [
+          "dethrottled-findings-fixture"
+        ],
+        "restored_from_checkpoint": false
+      },
+      "canary_matches": [],
+      "service_s": 0.584,
+      "events": {
+        "dialogs": [],
+        "console": [],
+        "page_errors": [],
+        "request_failures": [],
+        "http_errors": []
+      }
+    }
+  }
+]

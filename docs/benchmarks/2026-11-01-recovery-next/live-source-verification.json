@@ -1,0 +1,8 @@
+{
+  "version": "0.9.1",
+  "live_core_sources_match": true,
+  "live_browser_source_matches": true,
+  "live_adapters_match": true,
+  "graphics_profile": "mesa",
+  "D6": "excluded"
+}

@@ -1,0 +1,35 @@
+{
+  "review_type": "author-reviewed required-answer completion, not blinded or exhaustive",
+  "cases": [
+    {
+      "case": "site",
+      "required_facts_correct": true,
+      "tool_calls": 7,
+      "limits_disclosed": true,
+      "incidental_issue": "Claims about missing headings/metadata exceeded what extracted text established."
+    },
+    {
+      "case": "captions",
+      "required_facts_correct": true,
+      "tool_calls": 2,
+      "interval_seconds": [
+        5,
+        7.5
+      ],
+      "audio_not_verified": true
+    },
+    {
+      "case": "selectors",
+      "required_facts_correct": true,
+      "tool_calls": 2,
+      "sentence_offsets": [
+        0,
+        45
+      ],
+      "calculation_disclosed": true
+    }
+  ],
+  "count": 3,
+  "completed_required_answers": 3,
+  "general_accuracy_claim": false
+}

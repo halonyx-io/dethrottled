@@ -1,0 +1,8 @@
+{
+  "installed_adapters_match_checkout": {
+    "adapters/mcp_server.py": true,
+    "adapters/rest_gateway.py": true,
+    "src/dethrottled/access.py": true
+  },
+  "core_browser_match_verified_at_deploy": true
+}

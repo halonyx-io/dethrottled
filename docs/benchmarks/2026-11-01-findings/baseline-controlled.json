@@ -1,0 +1,67 @@
+[
+  {
+    "case": "default-alice",
+    "elapsed_ms": 152,
+    "ok": false,
+    "quality": "failed",
+    "expected_fact": false,
+    "tier": "tls",
+    "reason": "direct:http_403 | tls:tls_http_403",
+    "browser_recovery": null,
+    "tier_stats": {
+      "failed": 1
+    }
+  },
+  {
+    "case": "repeat-alice",
+    "elapsed_ms": 1429,
+    "ok": false,
+    "quality": "failed",
+    "expected_fact": false,
+    "tier": "tls",
+    "reason": "direct:http_403 | tls:tls_http_403",
+    "browser_recovery": null,
+    "tier_stats": {
+      "failed": 1
+    }
+  },
+  {
+    "case": "separate-bob",
+    "elapsed_ms": 1500,
+    "ok": false,
+    "quality": "failed",
+    "expected_fact": false,
+    "tier": "tls",
+    "reason": "direct:http_403 | tls:tls_http_403",
+    "browser_recovery": null,
+    "tier_stats": {
+      "failed": 1
+    }
+  },
+  {
+    "case": "explicit-charlie",
+    "elapsed_ms": 2451,
+    "ok": true,
+    "quality": "ok",
+    "expected_fact": false,
+    "tier": "headed",
+    "reason": "thin, best available: direct:http_403, tls:tls_http_403, headed:thin/65",
+    "browser_recovery": null,
+    "tier_stats": {
+      "headed-thin": 1
+    }
+  },
+  {
+    "case": "plain-control",
+    "elapsed_ms": 567,
+    "ok": true,
+    "quality": "ok",
+    "expected_fact": true,
+    "tier": "direct",
+    "reason": "",
+    "browser_recovery": null,
+    "tier_stats": {
+      "direct": 1
+    }
+  }
+]

@@ -1,0 +1,87 @@
+# Optional portable public adapters and local speech worker.
+# docker compose -f docker-compose.yml -f docker-compose.agents.yml --profile public up -d --build
+# Add --profile media and DETHROTTLED_MEDIA_WORKER_URL=http://media-worker:19889 for speech.
+services:
+  mcp:
+    profiles: [public]
+    build:
+      context: .
+      dockerfile: adapters/Dockerfile
+    image: dethrottled-adapters:local
+    restart: unless-stopped
+    ports: ["127.0.0.1:${DETHROTTLED_MCP_PORT:-18184}:18184"]
+    environment:
+      MCP_BACKEND_URL: http://dethrottled:8787
+      MCP_ALLOWED_HOSTS: "${MCP_ALLOWED_HOSTS:-localhost:*,127.0.0.1:*}"
+    volumes:
+      - adapter-state:/state
+      - type: bind
+        source: ${DETHROTTLED_TOKEN_REGISTRY_FILE:-./secrets/tokens.json}
+        target: /run/secrets/tokens.json
+        read_only: true
+        bind:
+          create_host_path: false
+    depends_on: [dethrottled]
+  rest:
+    profiles: [public]
+    image: dethrottled-adapters:local
+    restart: unless-stopped
+    command: [uvicorn, public_gateway:app, --host, 0.0.0.0, --port, "18186"]
+    ports: ["127.0.0.1:${DETHROTTLED_REST_PORT:-18186}:18186"]
+    environment:
+      MCP_BACKEND_URL: http://dethrottled:8787
+    volumes:
+      - adapter-state:/state
+      - type: bind
+        source: ${DETHROTTLED_TOKEN_REGISTRY_FILE:-./secrets/tokens.json}
+        target: /run/secrets/tokens.json
+        read_only: true
+        bind:
+          create_host_path: false
+    depends_on: [mcp]
+  docling-worker:
+    profiles: [layout]
+    build:
+      context: .
+      dockerfile: docling-worker/Dockerfile
+    image: dethrottled-docling:local
+    ulimits:
+      core: 0
+    restart: unless-stopped
+    volumes: [layout-models:/models]
+    expose: ["19891"]
+    mem_limit: 8g
+    cpus: 4
+    pids_limit: 256
+  format-worker:
+    profiles: [formats]
+    build:
+      context: .
+      dockerfile: format-worker/Dockerfile
+    image: dethrottled-formats:local
+    ulimits:
+      core: 0
+    restart: unless-stopped
+    expose: ["19892"]
+    mem_limit: 2g
+    cpus: 2
+    pids_limit: 128
+  media-worker:
+    profiles: [media]
+    build:
+      context: .
+      dockerfile: media-worker/Dockerfile
+    image: dethrottled-media:local
+    ulimits:
+      core: 0
+    restart: unless-stopped
+    environment:
+      WHISPER_MODEL: "${WHISPER_MODEL:-small}"
+      MEDIA_MAX_SECONDS: "${MEDIA_MAX_SECONDS:-1800}"
+    volumes: [media-models:/models]
+    expose: ["19889"]
+    mem_limit: 3g
+volumes:
+  adapter-state:
+  media-models:
+  layout-models:
