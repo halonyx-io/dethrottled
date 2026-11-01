@@ -26,3 +26,6 @@ DETHROTTLED_EVAL_BASELINE_URL and DETHROTTLED_EVAL_CANDIDATE_URL as needed.
 Defaults are evaluation-results, http://127.0.0.1:18396 and http://127.0.0.1:8787.
 Model/account credentials are never needed for this suite. Paid comparisons must
 be recorded separately and must not silently substitute cached local results.
+
+See the [current evidence index](../../docs/EVIDENCE.md) and
+[agent guide](../../docs/AGENT-UPGRADES.md) for present behavior.

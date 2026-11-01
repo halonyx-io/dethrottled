@@ -1,193 +1,113 @@
-# Browser drive for agents
+# Browser operation
 
-`POST /drive` operates the warm Patchright Chromium already managed by
-Dethrottled. It is designed for agents that need to interact with a page,
-preserve state across turns, and collect machine-readable evidence without
-starting their own browser or taking a screenshot after every action.
+`POST /drive` operates the existing headed Patchright browser. Use it when a
+read needs controls, an export, application responses or visual inspection.
+The API exposes bounded actions, not arbitrary JavaScript evaluation. Prefer
+structured inspection for planning and actual pixels when appearance is evidence.
 
-## Evidence-led agent loop
-
-1. Create one named session for one target and task.
-2. Set `allowed_hosts` before the first navigation, or let the public adapter
-   derive it from validated navigation URLs. Hostnames omit ports.
-3. Request a `snapshot` to discover useful controls and selectors.
-4. Perform the smallest next interaction and inspect its structured result.
-5. Use a unique canary when testing whether controlled text executes.
-6. Inspect screenshots or retained source pixels whenever layout, charts,
-   OCR uncertainty, or visual content could change the answer.
-7. Close the session as soon as the task is finished.
-
-Use structured text for navigation and source pixels when they help establish
-what the source actually says. Evidence coverage and correctness take priority
-over minimizing calls or context.
-
-## Start or continue a session
+## Sessions and the interaction loop
 
 ```sh
 curl -sS http://127.0.0.1:8787/drive \
-  -H 'content-type: application/json' \
-  -d '{
-    "session":"target-workflow-01",
-    "url":"https://example.com/",
-    "allowed_hosts":["example.com"],
-    "screenshot":"failure",
-    "steps":[{"action":"snapshot","limit":100}]
-  }'
+  -H 'Content-Type: application/json' \
+  -d '{"url":"https://example.com/","session":"source-task","allowed_hosts":["example.com"],"steps":[{"action":"snapshot","limit":100}],"screenshot":"failure"}'
 ```
 
-Reuse the same `session` in later requests without supplying `url`. Cookies,
-web storage, page state, and the current DOM remain available. Calls for the
-same session are serialized. Sessions live only in worker memory, expire after
-30 minutes by default, and do not survive a worker restart.
+Discover controls with a snapshot, perform the smallest justified interaction,
+then inspect its result. Reuse `session` without a URL to continue the same live
+DOM and browser state. Calls for a session are serialized. An unnamed navigation
+returns a persistent `auto-*` session; reuse the returned ID. For one-shot work,
+set `close_session=true`. A stateful call without navigation/session returns 422;
+a missing session without a restorable checkpoint returns 409.
 
-Close one explicitly:
+Live contexts expire after 30 idle minutes by default, with at most eight live
+sessions. Auto sessions can be evicted before explicitly named sessions.
+`checkpoint` saves selected state for restoration after eviction/restart; it
+is distinct from keeping a live page. Close a session explicitly when finished:
 
-```sh
-curl -sS http://127.0.0.1:8787/drive \
-  -H 'content-type: application/json' \
-  -d '{"session":"target-workflow-01","close_session":true,"steps":[]}'
+```json
+{"session":"source-task","close_session":true,"steps":[]}
 ```
-
-If the first navigation omits `session`, Dethrottled creates a persistent
-`auto-*` session and returns its ID in `session.id`. Reuse that exact ID for
-later `snapshot`, `text`, or interaction calls. A stateful call without either
-a navigation or a session is rejected with an actionable `422` instead of
-silently operating on a disposable `about:blank` page.
-
-For a true one-shot navigation, set `"close_session":true` in that request.
-Automatically named sessions are also the first sessions evicted if the
-session pool is full; explicitly named sessions are never evicted this way. A
-follow-up using an unknown, expired, or evicted ID returns `409` rather than
-silently creating a new `about:blank` context.
 
 ## Actions
 
-| Action | Important fields | Result |
-| --- | --- | --- |
-| `snapshot` | `selector`, `limit` | Visible interactive elements and selector hints; a selector scopes the snapshot and includes matching descendants |
-| `goto` | `url`, `ms` | Final URL and HTTP status when available |
-| `click` | `selector`, `index`, `ms` | Click outcome |
-| `fill` | `selector`, `value` | Replace a value and emit `input` plus `change` |
-| `type` | `selector`, `value`, `delay_ms` | Type sequentially when key events matter |
-| `press` | `selector`, `value` | Press a key such as `Enter` |
-| `select` | `selector`, `value` | Select an option |
-| `check`, `uncheck` | `selector` | Set checkbox/radio state |
-| `hover` | `selector` | Trigger hover behavior |
-| `wait` | `ms` | Bounded delay |
-| `wait_for` | `selector`, `value`, `ms` | Wait for `visible`, `hidden`, `attached`, or `detached` |
-| `text` | `selector`, `max_chars` | Read visible text with an explicit budget |
-| `html` | `selector`, `max_chars` | Read bounded outer HTML |
-| `download` | `selector`, `ms` | Capture an actual browser download, extract it, and retain its scoped source bytes |
-| `attr` | `selector`, `name` | Read an HTML attribute |
-| `count` | `selector` | Count matches |
-| `url`, `title` | none | Read current page identity |
+| Action | Fields and meaning |
+|---|---|
+| `snapshot` | `selector` scopes visible nodes/controls; `limit` bounds entries; hints include ambiguity/index information |
+| `goto` | Navigate to `url`, with `ms` action timing |
+| `click`, `hover`, `check`, `uncheck` | Act on `selector`/`index` |
+| `fill` | Replace with `value`; emits input and change |
+| `type` | Sequential typing; `value` and `delay_ms` |
+| `press`, `select` | Key or option in `value` |
+| `wait`, `wait_for` | Delay with `ms`, or selector state in `value` (`visible`, `hidden`, `attached`, `detached`) |
+| `text`, `html` | Bounded read using `selector` and `max_chars`; report actual size/truncation |
+| `attr`, `count` | Attribute `name` or locator count |
+| `url`, `title` | Current page identity |
+| `download` | Click a real download control and parse the captured file |
+| `network` | List captured same-scope XHR/fetch responses; `name="body"` reads `selector=response_id` |
+| `checkpoint` | Save cookies, localStorage, IndexedDB, allowed-frame sessionStorage and history |
+| `tabs`, `switch_tab` | Inspect tabs, then switch to an allowed live tab `index` |
+| `history` | Read bounded action outcomes without replaying actions |
 
-Steps stop at the first failure. Every step reports `ok`, `reason`,
-`elapsed_ms`, and `data`, so the caller should repair or re-plan instead of
-continuing from an assumed page state.
+Set `frame` to an iframe's CSS selector for supported locator actions. Its target
+must be in the session's allowed-host scope. Tab indices are live positions, not
+durable handles. Every step reports success, reason, timing and data. The run
+stops on the first failure; never assume later steps ran.
 
-Failed `click`, `html`, and `snapshot` steps also return `diagnostics`. For a
-click timeout, `reason` distinguishes `hidden`, `unstable`, `covered`,
-`out_of_viewport`, `disabled`, `detached`, `selector_error`, and `unknown`;
-diagnostics include the timeout stage, bounding box, viewport, pointer-events
-value, hit-test target, and a bounded browser error log. This tells an agent
-whether to scroll, wait, dismiss an overlay, choose another control, or stop
-guessing.
+Click/HTML/snapshot diagnostics help distinguish hidden, covered, detached,
+disabled, unstable, out-of-viewport and selector failures. For repeated controls,
+use snapshot context and selector indexes rather than guessing. `limit` is an
+entry count; `max_chars` is the text/HTML budget. Steps use `ms`, not a per-step
+`timeout_ms`; the top-level `timeout_ms` bounds the entire request.
 
-The default snapshot filters invisible nodes before applying `limit`. Supplying
-a container selector such as `#grid` or `[role=grid]` treats it as a scope and
-returns the visible container plus interactive descendants. This is useful for
-virtualized React grids whose controls occur after substantial page chrome.
+## Scope and network results
 
-`fill` uses the browser's native editing path. Patchright emits `input` while
-setting the value, and Dethrottled emits `change` immediately afterward. This
-makes React-controlled fields and forms that wait for a committed change
-deterministic without requiring a separate blur or arbitrary JavaScript.
+Set `allowed_hosts` at session creation; the allowlist and public-target policy
+cannot be broadened on reuse. Hostnames omit ports. Top-level and popup navigation
+remain within scope. Public subframes may load to execute challenges, but that
+does not grant arbitrary locator access to an out-of-scope frame. Public sessions
+also reject private-network requests. These checks do not replace network egress
+isolation or eliminate every DNS-rebinding risk.
 
-## Canary evidence
+Network capture keeps a ring of 50 responses. Use the returned stable
+`response_id`; eviction makes it unavailable. Text/JSON/XML/JavaScript body reads
+accept chunked bodies and enforce a 2 MB decoded limit as well as a declared
+size check. This is an acceptance limit, not streaming browser-memory isolation.
+Bodies can become retained documents. Binary files belong in the download path.
 
-Give each probe an unpredictable marker and pass it in `canaries`. Dethrottled
-checks dialogs, console messages, page errors, the title, URL, and visible
-text. Dialog, console, page-error, and title matches can establish an
-`execution_signal`; visible reflection alone does not.
+## Pixels, events and canaries
 
-```json
-{
-  "session": "target-workflow-01",
-  "canaries": ["DRIVE_CANARY_7f13"],
-  "screenshot": "canary",
-  "steps": [
-    {"action": "fill", "selector": "input[name=title]", "value": "DRIVE_CANARY_7f13"},
-    {"action": "click", "selector": "button[type=submit]"},
-    {"action": "wait", "ms": 1000}
-  ]
-}
-```
+`screenshot` is `never`, `failure` (default), `canary` or `always`; legacy booleans
+map to always/never. REST/local responses carry `screenshot_b64`; MCP forwards
+native image blocks. A vision-capable model must receive the image, not a
+placeholder string. Use screenshots when a chart, layout or challenge needs them.
 
-The response includes `canary_matches` and event telemetry for dialogs,
-console output, page errors, failed requests, and HTTP error responses. Browser
-dialogs are automatically dismissed so an alert cannot deadlock the session.
+Events include failed requests, HTTP errors, page errors, console signals and
+dismissed dialogs. Optional unpredictable `canaries` distinguish visible reflection
+from execution signals in dialogs/console/page-error/title channels. They are
+optional inspection controls, not required for ordinary reading.
 
-## Screenshot policy
+## Downloads, checkpoints and retries
 
-`screenshot` accepts:
+Downloads must come from an actual control. The worker bounds capture at 32 MiB;
+the API applies normal parsers, retains supported source bytes and returns a
+scoped document handle. Unsupported parsing fails explicitly. Closing a live
+session removes its browser download files; retained evidence has its own expiry.
 
-- `never`: never return pixels.
-- `failure`: capture only when the run fails; this is the default.
-- `canary`: capture only when a supplied canary matches.
-- `always`: capture after every request.
+A checkpoint lasts up to 24 hours and stores sensitive browser state locally.
+It excludes live DOM, sockets and other tabs. Restore with the same session and
+scope. Closing the session deletes its checkpoint. History retains up to 200
+outcomes without typed values, selectors or response bodies.
 
-The screenshot is a base64 PNG in `screenshot_b64`. Prefer `snapshot`, `text`,
-and browser events for planning; use pixels when layout or rendered appearance
-is itself the evidence.
+Use an explicit session plus `operation_id` for retry protection. An identical
+completed operation can replay its saved result; changed payloads conflict.
+The durable bounded journal lasts 24 hours. Running/unknown outcomes after a
+crash require inspection; it is not an exactly-once guarantee for external effects.
+Very large results may retain the outcome without replayable evidence.
 
-## Boundaries
+Automatic fetch recovery uses its own caller/exact-host browser identities and
+checkpoints. It does not export their cookies to curl or share them between
+clients. Its early-commit read policy differs from ordinary drive navigation,
+which waits for DOMContentLoaded. See [architecture](PIPELINE.md).
 
-Set `allowed_hosts` for autonomous operation. It restricts top-level
-navigation and includes subdomains of a listed host. The allowlist is fixed for
-the lifetime of a named session, preventing a later call from silently
-broadening its scope.
-
-`/drive` intentionally does not expose arbitrary JavaScript evaluation. The
-whole request and each step are time-bounded, the action set is explicit, and
-the number of stored sessions is capped. These controls protect the service;
-they do not determine whether a target or test is authorized.
-
-The raw local API has no caller authentication. Keep it on a trusted network
-or put an authenticated, policy-enforcing gateway in front of it before any
-external exposure.
-
-## Reading downloads and replaying operations
-
-Use `download` with a selector for a control that actually creates a file:
-
-```json
-{"session":"source-export","steps":[
-  {"action":"download","selector":"role=button[name=\"Export CSV\"]","ms":20000}
-],"screenshot":"never"}
-```
-
-The API returns parsed file content, provenance and a retained document handle.
-Unsupported formats produce a download-parse failure rather than decoded binary.
-Inspect warnings for OCR, formulas, partial archives and limited page ranges.
-
-For retries of a potentially mutating sequence, use an explicit session and an
-`operation_id`. Repeat the identical payload to obtain a retained result rather
-than clicking again. A 409 unknown/in-progress outcome requires inspection.
-Replay protection uses a durable journal with 24-hour retention and bounded
-capacity. Unknown outcomes remain blocked after restart; inspection is required
-before deciding whether another action is justified.
-
-Text and HTML steps accept `max_chars`; `limit` continues to mean the snapshot
-entry count. Snapshot selector_count, selector_index and ambiguous fields help
-identify duplicate targets. Semantic hints supplement explicit CSS selectors.
-
-MCP browser screenshots are native image blocks with structured metadata. REST
-and the internal API retain their base64 image fields for existing clients.
-
-Version 0.7 adds `frame` for locator actions inside allowed iframes, `tabs` and
-`switch_tab` for popups, and bounded `history` of action outcomes. `network`
-accepts chunked text/JSON bodies and checks decoded size. `checkpoint` retains
-cookies, localStorage, IndexedDB and active-page sessionStorage for restart
-recovery; other tabs and live DOM are excluded. Close the session to delete its
-checkpoint. See [scope, limits and recovery details](DEPENDABLE-WORKFLOWS.md#browser-recovery-and-scope).
+[Documentation home](README.md) · [Agent guide](AGENT-UPGRADES.md) · [API](API.md) · [Evidence](EVIDENCE.md)

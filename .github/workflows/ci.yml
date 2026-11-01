@@ -62,6 +62,13 @@ jobs:
         shell: bash
         run: pytest -q -m "not network"
 
+      - name: Documentation contracts, links and examples
+        if: matrix.os == 'ubuntu-latest' && matrix.python == '3.12'
+        shell: bash
+        run: |
+          python scripts/docs_reference.py --check
+          python scripts/check_docs.py
+
       - name: Server starts and answers with nothing configured
         # The degradation promise, tested. No SearXNG, no renderer, no relay --
         # it must still come up and serve.

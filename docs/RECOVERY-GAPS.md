@@ -1,5 +1,9 @@
 # Recovery gaps: 0.9.0 to 0.9.1
 
+> Historical evaluation: the measurements and deployment statements below describe
+> the recorded release, not current installation instructions. Use the
+> [current guides](README.md) and [evidence index](EVIDENCE.md) for context.
+
 This follows the [D1–D5 review](REVIEWED-BOT-FINDINGS.md). D6 is excluded. The
 release closes measured browser/reader gaps; it does not establish a higher
 commercial anti-bot bypass rate.

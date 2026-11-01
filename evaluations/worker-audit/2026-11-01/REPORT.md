@@ -1,5 +1,8 @@
 # Worker and Rust audit
 
+> Recorded evaluation of the stated versions. This is historical evidence, not
+> current deployment guidance. See the [evidence index](../../../docs/EVIDENCE.md).
+
 Recorded 1 November 2026 (Asia/Singapore). Dethrottled 0.7.0, checkout
 `7991875`. This was an inspection and functional audit; production workers,
 models, engine settings and package pins were not upgraded during it.

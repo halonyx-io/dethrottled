@@ -47,6 +47,8 @@ examples/
 *.md
 !README.md
 !docs/*.md
+!docs/**/*.md
+!evaluations/**/*.md
 
 .DS_Store
 .idea/

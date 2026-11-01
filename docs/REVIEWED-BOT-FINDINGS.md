@@ -1,5 +1,9 @@
 # Bot findings checked — Dethrottled 0.9.0
 
+> Historical evaluation: the measurements and deployment statements below describe
+> the recorded release, not current installation instructions. Use the
+> [current guides](README.md) and [evidence index](EVIDENCE.md) for context.
+
 The supplied `DETHROTTLED-CODEX-FINDINGS-2026-11-01.md` was read from the local
 OpenClaw workspace. Its claims were checked against deployed 0.8.0, SDK 1.28.1,
 source code, controlled browser fixtures and fresh public requests. D6 was excluded

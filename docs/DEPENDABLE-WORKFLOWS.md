@@ -1,105 +1,113 @@
-# Coverage and document workflows (0.7)
+# Reading and evidence
 
-Default discovery still uses the existing keyless sources and headed DDG path.
-Independent URLs with identical titles survive discovery. Duplicate URLs merge
-provider/query provenance; research can still collapse mirrors after reading
-and comparing actual content.
+Use `fetch` for a URL, then retain its document handle and inspect whether the
+returned evidence covers the question. The same read controls are available
+through the HTTP API, MCP and fetch jobs, with transport-specific parameters in
+the [HTTP](HTTP-REFERENCE.md) and [MCP](MCP-REFERENCE.md) references.
 
-## Optional independent providers
+## Formats and prerequisites
 
-Set one or more server environment variables (`DETHROTTLED_EXA_API_KEY`,
-`DETHROTTLED_TAVILY_API_KEY`, `DETHROTTLED_PARALLEL_API_KEY`). These are optional
-external, potentially metered services. Agents select them explicitly through
-`engines`, for example `web,exa,tavily`, on search, search_and_fetch or research.
-Default profiles never call them. Capabilities reports configuration booleans;
-keys are never tool arguments or response fields. Provider failures preserve
-other engines' results, and attempts distinguish not_configured, empty and failed.
-Prices are not estimated: diagnostics report cost=unknown for metered requests.
+| Source | Reader and important limits |
+|---|---|
+| HTML | Direct/TLS/render/headed acquisition with local extraction; partial snapshots, challenges and thin content remain explicit |
+| PDF | Text layer, native table detection, bounded page selection and Tesseract OCR; optional Docling layout/table inference |
+| CSV, TSV, XLS, XLSX/XLSM | Row windows, sheet selection and cell limits; cached values preferred, uncached formulas remain formulas |
+| DOCX, PPTX, ODT, ODS, ODP, EPUB, RTF | Local document readers; preserve warnings and bounded embedded-image OCR provenance |
+| Legacy DOC/PPT | Local antiword/catppt converters included in the API image; source installs need those tools |
+| Plain text/Markdown, JSON/JSONL, XML/SVG | Text/data extraction; SVG text does not reconstruct visual chart relationships |
+| EML | Message text and bounded attachment handling; inspect archive/attachment completeness |
+| ZIP, TAR, GZIP | Bounded member/nesting/expansion handling without extracting paths to disk; encrypted/unsupported members can fail |
+| Raster images | Tesseract OCR when enabled; layout and chart relationships need pixel inspection |
+| VTT/SRT and YouTube captions | Timed text when available; a blocked YouTube page or missing caption is not a universal media download path |
+| Direct audio/video files | Optional local speech worker; transcription covers speech, not video frames or verified speaker identity |
+| MSG/XLSB | Optional Tika worker, limited to these measured fallback formats; attachment completeness and physical cell structure unverified |
 
-This release tests contracts with synthetic responses. No paid-provider quality,
-quota, billing or availability comparison has been performed without account keys.
-Official interfaces: [Exa](https://exa.ai/docs/reference/search),
-[Tavily](https://docs.tavily.com/documentation/api-reference/endpoint/search),
-[Parallel](https://docs.parallel.ai/api-reference/search/search).
+Byte signatures take precedence where reliable. CSV/TSV require a URL or MIME
+hint. An HTML error page advertised as an Office file is not parsed as a valid
+spreadsheet. Supported does not mean arbitrary corrupted/encrypted files work.
+Check capabilities and per-source warnings on the actual installation.
 
-## PDF structure and optional Docling
+## Text, focus and citations
 
-`document_mode=auto` adds native table cells and source page boxes to PDF reads;
-inspect_document exposes native_pdf_tables. Text retains the original extraction
-and appends detected tables when space permits. Critical values still need source
-inspection: both native table detection and neural layout inference can be wrong.
-Use page_start/page_end and larger read budgets when table output is partial.
-`native` skips layout analysis. `layout` explicitly requests Docling.
+Fetch retains up to 1,000,000 extracted characters independently of the response
+budget by default. A `document_id` identifies scoped retained text with its
+`document_sha256`. `read_document` can select `focus`, or sequential `offset`
+and `max_chars`; continue with `next_offset`. Positions are Unicode character
+offsets in the retained version, not byte offsets in live HTML.
 
-To enable the local worker:
+`inspect_document` returns blocks, exact text selectors and supported table/page
+structure. A returned table-row ordinal is not necessarily a physical spreadsheet
+row. Retained text defaults to seven-day retention and a 200 MB storage budget;
+earlier eviction is possible. Re-fetch deliberately when current information is
+needed. A document hash does not assert that a website is unchanged.
 
-```sh
-# In .env:
-# DETHROTTLED_LAYOUT_WORKER_URL=http://docling-worker:19891
-docker compose -f docker-compose.yml -f docker-compose.agents.yml \
-  --profile layout build docling-worker dethrottled
-docker compose -f docker-compose.yml -f docker-compose.agents.yml \
-  --profile layout up -d docling-worker dethrottled
-```
+## PDF pages, OCR and layout
 
-The private worker accepts PDF bytes, never URLs. It uses Docling 2.145.0 and
-CPU PyTorch, with one conversion at a time, a 50 MiB input ceiling, at most 100
-selected pages and a 180-second child-process deadline. Compose limits it to
-8 GiB and four CPUs. Downloaded model weights persist in layout-models (about
-506 MiB in this evaluation); initial use requires access to the model repository.
-The layout worker performs native-text layout/table inference; scanned PDF OCR
-continues through the existing native/OCR pipeline. It is not a vision model
-for arbitrary charts. ARM64 installation has not been tested for this worker.
+Use `page_start`/`page_end` for at most 100 selected pages. Inspect total pages,
+methods, `next_page`, partial coverage and warnings. `ocr_mode=auto|always|never`
+controls OCR; `always` keeps native text as well. `ocr_language` selects installed
+Tesseract data. The API image includes English, Malay, simplified/traditional
+Chinese and orientation data. OCR confidence is a word score, not fact accuracy.
 
-Auto mode invokes Docling for observed multicolumn PDFs of at most ten selected
-pages, after native parsing, when native tables were not already recovered.
-Explicit layout mode can request larger bounded ranges. Failed/incomplete
-conversion, lost numeric tokens, major text loss, or lost native tables preserve
-the native text with a warning. These guards catch gross losses, not all errors.
-A missing worker also preserves native output. read_document(reparse=true),
-fetch and durable fetch jobs expose the same mode through MCP and REST.
-Acquisition cache compatibility includes the selected mode and whether the
-worker was configured, so enabling it does not silently reuse an incompatible
-old extraction.
+`document_mode=native` skips optional layout analysis; `layout` requests Docling;
+`auto` applies bounded heuristics, including multicolumn and scanned-table cases.
+Native parsing/table detection does not require that worker. Failed or incomplete
+layout inference preserves native evidence with warnings. Lost-text/numeric
+checks catch gross failures, not every incorrect cell. Neural/scanned table
+inference is not a general chart-understanding model.
 
-## Browser recovery and scope
+Use `view_document_image` for supported retained source pixels. Where source
+bytes were not retained, a re-acquisition must match the source hash before
+reparsing or image inspection. Changed bytes are not silently substituted. Some
+sources cannot provide pixels or an additional page later; follow the returned
+prerequisites rather than assuming every handle contains the original file.
 
-Use `drive` with normal public URL/host policy:
+## Spreadsheet windows and large cells
 
-1. Navigate and snapshot to identify controls.
-2. For iframe locator actions, set `frame` to the iframe's CSS selector.
-3. `tabs` lists current tabs; `switch_tab` selects an allowed tab by index.
-   Inspect tabs after a popup opens. Indexes are live positions, not durable IDs.
-4. `network` lists observed same-scope fetch/XHR responses. Set name=body and
-   selector=response_id to read one. Text/JSON bodies no longer require a
-   Content-Length header. Both declared and decoded sizes are checked against
-   2 MB; this is an acceptance limit, not streaming browser-memory isolation.
-5. `checkpoint` saves cookies, localStorage, IndexedDB and the active page's
-   allowed-frame sessionStorage for 24 hours. Wait for navigation to finish first.
-   Restore with the same session ID and original host scope. Other tabs and live
-   DOM state are not restored. Checkpoints are private local files, not response data.
-6. `history` lists up to 200 recent action outcomes. A checkpoint retains this
-   history. It omits typed values, selectors and response bodies and does not
-   replay actions. An operation_id can replay an already completed result;
-   unknown outcomes remain fenced. Pre-0.7 operation IDs remain compatible when
-   the new optional frame selector is omitted.
-7. Close the session to remove its retained checkpoint.
+Use `sheet`, `row_start`, `row_end` and `max_cell_chars`. Row positions are
+one-based physical source positions, including a header; a window selects at
+most 2,000 rows. Continue with table metadata's `next_row`. Later windows can
+include explicitly labeled row-1 context. Extent can include formatted empty rows.
 
-Allowed hosts must include any target iframe/popup host from the beginning.
-Navigation outside that scope is blocked, including popup and frame navigation;
-public-only network policy still applies. Checkpoint state is sensitive and
-belongs on protected persistent storage. Cross-protocol browser session IDs
-remain separate; retained document namespaces work across MCP and REST.
+Empty cells retain their columns. Pipes and ampersands in cells use reversible
+HTML entity escapes. The default cell cap is 32,767 characters; requests can
+raise it to one million. Truncated cells remain flagged. Unsupported range
+requests fail rather than claim to have selected a page or row.
 
-## Research coverage
+## Speech and captions
 
-Research now defaults to thorough keyless discovery. Supply explicit queries
-for facets and engines for deliberate provider selection. coverage.facets records
-candidate count, readable source references, lexical matched/missing terms,
-unread URLs, failed/duplicate reads and executable next_actions. The status
-`evidence_available` says text was read; answer_verified is always false.
-It neither certifies semantic support nor enumerates every source on the web.
-The caller must assess agreement, dates, primary-source authority and whether
-returned excerpts actually answer the question. Truncation and partial-source
-flags remain visible. MCP initialization instructions and capabilities explain
-these workflows without requiring a client-specific skill.
+Captions retain cue timing when available. Direct media files use the optional
+local Faster-Whisper worker: CPU int8, model `small` by default, one active job,
+50 MiB input and at most 30 minutes decoded audio. The supervisor deadline is
+570 seconds. Speech weights may download on first use and are cached locally.
+Use jobs for slow media, and inspect ASR warnings, segment timing and content.
+ASR can mishear or hallucinate; timestamps are estimates.
+
+## Durable jobs and site coverage
+
+`start_fetch_job`/`POST /jobs/fetch` takes normal fetch controls and an optional
+`operation_id`. Read with `job_id` and cursor, then reuse `next_cursor` and
+respect `poll_after_ms`. Results arrive in completion order; `source_index`
+maps to the input URL list. Defaults allow two active jobs per identity and four
+globally, with 24-hour result retention and a 200 MB budget.
+
+Identical operation submissions reuse the job; conflicting payloads return 409.
+Cancellation stops scheduling new work; in-flight acquisition may finish.
+After interruption, resume explicitly: committed results remain, missing
+positions can be read again, and browser mutations never resume automatically.
+
+`crawl_site` follows bounded observed links and sitemaps within one origin and
+path prefix. Inspect failed reads, frontier and continuation URLs. Hidden,
+unlinked and JavaScript-only sources can be absent; whole-site completeness
+remains unknown. Research `coverage.facets` reports readable candidates, failed
+or unread URLs and term matches. It does not verify semantic support.
+
+## Partial evidence
+
+`source_partial`, `truncated`, extraction metadata and `workflow.next_actions`
+are model-visible controls. A loading browser snapshot or HTML capture limit
+must not become a complete-source claim. HTML `quality=thin` preserves a short
+best-available result; structured short documents can still be valid. Preserve
+warnings even when the expected number appears in the returned excerpt.
+
+[Documentation home](README.md) · [Agent guide](AGENT-UPGRADES.md) · [API](API.md) · [Evidence](EVIDENCE.md)

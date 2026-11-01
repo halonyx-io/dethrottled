@@ -69,6 +69,11 @@ RUN useradd --create-home --uid 10001 dethrottled \
     && chown dethrottled:dethrottled /data
 # Keep documentation changes out of the dependency and model-download layers.
 COPY docs/ ./docs/
+COPY evaluations/ ./evaluations/
+COPY adapters/ ./adapters/
+COPY scripts/docs_reference.py scripts/check_docs.py ./scripts/
+COPY README.md LICENSE ./
+RUN chmod -R a+rX /app/docs /app/evaluations
 USER dethrottled
 
 ENV DETHROTTLED_DATA_DIR=/data \

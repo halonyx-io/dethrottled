@@ -1,81 +1,86 @@
-# Public adapters
+# Public REST and MCP access
 
-The raw API remains a trusted-network service. `adapters/rest_gateway.py`
-(FastAPI/httpx) and `adapters/mcp_server.py` (MCP SDK/httpx) are deployment
-entrypoints for authenticated public access. They share the standard-library
-`src/dethrottled/access.py` runtime, installed as `dethrottled_access.py` on
-the adapters' PYTHONPATH. Install adapter dependencies in separate virtualenvs;
-the core API does not need the MCP SDK.
+The raw API is an unauthenticated trusted-network service. The repository includes
+optional REST and MCP adapters with shared bearer identity, admission and evidence
+namespaces. They are separate deployment entrypoints, not raw API authentication.
+Base Compose does not publish them or configure TLS automatically.
 
-Both adapters read `DETHROTTLED_TOKEN_REGISTRY` (default
-`/etc/dethrottled-access/tokens.json`) on demand. Its schema is:
+## Portable deployment
+
+Create a protected registry file with token hashes, not plaintext tokens:
 
 ```json
-{"tokens":[{"label":"research-client","sha256":"<64 lowercase hex characters>",
-            "scopes":["web","drive","corpus"],"revoked":false}]}
+{"tokens":[{"label":"research-client","sha256":"<64 lowercase hex characters>","scopes":["web","drive","corpus"],"revoked":false}]}
 ```
 
-Store SHA-256 hashes, never plaintext bearer tokens. Restrict the registry to
-root and the service group (0640). Atomic replacement triggers a reload on the
-next request; removing, revoking, or corrupting the registry fails closed.
-Use `scripts/access-tokens.py` to list labels, add a token read from stdin, or
-revoke/restore a label. Existing separate registries must be merged by hash
-before switching adapters; preserve every authorized caller's scopes.
+Use `scripts/access-tokens.py` to manage labels and hashes, reading plaintext
+bearers from stdin rather than committing them. For the container profile, set
+`DETHROTTLED_TOKEN_REGISTRY_FILE` to the existing registry path and make it readable
+by UID 10004. The bind mount fails if the file is absent. Set `MCP_ALLOWED_HOSTS`
+to the actual proxy Host values; its default permits only loopback-style hosts.
 
-Scopes are `web`, `drive`, and `corpus`. REST checks by route; MCP checks
-inside each backend tool call. The same token has the same identity and
-revocation state across both surfaces. Health remains unauthenticated.
+```sh
+docker compose -f docker-compose.yml -f docker-compose.agents.yml \
+  --profile public up -d --build
+```
 
+MCP binds host loopback 18184 and REST 18186 by default. A TLS reverse proxy
+routes `/mcp` to MCP and supported REST paths to REST. Adapters use the same
+`adapter-state` volume for admission and the same read-only registry mount.
+There is no shipped default public bearer token.
+
+## Host-managed deployments
+
+`adapters/mcp_server.py` uses the MCP SDK/httpx; `adapters/rest_gateway.py` uses
+FastAPI/httpx. Install the shared `src/dethrottled/access.py` as
+`dethrottled_access.py` on their PYTHONPATH. Separate virtualenvs are supported.
+Set `MCP_BACKEND_URL` and `MCP_ALLOWED_HOSTS` as appropriate.
+
+`DETHROTTLED_TOKEN_REGISTRY` defaults to `/etc/dethrottled-access/tokens.json`;
 `DETHROTTLED_ADMISSION_DB` defaults to
-`/var/lib/dethrottled-access/admission.sqlite`. Its parent directory must be
-writable by both service users; use a dedicated shared service group if they
-differ. SQLite leases share concurrency and rate admission across processes:
+`/var/lib/dethrottled-access/admission.sqlite`. Both service users need admission
+directory access. Registry replacement/revocation reloads on request and fails
+closed. A strict systemd filesystem sandbox needs the admission write path. REST
+validation also needs DNS access; a loopback-only IP sandbox can reject valid
+public domains before source retrieval begins.
 
-| Environment variable | Default |
-| --- | --- |
-| `DETHROTTLED_CLIENT_CONCURRENCY` | 3 |
-| `DETHROTTLED_GLOBAL_CONCURRENCY` | 8 |
-| `DETHROTTLED_REQUESTS_PER_MINUTE` | 120 |
+## Client contract and routes
 
-Excess work returns 429 with Retry-After, storage failures return 503, and
-crashed request leases expire after 300 seconds. Requests get a trace ID
-returned as `X-Request-ID` and forwarded to the backend. Core fetch/render
-budgets remain separate workload controls.
+Use the connected MCP `tools/list` schemas and initialization instructions.
+There are 20 tools; unknown fields are rejected. Use `categories` and `format`,
+not `category` or MCP `raw`. [MCP reference](MCP-REFERENCE.md) and
+[agent integration](AGENT-UPGRADES.md) explain parameters and model-visible data.
+The REST gateway exposes an allowlisted subset of the core routes, including
+search/read/research/drive, documents, jobs, site crawl and diagnostics; its own
+health route remains unauthenticated. The [HTTP reference](HTTP-REFERENCE.md)
+describes core requests, not a promise that arbitrary extra core routes are public.
 
-Both adapters accept at most ten URLs, reject oversized requests, enforce
-public target policy, and namespace browser sessions by identity. Public
-`/fetch` and `/drive` set `public_only`; the core rechecks direct/TLS redirects
-and headed contexts reject private-network subrequests. DNS rebinding and full
-Crawl4AI egress containment require network isolation beyond these checks.
-Do not expose the raw API based on these adapter checks alone.
+Preserve structured metadata and forward native MCP image blocks. REST clients
+can read the same workflow policy from capabilities. A client that strips fields
+or hides tool results can defeat server-side affordances. After upgrades, refresh
+tool schemas and compare the initialization/workflow hash. Remote plugin code
+activation remains the client operator's responsibility.
 
-Set `MCP_BACKEND_URL` to the loopback API URL on both adapters. For MCP, set
-`MCP_ALLOWED_HOSTS` to the deployed public Host values and loopback probes.
-Systemd deployments with ProtectSystem=strict must include
-`ReadWritePaths=/var/lib/dethrottled-access` in their drop-ins.
+## Identity, limits and network policy
 
-An edge WAF can reject requests before either adapter sees them. Use a
-clear client User-Agent (for example `my-research-client/1.0`) in examples;
-change edge rules narrowly for the authenticated API paths if needed. Adapter
-changes cannot fix an upstream WAF block.
+Scopes are `web`, `drive` and `corpus`. Both adapters verify the same hash registry.
+Per-caller/global admission defaults are 3/8 concurrent requests and 120 requests
+per minute. 429 responses identify the limiter and provide retry hints; storage
+failure returns 503. Crashed leases expire after 300 seconds. A busy polling hint
+is not the lease expiry. Stale leases can temporarily delay callers after an
+adapter restart; this remains a documented limitation.
 
-## Retained evidence and jobs
+Wrappers force public-target policy and evidence namespace from verified identity.
+The same bearer can reopen retained documents/jobs through REST and MCP; forged
+namespaces cannot select another caller's records. Browser session namespaces
+are transport-specific; a REST session ID is not an MCP session ID. The existing
+shared corpus is not converted into per-token private storage by this mechanism.
 
-Public wrappers force evidence_namespace from the verified caller identity on
-fetch, research, browser downloads, document reads and jobs. A token used across
-REST/MCP sees the same scoped documents/jobs. Another token cannot retrieve them
-by supplying a forged namespace. This does not change the existing shared-corpus
-policy. Per-caller HTTP admission and background-job admission are separate.
+Direct/TLS redirects and headed subrequests are checked against public policy.
+This is not full DNS pinning or complete Crawl4AI egress containment; enforce
+network isolation where needed. Keep the raw API private. Record X-Request-ID,
+Server-Timing, exact arguments and version for latency investigations. An edge
+WAF can block a request before either adapter; client User-Agent and proxy rules
+must be investigated separately from plugin or backend behavior.
 
-The REST gateway resolves hostnames while validating public targets. If its
-systemd unit uses `IPAddressDeny=any`, permit the configured DNS resolvers in
-addition to loopback; otherwise valid public fetch/drive URLs can be rejected
-before the backend sees them. Keep resolver permissions aligned with the host's
-`/etc/resolv.conf`. This does not require allowing general external gateway
-egress: actual source retrieval remains in the API/browser services.
-
-MCP clients must pass the server's initialize instructions and tool descriptions
-to their model, and support native image blocks for visual inspection. REST
-clients can obtain the same workflow policy from capabilities and follow each
-read result's `workflow.next_actions`. A capability list alone is insufficient
-integration guidance.
+[Documentation home](README.md) · [Agent guide](AGENT-UPGRADES.md) · [API](API.md) · [Evidence](EVIDENCE.md)

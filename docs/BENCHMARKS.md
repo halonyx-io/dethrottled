@@ -1,5 +1,9 @@
 # Dethrottled benchmark: szbox and q6a
 
+> Historical evaluation: the measurements and deployment statements below describe
+> the recorded release, not current installation instructions. Use the
+> [current guides](README.md) and [evidence index](EVIDENCE.md) for context.
+
 For the newer 1 November 2026 coverage comparison, see the
 [0.6 → 0.7 report](../evaluations/dependable/results/2026-11-01/REPORT.md):
 99/110 → 109/110 mechanical checks, with controlled parser/browser checks

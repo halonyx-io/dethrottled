@@ -1,151 +1,105 @@
-# Operations and deployment
+# Operations
+
+Build all enabled services from one checkout and preserve mutable state during
+updates. Runtime version, image source and agent contract are separate checks;
+healthy processes alone do not establish useful web access.
 
 ## Build and verify
 
-From a checkout of this repository:
-
 ```sh
-cp .env.example .env
 docker compose build dethrottled browser-search
 docker run --rm --network none dethrottled:local python /app/verify_image.py
 docker compose up -d
 docker compose ps
 curl -fsS http://127.0.0.1:8787/health
+curl -fsS http://127.0.0.1:8787/v2/status
 curl -fsS http://127.0.0.1:8787/v2/capabilities
 ```
 
-The offline image verifier imports the included dependencies, runs a real
-corpus embedding, checks representative document readers, and confirms the
-model path does not require a host mount. A green `/health` only proves the API
-process is alive. Check `/ready`, `/v2/status`, `/stats`, and an actual search
-and fetch to verify the sources used by your installation.
+The offline verifier checks dependencies and a real corpus embedding without
+host model mounts. `/health` is liveness; `/ready` checks search sources;
+`/v2/status` probes configured workers and backfill. Test actual fresh search,
+a known-source fetch and the specific optional worker formats you use. A 200
+response can still contain failed reads or no useful search results.
 
-### x86_64 and ARM64
+For optional speech/layout/formats profiles, use both Compose files and their
+worker URLs as described in [configuration](CONFIGURATION.md). Public adapters
+are a separate profile or host-managed deployment.
 
-The Compose file builds the API and headed browser worker for the host's
-architecture. The pinned SearXNG and Crawl4AI digests are multi-platform
-indexes containing both `linux/amd64` and `linux/arm64` images. On either
-architecture, use the same `docker compose up -d --build` command above.
-For a separate architecture build, use Buildx and specify the platform:
+## State and backups
 
-```sh
-docker buildx build --platform linux/amd64 -t dethrottled:amd64 --load .
-docker buildx build --platform linux/arm64 -t dethrottled:arm64 --load .
-docker buildx build --platform linux/arm64 -t dethrottled-browser-search:arm64 \
-  --load browser-search
-```
+| Storage | Contents |
+|---|---|
+| dethrottled-data | Cache, corpus, retained documents/source files and jobs |
+| browser-state | Sensitive checkpoints and browser operation journal |
+| media-models, layout-models | Optional downloaded model assets |
+| adapter-state / host admission path | Public shared request admission |
+| Registry bind / protected host path | Public bearer hashes and scopes |
 
-Cross-architecture execution requires QEMU/binfmt on the build host and can be
-slow; a native ARM64 host or CI runner is preferable for verifying browser
-startup. Check the resulting image architecture with
-`docker image inspect -f '{{.Architecture}}' IMAGE` and run the offline
-verifier inside each API image. This repository's CI builds and starts the API
-and browser worker on native x86_64 and ARM64 runners; the Compose sidecars
-must still be checked with real search and render requests in a deployment.
+Image weights live in `/opt/dethrottled/models`, not the data volume. Retain
+model/source hashes, previous image tags, Compose/config files and registry
+permissions before updates. Protect browser/login and collected source data.
 
-```sh
-curl -sS http://127.0.0.1:8787/search \
-  -H 'content-type: application/json' \
-  -d '{"query":"Python documentation","limit":3,"fresh":true}'
-curl -sS http://127.0.0.1:8787/fetch \
-  -H 'content-type: application/json' \
-  -d '{"urls":["https://example.com/"],"fresh":true}'
-```
+For live SQLite backups use SQLite's backup API, not a lone copy of a database
+with an active WAL. For a whole-volume archive, stop its writers first, archive
+outside the checkout, restore on the destination and verify before deleting the
+source. `docker compose down` preserves named volumes; `down -v` destroys them.
+Check actual volume names rather than assuming a project prefix.
 
-Inspect the returned rows. A result page with HTTP 200 can still contain no
-usable results; a fetch response with HTTP 200 can contain failed rows. A
-successful browser worker must yield real URLs and snippets, not only an HTTP
-status from its search engine.
+## Upgrade and rollback
 
-## Logs and state
+Rebuild and recreate only changed services. Retain rollback image tags and
+compatible data. Keep Crawl4AI/SearXNG pins and the PDF overlay aligned when
+updating upstream images. Browser restarts lose live DOM/tabs but saved
+checkpoints can restore selected state. Core restarts interrupt unfinished jobs;
+committed rows remain and resume is explicit.
 
-```sh
-docker compose logs --tail=100 dethrottled browser-search searxng crawl4ai
-docker compose ps
-curl -fsS http://127.0.0.1:8787/stats
-curl -fsS http://127.0.0.1:8787/corpus/stats
-```
+When adapter code/instructions change, install/restart the adapter too. Do not
+assume changing a source file reloads a running process or remote plugin capture.
+Verify `initialize.instructions` against the backend workflow hash and refresh
+`tools/list`. Restarting unchanged adapters is not needed for a docs-only update.
+Stale request leases can temporarily consume slots after a crash/restart.
 
-The named `dethrottled-data` volume holds `cache.sqlite`, `corpus.sqlite`,
-and local engine/domain-health records. Keep this volume when rebuilding or
-moving the service if the corpus and cached pages matter. Model weights are in
-the immutable API image, not this volume. `docker compose down` preserves the
-volume; `docker compose down -v` removes it.
+E5 backfill is supervised and resumes committed progress. Setting
+`DETHROTTLED_MULTILINGUAL_CORPUS=0` preserves the original MiniLM index. Roll
+back images and worker URLs together when required; do not delete data to roll
+back code. Unknown external browser-operation outcomes remain inspect-before-retry.
 
-Before a stateful host move, stop writers, archive the volume, restore it on
-the destination, then start the destination Compose project. A portable
-example using a temporary helper container is:
+## Architecture support
 
-```sh
-docker compose stop dethrottled
-docker run --rm -v dethrottled_dethrottled-data:/data:ro \
-  -v "$PWD":/backup alpine tar -C /data -czf /backup/dethrottled-data.tar.gz .
-```
+The base stack has historical paired x86_64/ARM64 measurements and CI native
+build/start coverage. Buildx can target either architecture; cross-execution
+needs binfmt/QEMU and is slower. Those checks do not certify every newer optional
+worker, Mesa profile or external site's behavior. Validate the actual enabled
+stack on its target host. See [evidence](EVIDENCE.md).
 
-Check the actual volume name with `docker volume ls` before running the
-example; Compose project names can change it. Store the archive outside the
-checkout and protect it as collected page data. Restart the stopped service
-after the backup. Do not delete a source volume before a restored corpus has
-been read successfully.
+## Network and diagnostics
 
-## Updating
+The API binds host loopback by default and has no caller authentication. The
+browser worker, SearXNG, renderer and optional parsing workers are private.
+The optional HTML-to-PDF overlay currently publishes 8788 on all host interfaces;
+review its mapping. Public adapters do not replace network egress isolation.
 
-The API and browser worker build from this repository. SearXNG and Crawl4AI
-are pinned to specific upstream tags and digests in `docker-compose.yml`; the
-optional PDF worker uses the same Crawl4AI pin. Update those pins deliberately
-and test actual browser search, JavaScript rendering, document reading, and
-the PDF worker if enabled. Rebuild images and recreate affected services with
-Compose; preserve the data volume. `git status` should show only intended
-source/configuration changes. Roll back by restoring the prior source and image
-tags while retaining the newest compatible volume data.
+Inspect `/stats` for tier rest state, cache and headed/renderer admission; research
+has its own two-request semaphore. Optional workers expose private readiness and
+metrics. Record exact URLs, expected facts, timestamps, input controls and raw
+results; distinguish missing source evidence from a transport or limiter failure.
 
-## Network exposure
+## Documentation parity
 
-The default API host bind is loopback. Dethrottled itself has no caller
-authentication. It can fetch requested HTTP(S) URLs, including local targets
-through its raw `/fetch`; serving that API to untrusted callers without a
-gateway permits unwanted network access. A public gateway should authenticate
-callers, allow only intended routes, constrain request size and concurrency,
-and reject private/local fetch targets. The `/research` path performs its own
-public-source selection, but this does not replace gateway controls.
-
-Browser-search, SearXNG, and Crawl4AI are not host-published by the base
-Compose file. The optional PDF worker currently publishes port 8788 on all
-host interfaces; adjust its overlay if that is not appropriate for your
-network. Network and firewall policy belong to the deployment operator; these
-docs make no firewall changes.
-
-The default Compose project is keyless for search and fetch. Its
-`CRAWL4AI_TOKEN` is an internal renderer credential, not a paid API key and
-not a caller token. A hosted REST gateway and MCP bridge, if present, manage
-their own separate external bearer tokens. Neither is bundled in this image.
-
-## Worker audit and upgrade priorities
-
-The [1 November 2026 worker audit](../evaluations/worker-audit/2026-11-01/REPORT.md)
-records installed versions, functional probes, local limits and upgrade candidates.
-It distinguishes worker readiness from process liveness and proposes queue,
-OCR/layout, speech-quality and broad-format improvements. It also evaluates where
-an optional Rust document backend could help; no production upgrade or language
-migration was performed as part of the audit.
-
-## 0.8 worker rollout and rollback
-
-Build the API and optional workers from the same checkout. For the complete stack:
+The API image includes `/app/README.md`, `/app/docs` and recorded evaluation
+material at `/app/evaluations`. Current guides link to dated evidence rather than
+mixing release notes into setup. Regenerate request references and check links
+when source contracts change:
 
 ```sh
-docker compose -f docker-compose.yml -f docker-compose.agents.yml \
-  --profile media --profile layout --profile formats up -d --build
+python scripts/docs_reference.py --check
+python scripts/check_docs.py
 ```
 
-Set the three worker URL variables in `.env` as described in CONFIGURATION.md.
-Back up the data volume/SQLite databases using SQLite backup, and retain previous
-image tags before rollout. Watch `/v2/status`, `/stats` renderer admission and
-`/corpus/stats`; a listening worker alone does not prove cached weights are ready.
-The multilingual backfill writes a separate model index. Setting
-`DETHROTTLED_MULTILINGUAL_CORPUS=0` and restarting preserves the original index.
-Rollback old image tags and worker URLs together; retained E5 rows do not alter
-MiniLM queries. Keep the data volume. Systemd-hosted public adapters must also be
-installed/restarted from `adapters/mcp_server.py` after instruction changes.
-Confirm the MCP initialize instruction hash equals capabilities.client_contract's
-workflow hash. A remote agent's plugin code still requires its own activation.
+Run these in an installed development environment, or the API image with a
+checkout mounted. Rebuild/recreate the API to update its immutable documentation
+copy; changing host Markdown alone does not update an existing container. Verify
+file hashes and readability as its service user after promotion.
+
+[Documentation home](README.md) · [Agent guide](AGENT-UPGRADES.md) · [API](API.md) · [Evidence](EVIDENCE.md)

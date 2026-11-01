@@ -1,5 +1,8 @@
 # Cold-agent evidence: 1 November 2026
 
+> Recorded evaluation of the stated versions. This is historical evidence, not
+> current deployment guidance. See the [evidence index](../../../../docs/EVIDENCE.md).
+
 Dethrottled 0.4.0 versus 0.5.0, using `deepseek-v4.1-flash:cloud` through Ollama.
 
 | Measure | 0.4.0 | 0.5.0 |

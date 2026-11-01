@@ -1,5 +1,8 @@
 # Dethrottled 0.6.0: six agent upgrades, implemented and tested
 
+> Recorded evaluation of the stated versions. This is historical evidence, not
+> current deployment guidance. See the [evidence index](../../../../docs/EVIDENCE.md).
+
 1 November 2026, Singapore time. Deployed to the existing service and public
 `https://api.halonyx.io/mcp`. This is an initial concrete implementation across all
 six roadmap areas, not completion of every possible feature in those categories.

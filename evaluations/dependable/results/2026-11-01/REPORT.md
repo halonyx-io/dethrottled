@@ -1,5 +1,8 @@
 # Dethrottled 0.7.0: implementation and measured coverage
 
+> Recorded evaluation of the stated versions. This is historical evidence, not
+> current deployment guidance. See the [evidence index](../../../../docs/EVIDENCE.md).
+
 Recorded 1 November 2026, Asia/Singapore. Baseline: 0.6.0 at `05efcc6`.
 
 Dethrottled 0.7.0 is deployed on the existing API and public MCP route. It has

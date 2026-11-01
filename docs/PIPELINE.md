@@ -1,141 +1,83 @@
-# How the pipeline works
+# Architecture and data flow
 
-## Services and boundaries
+Dethrottled separates discovery, reading, browser operation and evidence storage.
+The API can run alone with reduced capabilities; full Compose provides the local
+browser and renderer paths.
 
 ```text
-caller -> Dethrottled HTTP API (port 8787)
-             |-- browser-search: headed Patchright Chromium under Xvfb
-             |-- SearXNG: configured news engines
-             |-- direct keyless web and news sources
-             |-- Crawl4AI: JavaScript rendering when extraction needs it
-             |-- local SQLite cache and corpus in /data
-             `-- separate MiniLM and multilingual E5 ONNX indexes
+agent / application
+  -> local HTTP API, or optional authenticated REST/MCP adapter
+       -> discovery: headed DDG/Bing worker, keyless web/news/academic sources
+       -> read: direct HTTP -> TLS -> Crawl4AI -> conditional headed browser
+       -> operate: stateful headed browser /drive
+       -> parse: local readers, OCR, optional speech/layout/format workers
+       -> retain: versioned documents, source bytes where available, read jobs
+       -> retrieve: SQLite cache and separate MiniLM/E5 corpus indexes
 ```
 
-The default Compose project starts four containers: the API, browser-search,
-SearXNG, and Crawl4AI. Browser-search,
-SearXNG, and Crawl4AI communicate on the private Compose network and are not
-published to the host. The optional HTML-to-PDF worker is a separate service
-from the API and is enabled with `docker-compose.pdf-worker.yml`.
+## Discovery
 
-## Discovery: `/search`
+Compose enables a bounded static DDG Lite probe before the headed browser race.
+On challenge, poor results or transport failure it falls through to the existing
+Patchright worker. The worker races DDG Lite, DDG HTML and Bing in separate tabs
+with shared pacing, three active searches and bounded waiting. A usable race
+winner needs real result URLs and useful text, not just HTTP 200. Direct keyless
+engines are a fallback.
 
-When `DETHROTTLED_CHEAP_DISCOVERY=1`, the API first tries a bounded
-1.5-second TLS-impersonated DDG Lite read. Challenges, thin results, and
-transport failures fall through to the established browser worker. Both paths
-share worker pacing. Otherwise discovery starts directly with the worker. Its single headed
-Chromium process races DuckDuckGo Lite, DuckDuckGo HTML, and Bing in separate
-tabs, with staggered starts. It accepts a race only when it gets real result
-URLs and enough useful titles/snippets; an HTTP 200 or challenge page alone is
-not success. It reports per-engine status and reasons. The worker allows three
-active searches, with up to three tabs each, and queues a limited number of
-additional requests. If it cannot produce a usable result, the API tries its
-direct keyless web engines.
+Profiles select web, web/news, Mwmbl or academic sources. News uses RSS and the
+configured SearXNG news engines; academic can add Crossref, OpenAlex and arXiv.
+Explicit engines can select optional metered providers only when configured.
+URL deduplication merges provenance; identical titles alone do not remove
+independent URLs. Lexical ranking/fusion and optional stored-corpus candidates
+operate before selected sources are fetched. Research can remove near-duplicate
+source content after acquisition.
 
-News profiles additionally query Bing News RSS and configured SearXNG news
-engines. The default web profile avoids that extra work; thorough adds Mwmbl
-and academic adds Crossref, OpenAlex and arXiv. It may use Google News RSS to discover additional headlines, but it
-resolves those to publisher URLs before returning them. Search merges the
-sources, removes canonical-URL and repeated-title duplicates, drops known junk
-domains, and interleaves news with web results when `categories` is `news`.
-Search engine failures can be rested temporarily; `/stats` and first-row
-`search_attempts` help reveal degradation. Results from outside search engines
-cannot be guaranteed on every query.
+## Acquisition and parsing
 
-By default, source order is retained. With `rank: true`, the API searches a
-larger pool and uses Unicode lexical BM25 on titles and snippets before choosing
-which URLs to return or fetch. `corpus` can merge already-fetched passages
-into that candidate pool. `recency` changes BM25 ordering of relevant dated
-results. There is no cross-encoder reranker or decision model in this path.
+The normal ladder is direct HTTP, Chrome-like TLS through curl_cffi, Crawl4AI,
+then conditional reuse of the headed browser. Jina is an optional external tier,
+disabled in Compose. Rendering restrictions override automatic escalation.
+Challenges and nearly empty script/iframe shells can reach the headed tier
+without a caller knowing its expert flag. A one-slot fair queue preserves
+competing reads; caller/exact-host/policy-scoped sessions retain clearance.
 
-## Reading: `/fetch`
+The automatic headed reader inspects after document commitment and polls
+interstitials or empty loading documents within a bounded deadline. Ordinary
+drive navigation waits for DOMContentLoaded. Partial or clipped snapshots remain
+explicitly partial. Navigation/response errors are not converted into useful
+content. Cookies are not promoted into the TLS tier or shared between callers.
 
-The API checks its extraction cache unless refresh or bypass is requested.
-Refresh writes the replacement; bypass writes nothing. Cached responses expose
-the stored retrieval time and cache age. Legacy extraction entries are lazily
-refetched so old encoding corruption does not survive the upgrade. A recognized
-YouTube video URL is handled through its caption track before the web-page
-ladder; it does not run speech recognition. Other URLs use these tiers, when
-enabled, in order:
+Reliable byte signatures precede MIME/URL hints for documents. HTML uses the
+trafilatura/resiliparse/selectolax cascade. Structured readers preserve page/row
+provenance and have a different short-content floor from articles. OCR, captions,
+speech, layout inference and Tika fallback disclose their method and limits.
+See [reading and evidence](DEPENDABLE-WORKFLOWS.md).
 
-1. Direct HTTP fetch and local extraction.
-2. `curl_cffi` with a browser TLS fingerprint.
-3. Local Crawl4AI Chromium rendering.
-4. Optional reuse of the existing headed browser (`headed_fallback: true`).
-5. Optional external Jina reader, disabled in the default Compose project.
+## Evidence and continuation
 
-`render: "always"` moves Crawl4AI to the front; `render: "never"` skips it.
-Each tier must yield usable content. A 200 status with a login page, challenge,
-or JavaScript shell does not count as a successful read. Short valid HTML can succeed without being treated as an article failure.
-A structural shell with no usable content is reported as incomplete rendering,
-not automatically as anti-bot blocking. `wait_for` and `render_delay` allow
-callers to specify DOM readiness. Structured documents use a different floor because a
-five-row table can be useful even though it is short.
+The extraction cache, retained documents, retained source bytes and corpus serve
+different purposes. A clipped response can reopen a retained document without a
+new fetch. Reparse or pixel inspection needs retained source bytes, or a
+hash-verified reacquisition; changed bytes are not silently substituted.
+Jobs retain committed rows across disconnects and expose explicit resume rules.
 
-File detection uses bytes first for PDF, Office ZIP/OLE, EPUB, OpenDocument,
-and RTF. Some formats, especially CSV, need a URL or server-header hint after
-sanity checks. The page extractor then uses local parsers and preserves table
-row breaks. Named and combined search/read calls can OCR scanned sources;
-callers can disable OCR explicitly. Mixed PDFs record extraction method by page.
+Research collects sources, term-matched evidence windows and a coverage ledger.
+It does not call a language model or verify an answer. Browser actions are a
+separate interaction surface with a durable operation journal; unknown external
+mutation outcomes are not automatically replayed.
 
-Canonical prose is indexed independently of the requested representation;
-image-only and navigation-only rows are excluded. Fetched successful prose is indexed into the corpus in a background task.
-The response does not wait for embeddings to finish. The fetch cache and
-corpus are distinct: the corpus can retain passages after a fetch cache entry
-expires.
+## Corpus and state
 
-The ladder **does not request or honor `robots.txt`**. It still has a
-per-domain request gap, timeouts, response-size ceilings, tier cooldowns, and
-rolling render budgets. See [CONFIGURATION.md](CONFIGURATION.md) for these
-controls. They are internal workload controls, not paid API quotas or Docker
-CPU pinning.
+MiniLM and multilingual E5 use separate versioned 384-dimensional indexes and
+relevance floors. E5 prefixes queries/passages and fuses retrieval with MiniLM;
+FTS5 supports lexical and opaque-identifier lookup. Compose enables E5 and a
+supervised backfill child. Embedding work is asynchronous; no live-web neural
+reranker or external model service is required.
 
-## Evidence: `/research`
+The API image contains pinned model weights under `/opt/dethrottled/models`.
+`/data` holds mutable cache, corpus, documents, source files and jobs. Browser
+checkpoints and operation history use the separate browser-state volume.
+Optional speech/layout weights have their own persistent volumes. Public
+adapters share token hashes and admission state outside the raw API.
 
-Research searches the question plus an official-source probe, or the question
-plus supplied facets. It interleaves results, checks that selected source URLs
-resolve to public addresses, limits concentration on one host, fetches the
-selected pages, removes near-duplicate text, and extracts short evidence
-windows matched to question terms before clipping the returned content. Its output is an evidence bundle with
-source IDs, content, and per-query attempts; it does not synthesize a written
-answer. Search and page reads are parallel within bounded request pools.
-
-## Local corpus
-
-The corpus stores passages and 384-dimensional vectors in SQLite under
-`/data`. MiniLM remains the English index; Compose also enables a separately
-versioned multilingual E5 index and reciprocal-rank fusion. Model scores use
-separate relevance floors. ONNX Runtime and the `tokenizers`
-library are inside the API image; no host model service is needed. Corpus
-search normally embeds the query and compares it with stored vectors. A
-synchronized SQLite FTS5 index supports lexical mode and exact opaque-ID
-lookups. Existing passage rows are backfilled when the index is first created. The default
-relevance floor helps avoid presenting the least-bad unrelated passage as an
-answer. The corpus is not Engram or Hypnos and does not require Redis.
-
-## What runs where
-
-The API image is self-contained for direct search, fetch, extraction, and
-corpus search. The full browser-backed pipeline requires the Compose sidecars.
-The image includes MiniLM and E5 weights/tokenizers in
-`/opt/dethrottled/models/emb-minilm` and `emb-e5`; the named `/data` volume contains only
-mutable state. No unused reranker or decision-model weights are shipped.
-
-## Retained evidence and source files
-
-Focused URL reads retain up to one million extracted characters independently
-of response length. Scoped document handles support new questions and sequential
-continuations. Progressive jobs publish sources in completion order and retain
-completed results across client disconnects. Browser downloads are parsed using
-the same readers; their scoped source bytes permit later page/row reads and
-image inspection without repeating browser actions. OCR-derived content retains
-warnings. Native text from mixed documents can enter the prose corpus; OCR
-pages/supplements are excluded until that index can preserve their verification
-provenance.
-
-Agent workflow policy is published at MCP initialization and in capabilities.
-Read results include prerequisite-aware next actions, and bounded automatic
-recovery can retry navigation-only reads with rendering or follow relevant
-image/document assets. Original HTTP file bytes can be reacquired for reparsing
-or pixel inspection only after verifying their hash against the retained version;
-changed bytes are never silently substituted.
+[Documentation home](README.md) · [Agent guide](AGENT-UPGRADES.md) · [API](API.md) · [Evidence](EVIDENCE.md)

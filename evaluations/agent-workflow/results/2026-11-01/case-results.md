@@ -1,4 +1,7 @@
 | Task family | Baseline reviewed | Candidate reviewed |
+
+> Recorded evaluation of the stated versions. This is historical evidence, not
+> current deployment guidance. See the [evidence index](../../../../docs/EVIDENCE.md).
 | --- | --- | --- |
 | deep_text | 2/2 | 2/2 |
 | late_table | 2/2 | 2/2 |

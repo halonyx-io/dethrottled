@@ -75,3 +75,6 @@ synthetic token/registry files and environment secrets outside publication.
 Manual review and summary data should cite the raw run IDs. A published claim
 must identify the model, cases, sample count, pilot tuning and any infrastructure
 failures; do not extrapolate to all agents from this small suite.
+
+See the [current evidence index](../../docs/EVIDENCE.md) and
+[agent guide](../../docs/AGENT-UPGRADES.md) for present behavior.

@@ -1,5 +1,9 @@
 # Measured improvements — 0.8.0
 
+> Historical evaluation: the measurements and deployment statements below describe
+> the recorded release, not current installation instructions. Use the
+> [current guides](README.md) and [evidence index](EVIDENCE.md) for context.
+
 This release prioritizes source coverage and recoverable work over lower latency.
 Baseline is commit `5bd93c4` / deployed 0.7.0. The changes use existing agent entry
 points; clients do not need to learn another extraction endpoint. Normal `fetch`
