@@ -1,0 +1,920 @@
+[
+  {
+    "case": "quora-style-leading",
+    "version": "0.9.1",
+    "result": {
+      "ok": true,
+      "text": "Something went wrong. Wait a moment and try again. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes.",
+      "tier": "direct",
+      "extractor": "direct-native",
+      "title": "",
+      "published": "",
+      "chars": 1520,
+      "url": "https://fixture.example/quora-style-leading",
+      "reason": "",
+      "cached": false,
+      "content_type": "html",
+      "extraction": {},
+      "warnings": [],
+      "content_status": "complete",
+      "acquisition_attempts": [
+        {
+          "tier": "direct",
+          "reason": "",
+          "outcome": "extracted"
+        }
+      ],
+      "schema_version": 3,
+      "acquisition": {
+        "rendered": false,
+        "wait_for": "",
+        "render_delay": null,
+        "extraction_limit": 1000000,
+        "page_start": 1,
+        "page_end": null,
+        "ocr_language": "",
+        "ocr_mode": "auto",
+        "ocr_allowed": true,
+        "row_start": 1,
+        "row_end": null,
+        "sheet": "",
+        "max_cell_chars": null,
+        "document_mode": "auto",
+        "scan_layout_revision": 1,
+        "format_worker_configured": false,
+        "layout_worker_configured": false
+      },
+      "retrieved_at": "2026-11-01T14:35:04.943088+00:00",
+      "cache_age_seconds": 0,
+      "content_chars": 1520,
+      "truncated": false
+    }
+  },
+  {
+    "case": "leading-upper-case",
+    "version": "0.9.1",
+    "result": {
+      "ok": true,
+      "text": "SOMETHING WENT WRONG. WAIT A MOMENT AND TRY AGAIN. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes.",
+      "tier": "direct",
+      "extractor": "direct-native",
+      "title": "",
+      "published": "",
+      "chars": 1520,
+      "url": "https://fixture.example/leading-upper-case",
+      "reason": "",
+      "cached": false,
+      "content_type": "html",
+      "extraction": {},
+      "warnings": [],
+      "content_status": "complete",
+      "acquisition_attempts": [
+        {
+          "tier": "direct",
+          "reason": "",
+          "outcome": "extracted"
+        }
+      ],
+      "schema_version": 3,
+      "acquisition": {
+        "rendered": false,
+        "wait_for": "",
+        "render_delay": null,
+        "extraction_limit": 1000000,
+        "page_start": 1,
+        "page_end": null,
+        "ocr_language": "",
+        "ocr_mode": "auto",
+        "ocr_allowed": true,
+        "row_start": 1,
+        "row_end": null,
+        "sheet": "",
+        "max_cell_chars": null,
+        "document_mode": "auto",
+        "scan_layout_revision": 1,
+        "format_worker_configured": false,
+        "layout_worker_configured": false
+      },
+      "retrieved_at": "2026-11-01T14:35:04.943281+00:00",
+      "cache_age_seconds": 0,
+      "content_chars": 1520,
+      "truncated": false
+    }
+  },
+  {
+    "case": "leading-whitespace",
+    "version": "0.9.1",
+    "result": {
+      "ok": true,
+      "text": "Something went wrong. Wait a moment and try again. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes.",
+      "tier": "direct",
+      "extractor": "direct-native",
+      "title": "",
+      "published": "",
+      "chars": 1520,
+      "url": "https://fixture.example/leading-whitespace",
+      "reason": "",
+      "cached": false,
+      "content_type": "html",
+      "extraction": {},
+      "warnings": [],
+      "content_status": "complete",
+      "acquisition_attempts": [
+        {
+          "tier": "direct",
+          "reason": "",
+          "outcome": "extracted"
+        }
+      ],
+      "schema_version": 3,
+      "acquisition": {
+        "rendered": false,
+        "wait_for": "",
+        "render_delay": null,
+        "extraction_limit": 1000000,
+        "page_start": 1,
+        "page_end": null,
+        "ocr_language": "",
+        "ocr_mode": "auto",
+        "ocr_allowed": true,
+        "row_start": 1,
+        "row_end": null,
+        "sheet": "",
+        "max_cell_chars": null,
+        "document_mode": "auto",
+        "scan_layout_revision": 1,
+        "format_worker_configured": false,
+        "layout_worker_configured": false
+      },
+      "retrieved_at": "2026-11-01T14:35:04.943443+00:00",
+      "cache_age_seconds": 0,
+      "content_chars": 1520,
+      "truncated": false
+    }
+  },
+  {
+    "case": "retry-later",
+    "version": "0.9.1",
+    "result": {
+      "ok": true,
+      "text": "Something went wrong. Please try again later. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes.",
+      "tier": "direct",
+      "extractor": "direct-native",
+      "title": "",
+      "published": "",
+      "chars": 1515,
+      "url": "https://fixture.example/retry-later",
+      "reason": "",
+      "cached": false,
+      "content_type": "html",
+      "extraction": {},
+      "warnings": [],
+      "content_status": "complete",
+      "acquisition_attempts": [
+        {
+          "tier": "direct",
+          "reason": "",
+          "outcome": "extracted"
+        }
+      ],
+      "schema_version": 3,
+      "acquisition": {
+        "rendered": false,
+        "wait_for": "",
+        "render_delay": null,
+        "extraction_limit": 1000000,
+        "page_start": 1,
+        "page_end": null,
+        "ocr_language": "",
+        "ocr_mode": "auto",
+        "ocr_allowed": true,
+        "row_start": 1,
+        "row_end": null,
+        "sheet": "",
+        "max_cell_chars": null,
+        "document_mode": "auto",
+        "scan_layout_revision": 1,
+        "format_worker_configured": false,
+        "layout_worker_configured": false
+      },
+      "retrieved_at": "2026-11-01T14:35:04.943601+00:00",
+      "cache_age_seconds": 0,
+      "content_chars": 1515,
+      "truncated": false
+    }
+  },
+  {
+    "case": "access-wall",
+    "version": "0.9.1",
+    "result": {
+      "ok": true,
+      "text": "Access denied. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes.",
+      "tier": "direct",
+      "extractor": "direct-native",
+      "title": "",
+      "published": "",
+      "chars": 1484,
+      "url": "https://fixture.example/access-wall",
+      "reason": "",
+      "cached": false,
+      "content_type": "html",
+      "extraction": {},
+      "warnings": [],
+      "content_status": "complete",
+      "acquisition_attempts": [
+        {
+          "tier": "direct",
+          "reason": "",
+          "outcome": "extracted"
+        }
+      ],
+      "schema_version": 3,
+      "acquisition": {
+        "rendered": false,
+        "wait_for": "",
+        "render_delay": null,
+        "extraction_limit": 1000000,
+        "page_start": 1,
+        "page_end": null,
+        "ocr_language": "",
+        "ocr_mode": "auto",
+        "ocr_allowed": true,
+        "row_start": 1,
+        "row_end": null,
+        "sheet": "",
+        "max_cell_chars": null,
+        "document_mode": "auto",
+        "scan_layout_revision": 1,
+        "format_worker_configured": false,
+        "layout_worker_configured": false
+      },
+      "retrieved_at": "2026-11-01T14:35:04.943751+00:00",
+      "cache_age_seconds": 0,
+      "content_chars": 1484,
+      "truncated": false
+    }
+  },
+  {
+    "case": "embedded-ui",
+    "version": "0.9.1",
+    "result": {
+      "ok": true,
+      "text": "The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. Something went wrong. Wait a moment and try again.",
+      "tier": "direct",
+      "extractor": "direct-native",
+      "title": "",
+      "published": "",
+      "chars": 1520,
+      "url": "https://fixture.example/embedded-ui",
+      "reason": "",
+      "cached": false,
+      "content_type": "html",
+      "extraction": {},
+      "warnings": [],
+      "content_status": "complete",
+      "acquisition_attempts": [
+        {
+          "tier": "direct",
+          "reason": "",
+          "outcome": "extracted"
+        }
+      ],
+      "schema_version": 3,
+      "acquisition": {
+        "rendered": false,
+        "wait_for": "",
+        "render_delay": null,
+        "extraction_limit": 1000000,
+        "page_start": 1,
+        "page_end": null,
+        "ocr_language": "",
+        "ocr_mode": "auto",
+        "ocr_allowed": true,
+        "row_start": 1,
+        "row_end": null,
+        "sheet": "",
+        "max_cell_chars": null,
+        "document_mode": "auto",
+        "scan_layout_revision": 1,
+        "format_worker_configured": false,
+        "layout_worker_configured": false
+      },
+      "retrieved_at": "2026-11-01T14:35:04.945721+00:00",
+      "cache_age_seconds": 0,
+      "content_chars": 1520,
+      "truncated": false
+    }
+  },
+  {
+    "case": "inline-quoted-mention",
+    "version": "0.9.1",
+    "result": {
+      "ok": true,
+      "text": "The error was \"Something went wrong. Wait a moment and try again.\". The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes.",
+      "tier": "direct",
+      "extractor": "direct-native",
+      "title": "",
+      "published": "",
+      "chars": 1537,
+      "url": "https://fixture.example/inline-quoted-mention",
+      "reason": "",
+      "cached": false,
+      "content_type": "html",
+      "extraction": {},
+      "warnings": [],
+      "content_status": "complete",
+      "acquisition_attempts": [
+        {
+          "tier": "direct",
+          "reason": "",
+          "outcome": "extracted"
+        }
+      ],
+      "schema_version": 3,
+      "acquisition": {
+        "rendered": false,
+        "wait_for": "",
+        "render_delay": null,
+        "extraction_limit": 1000000,
+        "page_start": 1,
+        "page_end": null,
+        "ocr_language": "",
+        "ocr_mode": "auto",
+        "ocr_allowed": true,
+        "row_start": 1,
+        "row_end": null,
+        "sheet": "",
+        "max_cell_chars": null,
+        "document_mode": "auto",
+        "scan_layout_revision": 1,
+        "format_worker_configured": false,
+        "layout_worker_configured": false
+      },
+      "retrieved_at": "2026-11-01T14:35:04.946018+00:00",
+      "cache_age_seconds": 0,
+      "content_chars": 1537,
+      "truncated": false
+    }
+  },
+  {
+    "case": "quoted-leading-example",
+    "version": "0.9.1",
+    "result": {
+      "ok": true,
+      "text": "\"Something went wrong. Wait a moment and try again.\" is a poor message. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes.",
+      "tier": "direct",
+      "extractor": "direct-native",
+      "title": "",
+      "published": "",
+      "chars": 1541,
+      "url": "https://fixture.example/quoted-leading-example",
+      "reason": "",
+      "cached": false,
+      "content_type": "html",
+      "extraction": {},
+      "warnings": [],
+      "content_status": "complete",
+      "acquisition_attempts": [
+        {
+          "tier": "direct",
+          "reason": "",
+          "outcome": "extracted"
+        }
+      ],
+      "schema_version": 3,
+      "acquisition": {
+        "rendered": false,
+        "wait_for": "",
+        "render_delay": null,
+        "extraction_limit": 1000000,
+        "page_start": 1,
+        "page_end": null,
+        "ocr_language": "",
+        "ocr_mode": "auto",
+        "ocr_allowed": true,
+        "row_start": 1,
+        "row_end": null,
+        "sheet": "",
+        "max_cell_chars": null,
+        "document_mode": "auto",
+        "scan_layout_revision": 1,
+        "format_worker_configured": false,
+        "layout_worker_configured": false
+      },
+      "retrieved_at": "2026-11-01T14:35:04.946237+00:00",
+      "cache_age_seconds": 0,
+      "content_chars": 1541,
+      "truncated": false
+    }
+  },
+  {
+    "case": "ordinary-sentence",
+    "version": "0.9.1",
+    "result": {
+      "ok": true,
+      "text": "Something went wrong with the allocation and was corrected. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes.",
+      "tier": "direct",
+      "extractor": "direct-native",
+      "title": "",
+      "published": "",
+      "chars": 1529,
+      "url": "https://fixture.example/ordinary-sentence",
+      "reason": "",
+      "cached": false,
+      "content_type": "html",
+      "extraction": {},
+      "warnings": [],
+      "content_status": "complete",
+      "acquisition_attempts": [
+        {
+          "tier": "direct",
+          "reason": "",
+          "outcome": "extracted"
+        }
+      ],
+      "schema_version": 3,
+      "acquisition": {
+        "rendered": false,
+        "wait_for": "",
+        "render_delay": null,
+        "extraction_limit": 1000000,
+        "page_start": 1,
+        "page_end": null,
+        "ocr_language": "",
+        "ocr_mode": "auto",
+        "ocr_allowed": true,
+        "row_start": 1,
+        "row_end": null,
+        "sheet": "",
+        "max_cell_chars": null,
+        "document_mode": "auto",
+        "scan_layout_revision": 1,
+        "format_worker_configured": false,
+        "layout_worker_configured": false
+      },
+      "retrieved_at": "2026-11-01T14:35:04.946444+00:00",
+      "cache_age_seconds": 0,
+      "content_chars": 1529,
+      "truncated": false
+    }
+  },
+  {
+    "case": "access-denied-explanation",
+    "version": "0.9.1",
+    "result": {
+      "ok": true,
+      "text": "Access denied is a common error message. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes.",
+      "tier": "direct",
+      "extractor": "direct-native",
+      "title": "",
+      "published": "",
+      "chars": 1510,
+      "url": "https://fixture.example/access-denied-explanation",
+      "reason": "",
+      "cached": false,
+      "content_type": "html",
+      "extraction": {},
+      "warnings": [],
+      "content_status": "complete",
+      "acquisition_attempts": [
+        {
+          "tier": "direct",
+          "reason": "",
+          "outcome": "extracted"
+        }
+      ],
+      "schema_version": 3,
+      "acquisition": {
+        "rendered": false,
+        "wait_for": "",
+        "render_delay": null,
+        "extraction_limit": 1000000,
+        "page_start": 1,
+        "page_end": null,
+        "ocr_language": "",
+        "ocr_mode": "auto",
+        "ocr_allowed": true,
+        "row_start": 1,
+        "row_end": null,
+        "sheet": "",
+        "max_cell_chars": null,
+        "document_mode": "auto",
+        "scan_layout_revision": 1,
+        "format_worker_configured": false,
+        "layout_worker_configured": false
+      },
+      "retrieved_at": "2026-11-01T14:35:04.946630+00:00",
+      "cache_age_seconds": 0,
+      "content_chars": 1510,
+      "truncated": false
+    }
+  },
+  {
+    "case": "clean",
+    "version": "0.9.1",
+    "result": {
+      "ok": true,
+      "text": "The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes.",
+      "tier": "direct",
+      "extractor": "direct-native",
+      "title": "",
+      "published": "",
+      "chars": 1469,
+      "url": "https://fixture.example/clean",
+      "reason": "",
+      "cached": false,
+      "content_type": "html",
+      "extraction": {},
+      "warnings": [],
+      "content_status": "complete",
+      "acquisition_attempts": [
+        {
+          "tier": "direct",
+          "reason": "",
+          "outcome": "extracted"
+        }
+      ],
+      "schema_version": 3,
+      "acquisition": {
+        "rendered": false,
+        "wait_for": "",
+        "render_delay": null,
+        "extraction_limit": 1000000,
+        "page_start": 1,
+        "page_end": null,
+        "ocr_language": "",
+        "ocr_mode": "auto",
+        "ocr_allowed": true,
+        "row_start": 1,
+        "row_end": null,
+        "sheet": "",
+        "max_cell_chars": null,
+        "document_mode": "auto",
+        "scan_layout_revision": 1,
+        "format_worker_configured": false,
+        "layout_worker_configured": false
+      },
+      "retrieved_at": "2026-11-01T14:35:04.946946+00:00",
+      "cache_age_seconds": 0,
+      "content_chars": 1469,
+      "truncated": false
+    }
+  },
+  {
+    "case": "removed-banner",
+    "version": "0.9.1",
+    "result": {
+      "ok": true,
+      "text": "The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes.",
+      "tier": "direct",
+      "extractor": "direct-native",
+      "title": "",
+      "published": "",
+      "chars": 1469,
+      "url": "https://fixture.example/removed-banner",
+      "reason": "",
+      "cached": false,
+      "content_type": "html",
+      "extraction": {},
+      "warnings": [],
+      "content_status": "complete",
+      "acquisition_attempts": [
+        {
+          "tier": "direct",
+          "reason": "",
+          "outcome": "extracted"
+        }
+      ],
+      "schema_version": 3,
+      "acquisition": {
+        "rendered": false,
+        "wait_for": "",
+        "render_delay": null,
+        "extraction_limit": 1000000,
+        "page_start": 1,
+        "page_end": null,
+        "ocr_language": "",
+        "ocr_mode": "auto",
+        "ocr_allowed": true,
+        "row_start": 1,
+        "row_end": null,
+        "sheet": "",
+        "max_cell_chars": null,
+        "document_mode": "auto",
+        "scan_layout_revision": 1,
+        "format_worker_configured": false,
+        "layout_worker_configured": false
+      },
+      "retrieved_at": "2026-11-01T14:35:04.947224+00:00",
+      "cache_age_seconds": 0,
+      "content_chars": 1469,
+      "truncated": false
+    }
+  },
+  {
+    "case": "leading-code-example",
+    "version": "0.9.1",
+    "result": {
+      "ok": true,
+      "text": "Something went wrong. Wait a moment and try again. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes.",
+      "tier": "direct",
+      "extractor": "direct-native",
+      "title": "",
+      "published": "",
+      "chars": 1520,
+      "url": "https://fixture.example/leading-code-example",
+      "reason": "",
+      "cached": false,
+      "content_type": "html",
+      "extraction": {},
+      "warnings": [],
+      "content_status": "complete",
+      "acquisition_attempts": [
+        {
+          "tier": "direct",
+          "reason": "",
+          "outcome": "extracted"
+        }
+      ],
+      "schema_version": 3,
+      "acquisition": {
+        "rendered": false,
+        "wait_for": "",
+        "render_delay": null,
+        "extraction_limit": 1000000,
+        "page_start": 1,
+        "page_end": null,
+        "ocr_language": "",
+        "ocr_mode": "auto",
+        "ocr_allowed": true,
+        "row_start": 1,
+        "row_end": null,
+        "sheet": "",
+        "max_cell_chars": null,
+        "document_mode": "auto",
+        "scan_layout_revision": 1,
+        "format_worker_configured": false,
+        "layout_worker_configured": false
+      },
+      "retrieved_at": "2026-11-01T14:35:04.947448+00:00",
+      "cache_age_seconds": 0,
+      "content_chars": 1520,
+      "truncated": false
+    }
+  },
+  {
+    "case": "quoted-ui-example",
+    "version": "0.9.1",
+    "result": {
+      "ok": true,
+      "text": "The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. Something went wrong. Wait a moment and try again.",
+      "tier": "direct",
+      "extractor": "direct-native",
+      "title": "",
+      "published": "",
+      "chars": 1520,
+      "url": "https://fixture.example/quoted-ui-example",
+      "reason": "",
+      "cached": false,
+      "content_type": "html",
+      "extraction": {},
+      "warnings": [],
+      "content_status": "complete",
+      "acquisition_attempts": [
+        {
+          "tier": "direct",
+          "reason": "",
+          "outcome": "extracted"
+        }
+      ],
+      "schema_version": 3,
+      "acquisition": {
+        "rendered": false,
+        "wait_for": "",
+        "render_delay": null,
+        "extraction_limit": 1000000,
+        "page_start": 1,
+        "page_end": null,
+        "ocr_language": "",
+        "ocr_mode": "auto",
+        "ocr_allowed": true,
+        "row_start": 1,
+        "row_end": null,
+        "sheet": "",
+        "max_cell_chars": null,
+        "document_mode": "auto",
+        "scan_layout_revision": 1,
+        "format_worker_configured": false,
+        "layout_worker_configured": false
+      },
+      "retrieved_at": "2026-11-01T14:35:04.947632+00:00",
+      "cache_age_seconds": 0,
+      "content_chars": 1520,
+      "truncated": false
+    }
+  },
+  {
+    "case": "structured-quoted-message",
+    "version": "0.9.1",
+    "result": {
+      "ok": true,
+      "text": "Something went wrong. Wait a moment and try again. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes.",
+      "tier": "direct",
+      "extractor": "direct-native",
+      "title": "",
+      "published": "",
+      "chars": 1520,
+      "url": "https://fixture.example/structured-quoted-message",
+      "reason": "",
+      "cached": false,
+      "content_type": "pdf",
+      "extraction": {},
+      "warnings": [],
+      "content_status": "complete",
+      "acquisition_attempts": [
+        {
+          "tier": "direct",
+          "reason": "",
+          "outcome": "extracted"
+        }
+      ],
+      "schema_version": 3,
+      "acquisition": {
+        "rendered": false,
+        "wait_for": "",
+        "render_delay": null,
+        "extraction_limit": 1000000,
+        "page_start": 1,
+        "page_end": null,
+        "ocr_language": "",
+        "ocr_mode": "auto",
+        "ocr_allowed": true,
+        "row_start": 1,
+        "row_end": null,
+        "sheet": "",
+        "max_cell_chars": null,
+        "document_mode": "auto",
+        "scan_layout_revision": 1,
+        "format_worker_configured": false,
+        "layout_worker_configured": false
+      },
+      "retrieved_at": "2026-11-01T14:35:04.948101+00:00",
+      "cache_age_seconds": 0,
+      "content_chars": 1520,
+      "truncated": false
+    }
+  },
+  {
+    "case": "structured-error-log",
+    "version": "0.9.1",
+    "result": {
+      "ok": true,
+      "text": "Something went wrong. Wait a moment and try again. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes.",
+      "tier": "direct",
+      "extractor": "direct-native",
+      "title": "",
+      "published": "",
+      "chars": 1520,
+      "url": "https://fixture.example/structured-error-log",
+      "reason": "",
+      "cached": false,
+      "content_type": "pdf",
+      "extraction": {},
+      "warnings": [],
+      "content_status": "complete",
+      "acquisition_attempts": [
+        {
+          "tier": "direct",
+          "reason": "",
+          "outcome": "extracted"
+        }
+      ],
+      "schema_version": 3,
+      "acquisition": {
+        "rendered": false,
+        "wait_for": "",
+        "render_delay": null,
+        "extraction_limit": 1000000,
+        "page_start": 1,
+        "page_end": null,
+        "ocr_language": "",
+        "ocr_mode": "auto",
+        "ocr_allowed": true,
+        "row_start": 1,
+        "row_end": null,
+        "sheet": "",
+        "max_cell_chars": null,
+        "document_mode": "auto",
+        "scan_layout_revision": 1,
+        "format_worker_configured": false,
+        "layout_worker_configured": false
+      },
+      "retrieved_at": "2026-11-01T14:35:04.948210+00:00",
+      "cache_age_seconds": 0,
+      "content_chars": 1520,
+      "truncated": false
+    }
+  },
+  {
+    "case": "unrecognized-retry-banner",
+    "version": "0.9.1",
+    "result": {
+      "ok": true,
+      "text": "A temporary problem occurred. Refresh this page. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes.",
+      "tier": "direct",
+      "extractor": "direct-native",
+      "title": "",
+      "published": "",
+      "chars": 1518,
+      "url": "https://fixture.example/unrecognized-retry-banner",
+      "reason": "",
+      "cached": false,
+      "content_type": "html",
+      "extraction": {},
+      "warnings": [],
+      "content_status": "complete",
+      "acquisition_attempts": [
+        {
+          "tier": "direct",
+          "reason": "",
+          "outcome": "extracted"
+        }
+      ],
+      "schema_version": 3,
+      "acquisition": {
+        "rendered": false,
+        "wait_for": "",
+        "render_delay": null,
+        "extraction_limit": 1000000,
+        "page_start": 1,
+        "page_end": null,
+        "ocr_language": "",
+        "ocr_mode": "auto",
+        "ocr_allowed": true,
+        "row_start": 1,
+        "row_end": null,
+        "sheet": "",
+        "max_cell_chars": null,
+        "document_mode": "auto",
+        "scan_layout_revision": 1,
+        "format_worker_configured": false,
+        "layout_worker_configured": false
+      },
+      "retrieved_at": "2026-11-01T14:35:04.948365+00:00",
+      "cache_age_seconds": 0,
+      "content_chars": 1518,
+      "truncated": false
+    }
+  },
+  {
+    "case": "french-error-banner",
+    "version": "0.9.1",
+    "result": {
+      "ok": true,
+      "text": "Une erreur est survenue. Veuillez r\u00e9essayer. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes.",
+      "tier": "direct",
+      "extractor": "direct-native",
+      "title": "",
+      "published": "",
+      "chars": 1514,
+      "url": "https://fixture.example/french-error-banner",
+      "reason": "",
+      "cached": false,
+      "content_type": "html",
+      "extraction": {},
+      "warnings": [],
+      "content_status": "complete",
+      "acquisition_attempts": [
+        {
+          "tier": "direct",
+          "reason": "",
+          "outcome": "extracted"
+        }
+      ],
+      "schema_version": 3,
+      "acquisition": {
+        "rendered": false,
+        "wait_for": "",
+        "render_delay": null,
+        "extraction_limit": 1000000,
+        "page_start": 1,
+        "page_end": null,
+        "ocr_language": "",
+        "ocr_mode": "auto",
+        "ocr_allowed": true,
+        "row_start": 1,
+        "row_end": null,
+        "sheet": "",
+        "max_cell_chars": null,
+        "document_mode": "auto",
+        "scan_layout_revision": 1,
+        "format_worker_configured": false,
+        "layout_worker_configured": false
+      },
+      "retrieved_at": "2026-11-01T14:35:04.948541+00:00",
+      "cache_age_seconds": 0,
+      "content_chars": 1514,
+      "truncated": false
+    }
+  }
+]

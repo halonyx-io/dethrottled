@@ -1,0 +1,278 @@
+{
+  "baseline": {
+    "counts": {
+      "cases": 18,
+      "true_positive": 0,
+      "false_positive": 0,
+      "false_negative": 8,
+      "true_negative": 10,
+      "fact_retained": 18
+    },
+    "cases": [
+      {
+        "case": "quora-style-leading",
+        "expected_pollution": true,
+        "reported_pollution": false,
+        "quality": "ok",
+        "classification": "false_negative"
+      },
+      {
+        "case": "leading-upper-case",
+        "expected_pollution": true,
+        "reported_pollution": false,
+        "quality": "ok",
+        "classification": "false_negative"
+      },
+      {
+        "case": "leading-whitespace",
+        "expected_pollution": true,
+        "reported_pollution": false,
+        "quality": "ok",
+        "classification": "false_negative"
+      },
+      {
+        "case": "retry-later",
+        "expected_pollution": true,
+        "reported_pollution": false,
+        "quality": "ok",
+        "classification": "false_negative"
+      },
+      {
+        "case": "access-wall",
+        "expected_pollution": true,
+        "reported_pollution": false,
+        "quality": "ok",
+        "classification": "false_negative"
+      },
+      {
+        "case": "embedded-ui",
+        "expected_pollution": true,
+        "reported_pollution": false,
+        "quality": "ok",
+        "classification": "false_negative"
+      },
+      {
+        "case": "inline-quoted-mention",
+        "expected_pollution": false,
+        "reported_pollution": false,
+        "quality": "ok",
+        "classification": "true_negative"
+      },
+      {
+        "case": "quoted-leading-example",
+        "expected_pollution": false,
+        "reported_pollution": false,
+        "quality": "ok",
+        "classification": "true_negative"
+      },
+      {
+        "case": "ordinary-sentence",
+        "expected_pollution": false,
+        "reported_pollution": false,
+        "quality": "ok",
+        "classification": "true_negative"
+      },
+      {
+        "case": "access-denied-explanation",
+        "expected_pollution": false,
+        "reported_pollution": false,
+        "quality": "ok",
+        "classification": "true_negative"
+      },
+      {
+        "case": "clean",
+        "expected_pollution": false,
+        "reported_pollution": false,
+        "quality": "ok",
+        "classification": "true_negative"
+      },
+      {
+        "case": "removed-banner",
+        "expected_pollution": false,
+        "reported_pollution": false,
+        "quality": "ok",
+        "classification": "true_negative"
+      },
+      {
+        "case": "leading-code-example",
+        "expected_pollution": false,
+        "reported_pollution": false,
+        "quality": "ok",
+        "classification": "true_negative"
+      },
+      {
+        "case": "quoted-ui-example",
+        "expected_pollution": false,
+        "reported_pollution": false,
+        "quality": "ok",
+        "classification": "true_negative"
+      },
+      {
+        "case": "structured-quoted-message",
+        "expected_pollution": false,
+        "reported_pollution": false,
+        "quality": "ok",
+        "classification": "true_negative"
+      },
+      {
+        "case": "structured-error-log",
+        "expected_pollution": false,
+        "reported_pollution": false,
+        "quality": "ok",
+        "classification": "true_negative"
+      },
+      {
+        "case": "unrecognized-retry-banner",
+        "expected_pollution": true,
+        "reported_pollution": false,
+        "quality": "ok",
+        "classification": "false_negative"
+      },
+      {
+        "case": "french-error-banner",
+        "expected_pollution": true,
+        "reported_pollution": false,
+        "quality": "ok",
+        "classification": "false_negative"
+      }
+    ]
+  },
+  "candidate": {
+    "counts": {
+      "cases": 18,
+      "true_positive": 6,
+      "false_positive": 0,
+      "false_negative": 2,
+      "true_negative": 10,
+      "fact_retained": 18
+    },
+    "cases": [
+      {
+        "case": "quora-style-leading",
+        "expected_pollution": true,
+        "reported_pollution": true,
+        "quality": "suspect",
+        "classification": "true_positive"
+      },
+      {
+        "case": "leading-upper-case",
+        "expected_pollution": true,
+        "reported_pollution": true,
+        "quality": "suspect",
+        "classification": "true_positive"
+      },
+      {
+        "case": "leading-whitespace",
+        "expected_pollution": true,
+        "reported_pollution": true,
+        "quality": "suspect",
+        "classification": "true_positive"
+      },
+      {
+        "case": "retry-later",
+        "expected_pollution": true,
+        "reported_pollution": true,
+        "quality": "suspect",
+        "classification": "true_positive"
+      },
+      {
+        "case": "access-wall",
+        "expected_pollution": true,
+        "reported_pollution": true,
+        "quality": "suspect",
+        "classification": "true_positive"
+      },
+      {
+        "case": "embedded-ui",
+        "expected_pollution": true,
+        "reported_pollution": true,
+        "quality": "suspect",
+        "classification": "true_positive"
+      },
+      {
+        "case": "inline-quoted-mention",
+        "expected_pollution": false,
+        "reported_pollution": false,
+        "quality": "ok",
+        "classification": "true_negative"
+      },
+      {
+        "case": "quoted-leading-example",
+        "expected_pollution": false,
+        "reported_pollution": false,
+        "quality": "ok",
+        "classification": "true_negative"
+      },
+      {
+        "case": "ordinary-sentence",
+        "expected_pollution": false,
+        "reported_pollution": false,
+        "quality": "ok",
+        "classification": "true_negative"
+      },
+      {
+        "case": "access-denied-explanation",
+        "expected_pollution": false,
+        "reported_pollution": false,
+        "quality": "ok",
+        "classification": "true_negative"
+      },
+      {
+        "case": "clean",
+        "expected_pollution": false,
+        "reported_pollution": false,
+        "quality": "ok",
+        "classification": "true_negative"
+      },
+      {
+        "case": "removed-banner",
+        "expected_pollution": false,
+        "reported_pollution": false,
+        "quality": "ok",
+        "classification": "true_negative"
+      },
+      {
+        "case": "leading-code-example",
+        "expected_pollution": false,
+        "reported_pollution": false,
+        "quality": "ok",
+        "classification": "true_negative"
+      },
+      {
+        "case": "quoted-ui-example",
+        "expected_pollution": false,
+        "reported_pollution": false,
+        "quality": "ok",
+        "classification": "true_negative"
+      },
+      {
+        "case": "structured-quoted-message",
+        "expected_pollution": false,
+        "reported_pollution": false,
+        "quality": "ok",
+        "classification": "true_negative"
+      },
+      {
+        "case": "structured-error-log",
+        "expected_pollution": false,
+        "reported_pollution": false,
+        "quality": "ok",
+        "classification": "true_negative"
+      },
+      {
+        "case": "unrecognized-retry-banner",
+        "expected_pollution": true,
+        "reported_pollution": false,
+        "quality": "ok",
+        "classification": "false_negative"
+      },
+      {
+        "case": "french-error-banner",
+        "expected_pollution": true,
+        "reported_pollution": false,
+        "quality": "ok",
+        "classification": "false_negative"
+      }
+    ]
+  }
+}

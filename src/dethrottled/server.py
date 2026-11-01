@@ -669,6 +669,7 @@ def _extract_once(url: str, max_chars: int, allow_ocr: bool = True,
         "content_status": result.get("content_status", "complete"),
         "assets": result.get("assets", []),
         "warnings": result.get("warnings", []),
+        "content_assessment": result.get("content_assessment", {}),
         "_index_text": result.get("_index_text", result.get("text", "")),
         "acquisition": result.get("acquisition", {}),
         "browser_recovery": result.get("browser_recovery"),
@@ -867,7 +868,7 @@ def v2_capabilities():
             "workflow_sha256": hashlib.sha256(INSTRUCTIONS.encode()).hexdigest(),
             "preserve_fields": ["document_id", "document_sha256", "workflow", "warnings",
                                 "source_partial", "truncated", "extraction", "next_offset",
-                                "acquisition_attempts"],
+                                "acquisition_attempts", "content_assessment"],
             "mcp_images": "forward native image content blocks to vision-capable models",
             "startup_check": "Compare initialize.instructions hash with workflow_sha256; "
                              "refresh tools/list after service upgrades.",
@@ -934,8 +935,13 @@ def v2_capabilities():
         "corpus": {"multilingual": os.getenv("DETHROTTLED_MULTILINGUAL_CORPUS") == "1",
                    "fusion": "reciprocal_rank", "separate_model_thresholds": True},
         "research": {"available": True, "model_used": False,
+                     "partial_sources": "suspect reads retained separately from clean sources",
                      "max_sources": 6, "max_queries": 4},
         "read": {
+            "content_assessment": {"revision": 1, "non_destructive": True,
+                                   "scope": "heuristic website error-banner pollution",
+                                   "quality_values": ["ok", "thin", "suspect", "failed"],
+                                   "answer_verification": False},
             "formats": readable,
             "pdf_ocr_installed": installed("pymupdf") and shutil.which("tesseract") is not None,
             # Installed is not the same as reachable: YouTube may refuse this
@@ -1298,6 +1304,8 @@ def read_document(body: DocumentReadBody):
                 allow_ocr=body.ocr_mode != "never", options=options)
             metadata.update(extraction=extraction, warnings=extraction.get("warnings", []),
                             source_partial=extraction.get("partial", False))
+            from .content import assess_content
+            metadata["content_assessment"] = assess_content(text, structured=True)
             record.update(documents().put(body.evidence_namespace, record["url"], text, metadata))
         except (ValueError, OSError) as exc:
             raise HTTPException(status_code=422, detail=str(exc)) from exc
@@ -1597,7 +1605,7 @@ def research(body: ResearchBody, background: BackgroundTasks):
                     "title": row.get("title") or item["title"],
                     "evidence": evidence}
 
-        sources, skipped, fingerprints = [], [], []
+        sources, skipped, fingerprints, partial_sources = [], [], [], []
         with ThreadPoolExecutor(max_workers=3) as pool:
             pending = selected[:body.max_sources]
             offset = len(pending)
@@ -1620,11 +1628,15 @@ def research(body: ResearchBody, background: BackgroundTasks):
                             sources.append(item)
                             fingerprints.append((item["url"], fingerprint))
                     else:
+                        suspect = item.get("quality") == "suspect"
+                        if suspect:
+                            partial_sources.append(item)
                         skipped.append({"url": item["url"],
                                             **({"requested_url": item["requested_url"]}
                                                if item.get("requested_url", item["url"])
                                                != item["url"] else {}),
-                                        "reason": item.get("failure_reason")
+                                        "reason": ("suspected_pollution" if suspect else
+                                                   item.get("failure_reason"))
                                         or (item.get("content_status") if item.get("content_status")
                                             in {"image_content", "navigation_only"}
                                             else "empty_content")})
@@ -1635,15 +1647,19 @@ def research(body: ResearchBody, background: BackgroundTasks):
         sources = sources[:body.max_sources]
         for index, item in enumerate(sources, 1):
             item["id"] = "S%d" % index
+        for index, item in enumerate(partial_sources, 1):
+            item["id"] = "P%d" % index
         background.add_task(index_fetched, _harvest(sources))
         coverage = research_engine.coverage_ledger(queries, searches, sources, skipped)
         if body.response_format == "concise":
             sources = [compact_row(row) for row in sources]
+            partial_sources = [compact_row(row) for row in partial_sources]
         return {"coverage": coverage, "question": body.question, "queries": telemetry,
-                "sources": sources, "skipped": skipped,
+                "sources": sources, "partial_sources": partial_sources, "skipped": skipped,
                 "summary": {"candidates": sum(len(rows) for rows in searches),
                             "selected": len(sources),
                             "read": len(sources),
+                            "partial": len(partial_sources),
                             "attempted": len(sources) + len(skipped),
                             "elapsed_ms": int((time.monotonic() - started) * 1000),
                             "model_used": False}}

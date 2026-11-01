@@ -3,8 +3,91 @@
 from __future__ import annotations
 
 import codecs
+import hashlib
 import re
 from urllib.parse import urljoin, urlsplit
+
+
+def assess_content(text: str, html: str = "", *, structured: bool = False) -> dict:
+    """Report suspect UI text without rewriting evidence or claiming semantic quality.
+
+    Offsets refer to the full retained extraction, before focus or response clipping.
+    Ordinary mentions and quoted examples are insufficient: require a leading error
+    instruction or a small, explicitly marked UI container in the source HTML.
+    """
+    spans = []
+    patterns = (
+        ("application_error", r"something went wrong[.!]?\s+"
+         r"(?:wait a moment and try again|please try again(?: later)?)[.!]?"),
+        ("access_wall", r"access (?:to this page has been )?denied(?:[.!]|$)"),
+        ("verification", r"verification required[.!]?\s+"
+         r"please wait while we verify your request[.!]*"),
+        ("interaction_wall", r"click (?:the )?button below to (?:continue|verify)[.!]?"),
+    )
+
+    def add(start, end, kind, signal):
+        if any(start < s["end"] and end > s["start"] for s in spans):
+            return
+        if len(spans) < 16:
+            spans.append(dict(start=start, end=end, quote=text[start:end], kind=kind,
+                              signal=signal, offset_in="full_extraction"))
+
+    quoted_messages = []
+    if html and not structured:
+        try:
+            from selectolax.lexbor import LexborHTMLParser
+            quoted_messages = [" ".join(n.text(separator=" ", strip=True).split()).casefold()
+                               for n in LexborHTMLParser(html).css("pre,code,blockquote")[:64]]
+        except (ImportError, ValueError, TypeError):
+            pass
+    if not structured:
+        for kind, pattern in patterns:
+            match = re.match(r"\s*(" + pattern + r")(?=\s|$)", text, re.I)
+            if match and not any(" ".join(match[1].split()).casefold() in q
+                                 for q in quoted_messages):
+                add(match.start(1), match.end(1), kind, "leading_error_instruction")
+        if html:
+            try:
+                from selectolax.lexbor import LexborHTMLParser
+                tree = LexborHTMLParser(html)
+                for node in tree.css('[role="alert"], [role="status"], [aria-live], '
+                                     '.error, .error-message, .alert, #error, #px-captcha')[:64]:
+                    parent, quoted = node, False
+                    while parent is not None:
+                        if parent.tag in {"pre", "code", "blockquote", "script", "template"}:
+                            quoted = True
+                            break
+                        parent = parent.parent
+                    message = node.text(separator=" ", strip=True)
+                    if quoted or not message or len(message) > 500:
+                        continue
+                    if not any(re.fullmatch(pattern, message, re.I) for _, pattern in patterns):
+                        continue
+                    expression = r"\s+".join(re.escape(w) for w in message.split())
+                    for match in re.finditer(expression, text, re.I):
+                        add(match.start(), match.end(), "error_banner", "source_ui_container")
+            except (ImportError, ValueError, TypeError):
+                pass
+    spans.sort(key=lambda s: s["start"])
+    suspected = sum(s["end"] - s["start"] for s in spans)
+    return dict(revision=1, text_sha256=hashlib.sha256(text.encode()).hexdigest(),
+                pollution=("not_assessed" if structured else
+                "suspected" if spans else "none_detected"),
+                completeness="unknown", usable_content="unverified",
+                inspected_chars=0 if structured else len(text),
+                suspected_chars=suspected, unflagged_chars=len(text) - suspected,
+                spans=spans)
+
+
+def annotate_content(row: dict, html: str = "", *, structured: bool = False) -> dict:
+    """Attach diagnostics to canonical text; retain all existing evidence and warnings."""
+    assessment = assess_content(row.get("text", ""), html, structured=structured)
+    row["content_assessment"] = assessment
+    if assessment["pollution"] == "suspected":
+        row["quality"] = "suspect"
+        row["warnings"] = list(dict.fromkeys([*row.get("warnings", []),
+            "suspected_error_banner; text_preserved; inspect_content_assessment_spans"]))
+    return row
 
 
 def decode_html(data: bytes, content_type: str = "") -> str:

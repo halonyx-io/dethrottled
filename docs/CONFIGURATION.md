@@ -30,7 +30,7 @@ application settings need an `environment` entry in a local override. Inspect
 | `DETHROTTLED_RENDER_CONCURRENCY` | `2` | API-side active renderer work |
 | `DETHROTTLED_DRIVE_SESSION_TTL`, `DETHROTTLED_DRIVE_MAX_SESSIONS` | `1800`, `8` | Browser session expiry and capacity |
 | `DETHROTTLED_BROWSER_GRAPHICS` | `mesa` in Compose | EGL/ANGLE GL with compatibility-blocklist override; `default` keeps original browser args |
-| `DETHROTTLED_USER_AGENT` | `dethrottled/0.9.1 (automated fetcher)` | Article-fetch identity |
+| `DETHROTTLED_USER_AGENT` | `dethrottled/0.9.2 (automated fetcher)` | Article-fetch identity |
 
 The base file maps internal worker URLs and optional worker/key variables.
 The complete interpolation map is in `docker-compose.yml` and the agents overlay;

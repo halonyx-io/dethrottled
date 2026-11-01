@@ -1038,6 +1038,10 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
             hit["acquisition_attempts"] = [{"tier": "cache", "outcome": "hit", "reason": ""}]
             hit["cached"] = True
             _tier_stats["cache"] += 1
+            from .content import annotate_content
+            if not hit.get("content_assessment"):
+                annotate_content(hit, structured=bool(hit.get("content_type") not in {
+                    "", "html", "text/html"}))
             return _clip(hit, max_chars)
 
     if not valid_url(url):
@@ -1178,11 +1182,13 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
     # it was last standing on, rather than reporting nothing at all.
     name = None
     challenged = False
+    polluted = False
     script_shell = False
     last_attempted = None
     for name, run in tiers:
         if name == "headed" and not (
-                challenged or script_shell or _READ_OPTIONS.get().get("headed_fallback")):
+                challenged or script_shell or polluted
+                or _READ_OPTIONS.get().get("headed_fallback")):
             continue
         # A resting tier is skipped without being asked. This is the smooth
         # transition: the ladder simply gets shorter for a while and the rungs
@@ -1200,8 +1206,10 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
                 reasons.append("%s: skipped, page budget of %.0fs spent" % (name, budget))
             continue
         last_attempted = name
+        attempt_started = time.monotonic()
         payload, reason, final = run()
-        attempt = {"tier": name, "reason": reason, "outcome": "response" if payload else "failed"}
+        attempt = {"tier": name, "reason": reason, "outcome": "response" if payload else "failed",
+                   "elapsed_ms": round((time.monotonic() - attempt_started) * 1000, 2)}
         attempts.append(attempt)
         payload = payload if isinstance(payload, dict) else {}
         html = payload.get("html") or ""
@@ -1293,6 +1301,20 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
             candidate["extraction"] = {**candidate.get("extraction", {}),
                                        "partial": True, "partial_reason": partial_reason}
             candidate["warnings"] = [*candidate.get("warnings", []), partial_reason]
+        from .content import annotate_content
+        annotate_content(candidate, payload.get("html") or "",
+                         structured=bool(payload.get("structured")))
+        suspect = candidate["content_assessment"]["pollution"] == "suspected"
+        attempt["content_assessment"] = {
+            k: v for k, v in candidate["content_assessment"].items() if k != "spans"}
+        if suspect:
+            polluted = True
+            attempt["outcome"] = "suspected_pollution"
+            reasons.append(name + ":suspected_error_banner")
+            if best is None or (candidate["content_assessment"]["unflagged_chars"]
+                                > best["content_assessment"]["unflagged_chars"]):
+                best = candidate
+            continue
         # Structured payloads are never "thin". THIN_CHARS asks whether a page
         # gave up only a teaser, which is a question about HTML -- no later
         # tier is going to read a spreadsheet or a scan better than the parser
@@ -1308,10 +1330,16 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
         # than either discarding a real result or stopping on a teaser.
         attempt["outcome"] = "thin"
         reasons.append("%s:thin/%d" % (name, candidate["chars"]))
-        if best is None or candidate["chars"] > best["chars"]:
+        if (best is None or candidate["content_assessment"]["unflagged_chars"]
+                > best["content_assessment"]["unflagged_chars"]):
             best = candidate
 
     if best is not None:
+        if best.get("content_assessment", {}).get("pollution") == "suspected":
+            _tier_stats[best["tier"] + "-suspect"] += 1
+            best["quality"] = "suspect"
+            best["reason"] = "suspected pollution, best available: " + ", ".join(reasons)
+            return finish(best)
         _tier_stats[best["tier"] + "-thin"] += 1
         best["quality"] = "thin"
         best["warnings"] = [*best.get("warnings", []), "thin_content; coverage_not_verified"]

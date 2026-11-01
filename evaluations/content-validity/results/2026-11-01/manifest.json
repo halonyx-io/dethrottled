@@ -1,0 +1,21 @@
+{
+  "started_at": "2026-11-01T14:32:53.709556+00:00",
+  "protocol_sha256": "c29736ff658a121d42a9a1b0fa80a6198aacd583c1cff1857cee48f9905592e9",
+  "endpoints": {
+    "baseline": "http://127.0.0.1:18791",
+    "candidate": "http://127.0.0.1:18790"
+  },
+  "repeat": 2,
+  "note": "Assertion matches require review; not semantic answer verification. Shared upstream/browser state and temporal drift can affect results.",
+  "versions": {
+    "baseline": "0.9.1",
+    "candidate": "0.9.2"
+  },
+  "image_id": "sha256:b12134722fcfb20f31ae506e27fef3b3f6bea7282d73bd47741abdc209d83cad",
+  "reader_source_sha256": {
+    "src/dethrottled/content.py": "09c449372fc2424da6eeb9ef298cdde7eb2b3bd5a14f08c4ae35b0f29e7e8e5b",
+    "src/dethrottled/fetch.py": "2a0def60bbf02e469eb2dca3b2a3c298afddeca8e3ef7f5a083055dcbec36e49"
+  },
+  "published_records": "Response text omitted; retain hashes, counts, assertion excerpts and diagnostics. Full raw responses retained locally.",
+  "upstream_state": "Same network/renderer/browser worker, distinct core stores; endpoint order alternated. Browser/upstream state was not reset between observations."
+}

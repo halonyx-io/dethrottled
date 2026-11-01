@@ -1,0 +1,290 @@
+[
+  {
+    "id": "quora-style-leading",
+    "payload": {
+      "text": "Something went wrong. Wait a moment and try again. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. ",
+      "html": "",
+      "structured": false,
+      "content_type": "html"
+    },
+    "expected_pollution": true,
+    "facts": [
+      {
+        "id": "allocation",
+        "pattern": "allocation for 2026 is 7341 tonnes"
+      }
+    ]
+  },
+  {
+    "id": "leading-upper-case",
+    "payload": {
+      "text": "SOMETHING WENT WRONG. WAIT A MOMENT AND TRY AGAIN. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. ",
+      "html": "",
+      "structured": false,
+      "content_type": "html"
+    },
+    "expected_pollution": true,
+    "facts": [
+      {
+        "id": "allocation",
+        "pattern": "allocation for 2026 is 7341 tonnes"
+      }
+    ]
+  },
+  {
+    "id": "leading-whitespace",
+    "payload": {
+      "text": " \nSomething went wrong. Wait a moment and try again. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. ",
+      "html": "",
+      "structured": false,
+      "content_type": "html"
+    },
+    "expected_pollution": true,
+    "facts": [
+      {
+        "id": "allocation",
+        "pattern": "allocation for 2026 is 7341 tonnes"
+      }
+    ]
+  },
+  {
+    "id": "retry-later",
+    "payload": {
+      "text": "Something went wrong. Please try again later. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. ",
+      "html": "",
+      "structured": false,
+      "content_type": "html"
+    },
+    "expected_pollution": true,
+    "facts": [
+      {
+        "id": "allocation",
+        "pattern": "allocation for 2026 is 7341 tonnes"
+      }
+    ]
+  },
+  {
+    "id": "access-wall",
+    "payload": {
+      "text": "Access denied. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. ",
+      "html": "",
+      "structured": false,
+      "content_type": "html"
+    },
+    "expected_pollution": true,
+    "facts": [
+      {
+        "id": "allocation",
+        "pattern": "allocation for 2026 is 7341 tonnes"
+      }
+    ]
+  },
+  {
+    "id": "embedded-ui",
+    "payload": {
+      "text": "The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. Something went wrong. Wait a moment and try again.",
+      "html": "<article>The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. </article><div role=\"alert\">Something went wrong. Wait a moment and try again.</div>",
+      "structured": false,
+      "content_type": "html"
+    },
+    "expected_pollution": true,
+    "facts": [
+      {
+        "id": "allocation",
+        "pattern": "allocation for 2026 is 7341 tonnes"
+      }
+    ]
+  },
+  {
+    "id": "inline-quoted-mention",
+    "payload": {
+      "text": "The error was \"Something went wrong. Wait a moment and try again.\". The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. ",
+      "html": "",
+      "structured": false,
+      "content_type": "html"
+    },
+    "expected_pollution": false,
+    "facts": [
+      {
+        "id": "allocation",
+        "pattern": "allocation for 2026 is 7341 tonnes"
+      }
+    ]
+  },
+  {
+    "id": "quoted-leading-example",
+    "payload": {
+      "text": "\"Something went wrong. Wait a moment and try again.\" is a poor message. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. ",
+      "html": "",
+      "structured": false,
+      "content_type": "html"
+    },
+    "expected_pollution": false,
+    "facts": [
+      {
+        "id": "allocation",
+        "pattern": "allocation for 2026 is 7341 tonnes"
+      }
+    ]
+  },
+  {
+    "id": "ordinary-sentence",
+    "payload": {
+      "text": "Something went wrong with the allocation and was corrected. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. ",
+      "html": "",
+      "structured": false,
+      "content_type": "html"
+    },
+    "expected_pollution": false,
+    "facts": [
+      {
+        "id": "allocation",
+        "pattern": "allocation for 2026 is 7341 tonnes"
+      }
+    ]
+  },
+  {
+    "id": "access-denied-explanation",
+    "payload": {
+      "text": "Access denied is a common error message. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. ",
+      "html": "",
+      "structured": false,
+      "content_type": "html"
+    },
+    "expected_pollution": false,
+    "facts": [
+      {
+        "id": "allocation",
+        "pattern": "allocation for 2026 is 7341 tonnes"
+      }
+    ]
+  },
+  {
+    "id": "clean",
+    "payload": {
+      "text": "The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. ",
+      "html": "",
+      "structured": false,
+      "content_type": "html"
+    },
+    "expected_pollution": false,
+    "facts": [
+      {
+        "id": "allocation",
+        "pattern": "allocation for 2026 is 7341 tonnes"
+      }
+    ]
+  },
+  {
+    "id": "removed-banner",
+    "payload": {
+      "text": "The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. ",
+      "html": "<div role=\"alert\">Something went wrong. Wait a moment and try again.</div><article>The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. </article>",
+      "structured": false,
+      "content_type": "html"
+    },
+    "expected_pollution": false,
+    "facts": [
+      {
+        "id": "allocation",
+        "pattern": "allocation for 2026 is 7341 tonnes"
+      }
+    ]
+  },
+  {
+    "id": "leading-code-example",
+    "payload": {
+      "text": "Something went wrong. Wait a moment and try again. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. ",
+      "html": "<pre><code>Something went wrong. Wait a moment and try again.</code></pre><article>The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. </article>",
+      "structured": false,
+      "content_type": "html"
+    },
+    "expected_pollution": false,
+    "facts": [
+      {
+        "id": "allocation",
+        "pattern": "allocation for 2026 is 7341 tonnes"
+      }
+    ]
+  },
+  {
+    "id": "quoted-ui-example",
+    "payload": {
+      "text": "The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. Something went wrong. Wait a moment and try again.",
+      "html": "<blockquote><div role=\"alert\">Something went wrong. Wait a moment and try again.</div></blockquote>",
+      "structured": false,
+      "content_type": "html"
+    },
+    "expected_pollution": false,
+    "facts": [
+      {
+        "id": "allocation",
+        "pattern": "allocation for 2026 is 7341 tonnes"
+      }
+    ]
+  },
+  {
+    "id": "structured-quoted-message",
+    "payload": {
+      "text": "Something went wrong. Wait a moment and try again. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. ",
+      "html": "",
+      "structured": true,
+      "content_type": "pdf"
+    },
+    "expected_pollution": false,
+    "facts": [
+      {
+        "id": "allocation",
+        "pattern": "allocation for 2026 is 7341 tonnes"
+      }
+    ]
+  },
+  {
+    "id": "structured-error-log",
+    "payload": {
+      "text": "Something went wrong. Wait a moment and try again. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. ",
+      "html": "",
+      "structured": true,
+      "content_type": "pdf"
+    },
+    "expected_pollution": false,
+    "facts": [
+      {
+        "id": "allocation",
+        "pattern": "allocation for 2026 is 7341 tonnes"
+      }
+    ]
+  },
+  {
+    "id": "unrecognized-retry-banner",
+    "payload": {
+      "text": "A temporary problem occurred. Refresh this page. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. ",
+      "html": "",
+      "structured": false,
+      "content_type": "html"
+    },
+    "expected_pollution": true,
+    "facts": [
+      {
+        "id": "allocation",
+        "pattern": "allocation for 2026 is 7341 tonnes"
+      }
+    ]
+  },
+  {
+    "id": "french-error-banner",
+    "payload": {
+      "text": "Une erreur est survenue. Veuillez r\u00e9essayer. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. ",
+      "html": "",
+      "structured": false,
+      "content_type": "html"
+    },
+    "expected_pollution": true,
+    "facts": [
+      {
+        "id": "allocation",
+        "pattern": "allocation for 2026 is 7341 tonnes"
+      }
+    ]
+  }
+]

@@ -8,6 +8,7 @@ services; a supported format does not guarantee a correct or complete extraction
 |---|---|---|
 | Web, news and academic discovery | `search`, `POST /search` or `/v2/search` | Keyless profiles, explicit engines, source attempts; v2 retains diagnostics for empty results |
 | Known-source reading | `fetch`, `POST /fetch` | HTTP/TLS/render/headed ladder, automatic challenge and script-shell recovery, explicit thin/failed outcomes |
+| Mixed-content diagnostics | `fetch`, `research`, retained reads | Suspect banner spans and text hashes, preserved evidence, bounded recovery and agent inspection actions; narrow heuristics, not semantic verification |
 | Combined discovery/read | `search_and_fetch`, `/search-and-fetch` | Ranked candidates with per-source extraction status |
 | Evidence bundle | `research`, `/research` | Diverse source references, term windows, facet gaps; no generated answer |
 | Site traversal | `crawl_site`, `/site/crawl` | One-origin/path bounds, sitemap/HTML discovery, frontier and incomplete coverage |

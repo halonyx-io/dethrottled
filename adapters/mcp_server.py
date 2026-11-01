@@ -222,6 +222,10 @@ explicit control; explicit render=never and OCR choices are respected.
 Read each result's workflow, warnings, source_partial and truncation fields. quality=ok
 means text was extracted, not that the answer is present or the source is complete.
 quality=thin retains short evidence; coverage is unverified. Preserve its warnings.
+quality=suspect retains possible error-banner pollution after available recovery.
+Inspect content_assessment.spans against full retained extraction offsets; text is
+preserved. none_detected is not proof of clean content; completeness and answer support
+remain unverified. Focused/clipped responses may omit the flagged spans.
 acquisition_attempts records the tiers actually tried and their observed outcomes.
 Detected challenges automatically try a bounded headed-browser recovery when rendering
 is allowed. Browser state is scoped to the caller and exact host; render=never wins.
@@ -262,6 +266,8 @@ page boxes. document_mode=layout requests the optional local Docling worker; nat
 layout analysis. Failed or incomplete layout inference preserves the native extraction.
 Check capabilities.read.layout_worker_configured. Critical cells still need source inspection.
 research.coverage.facets lists readable evidence, failed reads and unread URLs with next_actions.
+research.partial_sources retains suspect mixed-content reads separately from clean sources;
+inspect their warnings and exact spans before using any supporting passages.
 These are retrieval/term matches, never verified answers or an exhaustive source census.
 Search engines may explicitly include exa,tavily,parallel alongside web when configured in
 capabilities.optional_search_providers. These external services can incur charges; default
