@@ -1,0 +1,91 @@
+{
+  "build": "baseline",
+  "reads": [
+    {
+      "path": "/plain",
+      "elapsed_ms": 915,
+      "expected_fact": true,
+      "reason": "",
+      "recovery": {
+        "restored_from_checkpoint": false,
+        "challenge_polls": 0,
+        "checkpointed": true,
+        "elapsed_ms": 915
+      }
+    },
+    {
+      "path": "/slow",
+      "elapsed_ms": 12011,
+      "expected_fact": false,
+      "reason": "headed_step_failed:goto:run_deadline_exceeded",
+      "recovery": null
+    },
+    {
+      "path": "/loading",
+      "elapsed_ms": 2768,
+      "expected_fact": true,
+      "reason": "",
+      "recovery": {
+        "restored_from_checkpoint": false,
+        "challenge_polls": 0,
+        "checkpointed": true,
+        "elapsed_ms": 2767
+      }
+    },
+    {
+      "path": "/webgl",
+      "elapsed_ms": 766,
+      "expected_fact": false,
+      "reason": "",
+      "recovery": {
+        "restored_from_checkpoint": false,
+        "challenge_polls": 0,
+        "checkpointed": true,
+        "elapsed_ms": 765
+      }
+    }
+  ],
+  "concurrent": [
+    {
+      "id": 0,
+      "fact": true,
+      "reason": "",
+      "recovery": {
+        "restored_from_checkpoint": false,
+        "challenge_polls": 0,
+        "checkpointed": true,
+        "elapsed_ms": 822
+      }
+    },
+    {
+      "id": 1,
+      "fact": false,
+      "reason": "headed_unavailable_or_busy",
+      "recovery": null
+    },
+    {
+      "id": 2,
+      "fact": false,
+      "reason": "headed_unavailable_or_busy",
+      "recovery": null
+    },
+    {
+      "id": 3,
+      "fact": false,
+      "reason": "headed_unavailable_or_busy",
+      "recovery": null
+    },
+    {
+      "id": 4,
+      "fact": false,
+      "reason": "headed_unavailable_or_busy",
+      "recovery": null
+    },
+    {
+      "id": 5,
+      "fact": false,
+      "reason": "headed_unavailable_or_busy",
+      "recovery": null
+    }
+  ]
+}

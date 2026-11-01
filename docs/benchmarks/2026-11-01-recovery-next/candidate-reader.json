@@ -1,0 +1,213 @@
+{
+  "build": "candidate",
+  "reads": [
+    {
+      "path": "/plain",
+      "elapsed_ms": 910,
+      "expected_fact": true,
+      "reason": "",
+      "recovery": {
+        "restored_from_checkpoint": false,
+        "challenge_polls": 0,
+        "loading_polls": 0,
+        "navigation": {
+          "url": "http://dethrottled-recovery-fixture:19890/plain",
+          "status": 200,
+          "wait_until": "commit",
+          "challenge_headers": {}
+        },
+        "checkpointed": true,
+        "elapsed_ms": 909,
+        "queue_ms": 0
+      }
+    },
+    {
+      "path": "/slow",
+      "elapsed_ms": 1389,
+      "expected_fact": true,
+      "reason": "",
+      "recovery": {
+        "restored_from_checkpoint": false,
+        "challenge_polls": 0,
+        "loading_polls": 0,
+        "navigation": {
+          "url": "http://dethrottled-recovery-fixture:19890/slow",
+          "status": 200,
+          "wait_until": "commit",
+          "challenge_headers": {}
+        },
+        "checkpointed": true,
+        "elapsed_ms": 1389,
+        "queue_ms": 0
+      }
+    },
+    {
+      "path": "/loading",
+      "elapsed_ms": 2785,
+      "expected_fact": true,
+      "reason": "",
+      "recovery": {
+        "restored_from_checkpoint": false,
+        "challenge_polls": 0,
+        "loading_polls": 2,
+        "navigation": {
+          "url": "http://dethrottled-recovery-fixture:19890/loading",
+          "status": 200,
+          "wait_until": "commit",
+          "challenge_headers": {}
+        },
+        "checkpointed": true,
+        "elapsed_ms": 2784,
+        "queue_ms": 0
+      }
+    },
+    {
+      "path": "/webgl",
+      "elapsed_ms": 756,
+      "expected_fact": true,
+      "reason": "",
+      "recovery": {
+        "restored_from_checkpoint": false,
+        "challenge_polls": 0,
+        "loading_polls": 0,
+        "navigation": {
+          "url": "http://dethrottled-recovery-fixture:19890/webgl",
+          "status": 200,
+          "wait_until": "commit",
+          "challenge_headers": {}
+        },
+        "checkpointed": true,
+        "elapsed_ms": 755,
+        "queue_ms": 0
+      }
+    }
+  ],
+  "concurrent": [
+    {
+      "id": 0,
+      "fact": true,
+      "reason": "",
+      "recovery": {
+        "restored_from_checkpoint": false,
+        "challenge_polls": 0,
+        "loading_polls": 0,
+        "navigation": {
+          "url": "http://dethrottled-recovery-fixture:19890/plain",
+          "status": 200,
+          "wait_until": "commit",
+          "challenge_headers": {}
+        },
+        "checkpointed": true,
+        "elapsed_ms": 835,
+        "queue_ms": 0
+      }
+    },
+    {
+      "id": 1,
+      "fact": true,
+      "reason": "",
+      "recovery": {
+        "restored_from_checkpoint": false,
+        "challenge_polls": 0,
+        "loading_polls": 0,
+        "navigation": {
+          "url": "http://dethrottled-recovery-fixture:19890/plain",
+          "status": 200,
+          "wait_until": "commit",
+          "challenge_headers": {}
+        },
+        "checkpointed": true,
+        "elapsed_ms": 826,
+        "queue_ms": 834
+      }
+    },
+    {
+      "id": 2,
+      "fact": true,
+      "reason": "",
+      "recovery": {
+        "restored_from_checkpoint": false,
+        "challenge_polls": 0,
+        "loading_polls": 0,
+        "navigation": {
+          "url": "http://dethrottled-recovery-fixture:19890/plain",
+          "status": 200,
+          "wait_until": "commit",
+          "challenge_headers": {}
+        },
+        "checkpointed": true,
+        "elapsed_ms": 820,
+        "queue_ms": 1660
+      }
+    },
+    {
+      "id": 3,
+      "fact": true,
+      "reason": "",
+      "recovery": {
+        "restored_from_checkpoint": false,
+        "challenge_polls": 0,
+        "loading_polls": 0,
+        "navigation": {
+          "url": "http://dethrottled-recovery-fixture:19890/plain",
+          "status": 200,
+          "wait_until": "commit",
+          "challenge_headers": {}
+        },
+        "checkpointed": true,
+        "elapsed_ms": 815,
+        "queue_ms": 2481
+      }
+    },
+    {
+      "id": 4,
+      "fact": true,
+      "reason": "",
+      "recovery": {
+        "restored_from_checkpoint": false,
+        "challenge_polls": 0,
+        "loading_polls": 0,
+        "navigation": {
+          "url": "http://dethrottled-recovery-fixture:19890/plain",
+          "status": 200,
+          "wait_until": "commit",
+          "challenge_headers": {}
+        },
+        "checkpointed": true,
+        "elapsed_ms": 826,
+        "queue_ms": 3296
+      }
+    },
+    {
+      "id": 5,
+      "fact": true,
+      "reason": "",
+      "recovery": {
+        "restored_from_checkpoint": false,
+        "challenge_polls": 0,
+        "loading_polls": 0,
+        "navigation": {
+          "url": "http://dethrottled-recovery-fixture:19890/plain",
+          "status": 200,
+          "wait_until": "commit",
+          "challenge_headers": {}
+        },
+        "checkpointed": true,
+        "elapsed_ms": 887,
+        "queue_ms": 4123
+      }
+    }
+  ],
+  "admission": {
+    "started": 10,
+    "completed": 10,
+    "rejected": 0,
+    "timed_out": 0,
+    "active": 0,
+    "waiting": 0,
+    "clients_waiting": 0,
+    "capacity": 1,
+    "max_waiting": 32,
+    "per_client_waiting": 8
+  }
+}

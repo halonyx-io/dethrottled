@@ -1,5 +1,9 @@
 # Dethrottled
 
+Version 0.9.1 closes measured browser recovery gaps: queued headed reads, automatic script-shell
+recovery, early document inspection and working software WebGL. See the
+[before/after results and remaining failures](docs/RECOVERY-GAPS.md).
+
 Version 0.9 adds automatic challenge recovery in the existing headed browser,
 caller-scoped clearance checkpoints, strict MCP arguments and explicit thin-result
 quality. [Bot findings checked against code and tests](docs/REVIEWED-BOT-FINDINGS.md).

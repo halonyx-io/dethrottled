@@ -66,7 +66,7 @@ services:
       DETHROTTLED_CRAWL4AI_BUDGET: "${DETHROTTLED_CRAWL4AI_BUDGET:--1}"
       DETHROTTLED_RENDER_CONCURRENCY: "${DETHROTTLED_RENDER_CONCURRENCY:-2}"
       DETHROTTLED_MEDIA_WORKER_URL: "${DETHROTTLED_MEDIA_WORKER_URL:-}"
-      DETHROTTLED_USER_AGENT: "${DETHROTTLED_USER_AGENT:-dethrottled/0.9.0 (automated fetcher)}"
+      DETHROTTLED_USER_AGENT: "${DETHROTTLED_USER_AGENT:-dethrottled/0.9.1 (automated fetcher)}"
       DETHROTTLED_EXTRACT_CACHE_CHARS: "${DETHROTTLED_EXTRACT_CACHE_CHARS:-1000000}"
       # MODEL_DIR is deliberately NOT set here. The image bakes the weights
       # into /opt/dethrottled/models, and pointing this at /data/models would
@@ -87,6 +87,7 @@ services:
     restart: unless-stopped
     environment:
       DETHROTTLED_BROWSER_STATE_DIR: /state
+      DETHROTTLED_BROWSER_GRAPHICS: "${DETHROTTLED_BROWSER_GRAPHICS:-mesa}"
       DETHROTTLED_DRIVE_SESSION_TTL: "${DETHROTTLED_DRIVE_SESSION_TTL:-1800}"
       DETHROTTLED_DRIVE_MAX_SESSIONS: "${DETHROTTLED_DRIVE_MAX_SESSIONS:-8}"
     expose:

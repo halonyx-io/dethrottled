@@ -1,0 +1,44 @@
+[
+  {
+    "profile": "default",
+    "args": [],
+    "webgl": false,
+    "webgl2": false,
+    "vendor": null,
+    "renderer": null
+  },
+  {
+    "profile": "angle-gl",
+    "args": [
+      "--use-gl=angle",
+      "--use-angle=gl"
+    ],
+    "webgl": false,
+    "webgl2": false,
+    "vendor": null,
+    "renderer": null
+  },
+  {
+    "profile": "angle-egl",
+    "args": [
+      "--use-gl=angle",
+      "--use-angle=gles"
+    ],
+    "webgl": false,
+    "webgl2": false,
+    "vendor": null,
+    "renderer": null
+  },
+  {
+    "profile": "angle-gl-unblocked",
+    "args": [
+      "--use-gl=angle",
+      "--use-angle=gl",
+      "--ignore-gpu-blocklist"
+    ],
+    "webgl": true,
+    "webgl2": true,
+    "vendor": "Google Inc. (Mesa)",
+    "renderer": "ANGLE (Mesa, llvmpipe (LLVM 19.1.7 256 bits), OpenGL 4.5)"
+  }
+]

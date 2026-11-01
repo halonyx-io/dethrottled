@@ -21,6 +21,7 @@ PROMPTS = (
     "enable javascript and cookies to continue",
     "enable js and disable any ad blocker",
     "complete the security check",
+    "we must verify your session before you can proceed",
     "access to this page has been denied",
     "press & hold",
 )
@@ -51,6 +52,10 @@ def classify(body, headers=None):
     )
     starts_prompt = visible.startswith(PROMPTS)
     titled = title.startswith(("just a moment", "verification required", "security check"))
+    # Observed Expedia wall: neither HTTP 429 nor "human side" alone suffices.
+    if (brief and visible.startswith("show us your human side")
+            and "can't tell if you're a human or a bot" in visible):
+        return "generic"
     for vendor, markers in VENDORS.items():
         if (
             any(marker in lower for marker in markers)

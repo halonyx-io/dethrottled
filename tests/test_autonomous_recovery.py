@@ -308,3 +308,154 @@ def test_browser_failure_preserves_actionable_reason(monkeypatch):
     monkeypatch.setattr(f.requests, "post", lambda *a, **kw: Response())
     payload, reason, _ = f._tier_headed("https://source.example")
     assert not payload and reason == "headed_step_failed:goto:navigation_outside_allowed_hosts"
+
+
+def test_headed_waiters_keep_their_chance_to_read(monkeypatch):
+    import time
+    from concurrent.futures import ThreadPoolExecutor
+
+    monkeypatch.setenv("DETHROTTLED_BROWSER_SEARCH_URL", "http://browser")
+
+    def read(url, backend):
+        time.sleep(0.15)
+        return {"html": ARTICLE, "browser_recovery": {}}, "", url
+
+    monkeypatch.setattr(f, "_headed_read", read)
+    with ThreadPoolExecutor(max_workers=6) as pool:
+        results = list(pool.map(f._tier_headed, ["https://source.example"] * 6))
+    assert all(payload.get("html") == ARTICLE and not reason for payload, reason, _ in results)
+
+
+def test_header_challenge_and_loading_are_polled_separately(monkeypatch):
+    calls = []
+    replies = iter(
+        [
+            {
+                "ok": True,
+                "session": {"restored_from_checkpoint": True},
+                "steps": [
+                    {
+                        "action": "goto",
+                        "data": {"status": 403, "challenge_headers": {"cf-mitigated": "challenge"}},
+                    },
+                    {
+                        "action": "html",
+                        "data": "<html><body></body></html>",
+                        "document_ready_state": "loading",
+                    },
+                ],
+            },
+            {
+                "ok": True,
+                "steps": [
+                    {"action": "html", "data": "<html></html>", "document_ready_state": "loading"}
+                ],
+            },
+            {
+                "ok": True,
+                "steps": [
+                    {"action": "html", "data": ARTICLE, "document_ready_state": "interactive"}
+                ],
+            },
+            {"ok": True, "steps": [{"action": "checkpoint", "data": True}]},
+        ]
+    )
+
+    class Response:
+        def raise_for_status(self):
+            pass
+
+        def json(self):
+            return next(replies)
+
+    def post(*args, **kw):
+        calls.append(kw["json"])
+        return Response()
+
+    monkeypatch.setenv("DETHROTTLED_BROWSER_SEARCH_URL", "http://browser")
+    monkeypatch.setattr(f.requests, "post", post)
+    payload, reason, _ = f._tier_headed("https://source.example")
+    assert not reason and payload["html"] == ARTICLE
+    recovery = payload["browser_recovery"]
+    assert recovery["challenge_polls"] == 1 and recovery["loading_polls"] == 1
+    assert recovery["restored_from_checkpoint"]
+    assert calls[0]["navigation_wait"] == "commit"
+
+
+def test_headed_queue_timeout_is_named_without_attempting_navigation(monkeypatch):
+    from dethrottled.admission import FairQueue
+
+    queue = FairQueue(capacity=1)
+    monkeypatch.setattr(f, "_HEADED_QUEUE", queue)
+    monkeypatch.setenv("DETHROTTLED_BROWSER_SEARCH_URL", "http://browser")
+    monkeypatch.setenv("DETHROTTLED_HEADED_QUEUE_SECONDS", "0")
+    monkeypatch.setattr(f, "_headed_read", lambda *a: pytest.fail("slot not acquired"))
+    with queue.slot("other"):
+        payload, reason, _ = f._tier_headed("https://source.example")
+    assert not payload and reason == "headed_queue_timeout"
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "We must verify your session before you can proceed. Need help? Contact support.",
+        "Show us your human side... We can't tell if you're a human or a bot.",
+    ],
+)
+def test_live_observed_interstitials_are_not_thin_evidence(text):
+    assert classify("<html><body>" + text + "</body></html>") == "generic"
+    assert not classify("<article>An analysis of the message: " + text + "</article>")
+
+
+@pytest.mark.parametrize("pending", [True, False])
+def test_early_or_clipped_html_never_claims_complete_source(tiers, pending):
+    payload = {
+        "html": ARTICLE,
+        "clipped": not pending,
+        "browser_recovery": {"document_ready_state": "loading" if pending else "complete"},
+    }
+    tiers.setattr(f, "_tier_headed", lambda u: (payload, "", u))
+    result = f.fetch_and_extract("https://source.example")
+    assert result["ok"] and result["extraction"]["partial"]
+    assert result["truncated"]
+    reason = "browser_document_loading" if pending else "html_capture_limit"
+    assert reason in result["warnings"]
+
+
+@pytest.mark.parametrize("allowed", [True, False])
+def test_partial_browser_snapshot_has_a_justified_followup(allowed):
+    from dethrottled.workflow import guidance
+
+    result = guidance(
+        {
+            "url": "https://source.example",
+            "quality": "ok",
+            "extraction": {"partial": True, "partial_reason": "browser_document_loading"},
+        },
+        rendered_allowed=allowed,
+    )
+    drives = [a for a in result["next_actions"] if a["tool"] == "drive"]
+    assert bool(drives) is allowed
+    if allowed:
+        assert drives[0]["arguments"]["steps"][0]["action"] == "text"
+        assert not result["source_complete"]
+
+
+def test_script_only_shell_reaches_browser_without_an_agent_knowing_the_flag(tiers):
+    tiers.setattr(
+        f,
+        "_tier_direct",
+        lambda *a: (
+            {
+                "html": (
+                    '<html><body><div id="root"></div><script src="/app.js"></script></body></html>'
+                )
+            },
+            "",
+            a[0],
+        ),
+    )
+    tiers.setattr(f, "_tier_tls", lambda u: ({}, "empty", u))
+    tiers.setattr(f, "_tier_headed", lambda u: ({"html": ARTICLE}, "", u))
+    result = f.fetch_and_extract("https://source.example")
+    assert result["ok"] and result["tier"] == "headed"

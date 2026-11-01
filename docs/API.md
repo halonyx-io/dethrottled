@@ -445,3 +445,10 @@ Use `format` as the cross-transport fetch spelling. Capabilities advertise REST
 return tool errors before the backend is invoked; REST body typos return 422.
 Busy responses retain HTTP 429 and add machine-readable reasons/limiter identity;
 clients should distinguish polling from rate-window waiting.
+
+In 0.9.1, `browser_recovery` also reports `queue_ms`, `loading_polls`,
+`document_ready_state` and `initial_navigation` (initial status, wait policy and
+only the challenge header). Early loading snapshots and HTML capture limits set
+`extraction.partial` with `partial_reason` and warnings. Preserve `source_partial`
+and the returned workflow; an early fact is not proof of a complete source.
+`/stats.headed_admission` identifies pressure on the automatic headed reader.

@@ -1,0 +1,104 @@
+{
+  "public_mcp_status": 200,
+  "ok": true,
+  "selected_checks": [
+    [
+      "WebDriver (New)",
+      "missing (passed)"
+    ],
+    [
+      "Plugins Length (Old)",
+      "5"
+    ],
+    [
+      "Languages (Old)",
+      "en-US,en"
+    ],
+    [
+      "WebGL Vendor",
+      "Google Inc. (Mesa)"
+    ],
+    [
+      "WebGL Renderer",
+      "ANGLE (Mesa, llvmpipe (LLVM 19.1.7 256 bits), OpenGL 4.5)"
+    ]
+  ],
+  "workers": {
+    "browser": {
+      "status": "ready",
+      "http_status": 200,
+      "probe_ms": 3
+    },
+    "renderer": {
+      "status": "ready",
+      "http_status": 200,
+      "probe_ms": 3
+    },
+    "layout": {
+      "status": "ready",
+      "http_status": 200,
+      "metrics": {
+        "completed": 0,
+        "failed": 0,
+        "timed_out": 0,
+        "cancelled": 0,
+        "rejected": 0,
+        "active": 0,
+        "active_seconds": 0,
+        "deadline_seconds": 180,
+        "max_input_bytes": 52428800
+      },
+      "probe_ms": 5
+    },
+    "speech": {
+      "status": "ready",
+      "http_status": 200,
+      "metrics": {
+        "completed": 3,
+        "failed": 0,
+        "timed_out": 0,
+        "cancelled": 0,
+        "rejected": 0,
+        "active": 0,
+        "active_seconds": 0,
+        "deadline_seconds": 570,
+        "max_input_bytes": 52428800
+      },
+      "probe_ms": 5
+    },
+    "formats": {
+      "status": "ready",
+      "http_status": 200,
+      "metrics": {
+        "completed": 2,
+        "failed": 0,
+        "timed_out": 0,
+        "cancelled": 0,
+        "rejected": 0,
+        "active": 0,
+        "active_seconds": 0,
+        "deadline_seconds": 60,
+        "max_input_bytes": 52428800
+      },
+      "probe_ms": 4
+    }
+  },
+  "backfill": {
+    "status": "complete",
+    "passages": 0
+  },
+  "version": "0.9.1",
+  "headed_admission": {
+    "started": 1,
+    "completed": 1,
+    "rejected": 0,
+    "timed_out": 0,
+    "active": 0,
+    "waiting": 0,
+    "clients_waiting": 0,
+    "capacity": 1,
+    "max_waiting": 32,
+    "per_client_waiting": 8
+  },
+  "note": "Full fingerprint HTML and credentials are not recorded."
+}

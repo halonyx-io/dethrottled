@@ -232,8 +232,13 @@ async def _watch_browser(app):
 async def lifespan(app):
     DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)
     async with async_playwright() as playwright:
+        graphics = os.environ.get("DETHROTTLED_BROWSER_GRAPHICS", "default")
+        if graphics not in {"default", "mesa"}:
+            raise ValueError("DETHROTTLED_BROWSER_GRAPHICS must be default or mesa")
+        graphics_args = (["--use-gl=angle", "--use-angle=gl", "--ignore-gpu-blocklist"]
+                         if graphics == "mesa" else [])
         app.state.browser = await playwright.chromium.launch(
-            headless=False, downloads_path=str(DOWNLOAD_DIR))
+            headless=False, downloads_path=str(DOWNLOAD_DIR), args=graphics_args)
         watcher = asyncio.create_task(_watch_browser(app))
         session_reaper = asyncio.create_task(_reap_drive_sessions())
         try:
@@ -326,6 +331,8 @@ class DriveRequest(BaseModel):
     # Whole-run budget. Individual actions also have their own ceiling; this is
     # the backstop so one slow selector cannot hold a browser forever.
     timeout_ms: int = Field(default=45000, ge=1000, le=180000)
+    # Internal readers can inspect a committed document while slow scripts load.
+    navigation_wait: Literal["commit", "domcontentloaded"] = "domcontentloaded"
     # A named session retains cookies, local storage and its current page.
     # Empty means an ephemeral context that is closed after this request.
     session: str = Field(default="", max_length=64, pattern=r"^[A-Za-z0-9._-]*$")
@@ -915,8 +922,11 @@ async def _drive(state: dict, body: DriveRequest) -> dict:
         allowed = state["allowed_hosts"]
         if allowed and not _host_allowed(url, allowed):
             raise ValueError("navigation outside allowed_hosts")
-        response = await page.goto(url, wait_until="domcontentloaded", timeout=timeout)
-        return {"url": page.url, "status": response.status if response else None}
+        response = await page.goto(url, wait_until=body.navigation_wait, timeout=timeout)
+        return {"url": page.url, "status": response.status if response else None,
+                "wait_until": body.navigation_wait,
+                "challenge_headers": ({"cf-mitigated": response.headers["cf-mitigated"]}
+                                      if response and "cf-mitigated" in response.headers else {})}
 
     async def diagnosed_failure(action: str, target, exc: Exception, stage: str):
         diagnostics = await _locator_diagnostics(page, target)
@@ -1027,6 +1037,8 @@ async def _drive(state: dict, body: DriveRequest) -> dict:
                     text = await target.evaluate("el => el.outerHTML")
                     cap = s.max_chars or 20000
                     read_metadata.update(content_chars=len(text), truncated=len(text) > cap)
+                    read_metadata["document_ready_state"] = await page.evaluate(
+                        "document.readyState")
                     return text[:cap]
                 except Exception as exc:
                     await diagnosed_failure("html", target, exc, "dom_read")
@@ -1248,6 +1260,8 @@ DRIVE_OPERATIONS = _load_operations()
 def _operation_fingerprint(body, *, normalize=True):
     payload = body.model_dump(exclude={"operation_id"})
     if normalize:
+        if payload.get("navigation_wait") == "domcontentloaded":
+            payload.pop("navigation_wait", None)
         # Adding an optional selector must not invalidate pre-upgrade retry IDs.
         for step in payload.get("steps", []):
             if not step.get("frame"):

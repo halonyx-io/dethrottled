@@ -1,0 +1,40 @@
+........................................................................ [ 12%]
+..................................................ssssssssssssss........ [ 24%]
+........................................................................ [ 36%]
+........................................s............................... [ 48%]
+........................................................................ [ 60%]
+........................................................................ [ 72%]
+........................................................................ [ 84%]
+........................................................................ [ 97%]
+.................                                                        [100%]
+=============================== warnings summary ===============================
+src/dethrottled/server.py:779
+  /candidate/src/dethrottled/server.py:779: DeprecationWarning:
+          on_event is deprecated, use lifespan event handlers instead.
+
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+
+    @app.on_event("startup")
+
+../usr/local/lib/python3.12/site-packages/fastapi/applications.py:4745
+../usr/local/lib/python3.12/site-packages/fastapi/applications.py:4745
+  /usr/local/lib/python3.12/site-packages/fastapi/applications.py:4745: DeprecationWarning:
+          on_event is deprecated, use lifespan event handlers instead.
+
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+
+    return self.router.on_event(event_type)  # ty: ignore[deprecated]
+
+src/dethrottled/server.py:785
+  /candidate/src/dethrottled/server.py:785: DeprecationWarning:
+          on_event is deprecated, use lifespan event handlers instead.
+
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+
+    @app.on_event("shutdown")
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+578 passed, 15 skipped, 2 deselected, 4 warnings in 19.27s

@@ -1,0 +1,11 @@
+{
+  "version": "0.9.1",
+  "registry_unchanged": true,
+  "env_unchanged": true,
+  "routing_unchanged": true,
+  "adapters_restarted": false,
+  "gpu_device_passthrough": false,
+  "graphics_profile": "mesa",
+  "fixture_exceptions_deployed": false,
+  "package_and_browser_sources_match": true
+}

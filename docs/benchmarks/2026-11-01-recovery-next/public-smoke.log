@@ -1,0 +1,15 @@
+public-initialize 200 133.36
+public-tools-list 200 144.65
+public-reject-unknown-category 200 113.69
+public-reject-unknown-raw 200 78.57
+public-capabilities 200 164.84
+public-fetch 200 127.81
+public-inspect-document 200 539.87
+public-rest-read-mcp-document 200 81.59
+public-site-crawl 200 757.89
+public-fresh-search 200 692.6
+public-audio-fetch 200 5190.74
+public-browser-checkpoint 200 644.71
+public-research-coverage 200 20518.03
+public-browser-close 200 97.17
+PASS: all public production assertions

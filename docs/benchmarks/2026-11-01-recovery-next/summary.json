@@ -1,0 +1,52 @@
+{
+  "version": "0.9.1",
+  "baseline_commit": "13ec0aa",
+  "tests": {
+    "passed": 578,
+    "skipped": 15,
+    "network_deselected": 2
+  },
+  "default_js_fixtures": {
+    "baseline_facts": 0,
+    "candidate_facts": 2,
+    "cases": 2
+  },
+  "headed_concurrency_facts": {
+    "baseline": 1,
+    "candidate": 6,
+    "cases": 6,
+    "active_capacity": 1
+  },
+  "webgl": {
+    "baseline": false,
+    "candidate": true,
+    "renderer": "Mesa llvmpipe software",
+    "real_pixel_fixture_passed": true,
+    "gpu_passthrough": false
+  },
+  "live_search_counts": {
+    "baseline": [
+      10,
+      9,
+      10
+    ],
+    "candidate": [
+      10,
+      9,
+      10
+    ]
+  },
+  "hostile_reads": {
+    "sites": 4,
+    "baseline": 0,
+    "candidate": 0,
+    "persistent_chromium": 0,
+    "persistent_chrome": 0
+  },
+  "clearance_regression": "5/5 facts including plain control",
+  "public_mcp_rest_smoke": true,
+  "public_mcp_graphics": true,
+  "actual_sdk_completed": true,
+  "D6": "excluded",
+  "chrome_or_full_profiles_shipped": false
+}

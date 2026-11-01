@@ -1,0 +1,70 @@
+[
+  {
+    "path": "/slow",
+    "elapsed_ms": 12346,
+    "fact": false,
+    "result": {
+      "ok": false,
+      "text": "",
+      "tier": "headed",
+      "extractor": null,
+      "title": "",
+      "published": "",
+      "chars": 0,
+      "url": "http://dethrottled-recovery-fixture:19890/slow",
+      "reason": "direct:fetched_but_no_extractor_succeeded | tls:fetched_but_no_extractor_succeeded | headed:headed_step_failed:goto:run_deadline_exceeded",
+      "cached": false,
+      "acquisition_attempts": [
+        {
+          "tier": "direct",
+          "reason": "",
+          "outcome": "response"
+        },
+        {
+          "tier": "tls",
+          "reason": "",
+          "outcome": "response"
+        },
+        {
+          "tier": "headed",
+          "reason": "headed_step_failed:goto:run_deadline_exceeded",
+          "outcome": "failed"
+        }
+      ]
+    }
+  },
+  {
+    "path": "/webgl",
+    "elapsed_ms": 772,
+    "fact": false,
+    "result": {
+      "ok": false,
+      "text": "",
+      "tier": "headed",
+      "extractor": null,
+      "title": "",
+      "published": "",
+      "chars": 0,
+      "url": "http://dethrottled-recovery-fixture:19890/webgl",
+      "reason": "direct:fetched_but_no_extractor_succeeded | tls:fetched_but_no_extractor_succeeded | headed:fetched_but_empty_html",
+      "cached": false,
+      "acquisition_attempts": [
+        {
+          "tier": "direct",
+          "reason": "",
+          "outcome": "response"
+        },
+        {
+          "tier": "tls",
+          "reason": "",
+          "outcome": "response"
+        },
+        {
+          "tier": "headed",
+          "reason": "",
+          "outcome": "response"
+        }
+      ]
+    }
+  }
+]

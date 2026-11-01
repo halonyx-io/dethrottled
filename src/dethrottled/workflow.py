@@ -97,6 +97,18 @@ def guidance(row, *, offset=0, focused=False, rendered_allowed=True):
             )
         )
 
+    if (url and rendered_allowed and extraction.get("partial_reason") in {
+            "browser_document_loading", "html_capture_limit"}):
+        action(
+            "drive",
+            "The HTML snapshot is partial; if evidence is missing, inspect visible text "
+            "after normal document loading and narrow selectors if it is still too large.",
+            url=url,
+            steps=[{"action": "text", "selector": "body", "max_chars": 120000}],
+            timeout_ms=45000,
+            screenshot="failure",
+        )
+
     if row.get("quality") in {"failed", "thin"}:
         headed_attempted = any(a.get("tier") == "headed"
                                for a in row.get("acquisition_attempts", []))

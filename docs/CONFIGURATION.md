@@ -204,3 +204,21 @@ refresh/read its actual tool schema after upgrading.
 Public admission and research/gateway 429 responses identify the limiter. Rate
 window retry hints round up to the next boundary; busy hints are polling advice,
 not a claim that an active operation or crashed lease expires at that instant.
+
+### Headed recovery queue and graphics (0.9.1)
+
+`DETHROTTLED_HEADED_QUEUE_SECONDS` controls API-side headed admission waiting
+(default 60 seconds), separately from `DETHROTTLED_CHALLENGE_WAIT_SECONDS` (15).
+One read is active; the queue holds at most 32 waiters, up to eight per caller.
+`/stats.headed_admission` reports waiting, completed, rejected and timed-out work.
+An empty script/iframe shell can reach headed recovery automatically; readable
+ordinary pages and explicit render restrictions retain their existing behavior.
+
+Compose defaults `DETHROTTLED_BROWSER_GRAPHICS=mesa` for the browser worker. This
+uses EGL/GLES libraries and ANGLE GL with `--ignore-gpu-blocklist`, enabling real
+Mesa/llvmpipe software WebGL in the tested container. It needs no `/dev/dri` mount,
+external account or API. It exposes its true software renderer. Set the variable
+to `default` to retain the browser's original launch configuration. Direct worker
+launches outside Compose also default to `default`. Software graphics can consume
+CPU on complex pages; no unsafe SwiftShader flag or fingerprint injection is used.
+See [measurements and remaining gaps](RECOVERY-GAPS.md).

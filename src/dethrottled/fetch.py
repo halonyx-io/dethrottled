@@ -51,7 +51,6 @@ from .challenges import classify as challenge_kind
 from .content import decode_html, page_details, short_text
 
 _READ_OPTIONS = ContextVar("read_options", default=MappingProxyType({}))
-_HEADED_READS = threading.BoundedSemaphore(1)
 
 
 def _get_with_policy(get, url, **kwargs):
@@ -259,6 +258,7 @@ _RENDER_QUEUE = FairQueue(
     capacity=int(os.getenv("DETHROTTLED_RENDER_CONCURRENCY", "2")),
     max_waiting=int(os.getenv("DETHROTTLED_RENDER_MAX_WAITING", "32")),
     per_client=int(os.getenv("DETHROTTLED_RENDER_PER_CLIENT", "8")))
+_HEADED_QUEUE = FairQueue(capacity=1, max_waiting=32, per_client=8)
 
 _locks = defaultdict(threading.Lock)
 _last_hit = {}
@@ -1178,9 +1178,11 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
     # it was last standing on, rather than reporting nothing at all.
     name = None
     challenged = False
+    script_shell = False
     last_attempted = None
     for name, run in tiers:
-        if name == "headed" and not (challenged or _READ_OPTIONS.get().get("headed_fallback")):
+        if name == "headed" and not (
+                challenged or script_shell or _READ_OPTIONS.get().get("headed_fallback")):
             continue
         # A resting tier is skipped without being asked. This is the smooth
         # transition: the ladder simply gets shorter for a while and the rungs
@@ -1192,7 +1194,8 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
         # already running is allowed to finish, because killing a fetch that is
         # about to succeed wastes everything spent on it. This stops the NEXT
         # attempt, which is where a runaway page actually costs its minute.
-        if time.time() - budget_started > budget and not (name == "headed" and challenged):
+        if (time.time() - budget_started > budget
+                and not (name == "headed" and (challenged or script_shell))):
             if best is None:
                 reasons.append("%s: skipped, page budget of %.0fs spent" % (name, budget))
             continue
@@ -1201,6 +1204,10 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
         attempt = {"tier": name, "reason": reason, "outcome": "response" if payload else "failed"}
         attempts.append(attempt)
         payload = payload if isinstance(payload, dict) else {}
+        html = payload.get("html") or ""
+        if (html and re.search(r"<(?:script|iframe)\b", html, re.I)
+                and len(short_text(html).strip()) < 40):
+            script_shell = True
         detected = challenge_kind(payload.get("html") or (
             "" if payload.get("structured") else payload.get("text") or ""))
         reported_block = "anti-bot" in reason.lower() and "http 429" not in reason.lower()
@@ -1280,6 +1287,12 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
 
         if payload.get("browser_recovery"):
             candidate["browser_recovery"] = payload["browser_recovery"]
+        pending = (payload.get("browser_recovery") or {}).get("document_ready_state") == "loading"
+        if candidate.get("content_type") == "html" and (pending or payload.get("clipped")):
+            partial_reason = "browser_document_loading" if pending else "html_capture_limit"
+            candidate["extraction"] = {**candidate.get("extraction", {}),
+                                       "partial": True, "partial_reason": partial_reason}
+            candidate["warnings"] = [*candidate.get("warnings", []), partial_reason]
         # Structured payloads are never "thin". THIN_CHARS asks whether a page
         # gave up only a teaser, which is a question about HTML -- no later
         # tier is going to read a spreadsheet or a scan better than the parser
@@ -1326,8 +1339,21 @@ class _HeadedReadFailure(ValueError):
 
 def _tier_headed(url: str) -> tuple:
     backend = os.environ.get("DETHROTTLED_BROWSER_SEARCH_URL", "").rstrip("/")
-    if not backend or not _HEADED_READS.acquire(timeout=0.1):
-        return {}, "headed_unavailable_or_busy", url
+    if not backend:
+        return {}, "headed_unavailable", url
+    try:
+        queue_timeout = float(os.getenv("DETHROTTLED_HEADED_QUEUE_SECONDS", "60"))
+        with _HEADED_QUEUE.slot(_READ_OPTIONS.get().get("admission_key", "local"),
+                                timeout=queue_timeout) as ms:
+            payload, reason, final = _headed_read(url, backend)
+            if "browser_recovery" in payload:
+                payload["browser_recovery"]["queue_ms"] = ms
+            return payload, reason, final
+    except AdmissionError as exc:
+        return {}, str(exc).replace("renderer_", "headed_"), url
+
+
+def _headed_read(url: str, backend: str) -> tuple:
     # Exact-host, caller-scoped browser identity. Never export cookies to another
     # transport or share clearance state across public clients.
     options = _READ_OPTIONS.get()
@@ -1338,7 +1364,8 @@ def _tier_headed(url: str) -> tuple:
     started = time.monotonic()
     deadline = started + float(os.getenv("DETHROTTLED_CHALLENGE_WAIT_SECONDS", "15"))
     body = {"session": session, "screenshot": "never", "allowed_hosts": [host],
-            "public_only": options.get("public_only", False), "timeout_ms": 12000}
+            "public_only": options.get("public_only", False), "timeout_ms": 12000,
+            "navigation_wait": "commit"}
     read = {"action": "html", "selector": "html", "max_chars": 120000}
 
     def drive(steps, navigate=False):
@@ -1357,20 +1384,29 @@ def _tier_headed(url: str) -> tuple:
         steps = ([{"action": "wait_for", "selector": wait_for, "ms": 5000}]
                  if wait_for else [{"action": "wait", "ms": 700}]) + [read]
         data = drive(steps, navigate=True)
+        navigation = next((step.get("data") or {} for step in data.get("steps", [])
+                           if step.get("action") == "goto"), {})
+        restored = bool(data.get("session", {}).get("restored_from_checkpoint"))
         polls = 0
+        loading_polls = 0
         while True:
             html = data["steps"][-1].get("data") or ""
             if isinstance(html, dict):
                 html = html.get("html", "")
-            vendor = challenge_kind(html)
-            if not vendor:
+            headers = navigation.get("challenge_headers") if polls == 0 else None
+            vendor = challenge_kind(html, headers)
+            loading = (data["steps"][-1].get("document_ready_state") == "loading"
+                       and len(short_text(html).strip()) < 40)
+            if not vendor and not loading:
                 break
             remaining = deadline - time.monotonic()
             if remaining <= 0:
-                return {}, "headed_challenge_unresolved:" + vendor, url
+                return {}, ("headed_challenge_unresolved:" + vendor if vendor
+                            else "headed_document_still_loading"), url
             data = drive([{"action": "wait", "ms": min(1000, max(1, int(remaining * 1000)))},
                           read])
             polls += 1
+            loading_polls += int(loading and not vendor)
         # Checkpoints retain same-browser state across worker restarts. A failed
         # checkpoint must not discard acquired evidence or export credentials.
         checkpointed = True
@@ -1381,17 +1417,16 @@ def _tier_headed(url: str) -> tuple:
         return {"html": html,
                 "clipped": bool(data["steps"][-1].get("truncated")),
                 "browser_recovery": {
-            "restored_from_checkpoint": bool(data.get("session", {}).get(
-                "restored_from_checkpoint")),
-            "challenge_polls": polls, "checkpointed": checkpointed,
+            "restored_from_checkpoint": restored,
+            "challenge_polls": polls - loading_polls, "loading_polls": loading_polls,
+            "document_ready_state": data["steps"][-1].get("document_ready_state"),
+            "initial_navigation": navigation, "checkpointed": checkpointed,
             "elapsed_ms": int((time.monotonic() - started) * 1000)}}, "", (
                 data.get("final", {}).get("url") or url)
     except _HeadedReadFailure as exc:
         return {}, str(exc), url
     except (requests.RequestException, ValueError, KeyError, TypeError) as exc:
         return {}, "headed_" + type(exc).__name__, url
-    finally:
-        _HEADED_READS.release()
 
 
 def fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAULT_TIMEOUT,

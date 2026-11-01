@@ -1,0 +1,82 @@
+[
+  {
+    "name": "cargurus",
+    "url": "https://www.cargurus.com/",
+    "elapsed_ms": 222,
+    "reason": "headed_step_failed:goto:Error: Page.goto: net::ERR_HTTP_RESPONSE_CODE_FAILURE at https://www.cargurus.com/\nCall log:\n  - navigating to \"https://www.cargurus.com/\", waiting until \"domcontentlo",
+    "challenge": "",
+    "chars": 0,
+    "markers_found": false,
+    "readable_candidate": false,
+    "recovery": null,
+    "text_preview": ""
+  },
+  {
+    "name": "crunchbase",
+    "url": "https://www.crunchbase.com/organization/openai",
+    "elapsed_ms": 1537,
+    "reason": "",
+    "challenge": "",
+    "chars": 128,
+    "markers_found": false,
+    "readable_candidate": false,
+    "recovery": {
+      "restored_from_checkpoint": false,
+      "challenge_polls": 0,
+      "checkpointed": true,
+      "elapsed_ms": 1535
+    },
+    "text_preview": "      We must verify your session before you can proceed      Need help? Contact our support team .  Ray ID: a53ae0decba18b5a   "
+  },
+  {
+    "name": "g2",
+    "url": "https://www.g2.com/products/notion/reviews",
+    "elapsed_ms": 1498,
+    "reason": "",
+    "challenge": "",
+    "chars": 0,
+    "markers_found": false,
+    "readable_candidate": false,
+    "recovery": {
+      "restored_from_checkpoint": false,
+      "challenge_polls": 0,
+      "checkpointed": true,
+      "elapsed_ms": 1497
+    },
+    "text_preview": ""
+  },
+  {
+    "name": "expedia",
+    "url": "https://www.expedia.com/",
+    "elapsed_ms": 1227,
+    "reason": "",
+    "challenge": "",
+    "chars": 105,
+    "markers_found": false,
+    "readable_candidate": false,
+    "recovery": {
+      "restored_from_checkpoint": false,
+      "challenge_polls": 0,
+      "checkpointed": true,
+      "elapsed_ms": 1225
+    },
+    "text_preview": "Show us your human side... We can't tell if you're a human or a bot. d7c6bab9-0399-4e61-966e-19239874caa2"
+  },
+  {
+    "name": "python-control",
+    "url": "https://docs.python.org/3/library/sqlite3.html",
+    "elapsed_ms": 1216,
+    "reason": "",
+    "challenge": "",
+    "chars": 26288,
+    "markers_found": true,
+    "readable_candidate": true,
+    "recovery": {
+      "restored_from_checkpoint": false,
+      "challenge_polls": 0,
+      "checkpointed": true,
+      "elapsed_ms": 1211
+    },
+    "text_preview": "         Navigation    index   modules |   next |   previous |   Python \u00bb   German | Deutsch Greek | \u0395\u03bb\u03bb\u03b7\u03bd\u03b9\u03ba\u03ac English Spanish | espa\u00f1ol Persian | \u0641\u0627\u0631\u0633\u06cc French | fran\u00e7ais Italian | italiano Japanese | \u65e5\u672c\u8a9e Korean | \ud55c\uad6d\uc5b4 Punjabi | \u0a2a\u0a70\u0a1c\u0a3e\u0a2c\u0a40 Polish | polski "
+  }
+]

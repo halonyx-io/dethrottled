@@ -958,6 +958,7 @@ def v2_capabilities():
         },
         "workflow": {"instructions": INSTRUCTIONS, "automatic_recovery": [
             "transport/format/OCR ladder", "scoped headed challenge recovery",
+            "script-only shell recovery",
             "navigation-only rendered retry",
             "up to two image/document asset attempts"],
             "next_actions": "Each read returns tool, endpoint, arguments, reason and prerequisites",
@@ -1686,6 +1687,7 @@ def stats():
     # rendering after 8 pages and jina after 25, silently, for the rest of the
     # process. They refill hourly now, and you can see how much is spent.
     return {"renderer_admission": fetcher._RENDER_QUEUE.stats(),
+            "headed_admission": fetcher._HEADED_QUEUE.stats(),
             "cache": cache().stats(), "version": VERSION,
             "tiers_resting": fetcher.tier_rest_state(),
             "domain_health": domain_health.stats(),

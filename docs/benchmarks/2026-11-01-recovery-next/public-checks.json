@@ -1,0 +1,16 @@
+{
+  "version": "0.9.1",
+  "tools": 20,
+  "all_assertions_passed": true,
+  "checks": [
+    "workflow hash",
+    "20 strict schemas",
+    "unknown arguments rejected",
+    "MCP-to-REST document continuity",
+    "one-page crawl",
+    "fresh discovery",
+    "local speech",
+    "browser checkpoint/cleanup",
+    "research coverage"
+  ]
+}
