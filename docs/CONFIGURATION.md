@@ -124,3 +124,14 @@ can be read with successive row ranges. `DETHROTTLED_DOC_MAX_CELL` now defaults
 to 32767, with an explicit per-request max_cell_chars override and truncation
 metadata. Empty/covered OpenDocument cells retain their column positions;
 repeated cells/rows are expanded within the extraction budget.
+
+## Optional layout and discovery services (0.7)
+
+`DETHROTTLED_LAYOUT_WORKER_URL` enables the private Docling PDF worker. Build
+and start the `layout` profile with `docker-compose.agents.yml`; model weights
+persist in `layout-models`. Native table detection works without this worker.
+
+`DETHROTTLED_EXA_API_KEY`, `DETHROTTLED_TAVILY_API_KEY` and
+`DETHROTTLED_PARALLEL_API_KEY` configure optional external discovery providers.
+Keys stay server-side; callers must explicitly select providers through `engines`.
+Default profiles remain keyless. See [setup and resource limits](DEPENDABLE-WORKFLOWS.md).

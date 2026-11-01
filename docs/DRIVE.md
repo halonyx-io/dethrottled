@@ -174,7 +174,9 @@ Inspect warnings for OCR, formulas, partial archives and limited page ranges.
 For retries of a potentially mutating sequence, use an explicit session and an
 `operation_id`. Repeat the identical payload to obtain a retained result rather
 than clicking again. A 409 unknown/in-progress outcome requires inspection.
-Replay protection is bounded to the current worker lifetime and journal capacity.
+Replay protection uses a durable journal with 24-hour retention and bounded
+capacity. Unknown outcomes remain blocked after restart; inspection is required
+before deciding whether another action is justified.
 
 Text and HTML steps accept `max_chars`; `limit` continues to mean the snapshot
 entry count. Snapshot selector_count, selector_index and ambiguous fields help
@@ -182,3 +184,10 @@ identify duplicate targets. Semantic hints supplement explicit CSS selectors.
 
 MCP browser screenshots are native image blocks with structured metadata. REST
 and the internal API retain their base64 image fields for existing clients.
+
+Version 0.7 adds `frame` for locator actions inside allowed iframes, `tabs` and
+`switch_tab` for popups, and bounded `history` of action outcomes. `network`
+accepts chunked text/JSON bodies and checks decoded size. `checkpoint` retains
+cookies, localStorage, IndexedDB and active-page sessionStorage for restart
+recovery; other tabs and live DOM are excluded. Close the session to delete its
+checkpoint. See [scope, limits and recovery details](DEPENDABLE-WORKFLOWS.md#browser-recovery-and-scope).

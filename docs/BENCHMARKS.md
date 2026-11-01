@@ -1,5 +1,12 @@
 # Dethrottled benchmark: szbox and q6a
 
+For the newer 1 November 2026 coverage comparison, see the
+[0.6 → 0.7 report](../evaluations/dependable/results/2026-11-01/REPORT.md):
+99/110 → 109/110 mechanical checks, with controlled parser/browser checks
+improving from 22/30 to 30/30. The report includes raw evidence and limitations;
+these are not general answer-accuracy or paid-provider superiority scores.
+The historical host-performance comparison below is a separate experiment.
+
 Recorded 4 October 2026. This is a paired run of the same Dethrottled source
 and pinned Python dependency set on x86_64 and ARM64. These are observed
 results, not service-level guarantees. Public search engines and websites can

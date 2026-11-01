@@ -149,5 +149,5 @@ Protected database/config backups and rollback images were created before deploy
    a separately operated OpenClaw gateway has loaded.
 
 The raw evidence, frozen task expectations, earlier unsuccessful runs, agent tool
-traces and operational checks are included in the accompanying archive. There has
-been no GitHub push or PR publication in this run.
+traces and operational checks are included in [the accompanying archive](evidence.zip).
+Publication of this evidence does not change the measurement limitations above.

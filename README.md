@@ -181,3 +181,11 @@ iframe/popup control, broader browser state recovery, research coverage ledgers
 and explicitly selected optional discovery providers. See
 [dependable workflows](docs/DEPENDABLE-WORKFLOWS.md) for agent behavior and setup,
 and [recorded checks](evaluations/dependable/README.md) for measurement limits.
+
+The [0.6 → 0.7 report](evaluations/dependable/results/2026-11-01/REPORT.md)
+records 99/110 → 109/110 mechanical checks, including controlled parser/browser
+checks improving from 22/30 to 30/30. These single-run observations are not a
+general answer-accuracy score or evidence of paid-provider superiority.
+[Raw evidence](evaluations/dependable/results/2026-11-01/evidence.zip) and
+[machine-readable totals](evaluations/dependable/results/2026-11-01/summary.json)
+are included.

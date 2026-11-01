@@ -49,6 +49,9 @@ sets the maximum acceptable cache age in seconds.
 `news` (web/news), `thorough` (web/Mwmbl), or `academic`
 (web/Crossref/OpenAlex/arXiv). Explicit comma-separated `engines` overrides
 that selection: `web`, `news`, `mwmbl`, `crossref`, `openalex`, `arxiv`.
+Optional `exa`, `tavily`, and `parallel` sources require server-side keys and
+explicit selection; default profiles never call those metered providers.
+Capabilities reports their configuration, and attempts report individual failures.
 Legacy `engines: "auto"` selects web. News is no longer fetched for every
 ordinary web query. `site:` and `-site:` constraints apply after all merges.
 
@@ -59,6 +62,13 @@ lexical order. `prefer_domains` is an explicit list of preferred hosts.
 `recency` is bounded to 0–1. `rerank: true` is rejected: neural reranking
 remains disabled because the local evaluation did not show a quality gain.
 Search limits are 1–10; invalid controls receive 422.
+
+Version 0.7 adds `document_mode=auto|native|layout` on PDF fetches, retained
+document reparsing, and fetch jobs; structured cells and page boxes are available
+through `inspect_document`. Research defaults to thorough discovery and returns
+`coverage.facets` with unread sources, failed reads and suggested follow-ups.
+Those retrieval/lexical states never verify an answer. See
+[coverage and document workflows](DEPENDABLE-WORKFLOWS.md) for bounds and examples.
 
 The response is an array of rows with `url`, `title`, `snippet`,
 `publishedDate`, `engine`, `from_corpus`, and related metadata. The **first**
