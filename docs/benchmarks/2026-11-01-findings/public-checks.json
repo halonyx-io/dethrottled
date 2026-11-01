@@ -1,0 +1,16 @@
+{
+  "version": "0.9.0",
+  "tools": 20,
+  "all_assertions_passed": true,
+  "checks": [
+    "workflow hash",
+    "20 strict tool schemas",
+    "unknown category/raw rejected",
+    "MCP-to-REST evidence continuity",
+    "site coverage ledger",
+    "fresh discovery",
+    "local speech through public MCP",
+    "public browser checkpoint and cleanup",
+    "research coverage fields"
+  ]
+}

@@ -151,7 +151,9 @@ async def upstream(
     try:
         await asyncio.wait_for(SLOTS.acquire(), timeout=0.1)
     except asyncio.TimeoutError:
-        return JSONResponse({'error': 'busy'}, status_code=429, headers={'Retry-After': '5'})
+        return JSONResponse({'error': 'busy', 'reason': 'rest_gateway_busy',
+                             'limiter': 'rest_gateway', 'retryable': True}, status_code=429,
+                            headers={'Retry-After': '5', 'X-Dethrottled-Limiter': 'rest_gateway'})
     try:
         timeout = 240.0
         if path == '/drive' and payload:
@@ -173,7 +175,11 @@ async def upstream(
             except ValueError:
                 pass
         return Response(content, status_code=response.status_code,
-                        media_type='application/json', headers={'Cache-Control': 'no-store'})
+                        media_type='application/json', headers={
+                            'Cache-Control': 'no-store',
+                            **{name: response.headers[name] for name in
+                               ('Retry-After', 'X-Dethrottled-Limiter')
+                               if name in response.headers}})
     except httpx.HTTPError:
         return JSONResponse({'error': 'backend unavailable'}, status_code=502)
     finally:

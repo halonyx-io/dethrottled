@@ -169,3 +169,38 @@ to download weights. `/v2/status.workers` probes the configured workers with a
 before releasing admission. This reloads speech weights per job and can increase
 latency. Layout automatically tries OCR on scanned PDF tables; explicit OCR and
 native-mode choices are respected. Read `MEASURED-IMPROVEMENTS.md` for evidence.
+
+## Automatic challenge recovery (0.9)
+
+When a read observes a supported challenge signal, it tries the configured headed
+browser after the cheaper tiers. No solver service, model API or new key is used.
+`render=never` and the fast profile still prohibit browser escalation.
+`headed_fallback=true` additionally requests this tier for other acquisition failures.
+A detected challenge is permitted one headed attempt after the ordinary soft page
+budget; `DETHROTTLED_CHALLENGE_WAIT_SECONDS` defaults to 15 for its polling deadline.
+Individual navigation/HTTP requests retain their own timeouts. A challenge that
+persists is reported unresolved; it is never counted as article content.
+
+Sessions use `auto-reader-<hash>` identities scoped to the evidence namespace,
+exact host and public-target policy. Existing session limits, expiry and eviction
+apply. Successful reads checkpoint browser state, and resumed reads can restore
+it. Cookies remain inside that browser identity; they are not exported to curl or
+shared across callers. Public subframes may load for challenge execution; top-level
+and popup scope and private-network restrictions remain in force.
+
+`quality=thin` preserves a short HTML result and its warnings without claiming
+normal coverage. Short successfully parsed structured documents remain valid.
+`acquisition_attempts` lists actual tiers, reasons and outcomes, including residual
+challenges. A skipped tier is not reported as attempted. The workflow recommends
+native browser pixels for an unresolved challenge and avoids blindly repeating the
+already-attempted acquisition ladder.
+
+MCP tool argument schemas now reject unknown fields. Use `categories`, not
+`category`, and `format=html`/`format=links`; `raw`/`links` remain REST aliases.
+The backend body models already reject unknown fields. A client that silently
+removes fields before sending them cannot be diagnosed by server-side validation;
+refresh/read its actual tool schema after upgrading.
+
+Public admission and research/gateway 429 responses identify the limiter. Rate
+window retry hints round up to the next boundary; busy hints are polling advice,
+not a claim that an active operation or crashed lease expires at that instant.

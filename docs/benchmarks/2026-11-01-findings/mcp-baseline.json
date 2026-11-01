@@ -1,0 +1,16 @@
+[
+  {
+    "tool": "search",
+    "accepted": true,
+    "result": {
+      "stub_backend_reached": true
+    }
+  },
+  {
+    "tool": "fetch",
+    "accepted": true,
+    "result": {
+      "stub_backend_reached": true
+    }
+  }
+]

@@ -424,3 +424,24 @@ fixture generation, scoring rules and evidence-recording methodology. This
 workflow is intended to guide autonomous agents, while preserving direct tools
 for deliberate shortcuts and recovery. Its presence is not proof that every
 model/client will follow it successfully.
+
+## 0.9 result and error refinements
+
+HTML results below the ordinary content threshold can be returned as
+`quality: "thin"` with text, retained evidence and warnings. They are not silently
+promoted to `ok`; structured files retain their existing treatment. Blank prose
+and detected interstitials do not count as successful text extraction.
+`acquisition_attempts` records only tiers actually called, with `tier`, `reason`,
+`outcome`, and challenge provider when observed. `browser_recovery` adds polling,
+checkpoint and restoration metadata when the headed read succeeds.
+
+Default reads automatically try bounded same-browser recovery after a detected
+challenge. Explicit rendering restrictions win. Residual challenges remain failures
+with workflow actions for inspection. Success means recovered content, not a solved
+question or a guarantee that every bot wall can be bypassed.
+
+Use `format` as the cross-transport fetch spelling. Capabilities advertise REST
+`raw`/`links` under `compatibility_fields.rest_fetch_aliases`. Unknown MCP arguments
+return tool errors before the backend is invoked; REST body typos return 422.
+Busy responses retain HTTP 429 and add machine-readable reasons/limiter identity;
+clients should distinguish polling from rate-window waiting.

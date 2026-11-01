@@ -221,6 +221,10 @@ Malay or French queries, but an empty result is not evidence of absence. Set rec
 explicit control; explicit render=never and OCR choices are respected.
 Read each result's workflow, warnings, source_partial and truncation fields. quality=ok
 means text was extracted, not that the answer is present or the source is complete.
+quality=thin retains short evidence; coverage is unverified. Preserve its warnings.
+acquisition_attempts records the tiers actually tried and their observed outcomes.
+Detected challenges automatically try a bounded headed-browser recovery when rendering
+is allowed. Browser state is scoped to the caller and exact host; render=never wins.
 workflow.next_actions contains tool names and exact arguments for justified follow-ups;
 choose those relevant to the question, rather than following every suggestion blindly.
 Use read_document with document_id for another focus or next_offset. For later PDF pages
@@ -270,7 +274,19 @@ available for deliberate shortcuts and stronger acquisition when the task justif
 """
 
 
-mcp = FastMCP(
+class StrictFastMCP(FastMCP):
+    """Validate unexpected tool arguments before the SDK can silently drop them."""
+    def add_tool(self, fn, *args, **kwargs):
+        super().add_tool(fn, *args, **kwargs)
+        name = kwargs.get("name") or (args[0] if args else None) or fn.__name__
+        tool = self._tool_manager.get_tool(name)
+        model = tool.fn_metadata.arg_model
+        model.model_config["extra"] = "forbid"
+        model.model_rebuild(force=True)
+        tool.parameters = model.model_json_schema(by_alias=True)
+
+
+mcp = StrictFastMCP(
     "dethrottled MCP",
     # engine_*, not web_*: OpenClaw ships built-in web_search and web_fetch, and
     # a same-named MCP tool is a needless collision in an agent's tool list.
@@ -356,6 +372,8 @@ async def fetch(
     select PDF pages; ocr_language selects installed Tesseract language data.
     Bounded recovery is automatic; recovery=manual leaves acquisition to you.
     Follow workflow.next_actions for exact continuation/render/page/row calls.
+    Detected challenges use the headed browser automatically; headed_fallback also
+    requests it for other failures. Use format=html or format=links, not REST aliases.
     quality=ok is extraction success, not proof the answer exists. If truncated,
     use read_document with next_offset; for uncertain OCR inspect source pixels
     when retained, or drive/capture the source. Preserve partial-read warnings.

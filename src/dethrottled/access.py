@@ -11,6 +11,7 @@ import contextvars
 import hashlib
 import hmac
 import json
+import math
 import os
 import sqlite3
 import threading
@@ -120,7 +121,7 @@ class Admission:
                 if active >= self.global_limit:
                     raise AccessError("service_busy", 429)
                 if used and used[0] >= self.per_minute:
-                    raise AccessError("rate_limited", 429, max(1, int(60 - now % 60)))
+                    raise AccessError("rate_limited", 429, max(1, math.ceil(60 - now % 60)))
                 db.execute("INSERT INTO windows VALUES(?,?,1) ON CONFLICT(client,minute) "
                            "DO UPDATE SET used=used+1", (namespace, minute))
                 # Reap leases left by crashed adapters; all adapter timeouts are smaller.
@@ -183,13 +184,21 @@ class AccessMiddleware:
                 raise
             admission_ms = (time.monotonic() - admission_started) * 1000
         except AccessError as exc:
-            body = json.dumps({"error": exc.code, "request_id": request_id}).encode()
+            limiter = ("request_rate" if exc.code == "rate_limited" else
+                       "caller_concurrency" if exc.code == "caller_busy" else
+                       "global_concurrency" if exc.code == "service_busy" else "access")
+            body = json.dumps({"error": exc.code, "reason": exc.code, "limiter": limiter,
+                               "retryable": exc.status in {429, 503},
+                               "retry_after_seconds": exc.retry_after,
+                               "retry_kind": "window" if exc.code == "rate_limited" else "poll",
+                               "request_id": request_id}).encode()
             response_headers = [(b"content-type", b"application/json"),
                                 (b"x-request-id", request_id.encode())]
             if exc.status == 401:
                 response_headers.append((b"www-authenticate", b"Bearer"))
             if exc.status in {429, 503}:
                 response_headers.append((b"retry-after", str(exc.retry_after).encode()))
+                response_headers.append((b"x-dethrottled-limiter", limiter.encode()))
             await send({"type": "http.response.start", "status": exc.status,
                         "headers": response_headers})
             await send({"type": "http.response.body", "body": body})

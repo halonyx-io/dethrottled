@@ -1,5 +1,9 @@
 # Dethrottled
 
+Version 0.9 adds automatic challenge recovery in the existing headed browser,
+caller-scoped clearance checkpoints, strict MCP arguments and explicit thin-result
+quality. [Bot findings checked against code and tests](docs/REVIEWED-BOT-FINDINGS.md).
+
 Version 0.8 adds fair renderer admission, supervised heavy workers, measured
 MSG/XLSB fallback, scanned-table OCR layout and multilingual corpus retrieval.
 See [measurements and limitations](docs/MEASURED-IMPROVEMENTS.md).

@@ -14,6 +14,10 @@ Malay or French queries, but an empty result is not evidence of absence. Set rec
 explicit control; explicit render=never and OCR choices are respected.
 Read each result's workflow, warnings, source_partial and truncation fields. quality=ok
 means text was extracted, not that the answer is present or the source is complete.
+quality=thin retains short evidence; coverage is unverified. Preserve its warnings.
+acquisition_attempts records the tiers actually tried and their observed outcomes.
+Detected challenges automatically try a bounded headed-browser recovery when rendering
+is allowed. Browser state is scoped to the caller and exact host; render=never wins.
 workflow.next_actions contains tool names and exact arguments for justified follow-ups;
 choose those relevant to the question, rather than following every suggestion blindly.
 Use read_document with document_id for another focus or next_offset. For later PDF pages
@@ -93,8 +97,10 @@ def guidance(row, *, offset=0, focused=False, rendered_allowed=True):
             )
         )
 
-    if row.get("quality") == "failed":
-        if url and rendered_allowed:
+    if row.get("quality") in {"failed", "thin"}:
+        headed_attempted = any(a.get("tier") == "headed"
+                               for a in row.get("acquisition_attempts", []))
+        if url and rendered_allowed and not headed_attempted:
             action(
                 "fetch",
                 "Reading failed; try explicit rendered acquisition if appropriate.",
@@ -109,7 +115,8 @@ def guidance(row, *, offset=0, focused=False, rendered_allowed=True):
                 "Inspect the source interactively if reading cannot acquire it.",
                 url=url,
                 steps=[{"action": "snapshot"}],
-                screenshot="failure",
+                screenshot=("always" if any(a.get("outcome") == "challenge"
+                            for a in row.get("acquisition_attempts", [])) else "failure"),
             )
     if doc and not focused:
         end = offset + len(row.get("content", ""))

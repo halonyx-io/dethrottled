@@ -644,12 +644,13 @@ def _extract_once(url: str, max_chars: int, allow_ocr: bool = True,
                 # fetch_and_extract now reports which tier it was last
                 # standing on when it gave up; a hardcoded None here would
                 # throw that away and leave a tier-only consumer with nothing.
-                "tier": result.get("tier"), "cached": result.get("cached", False)}
+                "tier": result.get("tier"), "cached": result.get("cached", False),
+                "acquisition_attempts": result.get("acquisition_attempts", [])}
     row = {
         "url": url,
         "content": result["text"],
         "content_type": MIME.get(result.get("content_type", ""), "text/html"),
-        "quality": "ok",
+        "quality": result.get("quality", "ok"),
         # `tier` says HOW the content was obtained: which fetch tier, which
         # extractor. "It worked" and "it worked on the fourth try through a
         # renderer" are different levels of confidence in the same text.
@@ -670,6 +671,8 @@ def _extract_once(url: str, max_chars: int, allow_ocr: bool = True,
         "warnings": result.get("warnings", []),
         "_index_text": result.get("_index_text", result.get("text", "")),
         "acquisition": result.get("acquisition", {}),
+        "browser_recovery": result.get("browser_recovery"),
+        "acquisition_attempts": result.get("acquisition_attempts", []),
         "extraction": result.get("extraction", {}),
         "source_partial": bool(result.get("extraction", {}).get("partial")),
         "final_url": result.get("url", url),
@@ -863,7 +866,8 @@ def v2_capabilities():
         "client_contract": {
             "workflow_sha256": hashlib.sha256(INSTRUCTIONS.encode()).hexdigest(),
             "preserve_fields": ["document_id", "document_sha256", "workflow", "warnings",
-                                "source_partial", "truncated", "extraction", "next_offset"],
+                                "source_partial", "truncated", "extraction", "next_offset",
+                                "acquisition_attempts"],
             "mcp_images": "forward native image content blocks to vision-capable models",
             "startup_check": "Compare initialize.instructions hash with workflow_sha256; "
                              "refresh tools/list after service upgrades.",
@@ -888,6 +892,7 @@ def v2_capabilities():
             ("direct", True),
             ("tls", fetcher.ENABLE_TLS),
             ("crawl4ai", bool(fetcher.CRAWL4AI_URL)),
+            ("headed", bool(fs.BROWSER_SEARCH_URL)),
             ("jina-reader", fetcher.ENABLE_JINA),
         ) if on],
         # Browser MANIPULATION, as distinct from the fetch ladder above. /fetch
@@ -952,7 +957,8 @@ def v2_capabilities():
             "document_max_bytes": fetcher.DOC_MAX_BYTES,
         },
         "workflow": {"instructions": INSTRUCTIONS, "automatic_recovery": [
-            "transport/format/OCR ladder", "navigation-only rendered retry",
+            "transport/format/OCR ladder", "scoped headed challenge recovery",
+            "navigation-only rendered retry",
             "up to two image/document asset attempts"],
             "next_actions": "Each read returns tool, endpoint, arguments, reason and prerequisites",
             "manual_control": "fetch recovery=manual; explicit render/OCR/ranges remain available"},
@@ -989,16 +995,14 @@ def v2_capabilities():
         # Every field accepted beyond the core, and nothing that is not. An
         # under-declared field is as bad as an over-declared one: a client that
         # trusts this drops a refinement the engine would have used.
+        "compatibility_fields": {"rest_fetch_aliases": ["raw", "links"],
+                                 "mcp_fetch": "Use format=html or format=links"},
         "optional_fields": {
-            # Only fields this engine actually honours. `engines` and
-            # `profile` are accepted for compatibility but change nothing --
-            # engines would reach one of five sources, profile is read
-            # nowhere -- and a declared field is a promise that sending it
-            # does something.
+            # Canonical cross-transport names; REST aliases are listed separately.
             "search": ["categories", "language", "rank", "engines", "profile",
                        "cache_mode", "max_age", "ranking", "prefer_domains",
                        "corpus", "recency"],
-            "fetch": ["raw", "links", "wait_for", "render_delay", "headed_fallback",
+            "fetch": ["format", "document_mode", "wait_for", "render_delay", "headed_fallback",
                       "cache_mode", "max_age", "focus", "response_format", "ocr_language",
                       "page_start", "page_end", "ocr_mode", "row_start", "row_end",
                       "sheet", "max_cell_chars", "recovery"],
@@ -1520,7 +1524,9 @@ _RESEARCH_REQUESTS = threading.BoundedSemaphore(2)
 def research(body: ResearchBody, background: BackgroundTasks):
     """Collect a cited, diverse evidence bundle without a language model."""
     if not _RESEARCH_REQUESTS.acquire(blocking=False):
-        raise HTTPException(status_code=429, detail="research busy")
+        raise HTTPException(status_code=429, detail={"reason": "research_busy",
+                            "limiter": "research", "retryable": True},
+                            headers={"Retry-After": "2", "X-Dethrottled-Limiter": "research"})
     started = time.monotonic()
     try:
         if any(not query.strip() or len(query) > 500 for query in body.queries):

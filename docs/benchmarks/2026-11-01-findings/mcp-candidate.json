@@ -1,0 +1,16 @@
+{
+  "cases": [
+    {
+      "tool": "search",
+      "rejected": true,
+      "error": "Error executing tool search: 1 validation error for searchArguments\ncategory\n  Extra inputs are not permitted [type=extra_forbidden, input_value='news', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden"
+    },
+    {
+      "tool": "fetch",
+      "rejected": true,
+      "error": "Error executing tool fetch: 1 validation error for fetchArguments\nraw\n  Extra inputs are not permitted [type=extra_forbidden, input_value=True, input_type=bool]\n    For further information visit https://errors.pydantic.dev/2.13/v/extra_forbidden"
+    }
+  ],
+  "valid_backend_calls": 1,
+  "strict_tool_schemas": 20
+}

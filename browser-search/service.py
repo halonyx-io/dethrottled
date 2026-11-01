@@ -423,6 +423,16 @@ async def _public_network_target(url: str) -> bool:
         return False
 
 
+def _top_level_navigation(request):
+    if not request.is_navigation_request():
+        return False
+    try:
+        return request.frame == request.frame.page.main_frame
+    except Exception:
+        # A navigation with no inspectable frame must not weaken origin scope.
+        return True
+
+
 async def _make_drive_state(browser, allowed_hosts: list[str], public_only=False,
                             storage_state=None, session_storage=None) -> dict:
     options = {"storage_state": storage_state} if storage_state else {}
@@ -439,7 +449,7 @@ async def _make_drive_state(browser, allowed_hosts: list[str], public_only=False
                              "__restoreMarker": "__dth_" + secrets.token_hex(12)}))
     if public_only or allowed_hosts:
         async def public_route(route, request):
-            if request.is_navigation_request() and not _host_allowed(request.url, allowed_hosts):
+            if _top_level_navigation(request) and not _host_allowed(request.url, allowed_hosts):
                 await route.abort("blockedbyclient")
             elif not public_only or await _public_network_target(request.url):
                 await route.continue_()

@@ -10,7 +10,7 @@ order, HTTP/2 fingerprinting, JA4 -- were chasing a pre-challenge gap that did
 not exist. Every one of those responses was in fact a Cloudflare challenge
 document, and a real Chrome on the same address received the identical 403.
 
-So this is not a thing to defeat. It is a thing to report accurately.
+Classify challenges accurately before bounded automatic browser recovery.
 """
 import pytest
 
@@ -85,7 +85,7 @@ def test_missing_headers_are_survivable():
 
 def test_reason_names_a_challenge_plainly():
     reason = f._http_reason("", 403, {"cf-mitigated": "challenge"}, "")
-    assert reason == "challenge_needs_a_human"
+    assert reason == "challenge_detected"
 
 
 def test_reason_keeps_the_status_for_a_real_refusal():
@@ -96,7 +96,7 @@ def test_reason_keeps_the_status_for_a_real_refusal():
 def test_the_prefix_identifies_the_tier():
     assert f._http_reason("tls_", 403, {}, REAL_FORBIDDEN) == "tls_http_403"
     assert f._http_reason("tls_", 403, {"cf-mitigated": "challenge"},
-                          "") == "tls_challenge_needs_a_human"
+                          "") == "tls_challenge_detected"
 
 
 # ── how the ladder treats it ────────────────────────────────────────────────
@@ -113,8 +113,8 @@ def test_a_challenge_does_not_rest_a_per_host_tier():
     end-to-end extraction from 87% to 67%."""
     f._tier_rest.clear()
     try:
-        f.tier_refused("direct", "challenge_needs_a_human")
-        f.tier_refused("tls", "tls_challenge_needs_a_human")
+        f.tier_refused("direct", "challenge_detected")
+        f.tier_refused("tls", "tls_challenge_detected")
         assert f.tier_resting("direct") is False
         assert f.tier_resting("tls") is False
     finally:

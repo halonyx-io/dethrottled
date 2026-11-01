@@ -32,6 +32,7 @@ The fetch ladder does not request or consult robots.txt.
 
 from __future__ import annotations
 
+import hashlib
 import os
 import re
 import threading
@@ -46,6 +47,7 @@ from urllib.parse import urljoin, urlparse
 import requests
 
 from . import __version__
+from .challenges import classify as challenge_kind
 from .content import decode_html, page_details, short_text
 
 _READ_OPTIONS = ContextVar("read_options", default=MappingProxyType({}))
@@ -421,56 +423,18 @@ def _reader_reported_error(text: str) -> str:
     return match.group(1) if match else ""
 
 
-# Markers of an interactive challenge, as opposed to a refusal.
-#
-# The distinction matters more than it looks. A 403 reads as "you are not
-# allowed", and callers act on that: they stop asking, or they go looking for a
-# block that is not there. A managed challenge is a different fact -- the site
-# is willing to serve the page to whoever can run its JavaScript and, at the
-# end of it, tick a box.
-#
-# Measured on four sites that were previously recorded as flat 403s: every one
-# returned a `cf-mitigated: challenge` header, a "Just a moment..." document
-# and challenge-platform script. A real Chrome on the same address got exactly
-# the same 403 -- the only difference was that it could execute the challenge,
-# and even then it ended at an interactive checkbox.
-#
-# So this is not something to defeat. It is something to REPORT accurately, so
-# nobody spends an afternoon tuning header order at a problem that was never
-# about headers.
-_CHALLENGE_MARKERS = (
-    "just a moment",
-    "cf-challenge",
-    "challenge-platform",
-    "verifying you are human",
-    "performing security verification",
-    "enable javascript and cookies to continue",
-)
-
-
+# Classify the interstitial, then attempt browser recovery within the read policy.
 def _is_challenge(status: int, headers, body: str) -> bool:
-    """Is this an interactive challenge rather than a refusal?
-
-    The `cf-mitigated` header is authoritative when present; the body markers
-    catch vendors that do not set it. Bounded to the first 8KB because a
-    challenge document is small and scanning a whole page would be wasteful.
-    """
-    try:
-        mitigated = (headers or {}).get("cf-mitigated", "")
-    except Exception:
-        mitigated = ""
-    if "challenge" in str(mitigated).lower():
+    if status in {403, 429, 503} and (body or "")[:200].lower().lstrip().startswith(
+            "just a moment"):
         return True
-    if status not in (403, 429, 503):
-        return False
-    head = (body or "")[:8192].lower()
-    return any(marker in head for marker in _CHALLENGE_MARKERS)
+    return bool(challenge_kind(body, headers))
 
 
 def _http_reason(prefix: str, status: int, headers, body: str) -> str:
     """The reason string for a non-200, told apart properly."""
     if _is_challenge(status, headers, body):
-        return "%schallenge_needs_a_human" % prefix
+        return "%schallenge_detected" % prefix
     return "%shttp_%d" % (prefix, status)
 
 
@@ -1035,6 +999,9 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
         hit = cache.get("extract", url)
         acquisition = (hit or {}).get("acquisition", {})
         compatible = not render_first or acquisition.get("rendered", False)
+        if hit is not None and (challenge_kind(hit.get("text", "")) or
+                                not hit.get("text", "").strip()):
+            compatible = False
         requested_wait = _READ_OPTIONS.get().get("wait_for", "")
         if requested_wait:
             compatible = compatible and acquisition.get("wait_for") == requested_wait
@@ -1066,6 +1033,9 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
         if scanned and os.getenv("DETHROTTLED_LAYOUT_WORKER_URL"):
             compatible = compatible and acquisition.get("scan_layout_revision") == 1
         if hit is not None and compatible:
+            if hit.get("reason", "").startswith("thin, best available"):
+                hit["quality"] = "thin"
+            hit["acquisition_attempts"] = [{"tier": "cache", "outcome": "hit", "reason": ""}]
             hit["cached"] = True
             _tier_stats["cache"] += 1
             return _clip(hit, max_chars)
@@ -1103,7 +1073,9 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
         tiers.append(("tls", lambda: _tier_tls(url)))
     if allow_render and CRAWL4AI_URL and CRAWL4AI_BUDGET != 0:
         tiers.append(("crawl4ai", lambda: _tier_crawl4ai(url)))
-    if allow_render and _READ_OPTIONS.get().get("headed_fallback"):
+    if allow_render and os.getenv("DETHROTTLED_BROWSER_SEARCH_URL"):
+        tiers.append(("headed", lambda: _tier_headed(url)))
+    elif allow_render and _READ_OPTIONS.get().get("headed_fallback"):
         tiers.append(("headed", lambda: _tier_headed(url)))
     if ENABLE_JINA:
         tiers.append(("jina-reader", lambda: _tier_jina_reader(url)))
@@ -1128,7 +1100,11 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
     budget = PAGE_BUDGET if page_budget is None else page_budget
     budget_started = time.time()
 
+    attempts = []
+
     def finish(out):
+        # Recheck old cached interstitials on the read path as well.
+        out["acquisition_attempts"] = [dict(a) for a in attempts]
         out["schema_version"] = 3
         rendered = out.get("tier") in {"crawl4ai", "headed"}
         out["acquisition"] = {"rendered": rendered,
@@ -1201,7 +1177,11 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
     # Kept bound past the loop so a total failure can report which tier
     # it was last standing on, rather than reporting nothing at all.
     name = None
+    challenged = False
+    last_attempted = None
     for name, run in tiers:
+        if name == "headed" and not (challenged or _READ_OPTIONS.get().get("headed_fallback")):
+            continue
         # A resting tier is skipped without being asked. This is the smooth
         # transition: the ladder simply gets shorter for a while and the rungs
         # that still work carry the load.
@@ -1212,13 +1192,25 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
         # already running is allowed to finish, because killing a fetch that is
         # about to succeed wastes everything spent on it. This stops the NEXT
         # attempt, which is where a runaway page actually costs its minute.
-        if time.time() - budget_started > budget:
+        if time.time() - budget_started > budget and not (name == "headed" and challenged):
             if best is None:
-                reasons.append("%s: skipped, page budget of %.0fs spent"
-                               % (name, budget))
-            break
+                reasons.append("%s: skipped, page budget of %.0fs spent" % (name, budget))
+            continue
+        last_attempted = name
         payload, reason, final = run()
+        attempt = {"tier": name, "reason": reason, "outcome": "response" if payload else "failed"}
+        attempts.append(attempt)
         payload = payload if isinstance(payload, dict) else {}
+        detected = challenge_kind(payload.get("html") or (
+            "" if payload.get("structured") else payload.get("text") or ""))
+        reported_block = "anti-bot" in reason.lower() and "http 429" not in reason.lower()
+        if detected or "challenge" in reason or reported_block:
+            challenged = True
+            attempt.update(outcome="challenge", provider=detected or "unspecified")
+            if detected:
+                attempt["reason"] = reason or "challenge_detected:" + detected
+                reasons.append(name + ":" + attempt["reason"])
+                continue
         if _is_refusal(reason):
             tier_refused(name, reason)
         elif payload:
@@ -1262,11 +1254,12 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
                 continue
             result = _fx.extract(html, url=final, max_chars=CACHE_CHARS)
             if not result["ok"]:
-                small = short_text(html)
-                if small or (_READ_OPTIONS.get().get("format") in {"html", "links"}):
+                small = short_text(html).strip()
+                if len(small) >= 40 or (_READ_OPTIONS.get().get("format") in {"html", "links"}):
                     result = {"ok": True, "text": small, "tier": "short",
                               "title": "", "published": "", "chars": len(small)}
-            if result["ok"]:
+            if result["ok"] and (result.get("text", "").strip() or
+                                 _READ_OPTIONS.get().get("format") in {"html", "links"}):
                 # The source, only when asked for. finish() strips it before
                 # the cache write, so this never bloats the page cache.
                 source = {"html": html} if keep_html else {}
@@ -1285,6 +1278,8 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
                 reasons.append("%s:fetched_but_%s" % (name, result["reason"]))
                 continue
 
+        if payload.get("browser_recovery"):
+            candidate["browser_recovery"] = payload["browser_recovery"]
         # Structured payloads are never "thin". THIN_CHARS asks whether a page
         # gave up only a teaser, which is a question about HTML -- no later
         # tier is going to read a spreadsheet or a scan better than the parser
@@ -1292,17 +1287,21 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
         if (candidate["chars"] >= THIN_CHARS or payload.get("structured")
                 or _READ_OPTIONS.get().get("format") in {"html", "links"}
                 or candidate.get("content_status") == "image_content"):
+            attempt["outcome"] = "extracted"
             _tier_stats[name] += 1
             return finish(candidate)
 
         # Thin: keep it as a floor and let a later tier try to beat it, rather
         # than either discarding a real result or stopping on a teaser.
+        attempt["outcome"] = "thin"
         reasons.append("%s:thin/%d" % (name, candidate["chars"]))
         if best is None or candidate["chars"] > best["chars"]:
             best = candidate
 
     if best is not None:
         _tier_stats[best["tier"] + "-thin"] += 1
+        best["quality"] = "thin"
+        best["warnings"] = [*best.get("warnings", []), "thin_content; coverage_not_verified"]
         best["reason"] = "thin, best available: " + ", ".join(reasons)
         return finish(best)
 
@@ -1311,41 +1310,84 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
     # branch above already returned). `name` is the last tier the loop tried
     # before giving up -- the same "how far did it get" fact `tier` reports on
     # success, so a caller checking only `tier` is not left with nothing.
-    return {"ok": False, "text": "", "tier": name, "extractor": None,
+    return {"ok": False, "text": "", "tier": last_attempted, "extractor": None,
             "title": "", "published": "", "chars": 0, "url": url,
-            "reason": " | ".join(reasons), "cached": False}
+            "reason": " | ".join(reasons), "cached": False,
+            "acquisition_attempts": attempts}
 
 
 def _challenge_document(html: str) -> bool:
-    head = html[:20000].lower()
-    # Structural vendor markers, not a broad ban on articles discussing CAPTCHA.
-    return ("anomaly.js" in head or "challenge-platform" in head
-            or "cf-challenge" in head or "<title>just a moment" in head
-            or ("verify you are human" in head and len(short_text(html)) < 350))
+    return bool(challenge_kind(html))
+
+
+class _HeadedReadFailure(ValueError):
+    pass
 
 
 def _tier_headed(url: str) -> tuple:
     backend = os.environ.get("DETHROTTLED_BROWSER_SEARCH_URL", "").rstrip("/")
     if not backend or not _HEADED_READS.acquire(timeout=0.1):
         return {}, "headed_unavailable_or_busy", url
-    try:
-        response = requests.post(backend + "/drive", json={
-            "url": url, "close_session": True, "screenshot": "never",
-            "public_only": _READ_OPTIONS.get().get("public_only", False),
-            "allowed_hosts": [urlparse(url).hostname], "timeout_ms": 12000,
-            "steps": ([{"action": "wait_for", "selector": _READ_OPTIONS.get()["wait_for"],
-                         "ms": 5000}] if _READ_OPTIONS.get().get("wait_for") else
-                        [{"action": "wait", "ms": 700}]) +
-                       [{"action": "html", "selector": "body", "limit": 200}],
-        }, timeout=15)
+    # Exact-host, caller-scoped browser identity. Never export cookies to another
+    # transport or share clearance state across public clients.
+    options = _READ_OPTIONS.get()
+    host = urlparse(url).hostname
+    key = "|".join((str(options.get("admission_key", "local")), host or "",
+                    str(options.get("public_only", False))))
+    session = "auto-reader-" + hashlib.sha256(key.encode()).hexdigest()[:32]
+    started = time.monotonic()
+    deadline = started + float(os.getenv("DETHROTTLED_CHALLENGE_WAIT_SECONDS", "15"))
+    body = {"session": session, "screenshot": "never", "allowed_hosts": [host],
+            "public_only": options.get("public_only", False), "timeout_ms": 12000}
+    read = {"action": "html", "selector": "html", "max_chars": 120000}
+
+    def drive(steps, navigate=False):
+        response = requests.post(backend + "/drive", json={**body,
+            **({"url": url} if navigate else {}), "steps": steps}, timeout=15)
         response.raise_for_status()
-        data = response.json()
-        if not data.get("ok"):
-            return {}, "headed_read_failed", url
-        html = data["steps"][-1].get("data") or ""
-        if isinstance(html, dict):
-            html = html.get("html", "")
-        return {"html": html}, "", data.get("final", {}).get("url") or url
+        value = response.json()
+        if not value.get("ok"):
+            failed = next((step for step in value.get("steps", []) if not step.get("ok")), {})
+            raise _HeadedReadFailure("headed_step_failed:" + str(failed.get("action", "unknown"))
+                                     + ":" + str(failed.get("reason") or "drive_failed")[:200])
+        return value
+
+    try:
+        wait_for = options.get("wait_for")
+        steps = ([{"action": "wait_for", "selector": wait_for, "ms": 5000}]
+                 if wait_for else [{"action": "wait", "ms": 700}]) + [read]
+        data = drive(steps, navigate=True)
+        polls = 0
+        while True:
+            html = data["steps"][-1].get("data") or ""
+            if isinstance(html, dict):
+                html = html.get("html", "")
+            vendor = challenge_kind(html)
+            if not vendor:
+                break
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                return {}, "headed_challenge_unresolved:" + vendor, url
+            data = drive([{"action": "wait", "ms": min(1000, max(1, int(remaining * 1000)))},
+                          read])
+            polls += 1
+        # Checkpoints retain same-browser state across worker restarts. A failed
+        # checkpoint must not discard acquired evidence or export credentials.
+        checkpointed = True
+        try:
+            drive([{"action": "checkpoint"}])
+        except (requests.RequestException, ValueError):
+            checkpointed = False
+        return {"html": html,
+                "clipped": bool(data["steps"][-1].get("truncated")),
+                "browser_recovery": {
+            "restored_from_checkpoint": bool(data.get("session", {}).get(
+                "restored_from_checkpoint")),
+            "challenge_polls": polls, "checkpointed": checkpointed,
+            "elapsed_ms": int((time.monotonic() - started) * 1000)}}, "", (
+                data.get("final", {}).get("url") or url)
+    except _HeadedReadFailure as exc:
+        return {}, str(exc), url
     except (requests.RequestException, ValueError, KeyError, TypeError) as exc:
         return {}, "headed_" + type(exc).__name__, url
     finally:
