@@ -119,3 +119,12 @@ The default Compose project is keyless for search and fetch. Its
 `CRAWL4AI_TOKEN` is an internal renderer credential, not a paid API key and
 not a caller token. A hosted REST gateway and MCP bridge, if present, manage
 their own separate external bearer tokens. Neither is bundled in this image.
+
+## Worker audit and upgrade priorities
+
+The [1 November 2026 worker audit](../evaluations/worker-audit/2026-11-01/REPORT.md)
+records installed versions, functional probes, local limits and upgrade candidates.
+It distinguishes worker readiness from process liveness and proposes queue,
+OCR/layout, speech-quality and broad-format improvements. It also evaluates where
+an optional Rust document backend could help; no production upgrade or language
+migration was performed as part of the audit.
