@@ -360,7 +360,7 @@ def test_restart_marks_unfinished_jobs_interrupted_and_retains_completed_rows(tm
 
 
 def test_xlsx_does_not_silently_drop_uncached_formulas():
-    import openpyxl
+    openpyxl = pytest.importorskip("openpyxl")
 
     book = openpyxl.Workbook()
     book.active.append(["Input", "Formula"])
@@ -509,7 +509,7 @@ def test_csv_row_window_reaches_beyond_default_cap_and_reports_positions():
 
 
 def test_xlsx_sheet_and_row_selection_keeps_correct_context():
-    import openpyxl
+    openpyxl = pytest.importorskip("openpyxl")
 
     book = openpyxl.Workbook()
     book.active.title = "Other"

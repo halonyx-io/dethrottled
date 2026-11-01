@@ -98,6 +98,7 @@ class Request:
         )
 
 
+@pytest.mark.skipif(not hasattr(os, "killpg"), reason="Linux worker process-group lifecycle")
 @pytest.mark.parametrize("failure", ["timeout", "disconnect", "cancel"])
 def test_child_is_killed_before_worker_slot_is_released(runtime, tmp_path, failure):
     pidfile = tmp_path / "pid"
@@ -162,6 +163,7 @@ def test_readiness_exposes_unreachable_and_unconfigured(monkeypatch):
 
 
 def test_backfill_preserves_original_index_and_resumes(tmp_path, monkeypatch):
+    pytest.importorskip("numpy")
     monkeypatch.setenv("DETHROTTLED_DATA_DIR", str(tmp_path))
     monkeypatch.setattr(
         corpus.Corpus, "_embed", lambda self, texts, **kw: [[1.0, 0.0]] * len(texts)
@@ -190,7 +192,7 @@ def test_fallback_requires_matching_signature():
 
 
 def test_scanned_layout_respects_ocr_disabled(monkeypatch):
-    import pymupdf
+    pymupdf = pytest.importorskip("pymupdf")
 
     from dethrottled import layout
 
@@ -266,6 +268,7 @@ def test_upgraded_readers_refresh_only_affected_cached_content(
     assert result["text"] == ("upgraded extraction" if refresh else "old extraction")
 
 
+@pytest.mark.skipif(not hasattr(os, "killpg"), reason="Linux supervisor uses POSIX process groups")
 @pytest.mark.parametrize("mode", ["stop", "crash", "complete"])
 def test_backfill_native_child_is_supervised(mode):
     import sys
