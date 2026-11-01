@@ -68,4 +68,8 @@ def select(record, *, offset=0, limit=50, focus=""):
             "layout": "Text blocks use retained-text offsets; PDF text-layer boxes "
                       "use source page points and are not an OCR alignment.",
             "page_layout": record.get("metadata", {}).get("extraction", {}).get("pages", [])[:5],
+            "native_pdf_tables": record.get("metadata", {}).get("extraction", {}).get(
+                "native_pdf_tables", []),
+            "layout_tables": record.get("metadata", {}).get("extraction", {}).get(
+                "layout_tables", []),
             "answer_verified": False}

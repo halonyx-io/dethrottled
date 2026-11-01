@@ -218,7 +218,9 @@ def read_blob(data, kind, limit, *, allow_ocr=True, options=None, depth=0):
         return timed.captions(data, limit) if kind == "captions" else timed.transcribe(data, limit)
     metadata = {"warnings": [], "partial": False}
     if kind == "pdf":
-        return pdf_text(data, limit, allow_ocr, options)
+        from .layout import read_pdf
+        text, meta = pdf_text(data, limit, allow_ocr, options)
+        return read_pdf(data, text, meta, limit, options)
     if kind == "image":
         if not allow_ocr:
             raise ValueError("image_requires_ocr")

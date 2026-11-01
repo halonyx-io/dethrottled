@@ -23,6 +23,7 @@ import feedparser
 import requests
 
 from . import paths as _paths
+from . import providers
 from .content import constrained
 from .discovery import SOURCE_PROFILES, tls_search
 from .fetch import USER_AGENT, canonical_url
@@ -433,7 +434,7 @@ DRIVE_MAX_SESSIONS = int(os.environ.get("DETHROTTLED_DRIVE_MAX_SESSIONS", "8"))
 # A caller reading /v2/capabilities gets the truth whether or not the worker is
 # answering at that instant.
 DRIVE_ACTIONS = (
-    "download", "network", "checkpoint",
+    "download", "network", "checkpoint", "tabs", "switch_tab", "history",
     "goto", "click", "fill", "type", "press", "select", "check", "uncheck", "hover",
     "wait", "wait_for", "text", "html", "attr", "count", "snapshot", "url", "title",
 )
@@ -645,7 +646,7 @@ def search(query: str, *, max_items: int = 8, categories: str = "",
     started = time.time()
     sources = set(x.strip() for x in engines.split(",") if x.strip()) if engines else set(
         SOURCE_PROFILES.get(categories or profile, SOURCE_PROFILES["balanced"]))
-    seen, seen_titles, merged, per_source = set(), set(), [], {}
+    seen, merged, per_source = {}, [], {}
 
     def add(rows, tag):
         added = 0
@@ -656,21 +657,18 @@ def search(query: str, *, max_items: int = 8, categories: str = "",
             # Canonical, so one article is one row whatever query string or
             # mobile host it arrived under.
             key = canonical_url(url)
-            if not key or key in seen:
+            if not key:
                 continue
-
-            # And one story is one row however many sites carried it. A live
-            # run returned a Reuters wire piece from Channel News Asia, Yahoo
-            # Finance and US News: three real URLs, one article. The length
-            # guard is why "Home" and "News" do not collapse unrelated sites --
-            # they reduce to a single short word.
-            title = _title_key(row.get("title", ""))
-            if len(title) >= 25:
-                if title in seen_titles:
-                    continue
-                seen_titles.add(title)
-
-            seen.add(key)
+            row = dict(row)
+            provenance = row.setdefault("discovery", [{"provider": tag, "query": query}])
+            if key in seen:
+                for entry in provenance:
+                    if entry not in seen[key]["discovery"]:
+                        seen[key]["discovery"].append(entry)
+                continue
+            # Titles alone cannot prove syndication. Preserve independent URLs;
+            # research deduplicates mirrors using the actual extracted content.
+            seen[key] = row
             merged.append(row)
             added += 1
         per_source[tag] = per_source.get(tag, 0) + added
@@ -692,6 +690,12 @@ def search(query: str, *, max_items: int = 8, categories: str = "",
         tasks["specialist"] = _SOURCE_POOL.submit(
             searxng, query, max_items=max_items * 2, engines=",".join(specialists),
             cache=cache, language=language, timeout=8, diagnostics=source_reports["specialist"])
+    source_reports["providers"] = {}
+    for provider in providers.NAMES:
+        if provider in sources:
+            report = source_reports["providers"].setdefault(provider, {})
+            tasks[provider] = _SOURCE_POOL.submit(
+                providers.search, provider, query, max_items, report)
     for name, task in tasks.items():
         try:
             add(task.result(), name)
@@ -745,7 +749,7 @@ def search(query: str, *, max_items: int = 8, categories: str = "",
             for row in reputable_sweep(query, rotated, cache=cache):
                 key = row.get("url", "").split("?")[0].rstrip("/")
                 if key and key not in seen:
-                    seen.add(key)
+                    seen[key] = row
                     merged.append(row)
                     swept += 1
             per_source["reputable-sweep"] = swept
@@ -753,7 +757,7 @@ def search(query: str, *, max_items: int = 8, categories: str = "",
     merged = rank(merged, prefer_domains)
     if "news" in sources:
         merged = _blend_news(merged)
-    elif specialists and "web" in sources:
+    elif (specialists or sources.intersection(providers.NAMES)) and "web" in sources:
         groups = {}
         for row in merged:
             key = "web" if row.get("engine", "").startswith("web-") else row.get("engine")
@@ -781,7 +785,7 @@ def search(query: str, *, max_items: int = 8, categories: str = "",
         "junk_dropped": dropped,
         "swept": swept,
         "elapsed_ms": int((time.time() - started) * 1000),
-        "cost": "free",
+        "cost": "potentially_metered" if sources.intersection(providers.NAMES) else "free",
     }
     if log_fn:
         log_fn("    free-search '%s': %d results %s"

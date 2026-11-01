@@ -1035,7 +1035,8 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
             _READ_OPTIONS.get().get("page_end"))
         compatible = compatible and acquisition.get("ocr_mode", "auto") == (
             _READ_OPTIONS.get().get("ocr_mode", "auto"))
-        for option, default in (("row_start", 1), ("row_end", None), ("sheet", ""),
+        for option, default in (("document_mode", "auto"), ("row_start", 1),
+                                ("row_end", None), ("sheet", ""),
                                 ("max_cell_chars", None)):
             compatible = compatible and acquisition.get(option, default) == (
                 _READ_OPTIONS.get().get(option, default))
@@ -1046,6 +1047,8 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
         if render_first or requested_wait:
             compatible = compatible and (acquisition.get("render_delay") or 0) >= (
                 _READ_OPTIONS.get().get("render_delay", 0.5))
+        compatible = compatible and acquisition.get("layout_worker_configured", False) == bool(
+            os.getenv("DETHROTTLED_LAYOUT_WORKER_URL"))
         if hit is not None and compatible:
             hit["cached"] = True
             _tier_stats["cache"] += 1
@@ -1126,7 +1129,10 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
                               "row_start": _READ_OPTIONS.get().get("row_start", 1),
                               "row_end": _READ_OPTIONS.get().get("row_end"),
                               "sheet": _READ_OPTIONS.get().get("sheet", ""),
-                              "max_cell_chars": _READ_OPTIONS.get().get("max_cell_chars")}
+                              "max_cell_chars": _READ_OPTIONS.get().get("max_cell_chars"),
+                              "document_mode": _READ_OPTIONS.get().get("document_mode", "auto"),
+                              "layout_worker_configured": bool(
+                                  os.getenv("DETHROTTLED_LAYOUT_WORKER_URL"))}
         out.setdefault("retrieved_at", datetime.now(timezone.utc).isoformat())
         out.setdefault("cache_age_seconds", 0)
         out.setdefault("content_chars", len(out.get("text", "")))
@@ -1335,14 +1341,16 @@ def fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAULT
                       public_only: bool = False, ocr_language: str = "", ocr_mode: str = "auto",
                       page_start: int = 1, page_end: int | None = None,
                       row_start: int = 1, row_end: int | None = None, sheet: str = "",
-                      max_cell_chars: int | None = None, source_sink=None) -> dict:
+                      max_cell_chars: int | None = None, document_mode: str = "auto",
+                      source_sink=None) -> dict:
     """Read a URL with request-local rendering/target policy and bounded output."""
     options = dict(format=format, wait_for=wait_for, render_delay=render_delay,
                    headed_fallback=headed_fallback, public_only=public_only,
                    ocr_language=ocr_language, ocr_mode=ocr_mode,
                    page_start=page_start, page_end=page_end,
                    allow_ocr=allow_ocr, row_start=row_start, row_end=row_end,
-                   sheet=sheet, max_cell_chars=max_cell_chars, source_sink=source_sink)
+                   sheet=sheet, max_cell_chars=max_cell_chars, document_mode=document_mode,
+                   source_sink=source_sink)
     token = _READ_OPTIONS.set(options)
     try:
         if options.get("public_only"):

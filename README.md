@@ -173,3 +173,11 @@ MIT — see [LICENSE](LICENSE).
 Maintained by [Halonyx](https://github.com/halonyx-io).
 
 Agent integrations receive an evidence-led workflow, concrete follow-up calls, and bounded automatic recovery. See [the API workflow](docs/API.md#evidence-led-agent-workflow-05) and [cold-agent evaluation](evaluations/agent-workflow/README.md) for behavior and validation limits.
+
+### Agent coverage and document recovery
+
+Version 0.7 adds PDF table cells, an optional local Docling layout worker,
+iframe/popup control, broader browser state recovery, research coverage ledgers
+and explicitly selected optional discovery providers. See
+[dependable workflows](docs/DEPENDABLE-WORKFLOWS.md) for agent behavior and setup,
+and [recorded checks](evaluations/dependable/README.md) for measurement limits.

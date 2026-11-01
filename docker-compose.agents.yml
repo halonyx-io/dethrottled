@@ -39,6 +39,16 @@ services:
         bind:
           create_host_path: false
     depends_on: [mcp]
+  docling-worker:
+    profiles: [layout]
+    build: ./docling-worker
+    image: dethrottled-docling:local
+    restart: unless-stopped
+    volumes: [layout-models:/models]
+    expose: ["19891"]
+    mem_limit: 8g
+    cpus: 4
+    pids_limit: 256
   media-worker:
     profiles: [media]
     build: ./media-worker
@@ -53,3 +63,4 @@ services:
 volumes:
   adapter-state:
   media-models:
+  layout-models:

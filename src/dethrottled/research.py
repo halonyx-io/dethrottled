@@ -61,6 +61,43 @@ def queries_for(question: str, supplied: list[str] | None = None) -> list[str]:
     return out
 
 
+def coverage_ledger(queries, searches, sources, skipped):
+    """Account for retrieval, never certify that lexical matches answer a question."""
+    read = {canonical_url(s.get("requested_url") or s["url"]): s for s in sources}
+    failed = {canonical_url(s.get("requested_url") or s["url"]): s for s in skipped}
+    facets = []
+    for index, query in enumerate(queries):
+        candidates = {canonical_url(r["url"]): r["url"] for r in searches[index]}
+        terms = {w.casefold() for w in _WORDS.findall(query) if len(w) > 2} - _STOP
+        evidence = []
+        for key, row in read.items():
+            if key not in candidates and index not in row.get("query_indexes", []):
+                continue
+            words = set(_WORDS.findall(row.get("content", "").casefold()))
+            evidence.append({"source_id": row["id"], "url": row["url"],
+                             "document_id": row.get("document_id"),
+                             "matched_terms": sorted(terms & words),
+                             "missing_terms": sorted(terms - words),
+                             "source_partial": bool(row.get("source_partial")),
+                             "excerpt_truncated": bool(row.get("truncated"))})
+        unread = [url for key, url in candidates.items() if key not in read and key not in failed]
+        failures = [failed[key] for key in candidates if key in failed]
+        state = ("evidence_available" if evidence else "read_failed" if failures
+                 else "unread" if unread else "no_candidates")
+        actions = ([{"tool": "fetch", "arguments": {"urls": unread[:3], "focus": query},
+                     "reason": "Discovered sources remain unread."}] if unread else [])
+        if not evidence:
+            actions.append({"tool": "search", "arguments": {"query": query, "profile": "thorough"},
+                            "reason": "No readable evidence for this facet; refine the query."})
+        facets.append({"query": query, "state": state, "candidates": len(candidates),
+                       "evidence": evidence, "unread": unread, "failed_or_duplicate": failures,
+                       "next_actions": actions, "answer_verified": False})
+    return {"method": "retrieval_and_lexical_accounting", "answer_verified": False,
+            "warning": ("Readable text and matched terms do not establish an answer, "
+                        "truth, agreement, or completeness."),
+            "facets": facets}
+
+
 def public_url(url: str) -> bool:
     """Do not let a search result turn research into a local-network fetch."""
     try:

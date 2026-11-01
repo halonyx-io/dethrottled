@@ -83,6 +83,7 @@ from . import extract as fx
 from . import fetch as fetcher
 from . import ocr as ocr_engine
 from . import paths as _paths
+from . import providers
 from . import rank as ranker
 from . import research as research_engine
 from . import search as fs
@@ -184,7 +185,8 @@ class SearchBody(BaseModel):
     @field_validator("engines")
     @classmethod
     def validate_sources(cls, value):
-        allowed = {"auto", "web", "news", "mwmbl", "crossref", "openalex", "arxiv"}
+        allowed = {"auto", "web", "news", "mwmbl", "crossref", "openalex", "arxiv",
+                   "exa", "tavily", "parallel"}
         if any(x.strip() not in allowed for x in value.split(",") if x.strip()):
             raise ValueError("supported sources: " + ", ".join(sorted(allowed)))
         return ",".join("web" if x.strip() == "auto" else x.strip()
@@ -277,6 +279,7 @@ class FetchBody(BaseModel):
     response_format: Literal["detailed", "concise"] = "detailed"
     evidence_namespace: str = Field(default="local", max_length=100)
     ocr_language: str = Field(default="", pattern=r"^[a-z_]*(?:\+[a-z_]+)*$", max_length=100)
+    document_mode: Literal["auto", "native", "layout"] = "auto"
     ocr_mode: Literal["auto", "always", "never"] = "auto"
     row_start: int = Field(default=1, ge=1, le=1048576)
     row_end: int | None = Field(default=None, ge=1, le=1048576)
@@ -304,6 +307,7 @@ class FetchBody(BaseModel):
 
 
 class SearchFetchBody(SearchBody):
+    document_mode: Literal["auto", "native", "layout"] = "auto"
     ocr_mode: Literal["auto", "always", "never"] = "auto"
     ocr_language: str = Field(default="", pattern=r"^[a-z_]*(?:\+[a-z_]+)*$", max_length=100)
     evidence_namespace: str = Field(default="local", max_length=100)
@@ -331,9 +335,17 @@ class ResearchBody(BaseModel):
     language: str = ""
     fresh: bool = False
     follow_assets: bool = True
+    engines: str = ""
+    profile: Literal["web", "balanced", "thorough", "academic", "news"] = "thorough"
     categories: str = ""
     response_format: Literal["detailed", "concise"] = "detailed"
     evidence_namespace: str = Field(default="local", max_length=100)
+
+
+    @field_validator("engines")
+    @classmethod
+    def validate_engines(cls, value):
+        return SearchBody.validate_sources(value)
 
 
 class DocumentReadBody(BaseModel):
@@ -348,6 +360,7 @@ class DocumentReadBody(BaseModel):
     max_cell_chars: int | None = Field(default=None, ge=1, le=1000000)
     page_start: int = Field(default=1, ge=1, le=100000)
     page_end: int | None = Field(default=None, ge=1, le=100000)
+    document_mode: Literal["auto", "native", "layout"] = "auto"
     ocr_mode: Literal["auto", "always", "never"] = "auto"
     ocr_language: str = Field(default="", pattern=r"^[a-z_]*(?:\+[a-z_]+)*$", max_length=100)
     offset: int = Field(default=0, ge=0)
@@ -434,6 +447,8 @@ class DriveStep(BaseModel):
     # wait_for  wait for `selector` to appear, up to `ms`
     # text      read the text of `selector` (or the whole body)
     action: str = Field(min_length=1, max_length=20)
+    frame: str = Field(default="", max_length=1000,
+                       description="CSS selector for an allowed iframe")
     selector: str = Field(default="", max_length=1000)
     value: str = Field(default="", max_length=4000)
     url: str = Field(default="", max_length=2048)
@@ -501,7 +516,8 @@ def _attempts(meta: dict) -> list:
                      "status": "ok" if configured else count,
                      "elapsed_ms": meta.get("elapsed_ms", 0),
                      "unresponsive": [],
-                     **(meta.get("source_reports") or {}).get(name, {})})
+                     **(meta.get("source_reports") or {}).get(name, {}),
+                     **(meta.get("source_reports") or {}).get("providers", {}).get(name, {})})
     browser = meta.get("browser_search") or {}
     if browser.get("direct"):
         direct = browser["direct"]
@@ -532,6 +548,7 @@ def _search_row(row: dict, meta: dict, index: int) -> dict:
         "publishedDate": row.get("publishedDate") or None,
         "engine": row.get("engine", "dethrottled"),
         "engines": [row.get("engine", "dethrottled")],
+        "discovery": row.get("discovery", []),
         "category": None,
         "score": row.get("score"),
         "cached": bool(row.get("cached")),
@@ -588,7 +605,7 @@ def _extract_once(url: str, max_chars: int, allow_ocr: bool = True,
                  ocr_language: str = "", ocr_mode: str = "auto", page_start: int = 1,
                  page_end: int | None = None, row_start: int = 1,
                  row_end: int | None = None, sheet: str = "",
-                 max_cell_chars: int | None = None) -> dict:
+                 max_cell_chars: int | None = None, document_mode: str = "auto") -> dict:
     # allow_ocr is the one-URL-versus-many split. OCR costs about 1.4s a page,
     # which is worth it for a page somebody asked for by name and is not worth
     # it multiplied across a page of search results.
@@ -611,7 +628,8 @@ def _extract_once(url: str, max_chars: int, allow_ocr: bool = True,
                                        ocr_language=ocr_language, ocr_mode=ocr_mode,
                                        page_start=page_start,
                                        page_end=page_end, row_start=row_start, row_end=row_end,
-                                       sheet=sheet, max_cell_chars=max_cell_chars)
+                                       sheet=sheet, max_cell_chars=max_cell_chars,
+                                       document_mode=document_mode)
     # Record what happened, per domain. A cache hit is not evidence about the
     # site -- it says the cache worked, which is a different fact -- so only
     # live attempts count.
@@ -812,6 +830,7 @@ def v2_capabilities():
 
     return {
         "service": "dethrottled",
+        "optional_search_providers": providers.configured(),
         "version": VERSION,
         "client_contract": {
             "workflow_sha256": hashlib.sha256(INSTRUCTIONS.encode()).hexdigest(),
@@ -867,9 +886,12 @@ def v2_capabilities():
             "operation_replay": "durable journal; unknown outcomes never auto-repeat",
             "operation_retention_seconds": 86400,
             "checkpoint": {"action": "checkpoint", "retention_seconds": 86400,
-                           "state": ["cookies", "local_storage"],
+                           "state": ["cookies", "local_storage", "indexed_db", "session_storage"],
                            "restore": "same session and original allowed_hosts"},
             "network_response_inspection": True,
+            "frames": "CSS frame selector within allowed_hosts",
+            "tabs": ["tabs", "switch_tab"],
+            "action_history": "bounded outcome history; checkpoint persists it",
             "download_reading": True,
             "text_max_chars": 120000,
         },
@@ -886,6 +908,8 @@ def v2_capabilities():
             "youtube_captions_configured": (
                 installed("youtube_transcript_api")
                 and _transcripts_enabled()),
+            "layout_worker_configured": bool(os.getenv("DETHROTTLED_LAYOUT_WORKER_URL")),
+            "document_modes": ["auto", "native", "layout"],
             "speech_worker_configured": bool(os.getenv("DETHROTTLED_MEDIA_WORKER_URL")),
             "timed_caption_evidence": True,
             "pdf_page_selection": True,
@@ -1074,6 +1098,7 @@ def fetch_urls(body: FetchBody, background: BackgroundTasks):
                                public_only=body.public_only, focus=body.focus,
                                evidence_namespace=body.evidence_namespace,
                                ocr_language=body.ocr_language, ocr_mode=body.ocr_mode,
+                               document_mode=body.document_mode,
                                page_start=body.page_start,
                                page_end=body.page_end, row_start=body.row_start,
                                row_end=body.row_end, sheet=body.sheet,
@@ -1099,7 +1124,7 @@ def _job_read(body, url):
                        headed_fallback=body.headed_fallback or body.profile == "thorough",
                        public_only=body.public_only, focus=body.focus,
                        evidence_namespace=body.evidence_namespace, ocr_language=body.ocr_language,
-                       ocr_mode=body.ocr_mode,
+                       ocr_mode=body.ocr_mode, document_mode=body.document_mode,
                        page_start=body.page_start, page_end=body.page_end,
                        row_start=body.row_start, row_end=body.row_end, sheet=body.sheet,
                        max_cell_chars=body.max_cell_chars, recovery=body.recovery)
@@ -1224,7 +1249,8 @@ def read_document(body: DocumentReadBody):
     metadata = record.pop("metadata")
     needs_parse = (body.reparse or body.row_start != 1 or body.row_end is not None
                    or body.sheet or body.max_cell_chars is not None or body.page_start != 1
-                   or body.page_end is not None or body.ocr_mode != "auto" or body.ocr_language)
+                   or body.page_end is not None or body.ocr_mode != "auto" or body.ocr_language
+                   or body.document_mode != "auto")
     if needs_parse:
         from . import formats
         artifact = _source_artifact({**record, "text": text, "metadata": metadata},
@@ -1438,7 +1464,8 @@ def search_and_fetch(body: SearchFetchBody, background: BackgroundTasks):
         sf_mode = _render_mode(body.render)
         extracted = _extract_row(row.get("url", ""), body.max_chars,
                                  allow_ocr=body.ocr_mode != "never",
-                                 ocr_mode=body.ocr_mode, ocr_language=body.ocr_language,
+                                 ocr_mode=body.ocr_mode, document_mode=body.document_mode,
+                                 ocr_language=body.ocr_language,
                                  page_budget=fetcher.PAGE_BUDGET_BULK,
                                  allow_render=sf_mode != "never",
                                  render_first=sf_mode == "always",
@@ -1474,7 +1501,8 @@ def research(body: ResearchBody, background: BackgroundTasks):
             try:
                 rows, meta, _ = _ranked(SearchBody(
                     query=query, limit=8, language=body.language,
-                    fresh=body.fresh, categories=body.categories))
+                    fresh=body.fresh, categories=body.categories,
+                    profile=body.profile, engines=body.engines))
                 return rows, {"query": query, "found": len(rows),
                               "elapsed_ms": meta.get("elapsed_ms", 0),
                               "attempts": _attempts(meta)}
@@ -1527,7 +1555,7 @@ def research(body: ResearchBody, background: BackgroundTasks):
             row["content"] = selected_content
             row["full_extraction_chars"] = len(content)
             row["truncated"] = len(content) > len(selected_content)
-            return {**item, **row,
+            return {**item, **row, "requested_url": item["url"],
                     "title": row.get("title") or item["title"],
                     "evidence": evidence}
 
@@ -1545,6 +1573,9 @@ def research(body: ResearchBody, background: BackgroundTasks):
                             fingerprint, fingerprints)
                         if duplicate_of:
                             skipped.append({"url": item["url"],
+                                            **({"requested_url": item["requested_url"]}
+                                               if item.get("requested_url", item["url"])
+                                               != item["url"] else {}),
                                             "reason": "duplicate_content",
                                             "duplicate_of": duplicate_of})
                         else:
@@ -1552,6 +1583,9 @@ def research(body: ResearchBody, background: BackgroundTasks):
                             fingerprints.append((item["url"], fingerprint))
                     else:
                         skipped.append({"url": item["url"],
+                                            **({"requested_url": item["requested_url"]}
+                                               if item.get("requested_url", item["url"])
+                                               != item["url"] else {}),
                                         "reason": item.get("failure_reason")
                                         or (item.get("content_status") if item.get("content_status")
                                             in {"image_content", "navigation_only"}
@@ -1564,9 +1598,10 @@ def research(body: ResearchBody, background: BackgroundTasks):
         for index, item in enumerate(sources, 1):
             item["id"] = "S%d" % index
         background.add_task(index_fetched, _harvest(sources))
+        coverage = research_engine.coverage_ledger(queries, searches, sources, skipped)
         if body.response_format == "concise":
             sources = [compact_row(row) for row in sources]
-        return {"question": body.question, "queries": telemetry,
+        return {"coverage": coverage, "question": body.question, "queries": telemetry,
                 "sources": sources, "skipped": skipped,
                 "summary": {"candidates": sum(len(rows) for rows in searches),
                             "selected": len(sources),

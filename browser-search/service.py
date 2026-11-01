@@ -284,7 +284,7 @@ DOWNLOAD_LOCK = asyncio.Lock()
 DRIVE_ACTIONS = (
     "goto", "click", "fill", "type", "press", "select", "check", "uncheck", "hover",
     "wait", "wait_for", "text", "html", "attr", "count", "snapshot", "url", "title",
-    "download", "network", "checkpoint",
+    "download", "network", "checkpoint", "tabs", "switch_tab", "history",
 )
 SCREENSHOT_MODES = ("never", "failure", "canary", "always")
 INTERACTIVE_SELECTOR = (
@@ -304,6 +304,8 @@ class DriveStep(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     action: str = Field(min_length=1, max_length=20)
+    frame: str = Field(default="", max_length=1000,
+                       description="CSS selector for an allowed iframe")
     selector: str = Field(default="", max_length=1000)
     value: str = Field(default="", max_length=4000)
     url: str = Field(default="", max_length=2048)
@@ -422,12 +424,24 @@ async def _public_network_target(url: str) -> bool:
 
 
 async def _make_drive_state(browser, allowed_hosts: list[str], public_only=False,
-                            storage_state=None) -> dict:
+                            storage_state=None, session_storage=None) -> dict:
     options = {"storage_state": storage_state} if storage_state else {}
     context = await browser.new_context(accept_downloads=True, **options)
-    if public_only:
+    if session_storage:
+        await context.add_init_script("""(() => {
+          const saved = %s;
+          const values = saved[location.origin];
+          if (values && !sessionStorage.getItem(saved.__restoreMarker)) {
+            for (const [key, value] of Object.entries(values)) sessionStorage.setItem(key, value);
+            sessionStorage.setItem(saved.__restoreMarker, '1');
+          }
+        })();""" % json.dumps({**session_storage,
+                             "__restoreMarker": "__dth_" + secrets.token_hex(12)}))
+    if public_only or allowed_hosts:
         async def public_route(route, request):
-            if await _public_network_target(request.url):
+            if request.is_navigation_request() and not _host_allowed(request.url, allowed_hosts):
+                await route.abort("blockedbyclient")
+            elif not public_only or await _public_network_target(request.url):
                 await route.continue_()
             else:
                 await route.abort("blockedbyclient")
@@ -442,9 +456,14 @@ async def _make_drive_state(browser, allowed_hosts: list[str], public_only=False
         if response.request.resource_type in {"xhr", "fetch"}:
             responses.append({"response_id": secrets.token_hex(12), "response": response})
     page.on("response", capture_response)
+    def capture_page(new_page):
+        new_page.set_default_timeout(8000)
+        _install_event_capture(new_page, events)
+        new_page.on("response", capture_response)
+    context.on("page", capture_page)
     return {"context": context, "page": page, "events": events, "responses": responses,
             "allowed_hosts": list(allowed_hosts), "public_only": public_only,
-            "lock": asyncio.Lock(),
+            "lock": asyncio.Lock(), "history": deque(maxlen=200),
             "last_used": time.monotonic()}
 
 
@@ -536,9 +555,12 @@ async def _get_drive_state(browser, body: DriveRequest) -> tuple[dict, bool]:
             DRIVE_SESSIONS.pop(evicted_id, None)
         state = await _make_drive_state(browser, body.allowed_hosts,
                                        **({"public_only": True} if body.public_only else {}),
-                                       **({"storage_state": checkpoint["storage"]}
+                                       **({"storage_state": checkpoint["storage"],
+                                           "session_storage": checkpoint.get("session_storage") }
                                           if checkpoint else {}))
         if checkpoint:
+            state["history"] = deque(checkpoint.get("history", []), maxlen=200)
+            state["sequence"] = checkpoint.get("sequence", 0)
             state["restored"] = True
             if not body.url:
                 target = checkpoint["url"]
@@ -849,8 +871,10 @@ async def _drive(state: dict, body: DriveRequest) -> dict:
     for items in events.values():
         items.clear()
 
+    scope = page
+
     def locator(step):
-        return page.locator(step.selector).nth(step.index)
+        return scope.locator(step.selector).nth(step.index)
 
     async def _run(action: str, coro_factory) -> dict:
         step = {"action": action, "ok": False, "reason": None,
@@ -905,12 +929,26 @@ async def _drive(state: dict, body: DriveRequest) -> dict:
         if results and not results[-1]["ok"]:
             break
         action = s.action.lower()
+        scope = page
+        if s.frame:
+            async def resolve_frame(s=s):
+                element = await page.locator(s.frame).element_handle(timeout=s.ms or 8000)
+                frame = await element.content_frame() if element else None
+                if not frame or not _host_allowed(frame.url, state["allowed_hosts"]):
+                    raise ValueError("frame_missing_or_outside_allowed_hosts")
+                return frame
+            frame_result = await _run("frame", resolve_frame)
+            if not frame_result["ok"]:
+                frame_result["data"] = None
+                results.append(frame_result)
+                break
+            scope = frame_result["data"]
         read_metadata = {}
         if action == "goto":
-            async def call(s=s):
+            async def call(s=s, scope=scope):
                 return await navigate(s.url, min(30000, s.ms or 20000))
         elif action == "click":
-            async def call(s=s):
+            async def call(s=s, scope=scope):
                 target = locator(s)
                 try:
                     await target.click(timeout=s.ms or 8000)
@@ -918,63 +956,63 @@ async def _drive(state: dict, body: DriveRequest) -> dict:
                     await diagnosed_failure("click", target, exc, "actionability")
                 return True
         elif action == "download":
-            async def call(s=s):
+            async def call(s=s, scope=scope):
                 return await _download(page, locator(s), s.ms or 20000)
         elif action == "fill":
-            async def call(s=s):
+            async def call(s=s, scope=scope):
                 target = locator(s)
                 await target.fill(s.value, timeout=s.ms or 8000)
                 await target.dispatch_event("change")
                 return True
         elif action == "type":
-            async def call(s=s):
+            async def call(s=s, scope=scope):
                 await locator(s).press_sequentially(s.value, delay=s.delay_ms,
                                                     timeout=s.ms or 8000)
                 return True
         elif action == "press":
-            async def call(s=s):
-                target = locator(s) if s.selector else page.locator("body")
+            async def call(s=s, scope=scope):
+                target = locator(s) if s.selector else scope.locator("body")
                 await target.press(s.value or "Enter", timeout=s.ms or 8000)
                 return True
         elif action == "select":
-            async def call(s=s):
+            async def call(s=s, scope=scope):
                 return await locator(s).select_option(s.value, timeout=s.ms or 8000)
         elif action == "check":
-            async def call(s=s):
+            async def call(s=s, scope=scope):
                 await locator(s).check(timeout=s.ms or 8000)
                 return True
         elif action == "uncheck":
-            async def call(s=s):
+            async def call(s=s, scope=scope):
                 await locator(s).uncheck(timeout=s.ms or 8000)
                 return True
         elif action == "hover":
-            async def call(s=s):
+            async def call(s=s, scope=scope):
                 await locator(s).hover(timeout=s.ms or 8000)
                 return True
         elif action == "wait":
-            async def call(s=s):
+            async def call(s=s, scope=scope):
                 await asyncio.sleep(min(s.ms, 30000) / 1000.0)
                 return True
         elif action == "wait_for":
-            async def call(s=s):
+            async def call(s=s, scope=scope):
                 state_name = s.value or "visible"
                 if state_name not in ("attached", "detached", "visible", "hidden"):
                     raise ValueError(
                         "wait_for value must be attached, detached, visible, or hidden"
                     )
-                await page.wait_for_selector(s.selector, state=state_name,
+                await scope.wait_for_selector(s.selector, state=state_name,
                                              timeout=s.ms or 8000)
                 return True
         elif action == "text":
-            async def call(s=s, read_metadata=read_metadata):
-                target = locator(s) if s.selector else page.locator("body")
+            async def call(s=s, scope=scope, read_metadata=read_metadata):
+                target = locator(s) if s.selector else scope.locator("body")
                 text = await target.inner_text(timeout=s.ms or 8000)
                 cap = s.max_chars or 16000
                 read_metadata.update(content_chars=len(text), truncated=len(text) > cap)
                 return text[:cap]
         elif action == "html":
-            async def call(s=s, read_metadata=read_metadata):
-                target = locator(s) if s.selector else page.locator("html")
+            async def call(s=s, scope=scope, read_metadata=read_metadata):
+                target = locator(s) if s.selector else scope.locator("html")
                 try:
                     text = await target.evaluate("el => el.outerHTML")
                     cap = s.max_chars or 20000
@@ -983,21 +1021,21 @@ async def _drive(state: dict, body: DriveRequest) -> dict:
                 except Exception as exc:
                     await diagnosed_failure("html", target, exc, "dom_read")
         elif action == "attr":
-            async def call(s=s):
+            async def call(s=s, scope=scope):
                 if not s.name:
                     raise ValueError("attr requires name")
                 return await locator(s).get_attribute(s.name, timeout=s.ms or 8000)
         elif action == "count":
-            async def call(s=s):
-                return await page.locator(s.selector).count()
+            async def call(s=s, scope=scope):
+                return await scope.locator(s.selector).count()
         elif action == "snapshot":
-            async def call(s=s):
+            async def call(s=s, scope=scope):
                 try:
-                    return await _snapshot(page, s.selector, s.limit)
+                    return await _snapshot(scope, s.selector, s.limit)
                 except Exception as exc:
                     target = (
-                        page.locator(s.selector).first
-                        if s.selector else page.locator("body")
+                        scope.locator(s.selector).first
+                        if s.selector else scope.locator("body")
                     )
                     await diagnosed_failure("snapshot", target, exc, "dom_snapshot")
         elif action == "checkpoint":
@@ -1007,13 +1045,19 @@ async def _drive(state: dict, body: DriveRequest) -> dict:
                 _save_checkpoint(body.session, {
                     "url": page.url, "allowed_hosts": state["allowed_hosts"],
                     "public_only": state.get("public_only", False),
-                    "storage": await state["context"].storage_state(),
+                    "storage": await state["context"].storage_state(indexed_db=True),
+                    "history": list(state.get("history", [])),
+                    "sequence": state.get("sequence", 0),
+                    "session_storage": {await frame.evaluate("location.origin"):
+                        await frame.evaluate("Object.fromEntries(Object.entries(sessionStorage))")
+                        for frame in page.frames
+                        if _host_allowed(frame.url, state["allowed_hosts"])},
                     "expires": time.time() + 86400})
                 return {"saved": True, "retention_seconds": 86400,
-                        "includes": ["cookies", "local_storage"],
-                        "excludes": ["session_storage", "indexed_db", "live_dom"]}
+                        "includes": ["cookies", "local_storage", "session_storage", "indexed_db"],
+                        "excludes": ["live_dom", "other_tabs"]}
         elif action == "network":
-            async def call(s=s):
+            async def call(s=s, scope=scope):
                 responses = [r for r in state.get("responses", [])
                              if _host_allowed(r["response"].url, state["allowed_hosts"])
                              and (not s.value or s.value in r["response"].url)]
@@ -1031,12 +1075,39 @@ async def _drive(state: dict, body: DriveRequest) -> dict:
                     raise ValueError("network_response_missing; list responses first")
                 response = responses[index]["response"]
                 size = response.headers.get("content-length", "")
-                if not size.isdigit() or int(size) > 2_000_000:
-                    raise ValueError("network_body_requires_content_length_at_most_2MB")
-                text = await response.text()
+                if size.isdigit() and int(size) > 2_000_000:
+                    raise ValueError("network_body_over_2MB")
+                raw_body = await response.body()
+                if len(raw_body) > 2_000_000:
+                    raise ValueError("network_body_over_2MB")
+                media_type = response.headers.get("content-type", "").lower()
+                if not any(t in media_type for t in ("json", "text/", "xml", "javascript")):
+                    raise ValueError("network_body_not_text; use download for binary files")
+                text = raw_body.decode("utf-8", errors="replace")
                 cap = s.max_chars or 16000
                 return {**listing[index], "content": text[:cap],
                         "truncated": len(text) > cap, "content_chars": len(text)}
+        elif action == "tabs":
+            async def call():
+                return {"tabs": [{"index": i, "url": tab.url, "active": tab == page,
+                                  "allowed": _host_allowed(tab.url, state["allowed_hosts"])}
+                                 for i, tab in enumerate(state["context"].pages)]}
+        elif action == "switch_tab":
+            async def call(s=s):
+                nonlocal page, scope
+                tabs = state["context"].pages
+                if s.index >= len(tabs) or not _host_allowed(
+                        tabs[s.index].url, state["allowed_hosts"]):
+                    raise ValueError("tab_missing_or_outside_allowed_hosts")
+                page = tabs[s.index]
+                scope = page
+                state["page"] = page
+                return {"index": s.index, "url": page.url}
+        elif action == "history":
+            async def call(s=s, scope=scope):
+                return {"steps": list(state.get("history", []))[-s.limit:],
+                        "retention": "last_200_steps; checkpoint_saves_history",
+                        "replays_actions": False}
         elif action == "url":
             async def call():
                 return page.url
@@ -1048,6 +1119,12 @@ async def _drive(state: dict, body: DriveRequest) -> dict:
             break
         results.append(await _run(action, call))
         results[-1].update(read_metadata)
+        # No values, headers, response bodies or selectors in the audit trail.
+        state.setdefault("history", deque(maxlen=200)).append({
+            "sequence": state.get("sequence", 0) + 1, "action": action,
+            "ok": results[-1]["ok"], "elapsed_ms": results[-1]["elapsed_ms"],
+            "timestamp": time.time(), "frame": bool(s.frame)})
+        state["sequence"] = state.get("sequence", 0) + 1
         if results[-1]["ok"] and state["allowed_hosts"]:
             if page.url != "about:blank" and not _host_allowed(page.url, state["allowed_hosts"]):
                 results[-1].update(ok=False, reason="navigation_outside_allowed_hosts")
@@ -1158,16 +1235,25 @@ def _load_operations():
 DRIVE_OPERATIONS = _load_operations()
 
 
+def _operation_fingerprint(body, *, normalize=True):
+    payload = body.model_dump(exclude={"operation_id"})
+    if normalize:
+        # Adding an optional selector must not invalidate pre-upgrade retry IDs.
+        for step in payload.get("steps", []):
+            if not step.get("frame"):
+                step.pop("frame", None)
+    return hashlib.sha256(json.dumps(payload, sort_keys=True).encode()).hexdigest()
+
+
 def _operation_lookup(body):
     if not body.operation_id:
         return None
     key = (body.session, body.operation_id)
-    fingerprint = hashlib.sha256(json.dumps(body.model_dump(exclude={"operation_id"}),
-                                            sort_keys=True).encode()).hexdigest()
+    fingerprint = _operation_fingerprint(body)
     previous = DRIVE_OPERATIONS.get(key)
     if previous is None:
         return None
-    if previous["fingerprint"] != fingerprint:
+    if previous["fingerprint"] not in {fingerprint, _operation_fingerprint(body, normalize=False)}:
         raise HTTPException(409, "operation_id_payload_conflict")
     if previous["state"] != "completed":
         raise HTTPException(409, "operation_" + previous["state"] + "_inspect_session")
@@ -1221,9 +1307,7 @@ async def drive(body: DriveRequest):
                     if len(DRIVE_OPERATIONS) >= 256:
                         raise HTTPException(429, "operation_journal_full")
                     key = (body.session, body.operation_id)
-                    fingerprint = hashlib.sha256(json.dumps(
-                        body.model_dump(exclude={"operation_id"}),
-                        sort_keys=True).encode()).hexdigest()
+                    fingerprint = _operation_fingerprint(body)
                     DRIVE_OPERATIONS[key] = {"fingerprint": fingerprint, "state": "running",
                                              "created": time.time()}
                     _persist_operation(key, DRIVE_OPERATIONS[key])
