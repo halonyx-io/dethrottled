@@ -10,7 +10,8 @@ apply otherwise. Check the effective setup with `docker compose config`.
 
 For a source install, `pip install '.[all]'` installs the Python features but
 does not start SearXNG, the browser-search worker, or Crawl4AI. Run
-`./scripts/fetch-models.sh` for the one corpus model. Set any
+`./scripts/fetch-models.sh` for MiniLM; add `--multilingual` for E5 and set the
+revision/environment variables printed by the script. Set any
 `DETHROTTLED_*` variables in that process's environment, then start
 `dethrottled`. A plain source install can still search through its direct
 keyless engines and news feeds; capabilities differ from full Compose.
@@ -58,7 +59,11 @@ placing an unreferenced name in `.env` alone will not pass it through.
 | `DETHROTTLED_TLS_TIMEOUT` | `8` seconds | Time allowed for the TLS-fingerprint tier |
 | `DETHROTTLED_CRAWL4AI_TIMEOUT` | `25` seconds | API wait for renderer |
 | `DETHROTTLED_CRAWL4AI_RENDER_MS` | `20000` ms | Requested browser render time; keep below renderer timeout |
-| `DETHROTTLED_CRAWL4AI_BUDGET` | `40` per window | Rolling local-render attempt budget |
+| `DETHROTTLED_CRAWL4AI_BUDGET` | `-1` | No hourly local quota; `0` disables, positive caps/window |
+| `DETHROTTLED_RENDER_CONCURRENCY` | `2` | Active local renders per API process |
+| `DETHROTTLED_RENDER_MAX_WAITING` | `32` | Total queued renders |
+| `DETHROTTLED_RENDER_PER_CLIENT` | `8` | Waiting renders per evidence namespace |
+| `DETHROTTLED_RENDER_QUEUE_SECONDS` | `60` | Maximum admission wait |
 | `DETHROTTLED_TIER_BUDGET_WINDOW` | `3600` seconds | Window shared by tier budgets |
 | `DETHROTTLED_ENGINE_REST_SECONDS` | `1800` seconds | How long failing search engines rest |
 | `DETHROTTLED_ENABLE_TLS` | `1` | Disable TLS tier only for diagnosis |
@@ -135,3 +140,32 @@ persist in `layout-models`. Native table detection works without this worker.
 `DETHROTTLED_PARALLEL_API_KEY` configure optional external discovery providers.
 Keys stay server-side; callers must explicitly select providers through `engines`.
 Default profiles remain keyless. See [setup and resource limits](DEPENDABLE-WORKFLOWS.md).
+
+## Measured worker additions (0.8)
+
+The API image now includes pinned multilingual E5-small weights alongside MiniLM.
+Compose enables `DETHROTTLED_MULTILINGUAL_CORPUS=1`; library users opt in with that
+variable. Set it to `0` for the original index alone. E5 uses a separate versioned
+index, query/passage prefixes and `DETHROTTLED_E5_FLOOR=0.77`; the English floor
+continues to apply only to MiniLM. The E5 floor is calibrated on a small fixture,
+not a universal relevance guarantee. `DETHROTTLED_EMBED_THREADS` defaults to 4.
+A supervised child backfills missing URLs from retained passages without
+refetching source URLs;
+`/v2/status.multilingual_backfill` reports completion or a typed failure. Shutdown kills/reaps the child; restart resumes committed progress. Old vectors
+remain usable when disabling E5. Allow extra disk and RAM for weights and vectors.
+
+For MSG/XLSB, enable `--profile formats` with `docker-compose.agents.yml` and set
+`DETHROTTLED_FORMAT_WORKER_URL=http://format-worker:19892`. This private Tika 3.3.3
+worker receives bytes, never caller URLs. It has a 50 MiB input limit, 60-second
+wall deadline, 1 GiB Java heap, 2 GiB container limit and single active conversion.
+Only the two measured formats are routed to it. An arbitrary-format capability
+is not advertised. Attachment completeness and physical spreadsheet cells remain
+unverified; preserve the extraction warnings.
+
+Speech, layout and format workers expose `/health`, `/ready`, `/metrics` internally.
+Readiness checks cached model assets; the first speech/layout conversion may need
+to download weights. `/v2/status.workers` probes the configured workers with a
+10-second cache. Cancellation/disconnect/deadline kills the child process group
+before releasing admission. This reloads speech weights per job and can increase
+latency. Layout automatically tries OCR on scanned PDF tables; explicit OCR and
+native-mode choices are respected. Read `MEASURED-IMPROVEMENTS.md` for evidence.

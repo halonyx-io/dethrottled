@@ -1,5 +1,9 @@
 # Dethrottled
 
+Version 0.8 adds fair renderer admission, supervised heavy workers, measured
+MSG/XLSB fallback, scanned-table OCR layout and multilingual corpus retrieval.
+See [measurements and limitations](docs/MEASURED-IMPROVEMENTS.md).
+
 Version 0.6 adds site coverage ledgers, exact citation selectors, application-response
 inspection, browser restart checkpoints, resumable read jobs, timed captions and
 optional local speech recognition. See [agent upgrades](docs/AGENT-UPGRADES.md)
@@ -27,7 +31,7 @@ results stay traceable to their sources.
   DOM snapshots, bounded interactions, execution canaries, and event telemetry
   without requiring agents to launch Chromium or interpret every screenshot.
 - **Self-contained.** The API image bakes in its Python dependencies,
-  Tesseract, ONNX Runtime, and the one MiniLM corpus model it uses.
+  Tesseract, ONNX Runtime, MiniLM and multilingual E5 corpus models.
 - **Evidence, not prose.** `/research` returns a cited source bundle you can
   read and verify; nothing is summarised by a model.
 
@@ -140,7 +144,7 @@ client ──▶ dethrottled API (:8787) ──▶ search engines (keyless)
                     ├─▶ fetch ladder ──▶ direct ▸ tls ▸ crawl4ai (JS render)
                     ├─▶ extraction ───▶ trafilatura ▸ resiliparse ▸ selectolax
                     ├─▶ /drive ───────▶ isolated Patchright browser sessions
-                    └─▶ corpus (SQLite + ONNX MiniLM embeddings)
+                    └─▶ corpus (SQLite + separate MiniLM/E5 ONNX indexes)
 ```
 
 The API is a single FastAPI service. The Compose project runs it alongside the

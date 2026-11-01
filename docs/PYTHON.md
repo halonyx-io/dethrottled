@@ -45,7 +45,9 @@ with `ok`, `text`, `tier`, `extractor`, `title`, `published`, `chars`, `url`,
 `reason`, and `cached`. `Corpus().search` reads local passages and embeds the
 query with MiniLM. It needs the `semantic` extra and downloaded model for a
 source install. Direct module calls do not automatically index fetched pages;
-the HTTP routes schedule that indexing in the background.
+the HTTP routes schedule that indexing in the background. Use `shared_corpus()`
+with `DETHROTTLED_MULTILINGUAL_CORPUS=1` and pinned E5 weights/revision for dual
+retrieval; explicit `Corpus()` keeps the original MiniLM index.
 
 For a caller-controlled publisher preference, the direct search module also
 supports `prefer_domains`:

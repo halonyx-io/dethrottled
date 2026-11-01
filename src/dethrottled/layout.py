@@ -56,11 +56,14 @@ def read_pdf(data, text, metadata, limit, options):
         if mode == "layout":
             metadata["warnings"].append("layout_worker_not_configured; native_parser_used")
         return text, metadata
-    if mode == "auto" and (not complex_layout or native_tables or end - start >= 10):
+    scan = any("ocr" in page.get("method", "") for page in metadata.get("pages", []))
+    if mode == "auto" and ((not complex_layout and not scan) or native_tables or end - start >= 10):
         return text, metadata
     try:
         response = requests.post(worker + "/convert", data=data,
-            params={"page_start": start, "page_end": end},
+            params={"page_start": start, "page_end": end,
+                    "ocr": options.get("allow_ocr", True) and options.get("ocr_mode") != "never",
+                    "ocr_language": options.get("ocr_language") or "eng"},
             headers={"Content-Type": "application/pdf"}, timeout=(5, 190), allow_redirects=False)
         response.raise_for_status()
         result = response.json()
@@ -72,7 +75,7 @@ def read_pdf(data, text, metadata, limit, options):
                 or not numbers.issubset(set(re.findall(r"\b\d+(?:[.,]\d+)*\b", candidate)))
                 or (native_tables and len(result.get("tables", [])) < len(native_tables))):
             raise ValueError("layout_incomplete")
-        metadata.update(parser="docling", layout_tables=result.get("tables", []),
+        metadata.update(parser="docling", ocr_layout=scan, layout_tables=result.get("tables", []),
                         layout_tables_total=result.get("tables_total", 0))
         if len(candidate) > limit:
             metadata["partial"] = True

@@ -214,7 +214,10 @@ Prioritize grounded coverage and accuracy.
 Known URL: call fetch directly, normally with focus set to the question. Unknown sources:
 search then fetch selected URLs, or research for a multi-source evidence bundle. Corpus
 is optional reusable evidence, never a compulsory first step. fetch automatically tries
-transport/format/OCR recovery and bounded content recovery. Set recovery=manual for
+transport/format/OCR recovery and bounded content recovery. When configured, Outlook
+MSG and XLSB use the local format fallback; scanned PDF tables escalate to OCR layout.
+Corpus combines English and multilingual indexes; English sources can answer Chinese,
+Malay or French queries, but an empty result is not evidence of absence. Set recovery=manual for
 explicit control; explicit render=never and OCR choices are respected.
 Read each result's workflow, warnings, source_partial and truncation fields. quality=ok
 means text was extracted, not that the answer is present or the source is complete.

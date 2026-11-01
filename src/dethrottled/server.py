@@ -83,7 +83,7 @@ from . import extract as fx
 from . import fetch as fetcher
 from . import ocr as ocr_engine
 from . import paths as _paths
-from . import providers
+from . import providers, workers
 from . import rank as ranker
 from . import research as research_engine
 from . import search as fs
@@ -570,7 +570,8 @@ MIME = {
     "gzip": "application/gzip", "tar": "application/x-tar", "image": "application/octet-stream",
     "doc": "application/msword", "ppt": "application/vnd.ms-powerpoint",
     "epub": "application/epub+zip", "rtf": "application/rtf",
-    "pdf": "application/pdf",
+    "pdf": "application/pdf", "msg": "application/vnd.ms-outlook",
+    "xlsb": "application/vnd.ms-excel.sheet.binary.macroEnabled.12",
     "xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     "xls": "application/vnd.ms-excel",
     "csv": "text/csv",
@@ -629,7 +630,8 @@ def _extract_once(url: str, max_chars: int, allow_ocr: bool = True,
                                        page_start=page_start,
                                        page_end=page_end, row_start=row_start, row_end=row_end,
                                        sheet=sheet, max_cell_chars=max_cell_chars,
-                                       document_mode=document_mode)
+                                       document_mode=document_mode,
+                                       admission_key=evidence_namespace)
     # Record what happened, per domain. A cache hit is not evidence about the
     # site -- it says the cache worked, which is a different fact -- so only
     # live attempts count.
@@ -766,6 +768,22 @@ def _extract_row(url, max_chars, *, recovery="auto", **options):
     return row
 
 
+from .backfill import BackfillJob  # noqa: E402
+
+_BACKFILL_JOB = BackfillJob()
+
+
+@app.on_event("startup")
+def start_multilingual_backfill():
+    if os.getenv("DETHROTTLED_MULTILINGUAL_CORPUS") == "1":
+        _BACKFILL_JOB.start()
+
+
+@app.on_event("shutdown")
+def stop_multilingual_backfill():
+    _BACKFILL_JOB.stop()
+
+
 @app.get("/health")
 def health():
     return {"status": "ok", "service": "dethrottled", "version": VERSION}
@@ -780,8 +798,14 @@ def ready():
 @app.get("/v2/status")
 def v2_status():
     report = fs.health()
+    worker_status = workers.status()
     return {
-        "status": "ok" if report["ok"] else "degraded",
+        "status": "ok" if report["ok"] and all(
+            row["status"] in {"ready", "not_configured"} for row in worker_status.values())
+            and _BACKFILL_JOB.state["status"] in {"disabled", "running", "complete"}
+            else "degraded",
+        "workers": worker_status,
+        "multilingual_backfill": dict(_BACKFILL_JOB.state),
         "components": {
             # An unconfigured source is not a down source: "down" sends you
             # looking for a broken service, "not_configured" sends you to the
@@ -793,7 +817,9 @@ def v2_status():
         "providers": {k: {"configured": v}
                       for k, v in fx.available().items()},
         "profiles": {p: {"sources": list(v)} for p, v in fs.SOURCE_PROFILES.items()},
-        "cost": {"api_calls": 0, "daily_caps": None, "keys_required": False},
+        "cost": {"api_calls": None, "daily_caps": None, "keys_required": False,
+                 "default_search": "keyless", "optional_metered": providers.configured(),
+                 "accounting": "per_request_attempts; cumulative_usage_unavailable"},
         "uptime_seconds": int(time.time() - STARTED),
     }
 
@@ -809,6 +835,8 @@ def v2_capabilities():
 
     readable = ["html", "csv", "tsv", "text", "markdown", "json", "jsonl", "xml", "vtt", "srt",
                 "svg-text", "eml", "zip", "tar", "gzip"]
+    if os.getenv("DETHROTTLED_FORMAT_WORKER_URL"):
+        readable.extend(["msg", "xlsb"])
     if installed("PIL") and shutil.which("tesseract"):
         readable.extend(["png", "jpeg", "webp", "tiff", "gif", "bmp"])
     if shutil.which("antiword"):
@@ -898,6 +926,8 @@ def v2_capabilities():
         "tiers_resting": fetcher.tier_rest_state(),
         "extract": [k for k, v in fx.available().items() if v],
         "ranking": ranker.available(),
+        "corpus": {"multilingual": os.getenv("DETHROTTLED_MULTILINGUAL_CORPUS") == "1",
+                   "fusion": "reciprocal_rank", "separate_model_thresholds": True},
         "research": {"available": True, "model_used": False,
                      "max_sources": 6, "max_queries": 4},
         "read": {
@@ -909,6 +939,7 @@ def v2_capabilities():
                 installed("youtube_transcript_api")
                 and _transcripts_enabled()),
             "layout_worker_configured": bool(os.getenv("DETHROTTLED_LAYOUT_WORKER_URL")),
+            "format_worker_configured": bool(os.getenv("DETHROTTLED_FORMAT_WORKER_URL")),
             "document_modes": ["auto", "native", "layout"],
             "speech_worker_configured": bool(os.getenv("DETHROTTLED_MEDIA_WORKER_URL")),
             "timed_caption_evidence": True,
@@ -1648,7 +1679,8 @@ def stats():
     # they were lifetime counters that nothing reset, so crawl4ai stopped
     # rendering after 8 pages and jina after 25, silently, for the rest of the
     # process. They refill hourly now, and you can see how much is spent.
-    return {"cache": cache().stats(), "version": VERSION,
+    return {"renderer_admission": fetcher._RENDER_QUEUE.stats(),
+            "cache": cache().stats(), "version": VERSION,
             "tiers_resting": fetcher.tier_rest_state(),
             "domain_health": domain_health.stats(),
             "uptime_seconds": int(time.time() - STARTED),

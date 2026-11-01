@@ -41,18 +41,39 @@ services:
     depends_on: [mcp]
   docling-worker:
     profiles: [layout]
-    build: ./docling-worker
+    build:
+      context: .
+      dockerfile: docling-worker/Dockerfile
     image: dethrottled-docling:local
+    ulimits:
+      core: 0
     restart: unless-stopped
     volumes: [layout-models:/models]
     expose: ["19891"]
     mem_limit: 8g
     cpus: 4
     pids_limit: 256
+  format-worker:
+    profiles: [formats]
+    build:
+      context: .
+      dockerfile: format-worker/Dockerfile
+    image: dethrottled-formats:local
+    ulimits:
+      core: 0
+    restart: unless-stopped
+    expose: ["19892"]
+    mem_limit: 2g
+    cpus: 2
+    pids_limit: 128
   media-worker:
     profiles: [media]
-    build: ./media-worker
+    build:
+      context: .
+      dockerfile: media-worker/Dockerfile
     image: dethrottled-media:local
+    ulimits:
+      core: 0
     restart: unless-stopped
     environment:
       WHISPER_MODEL: "${WHISPER_MODEL:-small}"

@@ -1,0 +1,145 @@
+{
+  "documents": [
+    [
+      "rail",
+      "The northbound railway service makes its final departure at 21:43 from platform seven. Rail passengers must validate their tickets before boarding the final train."
+    ],
+    [
+      "water",
+      "The municipal drinking-water report records arsenic at 12 micrograms per litre. This is a measured concentration in the water supply, not an annual production figure."
+    ],
+    [
+      "solar",
+      "The national electricity statistics report installed solar generation capacity of 5120 megawatts. Solar panels generate electricity from sunlight, and these figures refer to installed power."
+    ],
+    [
+      "library",
+      "The central public library closes at 18:30 on Saturday. Borrowed books may be placed in the external return box after the staffed library has closed for the day."
+    ],
+    [
+      "shipping",
+      "The port manifest records a shipment of 7341 crates of machine parts. The quantity is measured in crates, rather than tonnes or the number of individual components."
+    ],
+    [
+      "penguin",
+      "Emperor penguins breed on Antarctic sea ice during the winter. Their young depend on stable ice until they develop the waterproof feathers needed for swimming."
+    ],
+    [
+      "hospital",
+      "The provincial hospital has opened a new pediatric wing with 291 beds. The construction project also includes a dedicated entrance for children and their families."
+    ],
+    [
+      "museum",
+      "The local history museum entry ticket costs 17 euros for an adult visitor. Children under twelve can enter without paying when they are accompanied by a responsible adult."
+    ]
+  ],
+  "queries": [
+    [
+      "rail",
+      "What time does the final northbound train depart?",
+      "en"
+    ],
+    [
+      "water",
+      "What arsenic concentration was measured in drinking water?",
+      "en"
+    ],
+    [
+      "solar",
+      "How much installed solar capacity is reported?",
+      "en"
+    ],
+    [
+      "library",
+      "When does the library close on Saturday?",
+      "en"
+    ],
+    [
+      "shipping",
+      "How many crates were shipped through the port?",
+      "en"
+    ],
+    [
+      "penguin",
+      "Where do emperor penguins breed during winter?",
+      "en"
+    ],
+    [
+      "hospital",
+      "How many beds does the new pediatric hospital wing have?",
+      "en"
+    ],
+    [
+      "museum",
+      "How much does an adult museum ticket cost?",
+      "en"
+    ],
+    [
+      "rail",
+      "北行列车的末班车几点出发？",
+      "zh"
+    ],
+    [
+      "water",
+      "饮用水中测得的砷浓度是多少？",
+      "zh"
+    ],
+    [
+      "solar",
+      "报告中的太阳能装机容量是多少？",
+      "zh"
+    ],
+    [
+      "hospital",
+      "新儿科病房有多少张床位？",
+      "zh"
+    ],
+    [
+      "rail",
+      "Pukul berapa kereta api terakhir ke utara berlepas?",
+      "ms"
+    ],
+    [
+      "library",
+      "Pukul berapa perpustakaan tutup pada hari Sabtu?",
+      "ms"
+    ],
+    [
+      "shipping",
+      "Berapa peti dalam penghantaran di pelabuhan?",
+      "ms"
+    ],
+    [
+      "museum",
+      "Berapakah harga tiket muzium untuk orang dewasa?",
+      "ms"
+    ],
+    [
+      "water",
+      "Quelle concentration d'arsenic a été mesurée dans l'eau potable ?",
+      "fr"
+    ],
+    [
+      "solar",
+      "Quelle est la puissance solaire installée indiquée dans le rapport ?",
+      "fr"
+    ],
+    [
+      "penguin",
+      "Où les manchots empereurs se reproduisent-ils en hiver ?",
+      "fr"
+    ],
+    [
+      "museum",
+      "Combien coûte l'entrée au musée pour un adulte ?",
+      "fr"
+    ]
+  ],
+  "negative": [
+    "What is the telephone number of the lunar embassy?",
+    "火星大使馆的电话号码是什么？",
+    "Siapakah pemenang kejohanan tenis tahun 1912?",
+    "Quel est le numéro de téléphone de cette ambassade ?"
+  ],
+  "limits": "Controlled eight-topic fixture, 20 relevant queries and four absent topics. No claim of general language accuracy."
+}

@@ -9,7 +9,7 @@ caller -> Dethrottled HTTP API (port 8787)
              |-- direct keyless web and news sources
              |-- Crawl4AI: JavaScript rendering when extraction needs it
              |-- local SQLite cache and corpus in /data
-             `-- MiniLM ONNX embedding model in the API image
+             `-- separate MiniLM and multilingual E5 ONNX indexes
 ```
 
 The default Compose project starts four containers: the API, browser-search,
@@ -103,7 +103,9 @@ answer. Search and page reads are parallel within bounded request pools.
 ## Local corpus
 
 The corpus stores passages and 384-dimensional vectors in SQLite under
-`/data`. Only `all-MiniLM-L6-v2` is used. ONNX Runtime and the `tokenizers`
+`/data`. MiniLM remains the English index; Compose also enables a separately
+versioned multilingual E5 index and reciprocal-rank fusion. Model scores use
+separate relevance floors. ONNX Runtime and the `tokenizers`
 library are inside the API image; no host model service is needed. Corpus
 search normally embeds the query and compares it with stored vectors. A
 synchronized SQLite FTS5 index supports lexical mode and exact opaque-ID
@@ -115,8 +117,8 @@ answer. The corpus is not Engram or Hypnos and does not require Redis.
 
 The API image is self-contained for direct search, fetch, extraction, and
 corpus search. The full browser-backed pipeline requires the Compose sidecars.
-The image includes the MiniLM weights and tokenizer in
-`/opt/dethrottled/models/emb-minilm`; the named `/data` volume contains only
+The image includes MiniLM and E5 weights/tokenizers in
+`/opt/dethrottled/models/emb-minilm` and `emb-e5`; the named `/data` volume contains only
 mutable state. No unused reranker or decision-model weights are shipped.
 
 ## Retained evidence and source files

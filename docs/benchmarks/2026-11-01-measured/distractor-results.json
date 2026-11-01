@@ -1,0 +1,528 @@
+[
+  {
+    "system": "minilm",
+    "stats": {
+      "e5-614241f622f5": {
+        "passages": 10188,
+        "pages": 3604
+      },
+      "minilm": {
+        "passages": 10196,
+        "pages": 3612
+      }
+    },
+    "rows": [
+      {
+        "query": "What time does the final northbound train depart?",
+        "language": "en",
+        "expected": "rail",
+        "top_fixture": "rail",
+        "pass": true,
+        "split": "calibration"
+      },
+      {
+        "query": "What arsenic concentration was measured in drinking water?",
+        "language": "en",
+        "expected": "water",
+        "top_fixture": "water",
+        "pass": true,
+        "split": "calibration"
+      },
+      {
+        "query": "How much installed solar capacity is reported?",
+        "language": "en",
+        "expected": "solar",
+        "top_fixture": "solar",
+        "pass": true,
+        "split": "calibration"
+      },
+      {
+        "query": "When does the library close on Saturday?",
+        "language": "en",
+        "expected": "library",
+        "top_fixture": "library",
+        "pass": true,
+        "split": "calibration"
+      },
+      {
+        "query": "How many crates were shipped through the port?",
+        "language": "en",
+        "expected": "shipping",
+        "top_fixture": "shipping",
+        "pass": true,
+        "split": "calibration"
+      },
+      {
+        "query": "Where do emperor penguins breed during winter?",
+        "language": "en",
+        "expected": "penguin",
+        "top_fixture": "penguin",
+        "pass": true,
+        "split": "calibration"
+      },
+      {
+        "query": "How many beds does the new pediatric hospital wing have?",
+        "language": "en",
+        "expected": "hospital",
+        "top_fixture": "hospital",
+        "pass": true,
+        "split": "calibration"
+      },
+      {
+        "query": "How much does an adult museum ticket cost?",
+        "language": "en",
+        "expected": "museum",
+        "top_fixture": "museum",
+        "pass": true,
+        "split": "calibration"
+      },
+      {
+        "query": "北行列车的末班车几点出发？",
+        "language": "zh",
+        "expected": "rail",
+        "top_fixture": "retained_distractor",
+        "pass": false,
+        "split": "calibration"
+      },
+      {
+        "query": "饮用水中测得的砷浓度是多少？",
+        "language": "zh",
+        "expected": "water",
+        "top_fixture": "retained_distractor",
+        "pass": false,
+        "split": "calibration"
+      },
+      {
+        "query": "报告中的太阳能装机容量是多少？",
+        "language": "zh",
+        "expected": "solar",
+        "top_fixture": "retained_distractor",
+        "pass": false,
+        "split": "calibration"
+      },
+      {
+        "query": "新儿科病房有多少张床位？",
+        "language": "zh",
+        "expected": "hospital",
+        "top_fixture": "retained_distractor",
+        "pass": false,
+        "split": "calibration"
+      },
+      {
+        "query": "Pukul berapa kereta api terakhir ke utara berlepas?",
+        "language": "ms",
+        "expected": "rail",
+        "top_fixture": "retained_distractor",
+        "pass": false,
+        "split": "calibration"
+      },
+      {
+        "query": "Pukul berapa perpustakaan tutup pada hari Sabtu?",
+        "language": "ms",
+        "expected": "library",
+        "top_fixture": "retained_distractor",
+        "pass": false,
+        "split": "calibration"
+      },
+      {
+        "query": "Berapa peti dalam penghantaran di pelabuhan?",
+        "language": "ms",
+        "expected": "shipping",
+        "top_fixture": "retained_distractor",
+        "pass": false,
+        "split": "calibration"
+      },
+      {
+        "query": "Berapakah harga tiket muzium untuk orang dewasa?",
+        "language": "ms",
+        "expected": "museum",
+        "top_fixture": "retained_distractor",
+        "pass": false,
+        "split": "calibration"
+      },
+      {
+        "query": "Quelle concentration d'arsenic a été mesurée dans l'eau potable ?",
+        "language": "fr",
+        "expected": "water",
+        "top_fixture": "water",
+        "pass": true,
+        "split": "calibration"
+      },
+      {
+        "query": "Quelle est la puissance solaire installée indiquée dans le rapport ?",
+        "language": "fr",
+        "expected": "solar",
+        "top_fixture": "retained_distractor",
+        "pass": false,
+        "split": "calibration"
+      },
+      {
+        "query": "Où les manchots empereurs se reproduisent-ils en hiver ?",
+        "language": "fr",
+        "expected": "penguin",
+        "top_fixture": "retained_distractor",
+        "pass": false,
+        "split": "calibration"
+      },
+      {
+        "query": "Combien coûte l'entrée au musée pour un adulte ?",
+        "language": "fr",
+        "expected": "museum",
+        "top_fixture": "retained_distractor",
+        "pass": false,
+        "split": "calibration"
+      },
+      {
+        "query": "港口运出了多少箱机器零件？",
+        "language": "zh",
+        "expected": "shipping",
+        "top_fixture": "retained_distractor",
+        "pass": false,
+        "split": "holdout"
+      },
+      {
+        "query": "成人参观历史博物馆要付多少欧元？",
+        "language": "zh",
+        "expected": "museum",
+        "top_fixture": "retained_distractor",
+        "pass": false,
+        "split": "holdout"
+      },
+      {
+        "query": "企鹅在什么地方的冰上繁殖？",
+        "language": "zh",
+        "expected": "penguin",
+        "top_fixture": "retained_distractor",
+        "pass": false,
+        "split": "holdout"
+      },
+      {
+        "query": "图书馆星期六几点关门？",
+        "language": "zh",
+        "expected": "library",
+        "top_fixture": "retained_distractor",
+        "pass": false,
+        "split": "holdout"
+      },
+      {
+        "query": "Berapakah kandungan arsenik dalam bekalan air minuman?",
+        "language": "ms",
+        "expected": "water",
+        "top_fixture": "retained_distractor",
+        "pass": false,
+        "split": "holdout"
+      },
+      {
+        "query": "Berapakah kapasiti penjanaan tenaga suria yang dipasang?",
+        "language": "ms",
+        "expected": "solar",
+        "top_fixture": "retained_distractor",
+        "pass": false,
+        "split": "holdout"
+      },
+      {
+        "query": "Berapakah jumlah peti komponen mesin dalam penghantaran itu?",
+        "language": "ms",
+        "expected": "shipping",
+        "top_fixture": "retained_distractor",
+        "pass": false,
+        "split": "holdout"
+      },
+      {
+        "query": "Berapakah harga tiket dewasa untuk masuk muzium?",
+        "language": "ms",
+        "expected": "museum",
+        "top_fixture": "retained_distractor",
+        "pass": false,
+        "split": "holdout"
+      },
+      {
+        "query": "À quelle heure part le dernier train vers le nord ?",
+        "language": "fr",
+        "expected": "rail",
+        "top_fixture": "retained_distractor",
+        "pass": false,
+        "split": "holdout"
+      },
+      {
+        "query": "Quelle est la puissance solaire installée en mégawatts ?",
+        "language": "fr",
+        "expected": "solar",
+        "top_fixture": "solar",
+        "pass": true,
+        "split": "holdout"
+      },
+      {
+        "query": "Combien de lits compte le nouveau service pour enfants ?",
+        "language": "fr",
+        "expected": "hospital",
+        "top_fixture": "retained_distractor",
+        "pass": false,
+        "split": "holdout"
+      }
+    ]
+  },
+  {
+    "system": "dual",
+    "stats": {
+      "e5-614241f622f5": {
+        "passages": 10196,
+        "pages": 3612
+      },
+      "minilm": {
+        "passages": 10196,
+        "pages": 3612
+      }
+    },
+    "rows": [
+      {
+        "query": "What time does the final northbound train depart?",
+        "language": "en",
+        "expected": "rail",
+        "top_fixture": "rail",
+        "pass": true,
+        "split": "calibration"
+      },
+      {
+        "query": "What arsenic concentration was measured in drinking water?",
+        "language": "en",
+        "expected": "water",
+        "top_fixture": "water",
+        "pass": true,
+        "split": "calibration"
+      },
+      {
+        "query": "How much installed solar capacity is reported?",
+        "language": "en",
+        "expected": "solar",
+        "top_fixture": "solar",
+        "pass": true,
+        "split": "calibration"
+      },
+      {
+        "query": "When does the library close on Saturday?",
+        "language": "en",
+        "expected": "library",
+        "top_fixture": "library",
+        "pass": true,
+        "split": "calibration"
+      },
+      {
+        "query": "How many crates were shipped through the port?",
+        "language": "en",
+        "expected": "shipping",
+        "top_fixture": "shipping",
+        "pass": true,
+        "split": "calibration"
+      },
+      {
+        "query": "Where do emperor penguins breed during winter?",
+        "language": "en",
+        "expected": "penguin",
+        "top_fixture": "penguin",
+        "pass": true,
+        "split": "calibration"
+      },
+      {
+        "query": "How many beds does the new pediatric hospital wing have?",
+        "language": "en",
+        "expected": "hospital",
+        "top_fixture": "hospital",
+        "pass": true,
+        "split": "calibration"
+      },
+      {
+        "query": "How much does an adult museum ticket cost?",
+        "language": "en",
+        "expected": "museum",
+        "top_fixture": "museum",
+        "pass": true,
+        "split": "calibration"
+      },
+      {
+        "query": "北行列车的末班车几点出发？",
+        "language": "zh",
+        "expected": "rail",
+        "top_fixture": "retained_distractor",
+        "pass": false,
+        "split": "calibration"
+      },
+      {
+        "query": "饮用水中测得的砷浓度是多少？",
+        "language": "zh",
+        "expected": "water",
+        "top_fixture": "retained_distractor",
+        "pass": false,
+        "split": "calibration"
+      },
+      {
+        "query": "报告中的太阳能装机容量是多少？",
+        "language": "zh",
+        "expected": "solar",
+        "top_fixture": "retained_distractor",
+        "pass": false,
+        "split": "calibration"
+      },
+      {
+        "query": "新儿科病房有多少张床位？",
+        "language": "zh",
+        "expected": "hospital",
+        "top_fixture": "retained_distractor",
+        "pass": false,
+        "split": "calibration"
+      },
+      {
+        "query": "Pukul berapa kereta api terakhir ke utara berlepas?",
+        "language": "ms",
+        "expected": "rail",
+        "top_fixture": "retained_distractor",
+        "pass": false,
+        "split": "calibration"
+      },
+      {
+        "query": "Pukul berapa perpustakaan tutup pada hari Sabtu?",
+        "language": "ms",
+        "expected": "library",
+        "top_fixture": "library",
+        "pass": true,
+        "split": "calibration"
+      },
+      {
+        "query": "Berapa peti dalam penghantaran di pelabuhan?",
+        "language": "ms",
+        "expected": "shipping",
+        "top_fixture": "retained_distractor",
+        "pass": false,
+        "split": "calibration"
+      },
+      {
+        "query": "Berapakah harga tiket muzium untuk orang dewasa?",
+        "language": "ms",
+        "expected": "museum",
+        "top_fixture": "museum",
+        "pass": true,
+        "split": "calibration"
+      },
+      {
+        "query": "Quelle concentration d'arsenic a été mesurée dans l'eau potable ?",
+        "language": "fr",
+        "expected": "water",
+        "top_fixture": "water",
+        "pass": true,
+        "split": "calibration"
+      },
+      {
+        "query": "Quelle est la puissance solaire installée indiquée dans le rapport ?",
+        "language": "fr",
+        "expected": "solar",
+        "top_fixture": "solar",
+        "pass": true,
+        "split": "calibration"
+      },
+      {
+        "query": "Où les manchots empereurs se reproduisent-ils en hiver ?",
+        "language": "fr",
+        "expected": "penguin",
+        "top_fixture": "penguin",
+        "pass": true,
+        "split": "calibration"
+      },
+      {
+        "query": "Combien coûte l'entrée au musée pour un adulte ?",
+        "language": "fr",
+        "expected": "museum",
+        "top_fixture": "museum",
+        "pass": true,
+        "split": "calibration"
+      },
+      {
+        "query": "港口运出了多少箱机器零件？",
+        "language": "zh",
+        "expected": "shipping",
+        "top_fixture": "retained_distractor",
+        "pass": false,
+        "split": "holdout"
+      },
+      {
+        "query": "成人参观历史博物馆要付多少欧元？",
+        "language": "zh",
+        "expected": "museum",
+        "top_fixture": "museum",
+        "pass": true,
+        "split": "holdout"
+      },
+      {
+        "query": "企鹅在什么地方的冰上繁殖？",
+        "language": "zh",
+        "expected": "penguin",
+        "top_fixture": "retained_distractor",
+        "pass": false,
+        "split": "holdout"
+      },
+      {
+        "query": "图书馆星期六几点关门？",
+        "language": "zh",
+        "expected": "library",
+        "top_fixture": "retained_distractor",
+        "pass": false,
+        "split": "holdout"
+      },
+      {
+        "query": "Berapakah kandungan arsenik dalam bekalan air minuman?",
+        "language": "ms",
+        "expected": "water",
+        "top_fixture": "water",
+        "pass": true,
+        "split": "holdout"
+      },
+      {
+        "query": "Berapakah kapasiti penjanaan tenaga suria yang dipasang?",
+        "language": "ms",
+        "expected": "solar",
+        "top_fixture": "retained_distractor",
+        "pass": false,
+        "split": "holdout"
+      },
+      {
+        "query": "Berapakah jumlah peti komponen mesin dalam penghantaran itu?",
+        "language": "ms",
+        "expected": "shipping",
+        "top_fixture": "shipping",
+        "pass": true,
+        "split": "holdout"
+      },
+      {
+        "query": "Berapakah harga tiket dewasa untuk masuk muzium?",
+        "language": "ms",
+        "expected": "museum",
+        "top_fixture": "museum",
+        "pass": true,
+        "split": "holdout"
+      },
+      {
+        "query": "À quelle heure part le dernier train vers le nord ?",
+        "language": "fr",
+        "expected": "rail",
+        "top_fixture": "rail",
+        "pass": true,
+        "split": "holdout"
+      },
+      {
+        "query": "Quelle est la puissance solaire installée en mégawatts ?",
+        "language": "fr",
+        "expected": "solar",
+        "top_fixture": "solar",
+        "pass": true,
+        "split": "holdout"
+      },
+      {
+        "query": "Combien de lits compte le nouveau service pour enfants ?",
+        "language": "fr",
+        "expected": "hospital",
+        "top_fixture": "hospital",
+        "pass": true,
+        "split": "holdout"
+      }
+    ]
+  }
+]

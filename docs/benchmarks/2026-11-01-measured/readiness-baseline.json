@@ -1,0 +1,34 @@
+[
+  {
+    "worker": "dethrottled-docling-worker-1",
+    "route": "/ready",
+    "status": 404,
+    "body": {
+      "detail": "Not Found"
+    }
+  },
+  {
+    "worker": "dethrottled-docling-worker-1",
+    "route": "/metrics",
+    "status": 404,
+    "body": {
+      "detail": "Not Found"
+    }
+  },
+  {
+    "worker": "dethrottled-media-worker-1",
+    "route": "/ready",
+    "status": 404,
+    "body": {
+      "detail": "Not Found"
+    }
+  },
+  {
+    "worker": "dethrottled-media-worker-1",
+    "route": "/metrics",
+    "status": 404,
+    "body": {
+      "detail": "Not Found"
+    }
+  }
+]

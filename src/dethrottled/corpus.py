@@ -14,25 +14,10 @@ nothing to do. Past roughly a hundred thousand passages that stops being true
 and something like pgvector or FAISS earns its place -- but the interface below
 need not change when it does, so that is a problem for whoever gets there.
 
-One model: all-MiniLM-L6-v2, 87MB, ~0.3ms per passage, 384 dimensions.
-
-multilingual-e5-small was carried alongside it and has been dropped. Measured
-over ten documents on neighbouring subjects with ten questions whose right
-answer was known, both scored 1.00 accuracy and 1.000 MRR -- but:
-
-    model     acc@1    MRR    score margin    size    query
-    minilm     1.00   1.000          0.242    87MB    1.4ms
-    e5         1.00   1.000          0.037   465MB    3.3ms
-
-The margin is the gap between the right answer and the best wrong one, and it
-is the number that decides whether a relevance floor can be set safely at all.
-MiniLM separates by 0.242; e5 compresses everything upward and separates by
-0.037. Equal ranking, six times the headroom, a fifth of the size.
-
-What is given up is cross-language retrieval -- e5 could answer a French query
-from English documents. That is a real capability and this is an English-first
-tool, so it goes. The `model` column in the schema stays, so adding a second
-index later needs no migration.
+MiniLM remains the English index. An optional, separately versioned multilingual
+E5 index adds cross-language retrieval. Each model has its own relevance floor;
+reciprocal-rank fusion combines retained hits without comparing cosine scales.
+See docs/MEASURED-IMPROVEMENTS.md for the small calibration and holdout results.
 """
 from __future__ import annotations
 
@@ -96,44 +81,46 @@ _LOADED = {}
 _LOCK = threading.Lock()
 
 
-def _model():
+def _model(name="minilm"):
     """Load the model once per process. Returns tokenizer, session and inputs."""
     with _LOCK:
-        if "en" not in _LOADED:
+        if name not in _LOADED:
             import numpy
             from tokenizers import Tokenizer
 
             from ._quiet import load as _load_onnxruntime
             onnxruntime = _load_onnxruntime()
             options = onnxruntime.SessionOptions()
-            # 0 lets ONNX Runtime size the pool to the host. The old default of
-            # 4 quietly pinned embedding to half a small board and a quarter of
-            # a big one, and assumed a core count this project cannot assume --
-            # it ships to other people's machines. Override only to cap it.
+            # Bound CPU contention on shared hosts; operators may override.
+            # A value of 0 lets ONNX Runtime size the pool to the host.
             options.intra_op_num_threads = int(
-                os.environ.get("DETHROTTLED_EMBED_THREADS", "0"))
+                os.environ.get("DETHROTTLED_EMBED_THREADS", "4"))
             # Quiets this session's own logging. The GPU-discovery warning is
             # NOT this -- it fires during import, before any session exists,
             # which is why setting it here never suppressed it. See _quiet.py.
             options.log_severity_level = 3
             session = onnxruntime.InferenceSession(
-                ENGLISH_MODEL + "/model.onnx", options,
+                (ENGLISH_MODEL if name == "minilm" else str(MODELS / "emb-e5")) + "/model.onnx",
+                options,
                 providers=["CPUExecutionProvider"])
-            tokenizer = Tokenizer.from_file(ENGLISH_MODEL + "/tokenizer.json")
+            tokenizer = Tokenizer.from_file((ENGLISH_MODEL if name == "minilm"
+                                             else str(MODELS / "emb-e5")) + "/tokenizer.json")
             tokenizer.no_padding()
             tokenizer.no_truncation()
-            tokenizer.enable_truncation(max_length=256)
-            tokenizer.enable_padding(pad_id=0, pad_token="[PAD]", pad_type_id=0)
-            _LOADED["en"] = {
+            tokenizer.enable_truncation(max_length=256 if name == "minilm" else 512)
+            tokenizer.enable_padding(pad_id=0 if name == "minilm" else 1,
+                                     pad_token="[PAD]" if name == "minilm" else "<pad>",
+                                     pad_type_id=0)
+            _LOADED[name] = {
                 "np": numpy,
                 "tok": tokenizer,
                 "sess": session,
                 "inputs": {i.name for i in session.get_inputs()},
             }
-    return _LOADED["en"]
+    return _LOADED[name]
 
 
-def embed(texts: list, *, batch: int = 32) -> list:
+def embed(texts: list, *, batch: int = 32, model_name="minilm", query=False) -> list:
     """Unit-normalised vectors, mean-pooled over the tokens that are real.
 
     Pooling ignores padding: averaging over pad tokens dilutes a short passage
@@ -142,7 +129,9 @@ def embed(texts: list, *, batch: int = 32) -> list:
     """
     if not texts:
         return []
-    model = _model()
+    model = _model(model_name)
+    if model_name != "minilm":
+        texts = [("query: " if query else "passage: ") + text for text in texts]
     np = model["np"]
 
     out = []
@@ -265,6 +254,10 @@ class Corpus:
     # already separates indexes by model, so adding a second one back later
     # needs no migration and no rewrite of what is already stored.
     model_name = "minilm"
+    floor = FLOOR
+
+    def _embed(self, texts, *, query=False):
+        return embed(texts)
 
     def add(self, url: str, title: str, text: str) -> int:
         """Index one page. Returns how many passages were added or refreshed."""
@@ -286,7 +279,7 @@ class Corpus:
             # changed, so refreshed reports remained stale for 180 days.
             # Hold this instance's lock through embedding so concurrent
             # refreshes of the same URL cannot commit out of order.
-            vectors = embed([c for _, c in changed]) if changed else []
+            vectors = self._embed([c for _, c in changed]) if changed else []
             now = time.time()
             if stale:
                 self._db.executemany(
@@ -445,11 +438,11 @@ class Corpus:
             return out
         import numpy as np
         if floor is None:
-            floor = FLOOR
+            floor = self.floor
         vectors, meta = self.matrix()
         if vectors is None:
             return []
-        q = np.asarray(embed([query])[0], dtype="float32")
+        q = np.asarray(self._embed([query], query=True)[0], dtype="float32")
 
         scores = vectors @ q
         wanted = tuple(d.lower() for d in (domains or ()))
@@ -476,6 +469,60 @@ class Corpus:
         return {r[0]: {"passages": r[1], "pages": r[2]} for r in rows}
 
 
+class MultilingualCorpus(Corpus):
+    model_name = "e5-" + os.getenv("DETHROTTLED_E5_REVISION", "v1")[:12]
+    floor = float(os.getenv("DETHROTTLED_E5_FLOOR", ".77"))
+
+    def _embed(self, texts, *, query=False):
+        return embed(texts, model_name="e5", query=query, batch=16)
+
+
+class DualCorpus:
+    def __init__(self):
+        self.primary = Corpus()
+        self.multilingual = MultilingualCorpus()
+
+    def add(self, *args):
+        result = self.primary.add(*args)
+        self.multilingual.add(*args)
+        return result
+
+    def prune(self):
+        return self.primary.prune() + self.multilingual.prune()
+
+    def stats(self):
+        return self.primary.stats()
+
+    def search(self, query, **kwargs):
+        primary = self.primary.search(query, **kwargs)
+        if kwargs.get("mode") == "lexical":
+            return primary
+        # An English threshold must never be applied to a different embedding model.
+        try:
+            multilingual = self.multilingual.search(query, **dict(kwargs, floor=None))
+        except Exception as exc:
+            return [dict(row, retrieval_warning="multilingual_unavailable:" + type(exc).__name__)
+                    for row in primary]
+        merged = {}
+        for model, rows in [(self.multilingual.model_name, multilingual), ("minilm", primary)]:
+            for index, row in enumerate(rows):
+                key = (row["url"], row["text"])
+                record = merged.setdefault(key, {**row, "embedding_model": model,
+                                                "fusion_score": 0.0})
+                record["fusion_score"] += 1 / (60 + index + 1)
+        ranked = sorted(merged.values(), key=lambda row: -row["fusion_score"])
+        selected, counts = [], {}
+        for row in ranked:
+            url = row["url"]
+            if counts.get(url, 0) >= kwargs.get("per_url", 2):
+                continue
+            counts[url] = counts.get(url, 0) + 1
+            selected.append(row)
+            if len(selected) >= kwargs.get("limit", 10):
+                break
+        return selected
+
+
 _SHARED_CORPUS = None
 _SHARED_CORPUS_LOCK = threading.Lock()
 
@@ -485,7 +532,8 @@ def shared_corpus() -> Corpus:
     global _SHARED_CORPUS
     with _SHARED_CORPUS_LOCK:
         if _SHARED_CORPUS is None:
-            _SHARED_CORPUS = Corpus()
+            _SHARED_CORPUS = (DualCorpus() if os.getenv("DETHROTTLED_MULTILINGUAL_CORPUS") == "1"
+                              else Corpus())
         return _SHARED_CORPUS
 
 
@@ -548,3 +596,39 @@ def index_fetched(fetched) -> int:
     if due:
         _last_prune = time.time()
     return added
+
+
+def backfill_multilingual(batch_urls=16):
+    """Resume a separate model index from retained passages without refetching URLs.
+
+    Commit a whole URL at once; a later ordinary refresh replaces migrated IDs.
+    Existing MiniLM rows and thresholds are never overwritten.
+    """
+    primary, target = Corpus(), MultilingualCorpus()
+    migrated = 0
+    while True:
+        with primary._lock:
+            urls = [row[0] for row in primary._db.execute(
+                "SELECT DISTINCT p.url FROM passages p WHERE p.model='minilm' "
+                "AND NOT EXISTS (SELECT 1 FROM passages q WHERE q.url=p.url AND q.model=?) "
+                "LIMIT ?", (target.model_name, batch_urls))]
+        if not urls:
+            return migrated
+        with target._lock:
+            records = []
+            for url in urls:
+                if target._db.execute("SELECT 1 FROM passages WHERE url=? AND model=?",
+                                      (url, target.model_name)).fetchone():
+                    continue
+                records.extend(target._db.execute(
+                    "SELECT id,url,title,text,ts FROM passages WHERE url=? AND model='minilm'",
+                    (url,)).fetchall())
+            if not records:
+                continue
+            vectors = target._embed([row[3] for row in records])
+            target._db.executemany("INSERT OR IGNORE INTO passages VALUES(?,?,?,?,?,?,?)", [
+                (hashlib.blake2b((row[0] + target.model_name).encode(), digest_size=12).hexdigest(),
+                 row[1], row[2], row[3], target.model_name, _pack(vector), row[4])
+                for row, vector in zip(records, vectors)])
+            target._db.commit()
+            migrated += len(records)

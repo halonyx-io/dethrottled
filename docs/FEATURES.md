@@ -62,14 +62,15 @@ English and orientation data; additional OCR languages are optional.
 - Successful fetched prose is cached and indexed into a local SQLite corpus in
   a background task. Search cache and extraction cache have different lifetimes;
   use `fresh: true` to bypass the relevant cache for a request.
-- The corpus uses one bundled `all-MiniLM-L6-v2` ONNX embedding model. It is
-  for already-fetched passages, not a live-web reranker. There is no bundled
+- The corpus bundles MiniLM and multilingual E5 ONNX models, with separate
+  versioned indexes and relevance floors. Compose enables E5; source installs
+  opt in. These retrieve already-fetched passages and do not rerank the live web. There is no bundled
   cross-encoder, Laya, Ettin, llama.cpp, Engram, Hypnos, or Redis dependency.
 - `/research` resolves selected sources to public addresses, limits site
   concentration, removes near-duplicate text, and returns evidence windows.
   It does not write an answer or invoke Ollama.
 - The fetch ladder ignores `robots.txt`. It still has page-size limits,
-  per-domain pacing, tier timeouts, cooldowns, and rolling render budgets.
+  per-domain pacing, tier timeouts, cooldowns, and bounded fair render admission.
   These are operational controls, not paid API quotas or Docker core pinning.
 
 `rerank: true` is rejected with HTTP 422. `engines` and `profile` request

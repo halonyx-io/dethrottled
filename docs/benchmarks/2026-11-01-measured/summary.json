@@ -1,0 +1,90 @@
+{
+  "version": "0.8.0",
+  "baseline_commit": "5bd93c4",
+  "tests": {
+    "passed": 544,
+    "skipped": 15,
+    "network_deselected": 2,
+    "focused_passed": 20,
+    "lint": "pass"
+  },
+  "admission": {
+    "attempts": 48,
+    "baseline_admitted": 40,
+    "candidate_admitted": 48,
+    "controlled_upstream": true
+  },
+  "formats": {
+    "files": 4,
+    "baseline_expected_facts": 0,
+    "candidate_expected_facts": 4,
+    "formats": [
+      "msg",
+      "xlsb"
+    ],
+    "rust_candidate": "rejected: XLSB panic"
+  },
+  "scan": {
+    "synthetic_pages": 1,
+    "baseline_structured_tables": 0,
+    "candidate_structured_tables": 1,
+    "numeric_cells_preserved": 4,
+    "baseline_already_read_numbers": true
+  },
+  "speech": {
+    "transcript_unchanged": true,
+    "baseline_ms": 2326,
+    "candidate_ms": 5182
+  },
+  "shutdown": [
+    {
+      "build": "threaded",
+      "migrated_before_stop": 44,
+      "stop_ms": 1758,
+      "exit_code": 139,
+      "oom_killed": false
+    },
+    {
+      "build": "isolated",
+      "migrated_before_stop": 44,
+      "stop_ms": 1123,
+      "exit_code": 0,
+      "oom_killed": false
+    }
+  ],
+  "retrieval": {
+    "small_calibration": {
+      "baseline": 10,
+      "candidate": 20,
+      "queries": 20
+    },
+    "small_holdout": {
+      "baseline": 2,
+      "candidate": 10,
+      "queries": 11
+    },
+    "small_negative_holdout": {
+      "baseline_empty": 4,
+      "candidate_empty": 4,
+      "queries": 4
+    },
+    "retained_distractor_holdout": {
+      "baseline_known_source_first": 1,
+      "candidate_known_source_first": 7,
+      "queries": 11,
+      "retained_passages": 10188,
+      "private_distractors_not_published": true
+    }
+  },
+  "production": {
+    "public_mcp_rest": "passed",
+    "sdk_version": "1.28.1",
+    "mcp_tools": 20,
+    "backfill": "complete",
+    "passages_per_index": 10188,
+    "pages_per_index": 3604,
+    "registry_unchanged": true,
+    "rollout_native_shutdown_failure": "observed, reproduced and corrected; temporary outage disclosed",
+    "temporary_containers": "removed"
+  }
+}

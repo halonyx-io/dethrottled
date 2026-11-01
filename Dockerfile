@@ -42,6 +42,7 @@ RUN python -m pip install --no-cache-dir --upgrade pip \
 #
 # Build with --build-arg WITH_MODELS=0 for a smaller image without them.
 ARG WITH_MODELS=1
+ARG E5_REVISION=614241f622f53c4eeff9890bdc4f31cfecc418b3
 ARG MINILM_REVISION=1110a243fdf4706b3f48f1d95db1a4f5529b4d41
 ENV DETHROTTLED_MODEL_DIR=/opt/dethrottled/models \
     PYTHONUNBUFFERED=1
@@ -50,6 +51,15 @@ RUN if [ "$WITH_MODELS" = "1" ]; then \
      && base=https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/$MINILM_REVISION \
      && curl -fsSL -o /opt/dethrottled/models/emb-minilm/model.onnx "$base/onnx/model.onnx" \
      && curl -fsSL -o /opt/dethrottled/models/emb-minilm/tokenizer.json "$base/tokenizer.json"; \
+    fi
+
+# Separate multilingual index; the model revision is part of stored vector IDs.
+ENV DETHROTTLED_E5_REVISION=$E5_REVISION
+RUN if [ "$WITH_MODELS" = "1" ]; then \
+        mkdir -p /opt/dethrottled/models/emb-e5 \
+     && base=https://huggingface.co/intfloat/multilingual-e5-small/resolve/$E5_REVISION \
+     && curl -fsSL -o /opt/dethrottled/models/emb-e5/model.onnx "$base/onnx/model.onnx" \
+     && curl -fsSL -o /opt/dethrottled/models/emb-e5/tokenizer.json "$base/tokenizer.json"; \
     fi
 
 # Unprivileged. The service fetches URLs chosen by whoever can reach it, which

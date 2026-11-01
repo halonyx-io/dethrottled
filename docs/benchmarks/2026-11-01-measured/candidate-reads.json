@@ -1,0 +1,582 @@
+[
+  {
+    "file": "ruled-table.pdf",
+    "kind": "pdf",
+    "elapsed_ms": 144,
+    "text": "## Page 1\nRegional allocation, units: tonnes\n\n\n\n Region            2024            2025\n\n\n ALPHA            17              7341\n\n\n BETA             291             420\n\n## Page 1 \u2014 detected table\n| Region | 2024 | 2025 |\n| ALPHA | 17 | 7341 |\n| BETA | 291 | 420 |",
+    "metadata": {
+      "pages": [
+        {
+          "page": 1,
+          "method": "text",
+          "text_chars": 158,
+          "text_layer_blocks": [
+            {
+              "bbox": [
+                50.0,
+                30.649999618530273,
+                314.1319885253906,
+                55.38199996948242
+              ],
+              "text": "Regional allocation, units: tonnes\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                62.0,
+                123.6500015258789,
+                442.031982421875,
+                148.3820037841797
+              ],
+              "text": "Region\n2024\n2025\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                62.0,
+                193.64999389648438,
+                442.031982421875,
+                218.3820037841797
+              ],
+              "text": "ALPHA\n17\n7341\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                62.0,
+                263.6499938964844,
+                432.02398681640625,
+                288.3819885253906
+              ],
+              "text": "BETA\n291\n420\n",
+              "text_truncated": false
+            }
+          ],
+          "layout_coordinate_space": "PDF points, origin top-left",
+          "layout_may_be_incomplete": true
+        }
+      ],
+      "total_pages": 1,
+      "next_page": null,
+      "partial": false,
+      "warnings": [
+        "table_structure_is_inferred; verify_critical_cells_against_source"
+      ],
+      "native_pdf_tables": [
+        {
+          "page": 1,
+          "bbox": [
+            50.0,
+            100.0,
+            550.0,
+            310.0
+          ],
+          "coordinate_space": "PDF points, origin top-left",
+          "cells": [
+            [
+              "Region",
+              "2024",
+              "2025"
+            ],
+            [
+              "ALPHA",
+              "17",
+              "7341"
+            ],
+            [
+              "BETA",
+              "291",
+              "420"
+            ]
+          ],
+          "rows_total": 3,
+          "columns_total": 3,
+          "partial": false
+        }
+      ]
+    }
+  },
+  {
+    "file": "scanned-table.pdf",
+    "kind": "pdf",
+    "elapsed_ms": 9615,
+    "text": "## Page 1\nRegional\n\n## allocation, units: tonnes\n\n| Region   |   2024 |   2025 |\n|----------|--------|--------|\n| ALPHA    |     17 |   7341 |\n| BETA     |    291 |    420 |",
+    "metadata": {
+      "pages": [
+        {
+          "page": 1,
+          "method": "ocr",
+          "text_chars": 78,
+          "text_layer_blocks": [],
+          "layout_coordinate_space": "PDF points, origin top-left",
+          "layout_may_be_incomplete": true
+        }
+      ],
+      "total_pages": 1,
+      "next_page": null,
+      "partial": false,
+      "warnings": [
+        "OCR can misread numbers, layout and tables; verify against the source image. Word confidence is not an accuracy probability.",
+        "layout_is_model_inferred; verify_critical_cells_against_source"
+      ],
+      "parser": "docling",
+      "ocr_layout": true,
+      "layout_tables": [
+        {
+          "provenance": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 48.93532943725586,
+                "t": 601.2535705566406,
+                "r": 550.84228515625,
+                "b": 389.6105041503906,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                0
+              ]
+            }
+          ],
+          "data": {
+            "table_cells": [
+              {
+                "bbox": {
+                  "l": 63.66666666666667,
+                  "t": 130.0,
+                  "r": 118.0,
+                  "b": 147.0,
+                  "coord_origin": "TOPLEFT"
+                },
+                "row_span": 1,
+                "col_span": 1,
+                "start_row_offset_idx": 0,
+                "end_row_offset_idx": 1,
+                "start_col_offset_idx": 0,
+                "end_col_offset_idx": 1,
+                "text": "Region",
+                "column_header": false,
+                "row_header": false,
+                "row_section": false,
+                "fillable": false
+              },
+              {
+                "bbox": {
+                  "l": 242.66666666666666,
+                  "t": 130.0,
+                  "r": 281.33333333333337,
+                  "b": 143.66666666666666,
+                  "coord_origin": "TOPLEFT"
+                },
+                "row_span": 1,
+                "col_span": 1,
+                "start_row_offset_idx": 0,
+                "end_row_offset_idx": 1,
+                "start_col_offset_idx": 1,
+                "end_col_offset_idx": 2,
+                "text": "2024",
+                "column_header": true,
+                "row_header": false,
+                "row_section": false,
+                "fillable": false
+              },
+              {
+                "bbox": {
+                  "l": 402.6666666666667,
+                  "t": 130.0,
+                  "r": 441.3333333333333,
+                  "b": 143.66666666666666,
+                  "coord_origin": "TOPLEFT"
+                },
+                "row_span": 1,
+                "col_span": 1,
+                "start_row_offset_idx": 0,
+                "end_row_offset_idx": 1,
+                "start_col_offset_idx": 2,
+                "end_col_offset_idx": 3,
+                "text": "2025",
+                "column_header": true,
+                "row_header": false,
+                "row_section": false,
+                "fillable": false
+              },
+              {
+                "bbox": {
+                  "l": 62.33333333333333,
+                  "t": 200.0,
+                  "r": 120.66666666666667,
+                  "b": 213.0,
+                  "coord_origin": "TOPLEFT"
+                },
+                "row_span": 1,
+                "col_span": 1,
+                "start_row_offset_idx": 1,
+                "end_row_offset_idx": 2,
+                "start_col_offset_idx": 0,
+                "end_col_offset_idx": 1,
+                "text": "ALPHA",
+                "column_header": false,
+                "row_header": false,
+                "row_section": false,
+                "fillable": false
+              },
+              {
+                "bbox": {
+                  "l": 243.66666666666666,
+                  "t": 200.0,
+                  "r": 261.33333333333337,
+                  "b": 213.0,
+                  "coord_origin": "TOPLEFT"
+                },
+                "row_span": 1,
+                "col_span": 1,
+                "start_row_offset_idx": 1,
+                "end_row_offset_idx": 2,
+                "start_col_offset_idx": 1,
+                "end_col_offset_idx": 2,
+                "text": "17",
+                "column_header": false,
+                "row_header": false,
+                "row_section": false,
+                "fillable": false
+              },
+              {
+                "bbox": {
+                  "l": 402.6666666666667,
+                  "t": 200.0,
+                  "r": 438.3333333333333,
+                  "b": 213.66666666666669,
+                  "coord_origin": "TOPLEFT"
+                },
+                "row_span": 1,
+                "col_span": 1,
+                "start_row_offset_idx": 1,
+                "end_row_offset_idx": 2,
+                "start_col_offset_idx": 2,
+                "end_col_offset_idx": 3,
+                "text": "7341",
+                "column_header": false,
+                "row_header": false,
+                "row_section": false,
+                "fillable": false
+              },
+              {
+                "bbox": {
+                  "l": 63.33333333333333,
+                  "t": 270.0,
+                  "r": 108.66666666666667,
+                  "b": 283.0,
+                  "coord_origin": "TOPLEFT"
+                },
+                "row_span": 1,
+                "col_span": 1,
+                "start_row_offset_idx": 2,
+                "end_row_offset_idx": 3,
+                "start_col_offset_idx": 0,
+                "end_col_offset_idx": 1,
+                "text": "BETA",
+                "column_header": false,
+                "row_header": false,
+                "row_section": false,
+                "fillable": false
+              },
+              {
+                "bbox": {
+                  "l": 242.66666666666666,
+                  "t": 270.0,
+                  "r": 268.33333333333337,
+                  "b": 283.33333333333337,
+                  "coord_origin": "TOPLEFT"
+                },
+                "row_span": 1,
+                "col_span": 1,
+                "start_row_offset_idx": 2,
+                "end_row_offset_idx": 3,
+                "start_col_offset_idx": 1,
+                "end_col_offset_idx": 2,
+                "text": "291",
+                "column_header": false,
+                "row_header": false,
+                "row_section": false,
+                "fillable": false
+              },
+              {
+                "bbox": {
+                  "l": 402.3333333333333,
+                  "t": 270.0,
+                  "r": 431.0,
+                  "b": 283.66666666666663,
+                  "coord_origin": "TOPLEFT"
+                },
+                "row_span": 1,
+                "col_span": 1,
+                "start_row_offset_idx": 2,
+                "end_row_offset_idx": 3,
+                "start_col_offset_idx": 2,
+                "end_col_offset_idx": 3,
+                "text": "420",
+                "column_header": false,
+                "row_header": false,
+                "row_section": false,
+                "fillable": false
+              }
+            ],
+            "num_rows": 3,
+            "num_cols": 3,
+            "orientation": "rot_0",
+            "grid": [
+              [
+                {
+                  "bbox": {
+                    "l": 63.66666666666667,
+                    "t": 130.0,
+                    "r": 118.0,
+                    "b": 147.0,
+                    "coord_origin": "TOPLEFT"
+                  },
+                  "row_span": 1,
+                  "col_span": 1,
+                  "start_row_offset_idx": 0,
+                  "end_row_offset_idx": 1,
+                  "start_col_offset_idx": 0,
+                  "end_col_offset_idx": 1,
+                  "text": "Region",
+                  "column_header": false,
+                  "row_header": false,
+                  "row_section": false,
+                  "fillable": false
+                },
+                {
+                  "bbox": {
+                    "l": 242.66666666666666,
+                    "t": 130.0,
+                    "r": 281.33333333333337,
+                    "b": 143.66666666666666,
+                    "coord_origin": "TOPLEFT"
+                  },
+                  "row_span": 1,
+                  "col_span": 1,
+                  "start_row_offset_idx": 0,
+                  "end_row_offset_idx": 1,
+                  "start_col_offset_idx": 1,
+                  "end_col_offset_idx": 2,
+                  "text": "2024",
+                  "column_header": true,
+                  "row_header": false,
+                  "row_section": false,
+                  "fillable": false
+                },
+                {
+                  "bbox": {
+                    "l": 402.6666666666667,
+                    "t": 130.0,
+                    "r": 441.3333333333333,
+                    "b": 143.66666666666666,
+                    "coord_origin": "TOPLEFT"
+                  },
+                  "row_span": 1,
+                  "col_span": 1,
+                  "start_row_offset_idx": 0,
+                  "end_row_offset_idx": 1,
+                  "start_col_offset_idx": 2,
+                  "end_col_offset_idx": 3,
+                  "text": "2025",
+                  "column_header": true,
+                  "row_header": false,
+                  "row_section": false,
+                  "fillable": false
+                }
+              ],
+              [
+                {
+                  "bbox": {
+                    "l": 62.33333333333333,
+                    "t": 200.0,
+                    "r": 120.66666666666667,
+                    "b": 213.0,
+                    "coord_origin": "TOPLEFT"
+                  },
+                  "row_span": 1,
+                  "col_span": 1,
+                  "start_row_offset_idx": 1,
+                  "end_row_offset_idx": 2,
+                  "start_col_offset_idx": 0,
+                  "end_col_offset_idx": 1,
+                  "text": "ALPHA",
+                  "column_header": false,
+                  "row_header": false,
+                  "row_section": false,
+                  "fillable": false
+                },
+                {
+                  "bbox": {
+                    "l": 243.66666666666666,
+                    "t": 200.0,
+                    "r": 261.33333333333337,
+                    "b": 213.0,
+                    "coord_origin": "TOPLEFT"
+                  },
+                  "row_span": 1,
+                  "col_span": 1,
+                  "start_row_offset_idx": 1,
+                  "end_row_offset_idx": 2,
+                  "start_col_offset_idx": 1,
+                  "end_col_offset_idx": 2,
+                  "text": "17",
+                  "column_header": false,
+                  "row_header": false,
+                  "row_section": false,
+                  "fillable": false
+                },
+                {
+                  "bbox": {
+                    "l": 402.6666666666667,
+                    "t": 200.0,
+                    "r": 438.3333333333333,
+                    "b": 213.66666666666669,
+                    "coord_origin": "TOPLEFT"
+                  },
+                  "row_span": 1,
+                  "col_span": 1,
+                  "start_row_offset_idx": 1,
+                  "end_row_offset_idx": 2,
+                  "start_col_offset_idx": 2,
+                  "end_col_offset_idx": 3,
+                  "text": "7341",
+                  "column_header": false,
+                  "row_header": false,
+                  "row_section": false,
+                  "fillable": false
+                }
+              ],
+              [
+                {
+                  "bbox": {
+                    "l": 63.33333333333333,
+                    "t": 270.0,
+                    "r": 108.66666666666667,
+                    "b": 283.0,
+                    "coord_origin": "TOPLEFT"
+                  },
+                  "row_span": 1,
+                  "col_span": 1,
+                  "start_row_offset_idx": 2,
+                  "end_row_offset_idx": 3,
+                  "start_col_offset_idx": 0,
+                  "end_col_offset_idx": 1,
+                  "text": "BETA",
+                  "column_header": false,
+                  "row_header": false,
+                  "row_section": false,
+                  "fillable": false
+                },
+                {
+                  "bbox": {
+                    "l": 242.66666666666666,
+                    "t": 270.0,
+                    "r": 268.33333333333337,
+                    "b": 283.33333333333337,
+                    "coord_origin": "TOPLEFT"
+                  },
+                  "row_span": 1,
+                  "col_span": 1,
+                  "start_row_offset_idx": 2,
+                  "end_row_offset_idx": 3,
+                  "start_col_offset_idx": 1,
+                  "end_col_offset_idx": 2,
+                  "text": "291",
+                  "column_header": false,
+                  "row_header": false,
+                  "row_section": false,
+                  "fillable": false
+                },
+                {
+                  "bbox": {
+                    "l": 402.3333333333333,
+                    "t": 270.0,
+                    "r": 431.0,
+                    "b": 283.66666666666663,
+                    "coord_origin": "TOPLEFT"
+                  },
+                  "row_span": 1,
+                  "col_span": 1,
+                  "start_row_offset_idx": 2,
+                  "end_row_offset_idx": 3,
+                  "start_col_offset_idx": 2,
+                  "end_col_offset_idx": 3,
+                  "text": "420",
+                  "column_header": false,
+                  "row_header": false,
+                  "row_section": false,
+                  "fillable": false
+                }
+              ]
+            ]
+          }
+        }
+      ],
+      "layout_tables_total": 1
+    }
+  },
+  {
+    "file": "test-columnar.xlsb",
+    "kind": "xlsb",
+    "elapsed_ms": 965,
+    "text": "testing\n\tRecord Number\tSquare of the Record Number\tDescription of the Row\tPercent Done\tPercent Increment\tdate\tdatetime\ttime\n\t0\t0\tThis is row            0 of           10\t0.00%\t\t01-01-1960\t01Jan60 00:00:01\t0:00:01\n\t1\t1\tThis is row            1 of           10\t10.00%\t0.00%\t02-01-1960\t01Jan60 00:00:10\t0:00:03\n\t2\t4\tThis is row            2 of           10\t20.00%\t50.00%\t17-01-1960\t01Jan60 00:01:40\t0:00:09\n\t3\t9\tThis is row            3 of           10\t30.00%\t66.67%\t22-03-1960\t01Jan60 00:16:40\t0:00:27\n\t4\t16\tThis is row            4 of           10\t40.00%\t75.00%\t13-09-1960\t01Jan60 02:46:40\t0:01:21\n\t5\t25\tThis is row            5 of           10\t50.00%\t80.00%\t17-09-1961\t02Jan60 03:46:40\t0:04:03\n\t6\t36\tThis is row            6 of           10\t60.00%\t83.33%\t20-07-1963\t12Jan60 13:46:40\t0:12:09\n\t7\t49\tThis is row            7 of           10\t70.00%\t85.71%\t29-07-1966\t25Apr60 17:46:40\t0:36:27\n\t8\t64\tThis is row            8 of           10\t80.00%\t87.50%\t20-03-1971\t03Mar63 09:46:40\t1:49:21\n\t9\t81\tThis is row            9 of           10\t90.00%\t88.89%\t18-12-1977\t09Sep91 01:46:40\t5:28:03\n\t10\t100\tThis is row           10 of           10\t100.00%\t90.00%\t19-05-1987\t19Nov76 17:46:40\t16:24:09\n\n\n",
+    "metadata": {
+      "parser": "apache-tika",
+      "parser_version": "3.3.3",
+      "partial": false,
+      "warnings": [
+        "Fallback parser text; attachment completeness and physical table cells are not verified."
+      ],
+      "mime": "application/vnd.ms-excel.sheet.binary.macroEnabled.12"
+    }
+  },
+  {
+    "file": "test-outlook.msg",
+    "kind": "msg",
+    "elapsed_ms": 803,
+    "text": "Microsoft Outlook Express 6\n\tFrom\n\tL'\u00c9quipe Microsoft Outlook Express\n\tTo\n\tNouvel utilisateur de Outlook Express\n\tRecipients\n\tNouvel utilisateur de Outlook Express\n\n \t\u00a0\t \n \tLa r\u00e9ponse \u00e0 vos attentes en mati\u00e8re de messagerie\t \n\u00a0\t \n\u00a0Fonctionnalit\u00e9\t \u00a0\t \n\t\n\t Messagerie et groupes de discussion\t \n Comptes et identit\u00e9s multiples\t \n Prise en charge du format HTML\t \n Carnets d'adresses et annuaires\t \n Synchronisation hors connexion\t \n R\u00e8gles am\u00e9lior\u00e9es\t \n\t\n\u00a0Plus d'informations\t \u00a0\t \n\t\n\tPour obtenir les derni\u00e8res informations sur Outlook Express, acc\u00e9dez au menu d'aide et cliquez sur Lisez-moi.\n\nPour soumettre vos probl\u00e8mes, consulter les questions fr\u00e9quemment pos\u00e9es et obtenir des astuces d'utilisation, visitez notre groupe de discussion.\n\nPour obtenir les mises \u00e0 jour et des informations sur Outlook Express 6, visitez Microsoft sur le Web.\n\nPour obtenir de l'aide et pour le d\u00e9pannage, acc\u00e9dez au menu d'aide, cliquez sur une rubrique ou parcourez l'index. La rubrique D\u00e9pannage est accessible dans l'index.\n\u00a0 \t\n\u00a0 _____ \u00a0\n\nMerci d'avoir choisi Microsoft Internet Explorer et Outlook Express 6.\nL'\u00e9quipe Microsoft Outlook Express \n\nLe lien vers http://digitalid.verisign.com est fourni pour votre commodit\u00e9 et Microsoft n'est pas responsable de son contenu ou des services fournis par ce site. \n\t \n\nVous ne souhaitez plus partager votre compte de messagerie avec les autres membres de votre foyer\u00a0? Ouvrez un compte gratuit sur Hotmail\u00a0! Vous pourrez ainsi lire vos messages depuis le monde entier. Cliquez ici pour vous enregistrer d\u00e8s maintenant\u00a0! \n \n\nObtenez un identificateur num\u00e9rique personnel d'essai gratuit chez VeriSign. Utilisez cet identificateur afin de vous identifier positivement lorsque vous envoyez un courrier \u00e9lectronique s\u00e9curis\u00e9. Obtenez votre ID num\u00e9rique aujourd'hui !\n\n",
+    "metadata": {
+      "parser": "apache-tika",
+      "parser_version": "3.3.3",
+      "partial": false,
+      "warnings": [
+        "Fallback parser text; attachment completeness and physical table cells are not verified."
+      ],
+      "mime": "application/vnd.ms-outlook"
+    }
+  },
+  {
+    "file": "testEXCEL.xlsb",
+    "kind": "xlsb",
+    "elapsed_ms": 867,
+    "text": "Sheet1\n\tThis is an example spreadsheet created with Microsoft Excel 2007 Beta 2.\n\n\nSheet2\n\n\nSheet3\n\n\n",
+    "metadata": {
+      "parser": "apache-tika",
+      "parser_version": "3.3.3",
+      "partial": false,
+      "warnings": [
+        "Fallback parser text; attachment completeness and physical table cells are not verified."
+      ],
+      "mime": "application/vnd.ms-excel.sheet.binary.macroEnabled.12"
+    }
+  },
+  {
+    "file": "testMSG.msg",
+    "kind": "msg",
+    "elapsed_ms": 776,
+    "text": "MIME registry use cases\n\tFrom\n\tJukka Zitting\n\tTo\n\ttika-dev@lucene.apache.org\n\tRecipients\n\ttika-dev@lucene.apache.org\n\nHi,\n\nAs discussed, I've been working on making the type detection code more\nmodular and extensible. This work has progressed pretty well, and now\nI'd like to start integrating the results with the rest of Tika. To do\nthis, I'll need to modify the current MIME type classes. However, I\ndon't know all the ways in which this code is being used out there.\n\nIf you're directly using the classes in org.apache.tika.mime, please\nlet me know about your use cases and the classes/methods you're\naccessing. Otherwise I might end up breaking your application.\n\nBR,\n\nJukka Zitting\n\n",
+    "metadata": {
+      "parser": "apache-tika",
+      "parser_version": "3.3.3",
+      "partial": false,
+      "warnings": [
+        "Fallback parser text; attachment completeness and physical table cells are not verified."
+      ],
+      "mime": "application/vnd.ms-outlook"
+    }
+  }
+]

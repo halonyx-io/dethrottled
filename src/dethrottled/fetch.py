@@ -248,16 +248,15 @@ CRAWL4AI_RENDER_MS = int(os.environ.get("DETHROTTLED_CRAWL4AI_RENDER_MS", "20000
 #
 # It earns its slot in the ladder: DIGITIMES yields 432 chars through the CF
 # Worker and 21,896 through the renderer.
-# 40 an hour, up from 8. The 8 was sized for crawl4ai being the LAST resort,
-# reached only by pages nothing else could solve. It is second now, so it is
-# offered most pages that direct cannot parse, and 8 would have been spent by
-# the second search of the hour -- turning the promotion into a demotion.
-#
-# The cost is local: about 4.7s of rendering each, so 40 is roughly three
-# minutes of rendering per hour on your own hardware. jina-reader stays
-# at 25 because it is external, it is now third so it is reached less, and
-# being conservative with someone else's service is the right default.
-CRAWL4AI_BUDGET = int(os.environ.get("DETHROTTLED_CRAWL4AI_BUDGET", "40"))
+# Local rendering is bounded by concurrent work and a fair queue. A positive
+# legacy budget remains an explicit operator ceiling; zero disables rendering.
+CRAWL4AI_BUDGET = int(os.environ.get("DETHROTTLED_CRAWL4AI_BUDGET", "-1"))
+from .admission import AdmissionError, FairQueue  # noqa: E402
+
+_RENDER_QUEUE = FairQueue(
+    capacity=int(os.getenv("DETHROTTLED_RENDER_CONCURRENCY", "2")),
+    max_waiting=int(os.getenv("DETHROTTLED_RENDER_MAX_WAITING", "32")),
+    per_client=int(os.getenv("DETHROTTLED_RENDER_PER_CLIENT", "8")))
 
 _locks = defaultdict(threading.Lock)
 _last_hit = {}
@@ -928,7 +927,7 @@ def _tier_tls(url: str) -> tuple:
 
 
 def _tier_crawl4ai(url: str) -> tuple:
-    """Headless Chromium you host. Renders JavaScript. Slow, strictly budgeted.
+    """Headless Chromium you host. Renders JavaScript with bounded, fair admission.
 
     Optional. With DETHROTTLED_CRAWL4AI_URL unset this never runs and the ladder
     is one tier shorter, which is a smaller stack rather than a broken one.
@@ -938,12 +937,21 @@ def _tier_crawl4ai(url: str) -> tuple:
     plain fetcher, and a renderer you run yourself is the only way to read it
     without telling somebody else which URL you wanted.
     """
-    global _crawl4ai_dialect
     if not CRAWL4AI_URL:
         return {}, "crawl4ai_not_configured", url
-    if not _spend("crawl4ai", CRAWL4AI_BUDGET):
+    if CRAWL4AI_BUDGET >= 0 and not _spend("crawl4ai", CRAWL4AI_BUDGET):
         return {}, "crawl4ai_budget_spent", url
 
+    try:
+        with _RENDER_QUEUE.slot(_READ_OPTIONS.get().get("admission_key", "local"),
+                               timeout=float(os.getenv("DETHROTTLED_RENDER_QUEUE_SECONDS", "60"))):
+            return _crawl4ai_admitted(url)
+    except AdmissionError as exc:
+        return {}, str(exc), url
+
+
+def _crawl4ai_admitted(url):
+    global _crawl4ai_dialect
     order = ([_crawl4ai_dialect] if _crawl4ai_dialect
              else ["crawl", "render"])
     last = "crawl4ai_empty"
@@ -1049,6 +1057,14 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
                 _READ_OPTIONS.get().get("render_delay", 0.5))
         compatible = compatible and acquisition.get("layout_worker_configured", False) == bool(
             os.getenv("DETHROTTLED_LAYOUT_WORKER_URL"))
+        # Old archive XML / flat scan OCR must not hide newly enabled readers.
+        if urlparse(url).path.lower().endswith((".msg", ".xlsb")):
+            compatible = compatible and acquisition.get("format_worker_configured", False) == bool(
+                os.getenv("DETHROTTLED_FORMAT_WORKER_URL"))
+        scanned = any("ocr" in page.get("method", "")
+                      for page in (hit or {}).get("extraction", {}).get("pages", []))
+        if scanned and os.getenv("DETHROTTLED_LAYOUT_WORKER_URL"):
+            compatible = compatible and acquisition.get("scan_layout_revision") == 1
         if hit is not None and compatible:
             hit["cached"] = True
             _tier_stats["cache"] += 1
@@ -1085,7 +1101,7 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
     # failed -- faster than direct in measurement, and it needs no service.
     if ENABLE_TLS:
         tiers.append(("tls", lambda: _tier_tls(url)))
-    if allow_render and CRAWL4AI_URL and CRAWL4AI_BUDGET > 0:
+    if allow_render and CRAWL4AI_URL and CRAWL4AI_BUDGET != 0:
         tiers.append(("crawl4ai", lambda: _tier_crawl4ai(url)))
     if allow_render and _READ_OPTIONS.get().get("headed_fallback"):
         tiers.append(("headed", lambda: _tier_headed(url)))
@@ -1131,6 +1147,9 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
                               "sheet": _READ_OPTIONS.get().get("sheet", ""),
                               "max_cell_chars": _READ_OPTIONS.get().get("max_cell_chars"),
                               "document_mode": _READ_OPTIONS.get().get("document_mode", "auto"),
+                              "scan_layout_revision": 1,
+                              "format_worker_configured": bool(
+                                  os.getenv("DETHROTTLED_FORMAT_WORKER_URL")),
                               "layout_worker_configured": bool(
                                   os.getenv("DETHROTTLED_LAYOUT_WORKER_URL"))}
         out.setdefault("retrieved_at", datetime.now(timezone.utc).isoformat())
@@ -1342,7 +1361,7 @@ def fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAULT
                       page_start: int = 1, page_end: int | None = None,
                       row_start: int = 1, row_end: int | None = None, sheet: str = "",
                       max_cell_chars: int | None = None, document_mode: str = "auto",
-                      source_sink=None) -> dict:
+                      source_sink=None, admission_key="local") -> dict:
     """Read a URL with request-local rendering/target policy and bounded output."""
     options = dict(format=format, wait_for=wait_for, render_delay=render_delay,
                    headed_fallback=headed_fallback, public_only=public_only,
@@ -1350,7 +1369,7 @@ def fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAULT
                    page_start=page_start, page_end=page_end,
                    allow_ocr=allow_ocr, row_start=row_start, row_end=row_end,
                    sheet=sheet, max_cell_chars=max_cell_chars, document_mode=document_mode,
-                   source_sink=source_sink)
+                   source_sink=source_sink, admission_key=admission_key)
     token = _READ_OPTIONS.set(options)
     try:
         if options.get("public_only"):

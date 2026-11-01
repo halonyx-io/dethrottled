@@ -128,3 +128,24 @@ It distinguishes worker readiness from process liveness and proposes queue,
 OCR/layout, speech-quality and broad-format improvements. It also evaluates where
 an optional Rust document backend could help; no production upgrade or language
 migration was performed as part of the audit.
+
+## 0.8 worker rollout and rollback
+
+Build the API and optional workers from the same checkout. For the complete stack:
+
+```sh
+docker compose -f docker-compose.yml -f docker-compose.agents.yml \
+  --profile media --profile layout --profile formats up -d --build
+```
+
+Set the three worker URL variables in `.env` as described in CONFIGURATION.md.
+Back up the data volume/SQLite databases using SQLite backup, and retain previous
+image tags before rollout. Watch `/v2/status`, `/stats` renderer admission and
+`/corpus/stats`; a listening worker alone does not prove cached weights are ready.
+The multilingual backfill writes a separate model index. Setting
+`DETHROTTLED_MULTILINGUAL_CORPUS=0` and restarting preserves the original index.
+Rollback old image tags and worker URLs together; retained E5 rows do not alter
+MiniLM queries. Keep the data volume. Systemd-hosted public adapters must also be
+installed/restarted from `adapters/mcp_server.py` after instruction changes.
+Confirm the MCP initialize instruction hash equals capabilities.client_contract's
+workflow hash. A remote agent's plugin code still requires its own activation.

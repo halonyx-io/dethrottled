@@ -4,12 +4,13 @@ import json
 import sys
 
 from docling.datamodel.base_models import DocumentStream, InputFormat
-from docling.datamodel.pipeline_options import PdfPipelineOptions
+from docling.datamodel.pipeline_options import PdfPipelineOptions, TesseractCliOcrOptions
 from docling.document_converter import DocumentConverter, PdfFormatOption
 
 options = json.loads(sys.argv[2])
 pipeline = PdfPipelineOptions()
-pipeline.do_ocr = False  # Native text/layout only; existing OCR remains the fallback.
+pipeline.do_ocr = options.get("ocr", True)
+pipeline.ocr_options = TesseractCliOcrOptions(lang=[options.get("ocr_language", "eng")])
 pipeline.do_table_structure = True
 pipeline.document_timeout = 150
 converter = DocumentConverter(format_options={InputFormat.PDF: PdfFormatOption(

@@ -36,6 +36,10 @@ def kind_of(data, url="", content_type=""):
         return "image"
     if data.startswith(b"\x1f\x8b"):
         return "gzip"
+    from .fallback import kind as fallback_kind
+    extra = fallback_kind(data, url)
+    if extra:
+        return extra
     if data.startswith(documents.ZIP_MAGIC):
         return documents.kind_of(data, url, content_type) or "zip"
     if len(data) > 262 and data[257:262] == b"ustar":
@@ -216,11 +220,14 @@ def read_blob(data, kind, limit, *, allow_ocr=True, options=None, depth=0):
     if kind in {"captions", "media"}:
         from . import timed
         return timed.captions(data, limit) if kind == "captions" else timed.transcribe(data, limit)
+    if kind in {"msg", "xlsb"}:
+        from .fallback import read
+        return read(data, kind, limit)
     metadata = {"warnings": [], "partial": False}
     if kind == "pdf":
         from .layout import read_pdf
         text, meta = pdf_text(data, limit, allow_ocr, options)
-        return read_pdf(data, text, meta, limit, options)
+        return read_pdf(data, text, meta, limit, dict(options, allow_ocr=allow_ocr))
     if kind == "image":
         if not allow_ocr:
             raise ValueError("image_requires_ocr")
