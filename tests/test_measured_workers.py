@@ -114,8 +114,12 @@ def test_child_is_killed_before_worker_slot_is_released(runtime, tmp_path, failu
         request = Request(disconnect_after=0.3 if failure == "disconnect" else None)
         task = asyncio.create_task(runner.execute(request))
         if failure == "cancel":
-            while not pidfile.exists():
+            deadline = time.monotonic() + 3
+            while not pidfile.exists() and not task.done() and time.monotonic() < deadline:
                 await asyncio.sleep(0.01)
+            if task.done():
+                await task  # Surface startup failures rather than waiting forever for a PID.
+            assert pidfile.exists(), "worker child did not start within three seconds"
             task.cancel()
         with pytest.raises((HTTPException, asyncio.CancelledError)):
             await task
@@ -137,6 +141,24 @@ def test_worker_bounds_input_and_output(runtime, tmp_path):
     with pytest.raises(HTTPException) as exc:
         asyncio.run(runner.execute(Request(body=b"large")))
     assert exc.value.status_code == 413 and not runner.busy
+
+
+def test_worker_upload_deadline_releases_slot(runtime, tmp_path):
+    class SlowRequest(Request):
+        async def stream(self):
+            await asyncio.sleep(1)
+            yield b"late"
+
+    child = tmp_path / "child.py"
+    child.write_text('print(\'{"text":"recovered"}\')\n')
+    runner = runtime.Runner(str(child), timeout=0.02)
+    with pytest.raises(HTTPException) as exc:
+        asyncio.run(runner.execute(SlowRequest()))
+    assert exc.value.status_code == 504
+    assert not runner.busy and runner.pid is None
+    assert runner.counts["timed_out"] == 1
+    runner.timeout = 3
+    assert asyncio.run(runner.execute(Request()))["text"] == "recovered"
 
 
 def test_multilingual_model_never_reuses_minilm_vectors(tmp_path):

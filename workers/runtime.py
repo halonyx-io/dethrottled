@@ -44,13 +44,14 @@ class Runner:
         reader = None
         try:
             with tempfile.NamedTemporaryFile(suffix=self.suffix) as source:
-                size = 0
-                async with asyncio.timeout(self.timeout):
+                async def receive_source():
+                    size = 0
                     async for chunk in request.stream():
                         size += len(chunk)
                         if size > self.max_bytes:
                             raise HTTPException(413, "worker_input_limit")
                         source.write(chunk)
+                await asyncio.wait_for(receive_source(), timeout=self.timeout)
                 source.flush()
                 process = await asyncio.create_subprocess_exec(
                     sys.executable,
@@ -93,7 +94,7 @@ class Runner:
                 result = await reader
                 self.counts["completed"] += 1
                 return result
-        except TimeoutError:
+        except asyncio.TimeoutError:
             self.counts["timed_out"] += 1
             self.counts["failed"] += 1
             raise HTTPException(504, "worker_deadline_exceeded") from None
