@@ -143,6 +143,7 @@ def test_worker_bounds_input_and_output(runtime, tmp_path):
     assert exc.value.status_code == 413 and not runner.busy
 
 
+@pytest.mark.skipif(not hasattr(os, "killpg"), reason="Linux worker process-group lifecycle")
 def test_worker_upload_deadline_releases_slot(runtime, tmp_path):
     class SlowRequest(Request):
         async def stream(self):
