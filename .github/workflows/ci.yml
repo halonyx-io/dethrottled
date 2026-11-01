@@ -134,6 +134,10 @@ jobs:
           test "$(docker image inspect -f '{{.Architecture}}' dethrottled-browser-search:ci)" = "$expected"
       - name: Verify API image offline
         run: docker run --rm --network none dethrottled:ci python /app/verify_image.py
+      - name: Verify packaged documentation offline
+        run: |
+          docker run --rm --network none dethrottled:ci python /app/scripts/docs_reference.py --check
+          docker run --rm --network none dethrottled:ci python /app/scripts/check_docs.py
       - name: API image runs and answers
         run: |
           docker run -d --name dethrottled-ci -p 8787:8787 dethrottled:ci
