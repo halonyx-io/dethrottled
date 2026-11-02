@@ -48,8 +48,8 @@ _DEAD_ENGINES = {}
 def result_family(row):
     engine = str(row.get("engine") or "unknown").lower()
     if (engine in {"duckduckgo", "ddg-lite", "ddg-html", "tls-ddg-lite"}
-            or engine.startswith("web-") and any(name in engine for name in (
-                "ddg", "duckduckgo"))):
+            or (engine.startswith("web-") and any(name in engine for name in (
+                "ddg", "duckduckgo")))):
         return "ddg"
     return engine.removeprefix("web-browser-").removeprefix("web-").replace(" ", "-")
 
