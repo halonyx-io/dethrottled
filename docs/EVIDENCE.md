@@ -9,6 +9,7 @@ web access, answer correctness or superiority over paid services.
 
 | Scope | Report and raw data | Interpretation |
 |---|---|---|
+| Automatic discovery breadth | [Whole-path correction](../evaluations/search-breadth/results/2026-11-02/REPORT.md) | Records the failed public check and the staged MCP → API → TLS/browser recovery before promotion |
 | Browser discovery depth | [Broad-search follow-up](../evaluations/broad-search/results/2026-11-02/REPORT.md) | Requested count reaches the worker; bounded same-origin pagination and pooled results; native and live observations |
 | Dependency audit and coverage ceilings | [1.1.0 assessment](../evaluations/audit/results/2026-11-02/REPORT.md) | Full dependency locks, vulnerability observations, higher request capacities, compact MCP values and backend identity checks |
 | MCP maintenance | [1.0.1 transport checks](../evaluations/mcp-maintenance/2026-11-02/REPORT.md) | SDK upgrade, release identity, strict arguments and access contracts; no source-coverage claim |

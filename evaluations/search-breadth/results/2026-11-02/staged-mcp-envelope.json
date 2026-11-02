@@ -1,0 +1,83 @@
+{
+  "version": "1.1.2",
+  "results": 50,
+  "attempts": [
+    {
+      "engine": "web",
+      "count": 50,
+      "status": "ok",
+      "elapsed_ms": 4358,
+      "unresponsive": []
+    },
+    {
+      "engine": "bing-news",
+      "count": 0,
+      "status": "not_requested",
+      "elapsed_ms": 4358,
+      "unresponsive": []
+    },
+    {
+      "engine": "searxng",
+      "count": 0,
+      "status": "not_configured",
+      "elapsed_ms": 4358,
+      "unresponsive": []
+    },
+    {
+      "engine": "gnews-resolved",
+      "count": 0,
+      "status": "not_requested",
+      "elapsed_ms": 4358,
+      "unresponsive": []
+    },
+    {
+      "engine": "tls-ddg-lite",
+      "count": 10,
+      "status": "ok",
+      "reason": null,
+      "elapsed_ms": 584,
+      "unresponsive": []
+    },
+    {
+      "engine": "browser-search",
+      "count": 50,
+      "breadth": {
+        "requested": 50,
+        "cheap_count": 10,
+        "browser_count": 50,
+        "returned_count": 50,
+        "status": "fulfilled"
+      },
+      "status": "ok",
+      "elapsed_ms": 3767,
+      "queue_ms": 0,
+      "unresponsive": []
+    },
+    {
+      "engine": "browser-ddg-lite",
+      "count": 50,
+      "status": 200,
+      "reason": null,
+      "elapsed_ms": 3621,
+      "unresponsive": []
+    },
+    {
+      "engine": "browser-ddg-html",
+      "count": 0,
+      "status": null,
+      "reason": "cancelled_by_winner",
+      "elapsed_ms": 0,
+      "unresponsive": []
+    },
+    {
+      "engine": "browser-bing",
+      "count": 0,
+      "status": null,
+      "reason": "cancelled_by_winner",
+      "elapsed_ms": 0,
+      "unresponsive": []
+    }
+  ],
+  "url_count": 50,
+  "passed": true
+}
