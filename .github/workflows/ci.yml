@@ -176,7 +176,7 @@ jobs:
         run: |
           docker tag dethrottled:ci dethrottled:one-zero-candidate
           docker tag dethrottled-browser-search:ci dethrottled-browser-search:one-zero-candidate
-          docker build -f format-worker/Dockerfile -t dethrottled-formats:local .
+          docker build -f format-worker/Dockerfile -t dethrottled-formats:one-zero-candidate .
           python3 evaluations/release/compose-check.py --no-build --out /tmp/release-gates
       - name: Preserve release gate observations and negative results
         if: always()

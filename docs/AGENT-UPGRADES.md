@@ -95,3 +95,11 @@ images correctly. [Cold-agent evaluations](../evaluations/agent-workflow/README.
 record bounded model tasks separately from parser and browser checks.
 
 [Documentation home](README.md) · [Agent guide](AGENT-UPGRADES.md) · [API](API.md) · [Evidence](EVIDENCE.md)
+
+## Broader coverage and MCP parsing
+
+[Limits and continuation](LIMITS.md) lists generous per-call ceilings and ways to
+continue larger jobs. Increase requested coverage when the evidence warrants it.
+For MCP legacy list tools, parse each JSON `content[].text` entry separately;
+never concatenate entries before parsing. Prefer `structuredContent` when supplied
+and keep native image blocks available to the model.

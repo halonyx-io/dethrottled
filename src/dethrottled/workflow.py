@@ -4,6 +4,10 @@ from urllib.parse import urlsplit
 
 INSTRUCTIONS = """Dethrottled discovers and reads sources.
 Prioritize grounded coverage and accuracy.
+If coverage is insufficient, search accepts limit up to 50. Research accepts up to
+30 sources and 10 additional query facets, with up to 120000 characters per source.
+Fetch and read_document allow up to 1000000 characters; use retained-document offsets
+for longer sources. Defaults are smaller than ceilings; request more when justified.
 Known URL: call fetch directly, normally with focus set to the question. Unknown sources:
 search then fetch selected URLs, or research for a multi-source evidence bundle. Corpus
 is optional reusable evidence, never a compulsory first step. fetch automatically tries

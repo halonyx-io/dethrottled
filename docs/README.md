@@ -10,6 +10,7 @@ assets and public adapters may differ.
 | Your task | Start here | Continue with |
 |---|---|---|
 | Connect an agent | [Agent integration](AGENT-UPGRADES.md) | [MCP reference](MCP-REFERENCE.md), [public adapters](PUBLIC-ACCESS.md) |
+| Request broader coverage | [Limits and continuation](LIMITS.md) | [Agent integration](AGENT-UPGRADES.md) |
 | Read a source or file | [Reading and evidence](DEPENDABLE-WORKFLOWS.md) | [HTTP API](API.md), [browser operation](DRIVE.md) |
 | Understand automatic escalation | [Read planner](READ-PLANNER.md) | [Agent integration](AGENT-UPGRADES.md), [evidence](EVIDENCE.md) |
 | Install or extend the stack | [Configuration](CONFIGURATION.md) | [Operations](OPERATIONS.md), [architecture](PIPELINE.md) |

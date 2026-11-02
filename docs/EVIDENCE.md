@@ -9,6 +9,7 @@ web access, answer correctness or superiority over paid services.
 
 | Scope | Report and raw data | Interpretation |
 |---|---|---|
+| Dependency audit and coverage ceilings | [1.1.0 assessment](../evaluations/audit/results/2026-11-02/REPORT.md) | Full dependency locks, vulnerability observations, higher request capacities, compact MCP values and backend identity checks |
 | MCP maintenance | [1.0.1 transport checks](../evaluations/mcp-maintenance/2026-11-02/REPORT.md) | SDK upgrade, release identity, strict arguments and access contracts; no source-coverage claim |
 | 1.0 release gates | [Evaluation](../evaluations/release/results/2026-11-02/REPORT.md), [method](../evaluations/release/README.md) | Default-stack, fidelity, browser and remote-agent evidence; native CI results and release verification are recorded in the report |
 | Native browser navigation recovery | [0.10.1 comparison](../evaluations/drive-recovery/results/2026-11-02/REPORT.md), [method](../evaluations/drive-recovery/README.md) | Reddit listing/thread recovered with native controls; no additional Crunchbase/G2 reads; single-host observations |

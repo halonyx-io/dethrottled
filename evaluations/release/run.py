@@ -123,6 +123,17 @@ if a.phase == "contracts":
         }
 
     check("fresh-defaults", defaults)
+
+    def long_browser_read():
+        value = drive(session="release-long", url=a.fixture + "/long-read",
+                      steps=[{"action": "text", "selector": "body", "max_chars": 200000}],
+                      close_session=True)
+        step = value["steps"][-1]
+        assert len(step["data"]) > 120000 and "ALLOCATION_TOTAL_7341" in step["data"]
+        assert not step.get("truncated")
+        return {"late_fact_retained": True, "content_chars": len(step["data"])}
+
+    check("long-browser-read", long_browser_read)
     for name in [
         "alternate",
         "lazy",

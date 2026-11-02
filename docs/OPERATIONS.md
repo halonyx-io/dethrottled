@@ -19,8 +19,10 @@ curl -fsS http://127.0.0.1:8787/v2/capabilities
 The Docker image installs the tested Linux/Python 3.12 package versions from
 `requirements/docker-py312.txt`; source installs retain their compatibility ranges.
 Dependency/model layers precede application source so code-only rebuilds reuse them.
-Changing the pins requires the release gates on both native architectures. This
-freezes package versions, not every OS package or build byte.
+Changing the pins requires the release gates on both native architectures. All six Python Dockerfiles also pin the same multi-architecture base-image
+digest. This freezes the base image and declared Python package versions, not
+every later apt download, browser asset or build byte. Refresh base digests
+and dependency locks deliberately, then rerun native release gates.
 
 The offline verifier checks those versions, dependencies and a real corpus embedding without
 host model mounts. `/health` is liveness; `/ready` checks search sources;

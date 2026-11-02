@@ -1478,7 +1478,8 @@ def _headed_read(url: str, backend: str) -> tuple:
             # and navigation. Retain actual rendered evidence rather than
             # treating that prefix as a complete read.
             try:
-                rendered = drive([{'action': 'text', 'selector': 'body', 'max_chars': 120000}])
+                rendered = drive([{'action': 'text', 'selector': 'body',
+                                   'max_chars': min(CACHE_CHARS, 1000000)}])
             except (requests.RequestException, ValueError, _HeadedReadFailure) as exc:
                 rendered = {'steps': [{}]}
                 visible_error = type(exc).__name__

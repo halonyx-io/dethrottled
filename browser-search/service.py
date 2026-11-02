@@ -370,7 +370,7 @@ class DriveStep(BaseModel):
     name: str = Field(default="", max_length=200)
     index: int = Field(default=0, ge=0, le=500)
     limit: int = Field(default=100, ge=1, le=200)
-    max_chars: int | None = Field(default=None, ge=1, le=120000)
+    max_chars: int | None = Field(default=None, ge=1, le=1000000)
 
 
 class DriveRequest(BaseModel):

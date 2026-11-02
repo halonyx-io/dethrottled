@@ -72,7 +72,7 @@ Framework `/docs` and `/openapi.json` routes are available separately.
 | `ocr_mode` | "auto", "always", "never" | "auto" |  |
 | `ocr_language` | string | "" | maxLength=100; pattern=^[a-z_]*(?:\+[a-z_]+)*$ |
 | `offset` | integer | 0 | minimum=0.0 |
-| `max_chars` | integer | 12000 | minimum=1.0; maximum=120000.0 |
+| `max_chars` | integer | 12000 | minimum=1.0; maximum=1000000.0 |
 | `response_format` | "detailed", "concise" | "detailed" |  |
 | `evidence_namespace` | string | "local" | maxLength=100 |
 
@@ -109,7 +109,7 @@ Framework `/docs` and `/openapi.json` routes are available separately.
 | `name` | string | "" | maxLength=200 |
 | `index` | integer | 0 | minimum=0.0; maximum=500.0 |
 | `limit` | integer | 100 | minimum=1.0; maximum=200.0 |
-| `max_chars` | integer or null | factory/default; see runtime schema | minimum=1.0; maximum=120000.0 |
+| `max_chars` | integer or null | factory/default; see runtime schema | minimum=1.0; maximum=1000000.0 |
 
 ## FetchBody
 
@@ -120,7 +120,7 @@ Framework `/docs` and `/openapi.json` routes are available separately.
 | `format` | "text", "links", "html" | "text" |  |
 | `raw` | boolean | false |  |
 | `links` | boolean | false |  |
-| `max_chars` | integer | 8000 | minimum=1.0; maximum=120000.0 |
+| `max_chars` | integer | 8000 | minimum=1.0; maximum=1000000.0 |
 | `fresh` | boolean | false |  |
 | `cache_mode` | "use", "refresh", "bypass" | "use" |  |
 | `max_age` | number or null | factory/default; see runtime schema | minimum=0.0; maximum=1814400.0 |
@@ -152,7 +152,7 @@ Framework `/docs` and `/openapi.json` routes are available separately.
 | `format` | "text", "links", "html" | "text" |  |
 | `raw` | boolean | false |  |
 | `links` | boolean | false |  |
-| `max_chars` | integer | 8000 | minimum=1.0; maximum=120000.0 |
+| `max_chars` | integer | 8000 | minimum=1.0; maximum=1000000.0 |
 | `fresh` | boolean | false |  |
 | `cache_mode` | "use", "refresh", "bypass" | "use" |  |
 | `max_age` | number or null | factory/default; see runtime schema | minimum=0.0; maximum=1814400.0 |
@@ -190,9 +190,9 @@ Framework `/docs` and `/openapi.json` routes are available separately.
 | Field | Type/choices | Required/default | Bounds |
 |---|---|---|---|
 | `question` | string | required | minLength=3; maxLength=500 |
-| `queries` | array of string | factory/default; see runtime schema | maxItems=3 |
-| `max_sources` | integer | 6 | minimum=1.0; maximum=6.0 |
-| `max_chars` | integer | 5000 | minimum=500.0; maximum=6000.0 |
+| `queries` | array of string | factory/default; see runtime schema | maxItems=10 |
+| `max_sources` | integer | 10 | minimum=1.0; maximum=30.0 |
+| `max_chars` | integer | 12000 | minimum=500.0; maximum=120000.0 |
 | `language` | string | "" |  |
 | `fresh` | boolean | false |  |
 | `follow_assets` | boolean | true |  |
@@ -207,9 +207,9 @@ Framework `/docs` and `/openapi.json` routes are available separately.
 | Field | Type/choices | Required/default | Bounds |
 |---|---|---|---|
 | `query` | string | required | minLength=1; maxLength=500 |
-| `limit` | integer or null | factory/default; see runtime schema | minimum=1.0; maximum=10.0 |
-| `num_results` | integer | 8 | minimum=1.0; maximum=10.0 |
-| `max_items` | integer or null | factory/default; see runtime schema | minimum=1.0; maximum=10.0 |
+| `limit` | integer or null | factory/default; see runtime schema | minimum=1.0; maximum=50.0 |
+| `num_results` | integer | 8 | minimum=1.0; maximum=50.0 |
+| `max_items` | integer or null | factory/default; see runtime schema | minimum=1.0; maximum=50.0 |
 | `categories` | "", "news", "academic" | "" |  |
 | `language` | string | "" |  |
 | `engines` | string | "" |  |
@@ -229,9 +229,9 @@ Framework `/docs` and `/openapi.json` routes are available separately.
 | Field | Type/choices | Required/default | Bounds |
 |---|---|---|---|
 | `query` | string | required | minLength=1; maxLength=500 |
-| `limit` | integer or null | factory/default; see runtime schema | minimum=1.0; maximum=10.0 |
-| `num_results` | integer | 8 | minimum=1.0; maximum=10.0 |
-| `max_items` | integer or null | factory/default; see runtime schema | minimum=1.0; maximum=10.0 |
+| `limit` | integer or null | factory/default; see runtime schema | minimum=1.0; maximum=50.0 |
+| `num_results` | integer | 8 | minimum=1.0; maximum=50.0 |
+| `max_items` | integer or null | factory/default; see runtime schema | minimum=1.0; maximum=50.0 |
 | `categories` | "", "news", "academic" | "" |  |
 | `language` | string | "" |  |
 | `engines` | string | "" |  |
@@ -251,7 +251,7 @@ Framework `/docs` and `/openapi.json` routes are available separately.
 | `evidence_namespace` | string | "local" | maxLength=100 |
 | `render` | "auto", "always", "never" or boolean | "auto" |  |
 | `raw` | boolean | false |  |
-| `max_chars` | integer | 3000 | minimum=1.0; maximum=120000.0 |
+| `max_chars` | integer | 3000 | minimum=1.0; maximum=1000000.0 |
 
 ## SiteBody
 

@@ -56,7 +56,7 @@ def queries_for(question: str, supplied: list[str] | None = None) -> list[str]:
         if text and key not in seen:
             seen.add(key)
             out.append(text)
-        if len(out) >= 4:
+        if len(out) >= 11:
             break
     return out
 

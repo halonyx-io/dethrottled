@@ -2,7 +2,7 @@
 # linux/arm64, and every dependency below is either pure Python or ships wheels
 # for both. Nothing here is compiled from source at build time, which is why
 # this image builds on a laptop and on a single-board ARM machine alike.
-FROM python:3.12-slim
+FROM python:3.12-slim@sha256:b18b261e1b4974b4f321451ad5251ded85abb22c2b8b262da527dda1d031ab30
 
 # OCR and legacy Office converters are local command-line tools. English,
 # Malay and Chinese OCR data ship in the image; select a known language for
