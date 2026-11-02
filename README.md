@@ -97,7 +97,7 @@ The fetch ladder does not consult `robots.txt`. The raw API can access trusted
 LAN targets; public adapters enforce a narrower policy, which is not a substitute
 for deployment-level network isolation.
 
-This checkout is **1.1.2**. Check `/health` and `/v2/capabilities`
+This checkout is **1.1.3**. Check `/health` and `/v2/capabilities`
 on the installation you use; a repository branch or remote plugin may differ
 from the deployed service. Historical reports describe their recorded versions.
 

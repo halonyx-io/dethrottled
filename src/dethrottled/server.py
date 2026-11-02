@@ -172,7 +172,7 @@ class SearchBody(BaseModel):
     # The contract's name for result count. num_results and max_items remain
     # accepted for callers already written against them; limit wins.
     limit: int | None = Field(default=None, ge=1, le=50)
-    num_results: int = Field(default=8, ge=1, le=50)
+    num_results: int = Field(default=10, ge=1, le=50)
     max_items: int | None = Field(default=None, ge=1, le=50)
     # Default search includes direct web, Bing News RSS, local SearXNG and
     # resolved Google News headlines. This preserves existing callers.

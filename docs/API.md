@@ -14,7 +14,7 @@ request fields receive 422; cross-field validators impose additional constraints
 ```sh
 curl -sS http://127.0.0.1:8787/v2/search \
   -H 'Content-Type: application/json' \
-  -d '{"query":"Python sqlite3 documentation","profile":"web","limit":5,"fresh":true}'
+  -d '{"query":"Python sqlite3 documentation","profile":"web","limit":10,"fresh":true}'
 ```
 
 `/search` returns an array; `/v2/search` returns a diagnostic envelope including
@@ -28,6 +28,15 @@ Source order is default. `rank=true`/`ranking="bm25"` selects lexical ranking;
 `ranking="fusion"` combines source and lexical order. `prefer_domains`, `recency`
 and stored `corpus` candidates are explicit refinements. Neural `rerank=true`
 is rejected. Optional keyed engines are never implicitly added to defaults.
+
+Normal HTTP and MCP searches default to ten choices. Read promising sources
+before expanding to `limit=20` or rewriting around a missing fact. The
+[120-question evaluation](../evaluations/agent-search/results/2026-11-03/REPORT.md)
+supports retaining source order on the tested host; it does not justify adding
+Bing/Brave to every menu. DDG Lite/HTML/TLS/browser are alternative acquisition
+paths within one provider family. A display limit is not an upstream-request
+budget: browser races and pagination can make several requests. Inspect each
+row's actual `engine` and the envelope's `attempts`.
 
 ## Read known URLs
 

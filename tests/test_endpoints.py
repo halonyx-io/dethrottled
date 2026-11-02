@@ -79,6 +79,28 @@ def test_search_keeps_source_order_by_default_and_accepts_opt_in_bm25(client):
     assert lexical[0]["ranking"] == ["bm25"]
 
 
+@pytest.mark.parametrize("path", ["/search", "/v2/search"])
+def test_default_menu_and_expansion_reach_acquisition(client, monkeypatch, path):
+    requested = []
+
+    def source(query, **kwargs):
+        requested.append(kwargs["max_items"])
+        return ([dict(FAKE_ROWS[0], url=f"https://example.com/{i}")
+                 for i in range(25)], dict(FAKE_META))
+
+    monkeypatch.setattr(srv.fs, "search", source)
+    for body, count in [({}, 10), ({"limit": 20}, 20),
+                        ({"num_results": 5}, 5), ({"max_items": 3}, 3)]:
+        response = client.post(path, json={"query": "One", **body})
+        assert response.status_code == 200
+        rows = response.json()
+        if path == "/v2/search":
+            rows = rows["results"]
+        assert len(rows) == count
+        assert rows[0]["ranking"] == []
+        assert requested[-1] == count
+
+
 @pytest.mark.parametrize("path", ["/fetch", "/extract"])
 def test_fetch_and_its_alias_behave_identically(client, path):
     rows = client.post(path, json={"urls": ["https://example.com/a"]}).json()

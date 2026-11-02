@@ -1,0 +1,83 @@
+{
+  "selected": {
+    "normal": {
+      "config": {
+        "primary": 10,
+        "contribution": 0,
+        "backups": [
+          "bing",
+          "brave"
+        ],
+        "policy": "never",
+        "order": "source",
+        "weight": 1,
+        "protect": 0
+      },
+      "metrics": {
+        "shown": 9.8625,
+        "facet_coverage": 0.80625,
+        "gold_coverage": 0.4375,
+        "offtopic": 0.0425,
+        "uncertain": 0.28875,
+        "bytes": 4214.8625,
+        "useful_count3": 2.325,
+        "precision3": 0.775,
+        "useful_any3": 0.9375,
+        "highconf_count3": 1.8625,
+        "useful_count5": 3.7375,
+        "precision5": 0.7475,
+        "useful_any5": 0.9625,
+        "highconf_count5": 2.8125,
+        "useful_count10": 7.1375,
+        "precision10": 0.7143055555555555,
+        "useful_any10": 0.9625,
+        "highconf_count10": 5.1125,
+        "backup_requested": 0,
+        "backup_http_requests": 0,
+        "delta_precision3": 0.0,
+        "delta_offtopic": 0.0
+      }
+    },
+    "broader": {
+      "config": {
+        "primary": 10,
+        "contribution": 0,
+        "backups": [
+          "bing",
+          "brave"
+        ],
+        "policy": "never",
+        "order": "source",
+        "weight": 1,
+        "protect": 0
+      },
+      "metrics": {
+        "shown": 9.8625,
+        "facet_coverage": 0.80625,
+        "gold_coverage": 0.4375,
+        "offtopic": 0.0425,
+        "uncertain": 0.28875,
+        "bytes": 4214.8625,
+        "useful_count3": 2.325,
+        "precision3": 0.775,
+        "useful_any3": 0.9375,
+        "highconf_count3": 1.8625,
+        "useful_count5": 3.7375,
+        "precision5": 0.7475,
+        "useful_any5": 0.9625,
+        "highconf_count5": 2.8125,
+        "useful_count10": 7.1375,
+        "precision10": 0.7143055555555555,
+        "useful_any10": 0.9625,
+        "highconf_count10": 5.1125,
+        "backup_requested": 0,
+        "backup_http_requests": 0,
+        "delta_precision3": 0.0,
+        "delta_offtopic": 0.0
+      }
+    }
+  },
+  "time": 1793640519.7632737,
+  "questions_sha256": "b6a547ee64765dbdaba3724260d22250f135934d1c3b3a227d0d32ea977a4a5f",
+  "protocol_sha256": "4c61ac5982be4fd82b79a139dfa71e214035491d9db17a3e9ccf21692b2a451e"
+}

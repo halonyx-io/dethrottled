@@ -95,20 +95,33 @@ def test_resting_expires():
     assert "mojeek" in fs._rested("bing,mojeek").split(",")
 
 
-def test_the_last_engine_standing_is_never_rested():
-    """A wrong health record must not be able to turn every search into an
-    empty result."""
+def test_a_sole_blocked_engine_is_rested():
+    """Selecting one engine must not bypass its upstream cooldown."""
     fs._record_failure("bing", "blocked")
-    assert fs._rested("bing") == "bing"
+    assert fs._rested("bing") == ""
 
 
-def test_when_all_engines_are_rested_only_the_oldest_is_retried():
+def test_all_blocked_engines_stay_rested_until_expiry():
     fs._record_failure("auto", "blocked", namespace="web")
     fs._record_failure("google", "blocked", namespace="web")
     health = fs._load_health()
     health["web:auto"]["at"] = health["web:google"]["at"] - 1
     fs._save_health(health)
-    assert fs._rested("google,auto", namespace="web") == "auto"
+    assert fs._rested("google,auto", namespace="web") == ""
+
+
+def test_searxng_cooldown_does_not_request_default_engines(monkeypatch):
+    monkeypatch.setattr(fs, "SEARXNG_URL", "http://unused.invalid")
+    fs._record_failure("brave", "too many requests", namespace="searxng")
+
+    def forbidden(*args, **kwargs):
+        pytest.fail("A cooled-down engine must not reach SearXNG")
+
+    monkeypatch.setattr(fs.requests, "get", forbidden)
+    diagnostic = {}
+    for _ in range(20):
+        assert fs.searxng("test", engines="brave", diagnostics=diagnostic) == []
+        assert diagnostic["status"] == "cooldown"
 
 
 def test_failures_accumulate_a_count():

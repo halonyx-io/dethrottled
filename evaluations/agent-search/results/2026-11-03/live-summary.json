@@ -1,0 +1,801 @@
+{
+  "primary_limits": {
+    "5": {
+      "n": 12,
+      "successes": 12,
+      "median_ms": 854.9069166183472,
+      "p95_ms": 901.9763469696045,
+      "min_ms": 776.9880294799805,
+      "max_ms": 1050.581693649292,
+      "navigation_requests": {
+        "2": 12
+      },
+      "pages_in_winning_attempt": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "response_bytes": [
+        2575,
+        2476,
+        2182,
+        2679,
+        2650,
+        2534,
+        2629,
+        2514,
+        2395,
+        2805,
+        2783,
+        3061
+      ]
+    },
+    "10": {
+      "n": 12,
+      "successes": 12,
+      "median_ms": 902.3014307022095,
+      "p95_ms": 1194.2529678344727,
+      "min_ms": 793.2665348052979,
+      "max_ms": 1663.5046005249023,
+      "navigation_requests": {
+        "2": 12
+      },
+      "pages_in_winning_attempt": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "response_bytes": [
+        4706,
+        5124,
+        4480,
+        4727,
+        4959,
+        4999,
+        5528,
+        4574,
+        4098,
+        4620,
+        4682,
+        4814
+      ]
+    },
+    "20": {
+      "n": 12,
+      "successes": 12,
+      "median_ms": 1672.953724861145,
+      "p95_ms": 1844.902515411377,
+      "min_ms": 1641.7052745819092,
+      "max_ms": 1890.5043601989746,
+      "navigation_requests": {
+        "4": 12
+      },
+      "pages_in_winning_attempt": [
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2
+      ],
+      "response_bytes": [
+        9494,
+        8958,
+        9034,
+        8713,
+        9738,
+        10291,
+        9091,
+        9213,
+        9158,
+        8644,
+        7760,
+        8174
+      ]
+    }
+  },
+  "policies": {
+    "never": {
+      "n": 6,
+      "successes": 6,
+      "median_ms": 912.9092693328857,
+      "p95_ms": 924.6439933776855,
+      "min_ms": 826.6451358795166,
+      "max_ms": 974.2627143859863,
+      "backup_calls": 0,
+      "note": "Actual sequential/parallel end-to-end timings. Six development queries; no primary failure and frozen suspect trigger did not fire. Not proof of recovery effectiveness."
+    },
+    "always": {
+      "n": 6,
+      "successes": 6,
+      "median_ms": 915.4486656188965,
+      "p95_ms": 1010.2200508117676,
+      "min_ms": 856.6181659698486,
+      "max_ms": 1228.5583019256592,
+      "backup_calls": 12,
+      "note": "Actual sequential/parallel end-to-end timings. Six development queries; no primary failure and frozen suspect trigger did not fire. Not proof of recovery effectiveness."
+    },
+    "suspect": {
+      "n": 6,
+      "successes": 6,
+      "median_ms": 1015.9471035003662,
+      "p95_ms": 1396.3539600372314,
+      "min_ms": 848.3743667602539,
+      "max_ms": 1411.414623260498,
+      "backup_calls": 0,
+      "note": "Actual sequential/parallel end-to-end timings. Six development queries; no primary failure and frozen suspect trigger did not fire. Not proof of recovery effectiveness."
+    }
+  },
+  "bursts": {
+    "n": 9,
+    "successes": 9,
+    "median_ms": 1534.9485874176025,
+    "p95_ms": 1897.4473476409912,
+    "min_ms": 878.0622482299805,
+    "max_ms": 1974.177360534668,
+    "queue_seconds": [
+      0.0,
+      -0.0,
+      -0.0,
+      0.0,
+      -0.0,
+      0.0,
+      -0.0,
+      -0.0,
+      0.0
+    ],
+    "concurrency": 3,
+    "rounds": 3,
+    "spacing_seconds": 60
+  },
+  "production_control": {
+    "n": 12,
+    "successes": 12,
+    "median_ms": 693.897008895874,
+    "p95_ms": 765.897274017334,
+    "min_ms": 564.1415119171143,
+    "max_ms": 847.7563858032227,
+    "engines": {
+      "web-tls-ddg-lite": 120
+    },
+    "attempts": [
+      {
+        "id": "wlat_lon",
+        "attempts": [
+          {
+            "engine": "web",
+            "count": 10,
+            "status": "ok",
+            "elapsed_ms": 702,
+            "unresponsive": []
+          },
+          {
+            "engine": "bing-news",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 702,
+            "unresponsive": []
+          },
+          {
+            "engine": "searxng",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 702,
+            "unresponsive": []
+          },
+          {
+            "engine": "gnews-resolved",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 702,
+            "unresponsive": []
+          },
+          {
+            "engine": "tls-ddg-lite",
+            "count": 10,
+            "status": "ok",
+            "reason": null,
+            "elapsed_ms": 701,
+            "unresponsive": []
+          }
+        ],
+        "rows": 10
+      },
+      {
+        "id": "wleap_year",
+        "attempts": [
+          {
+            "engine": "web",
+            "count": 10,
+            "status": "ok",
+            "elapsed_ms": 696,
+            "unresponsive": []
+          },
+          {
+            "engine": "bing-news",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 696,
+            "unresponsive": []
+          },
+          {
+            "engine": "searxng",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 696,
+            "unresponsive": []
+          },
+          {
+            "engine": "gnews-resolved",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 696,
+            "unresponsive": []
+          },
+          {
+            "engine": "tls-ddg-lite",
+            "count": 10,
+            "status": "ok",
+            "reason": null,
+            "elapsed_ms": 695,
+            "unresponsive": []
+          }
+        ],
+        "rows": 10
+      },
+      {
+        "id": "h5a8e0a005542995085b373a1",
+        "attempts": [
+          {
+            "engine": "web",
+            "count": 10,
+            "status": "ok",
+            "elapsed_ms": 627,
+            "unresponsive": []
+          },
+          {
+            "engine": "bing-news",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 627,
+            "unresponsive": []
+          },
+          {
+            "engine": "searxng",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 627,
+            "unresponsive": []
+          },
+          {
+            "engine": "gnews-resolved",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 627,
+            "unresponsive": []
+          },
+          {
+            "engine": "tls-ddg-lite",
+            "count": 10,
+            "status": "ok",
+            "reason": null,
+            "elapsed_ms": 626,
+            "unresponsive": []
+          }
+        ],
+        "rows": 10
+      },
+      {
+        "id": "wshell_null",
+        "attempts": [
+          {
+            "engine": "web",
+            "count": 10,
+            "status": "ok",
+            "elapsed_ms": 560,
+            "unresponsive": []
+          },
+          {
+            "engine": "bing-news",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 560,
+            "unresponsive": []
+          },
+          {
+            "engine": "searxng",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 560,
+            "unresponsive": []
+          },
+          {
+            "engine": "gnews-resolved",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 560,
+            "unresponsive": []
+          },
+          {
+            "engine": "tls-ddg-lite",
+            "count": 10,
+            "status": "ok",
+            "reason": null,
+            "elapsed_ms": 559,
+            "unresponsive": []
+          }
+        ],
+        "rows": 10
+      },
+      {
+        "id": "wwayback",
+        "attempts": [
+          {
+            "engine": "web",
+            "count": 10,
+            "status": "ok",
+            "elapsed_ms": 687,
+            "unresponsive": []
+          },
+          {
+            "engine": "bing-news",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 687,
+            "unresponsive": []
+          },
+          {
+            "engine": "searxng",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 687,
+            "unresponsive": []
+          },
+          {
+            "engine": "gnews-resolved",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 687,
+            "unresponsive": []
+          },
+          {
+            "engine": "tls-ddg-lite",
+            "count": 10,
+            "status": "ok",
+            "reason": null,
+            "elapsed_ms": 686,
+            "unresponsive": []
+          }
+        ],
+        "rows": 10
+      },
+      {
+        "id": "h5ae4a3265542995ad6573de5",
+        "attempts": [
+          {
+            "engine": "web",
+            "count": 10,
+            "status": "ok",
+            "elapsed_ms": 691,
+            "unresponsive": []
+          },
+          {
+            "engine": "bing-news",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 691,
+            "unresponsive": []
+          },
+          {
+            "engine": "searxng",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 691,
+            "unresponsive": []
+          },
+          {
+            "engine": "gnews-resolved",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 691,
+            "unresponsive": []
+          },
+          {
+            "engine": "tls-ddg-lite",
+            "count": 10,
+            "status": "ok",
+            "reason": null,
+            "elapsed_ms": 691,
+            "unresponsive": []
+          }
+        ],
+        "rows": 10
+      },
+      {
+        "id": "h5ab51dae5542991779162d82",
+        "attempts": [
+          {
+            "engine": "web",
+            "count": 10,
+            "status": "ok",
+            "elapsed_ms": 649,
+            "unresponsive": []
+          },
+          {
+            "engine": "bing-news",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 649,
+            "unresponsive": []
+          },
+          {
+            "engine": "searxng",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 649,
+            "unresponsive": []
+          },
+          {
+            "engine": "gnews-resolved",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 649,
+            "unresponsive": []
+          },
+          {
+            "engine": "tls-ddg-lite",
+            "count": 10,
+            "status": "ok",
+            "reason": null,
+            "elapsed_ms": 649,
+            "unresponsive": []
+          }
+        ],
+        "rows": 10
+      },
+      {
+        "id": "h5a85fb085542994775f606de",
+        "attempts": [
+          {
+            "engine": "web",
+            "count": 10,
+            "status": "ok",
+            "elapsed_ms": 832,
+            "unresponsive": []
+          },
+          {
+            "engine": "bing-news",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 832,
+            "unresponsive": []
+          },
+          {
+            "engine": "searxng",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 832,
+            "unresponsive": []
+          },
+          {
+            "engine": "gnews-resolved",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 832,
+            "unresponsive": []
+          },
+          {
+            "engine": "tls-ddg-lite",
+            "count": 10,
+            "status": "ok",
+            "reason": null,
+            "elapsed_ms": 831,
+            "unresponsive": []
+          }
+        ],
+        "rows": 10
+      },
+      {
+        "id": "wcss_grid",
+        "attempts": [
+          {
+            "engine": "web",
+            "count": 10,
+            "status": "ok",
+            "elapsed_ms": 762,
+            "unresponsive": []
+          },
+          {
+            "engine": "bing-news",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 762,
+            "unresponsive": []
+          },
+          {
+            "engine": "searxng",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 762,
+            "unresponsive": []
+          },
+          {
+            "engine": "gnews-resolved",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 762,
+            "unresponsive": []
+          },
+          {
+            "engine": "tls-ddg-lite",
+            "count": 10,
+            "status": "ok",
+            "reason": null,
+            "elapsed_ms": 762,
+            "unresponsive": []
+          }
+        ],
+        "rows": 10
+      },
+      {
+        "id": "h5abd259d55429924427fcf1a",
+        "attempts": [
+          {
+            "engine": "web",
+            "count": 10,
+            "status": "ok",
+            "elapsed_ms": 686,
+            "unresponsive": []
+          },
+          {
+            "engine": "bing-news",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 686,
+            "unresponsive": []
+          },
+          {
+            "engine": "searxng",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 686,
+            "unresponsive": []
+          },
+          {
+            "engine": "gnews-resolved",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 686,
+            "unresponsive": []
+          },
+          {
+            "engine": "tls-ddg-lite",
+            "count": 10,
+            "status": "ok",
+            "reason": null,
+            "elapsed_ms": 685,
+            "unresponsive": []
+          }
+        ],
+        "rows": 10
+      },
+      {
+        "id": "wpython_fold",
+        "attempts": [
+          {
+            "engine": "web",
+            "count": 10,
+            "status": "ok",
+            "elapsed_ms": 721,
+            "unresponsive": []
+          },
+          {
+            "engine": "bing-news",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 721,
+            "unresponsive": []
+          },
+          {
+            "engine": "searxng",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 721,
+            "unresponsive": []
+          },
+          {
+            "engine": "gnews-resolved",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 721,
+            "unresponsive": []
+          },
+          {
+            "engine": "tls-ddg-lite",
+            "count": 10,
+            "status": "ok",
+            "reason": null,
+            "elapsed_ms": 721,
+            "unresponsive": []
+          }
+        ],
+        "rows": 10
+      },
+      {
+        "id": "h5abbf698554299114383a0b5",
+        "attempts": [
+          {
+            "engine": "web",
+            "count": 10,
+            "status": "ok",
+            "elapsed_ms": 675,
+            "unresponsive": []
+          },
+          {
+            "engine": "bing-news",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 675,
+            "unresponsive": []
+          },
+          {
+            "engine": "searxng",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 675,
+            "unresponsive": []
+          },
+          {
+            "engine": "gnews-resolved",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 675,
+            "unresponsive": []
+          },
+          {
+            "engine": "tls-ddg-lite",
+            "count": 10,
+            "status": "ok",
+            "reason": null,
+            "elapsed_ms": 675,
+            "unresponsive": []
+          }
+        ],
+        "rows": 10
+      }
+    ],
+    "note": "Unmodified production Compose API, fresh/bypass, explicit10. Separate from frozen DDG-only replay. HTTP timing does not count upstream requests by itself."
+  },
+  "capture_start_span_seconds": 1315.53347158432,
+  "browser_navigation_response_statuses": {
+    "200": 468,
+    "202": 6
+  },
+  "browser_non200_observations": [
+    {
+      "time": 1793639287.650714,
+      "engine": "ddg-html",
+      "query_hash": "6364b8890143dfd95b56b69bd85bffe5af45024fb365265023cc6b86f59f4b22",
+      "status": 202,
+      "retry_after": null
+    },
+    {
+      "time": 1793639455.6522593,
+      "engine": "ddg-html",
+      "query_hash": "5dda555f7bbde715cefa2f2ba0d287c9215cca56b33fe5b0c4c1bb7fc8362c48",
+      "status": 202,
+      "retry_after": null
+    },
+    {
+      "time": 1793639456.1650822,
+      "engine": "ddg-lite",
+      "query_hash": "5dda555f7bbde715cefa2f2ba0d287c9215cca56b33fe5b0c4c1bb7fc8362c48",
+      "status": 202,
+      "retry_after": null
+    },
+    {
+      "time": 1793639735.6437898,
+      "engine": "ddg-html",
+      "query_hash": "c5463ad1866a0c4b9555ced69e9911b790593114ac59d3c8c95d45786e0f01ee",
+      "status": 202,
+      "retry_after": null
+    },
+    {
+      "time": 1793641202.4410899,
+      "engine": "ddg-lite",
+      "query_hash": "62faba6f2140a3a9ae980eccaba276693a8d015277bca3c1b4d0ee67c5a8d10e",
+      "status": 202,
+      "retry_after": null
+    },
+    {
+      "time": 1793641283.3476613,
+      "engine": "ddg-lite",
+      "query_hash": "53c9a1ef5ad5c97f872288bc2acfeaa17ae5f6bc0509314479a040a753bc1821",
+      "status": 202,
+      "retry_after": null
+    }
+  ],
+  "searx_upstream_statuses": {
+    "('www.bing.com', 200)": 134,
+    "('search.yahoo.com', 307)": 2,
+    "('search.yahoo.com', 200)": 128,
+    "('search.brave.com', 429)": 1
+  },
+  "brave_recovery": {
+    "started_at": 1793640290.0078347,
+    "elapsed_ms": 268.33462715148926,
+    "http_status": 200,
+    "payload": {
+      "query": "Python pathlib recursive glob",
+      "results": [],
+      "answers": [],
+      "corrections": [],
+      "infoboxes": [],
+      "suggestions": [],
+      "unresponsive_engines": [
+        [
+          "brave",
+          "too many requests"
+        ]
+      ]
+    },
+    "rows": [],
+    "upstream": [
+      {
+        "time": 1793640290.0196493,
+        "host": "search.brave.com",
+        "path": "/search",
+        "query_hash": "4c85b9af82aa40b8a164680bf475b9ac0bb81546c2110e9771c1d48553e315be",
+        "method": "GET",
+        "status": 429,
+        "retry_after": null,
+        "final_host": "search.brave.com",
+        "page_title": "Brave Search",
+        "response_body_sha256": "b9089c5f20d9431e7f31dc269cbf6e081648532667f7c541a350ba7436e9a59c",
+        "visible_prefix": " \n \n   \n     \n     \n    \n     \n \n \n                                                                                 Brave Search \n\t\t \n    \n   \n   \n                                                        This page needs JavaScript to function.    Your request has been flagged as being suspicious and Brave Search decided to schedule a captcha for\n    you. Unfortunately,  your browser does not seem to have JavaScript enabled.      Here are a few things you can do:   If you are using the  Brave Browser  with scripts blocked, you can enable scripts\n        again for Brave Search then reload this page.   If you are using the  Tor browser  with its   safest   security level, you can selectively enable JavaScript on Brave Search via the noscript extension\n        toggle then reload this page.   If the above does not match your situation, make sure that your browser supports JavaScript\n        and that no extension is currently disabling JavaScript on Brave Search.                      \n\t\t\t\n\t\t\t\n\t\t \n    \n   \n \n",
+        "elapsed_ms": 221.54879570007324
+      }
+    ],
+    "upstream_requests": 1,
+    "status": "blocked"
+  },
+  "provider_guard": {
+    "brave": {
+      "blocked_at": 1793640290.2794397,
+      "next_probe": 1793643890.27944,
+      "reason": "[['brave', 'too many requests']]",
+      "refusals": 2,
+      "recovered": false
+    }
+  },
+  "caveats": [
+    "Some browser HTTP202 responses were observed; no retained response body for these proves CAPTCHA rather than another non-usable202.",
+    "The evaluation browser guard rested403/429 and named challenge reasons; bare HTTP202 did not trigger its rest. This is a rate-test limitation, not hidden success.",
+    "Main acquisition and ranking replay capture at most20 primary rows; no conclusion about deeper50-row retrieval.",
+    "P95 on12query or9burst samples is descriptive, not a stable service-level guarantee."
+  ]
+}

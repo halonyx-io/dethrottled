@@ -146,6 +146,18 @@ jobs:
         run: |
           docker build -f adapters/Dockerfile -t dethrottled-adapters:ci .
           docker run --rm --network none dethrottled-adapters:ci python /app/verify_adapter.py
+      - name: Pinned SearXNG honors upstream cooldown headers offline
+        run: |
+          sx_image=$(docker compose config --format json | python3 -c 'import json,sys; print(json.load(sys.stdin)["services"]["searxng"]["image"])')
+          docker run --rm --network none \
+            --entrypoint /usr/local/searxng/.venv/bin/python \
+            -w /usr/local/searxng -e PYTHONPATH=/usr/local/searxng \
+            -e SEARXNG_SETTINGS_PATH=/etc/searxng/settings.yml \
+            -v "$PWD/docker/searxng:/etc/searxng:ro" \
+            -v "$PWD/docker/searxng/dethrottled_guard.py:/usr/local/searxng/searx/plugins/dethrottled_guard.py:ro" \
+            -v "$PWD/docker/searxng/retry_after.py:/usr/local/searxng/searx/plugins/dethrottled_retry_after.py:ro" \
+            -v "$PWD/scripts/verify_searxng.py:/tmp/verify_searxng.py:ro" \
+            "$sx_image" /tmp/verify_searxng.py
       - name: Verify API image offline
         run: docker run --rm --network none dethrottled:ci python /app/verify_image.py
       - name: Verify packaged documentation offline

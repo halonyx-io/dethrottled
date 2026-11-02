@@ -37,7 +37,11 @@ installing only that shorter file does not freeze the transitive dependencies.
 `adapters/mcp_server.py` uses the MCP SDK/httpx; `adapters/rest_gateway.py` uses
 FastAPI/httpx. Install the shared `src/dethrottled/access.py` as
 `dethrottled_access.py` on their PYTHONPATH. Also install
-`src/dethrottled/__init__.py` as `dethrottled_version.py` beside the MCP adapter.
+`src/dethrottled/__init__.py` as `dethrottled_version.py` and
+`src/dethrottled/workflow.py` as `dethrottled_workflow.py` beside the MCP adapter.
+The adapter imports the same workflow text used by the API; compare the startup
+instruction hash with `capabilities.client_contract.workflow_sha256` after an
+upgrade. Reconnect clients that retain older tool descriptions or instructions.
 Separate virtualenvs are supported.
 Set `MCP_BACKEND_URL` and `MCP_ALLOWED_HOSTS` as appropriate.
 
