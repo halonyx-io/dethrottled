@@ -18,6 +18,8 @@ caller explicitly selects them.
 - Inspect source structure and retained source pixels where available.
 - Operate a headed browser: navigate, use controls, inspect frames and popups,
   read application responses, collect downloads and restore checkpoints.
+  [Navigation recovery](docs/DRIVE.md#navigation-recovery-and-access-evidence) also
+  applies when the reading ladder reaches the browser.
 - Assemble research evidence with source references and explicit coverage gaps.
 
 Recovery escalates from direct HTTP through TLS, rendering and the headed
@@ -89,7 +91,7 @@ The fetch ladder does not consult `robots.txt`. The raw API can access trusted
 LAN targets; public adapters enforce a narrower policy, which is not a substitute
 for deployment-level network isolation.
 
-This branch documents package **0.10.0**. Check `/health` and `/v2/capabilities`
+This branch documents package **0.10.1**. Check `/health` and `/v2/capabilities`
 on the installation you use; a repository branch or remote plugin may differ
 from the deployed service. Historical reports describe their recorded versions.
 

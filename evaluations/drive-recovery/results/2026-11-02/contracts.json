@@ -1,0 +1,148 @@
+[
+  {
+    "build": "baseline",
+    "case": "setup",
+    "elapsed_ms": 187
+  },
+  {
+    "build": "baseline",
+    "case": "chunked-json",
+    "elapsed_ms": 6,
+    "pass": true
+  },
+  {
+    "build": "baseline",
+    "case": "decoded-body-limit",
+    "elapsed_ms": 93,
+    "pass": true
+  },
+  {
+    "build": "baseline",
+    "case": "iframe-read",
+    "elapsed_ms": 23,
+    "pass": true
+  },
+  {
+    "build": "baseline",
+    "case": "iframe-act",
+    "elapsed_ms": 52,
+    "pass": true
+  },
+  {
+    "build": "baseline",
+    "case": "open-popup",
+    "elapsed_ms": 355
+  },
+  {
+    "build": "baseline",
+    "case": "popup-read",
+    "elapsed_ms": 53,
+    "pass": true
+  },
+  {
+    "build": "baseline",
+    "case": "return-to-main",
+    "elapsed_ms": 5
+  },
+  {
+    "build": "baseline",
+    "case": "save-authentication",
+    "elapsed_ms": 115
+  },
+  {
+    "build": "baseline",
+    "case": "restart-four-storage-types",
+    "elapsed_ms": 322,
+    "pass": true
+  },
+  {
+    "build": "baseline",
+    "case": "action-history",
+    "elapsed_ms": 11,
+    "pass": true
+  },
+  {
+    "build": "baseline",
+    "case": "download",
+    "elapsed_ms": 85,
+    "pass": true
+  },
+  {
+    "build": "baseline",
+    "case": "close",
+    "elapsed_ms": 12
+  },
+  {
+    "build": "candidate",
+    "case": "setup",
+    "elapsed_ms": 147
+  },
+  {
+    "build": "candidate",
+    "case": "chunked-json",
+    "elapsed_ms": 5,
+    "pass": true
+  },
+  {
+    "build": "candidate",
+    "case": "decoded-body-limit",
+    "elapsed_ms": 57,
+    "pass": true
+  },
+  {
+    "build": "candidate",
+    "case": "iframe-read",
+    "elapsed_ms": 23,
+    "pass": true
+  },
+  {
+    "build": "candidate",
+    "case": "iframe-act",
+    "elapsed_ms": 44,
+    "pass": true
+  },
+  {
+    "build": "candidate",
+    "case": "open-popup",
+    "elapsed_ms": 350
+  },
+  {
+    "build": "candidate",
+    "case": "popup-read",
+    "elapsed_ms": 25,
+    "pass": true
+  },
+  {
+    "build": "candidate",
+    "case": "return-to-main",
+    "elapsed_ms": 3
+  },
+  {
+    "build": "candidate",
+    "case": "save-authentication",
+    "elapsed_ms": 102
+  },
+  {
+    "build": "candidate",
+    "case": "restart-four-storage-types",
+    "elapsed_ms": 276,
+    "pass": true
+  },
+  {
+    "build": "candidate",
+    "case": "action-history",
+    "elapsed_ms": 8,
+    "pass": true
+  },
+  {
+    "build": "candidate",
+    "case": "download",
+    "elapsed_ms": 37,
+    "pass": true
+  },
+  {
+    "build": "candidate",
+    "case": "close",
+    "elapsed_ms": 12
+  }
+]

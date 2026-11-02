@@ -5,6 +5,27 @@ read needs controls, an export, application responses or visual inspection.
 The API exposes bounded actions, not arbitrary JavaScript evaluation. Prefer
 structured inspection for planning and actual pixels when appearance is evidence.
 
+## Navigation recovery and access evidence
+
+The browser keeps Patchright, the existing Chromium and optional real GPU. For
+Reddit HTTP/S navigation, it seeds a host-scoped `cookiesEnabled=true` preference
+only when absent, then waits up to five seconds within the navigation budget for
+posts, and comments on thread URLs. Existing cookie values are preserved. Initial
+navigation, explicit `goto` and checkpoint restoration use the same path.
+`DETHROTTLED_BROWSER_RECOVERY=off` disables this recipe for comparison.
+
+`navigation_recovery` reports the recipe, whether a cookie was added, readiness
+outcome and timing. It contains no cookie value or browser credentials.
+`access.status` distinguishes `challenge`, `login_required`, `http_error`,
+`content_observed` and `unknown`. An action's `ok` means that action executed;
+it does not mean the source answered the caller's question. `answer_verified`
+and `source_complete` remain false. Long content can still contain pollution.
+
+This recipe recovered a Reddit listing and a thread with real comment controls
+in the [recorded comparison](../evaluations/drive-recovery/results/2026-11-02/REPORT.md).
+It did not recover Crunchbase or G2. It is a measured site-specific compatibility
+fix, not a universal challenge solver or an authenticated Reddit session.
+
 ## Sessions and the interaction loop
 
 ```sh

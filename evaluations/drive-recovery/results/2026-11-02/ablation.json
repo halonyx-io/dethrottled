@@ -1,0 +1,34 @@
+[
+  {
+    "case": "native",
+    "ms": 4273.66,
+    "title": "Reddit - Prove your humanity",
+    "comments_1s": 0,
+    "comments": 0,
+    "chars": 240
+  },
+  {
+    "case": "cookie",
+    "ms": 4526.51,
+    "title": "Jepsen on ParticleDB: \"We tested versions 1.1.4 through 1.1.18.11.rc-22 and found that ParticleDB\u2019s claims of \u201cFull ACID\u201d were somewhat premature\" : r/programming",
+    "comments_1s": 0,
+    "comments": 16,
+    "chars": 10684
+  },
+  {
+    "case": "profile",
+    "ms": 4131.38,
+    "title": "Reddit - Prove your humanity",
+    "comments_1s": 0,
+    "comments": 0,
+    "chars": 240
+  },
+  {
+    "case": "profile-cookie",
+    "ms": 4088.99,
+    "title": "Jepsen on ParticleDB: \"We tested versions 1.1.4 through 1.1.18.11.rc-22 and found that ParticleDB\u2019s claims of \u201cFull ACID\u201d were somewhat premature\" : r/programming",
+    "comments_1s": 0,
+    "comments": 16,
+    "chars": 10776
+  }
+]

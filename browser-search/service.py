@@ -23,6 +23,7 @@ from urllib.parse import parse_qs, quote_plus, unquote, urljoin, urlparse
 from fastapi import FastAPI, HTTPException
 from patchright.async_api import async_playwright
 from pydantic import BaseModel, ConfigDict, Field
+from recovery import assess_access, navigation_recipe
 
 ENGINES = {
     "ddg-lite": ("https://lite.duckduckgo.com/lite/?q=", "a.result-link", ".result-snippet"),
@@ -490,6 +491,69 @@ def _top_level_navigation(request):
         return True
 
 
+async def _inspect_access(page):
+    snapshot = await asyncio.wait_for(page.evaluate("""() => ({
+      text:(document.body?.innerText || '').slice(0,5000), title:document.title
+    })"""), timeout=1)
+    return assess_access(snapshot['text'], snapshot['title'], page.url)
+
+
+async def _prepare_navigation(context, url):
+    if os.getenv('DETHROTTLED_BROWSER_RECOVERY', 'auto') == 'off':
+        return None
+    recipe = navigation_recipe(url)
+    if not recipe:
+        return None
+    existing = await context.cookies(url)
+    added = not any(c['name'] == recipe['cookie']['name'] for c in existing)
+    if added:
+        await context.add_cookies([recipe['cookie']])
+    return dict(name=recipe['name'], cookie_added=added,
+                existing_preference_preserved=not added, settle_ms=recipe['settle_ms'])
+
+
+async def _navigate(state, body, url, timeout, deadline):
+    page = state["page"]
+    allowed = state["allowed_hosts"]
+    if allowed and not _host_allowed(url, allowed):
+        raise ValueError("navigation outside allowed_hosts")
+    recovery = await _prepare_navigation(state['context'], url)
+    state['navigation_recovery'] = recovery
+    at = time.monotonic()
+    response = await page.goto(url, wait_until=body.navigation_wait, timeout=timeout)
+    if recovery:
+        remaining_ms = min(recovery['settle_ms'], max(1, int(
+            (deadline - time.monotonic()) * 1000)))
+        try:
+            await page.wait_for_function("""isThread => {
+              const text=document.body?.innerText || '';
+              const post=document.querySelector('shreddit-post');
+              if (text.length <= 600 || !post) return false;
+              if (isThread) return !!document.querySelector('shreddit-comment') ||
+                /be the first to comment|no comments yet/i.test(text);
+              return !!post.getAttribute('post-title');
+            }""", arg='/comments/' in urlparse(url).path, timeout=remaining_ms)
+            recovery['settled'] = True
+        except Exception as exc:
+            recovery.update(settled=False, settle_outcome=type(exc).__name__)
+        recovery['elapsed_ms'] = round((time.monotonic() - at) * 1000, 2)
+        state['navigation_recovery'] = recovery
+    try:
+        access = await _inspect_access(page)
+    except Exception:
+        access = {'status': 'unknown', 'reason': 'assessment_unavailable',
+                  'answer_verified': False, 'source_complete': False}
+    state['navigation_url'] = page.url
+    state['navigation_status'] = response.status if response else None
+    if response and response.status >= 400:
+        access.update(status='http_error', reason='navigation_http_' + str(response.status))
+    return {"access": access, **({'recovery': recovery} if recovery else {}),
+            "url": page.url, "status": response.status if response else None,
+            "wait_until": body.navigation_wait,
+            "challenge_headers": ({"cf-mitigated": response.headers["cf-mitigated"]}
+                                  if response and "cf-mitigated" in response.headers else {})}
+
+
 async def _make_drive_state(browser, allowed_hosts: list[str], public_only=False,
                             storage_state=None, session_storage=None) -> dict:
     options = {"storage_state": storage_state} if storage_state else {}
@@ -635,7 +699,9 @@ async def _get_drive_state(browser, body: DriveRequest) -> tuple[dict, bool]:
                     await _close_drive_state(state)
                     raise HTTPException(409, "checkpoint navigation scope mismatch")
                 try:
-                    await state["page"].goto(target, wait_until="domcontentloaded", timeout=15000)
+                    await _navigate(
+                        state, body.model_copy(update={"navigation_wait": "domcontentloaded"}),
+                        target, 15000, time.monotonic() + 15)
                 except BaseException:
                     await _close_drive_state(state)
                     raise
@@ -970,14 +1036,7 @@ async def _drive(state: dict, body: DriveRequest) -> dict:
         return step
 
     async def navigate(url: str, timeout: int):
-        allowed = state["allowed_hosts"]
-        if allowed and not _host_allowed(url, allowed):
-            raise ValueError("navigation outside allowed_hosts")
-        response = await page.goto(url, wait_until=body.navigation_wait, timeout=timeout)
-        return {"url": page.url, "status": response.status if response else None,
-                "wait_until": body.navigation_wait,
-                "challenge_headers": ({"cf-mitigated": response.headers["cf-mitigated"]}
-                                      if response and "cf-mitigated" in response.headers else {})}
+        return await _navigate(state, body, url, timeout, deadline)
 
     async def diagnosed_failure(action: str, target, exc: Exception, stage: str):
         diagnostics = await _locator_diagnostics(page, target)
@@ -1236,10 +1295,21 @@ async def _drive(state: dict, body: DriveRequest) -> dict:
             if page.url != "about:blank" and not _host_allowed(page.url, state["allowed_hosts"]):
                 results[-1].update(ok=False, reason="navigation_outside_allowed_hosts")
 
+    try:
+        access = await _inspect_access(page)
+    except Exception:
+        access = {'status': 'unknown', 'reason': 'assessment_unavailable',
+                  'answer_verified': False, 'source_complete': False}
+    if (page.url == state.get('navigation_url') and
+            (state.get('navigation_status') or 0) >= 400):
+        access.update(status='http_error', reason='navigation_http_' +
+                      str(state['navigation_status']))
     matches = await _canary_matches(page, events, body.canaries)
     ok = bool(results) and all(r["ok"] for r in results)
     out = {
         "ok": ok,
+        "access": access,
+        "navigation_recovery": state.get("navigation_recovery"),
         "steps": results,
         "final": {"url": page.url, "title": await page.title()},
         "session": {"id": body.session or None, "persistent": bool(body.session),

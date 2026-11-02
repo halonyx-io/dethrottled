@@ -459,3 +459,20 @@ def test_script_only_shell_reaches_browser_without_an_agent_knowing_the_flag(tie
     tiers.setattr(f, "_tier_headed", lambda u: ({"html": ARTICLE}, "", u))
     result = f.fetch_and_extract("https://source.example")
     assert result["ok"] and result["tier"] == "headed"
+
+
+def test_complete_visible_text_preserves_html_cap_without_repeating_recovery(tiers):
+    payload = {
+        "html": ARTICLE, "clipped": True,
+        "text": "Retained visible comment evidence. " * 60,
+        "content_type": "html",
+        "extraction": {"method": "browser_visible_text", "partial": False,
+                       "html_capture_partial": True},
+        "browser_recovery": {"document_ready_state": "interactive"},
+    }
+    tiers.setattr(f, "_tier_headed", lambda u: (payload, "", u))
+    result = f.fetch_and_extract("https://source.example")
+    assert result["ok"] and not result["extraction"]["partial"]
+    assert result["extraction"]["html_capture_partial"]
+    assert "html_capture_limit" not in result.get("warnings", [])
+    assert result["content_assessment"]["completeness"] == "unknown"

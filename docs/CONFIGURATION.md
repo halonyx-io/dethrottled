@@ -31,7 +31,7 @@ application settings need an `environment` entry in a local override. Inspect
 | `DETHROTTLED_DRIVE_SESSION_TTL`, `DETHROTTLED_DRIVE_MAX_SESSIONS` | `1800`, `8` | Browser session expiry and capacity |
 | `DETHROTTLED_BROWSER_GRAPHICS` | `auto` in Compose | Verify exposed hardware through GL EGL, fall back to software; `mesa` retains GL, `default` retains original args |
 | `DETHROTTLED_READ_PLAN_SECONDS` | `30` | Additional recovery admission budget, clamped to 0–120; in-flight operations retain their transport timeout |
-| `DETHROTTLED_USER_AGENT` | `dethrottled/0.10.0 (automated fetcher)` | Article-fetch identity |
+| `DETHROTTLED_USER_AGENT` | `dethrottled/0.10.1 (automated fetcher)` | Article-fetch identity |
 
 The base file maps internal worker URLs and optional worker/key variables.
 The complete interpolation map is in `docker-compose.yml` and the agents overlay;
@@ -89,6 +89,7 @@ mapped. Change them against recorded coverage and failure cases, not just latenc
 
 | Variable | Default | Meaning |
 |---|---|---|
+| `DETHROTTLED_BROWSER_RECOVERY` | `auto` | Browser worker: observed host-scoped navigation recipes and bounded readiness; `off` disables them. Forwarded by base Compose. |
 | `DETHROTTLED_THIN_CHARS` | `600` | HTML threshold; structured short documents differ |
 | `DETHROTTLED_PAGE_BUDGET`, `DETHROTTLED_PAGE_BUDGET_BULK` | `60`, `25` seconds | Soft ladder budgets; a known recovery case can receive a bounded headed attempt afterward |
 | `DETHROTTLED_TLS_TIMEOUT` | `8` seconds | TLS tier |

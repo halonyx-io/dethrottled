@@ -1,0 +1,130 @@
+[
+  {
+    "engine": "control",
+    "elapsed_ms": 15234.39,
+    "quality": "failed",
+    "tier": "headed",
+    "chars": 0,
+    "has_company": false,
+    "has_comment_fact": false,
+    "attempts": [
+      {
+        "tier": "direct",
+        "reason": "",
+        "outcome": "response",
+        "elapsed_ms": 62.49
+      },
+      {
+        "tier": "headed",
+        "reason": "headed_challenge_unresolved:generic",
+        "outcome": "challenge",
+        "elapsed_ms": 15033.34,
+        "provider": "unspecified"
+      }
+    ],
+    "browser_recovery": null,
+    "read_plan": {
+      "revision": 1,
+      "decisions": [],
+      "initial_gap": "failed",
+      "final_gap": "failed",
+      "answer_verified": false,
+      "stop_reason": "unresolved_gap",
+      "render_allowed": true,
+      "browser_configured": true,
+      "elapsed_ms": 0.02,
+      "budget_seconds": 30.0,
+      "browser_session": {
+        "id": "auto-read-c1d9b946687a5c0d5cc6a5cde5623cad",
+        "allowed_hosts": [
+          "www.reddit.com"
+        ],
+        "url": "https://www.reddit.com/r/programming/comments/1xl8d57/jepsen_on_particledb_we_tested_versions_114/"
+      }
+    },
+    "failure": "direct:fetched_but_no_extractor_succeeded | headed:headed_challenge_unresolved:generic"
+  },
+  {
+    "engine": "candidate",
+    "elapsed_ms": 2516.72,
+    "quality": "ok",
+    "tier": "headed/headed-native",
+    "chars": 10532,
+    "has_company": true,
+    "has_comment_fact": true,
+    "attempts": [
+      {
+        "tier": "direct",
+        "reason": "",
+        "outcome": "response",
+        "elapsed_ms": 60.31
+      },
+      {
+        "tier": "headed",
+        "reason": "",
+        "outcome": "extracted",
+        "elapsed_ms": 2294.13,
+        "content_assessment": {
+          "revision": 1,
+          "text_sha256": "6a3baa19f63b47d1e8d61e0785bd1e08ca2a111e93e67b51bba7ce66f732bac7",
+          "pollution": "none_detected",
+          "completeness": "unknown",
+          "usable_content": "unverified",
+          "inspected_chars": 10532,
+          "suspected_chars": 0,
+          "unflagged_chars": 10532
+        }
+      }
+    ],
+    "browser_recovery": {
+      "visible_text_error": null,
+      "restored_from_checkpoint": false,
+      "challenge_polls": 0,
+      "loading_polls": 0,
+      "document_ready_state": "interactive",
+      "initial_navigation": {
+        "access": {
+          "status": "content_observed",
+          "reason": "visible_text_present",
+          "answer_verified": false,
+          "source_complete": false
+        },
+        "recovery": {
+          "name": "reddit_cookie_preference",
+          "cookie_added": true,
+          "existing_preference_preserved": false,
+          "settle_ms": 5000,
+          "settled": true,
+          "elapsed_ms": 1253.73
+        },
+        "url": "https://www.reddit.com/r/programming/comments/1xl8d57/jepsen_on_particledb_we_tested_versions_114/",
+        "status": 200,
+        "wait_until": "commit",
+        "challenge_headers": {}
+      },
+      "checkpointed": true,
+      "elapsed_ms": 2289,
+      "queue_ms": 0
+    },
+    "read_plan": {
+      "revision": 1,
+      "decisions": [],
+      "initial_gap": "",
+      "final_gap": "",
+      "answer_verified": false,
+      "stop_reason": "evidence_available",
+      "render_allowed": true,
+      "browser_configured": true,
+      "elapsed_ms": 0.02,
+      "budget_seconds": 30.0,
+      "browser_session": {
+        "id": "auto-read-c1d9b946687a5c0d5cc6a5cde5623cad",
+        "allowed_hosts": [
+          "www.reddit.com"
+        ],
+        "url": "https://www.reddit.com/r/programming/comments/1xl8d57/jepsen_on_particledb_we_tested_versions_114/"
+      }
+    },
+    "failure": null
+  }
+]

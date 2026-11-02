@@ -215,3 +215,20 @@ def test_reserved_read_handles_share_adapters_but_isolate_callers():
         exec(compile(ast.Module(body=[node], type_ignores=[]), file, 'exec'), scope)
         results.append(scope[name]('alice', alias))
     assert results == [automatic_session('alice', alias)] * 2
+
+
+def test_partial_html_recovers_visible_dom_evidence():
+    def drive(body, **kwargs):
+        action = body['steps'][0]['action']
+        if action == 'checkpoint':
+            return {'ok': True, 'steps': []}
+        if action == 'text':
+            return {'ok': True, 'steps': [{'action': 'text', 'ok': True, 'data': FACT}]}
+        return {'ok': True, 'steps': [
+            {'action': 'read_state', 'data': {}},
+            {'action': 'html', 'data': '<body>Navigation only.</body>', 'truncated': True}]}
+
+    result = run(URL, dict(THIN), read=no_call, drive=drive, options={}, browser_available=True)
+    assert result['content'] == FACT
+    assert result['extraction']['method'] == 'browser_visible_text'
+    assert not result['source_partial']

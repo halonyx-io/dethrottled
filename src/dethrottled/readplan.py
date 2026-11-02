@@ -197,17 +197,37 @@ def run(url, initial, *, read, drive, options, browser_available, allow_assets=T
                 return None
             parsed = extract.extract(html, url=url, max_chars=1000000)
             text = parsed.get("text", "") or short_text(html).strip()
+            method = 'browser_read_plan'
+            partial = any(s.get("truncated") for s in result.get("steps", []))
+            if (partial or len(text) < 600) and available():
+                remaining = max(1, deadline - time.monotonic())
+                try:
+                    rendered = drive(dict(body, steps=[{'action': 'text', 'selector': 'body',
+                        'max_chars': 120000}], timeout_ms=int(min(remaining, 5) * 1000)),
+                        timeout=min(remaining + 1, 6))
+                except Exception as exc:
+                    rendered = {}
+                    state['visible_text_error'] = type(exc).__name__
+                snapshot = next((s for s in rendered.get('steps', [])
+                    if s.get('action') == 'text' and s.get('ok')), {})
+                visible = snapshot.get('data', '')
+                if isinstance(visible, str) and len(visible) > len(text) and not classify(visible):
+                    text, method = visible, 'browser_visible_text'
+                    partial = bool(snapshot.get('truncated'))
             if not text:
                 return None
-            partial = any(s.get("truncated") for s in result.get("steps", []))
             row = dict(url=url, final_url=result.get("final", {}).get("url", url),
                        content=text, _index_text=text, content_chars=len(text),
                        quality="ok" if len(text) >= 600 else "thin", tier="headed/read-plan",
                        title=parsed.get("title", ""), content_type="text/html", cached=False,
                        source_partial=partial, truncated=partial,
-                       extraction={"partial": partial, "method": "browser_read_plan"},
+                       extraction={"partial": partial, "method": method},
                        acquisition={"rendered": True, "method": "browser_read_plan"},
-                       warnings=["Autonomous browser read; source completeness unverified."],
+                       warnings=["Autonomous browser read; source completeness unverified.",
+                                 *(["Visible-text fallback failed: " + state["visible_text_error"]]
+                                   if state.get("visible_text_error") else []),
+                                 *(["Visible text may include navigation, ads and related content."]
+                                   if method == "browser_visible_text" else [])],
                        **{k: v for k, v in page_details(html, url).items() if k != "warnings"})
             annotated = annotate_content({"text": text}, html)
             row.update({k: v for k, v in annotated.items() if k != "text"})

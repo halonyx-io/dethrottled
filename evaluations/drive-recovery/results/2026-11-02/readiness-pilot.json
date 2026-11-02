@@ -1,0 +1,205 @@
+[
+  {
+    "case": "reddit-thread",
+    "engine": "control",
+    "elapsed_ms": 211.15,
+    "http_status": 200,
+    "content_chars": 240,
+    "title_support": false,
+    "comment_support": false,
+    "result": {
+      "ok": true,
+      "access": {
+        "status": "challenge",
+        "reason": "observed_verification_interstitial",
+        "answer_verified": false,
+        "source_complete": false
+      },
+      "navigation_recovery": null,
+      "steps": [
+        {
+          "action": "goto",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 97,
+          "data": {
+            "access": {
+              "status": "challenge",
+              "reason": "observed_verification_interstitial",
+              "answer_verified": false,
+              "source_complete": false
+            },
+            "url": "https://www.reddit.com/r/programming/comments/1xl8d57/jepsen_on_particledb_we_tested_versions_114/",
+            "status": 200,
+            "wait_until": "domcontentloaded",
+            "challenge_headers": {}
+          }
+        },
+        {
+          "action": "count",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 23,
+          "data": 0
+        },
+        {
+          "action": "text",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 28,
+          "content_chars": 240,
+          "truncated": false,
+          "evidence": {
+            "chars": 240,
+            "sha256": "92a6e680cba08274dd85fc6719c6cfa1ded40ae62affd8058705f37cfc48d6dc"
+          }
+        }
+      ],
+      "final": {
+        "url": "https://www.reddit.com/r/programming/comments/1xl8d57/jepsen_on_particledb_we_tested_versions_114/",
+        "title": "Reddit - Prove your humanity"
+      },
+      "session": {
+        "id": "comparison-66f523c881274427",
+        "persistent": true,
+        "closed": false,
+        "ttl_seconds": 1800,
+        "allowed_hosts": [
+          "www.reddit.com"
+        ],
+        "restored_from_checkpoint": false
+      },
+      "canary_matches": [],
+      "service_s": 0.151
+    }
+  },
+  {
+    "case": "reddit-thread-close",
+    "engine": "control",
+    "elapsed_ms": 7.61,
+    "http_status": 200,
+    "content_chars": 0,
+    "title_support": false,
+    "comment_support": false,
+    "result": {
+      "ok": true,
+      "steps": [],
+      "session": {
+        "id": "comparison-66f523c881274427",
+        "persistent": true,
+        "closed": true
+      },
+      "canary_matches": [],
+      "service_s": 0.0
+    }
+  },
+  {
+    "case": "reddit-thread",
+    "engine": "candidate",
+    "elapsed_ms": 1137.11,
+    "http_status": 200,
+    "content_chars": 835,
+    "title_support": true,
+    "comment_support": false,
+    "result": {
+      "ok": true,
+      "access": {
+        "status": "content_observed",
+        "reason": "visible_text_present",
+        "answer_verified": false,
+        "source_complete": false
+      },
+      "navigation_recovery": {
+        "name": "reddit_cookie_preference",
+        "cookie_added": true,
+        "existing_preference_preserved": false,
+        "settle_ms": 5000,
+        "settled": true,
+        "elapsed_ms": 1016.36
+      },
+      "steps": [
+        {
+          "action": "goto",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 1027,
+          "data": {
+            "access": {
+              "status": "content_observed",
+              "reason": "visible_text_present",
+              "answer_verified": false,
+              "source_complete": false
+            },
+            "recovery": {
+              "name": "reddit_cookie_preference",
+              "cookie_added": true,
+              "existing_preference_preserved": false,
+              "settle_ms": 5000,
+              "settled": true,
+              "elapsed_ms": 1016.36
+            },
+            "url": "https://www.reddit.com/r/programming/comments/1xl8d57/jepsen_on_particledb_we_tested_versions_114/",
+            "status": 200,
+            "wait_until": "domcontentloaded",
+            "challenge_headers": {}
+          }
+        },
+        {
+          "action": "count",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 36,
+          "data": 0
+        },
+        {
+          "action": "text",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 5,
+          "content_chars": 835,
+          "truncated": false,
+          "evidence": {
+            "chars": 835,
+            "sha256": "e30359605aee2cadcc6f8dd6eb1de3e23a03cf0bb10fce426219dd05f2267099"
+          }
+        }
+      ],
+      "final": {
+        "url": "https://www.reddit.com/r/programming/comments/1xl8d57/jepsen_on_particledb_we_tested_versions_114/",
+        "title": "Jepsen on ParticleDB: \"We tested versions 1.1.4 through 1.1.18.11.rc-22 and found that ParticleDB\u2019s claims of \u201cFull ACID\u201d were somewhat premature\" : r/programming"
+      },
+      "session": {
+        "id": "comparison-c6266938416c46f2",
+        "persistent": true,
+        "closed": false,
+        "ttl_seconds": 1800,
+        "allowed_hosts": [
+          "www.reddit.com"
+        ],
+        "restored_from_checkpoint": false
+      },
+      "canary_matches": [],
+      "service_s": 1.072
+    }
+  },
+  {
+    "case": "reddit-thread-close",
+    "engine": "candidate",
+    "elapsed_ms": 6.66,
+    "http_status": 200,
+    "content_chars": 0,
+    "title_support": false,
+    "comment_support": false,
+    "result": {
+      "ok": true,
+      "steps": [],
+      "session": {
+        "id": "comparison-c6266938416c46f2",
+        "persistent": true,
+        "closed": true
+      },
+      "canary_matches": [],
+      "service_s": 0.0
+    }
+  }
+]

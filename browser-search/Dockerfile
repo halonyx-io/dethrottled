@@ -18,7 +18,7 @@ RUN python -m pip install --no-cache-dir --upgrade pip \
     && chmod -R a+rX /ms-playwright \
     && mkdir /state && chown browsersearch:browsersearch /state
 
-COPY service.py ./
+COPY service.py recovery.py ./
 COPY start.sh ./
 USER browsersearch
 EXPOSE 19888

@@ -1,0 +1,21 @@
+{
+  "initial_ms": 1662.68,
+  "restored_ms": 1515.9,
+  "restored_from_checkpoint": true,
+  "post_fact": true,
+  "comment_fact": true,
+  "access": {
+    "status": "content_observed",
+    "reason": "visible_text_present",
+    "answer_verified": false,
+    "source_complete": false
+  },
+  "navigation_recovery": {
+    "name": "reddit_cookie_preference",
+    "cookie_added": false,
+    "existing_preference_preserved": true,
+    "settle_ms": 5000,
+    "settled": true,
+    "elapsed_ms": 1297.94
+  }
+}
