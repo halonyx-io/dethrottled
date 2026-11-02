@@ -308,9 +308,15 @@ def test_backfill_native_child_is_supervised(mode):
         else "print('{\"passages\": 291}')"
     )
     job.start([sys.executable, "-c", program])
-    if mode != "stop":
-        job.watcher.join(timeout=3)
-    job.stop()
+    try:
+        if mode != "stop":
+            # Cold/contended ARM runners can take longer than three seconds to
+            # start Python. Do not turn a still-starting crash fixture into an
+            # intentional stop and then assert that it crashed.
+            job.watcher.join(timeout=15)
+            assert not job.watcher.is_alive(), "child did not finish within the test deadline"
+    finally:
+        job.stop()
     assert job.process.poll() is not None and not job.watcher.is_alive()
     assert (
         job.state["status"]
