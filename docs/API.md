@@ -135,7 +135,7 @@ curl -sS http://127.0.0.1:8787/research \
   -d '{"question":"How does Python sqlite3 create an in-memory database?","max_sources":4}'
 ```
 
-Research defaults to thorough discovery. Supply up to three facet queries in
+Research defaults to web-only discovery. Supply up to ten facet queries in
 addition to the question. It returns source IDs, evidence windows, query
 attempts, skipped sources and `coverage.facets`. Term matches are not semantic
 verification; no model writes the answer. Two research requests can run at once;
