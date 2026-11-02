@@ -22,6 +22,12 @@ host model mounts. `/health` is liveness; `/ready` checks search sources;
 a known-source fetch and the specific optional worker formats you use. A 200
 response can still contain failed reads or no useful search results.
 
+For optional automatic Linux Mesa GPU setup, use `scripts/compose-auto.sh` in place
+of `docker compose` for builds and updates. It selects the GPU override only when
+host devices exist and supplies numeric groups. Verify `workers.browser.graphics`
+in `/v2/status`; mapped devices alone do not establish hardware rendering. See
+the [read planner and GPU setup](READ-PLANNER.md).
+
 For optional speech/layout/formats profiles, use both Compose files and their
 worker URLs as described in [configuration](CONFIGURATION.md). Public adapters
 are a separate profile or host-managed deployment.

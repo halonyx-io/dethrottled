@@ -58,6 +58,11 @@ OCR, captions, speech, retained text and source inspection.
 
 ## Interpret a read
 
+Ordinary text reads use the [autonomous read planner](READ-PLANNER.md) after initial
+acquisition. `read_plan.decisions` records the selected strategies, triggers, timings
+and adoption outcomes. `read_plan.stop_reason` explains why recovery stopped; it does
+not verify an answer. Retain `acquisition_url` and publisher-alternative provenance.
+
 | Field | Meaning |
 |---|---|
 | `quality` | `ok`: extracted; `thin`: short HTML with uncertain coverage; `suspect`: possible error-banner pollution retained after recovery; `failed`: no useful read |

@@ -55,7 +55,7 @@ def test_direct_error_reads_only_challenge_prefix(monkeypatch):
     response = Response()
     monkeypatch.setattr(fetch, "_throttle", lambda domain: None)
     monkeypatch.setattr(fetch.requests, "get", lambda *a, **kw: response)
-    payload, reason, _ = fetch._tier_direct("https://example.org/a", 2)
+    payload, reason, _ = fetch._tier_direct_once("https://example.org/a", 2, get=fetch.requests.get)
     assert payload == ""
     assert reason == "challenge_detected"
     assert response.chunks_read == 1

@@ -15,6 +15,16 @@ explicit control; explicit render=never and OCR choices are respected.
 Read each result's workflow, warnings, source_partial and truncation fields. quality=ok
 means text was extracted, not that the answer is present or the source is complete.
 quality=thin retains short evidence; coverage is unverified. Preserve its warnings.
+Automatic fetch recovery runs an observed-gap read plan: publisher-declared primary
+representations, scoped browser inspection, loading waits, standard details expansion,
+scrolling and exact-document primary JSON responses. Read read_plan.decisions and
+stop_reason before choosing another action; success remains extraction, not answer proof.
+Reuse read_plan.browser_session.id in drive to continue the same scoped browser state.
+evidence_variants links retained earlier extractions when recovery selects another view;
+read those if the selected view lacks material needed for the question.
+read_state, scroll and expand_details are also available through drive. Custom controls
+remain deliberate agent actions. HTTP/TLS cookie jars are scoped to caller, origin and
+transport/profile; they are process-local, bounded and expire after inactivity.
 quality=suspect retains possible error-banner pollution after available recovery.
 Inspect content_assessment.spans against full retained extraction offsets; text is
 preserved. none_detected is not proof of clean content; completeness and answer support
@@ -86,6 +96,9 @@ def guidance(row, *, offset=0, focused=False, rendered_allowed=True):
     def action(tool, reason, **arguments):
         if tool == "drive" and arguments.get("url"):
             arguments["allowed_hosts"] = [urlsplit(arguments["url"]).hostname]
+            handoff = row.get("read_plan", {}).get("browser_session", {})
+            if handoff.get("id"):
+                arguments.setdefault("session", handoff["id"])
         endpoints = {
             "fetch": "/fetch",
             "read_document": "/documents/read",
@@ -116,6 +129,10 @@ def guidance(row, *, offset=0, focused=False, rendered_allowed=True):
         )
 
     suspect = row.get("content_assessment", {}).get("pollution") == "suspected"
+    for variant in row.get("evidence_variants", [])[:2]:
+        if variant.get("document_id"):
+            action("read_document", "The earlier extraction may contain different evidence.",
+                   document_id=variant["document_id"], max_chars=12000)
     if suspect and doc:
         spans = row["content_assessment"].get("spans", [])
         if spans:
@@ -124,8 +141,10 @@ def guidance(row, *, offset=0, focused=False, rendered_allowed=True):
                    document_id=doc, offset=max(0, span["start"] - 120),
                    max_chars=min(12000, max(600, span["end"] - span["start"] + 240)))
     if row.get("quality") in {"failed", "thin", "suspect"} or suspect:
-        headed_attempted = any(a.get("tier") == "headed"
-                               for a in row.get("acquisition_attempts", []))
+        headed_attempted = (any(a.get("tier") == "headed"
+                                for a in row.get("acquisition_attempts", [])) or
+                            any(a.get("action") == "browser_inspect"
+                                for a in row.get("read_plan", {}).get("decisions", [])))
         if url and rendered_allowed and not headed_attempted:
             action(
                 "fetch",
@@ -135,7 +154,7 @@ def guidance(row, *, offset=0, focused=False, rendered_allowed=True):
                 headed_fallback=True,
                 recovery="manual",
             )
-        if url:
+        if url and rendered_allowed:
             action(
                 "drive",
                 "Inspect the source interactively if reading cannot acquire it.",
@@ -265,6 +284,7 @@ def guidance(row, *, offset=0, focused=False, rendered_allowed=True):
             "needs_inspection"
             if incomplete
             or suspect
+            or row.get("read_plan", {}).get("final_gap")
             or row.get("content_status") in {"navigation_only", "image_content"}
             or row.get("focus_status") == "no_term_matches"
             else "evidence_available"

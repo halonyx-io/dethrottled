@@ -1,0 +1,16 @@
+{
+  "cases": [
+    "alternate",
+    "lazy",
+    "details",
+    "network",
+    "cookie-seed",
+    "cookie-gated",
+    "normal",
+    "poison"
+  ],
+  "fact": "7341 tonnes",
+  "max_chars": 8000,
+  "cache_mode": "bypass",
+  "notes": "Synthetic same-origin fixtures; isolated core stores; shared browser. TLS and Crawl4AI disabled to isolate recovery strategies."
+}

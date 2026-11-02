@@ -1,0 +1,25 @@
+[
+  {
+    "mode": "auto",
+    "pdf_overlay_preserved": true,
+    "devices": [
+      {
+        "source": "/dev/dri",
+        "target": "/dev/dri",
+        "permissions": "rwm"
+      }
+    ],
+    "groups": [
+      "991",
+      "44"
+    ],
+    "graphics": "auto"
+  },
+  {
+    "mode": "off",
+    "pdf_overlay_preserved": true,
+    "devices": [],
+    "groups": [],
+    "graphics": "auto"
+  }
+]

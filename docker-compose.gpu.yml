@@ -1,0 +1,10 @@
+# Optional AMD/Intel Mesa DRM access. scripts/compose-auto.sh supplies numeric GIDs.
+services:
+  browser-search:
+    devices:
+      - /dev/dri:/dev/dri
+    group_add:
+      - "${DETHROTTLED_GPU_RENDER_GID:?use scripts/compose-auto.sh or set the render GID}"
+      - "${DETHROTTLED_GPU_VIDEO_GID:?use scripts/compose-auto.sh or set the card GID}"
+    environment:
+      DETHROTTLED_BROWSER_GRAPHICS: auto

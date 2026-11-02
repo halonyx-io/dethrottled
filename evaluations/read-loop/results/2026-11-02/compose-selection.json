@@ -1,0 +1,21 @@
+{
+  "auto": {
+    "devices": [
+      {
+        "source": "/dev/dri",
+        "target": "/dev/dri",
+        "permissions": "rwm"
+      }
+    ],
+    "group_add": [
+      "991",
+      "44"
+    ],
+    "graphics": "auto"
+  },
+  "off": {
+    "devices": [],
+    "group_add": [],
+    "graphics": "auto"
+  }
+}

@@ -46,7 +46,13 @@ curl -sS http://127.0.0.1:8787/fetch \
   -d '{"urls":["https://docs.python.org/3/library/sqlite3.html"],"focus":"in-memory database"}'
 ```
 
-An agent should inspect `quality`, `warnings`, `source_partial`, `truncated`,
+Ordinary reads run an [observed-gap recovery loop](docs/READ-PLANNER.md): acquire,
+inspect, select a justified publisher or browser strategy, then reassess. The loop
+can discover primary representations, scroll lazy content, open standard details
+and read observed primary JSON responses. It preserves partial evidence and records
+why recovery stopped. Optional GPU setup is described in the same guide.
+
+An agent should inspect `quality`, `warnings`, `read_plan`, `source_partial`, `truncated`,
 `document_id` and `workflow.next_actions`. The [agent guide](docs/AGENT-UPGRADES.md)
 explains the workflow and what an MCP client must forward to its model.
 
@@ -83,7 +89,7 @@ The fetch ladder does not consult `robots.txt`. The raw API can access trusted
 LAN targets; public adapters enforce a narrower policy, which is not a substitute
 for deployment-level network isolation.
 
-This branch documents package **0.9.2**. Check `/health` and `/v2/capabilities`
+This branch documents package **0.10.0**. Check `/health` and `/v2/capabilities`
 on the installation you use; a repository branch or remote plugin may differ
 from the deployed service. Historical reports describe their recorded versions.
 

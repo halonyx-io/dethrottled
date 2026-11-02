@@ -12,7 +12,13 @@ from typing import Annotated, Any, Literal
 from urllib.parse import urlsplit
 
 import httpx
-from dethrottled_access import CLAIMS, REQUEST_ID, AccessMiddleware, require_scope
+from dethrottled_access import (
+    CLAIMS,
+    REQUEST_ID,
+    AccessMiddleware,
+    automatic_session,
+    require_scope,
+)
 from mcp.server.fastmcp import FastMCP
 from mcp.server.transport_security import TransportSecuritySettings
 from mcp.types import CallToolResult, ImageContent, TextContent, ToolAnnotations
@@ -155,6 +161,9 @@ def _hostname_allowed(url: str, allowed_hosts: list[str]) -> bool:
 
 
 def _private_session_id(namespace: str, session: str) -> str:
+    shared_read = automatic_session(namespace, session)
+    if shared_read:
+        return shared_read
     digest = hashlib.sha256(session.encode()).hexdigest()[:32]
     prefix = "auto-m" if session.startswith("auto-") else "m"
     return f"{prefix}{namespace[:12]}-{digest}"
@@ -222,6 +231,16 @@ explicit control; explicit render=never and OCR choices are respected.
 Read each result's workflow, warnings, source_partial and truncation fields. quality=ok
 means text was extracted, not that the answer is present or the source is complete.
 quality=thin retains short evidence; coverage is unverified. Preserve its warnings.
+Automatic fetch recovery runs an observed-gap read plan: publisher-declared primary
+representations, scoped browser inspection, loading waits, standard details expansion,
+scrolling and exact-document primary JSON responses. Read read_plan.decisions and
+stop_reason before choosing another action; success remains extraction, not answer proof.
+Reuse read_plan.browser_session.id in drive to continue the same scoped browser state.
+evidence_variants links retained earlier extractions when recovery selects another view;
+read those if the selected view lacks material needed for the question.
+read_state, scroll and expand_details are also available through drive. Custom controls
+remain deliberate agent actions. HTTP/TLS cookie jars are scoped to caller, origin and
+transport/profile; they are process-local, bounded and expire after inactivity.
 quality=suspect retains possible error-banner pollution after available recovery.
 Inspect content_assessment.spans against full retained extraction offsets; text is
 preserved. none_detected is not proof of clean content; completeness and answer support
@@ -529,6 +548,11 @@ async def drive(
     ocr_language: str = "",
 ) -> dict[str, Any]:
     """Operate a stateful browser using bounded steps and structured evidence.
+
+    read_state inspects loading/details/scroll state; scroll moves up/down;
+    expand_details opens up to two visible standard HTML details sections.
+    Ordinary fetch uses these automatically for observed gaps; use drive for
+    deliberate application-specific operations.
 
     Use one session per target. If navigation omits a name, reuse the returned
     session.id for later snapshot/click/fill/read calls. Set allowed_hosts on

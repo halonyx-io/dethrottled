@@ -29,6 +29,11 @@ is distinct from keeping a live page. Close a session explicitly when finished:
 {"session":"source-task","close_session":true,"steps":[]}
 ```
 
+For automatic fetch recovery, reuse `read_plan.browser_session.id` and its
+`allowed_hosts` to continue the same browser state. These reserved handles are
+caller-scoped across REST and MCP; ordinary named sessions remain transport-private.
+See the [read planner](READ-PLANNER.md) for selection and retention rules.
+
 ## Actions
 
 | Action | Fields and meaning |
@@ -48,6 +53,9 @@ is distinct from keeping a live page. Close a session explicitly when finished:
 | `checkpoint` | Save cookies, localStorage, IndexedDB, allowed-frame sessionStorage and history |
 | `tabs`, `switch_tab` | Inspect tabs, then switch to an allowed live tab `index` |
 | `history` | Read bounded action outcomes without replaying actions |
+| `read_state` | Inspect ready state, a main-content selector, closed details, loading and scroll range |
+| `scroll` | Scroll 650 pixels; `value="down"` or `"up"` |
+| `expand_details` | Open up to two visible standard details summaries; `limit` can reduce this; nested interactive controls are skipped |
 
 Set `frame` to an iframe's CSS selector for supported locator actions. Its target
 must be in the session's allowed-host scope. Tab indices are live positions, not

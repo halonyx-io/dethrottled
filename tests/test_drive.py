@@ -97,3 +97,15 @@ def test_browser_proxy_timeout_tracks_requested_run_budget(monkeypatch):
     monkeypatch.setattr(fs.requests, "post", post)
     fs.browser_drive({"timeout_ms": 180000})
     assert seen["timeout"] == 195
+
+
+def test_automatic_read_handoff_is_scoped_and_returns_logical_handle(client):
+    from dethrottled.access import automatic_session, read_session_alias
+    alias = read_session_alias('https://example.com/report', False)
+    payload = dict(session=alias, allowed_hosts=['example.com'],
+                   steps=[{'action': 'snapshot'}], evidence_namespace='alice')
+    one = client.post('/drive', json=payload).json()
+    two = client.post('/drive', json={**payload, 'evidence_namespace': 'bob'}).json()
+    assert one['session']['id'] == two['session']['id'] == alias
+    assert one['echo']['session'] == automatic_session('alice', alias)
+    assert one['echo']['session'] != two['echo']['session']

@@ -1,0 +1,152 @@
+{
+  "core_python_files_match": 36,
+  "packaged_docs_match": 23,
+  "browser_source_matches": true,
+  "mcp_source_matches": true,
+  "rest_source_matches": true,
+  "access_source_matches": true,
+  "git_head": "d37a6b389d766796e231cf105c0eac2d3b8020ba",
+  "status": {
+    "status": "ok",
+    "workers": {
+      "browser": {
+        "status": "ready",
+        "http_status": 200,
+        "graphics": {
+          "webgl": true,
+          "renderer": "ANGLE (AMD, AMD Radeon Graphics (radeonsi renoir ACO DRM 3.61 6.12.111+deb13-amd64), OpenGL ES 3.2)",
+          "hardware_verified": true,
+          "requested_mode": "auto"
+        },
+        "probe_ms": 3
+      },
+      "renderer": {
+        "status": "ready",
+        "http_status": 200,
+        "probe_ms": 4
+      },
+      "layout": {
+        "status": "ready",
+        "http_status": 200,
+        "metrics": {
+          "completed": 1,
+          "failed": 0,
+          "timed_out": 0,
+          "cancelled": 0,
+          "rejected": 0,
+          "active": 0,
+          "active_seconds": 0,
+          "deadline_seconds": 180,
+          "max_input_bytes": 52428800
+        },
+        "probe_ms": 6
+      },
+      "speech": {
+        "status": "ready",
+        "http_status": 200,
+        "metrics": {
+          "completed": 3,
+          "failed": 0,
+          "timed_out": 0,
+          "cancelled": 0,
+          "rejected": 0,
+          "active": 0,
+          "active_seconds": 0,
+          "deadline_seconds": 570,
+          "max_input_bytes": 52428800
+        },
+        "probe_ms": 6
+      },
+      "formats": {
+        "status": "ready",
+        "http_status": 200,
+        "metrics": {
+          "completed": 2,
+          "failed": 0,
+          "timed_out": 0,
+          "cancelled": 0,
+          "rejected": 0,
+          "active": 0,
+          "active_seconds": 0,
+          "deadline_seconds": 60,
+          "max_input_bytes": 52428800
+        },
+        "probe_ms": 4
+      }
+    },
+    "multilingual_backfill": {
+      "status": "complete",
+      "passages": 0
+    },
+    "components": {
+      "searxng": {
+        "status": "ok"
+      },
+      "bing_news_rss": {
+        "status": "ok"
+      }
+    },
+    "providers": {
+      "trafilatura": {
+        "configured": true
+      },
+      "resiliparse": {
+        "configured": true
+      },
+      "selectolax": {
+        "configured": true
+      }
+    },
+    "profiles": {
+      "fast": {
+        "sources": [
+          "web"
+        ]
+      },
+      "web": {
+        "sources": [
+          "web"
+        ]
+      },
+      "balanced": {
+        "sources": [
+          "web",
+          "news"
+        ]
+      },
+      "thorough": {
+        "sources": [
+          "web",
+          "mwmbl"
+        ]
+      },
+      "news": {
+        "sources": [
+          "web",
+          "news"
+        ]
+      },
+      "academic": {
+        "sources": [
+          "web",
+          "crossref",
+          "openalex",
+          "arxiv"
+        ]
+      }
+    },
+    "cost": {
+      "api_calls": null,
+      "daily_caps": null,
+      "keys_required": false,
+      "default_search": "keyless",
+      "optional_metered": {
+        "exa": false,
+        "tavily": false,
+        "parallel": false
+      },
+      "accounting": "per_request_attempts; cumulative_usage_unavailable"
+    },
+    "uptime_seconds": 26
+  }
+}

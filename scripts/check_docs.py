@@ -29,6 +29,7 @@ GUIDES = {
     "docs/DEPENDABLE-WORKFLOWS.md",
     "docs/AGENT-UPGRADES.md",
     "docs/EVIDENCE.md",
+    "docs/READ-PLANNER.md",
 }
 FENCE = re.compile(r"^```([^\n]*)\n(.*?)^```\s*$", re.M | re.S)
 LINK = re.compile(r'!?\[[^\]\n]*\]\((<[^>]+>|[^\s)]+)(?:\s+"[^"]*")?\)')

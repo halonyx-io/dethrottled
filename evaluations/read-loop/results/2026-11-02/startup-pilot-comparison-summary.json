@@ -1,0 +1,113 @@
+[
+  {
+    "case": "alternate",
+    "engine": "baseline",
+    "has_fact": false,
+    "elapsed_ms": 19.62
+  },
+  {
+    "case": "alternate",
+    "engine": "candidate",
+    "error": "ConnectionResetError: [Errno 104] Connection reset by peer",
+    "elapsed_ms": 0.59
+  },
+  {
+    "case": "lazy",
+    "engine": "baseline",
+    "has_fact": false,
+    "elapsed_ms": 1509.15
+  },
+  {
+    "case": "lazy",
+    "engine": "candidate",
+    "has_fact": false,
+    "elapsed_ms": 254.05
+  },
+  {
+    "case": "details",
+    "engine": "baseline",
+    "has_fact": false,
+    "elapsed_ms": 1255.06
+  },
+  {
+    "case": "details",
+    "engine": "candidate",
+    "has_fact": true,
+    "elapsed_ms": 610.28
+  },
+  {
+    "case": "network",
+    "engine": "baseline",
+    "has_fact": false,
+    "elapsed_ms": 870.86
+  },
+  {
+    "case": "network",
+    "engine": "candidate",
+    "has_fact": true,
+    "elapsed_ms": 139.59
+  },
+  {
+    "case": "cookie-seed",
+    "engine": "baseline",
+    "has_fact": true,
+    "elapsed_ms": 1362.91
+  },
+  {
+    "case": "cookie-seed",
+    "engine": "candidate",
+    "has_fact": true,
+    "elapsed_ms": 109.48
+  },
+  {
+    "case": "cookie-gated",
+    "engine": "baseline",
+    "has_fact": false,
+    "elapsed_ms": 1380.88
+  },
+  {
+    "case": "cookie-gated",
+    "engine": "candidate",
+    "has_fact": true,
+    "elapsed_ms": 77.78
+  },
+  {
+    "case": "normal",
+    "engine": "baseline",
+    "has_fact": true,
+    "elapsed_ms": 1434.58
+  },
+  {
+    "case": "normal",
+    "engine": "candidate",
+    "has_fact": true,
+    "elapsed_ms": 74.44
+  },
+  {
+    "case": "poison",
+    "engine": "baseline",
+    "has_fact": false,
+    "elapsed_ms": 1421.06
+  },
+  {
+    "case": "poison",
+    "engine": "candidate",
+    "has_fact": false,
+    "elapsed_ms": 1638.39
+  },
+  {
+    "case": "render-never",
+    "engine": "candidate",
+    "has_fact": false
+  },
+  {
+    "case": "manual",
+    "engine": "candidate",
+    "has_fact": false
+  },
+  {
+    "case": "other-caller",
+    "engine": "candidate",
+    "has_fact": false
+  }
+]

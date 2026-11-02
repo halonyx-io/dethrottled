@@ -81,7 +81,8 @@ def main():
                     for strategy in protocol["strategies"]:
                         payload = dict(strategy["arguments"], urls=[case["url"]],
                                        max_chars=protocol["max_chars"], cache_mode="bypass",
-                                       evidence_namespace="content-validity-eval")
+                                       evidence_namespace="content-eval-" + hashlib.sha256(
+                                           name.encode()).hexdigest()[:12])
                         record = dict(case=case["id"], url=case["url"], repeat=repeat,
                                       endpoint=name, strategy=strategy["id"], request=payload,
                                       started_at=datetime.now(timezone.utc).isoformat())

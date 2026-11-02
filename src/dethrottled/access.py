@@ -24,6 +24,21 @@ CLAIMS = contextvars.ContextVar("access_claims", default=None)
 REQUEST_ID = contextvars.ContextVar("request_id", default="")
 
 
+def automatic_session(namespace, alias):
+    """Reserved read handles share one caller-scoped identity across adapters."""
+    suffix = alias.removeprefix("auto-read-")
+    if (not alias.startswith("auto-read-") or len(suffix) != 32
+            or any(c not in "0123456789abcdef" for c in suffix)):
+        return None
+    return "auto-reader-" + hashlib.sha256((namespace + "|" + alias).encode()).hexdigest()[:32]
+
+
+def read_session_alias(url, public_only):
+    from urllib.parse import urlsplit
+    scope = (urlsplit(url).hostname or "") + "|" + str(bool(public_only))
+    return "auto-read-" + hashlib.sha256(scope.encode()).hexdigest()[:32]
+
+
 class AccessError(Exception):
     def __init__(self, code, status=401, retry_after=1):
         self.code, self.status, self.retry_after = code, status, retry_after
