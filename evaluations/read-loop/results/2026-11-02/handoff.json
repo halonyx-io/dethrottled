@@ -1,0 +1,37 @@
+{
+  "ok": true,
+  "steps": [
+    {
+      "action": "text",
+      "ok": true,
+      "reason": null,
+      "elapsed_ms": 2,
+      "data": "Allocation report is loading. Scroll to view the available evidence.\nThe regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes. The regional allocation for 2026 is 7341 tonnes.",
+      "content_chars": 1538,
+      "truncated": false
+    }
+  ],
+  "final": {
+    "url": "http://dethrottled-loop-check:8099/lazy",
+    "title": ""
+  },
+  "session": {
+    "id": "auto-read-ea37ef94aa664482d13c628bf59c74df",
+    "persistent": true,
+    "closed": false,
+    "ttl_seconds": 1800,
+    "allowed_hosts": [
+      "dethrottled-loop-check"
+    ],
+    "restored_from_checkpoint": false
+  },
+  "canary_matches": [],
+  "service_s": 0.004,
+  "events": {
+    "dialogs": [],
+    "console": [],
+    "page_errors": [],
+    "request_failures": [],
+    "http_errors": []
+  }
+}

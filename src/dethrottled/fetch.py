@@ -32,7 +32,6 @@ The fetch ladder does not request or consult robots.txt.
 
 from __future__ import annotations
 
-import hashlib
 import os
 import re
 import threading
@@ -72,7 +71,7 @@ def _get_with_policy(get, url, **kwargs):
         url = urljoin(url, location)
     raise ValueError("too_many_redirects")
 
-PROJECT_URL = "https://github.com/zataraine/dethrottled"
+PROJECT_URL = "https://github.com/halonyx-io/dethrottled"
 
 # Identify this fetcher and keep a contact URL. Operators can override it for
 # their own deployment. The fetch ladder does not consult robots.txt.
@@ -151,8 +150,9 @@ MIN_DOMAIN_GAP = 1.5
 #
 # It does NOT render JavaScript, and it does not fix everything. Two hosts in
 # testing returned 403 to every fingerprint tried -- chrome, chrome131,
-# chrome124, safari17_0, safari15_5, edge101, firefox133 -- which is IP
-# reputation, and no client-side trick touches that.
+# chrome124, safari17_0, safari15_5, edge101, firefox133. Those observations did
+# not establish which upstream control
+# caused the refusal; a failed profile sweep is not an IP-reputation diagnosis.
 TLS_IMPERSONATE = os.environ.get("DETHROTTLED_TLS_IMPERSONATE", "chrome")
 
 # Its own short timeout, and this is not a detail -- it is the whole reason the
@@ -481,10 +481,19 @@ def _binary_payload(blob, url, ctype, allow_ocr, filename=""):
 
 
 def _tier_direct(url: str, timeout: int, allow_ocr: bool = False) -> tuple:
+    from .identity import POOL
+    options = _READ_OPTIONS.get()
+    with POOL.borrow(options.get("admission_key", "local"), url, "http",
+                     public_only=options.get("public_only", False)) as get:
+        return _tier_direct_once(url, timeout, allow_ocr, get=get)
+
+
+def _tier_direct_once(url: str, timeout: int, allow_ocr: bool = False, *, get=None) -> tuple:
     domain = _domain(url)
+    response = None
     try:
         _throttle(domain)
-        response = _get_with_policy(requests.get,
+        response = _get_with_policy(get or requests.get,
             url, timeout=timeout, stream=True, allow_redirects=True,
             headers={
                 "User-Agent": USER_AGENT,
@@ -545,6 +554,9 @@ def _tier_direct(url: str, timeout: int, allow_ocr: bool = False) -> tuple:
                 "html_truncated" if clipped else "", str(response.url))
     except Exception as exc:
         return {}, type(exc).__name__, url
+    finally:
+        if response is not None and hasattr(response, "close"):
+            response.close()
 
 
 # The one tier that leaves your network. It is free, keyless and
@@ -840,6 +852,19 @@ def _is_refusal(reason: str) -> bool:
 
 
 def _tier_tls(url: str) -> tuple:
+    if not ENABLE_TLS:
+        return {}, "tls_disabled", url
+    from .identity import POOL
+    options = _READ_OPTIONS.get()
+    try:
+        with POOL.borrow(options.get("admission_key", "local"), url, "tls", TLS_IMPERSONATE,
+                         options.get("public_only", False)) as get:
+            return _tier_tls_once(url, get=get)
+    except ImportError:
+        return {}, "tls_not_installed", url
+
+
+def _tier_tls_once(url: str, *, get=None) -> tuple:
     """Refetch with a browser's TLS fingerprint. Cheap, fast, no browser.
 
     Optional: without curl_cffi installed this reports itself unavailable and
@@ -858,7 +883,7 @@ def _tier_tls(url: str) -> tuple:
         # complaint from Rust on some hosts, after the response has already
         # arrived intact. Nothing actionable, and noisy on every such fetch.
         with quiet_fd2():
-            response = _get_with_policy(tls_requests.get,
+            response = _get_with_policy(get or tls_requests.get,
                 url, impersonate=TLS_IMPERSONATE, timeout=TLS_TIMEOUT,
                 allow_redirects=True, stream=True)
     except Exception as exc:
@@ -1183,6 +1208,7 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
     name = None
     challenged = False
     polluted = False
+    alternatives = []
     script_shell = False
     last_attempted = None
     for name, run in tiers:
@@ -1213,6 +1239,10 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
         attempts.append(attempt)
         payload = payload if isinstance(payload, dict) else {}
         html = payload.get("html") or ""
+        details = page_details(html, final) if html else {}
+        for alternate in details.get("source_alternatives", []):
+            if alternate not in alternatives and len(alternatives) < 8:
+                alternatives.append(alternate)
         if (html and re.search(r"<(?:script|iframe)\b", html, re.I)
                 and len(short_text(html).strip()) < 40):
             script_shell = True
@@ -1262,6 +1292,8 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
                          "extraction": payload.get("extraction", {}),
                          "warnings": payload.get("warnings", []),
                          "content_status": payload.get("content_status", "complete")}
+            candidate.update({k: details[k] for k in ("source_alternatives", "source_canonical")
+                              if k in details})
         else:
             html = payload.get("html") or ""
             if not html or _challenge_document(html):
@@ -1287,7 +1319,7 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
                              "reason": ("html_truncated"
                                         if payload.get("clipped") else ""),
                              "cached": False, "content_type": "html",
-                             **page_details(html, final)}
+                             **details}
             else:
                 # Fetched fine, but no prose -- almost always a JS shell.
                 reasons.append("%s:fetched_but_%s" % (name, result["reason"]))
@@ -1354,7 +1386,7 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
     return {"ok": False, "text": "", "tier": last_attempted, "extractor": None,
             "title": "", "published": "", "chars": 0, "url": url,
             "reason": " | ".join(reasons), "cached": False,
-            "acquisition_attempts": attempts}
+            "acquisition_attempts": attempts, "source_alternatives": alternatives}
 
 
 def _challenge_document(html: str) -> bool:
@@ -1386,9 +1418,9 @@ def _headed_read(url: str, backend: str) -> tuple:
     # transport or share clearance state across public clients.
     options = _READ_OPTIONS.get()
     host = urlparse(url).hostname
-    key = "|".join((str(options.get("admission_key", "local")), host or "",
-                    str(options.get("public_only", False))))
-    session = "auto-reader-" + hashlib.sha256(key.encode()).hexdigest()[:32]
+    from .access import automatic_session, read_session_alias
+    alias = read_session_alias(url, options.get("public_only", False))
+    session = automatic_session(str(options.get("admission_key", "local")), alias)
     started = time.monotonic()
     deadline = started + float(os.getenv("DETHROTTLED_CHALLENGE_WAIT_SECONDS", "15"))
     body = {"session": session, "screenshot": "never", "allowed_hosts": [host],

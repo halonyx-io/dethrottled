@@ -13,7 +13,7 @@ from pathlib import Path
 from urllib.parse import urlsplit
 
 import httpx
-from dethrottled_access import CLAIMS, REQUEST_ID, AccessMiddleware
+from dethrottled_access import CLAIMS, REQUEST_ID, AccessMiddleware, automatic_session
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, Response
 
@@ -59,6 +59,9 @@ def token_namespace(request: Request) -> str | None:
 
 
 def private_session_id(namespace: str, session: str) -> str:
+    shared_read = automatic_session(namespace, session)
+    if shared_read:
+        return shared_read
     digest = hashlib.sha256(session.encode()).hexdigest()[:32]
     prefix = 'auto-a' if session.startswith('auto-') else 'a'
     return f'{prefix}{namespace[:12]}-{digest}'

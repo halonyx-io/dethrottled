@@ -10,6 +10,7 @@ RUN python -m pip install --no-cache-dir --upgrade pip \
     && pip install --no-cache-dir -r requirements.txt \
     && apt-get update \
     && apt-get install -y --no-install-recommends xvfb xauth libegl1 libgles2 \
+         libgl1-mesa-dri libglx-mesa0 libegl-mesa0 \
     && python -m patchright install --with-deps --no-shell chromium \
     && rm -rf /ms-playwright/ffmpeg-* \
     && rm -rf /var/lib/apt/lists/* \

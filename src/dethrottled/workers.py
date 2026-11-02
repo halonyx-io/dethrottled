@@ -37,6 +37,10 @@ def status():
                 "status": "ready" if response.status_code == 200 else "unready",
                 "http_status": response.status_code,
             }
+            if name == "browser" and response.status_code == 200:
+                graphics = response.json().get("graphics", {})
+                result["graphics"] = {k: v for k, v in graphics.items() if k in {
+                    "webgl", "hardware_verified", "renderer", "requested_mode", "fallback_reason"}}
             if path == "/ready" and response.status_code == 200:
                 metrics = requests.get(
                     base.rstrip("/") + "/metrics", timeout=2, allow_redirects=False

@@ -147,7 +147,7 @@ def test_tls_routes_binary_documents_instead_of_decoding_them_as_html(monkeypatc
     fake = types.SimpleNamespace(requests=types.SimpleNamespace(get=lambda *a, **k: Response()))
     monkeypatch.setitem(sys.modules, "curl_cffi", fake)
     monkeypatch.setattr(fetch, "ENABLE_TLS", True)
-    payload, why, _ = fetch._tier_tls("https://example.org/data")
+    payload, why, _ = fetch._tier_tls_once("https://example.org/data")
     assert not why and payload["content_type"] == "json"
     assert "47" in payload["text"] and "html" not in payload
 

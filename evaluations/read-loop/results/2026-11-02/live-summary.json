@@ -1,0 +1,16 @@
+{
+  "baseline/auto": {
+    "requests": 4,
+    "http_success": 4,
+    "extraction_success": 2,
+    "complete_task_assertions": 1,
+    "supported_assertions": 3
+  },
+  "candidate/auto": {
+    "requests": 4,
+    "http_success": 4,
+    "extraction_success": 2,
+    "complete_task_assertions": 1,
+    "supported_assertions": 1
+  }
+}

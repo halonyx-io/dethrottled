@@ -1,0 +1,116 @@
+[
+  {
+    "case": "alternate",
+    "engine": "baseline",
+    "has_fact": false,
+    "elapsed_ms": 14.2
+  },
+  {
+    "case": "alternate",
+    "engine": "candidate",
+    "has_fact": true,
+    "elapsed_ms": 1521.66
+  },
+  {
+    "case": "lazy",
+    "engine": "baseline",
+    "has_fact": false,
+    "elapsed_ms": 37.59
+  },
+  {
+    "case": "lazy",
+    "engine": "candidate",
+    "has_fact": true,
+    "elapsed_ms": 2319.8
+  },
+  {
+    "case": "details",
+    "engine": "baseline",
+    "has_fact": false,
+    "elapsed_ms": 29.51
+  },
+  {
+    "case": "details",
+    "engine": "candidate",
+    "has_fact": true,
+    "elapsed_ms": 1008.93
+  },
+  {
+    "case": "network",
+    "engine": "baseline",
+    "has_fact": false,
+    "elapsed_ms": 476.5
+  },
+  {
+    "case": "network",
+    "engine": "candidate",
+    "has_fact": true,
+    "elapsed_ms": 674.82
+  },
+  {
+    "case": "cookie-seed",
+    "engine": "baseline",
+    "has_fact": true,
+    "elapsed_ms": 825.49
+  },
+  {
+    "case": "cookie-seed",
+    "engine": "candidate",
+    "has_fact": true,
+    "elapsed_ms": 646.32
+  },
+  {
+    "case": "cookie-gated",
+    "engine": "baseline",
+    "has_fact": false,
+    "elapsed_ms": 843.57
+  },
+  {
+    "case": "cookie-gated",
+    "engine": "candidate",
+    "has_fact": true,
+    "elapsed_ms": 620.31
+  },
+  {
+    "case": "normal",
+    "engine": "baseline",
+    "has_fact": true,
+    "elapsed_ms": 890.17
+  },
+  {
+    "case": "normal",
+    "engine": "candidate",
+    "has_fact": true,
+    "elapsed_ms": 609.39
+  },
+  {
+    "case": "poison",
+    "engine": "baseline",
+    "has_fact": false,
+    "elapsed_ms": 890.85
+  },
+  {
+    "case": "poison",
+    "engine": "candidate",
+    "has_fact": false,
+    "elapsed_ms": 2167.58
+  },
+  {
+    "case": "render-never",
+    "engine": "candidate",
+    "has_fact": false,
+    "elapsed_ms": 1444.09
+  },
+  {
+    "case": "manual",
+    "engine": "candidate",
+    "has_fact": false,
+    "elapsed_ms": 1488.63
+  },
+  {
+    "case": "other-caller",
+    "engine": "candidate",
+    "has_fact": false,
+    "elapsed_ms": 1633.06
+  }
+]

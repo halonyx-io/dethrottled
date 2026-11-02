@@ -21,6 +21,10 @@ See [public access](PUBLIC-ACCESS.md) for authentication and deployment.
 
 ## Work through the task
 
+Text fetches use the [read planner](READ-PLANNER.md) automatically. Preserve its
+decision trace and source alternatives. It selects bounded actions from observed
+gaps; it does not verify semantic support or operate arbitrary application controls.
+
 1. Use `fetch` directly for known URLs. Otherwise discover with `search`;
    choose `web`, `news`, `academic` or `thorough` for the question. Use
    `crawl_site` for bounded discovery within one origin/path.
@@ -43,7 +47,8 @@ See [public access](PUBLIC-ACCESS.md) for authentication and deployment.
 ## Preserve the evidence contract
 
 Keep `document_id`, `document_sha256`, `workflow`, `warnings`, `source_partial`,
-`truncated`, `extraction`, `acquisition_attempts`, `content_assessment` and continuation fields in the
+`truncated`, `extraction`, `acquisition_attempts`, `content_assessment`, `read_plan`,
+`acquisition_url` and continuation fields in the
 model-visible result. `quality=ok` means extraction succeeded; `thin` retains
 short HTML evidence with uncertain coverage; `suspect` retains possible error-banner
 pollution after available recovery; `failed` means acquisition failed. Inspect exact

@@ -1,8 +1,7 @@
-"""Private, keyless browser search worker for the Dethrottled Compose stack.
+"""Private keyless search races and scoped browser operations for Dethrottled.
 
-One headed Chromium process, at most three active searches and three tabs per
-search. Every attempt has an HTTP status or explicit failure reason. The
-worker discovers URLs only; Dethrottled validates and reads the documents.
+Owns headed Chromium, bounded admission, isolated sessions, checkpoints and
+observable reading/interaction primitives used by explicit drive and the read planner.
 """
 from __future__ import annotations
 
@@ -233,12 +232,62 @@ async def lifespan(app):
     DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)
     async with async_playwright() as playwright:
         graphics = os.environ.get("DETHROTTLED_BROWSER_GRAPHICS", "default")
-        if graphics not in {"default", "mesa"}:
-            raise ValueError("DETHROTTLED_BROWSER_GRAPHICS must be default or mesa")
+        if graphics not in {"default", "mesa", "auto"}:
+            raise ValueError("DETHROTTLED_BROWSER_GRAPHICS must be default, mesa or auto")
         graphics_args = (["--use-gl=angle", "--use-angle=gl", "--ignore-gpu-blocklist"]
-                         if graphics == "mesa" else [])
-        app.state.browser = await playwright.chromium.launch(
-            headless=False, downloads_path=str(DOWNLOAD_DIR), args=graphics_args)
+                         if graphics in {"mesa", "auto"} else [])
+        hardware_candidate = graphics == "auto" and bool(list(Path('/dev/dri').glob('renderD*')))
+        if hardware_candidate:
+            graphics_args[1] = "--use-angle=gl-egl"
+        launch_fallback = False
+        try:
+            app.state.browser = await playwright.chromium.launch(
+                headless=False, downloads_path=str(DOWNLOAD_DIR), args=graphics_args)
+        except Exception:
+            if not hardware_candidate:
+                raise
+            launch_fallback = True
+            graphics_args[1] = '--use-angle=gl'
+            app.state.browser = await playwright.chromium.launch(
+                headless=False, downloads_path=str(DOWNLOAD_DIR), args=graphics_args)
+        async def probe_graphics():
+            context = await app.state.browser.new_context()
+            try:
+                page = await context.new_page()
+                return await page.evaluate("""() => {
+                  let c=document.createElement('canvas');c.width=2;c.height=2;
+                  let g=c.getContext('webgl');if(!g)return {webgl:false};
+                  let e=g.getExtension('WEBGL_debug_renderer_info');
+                  let renderer=e?g.getParameter(e.UNMASKED_RENDERER_WEBGL):
+                    g.getParameter(g.RENDERER);
+                  g.clearColor(.25,.5,.75,1);g.clear(g.COLOR_BUFFER_BIT);
+                  let pixel=new Uint8Array(4);g.readPixels(0,0,1,1,g.RGBA,g.UNSIGNED_BYTE,pixel);
+                  return {webgl:true,renderer,pixel:Array.from(pixel)};
+                }""")
+            finally:
+                await context.close()
+        try:
+            info = await probe_graphics()
+        except Exception:
+            info = {'webgl': False}
+        def software(renderer):
+            return any(s in renderer.lower() for s in ('llvmpipe', 'swiftshader', 'software'))
+        if hardware_candidate and (not info.get('webgl') or
+                                   info.get('pixel') != [64, 128, 191, 255] or
+                                   software(info.get('renderer', ''))):
+            await app.state.browser.close()
+            app.state.browser = await playwright.chromium.launch(headless=False,
+                downloads_path=str(DOWNLOAD_DIR),
+                args=['--use-gl=angle', '--use-angle=gl', '--ignore-gpu-blocklist'])
+            info = await probe_graphics()
+            info['fallback_reason'] = 'hardware_not_verified'
+        if launch_fallback:
+            info['fallback_reason'] = 'hardware_launch_failed'
+        info['hardware_verified'] = bool(info.get('webgl') and
+            info.get('pixel') == [64, 128, 191, 255] and
+            not software(info.get('renderer', 'software')))
+        info['requested_mode'] = graphics
+        app.state.graphics = info
         watcher = asyncio.create_task(_watch_browser(app))
         session_reaper = asyncio.create_task(_reap_drive_sessions())
         try:
@@ -290,6 +339,7 @@ DRIVE_ACTIONS = (
     "goto", "click", "fill", "type", "press", "select", "check", "uncheck", "hover",
     "wait", "wait_for", "text", "html", "attr", "count", "snapshot", "url", "title",
     "download", "network", "checkpoint", "tabs", "switch_tab", "history",
+    "read_state", "scroll", "expand_details",
 )
 SCREENSHOT_MODES = ("never", "failure", "canary", "always")
 INTERACTIVE_SELECTOR = (
@@ -785,7 +835,8 @@ async def _canary_matches(page, events: dict[str, deque], canaries: list[str]) -
 async def health():
     if not app.state.browser.is_connected():
         raise HTTPException(503, "browser disconnected")
-    return {"ok":True,"active":ACTIVE,"waiting":WAITING}
+    return {"ok":True,"active":ACTIVE,"waiting":WAITING,
+            "graphics": getattr(app.state, "graphics", {})}
 
 
 @app.get("/metrics")
@@ -1013,6 +1064,40 @@ async def _drive(state: dict, body: DriveRequest) -> dict:
             async def call(s=s, scope=scope):
                 await asyncio.sleep(min(s.ms, 30000) / 1000.0)
                 return True
+        elif action == "read_state":
+            async def call(scope=scope):
+                return await scope.evaluate("""() => {
+                  const visible = e => !!(e && e.getClientRects().length);
+                  let main = ['main','article','[role="main"]'].find(s =>
+                    document.querySelectorAll(s).length === 1 &&
+                      visible(document.querySelector(s)));
+                  const root = document.scrollingElement;
+                  return {ready_state:document.readyState, main_selector:main || 'body',
+                    expandable_details:[...document.querySelectorAll(
+                      'details:not([open]) > summary')]
+                      .filter(visible).length,
+                    loading:!!document.querySelector('[aria-busy="true"]'),
+                    scroll_remaining:root ? Math.max(0, root.scrollHeight-innerHeight-scrollY) : 0};
+                }""")
+        elif action == "scroll":
+            async def call(scope=scope, s=s):
+                if s.value not in {"", "down", "up"}:
+                    raise ValueError("scroll value must be down or up")
+                amount = -650 if s.value == "up" else 650
+                return await scope.evaluate("""dy => {
+                    scrollBy(0,dy); return {scroll_y:scrollY};
+                }""", amount)
+        elif action == "expand_details":
+            async def call(scope=scope, s=s):
+                expanded = 0
+                for summary in await scope.locator('details:not([open]) > summary').all():
+                    if expanded >= min(s.limit, 2):
+                        break
+                    if (await summary.is_visible() and not await summary.locator(
+                            'a,button,input,select,textarea').count()):
+                        await summary.click(timeout=min(s.ms or 1500, 3000))
+                        expanded += 1
+                return {"expanded": expanded}
         elif action == "wait_for":
             async def call(s=s, scope=scope):
                 state_name = s.value or "visible"

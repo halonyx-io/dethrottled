@@ -27,7 +27,7 @@ class Response:
 def direct(monkeypatch, data, content_type, url):
     monkeypatch.setattr(fetch, "_throttle", lambda domain: None)
     monkeypatch.setattr(fetch.requests, "get", lambda *a, **k: Response(data, content_type, url))
-    return fetch._tier_direct(url, 20)
+    return fetch._tier_direct_once(url, 20, get=fetch.requests.get)
 
 
 def test_xlsx_with_html_header_is_read_as_spreadsheet(monkeypatch):

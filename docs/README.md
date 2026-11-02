@@ -11,6 +11,7 @@ assets and public adapters may differ.
 |---|---|---|
 | Connect an agent | [Agent integration](AGENT-UPGRADES.md) | [MCP reference](MCP-REFERENCE.md), [public adapters](PUBLIC-ACCESS.md) |
 | Read a source or file | [Reading and evidence](DEPENDABLE-WORKFLOWS.md) | [HTTP API](API.md), [browser operation](DRIVE.md) |
+| Understand automatic escalation | [Read planner](READ-PLANNER.md) | [Agent integration](AGENT-UPGRADES.md), [evidence](EVIDENCE.md) |
 | Install or extend the stack | [Configuration](CONFIGURATION.md) | [Operations](OPERATIONS.md), [architecture](PIPELINE.md) |
 | Call from application code | [HTTP API](API.md) | [Request reference](HTTP-REFERENCE.md), [Python API](PYTHON.md) |
 | Assess capabilities and quality | [Feature inventory](FEATURES.md) | [Evidence and limits](EVIDENCE.md) |

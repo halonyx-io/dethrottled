@@ -17,6 +17,11 @@ agent / application
 
 ## Discovery
 
+Known-source text reads add an [observed-gap recovery loop](READ-PLANNER.md) after
+the transport ladder. Publisher-declared primary representations and bounded
+browser inspection/actions are reassessed before adoption. Trace metadata records
+the chosen strategy, reason and result; partial evidence survives failed recovery.
+
 Compose enables a bounded static DDG Lite probe before the headed browser race.
 On challenge, poor results or transport failure it falls through to the existing
 Patchright worker. The worker races DDG Lite, DDG HTML and Bing in separate tabs

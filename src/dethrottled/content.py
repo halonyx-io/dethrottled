@@ -126,6 +126,20 @@ def page_details(html: str, url: str) -> dict:
     try:
         from selectolax.lexbor import LexborHTMLParser
         tree = LexborHTMLParser(html)
+        alternatives = []
+        for node in tree.css('link[rel="alternate"],link[rel="amphtml"]'):
+            target = urljoin(url, node.attributes.get("href", ""))
+            kind = node.attributes.get("type", "").split(";")[0].strip().lower()
+            if (urlsplit(target).scheme in {"http", "https"} and target != url
+                    and node.attributes.get("hreflang", "") in {"", "x-default"}
+                    and (kind in {"text/markdown", "application/json", "application/rss+xml",
+                                  "application/atom+xml"} or
+                         node.attributes.get("rel") == "amphtml")):
+                alternatives.append({"url": target, "type": kind,
+                                     "relationship": node.attributes.get("rel")})
+        canonical_node = tree.css_first('link[rel="canonical"]')
+        canonical = (urljoin(url, canonical_node.attributes.get("href", ""))
+                     if canonical_node else url)
         assets, seen = [], set()
         for tag, attribute in (("img", "src"), ("iframe", "src"), ("a", "href")):
             for node in tree.css(tag):
@@ -166,7 +180,8 @@ def page_details(html: str, url: str) -> dict:
                             "the requested information.")
         elif len(text) < 350:
             status = "short"
-        return {"assets": assets[:24], "content_status": status, "warnings": warnings}
+        return {"assets": assets[:24], "content_status": status, "warnings": warnings,
+                "source_alternatives": alternatives[:8], "source_canonical": canonical}
     except (ImportError, ValueError, TypeError):
         return {"assets": [], "content_status": "unknown", "warnings": []}
 

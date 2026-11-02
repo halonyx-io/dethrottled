@@ -9,6 +9,7 @@ services; a supported format does not guarantee a correct or complete extraction
 | Web, news and academic discovery | `search`, `POST /search` or `/v2/search` | Keyless profiles, explicit engines, source attempts; v2 retains diagnostics for empty results |
 | Known-source reading | `fetch`, `POST /fetch` | HTTP/TLS/render/headed ladder, automatic challenge and script-shell recovery, explicit thin/failed outcomes |
 | Mixed-content diagnostics | `fetch`, `research`, retained reads | Suspect banner spans and text hashes, preserved evidence, bounded recovery and agent inspection actions; narrow heuristics, not semantic verification |
+| Autonomous reading | Normal text `fetch` | Observed-gap planner, declared primary representations, browser state/details/scroll/network recovery, preserved attempts and stop reasons |
 | Combined discovery/read | `search_and_fetch`, `/search-and-fetch` | Ranked candidates with per-source extraction status |
 | Evidence bundle | `research`, `/research` | Diverse source references, term windows, facet gaps; no generated answer |
 | Site traversal | `crawl_site`, `/site/crawl` | One-origin/path bounds, sitemap/HTML discovery, frontier and incomplete coverage |
@@ -35,8 +36,9 @@ rejected. Corpus models retrieve stored passages, not live-web cross-encoder
 reranking. Optional Exa/Tavily/Parallel discovery is explicitly selected and can
 be metered; defaults remain keyless.
 
-Software WebGL is enabled by the Compose Mesa profile. This exposes llvmpipe,
-not a fabricated GPU identity. Universal CAPTCHA defeat, every-file-format
+Compose defaults to verified graphics `auto` mode. The optional host helper exposes
+DRM devices when available; the worker verifies hardware rendering or falls back
+to software. Neither result fabricates a GPU identity. Universal CAPTCHA defeat, every-file-format
 support, exhaustive site coverage and verified answers are not promised. The
 [evidence index](EVIDENCE.md) separates measured successes from remaining failures.
 

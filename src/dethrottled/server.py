@@ -36,8 +36,8 @@ milliseconds. Where forcing the question is genuinely useful, that is the
 
 `/drive` is the one place that rule bends, and on purpose. `/fetch` READS a
 page; `/drive` OPERATES one -- click, type, hold a session, read what rendered.
-That is not a strategy the ladder could have chosen for you, because the caller
-is not asking for a page, it is asking for a sequence of actions against one.
+The automatic read planner uses a bounded subset for observed reading gaps;
+explicit drive remains available for deliberate application-specific operations.
 It is proxied straight to the private browser worker, which owns the single
 warm, headed, stealth browser this stack already runs; the caller never
 launches a browser, sets a DISPLAY, or picks a Chromium build.
@@ -645,7 +645,8 @@ def _extract_once(url: str, max_chars: int, allow_ocr: bool = True,
                 # standing on when it gave up; a hardcoded None here would
                 # throw that away and leave a tier-only consumer with nothing.
                 "tier": result.get("tier"), "cached": result.get("cached", False),
-                "acquisition_attempts": result.get("acquisition_attempts", [])}
+                "acquisition_attempts": result.get("acquisition_attempts", []),
+                "source_alternatives": result.get("source_alternatives", [])}
     row = {
         "url": url,
         "content": result["text"],
@@ -669,6 +670,8 @@ def _extract_once(url: str, max_chars: int, allow_ocr: bool = True,
         "content_status": result.get("content_status", "complete"),
         "assets": result.get("assets", []),
         "warnings": result.get("warnings", []),
+        "source_alternatives": result.get("source_alternatives", []),
+        "source_canonical": result.get("source_canonical", result.get("url", url)),
         "content_assessment": result.get("content_assessment", {}),
         "_index_text": result.get("_index_text", result.get("text", "")),
         "acquisition": result.get("acquisition", {}),
@@ -707,65 +710,32 @@ def _extract_once(url: str, max_chars: int, allow_ocr: bool = True,
     return row
 
 
-def _extract_row(url, max_chars, *, recovery="auto", **options):
+def _extract_row(url, max_chars, *, recovery="auto", asset_recovery=True, **options):
     """Recover known evidence gaps without guessing UI actions or hiding attempts."""
     row = _extract_once(url, max_chars, **options)
-    attempts = []
     if recovery == "auto" and not options.get("raw") and not options.get("links"):
-        if (
-            row.get("content_status") == "navigation_only"
-            and options.get("allow_render", True)
-            and not row.get("acquisition", {}).get("rendered")
-        ):
-            retry_options = dict(options, render_first=True, headed_fallback=True)
-            stronger = _extract_once(url, max_chars, **retry_options)
-            attempts.append(
-                {
-                    "action": "render",
-                    "url": url,
-                    "quality": stronger.get("quality"),
-                    "reason": "navigation_only",
-                }
-            )
-            if (
-                stronger.get("quality") == "ok"
-                and stronger.get("content_status") != "navigation_only"
-            ):
-                row = stronger
-        if row.get("content_status") == "image_content":
-            for asset in row.get("assets", [])[:2]:
-                if asset.get("kind") not in {"image", "document"}:
-                    continue
-                child_options = {
-                    k: v
-                    for k, v in options.items()
-                    if k
-                    not in {
-                        "wait_for",
-                        "render_first",
-                        "row_start",
-                        "row_end",
-                        "sheet",
-                        "max_cell_chars",
-                        "page_start",
-                        "page_end",
-                    }
-                }
-                child = _extract_once(asset["url"], max_chars, **child_options)
-                attempts.append(
-                    {
-                        "action": "read_asset",
-                        "url": asset["url"],
-                        "quality": child.get("quality"),
-                        "reason": "image_content",
-                    }
-                )
-                if child.get("quality") == "ok" and child.get("content"):
-                    child.update(parent_url=url, parent_document_id=row.get("document_id"))
-                    row = child
-                    break
-    if attempts:
-        row["recovery_attempts"] = attempts
+        from .readplan import run
+        row = run(url, row, read=lambda target, opts: _extract_once(target, max_chars, **opts),
+                  drive=fs.browser_drive, options=options,
+                  browser_available=bool(fs.BROWSER_SEARCH_URL), allow_assets=asset_recovery)
+        canonical = row.get("_index_text", row.get("content", ""))
+        if canonical:
+            metadata = {k: v for k, v in row.items() if k not in {
+                "content", "html", "_index_text", "document_id", "document_sha256"}}
+            try:
+                row.update(documents().put(options.get("evidence_namespace", "local"),
+                                           row.get("url", url), canonical, metadata))
+            except (OSError, ValueError, sqlite3.Error):
+                row.setdefault("warnings", []).append("Recovered evidence retention unavailable")
+            if options.get("focus"):
+                selected, evidence = passage_excerpt(canonical, options["focus"], max_chars)
+                row.update(content=selected, evidence=evidence, focus=options["focus"],
+                           focus_status="term_matches" if evidence else "no_term_matches",
+                           truncated=len(selected) < len(canonical))
+            else:
+                row["content"] = canonical[:max_chars]
+                row["truncated"] = row.get("truncated", False) or len(canonical) > max_chars
+            row["content_chars"] = len(canonical)
     row["workflow"] = guidance(
         row, focused=bool(options.get("focus")), rendered_allowed=options.get("allow_render", True)
     )
@@ -868,7 +838,8 @@ def v2_capabilities():
             "workflow_sha256": hashlib.sha256(INSTRUCTIONS.encode()).hexdigest(),
             "preserve_fields": ["document_id", "document_sha256", "workflow", "warnings",
                                 "source_partial", "truncated", "extraction", "next_offset",
-                                "acquisition_attempts", "content_assessment"],
+                                "acquisition_attempts", "content_assessment", "read_plan",
+                                "evidence_variants", "source_alternatives", "acquisition_url"],
             "mcp_images": "forward native image content blocks to vision-capable models",
             "startup_check": "Compare initialize.instructions hash with workflow_sha256; "
                              "refresh tools/list after service upgrades.",
@@ -966,7 +937,12 @@ def v2_capabilities():
             "transport/format/OCR ladder", "scoped headed challenge recovery",
             "script-only shell recovery",
             "navigation-only rendered retry",
-            "up to two image/document asset attempts"],
+            "up to two image/document asset attempts", "publisher-declared primary representations",
+            "observed browser state, details expansion, scroll and primary JSON responses"],
+            "read_plan": {"revision": 1, "max_actions": 6,
+                          "admission_budget_seconds": float(os.getenv(
+                              "DETHROTTLED_READ_PLAN_SECONDS", "30")),
+                          "semantic_answer_verification": False},
             "next_actions": "Each read returns tool, endpoint, arguments, reason and prerequisites",
             "manual_control": "fetch recovery=manual; explicit render/OCR/ranges remain available"},
         "documents": {"read_endpoint": "/documents/read", "versioned": True,
@@ -1255,7 +1231,7 @@ def _source_artifact(record, namespace, public_only):
         )
     captured = []
     fetcher.fetch_and_extract(
-        record["url"],
+        metadata.get("acquisition_url") or record["url"],
         cache=None,
         max_chars=1,
         allow_ocr=False,
@@ -1414,6 +1390,11 @@ def drive(body: DriveBody):
     if body.operation_id and not body.session:
         raise HTTPException(status_code=422,
                             detail="operation_id requires an explicit named session")
+    from .access import automatic_session
+    logical_session = body.session
+    shared_session = automatic_session(body.evidence_namespace, body.session or "")
+    if shared_session:
+        body.session = shared_session
     has_navigation = bool(body.url) or any(
         step.action.lower() == "goto" and bool(step.url) for step in body.steps
     )
@@ -1435,6 +1416,8 @@ def drive(body: DriveBody):
     payload = body.model_dump(exclude={"evidence_namespace", "ocr_language"})
     try:
         result = fs.browser_drive(payload)
+        if shared_session and result.get("session", {}).get("id") == shared_session:
+            result["session"]["id"] = logical_session
         for step in result.get("steps", []):
             data = step.get("data")
             if (step.get("action") == "network" and step.get("ok")
@@ -1574,11 +1557,14 @@ def research(body: ResearchBody, background: BackgroundTasks):
                                    allow_ocr=True,
                                    page_budget=fetcher.PAGE_BUDGET_BULK,
                                    fresh=body.fresh, public_only=True,
-                                   evidence_namespace=body.evidence_namespace, recovery="manual")
+                                   evidence_namespace=body.evidence_namespace, recovery="auto",
+                                   asset_recovery=body.follow_assets)
             except Exception as exc:
                 row = {"url": item["url"], "quality": "failed", "content": "",
                        "failure_reason": type(exc).__name__}
-            if body.follow_assets and row.get("content_status") == "image_content":
+            if (body.follow_assets and row.get("content_status") == "image_content"
+                    and not any(a.get("action") == "read_asset"
+                                for a in row.get("read_plan", {}).get("decisions", []))):
                 asset_attempts = []
                 for asset in row.get("assets", [])[:2]:
                     if asset.get("kind") not in {"image", "document"}:
