@@ -38,7 +38,8 @@ requests return at most ten. Existing cache entries obey the same limits.
 
 If evidence is missing, read promising choices or rewrite the query around the
 missing fact. Deliberate academic/news/thorough profiles can add bounded specialist
-choices; Bing/Brave remain excluded from automatic general-web supplementation.
+choices with `limit=16`; primary DDG order is preserved before appended
+supplements. Bing/Brave remain excluded from automatic general-web supplementation.
 A successful response or a novel URL alone does not establish relevance.
 Research shares these budgets across its facets, including unread/failure choices.
 The [source-choice study](../evaluations/agent-search/results/2026-11-03/REPORT.md)

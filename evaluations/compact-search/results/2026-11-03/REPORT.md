@@ -7,7 +7,8 @@ at a particular number of URLs. Historical larger-pool evaluation records remain
 unchanged.
 
 The shared DDG Lite/HTML/TLS/browser family contributes at most **ten** choices.
-Every supplementary engine contributes at most **three**, with **six** supplements
+Primary DDG ordering is preserved; supplementary choices append rather than
+interleaving into the trusted first choices. Every supplementary engine contributes at most **three**, with **six** supplements
 total and **sixteen** unique choices in the complete menu. Normal discovery and
 research default to web-only. Bing/Brave are not automatic general-web supplements;
 the headed discovery race now uses only DDG Lite/HTML. The direct DDGS fallback

@@ -14,6 +14,7 @@ engines contribute at most three URLs each; the complete menu is at most sixteen
 Bing/Brave are not automatic general-web supplements. If evidence is missing, read
 promising sources or rewrite around the missing fact; do not request fifty choices.
 Use academic/news/thorough profiles deliberately when those sources fit the task.
+For a supplemented menu request limit=16; DDG choices stay first, supplements append.
 Alternative DDG acquisition paths are one provider family, not independent votes.
 Research shares the same family/menu budgets across its query facets, with up to
 sixteen selected sources and up to 120000 characters per source. Drive snapshots

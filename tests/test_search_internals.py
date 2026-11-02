@@ -264,7 +264,7 @@ def test_discovery_sources_overlap_but_keep_web_news_order(monkeypatch):
         "web-browser", "bing-news", "duckduckgo news"]
 
 
-def test_explicit_news_blends_browser_and_two_news_sources(monkeypatch):
+def test_news_remains_supplementary_to_primary_order(monkeypatch):
     def result(engine, index):
         word = ("alpha", "bravo", "charlie", "delta", "echo")[index]
         return {"title": f"Unique article from {engine} number {word}",
@@ -280,8 +280,13 @@ def test_explicit_news_blends_browser_and_two_news_sources(monkeypatch):
 
     news, _ = fs.search("a current event", categories="news", max_items=4)
     assert [row["engine"] for row in news[:4]] == [
-        "web-browser-ddg-lite", "bing-news", "duckduckgo news", "web-browser-ddg-lite"]
+        "web-browser-ddg-lite"] * 4
     assert len({row["url"] for row in news}) == len(news)
+    full, _ = fs.search("a current event", categories="news", max_items=16)
+    assert [row["engine"] for row in full[:5]] == ["web-browser-ddg-lite"] * 5
+    assert sum(row["engine"] == "bing-news" for row in full) == 3
+    assert sum(row["engine"] == "duckduckgo news" for row in full) == 3
+
 
     default, _ = fs.search("a current event", max_items=4, profile="web")
     assert [row["engine"] for row in default[:4]] == ["web-browser-ddg-lite"] * 4

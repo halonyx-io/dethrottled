@@ -809,18 +809,8 @@ def search(query: str, *, max_items: int = 8, categories: str = "",
             per_source["reputable-sweep"] = swept
 
     merged = rank(merged, prefer_domains)
-    if "news" in sources:
-        merged = _blend_news(merged)
-    elif (specialists or sources.intersection(providers.NAMES)) and "web" in sources:
-        groups = {}
-        for row in merged:
-            key = "web" if row.get("engine", "").startswith("web-") else row.get("engine")
-            groups.setdefault(key, deque()).append(row)
-        merged = []
-        while any(groups.values()):
-            for group in groups.values():
-                if group:
-                    merged.append(group.popleft())
+    # Supplements append to the primary engine order. Merely selecting a profile
+    # must not promote a weak supplementary index into the first trusted choices.
     dropped = 0
 
     meta = {
