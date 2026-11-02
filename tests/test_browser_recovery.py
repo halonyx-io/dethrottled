@@ -110,3 +110,41 @@ def test_truncated_html_reads_visible_evidence_without_losing_html(monkeypatch, 
     else:
         assert payload['text'] == fact and not payload['extraction']['partial']
         assert payload['extraction']['html_capture_partial']
+
+
+def test_checkpoint_retries_only_read_only_navigation_races():
+    from types import SimpleNamespace
+    tree = ast.parse((ROOT / 'browser-search/service.py').read_text())
+    function = next(n for n in tree.body if isinstance(n, ast.AsyncFunctionDef)
+                    and n.name == '_checkpoint_snapshot')
+    scope = {'asyncio': asyncio, '_host_allowed': lambda url, hosts: True}
+    exec(compile(ast.Module(body=[function], type_ignores=[]), '<worker>', 'exec'), scope)
+    frame = SimpleNamespace(url='https://fixture.example/', evaluate=AsyncMock(side_effect=[
+        RuntimeError('Frame was detached'),
+        {'origin': 'https://fixture.example', 'values': {'state': 'retained'}}]))
+    page = SimpleNamespace(url=frame.url, frames=[frame])
+    context = SimpleNamespace(storage_state=AsyncMock(return_value={'cookies': []}))
+    result = asyncio.run(scope['_checkpoint_snapshot'](context, page, ['fixture.example']))
+    assert result['session_storage']['https://fixture.example']['state'] == 'retained'
+    assert frame.evaluate.await_count == 2
+    frame.evaluate = AsyncMock(side_effect=RuntimeError('permission denied'))
+    with pytest.raises(RuntimeError, match='permission denied'):
+        asyncio.run(scope['_checkpoint_snapshot'](context, page, ['fixture.example']))
+    assert frame.evaluate.await_count == 1
+
+
+def test_every_browser_action_is_reachable_through_the_mcp_schema():
+    worker = ast.parse((ROOT / 'browser-search/service.py').read_text())
+    drive = next(n for n in worker.body if isinstance(n, ast.AsyncFunctionDef)
+                 and n.name == '_drive')
+    implemented = {n.comparators[0].value for n in ast.walk(drive)
+        if isinstance(n, ast.Compare) and isinstance(n.left, ast.Name)
+        and n.left.id == 'action' and len(n.ops) == 1 and isinstance(n.ops[0], ast.Eq)
+        and isinstance(n.comparators[0], ast.Constant)}
+    adapter = ast.parse((ROOT / 'adapters/mcp_server.py').read_text())
+    action = next(n for cls in adapter.body if isinstance(cls, ast.ClassDef)
+        for n in cls.body if isinstance(n, ast.AnnAssign)
+        and isinstance(n.target, ast.Name) and n.target.id == 'action')
+    published = {n.value for n in ast.walk(action.annotation)
+                 if isinstance(n, ast.Constant) and isinstance(n.value, str)}
+    assert implemented == published

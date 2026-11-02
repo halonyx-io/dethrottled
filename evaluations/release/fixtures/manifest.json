@@ -1,0 +1,14 @@
+[
+  {
+    "file": "quick.msg",
+    "url": "https://raw.githubusercontent.com/apache/poi/521b26fad979c1992538584c199fc75f2a1fd7aa/test-data/hsmf/quick.msg",
+    "sha256": "5cf6dd0bd15c07b8b221f070f7d69590ee6803a6b64358b9deb93a147cf4611b",
+    "expected": "The quick brown fox jumps over the lazy dog"
+  },
+  {
+    "file": "Simple.xlsb",
+    "url": "https://raw.githubusercontent.com/apache/poi/521b26fad979c1992538584c199fc75f2a1fd7aa/test-data/spreadsheet/Simple.xlsb",
+    "sha256": "41b0c82bfa682f968d69e05e23137232d6c89ea4f24439786f0b779be319929b",
+    "expected": "This is an example spreadsheet created with Microsoft Excel 2007 Beta 2."
+  }
+]

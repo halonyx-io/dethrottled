@@ -27,8 +27,11 @@ support for its answer.
 
 The raw API is local and unauthenticated. REST/MCP adapters add public identity,
 policy and shared admission; they are optional services, not built-in API
-routes. Base Compose has four services. Optional profiles add speech, PDF layout,
-broad-format parsing or public adapters.
+routes. Base Compose includes five services, including broad-format parsing. Speech and
+PDF layout use automatically connected profiles; public adapters use an overlay.
+
+The [1.0 candidate](ONE-ZERO.md) explains the release gates and which checks
+remain before promotion.
 
 ## Current guides and historical evidence
 

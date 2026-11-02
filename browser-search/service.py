@@ -964,6 +964,32 @@ async def search(body: SearchRequest):
         SEMAPHORE.release()
 
 
+async def _checkpoint_snapshot(context, page, allowed_hosts):
+    """Retry read-only capture when navigation detaches a frame; never repeat actions."""
+    for attempt in range(3):
+        try:
+            url = page.url
+            storage = await context.storage_state(indexed_db=True)
+            sessions = {}
+            for frame in page.frames:
+                if not _host_allowed(frame.url, allowed_hosts):
+                    continue
+                snapshot = await frame.evaluate("""() => ({origin:location.origin,
+                    values:Object.fromEntries(Object.entries(sessionStorage))})""")
+                if _host_allowed(snapshot['origin'], allowed_hosts):
+                    sessions[snapshot['origin']] = snapshot['values']
+            if page.url != url:
+                raise ValueError('checkpoint_navigation_changed')
+            return {'url': url, 'storage': storage, 'session_storage': sessions}
+        except Exception as exc:
+            transient = any(message in str(exc).lower() for message in (
+                'frame was detached', 'execution context was destroyed',
+                'checkpoint_navigation_changed'))
+            if not transient or attempt == 2:
+                raise
+            await asyncio.sleep(.1)
+
+
 async def _download(page, target, timeout):
     async with DOWNLOAD_LOCK:
         async with page.expect_download(timeout=timeout) as event:
@@ -1209,15 +1235,11 @@ async def _drive(state: dict, body: DriveRequest) -> dict:
                 if not body.session:
                     raise ValueError("checkpoint_requires_named_session")
                 _save_checkpoint(body.session, {
-                    "url": page.url, "allowed_hosts": state["allowed_hosts"],
+                    **await _checkpoint_snapshot(state['context'], page, state['allowed_hosts']),
+                    "allowed_hosts": state["allowed_hosts"],
                     "public_only": state.get("public_only", False),
-                    "storage": await state["context"].storage_state(indexed_db=True),
                     "history": list(state.get("history", [])),
                     "sequence": state.get("sequence", 0),
-                    "session_storage": {await frame.evaluate("location.origin"):
-                        await frame.evaluate("Object.fromEntries(Object.entries(sessionStorage))")
-                        for frame in page.frames
-                        if _host_allowed(frame.url, state["allowed_hosts"])},
                     "expires": time.time() + 86400})
                 return {"saved": True, "retention_seconds": 86400,
                         "includes": ["cookies", "local_storage", "session_storage", "indexed_db"],

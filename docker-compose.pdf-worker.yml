@@ -1,6 +1,7 @@
 # Optional overlay: an HTML-to-PDF worker. See docs/PDF_WORKER.md.
 # Enable with COMPOSE_FILE=docker-compose.yml:docker-compose.pdf-worker.yml in .env.
-# The image pin below must match the crawl4ai service in docker-compose.yml.
+# This offline print utility keeps its independently tested 0.9.4 runtime.
+# It does not run the Crawl4AI HTTP server; its pin can differ from the renderer.
 
 services:
   pdf-worker:

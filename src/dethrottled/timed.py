@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 import html
-import os
 import re
+
+from .workers import endpoint
 
 
 def seconds(value):
@@ -59,7 +60,7 @@ def render(segments, limit, *, method, language=None, duration=None):
 def transcribe(data, limit):
     import requests
 
-    worker = os.environ.get("DETHROTTLED_MEDIA_WORKER_URL", "").rstrip("/")
+    worker = endpoint("speech")
     if not worker:
         raise ValueError("speech_worker_not_configured; provide captions or enable media worker")
     response = requests.post(worker + "/transcribe", data=data,

@@ -1,0 +1,131 @@
+{
+  "model": "deepseek-v4.1-flash:cloud",
+  "temperature": 0,
+  "max_turns": 10,
+  "task": "Read this thread. One comment lists database anomalies; report the SQL predicate mentioned among those anomalies. Also open the thread comment-sort menu and report its visible choices. Cite the source and distinguish what you actually observed. Source: https://www.reddit.com/r/programming/comments/1xl8d57/jepsen_on_particledb_we_tested_versions_114/",
+  "passed": true,
+  "workflow_sha256": "33b893308194e700abf6568f37e15af576e2f3450d076bf3dfba3aea48d918e2",
+  "elapsed_ms": 62379.99,
+  "fact_reported": true,
+  "native_click_attempted": true,
+  "native_click_succeeded": true,
+  "sort_choices_reported": true,
+  "events": [
+    {
+      "tool": "drive",
+      "turn": 0,
+      "actions": [
+        "wait",
+        "snapshot"
+      ],
+      "is_error": false,
+      "elapsed_ms": 5402.56,
+      "result_sha256": "c7a8d12e2d7fdeaf130656e2f16fa61b1d93856d444b8c1ce3740e6069e26342"
+    },
+    {
+      "tool": "drive",
+      "turn": 1,
+      "actions": [
+        "click",
+        "wait",
+        "snapshot"
+      ],
+      "is_error": false,
+      "elapsed_ms": 1766.92,
+      "result_sha256": "f4c61892ca6719bd9544c5725260922c478371d67cfa7d70e9ee0b6b9df19dd4"
+    },
+    {
+      "tool": "fetch",
+      "turn": 1,
+      "actions": [],
+      "is_error": false,
+      "elapsed_ms": 14296.28,
+      "result_sha256": "2a1237a1600081cb93ba359384302da5294ff7712e2ecda7574af1313c882a20"
+    },
+    {
+      "tool": "drive",
+      "turn": 2,
+      "actions": [
+        "text"
+      ],
+      "is_error": false,
+      "elapsed_ms": 107.22,
+      "result_sha256": "8650e44460e11669b136a1e6bf0b989a50e997a3a00f2689a2463bb863d0a043"
+    },
+    {
+      "tool": "drive",
+      "turn": 3,
+      "actions": [
+        "scroll",
+        "scroll",
+        "scroll"
+      ],
+      "is_error": false,
+      "elapsed_ms": 24.67,
+      "result_sha256": "f91860ef1b848adfa831b42b489e87f3ed5d1b20201e3b97bff044df9fd665c2"
+    },
+    {
+      "tool": "drive",
+      "turn": 4,
+      "actions": [
+        "text"
+      ],
+      "is_error": false,
+      "elapsed_ms": 122.73,
+      "result_sha256": "7237fa649fac82ee485705571e49a144c1ac13a4b78f587d467912c57b75d1f4"
+    },
+    {
+      "tool": "drive",
+      "turn": 5,
+      "actions": [
+        "expand_details",
+        "click",
+        "wait"
+      ],
+      "is_error": false,
+      "elapsed_ms": 2804.23,
+      "result_sha256": "99ee4be6b167557793ba0d981ad9b45c15cc70107d1ffcef8e5a2e8448d7ce67"
+    },
+    {
+      "tool": "drive",
+      "turn": 6,
+      "actions": [
+        "scroll",
+        "scroll",
+        "text"
+      ],
+      "is_error": false,
+      "elapsed_ms": 187.03,
+      "result_sha256": "d2213ceea3d2f0fbfe8b386449ca45fa6866822c84574f13dcf4b72ab71c8552"
+    },
+    {
+      "tool": "drive",
+      "turn": 7,
+      "actions": [
+        "click",
+        "wait",
+        "text"
+      ],
+      "is_error": false,
+      "elapsed_ms": 3077.93,
+      "result_sha256": "dcd2770528c417bf3a9fb0a97dc43a11f686968abd72a154466256442fc34dc3"
+    },
+    {
+      "tool": "drive",
+      "turn": 8,
+      "actions": [],
+      "is_error": false,
+      "elapsed_ms": 41.37,
+      "result_sha256": "674b4923c8569c7c5d5a4ac36364be623091fd29b051a0faccaa67eb1a9be1fc"
+    }
+  ],
+  "reviewed_menu_choices": [
+    "Best",
+    "Top",
+    "New",
+    "Controversial",
+    "Old",
+    "Q&A"
+  ],
+  "reviewed_predicate": "WHERE 4 = 5"
+}

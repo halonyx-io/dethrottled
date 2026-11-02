@@ -16,7 +16,13 @@ curl -fsS http://127.0.0.1:8787/v2/status
 curl -fsS http://127.0.0.1:8787/v2/capabilities
 ```
 
-The offline verifier checks dependencies and a real corpus embedding without
+The Docker image installs the tested Linux/Python 3.12 package versions from
+`requirements/docker-py312.txt`; source installs retain their compatibility ranges.
+Dependency/model layers precede application source so code-only rebuilds reuse them.
+Changing the pins requires the release gates on both native architectures. This
+freezes package versions, not every OS package or build byte.
+
+The offline verifier checks those versions, dependencies and a real corpus embedding without
 host model mounts. `/health` is liveness; `/ready` checks search sources;
 `/v2/status` probes configured workers and backfill. Test actual fresh search,
 a known-source fetch and the specific optional worker formats you use. A 200
@@ -28,8 +34,9 @@ host devices exist and supplies numeric groups. Verify `workers.browser.graphics
 in `/v2/status`; mapped devices alone do not establish hardware rendering. See
 the [read planner and GPU setup](READ-PLANNER.md).
 
-For optional speech/layout/formats profiles, use both Compose files and their
-worker URLs as described in [configuration](CONFIGURATION.md). Public adapters
+Speech/layout profiles live in the base file and connect automatically. Use
+`docker compose --profile full up -d --build` for both, as described in
+[configuration](CONFIGURATION.md). Public adapters
 are a separate profile or host-managed deployment.
 
 ## State and backups
@@ -55,8 +62,9 @@ Check actual volume names rather than assuming a project prefix.
 ## Upgrade and rollback
 
 Rebuild and recreate only changed services. Retain rollback image tags and
-compatible data. Keep Crawl4AI/SearXNG pins and the PDF overlay aligned when
-updating upstream images. Browser restarts lose live DOM/tabs but saved
+compatible data. Verify Crawl4AI/SearXNG pins when updating upstream images. The offline PDF
+print utility retains its independently tested runtime; it does not run the
+renderer HTTP server. Browser restarts lose live DOM/tabs but saved
 checkpoints can restore selected state. Core restarts interrupt unfinished jobs;
 committed rows remain and resume is explicit.
 

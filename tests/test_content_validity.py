@@ -170,3 +170,19 @@ def test_research_keeps_suspect_evidence_and_continues_to_clean_source(monkeypat
     assert result["partial_sources"][0]["quality"] == "suspect"
     assert result["summary"]["partial"] == 1
     assert result["skipped"][0]["reason"] == "suspected_pollution"
+
+
+@pytest.mark.parametrize("banner", [
+    "A temporary problem occurred. Refresh this page.",
+    "Une erreur est survenue. Veuillez réessayer.",
+])
+def test_observed_retry_banners_are_non_destructive_and_quote_aware(banner):
+    text = banner + " " + ARTICLE
+    result = assess_content(text)
+    assert result["pollution"] == "suspected"
+    assert result["spans"][0]["quote"] == banner
+    assert result["unflagged_chars"] >= len(ARTICLE)
+    assert assess_content('"' + banner + '" is an example. ' + ARTICLE)[
+        "pollution"] == "none_detected"
+    assert assess_content(text, '<pre>' + banner + '</pre>')['pollution'] == 'none_detected'
+    assert assess_content(text, structured=True)['pollution'] == 'not_assessed'

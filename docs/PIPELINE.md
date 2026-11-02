@@ -10,7 +10,7 @@ agent / application
        -> discovery: headed DDG/Bing worker, keyless web/news/academic sources
        -> read: direct HTTP -> TLS -> Crawl4AI -> conditional headed browser
        -> operate: stateful headed browser /drive
-       -> parse: local readers, OCR, optional speech/layout/format workers
+       -> parse: local readers, OCR, default format and optional speech/layout workers
        -> retain: versioned documents, source bytes where available, read jobs
        -> retrieve: SQLite cache and separate MiniLM/E5 corpus indexes
 ```

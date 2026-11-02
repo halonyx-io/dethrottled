@@ -1,0 +1,21 @@
+{
+  "quality": "ok",
+  "extraction": {
+    "total_pages": 1,
+    "next_page": null,
+    "partial": false,
+    "warnings": [
+      "table_structure_is_inferred; verify_critical_cells_against_source",
+      "layout_unavailable_or_incomplete; native_parser_used"
+    ],
+    "source_sha256": "c56a372a4ff7e0ab4ed3e541b6e621920b1e5a781331147f02efc4f8fd69071b",
+    "source_bytes": 2927
+  },
+  "warnings": [
+    "table_structure_is_inferred; verify_critical_cells_against_source",
+    "layout_unavailable_or_incomplete; native_parser_used"
+  ],
+  "chars": 201,
+  "elapsed_ms": 34503,
+  "timing_note": "Transcribed from the recorded first cold-attempt console observation."
+}

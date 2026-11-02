@@ -1,0 +1,560 @@
+[
+  {
+    "case": "reddit-thread",
+    "engine": "cpu",
+    "repeat": 0,
+    "elapsed_ms": 1933.61,
+    "access": {
+      "status": "content_observed",
+      "reason": "visible_text_present",
+      "answer_verified": false,
+      "source_complete": false
+    },
+    "recovery": {
+      "name": "reddit_cookie_preference",
+      "cookie_added": true,
+      "existing_preference_preserved": false,
+      "settle_ms": 5000,
+      "settled": true,
+      "elapsed_ms": 1313.22
+    },
+    "action_ok": true,
+    "chars": 9216,
+    "text_sha256": "c08f058b6a31f3b33956277e09dc8d79807ca55f3d11b1d6edfb0717503b139f",
+    "facts": {
+      "ParticleDB": true,
+      "WHERE 4 = 5": true
+    },
+    "comments": 16,
+    "click_ms": 370.9,
+    "native_menu_opened": true,
+    "operation_replay": true
+  },
+  {
+    "case": "reddit-thread",
+    "engine": "gpu",
+    "repeat": 0,
+    "elapsed_ms": 1977.7,
+    "access": {
+      "status": "content_observed",
+      "reason": "visible_text_present",
+      "answer_verified": false,
+      "source_complete": false
+    },
+    "recovery": {
+      "name": "reddit_cookie_preference",
+      "cookie_added": true,
+      "existing_preference_preserved": false,
+      "settle_ms": 5000,
+      "settled": true,
+      "elapsed_ms": 1258.18
+    },
+    "action_ok": true,
+    "chars": 9270,
+    "text_sha256": "3155627d0ac180d1434389fac4ceffc446cc93cf6b54e0807e7c41d4524ae290",
+    "facts": {
+      "ParticleDB": true,
+      "WHERE 4 = 5": true
+    },
+    "comments": 16,
+    "click_ms": 204.75,
+    "native_menu_opened": true,
+    "operation_replay": true
+  },
+  {
+    "case": "reddit-thread",
+    "engine": "cpu",
+    "repeat": 1,
+    "elapsed_ms": 1822.92,
+    "access": {
+      "status": "content_observed",
+      "reason": "visible_text_present",
+      "answer_verified": false,
+      "source_complete": false
+    },
+    "recovery": {
+      "name": "reddit_cookie_preference",
+      "cookie_added": true,
+      "existing_preference_preserved": false,
+      "settle_ms": 5000,
+      "settled": true,
+      "elapsed_ms": 1343.3
+    },
+    "action_ok": true,
+    "chars": 9311,
+    "text_sha256": "42840b6013916ef3230d72d0052ad431b41eee5dfc3ccc80cd173d90f11f6f15",
+    "facts": {
+      "ParticleDB": true,
+      "WHERE 4 = 5": true
+    },
+    "comments": 16,
+    "click_ms": 219.52,
+    "native_menu_opened": true,
+    "operation_replay": true
+  },
+  {
+    "case": "reddit-thread",
+    "engine": "gpu",
+    "repeat": 1,
+    "elapsed_ms": 1683.4,
+    "access": {
+      "status": "content_observed",
+      "reason": "visible_text_present",
+      "answer_verified": false,
+      "source_complete": false
+    },
+    "recovery": {
+      "name": "reddit_cookie_preference",
+      "cookie_added": true,
+      "existing_preference_preserved": false,
+      "settle_ms": 5000,
+      "settled": true,
+      "elapsed_ms": 1269.65
+    },
+    "action_ok": true,
+    "chars": 6538,
+    "text_sha256": "c4a4cb5e5d0a4093ad8c1a8c6292793dd3df5124e5fcb9357723f8296637c2a7",
+    "facts": {
+      "ParticleDB": true,
+      "WHERE 4 = 5": true
+    },
+    "comments": 16,
+    "click_ms": 326.33,
+    "native_menu_opened": true,
+    "operation_replay": true
+  },
+  {
+    "case": "reddit-thread",
+    "engine": "cpu",
+    "repeat": 2,
+    "elapsed_ms": 1953.32,
+    "access": {
+      "status": "content_observed",
+      "reason": "visible_text_present",
+      "answer_verified": false,
+      "source_complete": false
+    },
+    "recovery": {
+      "name": "reddit_cookie_preference",
+      "cookie_added": true,
+      "existing_preference_preserved": false,
+      "settle_ms": 5000,
+      "settled": true,
+      "elapsed_ms": 1195.47
+    },
+    "action_ok": true,
+    "chars": 9246,
+    "text_sha256": "1191a27072996879a278ade315cd80fb7e027fe2c045db7d4597eb741d31a592",
+    "facts": {
+      "ParticleDB": true,
+      "WHERE 4 = 5": true
+    },
+    "comments": 16,
+    "click_ms": 211.78,
+    "native_menu_opened": true,
+    "operation_replay": true
+  },
+  {
+    "case": "reddit-thread",
+    "engine": "gpu",
+    "repeat": 2,
+    "elapsed_ms": 1755.11,
+    "access": {
+      "status": "content_observed",
+      "reason": "visible_text_present",
+      "answer_verified": false,
+      "source_complete": false
+    },
+    "recovery": {
+      "name": "reddit_cookie_preference",
+      "cookie_added": true,
+      "existing_preference_preserved": false,
+      "settle_ms": 5000,
+      "settled": true,
+      "elapsed_ms": 1242.91
+    },
+    "action_ok": true,
+    "chars": 9234,
+    "text_sha256": "6d5ac38c090b974a6ebc1c7ad399658d6f072dd56aae20d70f1ccbd1447d7f18",
+    "facts": {
+      "ParticleDB": true,
+      "WHERE 4 = 5": true
+    },
+    "comments": 16,
+    "click_ms": 225.74,
+    "native_menu_opened": true,
+    "operation_replay": true
+  },
+  {
+    "case": "reddit-listing",
+    "engine": "cpu",
+    "repeat": 0,
+    "elapsed_ms": 2126.46,
+    "access": {
+      "status": "content_observed",
+      "reason": "visible_text_present",
+      "answer_verified": false,
+      "source_complete": false
+    },
+    "recovery": {
+      "name": "reddit_cookie_preference",
+      "cookie_added": true,
+      "existing_preference_preserved": false,
+      "settle_ms": 5000,
+      "settled": true,
+      "elapsed_ms": 1028.04
+    },
+    "action_ok": true,
+    "chars": 2864,
+    "text_sha256": "54a56a0cc2de4578980dc409fb75ee639577671d935655d16798c469d5e362b1",
+    "facts": {
+      "programming": true
+    },
+    "comments": 0
+  },
+  {
+    "case": "reddit-listing",
+    "engine": "gpu",
+    "repeat": 0,
+    "elapsed_ms": 1556.31,
+    "access": {
+      "status": "content_observed",
+      "reason": "visible_text_present",
+      "answer_verified": false,
+      "source_complete": false
+    },
+    "recovery": {
+      "name": "reddit_cookie_preference",
+      "cookie_added": true,
+      "existing_preference_preserved": false,
+      "settle_ms": 5000,
+      "settled": true,
+      "elapsed_ms": 1198.56
+    },
+    "action_ok": true,
+    "chars": 2830,
+    "text_sha256": "6b7b196358bc3f8683e9bc7768884c5f370235b6b906fa029ceb455b16eb48c3",
+    "facts": {
+      "programming": true
+    },
+    "comments": 0
+  },
+  {
+    "case": "reddit-listing",
+    "engine": "cpu",
+    "repeat": 1,
+    "elapsed_ms": 2126.11,
+    "access": {
+      "status": "content_observed",
+      "reason": "visible_text_present",
+      "answer_verified": false,
+      "source_complete": false
+    },
+    "recovery": {
+      "name": "reddit_cookie_preference",
+      "cookie_added": true,
+      "existing_preference_preserved": false,
+      "settle_ms": 5000,
+      "settled": true,
+      "elapsed_ms": 1721.21
+    },
+    "action_ok": true,
+    "chars": 2864,
+    "text_sha256": "54a56a0cc2de4578980dc409fb75ee639577671d935655d16798c469d5e362b1",
+    "facts": {
+      "programming": true
+    },
+    "comments": 0
+  },
+  {
+    "case": "reddit-listing",
+    "engine": "gpu",
+    "repeat": 1,
+    "elapsed_ms": 1283.86,
+    "access": {
+      "status": "content_observed",
+      "reason": "visible_text_present",
+      "answer_verified": false,
+      "source_complete": false
+    },
+    "recovery": {
+      "name": "reddit_cookie_preference",
+      "cookie_added": true,
+      "existing_preference_preserved": false,
+      "settle_ms": 5000,
+      "settled": true,
+      "elapsed_ms": 952.34
+    },
+    "action_ok": true,
+    "chars": 2811,
+    "text_sha256": "114873dff84966690dcd182cba15970945cada9cf51f488176534c7ed1dc5835",
+    "facts": {
+      "programming": true
+    },
+    "comments": 0
+  },
+  {
+    "case": "reddit-listing",
+    "engine": "cpu",
+    "repeat": 2,
+    "elapsed_ms": 1589.95,
+    "access": {
+      "status": "content_observed",
+      "reason": "visible_text_present",
+      "answer_verified": false,
+      "source_complete": false
+    },
+    "recovery": {
+      "name": "reddit_cookie_preference",
+      "cookie_added": true,
+      "existing_preference_preserved": false,
+      "settle_ms": 5000,
+      "settled": true,
+      "elapsed_ms": 1201.91
+    },
+    "action_ok": true,
+    "chars": 2825,
+    "text_sha256": "cfdcdc0d2f8c28c3c55f121f10c127cd9bc20ae96c32ed510e7d61e4c3b0b1ec",
+    "facts": {
+      "programming": true
+    },
+    "comments": 0
+  },
+  {
+    "case": "reddit-listing",
+    "engine": "gpu",
+    "repeat": 2,
+    "elapsed_ms": 1578.18,
+    "access": {
+      "status": "content_observed",
+      "reason": "visible_text_present",
+      "answer_verified": false,
+      "source_complete": false
+    },
+    "recovery": {
+      "name": "reddit_cookie_preference",
+      "cookie_added": true,
+      "existing_preference_preserved": false,
+      "settle_ms": 5000,
+      "settled": true,
+      "elapsed_ms": 1187.05
+    },
+    "action_ok": true,
+    "chars": 2864,
+    "text_sha256": "54a56a0cc2de4578980dc409fb75ee639577671d935655d16798c469d5e362b1",
+    "facts": {
+      "programming": true
+    },
+    "comments": 0
+  },
+  {
+    "case": "python",
+    "engine": "cpu",
+    "repeat": 0,
+    "elapsed_ms": 417.99,
+    "access": {
+      "status": "content_observed",
+      "reason": "visible_text_present",
+      "answer_verified": false,
+      "source_complete": false
+    },
+    "recovery": null,
+    "action_ok": true,
+    "chars": 72720,
+    "text_sha256": "5f51106d3bca54defdf370a4a37458637061f9c3f1184b284ac7322ff09d70cb",
+    "facts": {
+      "sqlite3": true,
+      "Connection": true
+    },
+    "comments": 0
+  },
+  {
+    "case": "python",
+    "engine": "gpu",
+    "repeat": 0,
+    "elapsed_ms": 441.51,
+    "access": {
+      "status": "content_observed",
+      "reason": "visible_text_present",
+      "answer_verified": false,
+      "source_complete": false
+    },
+    "recovery": null,
+    "action_ok": true,
+    "chars": 72720,
+    "text_sha256": "5f51106d3bca54defdf370a4a37458637061f9c3f1184b284ac7322ff09d70cb",
+    "facts": {
+      "sqlite3": true,
+      "Connection": true
+    },
+    "comments": 0
+  },
+  {
+    "case": "crunchbase",
+    "engine": "cpu",
+    "repeat": 0,
+    "elapsed_ms": 504.26,
+    "access": {
+      "status": "http_error",
+      "reason": "navigation_http_403",
+      "answer_verified": false,
+      "source_complete": false
+    },
+    "recovery": null,
+    "action_ok": true,
+    "chars": 115,
+    "text_sha256": "360df7f40c9637d3c54fc4751b10c07e8a60db108abf86e8e8351f8dd1330cdc",
+    "facts": {
+      "OpenAI": false,
+      "2015": false
+    },
+    "comments": 0
+  },
+  {
+    "case": "crunchbase",
+    "engine": "gpu",
+    "repeat": 0,
+    "elapsed_ms": 758.98,
+    "access": {
+      "status": "http_error",
+      "reason": "navigation_http_403",
+      "answer_verified": false,
+      "source_complete": false
+    },
+    "recovery": null,
+    "action_ok": true,
+    "chars": 115,
+    "text_sha256": "7a4263f885e21e30f6c5889d04d7c4e24c6fc4d8d996a1c70613e63309d395ef",
+    "facts": {
+      "OpenAI": false,
+      "2015": false
+    },
+    "comments": 0
+  },
+  {
+    "case": "g2",
+    "engine": "cpu",
+    "repeat": 0,
+    "elapsed_ms": 729.98,
+    "access": {
+      "status": "http_error",
+      "reason": "navigation_http_403",
+      "answer_verified": false,
+      "source_complete": false
+    },
+    "recovery": null,
+    "action_ok": true,
+    "chars": 0,
+    "text_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "facts": {
+      "Notion": false,
+      "What do you like best": false
+    },
+    "comments": 0
+  },
+  {
+    "case": "g2",
+    "engine": "gpu",
+    "repeat": 0,
+    "elapsed_ms": 376.22,
+    "access": {
+      "status": "http_error",
+      "reason": "navigation_http_403",
+      "answer_verified": false,
+      "source_complete": false
+    },
+    "recovery": null,
+    "action_ok": true,
+    "chars": 0,
+    "text_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "facts": {
+      "Notion": false,
+      "What do you like best": false
+    },
+    "comments": 0
+  },
+  {
+    "case": "cargurus",
+    "engine": "cpu",
+    "repeat": 0,
+    "elapsed_ms": 167.54,
+    "access": {
+      "status": "unknown",
+      "reason": "no_clear_content_signal",
+      "answer_verified": false,
+      "source_complete": false
+    },
+    "recovery": null,
+    "action_ok": false,
+    "chars": 0,
+    "text_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "facts": {
+      "CarGurus": false,
+      "Used Cars": false
+    },
+    "comments": 0
+  },
+  {
+    "case": "cargurus",
+    "engine": "gpu",
+    "repeat": 0,
+    "elapsed_ms": 146.98,
+    "access": {
+      "status": "unknown",
+      "reason": "no_clear_content_signal",
+      "answer_verified": false,
+      "source_complete": false
+    },
+    "recovery": null,
+    "action_ok": false,
+    "chars": 0,
+    "text_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "facts": {
+      "CarGurus": false,
+      "Used Cars": false
+    },
+    "comments": 0
+  },
+  {
+    "case": "bloomberg",
+    "engine": "cpu",
+    "repeat": 0,
+    "elapsed_ms": 6005.65,
+    "access": {
+      "status": "content_observed",
+      "reason": "visible_text_present",
+      "answer_verified": false,
+      "source_complete": false
+    },
+    "recovery": null,
+    "action_ok": true,
+    "chars": 12133,
+    "text_sha256": "885bf0969e19edeaa087b9e6e180f65b099102af11fdae5b68d7c0bed9199a5c",
+    "facts": {
+      "Bloomberg": true,
+      "Markets": true
+    },
+    "comments": 0
+  },
+  {
+    "case": "bloomberg",
+    "engine": "gpu",
+    "repeat": 0,
+    "elapsed_ms": 5641.0,
+    "access": {
+      "status": "content_observed",
+      "reason": "visible_text_present",
+      "answer_verified": false,
+      "source_complete": false
+    },
+    "recovery": null,
+    "action_ok": true,
+    "chars": 12133,
+    "text_sha256": "885bf0969e19edeaa087b9e6e180f65b099102af11fdae5b68d7c0bed9199a5c",
+    "facts": {
+      "Bloomberg": true,
+      "Markets": true
+    },
+    "comments": 0
+  }
+]

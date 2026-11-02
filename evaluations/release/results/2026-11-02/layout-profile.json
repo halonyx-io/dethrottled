@@ -1,0 +1,26 @@
+{
+  "case": "layout",
+  "elapsed_ms": 13002,
+  "quality": "ok",
+  "extraction": {
+    "total_pages": 1,
+    "next_page": null,
+    "partial": false,
+    "warnings": [
+      "table_structure_is_inferred; verify_critical_cells_against_source",
+      "layout_is_model_inferred; verify_critical_cells_against_source"
+    ],
+    "parser": "docling",
+    "ocr_layout": false,
+    "layout_tables_total": 1,
+    "source_sha256": "c56a372a4ff7e0ab4ed3e541b6e621920b1e5a781331147f02efc4f8fd69071b",
+    "source_bytes": 2927
+  },
+  "warnings": [
+    "table_structure_is_inferred; verify_critical_cells_against_source",
+    "layout_is_model_inferred; verify_critical_cells_against_source"
+  ],
+  "chars": 158,
+  "text_sha256": "53f02292e5d8a693dd35b05a748d23c84d147e463c1b03ba597ea84218e317ef",
+  "fact": true
+}

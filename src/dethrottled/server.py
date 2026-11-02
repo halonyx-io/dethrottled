@@ -811,7 +811,7 @@ def v2_capabilities():
 
     readable = ["html", "csv", "tsv", "text", "markdown", "json", "jsonl", "xml", "vtt", "srt",
                 "svg-text", "eml", "zip", "tar", "gzip"]
-    if os.getenv("DETHROTTLED_FORMAT_WORKER_URL"):
+    if workers.endpoint("formats"):
         readable.extend(["msg", "xlsb"])
     if installed("PIL") and shutil.which("tesseract"):
         readable.extend(["png", "jpeg", "webp", "tiff", "gif", "bmp"])
@@ -841,7 +841,8 @@ def v2_capabilities():
             "preserve_fields": ["document_id", "document_sha256", "workflow", "warnings",
                                 "source_partial", "truncated", "extraction", "next_offset",
                                 "acquisition_attempts", "content_assessment", "read_plan",
-                                "evidence_variants", "source_alternatives", "acquisition_url"],
+                                "evidence_variants", "source_alternatives", "acquisition_url",
+                                "access", "navigation_recovery"],
             "mcp_images": "forward native image content blocks to vision-capable models",
             "startup_check": "Compare initialize.instructions hash with workflow_sha256; "
                              "refresh tools/list after service upgrades.",
@@ -922,10 +923,10 @@ def v2_capabilities():
             "youtube_captions_configured": (
                 installed("youtube_transcript_api")
                 and _transcripts_enabled()),
-            "layout_worker_configured": bool(os.getenv("DETHROTTLED_LAYOUT_WORKER_URL")),
-            "format_worker_configured": bool(os.getenv("DETHROTTLED_FORMAT_WORKER_URL")),
+            "layout_worker_configured": bool(workers.endpoint("layout")),
+            "format_worker_configured": bool(workers.endpoint("formats")),
             "document_modes": ["auto", "native", "layout"],
-            "speech_worker_configured": bool(os.getenv("DETHROTTLED_MEDIA_WORKER_URL")),
+            "speech_worker_configured": bool(workers.endpoint("speech")),
             "timed_caption_evidence": True,
             "pdf_page_selection": True,
             "pdf_mixed_page_ocr": True,

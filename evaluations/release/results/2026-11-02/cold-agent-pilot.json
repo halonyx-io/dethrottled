@@ -1,0 +1,147 @@
+{
+  "model": "deepseek-v4.1-flash:cloud",
+  "temperature": 0,
+  "max_turns": 10,
+  "task": "Read this thread and identify the SQL predicate a commenter used as a joke. Also open the thread comment-sort menu and report its visible choices. Cite the source and distinguish what you actually observed. Source: https://www.reddit.com/r/programming/comments/1xl8d57/jepsen_on_particledb_we_tested_versions_114/",
+  "passed": false,
+  "workflow_sha256": "e61f51b92fe4b5a53abc331e6778893da9a448ffd3ab5ee32f940c39d415743b",
+  "elapsed_ms": 45976.49,
+  "fact_reported": false,
+  "native_click_attempted": true,
+  "events": [
+    {
+      "tool": "fetch",
+      "turn": 0,
+      "actions": [],
+      "is_error": false,
+      "elapsed_ms": 2674.49,
+      "result_sha256": "e1db3d647d52a43cf1e46cba7debb9ae4dfa0183aa2f7d582548a2a5056c2335"
+    },
+    {
+      "tool": "drive",
+      "turn": 0,
+      "actions": [],
+      "is_error": false,
+      "elapsed_ms": 1952.8,
+      "result_sha256": "5a49538217aaa1343f2010119d985fb3cef9187f0ccb47dee7b6c4fbe32d443f"
+    },
+    {
+      "tool": "read_document",
+      "turn": 1,
+      "actions": [],
+      "is_error": false,
+      "elapsed_ms": 20.18,
+      "result_sha256": "7f2ddaded4030b7c16d7f77cf2e67a63eef21cac26d200c32e82a9556fa80899"
+    },
+    {
+      "tool": "drive",
+      "turn": 1,
+      "actions": [
+        "snapshot",
+        "click",
+        "snapshot"
+      ],
+      "is_error": false,
+      "elapsed_ms": 1343.6,
+      "result_sha256": "a4fe0e5f0f7e6490a68d9954bd5f1f0f309f3d9d587b4551f1954ded1dca8a3d"
+    },
+    {
+      "tool": "drive",
+      "turn": 2,
+      "actions": [
+        "click",
+        "snapshot",
+        "text"
+      ],
+      "is_error": false,
+      "elapsed_ms": 226.65,
+      "result_sha256": "7bf728cd48cbd53eeaf4c369171594f16f233cdef21a4fca96e6f1b8c11f6066"
+    },
+    {
+      "tool": "fetch",
+      "turn": 3,
+      "actions": [],
+      "is_error": false,
+      "elapsed_ms": 789.57,
+      "result_sha256": "1fed24300b1a64efffdac9c75455307d89ed09cec2bc70974db7acacfda5fcd9"
+    },
+    {
+      "tool": "drive",
+      "turn": 3,
+      "actions": [
+        "press",
+        "snapshot",
+        "text"
+      ],
+      "is_error": false,
+      "elapsed_ms": 229.91,
+      "result_sha256": "0b8b1785a825d12f34a974dac93dbb7ca46cb8ffacf67614c3e19cbb5394e976"
+    },
+    {
+      "tool": "drive",
+      "turn": 4,
+      "actions": [
+        "scroll",
+        "scroll",
+        "text"
+      ],
+      "is_error": true,
+      "elapsed_ms": 6.23,
+      "result_sha256": "09705b0fec21e43b57af78bde6f034e7c605e720413221d1dda0f1b4238f08d1"
+    },
+    {
+      "tool": "drive",
+      "turn": 5,
+      "actions": [
+        "press",
+        "press",
+        "text"
+      ],
+      "is_error": false,
+      "elapsed_ms": 36.08,
+      "result_sha256": "96d7ad8a20d6ed872efc99c5c343f57da08f512d35f133fe0b0da7019587a26d"
+    },
+    {
+      "tool": "read_document",
+      "turn": 6,
+      "actions": [],
+      "is_error": false,
+      "elapsed_ms": 26.43,
+      "result_sha256": "b82a0c9e5dca334cbd3197af57da8f9848f70a17fa2eeac010905789a3d569ec"
+    },
+    {
+      "tool": "fetch",
+      "turn": 7,
+      "actions": [],
+      "is_error": false,
+      "elapsed_ms": 682.4,
+      "result_sha256": "28135322d84c1531efd6ebca0bd1f0b1c4f932344b75e17c660ad824dc587b95"
+    },
+    {
+      "tool": "drive",
+      "turn": 8,
+      "actions": [
+        "goto",
+        "text"
+      ],
+      "is_error": false,
+      "elapsed_ms": 5404.87,
+      "result_sha256": "8758d6149854fbae3d0558178c4e8dedc1e632078705fba084a7753388785d0e"
+    },
+    {
+      "tool": "drive",
+      "turn": 9,
+      "actions": [
+        "goto",
+        "count",
+        "press",
+        "press",
+        "press",
+        "count"
+      ],
+      "is_error": false,
+      "elapsed_ms": 1676.56,
+      "result_sha256": "b7be423410bc114abd1d9ca56f08c208231b1fc0034b784443f4b5f1e500f5d1"
+    }
+  ]
+}

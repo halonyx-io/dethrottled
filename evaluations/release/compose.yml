@@ -1,0 +1,11 @@
+# Apply after the base file. No .env, host paths, GPU or production volumes.
+services:
+  dethrottled:
+    image: dethrottled:one-zero-candidate
+  browser-search:
+    image: dethrottled-browser-search:one-zero-candidate
+  fixture:
+    image: python:3.12-slim
+    volumes:
+      - ./evaluations:/evaluations:ro
+    command: [python, /evaluations/release/fixture.py]

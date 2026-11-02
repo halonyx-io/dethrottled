@@ -1,0 +1,290 @@
+[
+  {
+    "engine": "baseline",
+    "case": "quora-style-leading",
+    "version": "0.10.1",
+    "expected_pollution": true,
+    "observed": "suspected",
+    "fact_retained": true
+  },
+  {
+    "engine": "baseline",
+    "case": "leading-upper-case",
+    "version": "0.10.1",
+    "expected_pollution": true,
+    "observed": "suspected",
+    "fact_retained": true
+  },
+  {
+    "engine": "baseline",
+    "case": "leading-whitespace",
+    "version": "0.10.1",
+    "expected_pollution": true,
+    "observed": "suspected",
+    "fact_retained": true
+  },
+  {
+    "engine": "baseline",
+    "case": "retry-later",
+    "version": "0.10.1",
+    "expected_pollution": true,
+    "observed": "suspected",
+    "fact_retained": true
+  },
+  {
+    "engine": "baseline",
+    "case": "access-wall",
+    "version": "0.10.1",
+    "expected_pollution": true,
+    "observed": "suspected",
+    "fact_retained": true
+  },
+  {
+    "engine": "baseline",
+    "case": "embedded-ui",
+    "version": "0.10.1",
+    "expected_pollution": true,
+    "observed": "suspected",
+    "fact_retained": true
+  },
+  {
+    "engine": "baseline",
+    "case": "inline-quoted-mention",
+    "version": "0.10.1",
+    "expected_pollution": false,
+    "observed": "none_detected",
+    "fact_retained": true
+  },
+  {
+    "engine": "baseline",
+    "case": "quoted-leading-example",
+    "version": "0.10.1",
+    "expected_pollution": false,
+    "observed": "none_detected",
+    "fact_retained": true
+  },
+  {
+    "engine": "baseline",
+    "case": "ordinary-sentence",
+    "version": "0.10.1",
+    "expected_pollution": false,
+    "observed": "none_detected",
+    "fact_retained": true
+  },
+  {
+    "engine": "baseline",
+    "case": "access-denied-explanation",
+    "version": "0.10.1",
+    "expected_pollution": false,
+    "observed": "none_detected",
+    "fact_retained": true
+  },
+  {
+    "engine": "baseline",
+    "case": "clean",
+    "version": "0.10.1",
+    "expected_pollution": false,
+    "observed": "none_detected",
+    "fact_retained": true
+  },
+  {
+    "engine": "baseline",
+    "case": "removed-banner",
+    "version": "0.10.1",
+    "expected_pollution": false,
+    "observed": "none_detected",
+    "fact_retained": true
+  },
+  {
+    "engine": "baseline",
+    "case": "leading-code-example",
+    "version": "0.10.1",
+    "expected_pollution": false,
+    "observed": "none_detected",
+    "fact_retained": true
+  },
+  {
+    "engine": "baseline",
+    "case": "quoted-ui-example",
+    "version": "0.10.1",
+    "expected_pollution": false,
+    "observed": "none_detected",
+    "fact_retained": true
+  },
+  {
+    "engine": "baseline",
+    "case": "structured-quoted-message",
+    "version": "0.10.1",
+    "expected_pollution": false,
+    "observed": "not_assessed",
+    "fact_retained": true
+  },
+  {
+    "engine": "baseline",
+    "case": "structured-error-log",
+    "version": "0.10.1",
+    "expected_pollution": false,
+    "observed": "not_assessed",
+    "fact_retained": true
+  },
+  {
+    "engine": "baseline",
+    "case": "unrecognized-retry-banner",
+    "version": "0.10.1",
+    "expected_pollution": true,
+    "observed": "none_detected",
+    "fact_retained": true
+  },
+  {
+    "engine": "baseline",
+    "case": "french-error-banner",
+    "version": "0.10.1",
+    "expected_pollution": true,
+    "observed": "none_detected",
+    "fact_retained": true
+  },
+  {
+    "engine": "candidate",
+    "case": "quora-style-leading",
+    "version": "0.10.1",
+    "expected_pollution": true,
+    "observed": "suspected",
+    "fact_retained": true
+  },
+  {
+    "engine": "candidate",
+    "case": "leading-upper-case",
+    "version": "0.10.1",
+    "expected_pollution": true,
+    "observed": "suspected",
+    "fact_retained": true
+  },
+  {
+    "engine": "candidate",
+    "case": "leading-whitespace",
+    "version": "0.10.1",
+    "expected_pollution": true,
+    "observed": "suspected",
+    "fact_retained": true
+  },
+  {
+    "engine": "candidate",
+    "case": "retry-later",
+    "version": "0.10.1",
+    "expected_pollution": true,
+    "observed": "suspected",
+    "fact_retained": true
+  },
+  {
+    "engine": "candidate",
+    "case": "access-wall",
+    "version": "0.10.1",
+    "expected_pollution": true,
+    "observed": "suspected",
+    "fact_retained": true
+  },
+  {
+    "engine": "candidate",
+    "case": "embedded-ui",
+    "version": "0.10.1",
+    "expected_pollution": true,
+    "observed": "suspected",
+    "fact_retained": true
+  },
+  {
+    "engine": "candidate",
+    "case": "inline-quoted-mention",
+    "version": "0.10.1",
+    "expected_pollution": false,
+    "observed": "none_detected",
+    "fact_retained": true
+  },
+  {
+    "engine": "candidate",
+    "case": "quoted-leading-example",
+    "version": "0.10.1",
+    "expected_pollution": false,
+    "observed": "none_detected",
+    "fact_retained": true
+  },
+  {
+    "engine": "candidate",
+    "case": "ordinary-sentence",
+    "version": "0.10.1",
+    "expected_pollution": false,
+    "observed": "none_detected",
+    "fact_retained": true
+  },
+  {
+    "engine": "candidate",
+    "case": "access-denied-explanation",
+    "version": "0.10.1",
+    "expected_pollution": false,
+    "observed": "none_detected",
+    "fact_retained": true
+  },
+  {
+    "engine": "candidate",
+    "case": "clean",
+    "version": "0.10.1",
+    "expected_pollution": false,
+    "observed": "none_detected",
+    "fact_retained": true
+  },
+  {
+    "engine": "candidate",
+    "case": "removed-banner",
+    "version": "0.10.1",
+    "expected_pollution": false,
+    "observed": "none_detected",
+    "fact_retained": true
+  },
+  {
+    "engine": "candidate",
+    "case": "leading-code-example",
+    "version": "0.10.1",
+    "expected_pollution": false,
+    "observed": "none_detected",
+    "fact_retained": true
+  },
+  {
+    "engine": "candidate",
+    "case": "quoted-ui-example",
+    "version": "0.10.1",
+    "expected_pollution": false,
+    "observed": "none_detected",
+    "fact_retained": true
+  },
+  {
+    "engine": "candidate",
+    "case": "structured-quoted-message",
+    "version": "0.10.1",
+    "expected_pollution": false,
+    "observed": "not_assessed",
+    "fact_retained": true
+  },
+  {
+    "engine": "candidate",
+    "case": "structured-error-log",
+    "version": "0.10.1",
+    "expected_pollution": false,
+    "observed": "not_assessed",
+    "fact_retained": true
+  },
+  {
+    "engine": "candidate",
+    "case": "unrecognized-retry-banner",
+    "version": "0.10.1",
+    "expected_pollution": true,
+    "observed": "suspected",
+    "fact_retained": true
+  },
+  {
+    "engine": "candidate",
+    "case": "french-error-banner",
+    "version": "0.10.1",
+    "expected_pollution": true,
+    "observed": "suspected",
+    "fact_retained": true
+  }
+]

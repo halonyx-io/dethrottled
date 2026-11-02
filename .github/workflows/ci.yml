@@ -47,7 +47,11 @@ jobs:
         shell: bash
         run: |
           python -m pip install --upgrade pip
-          pip install -e ".[${{ matrix.extras || 'all,dev' }}]"
+          if [[ "${{ runner.os }}" == Linux && "${{ matrix.python }}" == 3.12 ]]; then
+            pip install -c requirements/docker-py312.txt -e ".[all,dev]"
+          else
+            pip install -e ".[${{ matrix.extras || 'all,dev' }}]"
+          fi
 
       - name: Import every module
         # Catches a syntax error or a bad relative import on a platform the
@@ -163,3 +167,17 @@ jobs:
           done
           test "$(docker inspect -f '{{.State.Health.Status}}' dethrottled-browser-ci)" = healthy
           docker rm -f dethrottled-browser-ci
+
+      - name: Fresh default Compose functional gates, no GPU or dotenv
+        run: |
+          docker tag dethrottled:ci dethrottled:one-zero-candidate
+          docker tag dethrottled-browser-search:ci dethrottled-browser-search:one-zero-candidate
+          docker build -f format-worker/Dockerfile -t dethrottled-formats:local .
+          python3 evaluations/release/compose-check.py --no-build --out /tmp/release-gates
+      - name: Preserve release gate observations and negative results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-gates-${{ matrix.os }}
+          path: /tmp/release-gates
+          if-no-files-found: ignore

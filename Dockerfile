@@ -22,11 +22,9 @@ WORKDIR /app
 
 # Dependencies first, in their own layer, so editing the source does not
 # reinstall onnxruntime every time.
-COPY pyproject.toml README.md ./
-COPY src/ ./src/
-COPY scripts/verify_image.py ./verify_image.py
+COPY requirements/docker-py312.txt ./requirements/docker-py312.txt
 RUN python -m pip install --no-cache-dir --upgrade pip \
-    && pip install --no-cache-dir ".[all]"
+    && pip install --no-cache-dir -r requirements/docker-py312.txt
 
 # The models, baked in.
 #
@@ -61,6 +59,13 @@ RUN if [ "$WITH_MODELS" = "1" ]; then \
      && curl -fsSL -o /opt/dethrottled/models/emb-e5/model.onnx "$base/onnx/model.onnx" \
      && curl -fsSL -o /opt/dethrottled/models/emb-e5/tokenizer.json "$base/tokenizer.json"; \
     fi
+
+# Source-only updates reuse dependency and model layers. Freeze the deployed
+# runtime independently of Python source-install compatibility ranges.
+COPY pyproject.toml README.md LICENSE ./
+COPY src/ ./src/
+COPY scripts/verify_image.py ./verify_image.py
+RUN pip install --no-cache-dir --no-deps .
 
 # Unprivileged. The service fetches URLs chosen by whoever can reach it, which
 # is a good enough reason on its own not to run it as root.

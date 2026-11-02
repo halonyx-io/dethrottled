@@ -43,7 +43,8 @@ a missing session without a restorable checkpoint returns 409.
 
 Live contexts expire after 30 idle minutes by default, with at most eight live
 sessions. Auto sessions can be evicted before explicitly named sessions.
-`checkpoint` saves selected state for restoration after eviction/restart; it
+`checkpoint` retries a read-only state capture up to three times if navigation
+detaches a frame; it never repeats the preceding action. It saves selected state for restoration after eviction/restart; it
 is distinct from keeping a live page. Close a session explicitly when finished:
 
 ```json

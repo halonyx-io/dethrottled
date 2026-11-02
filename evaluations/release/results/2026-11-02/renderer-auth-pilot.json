@@ -1,0 +1,50 @@
+[
+  {
+    "engine": "old",
+    "case": "js",
+    "elapsed_ms": 2,
+    "has_fact": false,
+    "reason": "crawl4ai_http_401",
+    "passed": false
+  },
+  {
+    "engine": "old",
+    "case": "quoted-wait",
+    "elapsed_ms": 1,
+    "has_fact": false,
+    "reason": "crawl4ai_http_401",
+    "passed": false
+  },
+  {
+    "engine": "old",
+    "case": "missing",
+    "elapsed_ms": 1,
+    "has_fact": false,
+    "reason": "crawl4ai_http_401",
+    "passed": true
+  },
+  {
+    "engine": "new",
+    "case": "js",
+    "elapsed_ms": 1,
+    "has_fact": false,
+    "reason": "crawl4ai_http_401",
+    "passed": false
+  },
+  {
+    "engine": "new",
+    "case": "quoted-wait",
+    "elapsed_ms": 1,
+    "has_fact": false,
+    "reason": "crawl4ai_http_401",
+    "passed": false
+  },
+  {
+    "engine": "new",
+    "case": "missing",
+    "elapsed_ms": 1,
+    "has_fact": false,
+    "reason": "crawl4ai_http_401",
+    "passed": true
+  }
+]

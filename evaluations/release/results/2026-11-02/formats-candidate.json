@@ -1,0 +1,16 @@
+[
+  {
+    "file": "quick.msg",
+    "fact": true,
+    "parser": "apache-tika",
+    "version": "1.0.0rc1",
+    "elapsed_ms": 865
+  },
+  {
+    "file": "Simple.xlsb",
+    "fact": true,
+    "parser": "apache-tika",
+    "version": "1.0.0rc1",
+    "elapsed_ms": 869
+  }
+]

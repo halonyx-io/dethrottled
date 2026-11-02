@@ -60,7 +60,8 @@ explains the workflow and what an MCP client must forward to its model.
 
 ## Documentation
 
-Start at the [documentation home](docs/README.md).
+Start at the [documentation home](docs/README.md). The unpublished
+[1.0 candidate gates](docs/ONE-ZERO.md) describe preparation and remaining checks.
 
 | Page | Use it for |
 |---|---|
@@ -74,6 +75,10 @@ Start at the [documentation home](docs/README.md).
 | [Evidence and limits](docs/EVIDENCE.md) | Dated measurements, raw results and unresolved failures |
 
 ## Deployment and limits
+
+Default Compose also starts the MSG/XLSB reader. Speech/layout are selected with
+`--profile full` (or individually with `media`/`layout`) and connect automatically.
+No `.env` file, worker URL or GPU is required for the default stack.
 
 The API image includes document libraries, Tesseract and MiniLM/E5 corpus
 models. Mutable evidence, jobs, cache and corpus live in a named data volume;
@@ -91,7 +96,7 @@ The fetch ladder does not consult `robots.txt`. The raw API can access trusted
 LAN targets; public adapters enforce a narrower policy, which is not a substitute
 for deployment-level network isolation.
 
-This branch documents package **0.10.1**. Check `/health` and `/v2/capabilities`
+This branch prepares the unpublished **1.0.0rc1** candidate. Check `/health` and `/v2/capabilities`
 on the installation you use; a repository branch or remote plugin may differ
 from the deployed service. Historical reports describe their recorded versions.
 
