@@ -101,13 +101,13 @@ async def _pace_ddg():
         NEXT_DDG_START = time.monotonic() + DDG_INTERVAL
 
 
-async def _extract(page, engine: str, query: str) -> list[dict]:
+async def _extract(page, engine: str, query: str, limit: int = 12) -> list[dict]:
     _, selector, snippet_selector = ENGINES[engine]
     links = page.locator(selector)
     snippets = page.locator(snippet_selector)
     snippet_count = await snippets.count()
     rows, seen = [], set()
-    for index in range(min(await links.count(), 12)):
+    for index in range(min(await links.count(), limit)):
         link = links.nth(index)
         title = (await link.inner_text(timeout=500)).strip()
         url = _destination(urljoin(page.url, (await link.get_attribute("href")) or ""))
@@ -119,7 +119,7 @@ async def _extract(page, engine: str, query: str) -> list[dict]:
                        if index < snippet_count else "")
         except Exception:
             snippet = ""
-        rows.append({"title": title[:300], "url": url, "snippet": snippet[:600]})
+        rows.append({"title": title[:300], "url": url, "snippet": snippet[:600], "engine": engine})
     return rows
 
 
@@ -127,7 +127,8 @@ def _usable(rows: list[dict]) -> bool:
     return len(rows) >= 3 and sum(len(r["snippet"]) >= 25 for r in rows) >= 2
 
 
-async def _engine(context, engine: str, query: str, delay: float) -> dict:
+async def _engine(context, engine: str, query: str, delay: float, limit: int = 12) -> dict:
+    limit = max(3, limit)  # Keep the existing three-row usability check for small requests.
     if delay:
         await asyncio.sleep(delay)
     if engine.startswith("ddg"):
@@ -135,25 +136,53 @@ async def _engine(context, engine: str, query: str, delay: float) -> dict:
     page = await context.new_page()
     started = time.monotonic()
     prefix, selector, _ = ENGINES[engine]
-    attempt = {"engine": engine, "status": None, "reason": None, "results": []}
+    attempt = {"engine": engine, "status": None, "reason": None, "results": [], "pages": 0}
+    seen = set()
     try:
-        response = await page.goto(prefix + quote_plus(query),
-                                   wait_until="domcontentloaded",
+        response = await page.goto(prefix + quote_plus(query), wait_until="domcontentloaded",
                                    timeout=int(ENGINE_TIMEOUT * 1000))
-        attempt["status"] = response.status if response else None
-        if attempt["status"] != 200:
-            attempt["reason"] = "http_" + str(attempt["status"])
-            return attempt
-        if "/sorry/" in page.url or "/captcha" in page.url:
-            attempt["reason"] = "challenge_page"
-            return attempt
         deadline = started + ENGINE_TIMEOUT
         while time.monotonic() < deadline:
+            attempt["status"] = response.status if response else None
+            if attempt["status"] != 200:
+                attempt["reason"] = "http_" + str(attempt["status"])
+                break
+            if "/sorry/" in page.url or "/captcha" in page.url:
+                attempt["reason"] = "challenge_page"
+                break
             if await page.locator(selector).count() >= 3:
-                attempt["results"] = await asyncio.wait_for(
-                    _extract(page, engine, query), timeout=2.0)
+                rows = await asyncio.wait_for(_extract(page, engine, query, limit), timeout=2.0)
+                added = [row for row in rows if row["url"] not in seen]
+                seen.update(row["url"] for row in added)
+                attempt["results"].extend(added)
+                attempt["results"] = attempt["results"][:limit]
+                attempt["pages"] += 1
                 if _usable(attempt["results"]):
-                    return attempt
+                    if limit <= 12 or len(attempt["results"]) >= limit:
+                        return attempt
+                    if not added or attempt["pages"] >= 5:
+                        attempt["reason"] = "no_new_results" if not added else "page_limit"
+                        return attempt
+                    control = page.locator(
+                        'input[type="submit"][value*="Next" i],a.sb_pagN').first
+                    if not await control.count():
+                        attempt["reason"] = "no_next_page"
+                        return attempt
+                    target = await control.evaluate('(el) => el.href || el.form?.action || ""')
+                    destination, origin = urlparse(target), urlparse(prefix)
+                    if (destination.scheme, destination.netloc) != (origin.scheme, origin.netloc):
+                        attempt["reason"] = "pagination_origin_rejected"
+                        return attempt
+                    if engine.startswith("ddg"):
+                        await _pace_ddg()
+                    remaining_ms = int((deadline - time.monotonic()) * 1000)
+                    if remaining_ms < 1:
+                        break
+                    async with page.expect_navigation(wait_until="domcontentloaded",
+                                                      timeout=remaining_ms) as navigation:
+                        await control.click(timeout=remaining_ms)
+                    response = await navigation.value
+                    continue
             if time.monotonic() - started > 0.7:
                 try:
                     body = (await page.locator("body").inner_text(timeout=500))[:1200].lower()
@@ -163,7 +192,7 @@ async def _engine(context, engine: str, query: str, delay: float) -> dict:
                     attempt["reason"] = "challenge_page"
                     return attempt
             await asyncio.sleep(0.2)
-        attempt["reason"] = "thin_or_unrelated_results"
+        attempt["reason"] = attempt["reason"] or "engine_budget_exhausted"
     except asyncio.CancelledError:
         attempt["reason"] = "cancelled"
         raise
@@ -178,12 +207,12 @@ async def _engine(context, engine: str, query: str, delay: float) -> dict:
     return attempt
 
 
-async def _race(browser, query: str) -> dict:
+async def _race(browser, query: str, limit: int = 12) -> dict:
     started = time.monotonic()
     context = await browser.new_context()
-    pending = {asyncio.create_task(_engine(context, engine, query, i * STAGGER)): engine
+    pending = {asyncio.create_task(_engine(context, engine, query, i * STAGGER, limit)): engine
                for i, engine in enumerate(ORDER)}
-    attempts, winner = [], None
+    attempts, winner, combined, seen = [], None, [], set()
     try:
         while pending and time.monotonic() - started < ENGINE_TIMEOUT + 2:
             remaining = max(0.1, ENGINE_TIMEOUT + 2 - (time.monotonic() - started))
@@ -200,9 +229,14 @@ async def _race(browser, query: str) -> dict:
                                "reason":type(exc).__name__,"results":[]}
                 attempts.append({k:v for k,v in attempt.items() if k != "results"} |
                                 {"count":len(attempt["results"])})
-                if winner is None and _usable(attempt["results"]):
-                    winner = attempt
-            if winner:
+                if _usable(attempt["results"]):
+                    if winner is None:
+                        winner = attempt
+                    for row in attempt["results"]:
+                        if row["url"] not in seen:
+                            seen.add(row["url"])
+                            combined.append(row)
+            if winner and (limit <= 12 or len(combined) >= limit):
                 break
     finally:
         cancelled = list(pending.values())
@@ -216,7 +250,9 @@ async def _race(browser, query: str) -> dict:
         await context.close()
     return {"ok":winner is not None,
             "engine":winner["engine"] if winner else None,
-            "results":winner["results"] if winner else [],
+            "results": ((winner["results"][:limit] if limit <= 12 else combined[:limit])
+                        if winner else []),
+            "requested_limit": limit, "broad_search": limit > 12,
             "attempts":attempts,
             "service_s":round(time.monotonic()-started,3)}
 
@@ -306,6 +342,7 @@ app = FastAPI(title="Dethrottled browser search worker", lifespan=lifespan)
 
 class SearchRequest(BaseModel):
     query: str = Field(min_length=2, max_length=500)
+    limit: int = Field(default=12, ge=1, le=50)
 
 
 # ---------------------------------------------------------------------------
@@ -942,7 +979,7 @@ async def search(body: SearchRequest):
     async with STATE_LOCK:
         ACTIVE += 1
     try:
-        result = await _race(app.state.browser, query)
+        result = await _race(app.state.browser, query, body.limit)
         result["queue_s"] = round(time.monotonic() - queued - result["service_s"], 3)
         STATS["requests"] += 1
         if result["ok"]:

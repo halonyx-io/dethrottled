@@ -479,7 +479,8 @@ def browser_search(query: str, *, max_items: int = 8, cache=None,
             return hit
     try:
         response = requests.post(BROWSER_SEARCH_URL + "/search",
-                                 json={"query": query}, timeout=18)
+                                 json={"query": query, "limit": min(max_items, 50)},
+                                 timeout=30 if max_items > 12 else 18)
         payload = response.json()
         if not isinstance(payload, dict):
             raise ValueError("browser response is not an object")
@@ -503,7 +504,8 @@ def browser_search(query: str, *, max_items: int = 8, cache=None,
             if len(title) < 10 or len(snippet) < 25:
                 continue
             rows.append(_norm(title=title, url=url, snippet=snippet,
-                              engine="web-browser-" + str(payload.get("engine") or "unknown")))
+                              engine="web-browser-" + str(item.get("engine")
+                                  or payload.get("engine") or "unknown")))
         if cache is not None and rows:
             cache.put("search", "browser", query, max_items, value=rows)
         return rows
