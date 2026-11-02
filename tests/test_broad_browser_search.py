@@ -91,3 +91,18 @@ def test_searxng_caps_each_engine_even_for_cached_results(monkeypatch, tmp_path)
 
     assert len(search.searxng('allocation', engines='mwmbl',
                               max_items=50, cache=Cache())) == 3
+
+
+def test_searx_duckduckgo_is_three_rows_but_shares_the_primary_family(monkeypatch, tmp_path):
+    monkeypatch.setenv('DETHROTTLED_ENGINE_HEALTH', str(tmp_path / 'health.json'))
+    monkeypatch.setattr(search, 'SEARXNG_URL', 'http://searxng')
+
+    class Cache:
+        def get(self, *key):
+            return rows('duckduckgo', 50, 100)
+
+    secondary = search.searxng('allocation', engines='duckduckgo',
+                               max_items=16, cache=Cache())
+    assert len(secondary) == 3
+    primary = rows('web-tls-ddg-lite', 10)
+    assert search.bounded_results([*primary, *secondary]) == primary

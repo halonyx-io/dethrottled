@@ -47,19 +47,20 @@ _DEAD_ENGINES = {}
 
 def result_family(row):
     engine = str(row.get("engine") or "unknown").lower()
-    if engine.startswith("web-") and any(name in engine for name in (
-            "ddg", "duckduckgo")):
+    if (engine in {"duckduckgo", "ddg-lite", "ddg-html", "tls-ddg-lite"}
+            or engine.startswith("web-") and any(name in engine for name in (
+                "ddg", "duckduckgo"))):
         return "ddg"
     return engine.removeprefix("web-browser-").removeprefix("web-").replace(" ", "-")
 
 
-def bounded_results(rows, limit=SEARCH_MENU_LIMIT):
+def bounded_results(rows, limit=SEARCH_MENU_LIMIT, *, primary_limit=PRIMARY_SEARCH_LIMIT):
     """One DDG-family budget; small supplements, canonical deduplication."""
     out, counts, seen, supplements = [], {}, set(), 0
     for row in rows:
         key = canonical_url(row.get("url", ""))
         family = result_family(row)
-        cap = PRIMARY_SEARCH_LIMIT if family == "ddg" else SUPPLEMENT_SEARCH_LIMIT
+        cap = primary_limit if family == "ddg" else SUPPLEMENT_SEARCH_LIMIT
         if (not key or key in seen or counts.get(family, 0) >= cap
                 or (family != "ddg" and supplements >= 6)):
             continue
@@ -231,7 +232,7 @@ def searxng(query: str, *, max_items: int = 8, categories: str = "",
         if hit is not None:
             if diagnostics is not None:
                 diagnostics.update(status="cached", elapsed_ms=0)
-            return bounded_results(hit, max_items)
+            return bounded_results(hit, max_items, primary_limit=SUPPLEMENT_SEARCH_LIMIT)
 
     params = {"q": query, "format": "json", "engines": engines}
     if categories:
@@ -279,7 +280,7 @@ def searxng(query: str, *, max_items: int = 8, categories: str = "",
         if diagnostics is not None:
             diagnostics.update(status="failed", reason=type(exc).__name__)
 
-    rows = bounded_results(rows, max_items)
+    rows = bounded_results(rows, max_items, primary_limit=SUPPLEMENT_SEARCH_LIMIT)
     if diagnostics is not None:
         diagnostics["elapsed_ms"] = int((time.monotonic() - started) * 1000)
     if cache is not None and rows:
