@@ -57,7 +57,9 @@ An agent should inspect `quality`, `warnings`, `read_plan`, `source_partial`, `t
 `document_id` and `workflow.next_actions`. The [agent guide](https://github.com/halonyx-io/dethrottled/blob/main/docs/AGENT-UPGRADES.md)
 explains the workflow and what an MCP client must forward to its model.
 [Coverage limits](https://github.com/halonyx-io/dethrottled/blob/main/docs/LIMITS.md)
-allow up to 50 search results, 30 research sources and million-character reads.
+keep discovery compact: ten DDG choices, at most three per supplementary engine,
+six supplements and sixteen unique candidates total. Research shares these budgets;
+million-character document reads remain available.
 
 ## Documentation
 
@@ -97,7 +99,7 @@ The fetch ladder does not consult `robots.txt`. The raw API can access trusted
 LAN targets; public adapters enforce a narrower policy, which is not a substitute
 for deployment-level network isolation.
 
-This checkout is **1.1.3**. Check `/health` and `/v2/capabilities`
+This checkout is **1.2.0**. Check `/health` and `/v2/capabilities`
 on the installation you use; a repository branch or remote plugin may differ
 from the deployed service. Historical reports describe their recorded versions.
 

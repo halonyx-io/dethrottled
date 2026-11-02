@@ -5,31 +5,37 @@ from fastapi.testclient import TestClient
 from dethrottled import research, server
 
 
-def test_search_returns_requested_late_sources(monkeypatch):
+def test_search_returns_bounded_source_menu(monkeypatch):
     def search(_query, **options):
-        assert options['max_items'] == 50
+        assert options['max_items'] == 16
         return ([{'url': f'https://source{i}.example/report', 'title': f'Allocation report {i}',
-                  'snippet': 'Regional allocation evidence', 'engine': 'fixture'}
+                  'snippet': 'Regional allocation evidence',
+                  'engine': ('web-ddg-lite' if i < 10 else 'crossref' if i < 13
+                             else 'openalex')}
                  for i in range(60)], {'elapsed_ms': 1, 'per_source': {'fixture': 60}})
     monkeypatch.setattr(server.fs, 'search', search)
     client = TestClient(server.app)
-    response = client.post('/search', json={'query': 'allocation', 'limit': 50})
+    response = client.post('/search', json={'query': 'allocation', 'limit': 16})
     assert response.status_code == 200
-    assert len(response.json()) == 50
-    assert response.json()[-1]['url'] == 'https://source49.example/report'
-    assert client.post('/search', json={'query': 'allocation', 'limit': 51}).status_code == 422
+    assert len(response.json()) == 16
+    assert response.json()[-1]['url'] == 'https://source15.example/report'
+    assert client.post('/search', json={'query': 'allocation', 'limit': 17}).status_code == 422
 
 
 @pytest.mark.parametrize("same_publisher", [False, True])
-def test_research_keeps_thirty_sources_and_all_explicit_facets(monkeypatch, same_publisher):
+def test_research_bounds_sources_and_all_explicit_facets(monkeypatch, same_publisher):
     monkeypatch.setattr(research, 'public_url', lambda url: True)
     monkeypatch.setattr(server, 'index_fetched', lambda *args: 0)
     observed_queries = []
 
     def ranked(body):
         observed_queries.append(body.query)
-        return ([{'url': (f'https://official.example/report/{i}' if same_publisher
-                          else f'https://source{i}.example/report'), 'title': f'Allocation {i}'}
+        return ([{'url': (f'https://official.example/{body.query.replace(" ", "-")}/{i}'
+                          if same_publisher
+                          else f'https://source{i}.example/{body.query.replace(" ", "-")}'),
+                          'title': f'Allocation {i}',
+                          'engine': ('web-ddg-lite' if i < 10 else 'crossref' if i < 13
+                                     else 'openalex')}
                  for i in range(30)], {'elapsed_ms': 1}, body.limit)
 
     def extracted(url, max_chars, **options):
@@ -39,10 +45,14 @@ def test_research_keeps_thirty_sources_and_all_explicit_facets(monkeypatch, same
     monkeypatch.setattr(server, '_extract_row', extracted)
     response = TestClient(server.app).post('/research', json={
         'question': 'Allocation evidence?', 'queries': [f'facet {i}' for i in range(10)],
-        'max_sources': 30, 'max_chars': 120000})
+        'max_sources': 16, 'max_chars': 120000})
     assert response.status_code == 200
     result = response.json()
-    assert len(result['sources']) == 30
+    assert len(result['sources']) == 16
+    assert result['summary']['candidates'] == 16
+    all_candidates = {u for f in result['coverage']['facets'] for u in f['unread']}
+    all_candidates.update(s['url'] for s in result['sources'])
+    assert len(all_candidates) <= 16
     assert set(observed_queries) == {'Allocation evidence?', *(f'facet {i}' for i in range(10))}
     assert all('7341 tonnes' in row['content'] for row in result['sources'])
 

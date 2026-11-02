@@ -27,6 +27,7 @@ from . import providers
 from .content import constrained
 from .discovery import SOURCE_PROFILES, tls_search
 from .fetch import USER_AGENT, canonical_url
+from .workflow import PRIMARY_SEARCH_LIMIT, SEARCH_MENU_LIMIT, SUPPLEMENT_SEARCH_LIMIT
 
 # Empty by default: a SearXNG instance is something you host, and pointing at
 # somebody else's public one is both rude and unreliable. Unset, the two RSS
@@ -42,6 +43,34 @@ SEARXNG_URL = os.environ.get("DETHROTTLED_SEARXNG_URL", "").rstrip("/")
 # it next.
 _HEALTH_TTL = int(os.environ.get("DETHROTTLED_ENGINE_REST_SECONDS", "1800"))
 _DEAD_ENGINES = {}
+
+
+def result_family(row):
+    engine = str(row.get("engine") or "unknown").lower()
+    if (engine in {"duckduckgo", "ddg-lite", "ddg-html", "tls-ddg-lite"}
+            or (engine.startswith("web-") and any(name in engine for name in (
+                "ddg", "duckduckgo")))):
+        return "ddg"
+    return engine.removeprefix("web-browser-").removeprefix("web-").replace(" ", "-")
+
+
+def bounded_results(rows, limit=SEARCH_MENU_LIMIT, *, primary_limit=PRIMARY_SEARCH_LIMIT):
+    """One DDG-family budget; small supplements, canonical deduplication."""
+    out, counts, seen, supplements = [], {}, set(), 0
+    for row in rows:
+        key = canonical_url(row.get("url", ""))
+        family = result_family(row)
+        cap = primary_limit if family == "ddg" else SUPPLEMENT_SEARCH_LIMIT
+        if (not key or key in seen or counts.get(family, 0) >= cap
+                or (family != "ddg" and supplements >= 6)):
+            continue
+        seen.add(key)
+        counts[family] = counts.get(family, 0) + 1
+        supplements += family != "ddg"
+        out.append(row)
+        if len(out) >= min(limit, SEARCH_MENU_LIMIT):
+            break
+    return out
 
 
 def _health_path():
@@ -191,6 +220,7 @@ def searxng(query: str, *, max_items: int = 8, categories: str = "",
         if diagnostics is not None:
             diagnostics.update(status="not_configured")
         return []
+    max_items = max(1, min(max_items, SEARCH_MENU_LIMIT))
     engines = _rested(engines or DEFAULT_ENGINES, namespace="searxng")
     if not engines:
         if diagnostics is not None:
@@ -202,7 +232,7 @@ def searxng(query: str, *, max_items: int = 8, categories: str = "",
         if hit is not None:
             if diagnostics is not None:
                 diagnostics.update(status="cached", elapsed_ms=0)
-            return hit
+            return bounded_results(hit, max_items, primary_limit=SUPPLEMENT_SEARCH_LIMIT)
 
     params = {"q": query, "format": "json", "engines": engines}
     if categories:
@@ -236,7 +266,7 @@ def searxng(query: str, *, max_items: int = 8, categories: str = "",
                     print("  [dethrottled] engine %r is not answering: %s "
                           "(resting it for %d min)"
                           % (name, reason, _HEALTH_TTL // 60), flush=True)
-            for item in (payload.get("results") or [])[:max_items]:
+            for item in payload.get("results") or []:
                 if item.get("url"):
                     rows.append(_norm(
                         title=item.get("title", ""), url=item["url"],
@@ -250,6 +280,7 @@ def searxng(query: str, *, max_items: int = 8, categories: str = "",
         if diagnostics is not None:
             diagnostics.update(status="failed", reason=type(exc).__name__)
 
+    rows = bounded_results(rows, max_items, primary_limit=SUPPLEMENT_SEARCH_LIMIT)
     if diagnostics is not None:
         diagnostics["elapsed_ms"] = int((time.monotonic() - started) * 1000)
     if cache is not None and rows:
@@ -259,10 +290,11 @@ def searxng(query: str, *, max_items: int = 8, categories: str = "",
 
 
 def bing_news(query: str, *, max_items: int = 8, timeout: int = 25, cache=None) -> list:
+    max_items = max(1, min(max_items, SUPPLEMENT_SEARCH_LIMIT))
     if cache is not None:
         hit = cache.get("search", "bnews", query, max_items)
         if hit is not None:
-            return hit
+            return hit[:max_items]
     rows = []
     try:
         response = requests.get(BING_NEWS.format(q=quote_plus(query)),
@@ -287,10 +319,11 @@ def bing_news(query: str, *, max_items: int = 8, timeout: int = 25, cache=None) 
 def google_news_headlines(query: str, *, max_items: int = 8, timeout: int = 25,
                           cache=None) -> list:
     """Headlines only. Links are unusable; see the module docstring."""
+    max_items = max(1, min(max_items, SUPPLEMENT_SEARCH_LIMIT))
     if cache is not None:
         hit = cache.get("search", "gnews", query, max_items)
         if hit is not None:
-            return hit
+            return hit[:max_items]
     rows = []
     try:
         response = requests.get(GOOGLE_NEWS.format(q=quote_plus(query)),
@@ -419,12 +452,11 @@ def reputable_sweep(query: str, domains: list, *, max_per_domain: int = 3,
 # second gap between requests -- so those are hard blocks, not rate limits, and
 # no amount of politeness recovers them. They are not in the default list.
 #
-# duckduckgo and bing are the two that answer reliably, and duckduckgo at 96ms
-# is by a distance the fastest source in the whole stack. The rest are left
-# available but off, because an engine that fails two queries in three costs a
-# timeout every time it is asked.
+# The figures above are historical availability observations, not current
+# relevance guarantees. Default fallback is DDG only; explicitly configured
+# other backends receive the supplementary three-choice budget.
 WEB_ENGINES = [e.strip() for e in os.environ.get(
-    "DETHROTTLED_WEB_ENGINES", "auto").split(",") if e.strip()]
+    "DETHROTTLED_WEB_ENGINES", "duckduckgo").split(",") if e.strip()]
 
 WEB_TIMEOUT = int(os.environ.get("DETHROTTLED_WEB_TIMEOUT", "20"))
 BROWSER_SEARCH_URL = os.environ.get("DETHROTTLED_BROWSER_SEARCH_URL", "").rstrip("/")
@@ -470,21 +502,22 @@ def browser_search(query: str, *, max_items: int = 8, cache=None,
     keyless DDGS path can carry the request. Document reading remains in the
     normal Dethrottled fetch pipeline.
     """
+    max_items = max(1, min(max_items, PRIMARY_SEARCH_LIMIT))
     if not BROWSER_SEARCH_URL:
         if diagnostics is not None:
             diagnostics.update(status="not_configured", attempts=[])
         return []
-    cache_namespace = "browser-broad-v1" if max_items > 12 else "browser"
+    cache_namespace = "browser-compact-v1"
     if cache is not None:
         hit = cache.get("search", cache_namespace, query, max_items)
         if hit is not None:
             if diagnostics is not None:
                 diagnostics.update(status="cached", attempts=[])
-            return hit
+            return bounded_results(hit, max_items)
     try:
         response = requests.post(BROWSER_SEARCH_URL + "/search",
-                                 json={"query": query, "limit": min(max_items, 50)},
-                                 timeout=30 if max_items > 12 else 18)
+                                 json={"query": query, "limit": max_items},
+                                 timeout=18)
         payload = response.json()
         if not isinstance(payload, dict):
             raise ValueError("browser response is not an object")
@@ -512,7 +545,7 @@ def browser_search(query: str, *, max_items: int = 8, cache=None,
                                   or payload.get("engine") or "unknown")))
         if cache is not None and rows:
             cache.put("search", cache_namespace, query, max_items, value=rows)
-        return rows
+        return bounded_results(rows, max_items)
     except (requests.RequestException, ValueError, KeyError, TypeError) as exc:
         if diagnostics is not None and "status" not in diagnostics:
             diagnostics.update(status=type(exc).__name__, attempts=[])
@@ -567,6 +600,7 @@ def web_search(query: str, *, max_items: int = 8, cache=None,
     Never fatal. `ddgs` is an optional dependency; without it this returns
     nothing and the RSS sources carry the search exactly as they did before.
     """
+    max_items = max(1, min(max_items, PRIMARY_SEARCH_LIMIT))
     # Explicit engine selections keep their old meaning for callers that
     # benchmark or request particular DDGS backends.
     if engines is None:
@@ -577,10 +611,10 @@ def web_search(query: str, *, max_items: int = 8, cache=None,
                                diagnostics=direct, worker=BROWSER_SEARCH_URL)
             if diagnostics is not None:
                 diagnostics["direct"] = direct
-            if cheap and (max_items <= 12 or len(cheap) >= max_items):
+            if cheap:
                 if diagnostics is not None:
                     diagnostics.update(status=direct.get("status"), attempts=[])
-                return cheap
+                return cheap[:max_items]
         found = browser_search(query, max_items=max_items, cache=cache,
                                diagnostics=diagnostics)
         merged, seen = [], set()
@@ -589,12 +623,8 @@ def web_search(query: str, *, max_items: int = 8, cache=None,
             if key and key not in seen:
                 seen.add(key)
                 merged.append(row)
-        if max_items > 12 and diagnostics is not None:
-            diagnostics["breadth"] = {"requested": max_items, "cheap_count": len(cheap),
-                "browser_count": len(found), "returned_count": min(len(merged), max_items),
-                "status": "fulfilled" if len(merged) >= max_items else "partial"}
         if merged:
-            return merged[:max_items]
+            return bounded_results(merged, max_items)
     try:
         from ddgs import DDGS
     except ImportError:
@@ -610,7 +640,10 @@ def web_search(query: str, *, max_items: int = 8, cache=None,
                 rows.extend(hit)
                 continue
         try:
-            found = DDGS().text(query, backend=engine, max_results=max_items)
+            found = DDGS().text(query, backend=engine,
+                                max_results=min(max_items, PRIMARY_SEARCH_LIMIT
+                                                if engine == "duckduckgo"
+                                                else SUPPLEMENT_SEARCH_LIMIT))
         except Exception as exc:
             _record_failure(engine, type(exc).__name__, namespace="web")
             continue
@@ -629,7 +662,7 @@ def web_search(query: str, *, max_items: int = 8, cache=None,
         if cache is not None and got:
             cache.put("search", "web", engine, query, max_items, value=got)
         rows.extend(got)
-    return rows
+    return bounded_results(rows, max_items)
 
 
 def _blend_news(rows: list) -> list:
@@ -661,6 +694,7 @@ def search(query: str, *, max_items: int = 8, categories: str = "",
            cache=None, log_fn=None, prefer_domains=None, language=None,
            profile="balanced", engines="") -> tuple:
     """Query every free source and merge. Returns (rows, meta)."""
+    max_items = max(1, min(max_items, SEARCH_MENU_LIMIT))
     started = time.time()
     sources = set(x.strip() for x in engines.split(",") if x.strip()) if engines else set(
         SOURCE_PROFILES.get(categories or profile, SOURCE_PROFILES["balanced"]))
@@ -696,24 +730,25 @@ def search(query: str, *, max_items: int = 8, categories: str = "",
     source_reports = {"searxng": {}, "specialist": {}}
     if "web" in sources:
         tasks["web"] = _SOURCE_POOL.submit(
-            web_search, query, max_items=max_items, cache=cache, diagnostics=browser_diagnostics)
+            web_search, query, max_items=min(max_items, PRIMARY_SEARCH_LIMIT), cache=cache,
+            diagnostics=browser_diagnostics)
     if "news" in sources:
         tasks["bing-news"] = _SOURCE_POOL.submit(
-            bing_news, query, max_items=max_items, cache=cache)
+            bing_news, query, max_items=min(max_items, SUPPLEMENT_SEARCH_LIMIT), cache=cache)
         tasks["searxng"] = _SOURCE_POOL.submit(
-            searxng, query, max_items=max_items * 2, categories="news",
+            searxng, query, max_items=SEARCH_MENU_LIMIT, categories="news",
             cache=cache, language=language, timeout=8, diagnostics=source_reports["searxng"])
     specialists = [e for e in ("mwmbl", "crossref", "openalex", "arxiv") if e in sources]
     if specialists:
         tasks["specialist"] = _SOURCE_POOL.submit(
-            searxng, query, max_items=max_items * 2, engines=",".join(specialists),
+            searxng, query, max_items=SEARCH_MENU_LIMIT, engines=",".join(specialists),
             cache=cache, language=language, timeout=8, diagnostics=source_reports["specialist"])
     source_reports["providers"] = {}
     for provider in providers.NAMES:
         if provider in sources:
             report = source_reports["providers"].setdefault(provider, {})
             tasks[provider] = _SOURCE_POOL.submit(
-                providers.search, provider, query, max_items, report)
+                providers.search, provider, query, min(max_items, SUPPLEMENT_SEARCH_LIMIT), report)
     for name, task in tasks.items():
         try:
             add(task.result(), name)
@@ -725,13 +760,10 @@ def search(query: str, *, max_items: int = 8, categories: str = "",
     # Google News is discovery only: resolve a bounded number of headlines it
     # surfaced that nothing else did, then drop the rest rather than emit URLs
     # that cannot be fetched.
-    # search() returns at most 2*max_items rows. With a full, non-junk pool
-    # and no preferred domains, Google News can only append rows beyond that
-    # return window. Avoid a headline fetch and up to four Bing resolutions
-    # that no caller could see. Keep the path for thin or preference-ranked
-    # pools, where it can genuinely add coverage.
-    usable_count = sum(_domain(r.get("url", "")) not in JUNK_DOMAINS for r in merged)
-    if "news" not in sources or (usable_count >= max_items * 2 and not prefer_domains):
+    # Do not resolve more headlines when the bounded visible menu is full.
+    usable_count = len(bounded_results(
+        [r for r in merged if _domain(r.get("url", "")) not in JUNK_DOMAINS], max_items))
+    if "news" not in sources or (usable_count >= max_items and not prefer_domains):
         per_source["gnews-resolved"] = ("not_requested" if "news" not in sources
                                         else "skipped_full_pool")
     else:
@@ -773,23 +805,15 @@ def search(query: str, *, max_items: int = 8, categories: str = "",
             per_source["reputable-sweep"] = swept
 
     merged = rank(merged, prefer_domains)
-    if "news" in sources:
-        merged = _blend_news(merged)
-    elif (specialists or sources.intersection(providers.NAMES)) and "web" in sources:
-        groups = {}
-        for row in merged:
-            key = "web" if row.get("engine", "").startswith("web-") else row.get("engine")
-            groups.setdefault(key, deque()).append(row)
-        merged = []
-        while any(groups.values()):
-            for group in groups.values():
-                if group:
-                    merged.append(group.popleft())
+    # Supplements append to the primary engine order. Merely selecting a profile
+    # must not promote a weak supplementary index into the first trusted choices.
     dropped = 0
 
+    menu = bounded_results(merged, max_items)
     meta = {
-        "ok": bool(merged),
-        "count": len(merged),
+        "ok": bool(menu),
+        "count": len(menu),
+        "candidate_pool_count": len(merged),
         # Recorded rather than omitted. A source that is switched off and a
         # source that answered with nothing are identical in a count of zero,
         # and a caller reading this to decide whether an empty result is
@@ -807,8 +831,8 @@ def search(query: str, *, max_items: int = 8, categories: str = "",
     }
     if log_fn:
         log_fn("    free-search '%s': %d results %s"
-               % (query[:44], len(merged), per_source))
-    return merged[: max_items * 2], meta
+               % (query[:44], len(menu), per_source))
+    return menu, meta
 
 
 # A probe query, not a real one. It must return results every day of the year

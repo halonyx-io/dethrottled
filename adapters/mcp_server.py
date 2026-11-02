@@ -35,7 +35,7 @@ MCP_BACKEND_URL = os.getenv("MCP_BACKEND_URL", "http://127.0.0.1:8787").rstrip("
 KEYS_PATH = Path(os.getenv("MCP_KEYS_PATH", "/etc/dethrottled-mcp/keys.json"))
 REQUEST_TIMEOUT = float(os.getenv("MCP_REQUEST_TIMEOUT", "90"))
 MAX_URLS = int(os.getenv("MCP_MAX_URLS", "10"))
-MAX_RESULTS = int(os.getenv("MCP_MAX_RESULTS", "50"))
+MAX_RESULTS = min(16, int(os.getenv("MCP_MAX_RESULTS", "16")))
 MAX_CHARS = int(os.getenv("MCP_MAX_CHARS", "1000000"))
 ALLOWED_HOSTS = [
     host.strip()
@@ -492,11 +492,11 @@ async def search_and_fetch(
 async def research(
     question: str,
     queries: list[str] | None = None,
-    max_sources: Annotated[int, Field(ge=1, le=30)] = 10,
+    max_sources: Annotated[int, Field(ge=1, le=16)] = 10,
     max_chars: Annotated[int, Field(ge=500, le=120000)] = 12000,
     fresh: bool = False,
     engines: str = "",
-    profile: Literal["web", "balanced", "thorough", "academic", "news"] = "thorough",
+    profile: Literal["web", "balanced", "thorough", "academic", "news"] = "web",
     follow_assets: bool = True,
     categories: Literal["", "news", "academic"] = "",
     response_format: Literal["detailed", "concise"] = "detailed",
@@ -513,7 +513,7 @@ async def research(
     return await _backend_post("/research", {
         "question": question,
         "queries": queries or [],
-        "max_sources": _bounded_int(max_sources, 1, 30),
+        "max_sources": _bounded_int(max_sources, 1, 16),
         "max_chars": _bounded_int(max_chars, 500, 120000),
         "fresh": fresh, "follow_assets": follow_assets, "engines": engines, "profile": profile,
         "categories": categories, "response_format": response_format,
@@ -535,7 +535,7 @@ class BrowserStep(BaseModel):
     delay_ms: int = Field(default=0, ge=0, le=1000)
     name: str = Field(default="", max_length=200)
     index: int = Field(default=0, ge=0, le=500)
-    limit: int = Field(default=100, ge=1, le=200, description="Snapshot/network list limit")
+    limit: int = Field(default=10, ge=1, le=10, description="Snapshot/network list limit")
     max_chars: int | None = Field(default=None, ge=1, le=1000000,
                                  description="Text/HTML output limit; preserves existing defaults")
 
@@ -778,10 +778,11 @@ async def crawl_site(urls: list[str],
 
 
 @mcp.tool()
-async def corpus_search(query: str, limit: int = 5, floor: float | None = None,
+async def corpus_search(query: str,
+                        limit: Annotated[int, Field(ge=1, le=10)] = 5, floor: float | None = None,
                         mode: Literal["auto", "semantic", "lexical"] = "auto") -> Any:
     """Search passages already stored in the local semantic corpus."""
-    params: dict[str, Any] = {"q": query, "limit": _bounded_int(limit, 1, 50), "mode": mode}
+    params: dict[str, Any] = {"q": query, "limit": _bounded_int(limit, 1, 10), "mode": mode}
     if floor is not None:
         params["floor"] = float(floor)
     return await _backend_get("/corpus/search", params)

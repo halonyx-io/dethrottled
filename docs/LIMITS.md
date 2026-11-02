@@ -7,12 +7,14 @@ will succeed. Inspect actual coverage, partial flags and continuation handles.
 
 | Operation | Default | Supported ceiling |
 |---|---|---|
-| Search results | HTTP 8; MCP 10 | 50 results |
-| Research sources | 10 | 30 sources |
+| Search choices | HTTP/MCP 10 | DDG family 10; each supplement 3; supplements 6 total; complete menu 16 |
+| Local corpus search | HTTP 10; MCP 5 | 10 matches |
+| Research sources | 10 | 16 unique candidates across all facets, sharing search family budgets |
 | Research additional facets | Automatic primary-source probe | 10 additional queries, plus the question |
 | Research excerpt per source | 12,000 characters | 120,000 characters |
 | Fetch text | HTTP 8,000; MCP 12,000 characters | 1,000,000 characters per URL |
 | Retained-document text read | 12,000 characters | 1,000,000 characters per call |
+| Browser snapshots/network lists | 10 items | 10 items; Bing snapshots 3 |
 | Browser text/HTML action | Worker action default | 1,000,000 characters per action |
 | Explicit URL batch | Caller supplied | 10 URLs per fetch request |
 | Site crawl | 10 pages | 50 pages per run; continue with returned frontier URLs |
@@ -27,8 +29,9 @@ backend timeout; individual page and browser-operation budgets remain bounded.
 ## How an agent should request more
 
 Start with a focused question and assess the returned evidence. If discovery is
-narrow, increase `limit`, add distinct research facets, or follow an observed
-site frontier. If a known document is truncated, use `read_document` with
+narrow, refine the question, select a fitting specialist profile or follow an
+observed site frontier. Additional facets share the same research candidate budget;
+they do not create another ten-choice menu each. If a known document is truncated, use `read_document` with
 `document_id`, `offset`, page or row controls. Use larger `max_chars` when the
 agent needs to examine more context together; an extraction may still be partial
 because of parser, file, page, model or publisher limits.

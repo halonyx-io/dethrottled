@@ -80,11 +80,11 @@ async def verify(url, rest_url, token, registry):
                 private = await client.call_tool('fetch', {'urls': ['http://127.0.0.1/']})
                 assert private.isError
                 assert 'public HTTP(S) URLs are required' in str(private.content)
-                rows = await client.call_tool('search', {'query': 'fixture', 'limit': 50})
-                assert not rows.isError and len(rows.content) == 50
+                rows = await client.call_tool('search', {'query': 'fixture', 'limit': 16})
+                assert not rows.isError and len(rows.content) == 16
                 assert rows.structuredContent is None  # Preserve the legacy list contract.
                 values = [json.loads(block.text) for block in rows.content]
-                assert values[-1]['url'] == 'https://example.org/49'
+                assert values[-1]['url'] == 'https://example.org/15'
                 assert all('7341 tonnes' in v['snippet'] and '\n' in v['snippet'] for v in values)
                 assert all(block.text == json.dumps(value, ensure_ascii=False,
                            separators=(',', ':')) for block, value in zip(rows.content, values))
@@ -100,25 +100,25 @@ async def verify(url, rest_url, token, registry):
                 assert not large.isError
                 assert '7341 tonnes' in json.loads(large.content[0].text)['content']
                 research = await client.call_tool('research', {
-                    'question': 'fixture evidence', 'max_sources': 30, 'max_chars': 120000,
+                    'question': 'fixture evidence', 'max_sources': 16, 'max_chars': 120000,
                     'queries': [f'facet {i}' for i in range(10)]})
-                assert not research.isError and len(research.structuredContent['sources']) == 30
+                assert not research.isError and len(research.structuredContent['sources']) == 16
                 pixels = await client.call_tool('drive', {
                     'session': 'fixture-pixels', 'allowed_hosts': ['93.184.216.34'],
                     'steps': [], 'screenshot': 'always'})
                 assert not pixels.isError
                 assert any(b.type == 'image' for b in pixels.content)
                 assert 'screenshot_b64' not in pixels.structuredContent
-                excessive = await client.call_tool('search', {'query': 'fixture', 'limit': 51})
+                excessive = await client.call_tool('search', {'query': 'fixture', 'limit': 17})
                 assert excessive.isError
         async with httpx.AsyncClient(base_url=rest_url, headers=headers) as rest:
-            search = await rest.post('/search', json={'query': 'fixture', 'limit': 50})
-            assert search.status_code == 200 and len(search.json()) == 50
+            search = await rest.post('/search', json={'query': 'fixture', 'limit': 16})
+            assert search.status_code == 200 and len(search.json()) == 16
             research = await rest.post('/research', json={
-                'question': 'fixture evidence', 'max_sources': 30, 'max_chars': 120000,
+                'question': 'fixture evidence', 'max_sources': 16, 'max_chars': 120000,
                 'queries': [f'facet {i}' for i in range(10)]})
-            assert research.status_code == 200 and len(research.json()['sources']) == 30
-            too_many = await rest.post('/search', json={'query': 'fixture', 'limit': 51})
+            assert research.status_code == 200 and len(research.json()['sources']) == 16
+            too_many = await rest.post('/search', json={'query': 'fixture', 'limit': 17})
             assert too_many.status_code == 400
             private = await rest.post('/fetch', json={'urls': ['http://127.0.0.1/']})
             assert private.status_code == 400
@@ -133,8 +133,8 @@ async def verify(url, rest_url, token, registry):
         print(json.dumps({'passed': True, 'application_version': __version__,
                           'sdk_version': health['sdk_version'], 'tools': len(listing.tools),
                           'strict_arguments': True, 'private_targets_rejected': True,
-                          'authentication_and_revocation': True, 'search_results': 50,
-                          'research_sources': 30, 'research_facets': 10,
+                          'authentication_and_revocation': True, 'search_results': 16,
+                          'research_sources': 16, 'research_facets': 10,
                           'large_read_fact': True, 'backend_mismatch_then_match': True,
                           'rest_coverage_and_policy': True, 'native_images_preserved': True,
                           'compact_bytes_8_rows': compact_bytes,

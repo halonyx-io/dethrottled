@@ -47,7 +47,7 @@ def test_drive_accepts_agent_inspection_and_session_fields(client):
         "allowed_hosts": ["staging.airtable.com", "*.staging.airtable.com"],
         "canaries": ["XSS_CANARY_123"],
         "screenshot": "canary",
-        "steps": [{"action": "snapshot", "selector": "main", "limit": 50},
+        "steps": [{"action": "snapshot", "selector": "main", "limit": 10},
                   {"action": "attr", "selector": "input", "name": "value"}],
     }
     body = client.post("/drive", json=request).json()
@@ -109,3 +109,9 @@ def test_automatic_read_handoff_is_scoped_and_returns_logical_handle(client):
     assert one['session']['id'] == two['session']['id'] == alias
     assert one['echo']['session'] == automatic_session('alice', alias)
     assert one['echo']['session'] != two['echo']['session']
+
+
+def test_drive_rejects_oversized_inspection_menu():
+    response = TestClient(srv.app).post("/drive", json={
+        "url": "https://example.com", "steps": [{"action": "snapshot", "limit": 50}]})
+    assert response.status_code == 422

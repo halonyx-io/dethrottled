@@ -24,10 +24,12 @@ the chosen strategy, reason and result; partial evidence survives failed recover
 
 Compose enables a bounded static DDG Lite probe before the headed browser race.
 On challenge, poor results or transport failure it falls through to the existing
-Patchright worker. The worker races DDG Lite, DDG HTML and Bing in separate tabs
+Patchright worker. The worker races DDG Lite and DDG HTML in separate tabs
 with shared pacing, three active searches and bounded waiting. A usable race
 winner needs real result URLs and useful text, not just HTTP 200. Direct keyless
-engines are a fallback.
+DuckDuckGo is the default direct fallback. All DDG acquisition paths share ten
+choices, with no automatic pagination; deliberate supplementary sources have
+three choices each, six total, and the complete unique menu is capped at sixteen.
 
 Profiles select web, web/news, Mwmbl or academic sources. News uses RSS and the
 configured SearXNG news engines; academic can add Crossref, OpenAlex and arXiv.

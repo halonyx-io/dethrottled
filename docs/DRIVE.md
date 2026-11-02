@@ -31,7 +31,7 @@ fix, not a universal challenge solver or an authenticated Reddit session.
 ```sh
 curl -sS http://127.0.0.1:8787/drive \
   -H 'Content-Type: application/json' \
-  -d '{"url":"https://example.com/","session":"source-task","allowed_hosts":["example.com"],"steps":[{"action":"snapshot","limit":100}],"screenshot":"failure"}'
+  -d '{"url":"https://example.com/","session":"source-task","allowed_hosts":["example.com"],"steps":[{"action":"snapshot","limit":10}],"screenshot":"failure"}'
 ```
 
 Discover controls with a snapshot, perform the smallest justified interaction,

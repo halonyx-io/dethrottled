@@ -220,12 +220,16 @@ def test_passage_ranking_preserves_central_terms_beyond_a_generic_intro():
         assert all(term in item["excerpt"].casefold() for term in item["matched_terms"])
 
 
-def test_specialist_profile_survives_a_full_web_result_pool(monkeypatch):
+def test_specialists_append_only_with_room_after_primary(monkeypatch):
     monkeypatch.setattr(search, "web_search", lambda *a, **k: [
         {"url": f"https://web.example/{i}", "title": f"Web source {i}",
-         "engine": "web-test"} for i in range(10)])
+         "engine": "web-ddg-lite"} for i in range(10)])
     monkeypatch.setattr(search, "searxng", lambda *a, **k: [
         {"url": "https://specialist.example/paper", "title": "Academic evidence",
          "engine": "crossref"}])
     rows, _ = search.search("academic evidence", max_items=3, profile="academic")
-    assert any(row["engine"] == "crossref" for row in rows[:3])
+    assert len(rows) == 3 and all(row["engine"] == "web-ddg-lite" for row in rows)
+    menu, _ = search.search("academic evidence", max_items=16, profile="academic")
+    assert len(menu) == 11
+    assert [r["engine"] for r in menu[:10]] == ["web-ddg-lite"] * 10
+    assert menu[-1]["engine"] == "crossref"
