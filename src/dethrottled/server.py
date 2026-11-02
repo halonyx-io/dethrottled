@@ -804,6 +804,8 @@ def v2_capabilities():
     import importlib.util
     import shutil
 
+    from .readplan import recovery_budget
+
     def installed(name: str) -> bool:
         return importlib.util.find_spec(name) is not None
 
@@ -940,8 +942,7 @@ def v2_capabilities():
             "up to two image/document asset attempts", "publisher-declared primary representations",
             "observed browser state, details expansion, scroll and primary JSON responses"],
             "read_plan": {"revision": 1, "max_actions": 6,
-                          "admission_budget_seconds": float(os.getenv(
-                              "DETHROTTLED_READ_PLAN_SECONDS", "30")),
+                          "admission_budget_seconds": recovery_budget(),
                           "semantic_answer_verification": False},
             "next_actions": "Each read returns tool, endpoint, arguments, reason and prerequisites",
             "manual_control": "fetch recovery=manual; explicit render/OCR/ranges remain available"},

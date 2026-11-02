@@ -77,7 +77,10 @@ capability test; it does not establish Cloudflare, PerimeterX or DataDome defeat
 
 The final local regression suite passed **622 tests**, with 15 skipped, two live
 network tests deselected and four existing FastAPI lifecycle deprecation warnings.
-[Regression log](regression-release.log). CI and deployed public transport checks
+[Regression log](regression-release.log). An initial ARM/Python 3.11 CI run exposed
+a three-second startup deadline in an existing child-crash fixture. The fixture now
+asserts completion before cleanup within a 15-second deadline, avoiding a deliberate
+stop being misreported as an expected crash. Runtime supervision is unchanged. CI and deployed public transport checks
 are recorded in the pull request and deployment verification, separately.
 
 The planner uses observed gaps and conservative predefined actions, not an LLM or

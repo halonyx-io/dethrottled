@@ -184,10 +184,12 @@ def test_identity_cookie_reuse_is_scoped_to_caller_and_origin():
 
 def test_selected_view_keeps_original_evidence_reference():
     initial = dict(THIN, document_id='original-proof', document_sha256='hash',
+                   acquisition_attempts=[{'tier': 'direct', 'outcome': 'response'}],
                    source_alternatives=[{'url': URL + '?md=1', 'type': 'text/markdown'}])
     result = run(URL, initial, read=lambda *a: dict(quality='ok', content=FACT),
                  drive=no_call, options={'allow_render': False}, browser_available=False)
     assert result['evidence_variants'][0]['document_id'] == 'original-proof'
+    assert result['acquisition_attempts'][0]['tier'] == 'direct'
     from dethrottled.workflow import guidance
     assert any(a['arguments'].get('document_id') == 'original-proof'
                for a in guidance(result)['next_actions'])

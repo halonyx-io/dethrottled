@@ -48,14 +48,18 @@ def article_json(text, requested):
     return parsed.get("text") if parsed.get("ok") else None
 
 
-def run(url, initial, *, read, drive, options, browser_available, allow_assets=True):
-    """Callbacks isolate transport/storage from this bounded policy state machine."""
-    started = time.monotonic()
+def recovery_budget():
     try:
         budget = float(os.getenv("DETHROTTLED_READ_PLAN_SECONDS", "30"))
     except ValueError:
         budget = 30
-    budget = min(120, max(0, budget))
+    return min(120, max(0, budget))
+
+
+def run(url, initial, *, read, drive, options, browser_available, allow_assets=True):
+    """Callbacks isolate transport/storage from this bounded policy state machine."""
+    started = time.monotonic()
+    budget = recovery_budget()
     deadline = started + budget
     decisions, best, seen = [], initial, set()
     focus = options.get("focus", "")
@@ -81,6 +85,8 @@ def run(url, initial, *, read, drive, options, browser_available, allow_assets=T
                 record.update(quality=candidate.get("quality"), adopted=adopted)
                 record["acquisition_url"] = candidate.get("acquisition_url",
                                                            candidate.get("url"))
+                if candidate.get("acquisition_attempts"):
+                    record["acquisition_attempts"] = candidate["acquisition_attempts"]
                 if adopted:
                     best = candidate
             else:
@@ -273,6 +279,10 @@ def run(url, initial, *, read, drive, options, browser_available, allow_assets=T
         best.setdefault("warnings", []).append(
             "Recovery selected another representation; the original extraction remains "
             "available through evidence_variants and may contain different material.")
+    if best is not initial:
+        best["acquisition_attempts"] = [
+            *[dict(a, url=url) for a in initial.get("acquisition_attempts", [])],
+            *best.get("acquisition_attempts", [])]
     best["read_plan"] = dict(revision=1, decisions=decisions, initial_gap=gap(initial),
         final_gap=gap(best), answer_verified=False,
         stop_reason=("budget_exhausted" if time.monotonic() >= deadline else

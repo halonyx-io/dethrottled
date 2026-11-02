@@ -37,4 +37,4 @@ src/dethrottled/server.py:756
     @app.on_event("shutdown")
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-622 passed, 15 skipped, 2 deselected, 4 warnings in 18.67s
+622 passed, 15 skipped, 2 deselected, 4 warnings in 17.95s
