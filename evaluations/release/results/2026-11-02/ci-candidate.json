@@ -1,0 +1,22 @@
+{
+  "run": "https://github.com/halonyx-io/dethrottled/actions/runs/41413525014",
+  "commit": "44e4d1ac64c98d833d1fe8922f333d1ce304a741",
+  "version": "1.0.0rc1",
+  "checks_passed": 14,
+  "architectures": {
+    "amd64": {
+      "contracts_passed": 20,
+      "restart_passed": 1,
+      "fresh_volumes": true,
+      "dotenv": false,
+      "gpu": false
+    },
+    "arm64": {
+      "contracts_passed": 20,
+      "restart_passed": 1,
+      "fresh_volumes": true,
+      "dotenv": false,
+      "gpu": false
+    }
+  }
+}

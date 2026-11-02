@@ -1,0 +1,49 @@
+Collecting numpy==2.5.3
+  Downloading numpy-2.5.3-cp312-cp312-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl.metadata (6.6 kB)
+Collecting onnxruntime==1.30.0
+  Downloading onnxruntime-1.30.0-cp312-cp312-manylinux_2_28_aarch64.whl.metadata (5.7 kB)
+Collecting tokenizers==0.23.2
+  Downloading tokenizers-0.23.2-cp310-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl.metadata (9.8 kB)
+Collecting curl_cffi==0.16.3
+  Downloading curl_cffi-0.16.3-cp310-abi3-manylinux2014_aarch64.manylinux_2_17_aarch64.whl.metadata (17 kB)
+Collecting Resiliparse==1.0.9
+  Downloading resiliparse-1.0.9-cp312-cp312-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl.metadata (6.2 kB)
+Collecting FastWARC==1.0.9
+  Downloading fastwarc-1.0.9-cp312-cp312-manylinux_2_28_aarch64.whl.metadata (4.1 kB)
+Collecting selectolax==1.0.0
+  Downloading selectolax-1.0.0-cp312-cp312-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl.metadata (6.9 kB)
+Collecting pymupdf==1.28.2
+  Downloading pymupdf-1.28.2-cp310-abi3-manylinux_2_28_aarch64.whl.metadata (26 kB)
+Collecting pillow==12.3.0
+  Downloading pillow-12.3.0-cp312-cp312-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl.metadata (9.1 kB)
+Downloading numpy-2.5.3-cp312-cp312-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl (15.7 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 15.7/15.7 MB 4.0 MB/s  0:00:03
+Downloading onnxruntime-1.30.0-cp312-cp312-manylinux_2_28_aarch64.whl (21.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 21.3/21.3 MB 5.9 MB/s  0:00:03
+Downloading tokenizers-0.23.2-cp310-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl (3.5 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.5/3.5 MB 2.9 MB/s  0:00:01
+Downloading curl_cffi-0.16.3-cp310-abi3-manylinux2014_aarch64.manylinux_2_17_aarch64.whl (12.8 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 12.8/12.8 MB 7.1 MB/s  0:00:01
+Downloading resiliparse-1.0.9-cp312-cp312-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl (5.4 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.4/5.4 MB 2.0 MB/s  0:00:02
+Downloading fastwarc-1.0.9-cp312-cp312-manylinux_2_28_aarch64.whl (4.0 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.0/4.0 MB 3.1 MB/s  0:00:01
+Downloading selectolax-1.0.0-cp312-cp312-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl (1.5 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.5/1.5 MB 1.3 MB/s  0:00:00
+Downloading pymupdf-1.28.2-cp310-abi3-manylinux_2_28_aarch64.whl (25.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 25.1/25.1 MB 7.4 MB/s  0:00:03
+Downloading pillow-12.3.0-cp312-cp312-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl (6.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.3/6.3 MB 6.7 MB/s  0:00:00
+Saved /proof/arm-wheels/numpy-2.5.3-cp312-cp312-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl
+Saved /proof/arm-wheels/onnxruntime-1.30.0-cp312-cp312-manylinux_2_28_aarch64.whl
+Saved /proof/arm-wheels/tokenizers-0.23.2-cp310-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
+Saved /proof/arm-wheels/curl_cffi-0.16.3-cp310-abi3-manylinux2014_aarch64.manylinux_2_17_aarch64.whl
+Saved /proof/arm-wheels/resiliparse-1.0.9-cp312-cp312-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl
+Saved /proof/arm-wheels/fastwarc-1.0.9-cp312-cp312-manylinux_2_28_aarch64.whl
+Saved /proof/arm-wheels/selectolax-1.0.0-cp312-cp312-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl
+Saved /proof/arm-wheels/pymupdf-1.28.2-cp310-abi3-manylinux_2_28_aarch64.whl
+Saved /proof/arm-wheels/pillow-12.3.0-cp312-cp312-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl
+Successfully downloaded numpy onnxruntime tokenizers curl_cffi Resiliparse FastWARC selectolax pymupdf pillow
+
+[notice] A new release of pip is available: 26.2.1 -> 26.2.2
+[notice] To update, run: pip install --upgrade pip

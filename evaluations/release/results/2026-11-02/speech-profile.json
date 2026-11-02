@@ -1,0 +1,23 @@
+{
+  "case": "speech",
+  "elapsed_ms": 6756,
+  "quality": "ok",
+  "extraction": {
+    "total_segments": 1,
+    "partial": false,
+    "method": "speech_recognition",
+    "language": "en",
+    "duration_seconds": 11.0,
+    "warnings": [
+      "Speech recognition can hallucinate or mishear; verify important claims against source audio. Timings are model estimates."
+    ],
+    "source_sha256": "59dfb9a4acb36fe2a2affc14bacbee2920ff435cb13cc314a08c13f66ba7860e",
+    "source_bytes": 352078
+  },
+  "warnings": [
+    "Speech recognition can hallucinate or mishear; verify important claims against source audio. Timings are model estimates."
+  ],
+  "chars": 122,
+  "text_sha256": "56d0a6b06663beabd6f67cdcfd0cb15fce1f708109f60dfc8434310c5bba6f04",
+  "fact": true
+}

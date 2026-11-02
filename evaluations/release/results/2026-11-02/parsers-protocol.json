@@ -1,0 +1,245 @@
+[
+  {
+    "id": "unicode-text",
+    "kind": "text",
+    "expected": [
+      "Z\u00fcrich",
+      "\u4e2d\u6587",
+      "7341"
+    ],
+    "options": {},
+    "checks": {}
+  },
+  {
+    "id": "json-nested",
+    "kind": "json",
+    "expected": [
+      "ALPHA",
+      "7341",
+      "tonnes"
+    ],
+    "options": {},
+    "checks": {}
+  },
+  {
+    "id": "jsonl-records",
+    "kind": "jsonl",
+    "expected": [
+      "ALPHA",
+      "7341",
+      "BETA",
+      "291"
+    ],
+    "options": {},
+    "checks": {}
+  },
+  {
+    "id": "xml-namespace",
+    "kind": "xml",
+    "expected": [
+      "7341"
+    ],
+    "options": {},
+    "checks": {}
+  },
+  {
+    "id": "email",
+    "kind": "eml",
+    "expected": [
+      "7341",
+      "tonnes"
+    ],
+    "options": {},
+    "checks": {}
+  },
+  {
+    "id": "csv-quotes",
+    "kind": "csv",
+    "expected": [
+      "ALPHA, NORTH",
+      "7341",
+      "tonnes"
+    ],
+    "options": {},
+    "checks": {}
+  },
+  {
+    "id": "csv-late-range",
+    "kind": "csv",
+    "expected": [
+      "R2537",
+      "43129"
+    ],
+    "options": {
+      "row_start": 2538,
+      "row_end": 2538
+    },
+    "checks": {}
+  },
+  {
+    "id": "captions-vtt",
+    "kind": "captions",
+    "expected": [
+      "7341",
+      "5.000",
+      "7.500"
+    ],
+    "options": {},
+    "checks": {}
+  },
+  {
+    "id": "captions-srt",
+    "kind": "captions",
+    "expected": [
+      "7341",
+      "5.000",
+      "7.500"
+    ],
+    "options": {},
+    "checks": {}
+  },
+  {
+    "id": "gzip-text",
+    "kind": "gzip",
+    "expected": [
+      "7341"
+    ],
+    "options": {},
+    "checks": {}
+  },
+  {
+    "id": "archive-zip",
+    "kind": "zip",
+    "expected": [
+      "7341"
+    ],
+    "options": {},
+    "checks": {}
+  },
+  {
+    "id": "archive-tar",
+    "kind": "tar",
+    "expected": [
+      "7341"
+    ],
+    "options": {},
+    "checks": {}
+  },
+  {
+    "id": "docx-table",
+    "kind": "docx",
+    "expected": [
+      "7341",
+      "BETA",
+      "291"
+    ],
+    "options": {},
+    "checks": {}
+  },
+  {
+    "id": "xlsx-all-sheets",
+    "kind": "xlsx",
+    "expected": [
+      "ALPHA",
+      "7341",
+      "BETA",
+      "291"
+    ],
+    "options": {},
+    "checks": {}
+  },
+  {
+    "id": "xlsx-sheet-selection",
+    "kind": "xlsx",
+    "expected": [
+      "BETA",
+      "291"
+    ],
+    "options": {
+      "sheet": "Detail"
+    },
+    "checks": {}
+  },
+  {
+    "id": "pptx",
+    "kind": "pptx",
+    "expected": [
+      "7341",
+      "tonnes"
+    ],
+    "options": {},
+    "checks": {}
+  },
+  {
+    "id": "rtf",
+    "kind": "rtf",
+    "expected": [
+      "7341",
+      "tonnes"
+    ],
+    "options": {},
+    "checks": {}
+  },
+  {
+    "id": "odt",
+    "kind": "odt",
+    "expected": [
+      "7341",
+      "tonnes"
+    ],
+    "options": {},
+    "checks": {}
+  },
+  {
+    "id": "epub",
+    "kind": "epub",
+    "expected": [
+      "7341",
+      "tonnes"
+    ],
+    "options": {},
+    "checks": {}
+  },
+  {
+    "id": "pdf-late-page",
+    "kind": "pdf",
+    "expected": [
+      "7341",
+      "tonnes"
+    ],
+    "options": {
+      "page_start": 107,
+      "page_end": 107,
+      "document_mode": "native"
+    },
+    "checks": {}
+  },
+  {
+    "id": "pdf-table",
+    "kind": "pdf",
+    "expected": [
+      "ALPHA",
+      "7341",
+      "BETA"
+    ],
+    "options": {
+      "document_mode": "auto"
+    },
+    "checks": {
+      "table_cells": true
+    }
+  },
+  {
+    "id": "pdf-columns",
+    "kind": "pdf",
+    "expected": [
+      "9317",
+      "287",
+      "tonnes"
+    ],
+    "options": {
+      "document_mode": "auto"
+    },
+    "checks": {}
+  }
+]

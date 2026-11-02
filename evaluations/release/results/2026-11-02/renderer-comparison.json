@@ -1,0 +1,122 @@
+[
+  {
+    "engine": "old",
+    "case": "js",
+    "http_status": 200,
+    "elapsed_ms": 1312,
+    "success": true,
+    "target_status": 200,
+    "has_fact": true,
+    "chars": 1471,
+    "sha256": "3706b1df889f6bd7b8e534f9eab3bf6bc5270e552981cb81e3ac31c206ffdf87",
+    "error": null
+  },
+  {
+    "engine": "old",
+    "case": "quoted-selector",
+    "http_status": 200,
+    "elapsed_ms": 1116,
+    "success": true,
+    "target_status": 200,
+    "has_fact": false,
+    "chars": 1,
+    "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+    "error": null
+  },
+  {
+    "engine": "old",
+    "case": "quoted-wait",
+    "http_status": 200,
+    "elapsed_ms": 1107,
+    "success": true,
+    "target_status": 200,
+    "has_fact": true,
+    "chars": 1471,
+    "sha256": "3706b1df889f6bd7b8e534f9eab3bf6bc5270e552981cb81e3ac31c206ffdf87",
+    "error": null
+  },
+  {
+    "engine": "old",
+    "case": "missing",
+    "http_status": 200,
+    "elapsed_ms": 646,
+    "success": true,
+    "target_status": 404,
+    "has_fact": false,
+    "chars": 114,
+    "sha256": "052b94795227b0d3a750f411177e9d241e57c7b0137f1a8ec76d98b06bc707fd",
+    "error": null
+  },
+  {
+    "engine": "old",
+    "case": "untrusted-js-wait",
+    "http_status": 200,
+    "elapsed_ms": 648,
+    "success": true,
+    "target_status": 200,
+    "has_fact": true,
+    "chars": 1471,
+    "sha256": "3706b1df889f6bd7b8e534f9eab3bf6bc5270e552981cb81e3ac31c206ffdf87",
+    "error": null
+  },
+  {
+    "engine": "new",
+    "case": "js",
+    "http_status": 200,
+    "elapsed_ms": 1065,
+    "success": true,
+    "target_status": 200,
+    "has_fact": true,
+    "chars": 1471,
+    "sha256": "3706b1df889f6bd7b8e534f9eab3bf6bc5270e552981cb81e3ac31c206ffdf87",
+    "error": null
+  },
+  {
+    "engine": "new",
+    "case": "quoted-selector",
+    "http_status": 200,
+    "elapsed_ms": 1155,
+    "success": true,
+    "target_status": 200,
+    "has_fact": true,
+    "chars": 1471,
+    "sha256": "3706b1df889f6bd7b8e534f9eab3bf6bc5270e552981cb81e3ac31c206ffdf87",
+    "error": null
+  },
+  {
+    "engine": "new",
+    "case": "quoted-wait",
+    "http_status": 200,
+    "elapsed_ms": 826,
+    "success": true,
+    "target_status": 200,
+    "has_fact": true,
+    "chars": 1471,
+    "sha256": "3706b1df889f6bd7b8e534f9eab3bf6bc5270e552981cb81e3ac31c206ffdf87",
+    "error": null
+  },
+  {
+    "engine": "new",
+    "case": "missing",
+    "http_status": 200,
+    "elapsed_ms": 727,
+    "success": true,
+    "target_status": 404,
+    "has_fact": false,
+    "chars": 114,
+    "sha256": "052b94795227b0d3a750f411177e9d241e57c7b0137f1a8ec76d98b06bc707fd",
+    "error": null
+  },
+  {
+    "engine": "new",
+    "case": "untrusted-js-wait",
+    "http_status": 400,
+    "elapsed_ms": 2,
+    "success": null,
+    "target_status": null,
+    "has_fact": false,
+    "chars": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "error": "Rejected config: a JavaScript wait_for is not permitted from an untrusted request"
+  }
+]

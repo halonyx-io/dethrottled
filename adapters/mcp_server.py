@@ -25,8 +25,7 @@ from mcp.types import CallToolResult, ImageContent, TextContent, ToolAnnotations
 from pydantic import BaseModel, ConfigDict, Field
 from starlette.responses import JSONResponse
 
-# The bridge and dethrottled run on szbox. Keep the fallback local too, so a
-# missing EnvironmentFile cannot silently send research to the old Q6A host.
+# Keep the default backend local; Compose supplies its private service address.
 MCP_BACKEND_URL = os.getenv("MCP_BACKEND_URL", "http://127.0.0.1:8787").rstrip("/")
 KEYS_PATH = Path(os.getenv("MCP_KEYS_PATH", "/etc/dethrottled-mcp/keys.json"))
 REQUEST_TIMEOUT = float(os.getenv("MCP_REQUEST_TIMEOUT", "90"))
@@ -37,7 +36,7 @@ ALLOWED_HOSTS = [
     host.strip()
     for host in os.getenv(
         "MCP_ALLOWED_HOSTS",
-        "127.0.0.1:*,localhost:*,[::1]:*,api.halonyx.io,api.halonyx.io:*",
+        "127.0.0.1:*,localhost:*,[::1]:*",
     ).split(",")
     if host.strip()
 ]
@@ -225,6 +224,8 @@ search then fetch selected URLs, or research for a multi-source evidence bundle.
 is optional reusable evidence, never a compulsory first step. fetch automatically tries
 transport/format/OCR recovery and bounded content recovery. When configured, Outlook
 MSG and XLSB use the local format fallback; scanned PDF tables escalate to OCR layout.
+Compose includes the format reader and discovers started speech/layout workers automatically.
+An unready model worker with initialization=first_use_download downloads weights on first use.
 Corpus combines English and multilingual indexes; English sources can answer Chinese,
 Malay or French queries, but an empty result is not evidence of absence. Set recovery=manual for
 explicit control; explicit render=never and OCR choices are respected.
@@ -519,7 +520,7 @@ class BrowserStep(BaseModel):
     action: Literal["goto", "click", "fill", "type", "press", "select", "check", "uncheck",
                     "hover", "wait", "wait_for", "text", "html", "attr", "count", "snapshot",
                     "url", "title", "download", "network", "checkpoint",
-                    "tabs", "switch_tab", "history"]
+                    "tabs", "switch_tab", "history", "read_state", "scroll", "expand_details"]
     frame: str = Field(default="", max_length=1000,
                        description="CSS selector for an allowed iframe")
     selector: str = Field(default="", max_length=1000)

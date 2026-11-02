@@ -1,6 +1,5 @@
-# Optional portable public adapters and local speech worker.
+# Optional public REST/MCP adapters; keyless content workers are in the base file.
 # docker compose -f docker-compose.yml -f docker-compose.agents.yml --profile public up -d --build
-# Add --profile media and DETHROTTLED_MEDIA_WORKER_URL=http://media-worker:19889 for speech.
 services:
   mcp:
     profiles: [public]
@@ -39,49 +38,5 @@ services:
         bind:
           create_host_path: false
     depends_on: [mcp]
-  docling-worker:
-    profiles: [layout]
-    build:
-      context: .
-      dockerfile: docling-worker/Dockerfile
-    image: dethrottled-docling:local
-    ulimits:
-      core: 0
-    restart: unless-stopped
-    volumes: [layout-models:/models]
-    expose: ["19891"]
-    mem_limit: 8g
-    cpus: 4
-    pids_limit: 256
-  format-worker:
-    profiles: [formats]
-    build:
-      context: .
-      dockerfile: format-worker/Dockerfile
-    image: dethrottled-formats:local
-    ulimits:
-      core: 0
-    restart: unless-stopped
-    expose: ["19892"]
-    mem_limit: 2g
-    cpus: 2
-    pids_limit: 128
-  media-worker:
-    profiles: [media]
-    build:
-      context: .
-      dockerfile: media-worker/Dockerfile
-    image: dethrottled-media:local
-    ulimits:
-      core: 0
-    restart: unless-stopped
-    environment:
-      WHISPER_MODEL: "${WHISPER_MODEL:-small}"
-      MEDIA_MAX_SECONDS: "${MEDIA_MAX_SECONDS:-1800}"
-    volumes: [media-models:/models]
-    expose: ["19889"]
-    mem_limit: 3g
 volumes:
   adapter-state:
-  media-models:
-  layout-models:

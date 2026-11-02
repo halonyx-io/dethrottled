@@ -1,0 +1,38 @@
+[
+  {
+    "file": "fastwarc-1.0.9-cp312-cp312-manylinux_2_28_aarch64.whl",
+    "sha256": "cc93b1f1a49f2820ee26d103967f9faed67a6c04d1b707b39f74d36b88f97787"
+  },
+  {
+    "file": "selectolax-1.0.0-cp312-cp312-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl",
+    "sha256": "e90ef352e15611d9285d2988f871e16932b7073076b13dd7d6414a32e19ae681"
+  },
+  {
+    "file": "curl_cffi-0.16.3-cp310-abi3-manylinux2014_aarch64.manylinux_2_17_aarch64.whl",
+    "sha256": "d5a4103f2baa1fcf619ec3101b419827d367044ba106b206228137cc71a5a9c5"
+  },
+  {
+    "file": "onnxruntime-1.30.0-cp312-cp312-manylinux_2_28_aarch64.whl",
+    "sha256": "6c32a000d5139a38ba9349030b0032e3331acb559d596b22738d9d2b343a2b83"
+  },
+  {
+    "file": "resiliparse-1.0.9-cp312-cp312-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl",
+    "sha256": "3636ac134164d7b8dda2ad4a974ee7d29051de83244defd82196d75560de8415"
+  },
+  {
+    "file": "pymupdf-1.28.2-cp310-abi3-manylinux_2_28_aarch64.whl",
+    "sha256": "3050a233dde1211efe89ada74e2add6238436434159f46097a1423aad2842545"
+  },
+  {
+    "file": "numpy-2.5.3-cp312-cp312-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl",
+    "sha256": "76c2c1e6bfa5c84adc6434dfbf013aa92096a7985221762c8f11fedfd20fff58"
+  },
+  {
+    "file": "tokenizers-0.23.2-cp310-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl",
+    "sha256": "a37039b5dfc4af84eb3ef0a92f4307e28936c8f9adccba2629d36f652e9bf7a2"
+  },
+  {
+    "file": "pillow-12.3.0-cp312-cp312-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl",
+    "sha256": "d9c7f76c0673154f044e9d78c8655fb4213f6ca31a836df48b40fe5d187717b9"
+  }
+]

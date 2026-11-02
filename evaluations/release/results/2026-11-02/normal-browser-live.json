@@ -1,0 +1,19 @@
+{
+  "normal_docker_build": true,
+  "gpu_passthrough": false,
+  "graphics": {
+    "webgl": true,
+    "renderer": "ANGLE (Mesa, llvmpipe (LLVM 19.1.7 256 bits), OpenGL 4.5)",
+    "pixel": [
+      64,
+      128,
+      191,
+      255
+    ],
+    "hardware_verified": false,
+    "requested_mode": "auto"
+  },
+  "thread_fact": true,
+  "native_menu": true,
+  "elapsed_ms": 2205.19
+}

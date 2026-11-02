@@ -1,0 +1,63 @@
+{
+  "cases": [
+    [
+      "reddit-thread",
+      "https://www.reddit.com/r/programming/comments/1xl8d57/jepsen_on_particledb_we_tested_versions_114/",
+      [
+        "ParticleDB",
+        "WHERE 4 = 5"
+      ]
+    ],
+    [
+      "reddit-listing",
+      "https://www.reddit.com/r/programming/",
+      [
+        "programming"
+      ]
+    ],
+    [
+      "python",
+      "https://docs.python.org/3/library/sqlite3.html",
+      [
+        "sqlite3",
+        "Connection"
+      ]
+    ],
+    [
+      "crunchbase",
+      "https://www.crunchbase.com/organization/openai",
+      [
+        "OpenAI",
+        "2015"
+      ]
+    ],
+    [
+      "g2",
+      "https://www.g2.com/products/notion/reviews",
+      [
+        "Notion",
+        "What do you like best"
+      ]
+    ],
+    [
+      "cargurus",
+      "https://www.cargurus.com/",
+      [
+        "CarGurus",
+        "Used Cars"
+      ]
+    ],
+    [
+      "bloomberg",
+      "https://www.bloomberg.com/",
+      [
+        "Bloomberg",
+        "Markets"
+      ]
+    ]
+  ],
+  "reddit_repeats": 3,
+  "other_repeats": 1,
+  "source_complete": false,
+  "notes": "Same browser image, recovery auto, fresh sessions. CPU and GPU on one host; facts are lexical task support, not truth or complete-source verification."
+}

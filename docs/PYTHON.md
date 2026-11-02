@@ -1,7 +1,15 @@
 # Python API
 
-The package can be used without an HTTP server. Source installation enables
-libraries, not Docker workers or external services:
+The package can be used without an HTTP server. Install the published package:
+
+```sh
+python -m pip install --upgrade 'dethrottled[all]'
+dethrottled --host 127.0.0.1 --port 8787
+```
+
+A Python install enables libraries, not Docker workers, system OCR tools or
+model weights. For the complete default engine, use Docker Compose. For a
+source checkout:
 
 ```sh
 python -m pip install '.[all]'

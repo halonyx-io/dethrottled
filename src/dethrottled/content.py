@@ -22,6 +22,8 @@ def assess_content(text: str, html: str = "", *, structured: bool = False) -> di
         ("access_wall", r"access (?:to this page has been )?denied(?:[.!]|$)"),
         ("verification", r"verification required[.!]?\s+"
          r"please wait while we verify your request[.!]*"),
+        ("temporary_failure", r"a temporary problem occurred[.!]\s+refresh this page[.!]?"),
+        ("localized_retry", r"une erreur est survenue[.!]\s+veuillez réessayer[.!]?"),
         ("interaction_wall", r"click (?:the )?button below to (?:continue|verify)[.!]?"),
     )
 

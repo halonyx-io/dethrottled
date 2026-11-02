@@ -1,8 +1,9 @@
 """Local PDF layout recovery; native text remains available if inference fails."""
-import os
 import re
 
 import requests
+
+from .workers import endpoint
 
 
 def read_pdf(data, text, metadata, limit, options):
@@ -11,6 +12,7 @@ def read_pdf(data, text, metadata, limit, options):
         return text, metadata
     import pymupdf
 
+    native_text_length = len(text)
     native_tables, table_text, complex_layout = [], [], False
     start = options.get("page_start", 1)
     end = metadata["pages"][-1]["page"]
@@ -51,7 +53,7 @@ def read_pdf(data, text, metadata, limit, options):
         text = combined[:limit]
         metadata["warnings"].append(
             "table_structure_is_inferred; verify_critical_cells_against_source")
-    worker = os.getenv("DETHROTTLED_LAYOUT_WORKER_URL", "").rstrip("/")
+    worker = endpoint("layout")
     if not worker:
         if mode == "layout":
             metadata["warnings"].append("layout_worker_not_configured; native_parser_used")
@@ -71,7 +73,7 @@ def read_pdf(data, text, metadata, limit, options):
         # Do not trust model success when it loses native text/numbers/tables.
         numbers = set(re.findall(r"\b\d+(?:[.,]\d+)*\b", text))
         if (result.get("status") != "success" or not candidate.strip()
-                or len(candidate) < len(text) * .7
+                or len(candidate) < native_text_length * .7
                 or not numbers.issubset(set(re.findall(r"\b\d+(?:[.,]\d+)*\b", candidate)))
                 or (native_tables and len(result.get("tables", [])) < len(native_tables))):
             raise ValueError("layout_incomplete")

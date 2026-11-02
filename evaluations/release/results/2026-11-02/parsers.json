@@ -1,0 +1,622 @@
+[
+  {
+    "id": "unicode-text",
+    "version": "0.10.1",
+    "elapsed_ms": 1,
+    "pass": true,
+    "matched": [
+      "Z\u00fcrich",
+      "\u4e2d\u6587",
+      "7341"
+    ],
+    "text": "Z\u00fcrich \u4e2d\u6587\nALPHA allocation is 7341 tonnes.",
+    "metadata": {
+      "warnings": [],
+      "partial": false
+    }
+  },
+  {
+    "id": "json-nested",
+    "version": "0.10.1",
+    "elapsed_ms": 0,
+    "pass": true,
+    "matched": [
+      "ALPHA",
+      "7341",
+      "tonnes"
+    ],
+    "text": "{\n  \"regions\": [\n    {\n      \"ALPHA\": 7341\n    }\n  ],\n  \"unit\": \"tonnes\"\n}",
+    "metadata": {
+      "warnings": [],
+      "partial": false
+    }
+  },
+  {
+    "id": "jsonl-records",
+    "version": "0.10.1",
+    "elapsed_ms": 0,
+    "pass": true,
+    "matched": [
+      "ALPHA",
+      "7341",
+      "BETA",
+      "291"
+    ],
+    "text": "{\"region\": \"ALPHA\", \"value\": 7341}\n{\"region\": \"BETA\", \"value\": 291}",
+    "metadata": {
+      "warnings": [],
+      "partial": false
+    }
+  },
+  {
+    "id": "xml-namespace",
+    "version": "0.10.1",
+    "elapsed_ms": 0,
+    "pass": true,
+    "matched": [
+      "7341"
+    ],
+    "text": "<ns0:r xmlns:ns0=\"urn:test\"><ns0:ALPHA unit=\"tonnes\">7341</ns0:ALPHA></ns0:r>",
+    "metadata": {
+      "warnings": [],
+      "partial": false
+    }
+  },
+  {
+    "id": "email",
+    "version": "0.10.1",
+    "elapsed_ms": 1,
+    "pass": true,
+    "matched": [
+      "7341",
+      "tonnes"
+    ],
+    "text": "From: test@example.org\nTo: \nDate: \nSubject: Allocation\n\nALPHA allocation is 7341 tonnes.",
+    "metadata": {
+      "warnings": [
+        "Attachments are not included in the email body extraction."
+      ],
+      "partial": false
+    }
+  },
+  {
+    "id": "csv-quotes",
+    "version": "0.10.1",
+    "elapsed_ms": 1,
+    "pass": true,
+    "matched": [
+      "ALPHA, NORTH",
+      "7341",
+      "tonnes"
+    ],
+    "text": "| region | allocation | unit |\n| ALPHA, NORTH | 7341 | tonnes |",
+    "metadata": {
+      "warnings": [],
+      "partial": false,
+      "tables": [
+        {
+          "sheet": "",
+          "total_rows": 2,
+          "row_start": 1,
+          "last_row": 2,
+          "returned_rows": 2,
+          "next_row": null,
+          "cell_encoding": "HTML entities for ampersands and pipe separators"
+        }
+      ]
+    }
+  },
+  {
+    "id": "csv-late-range",
+    "version": "0.10.1",
+    "elapsed_ms": 2,
+    "pass": true,
+    "matched": [
+      "R2537",
+      "43129"
+    ],
+    "text": "## Source row 1 (context): | id | value |\n| R2537 | 43129 |",
+    "metadata": {
+      "warnings": [],
+      "partial": true,
+      "tables": [
+        {
+          "sheet": "",
+          "total_rows": 2601,
+          "row_start": 2538,
+          "last_row": 2538,
+          "returned_rows": 1,
+          "next_row": 2539,
+          "cell_encoding": "HTML entities for ampersands and pipe separators"
+        }
+      ]
+    }
+  },
+  {
+    "id": "captions-vtt",
+    "version": "0.10.1",
+    "elapsed_ms": 45,
+    "pass": true,
+    "matched": [
+      "7341",
+      "5.000",
+      "7.500"
+    ],
+    "text": "[5.000-7.500] ALPHA 7341 tonnes",
+    "metadata": {
+      "segments": [
+        {
+          "start_seconds": 5.0,
+          "end_seconds": 7.5,
+          "text": "ALPHA 7341 tonnes"
+        }
+      ],
+      "total_segments": 1,
+      "partial": false,
+      "method": "source_captions",
+      "language": null,
+      "duration_seconds": null,
+      "warnings": []
+    }
+  },
+  {
+    "id": "captions-srt",
+    "version": "0.10.1",
+    "elapsed_ms": 0,
+    "pass": true,
+    "matched": [
+      "7341",
+      "5.000",
+      "7.500"
+    ],
+    "text": "[5.000-7.500] ALPHA 7341 tonnes",
+    "metadata": {
+      "segments": [
+        {
+          "start_seconds": 5.0,
+          "end_seconds": 7.5,
+          "text": "ALPHA 7341 tonnes"
+        }
+      ],
+      "total_segments": 1,
+      "partial": false,
+      "method": "source_captions",
+      "language": null,
+      "duration_seconds": null,
+      "warnings": []
+    }
+  },
+  {
+    "id": "gzip-text",
+    "version": "0.10.1",
+    "elapsed_ms": 0,
+    "pass": true,
+    "matched": [
+      "7341"
+    ],
+    "text": "## Archive member: data.txt\nALPHA allocation is 7341 tonnes.",
+    "metadata": {
+      "warnings": [],
+      "partial": false,
+      "members": [
+        {
+          "name": "data.txt",
+          "format": "text",
+          "partial": false
+        }
+      ],
+      "skipped_members": []
+    }
+  },
+  {
+    "id": "archive-zip",
+    "version": "0.10.1",
+    "elapsed_ms": 0,
+    "pass": true,
+    "matched": [
+      "7341"
+    ],
+    "text": "## Archive member: report.txt\nALPHA allocation is 7341 tonnes.\n\n## Archive member: second.json\n{\n  \"BETA\": 291\n}",
+    "metadata": {
+      "warnings": [],
+      "partial": false,
+      "members": [
+        {
+          "name": "report.txt",
+          "format": "text",
+          "partial": false
+        },
+        {
+          "name": "second.json",
+          "format": "json",
+          "partial": false
+        }
+      ],
+      "skipped_members": []
+    }
+  },
+  {
+    "id": "archive-tar",
+    "version": "0.10.1",
+    "elapsed_ms": 0,
+    "pass": true,
+    "matched": [
+      "7341"
+    ],
+    "text": "## Archive member: report.txt\nALPHA allocation is 7341 tonnes.",
+    "metadata": {
+      "warnings": [],
+      "partial": false,
+      "members": [
+        {
+          "name": "report.txt",
+          "format": "text",
+          "partial": false
+        }
+      ],
+      "skipped_members": []
+    }
+  },
+  {
+    "id": "docx-table",
+    "version": "0.10.1",
+    "elapsed_ms": 243,
+    "pass": true,
+    "matched": [
+      "7341",
+      "BETA",
+      "291"
+    ],
+    "text": "ALPHA allocation is 7341 tonnes.\n| Region | tonnes |\n| BETA | 291 |",
+    "metadata": {
+      "warnings": [
+        "OCR can misread numbers, layout and tables; verify against the source image. Word confidence is not an accuracy probability."
+      ],
+      "partial": false,
+      "tables": [
+        {
+          "sheet": "",
+          "total_rows": 2,
+          "row_start": 1,
+          "last_row": 2,
+          "returned_rows": 2,
+          "next_row": null,
+          "cell_encoding": "HTML entities for ampersands and pipe separators"
+        }
+      ],
+      "embedded_images": [
+        "docProps/thumbnail.jpeg"
+      ]
+    }
+  },
+  {
+    "id": "xlsx-all-sheets",
+    "version": "0.10.1",
+    "elapsed_ms": 6,
+    "pass": true,
+    "matched": [
+      "ALPHA",
+      "7341",
+      "BETA",
+      "291"
+    ],
+    "text": "## Summary\n| ALPHA | 7341 |\n## Detail\n| BETA | 291 |",
+    "metadata": {
+      "warnings": [],
+      "partial": false,
+      "available_sheets": [
+        "Summary",
+        "Detail"
+      ],
+      "tables": [
+        {
+          "sheet": "Summary",
+          "total_rows": 1,
+          "row_start": 1,
+          "last_row": 1,
+          "returned_rows": 1,
+          "next_row": null,
+          "cell_encoding": "HTML entities for ampersands and pipe separators"
+        },
+        {
+          "sheet": "Detail",
+          "total_rows": 1,
+          "row_start": 1,
+          "last_row": 1,
+          "returned_rows": 1,
+          "next_row": null,
+          "cell_encoding": "HTML entities for ampersands and pipe separators"
+        }
+      ],
+      "embedded_images": []
+    }
+  },
+  {
+    "id": "xlsx-sheet-selection",
+    "version": "0.10.1",
+    "elapsed_ms": 4,
+    "pass": true,
+    "matched": [
+      "BETA",
+      "291"
+    ],
+    "text": "## Detail\n| BETA | 291 |",
+    "metadata": {
+      "warnings": [],
+      "partial": true,
+      "available_sheets": [
+        "Summary",
+        "Detail"
+      ],
+      "tables": [
+        {
+          "sheet": "Detail",
+          "total_rows": 1,
+          "row_start": 1,
+          "last_row": 1,
+          "returned_rows": 1,
+          "next_row": null,
+          "cell_encoding": "HTML entities for ampersands and pipe separators"
+        }
+      ],
+      "embedded_images": []
+    }
+  },
+  {
+    "id": "pptx",
+    "version": "0.10.1",
+    "elapsed_ms": 209,
+    "pass": true,
+    "matched": [
+      "7341",
+      "tonnes"
+    ],
+    "text": "## Slide 1\nAllocation\nALPHA allocation is 7341 tonnes.",
+    "metadata": {
+      "warnings": [
+        "OCR can misread numbers, layout and tables; verify against the source image. Word confidence is not an accuracy probability."
+      ],
+      "partial": false,
+      "embedded_images": [
+        "docProps/thumbnail.jpeg"
+      ]
+    }
+  },
+  {
+    "id": "rtf",
+    "version": "0.10.1",
+    "elapsed_ms": 1,
+    "pass": true,
+    "matched": [
+      "7341",
+      "tonnes"
+    ],
+    "text": "ALPHA allocation is 7341 tonnes.",
+    "metadata": {
+      "warnings": [],
+      "partial": false
+    }
+  },
+  {
+    "id": "odt",
+    "version": "0.10.1",
+    "elapsed_ms": 2,
+    "pass": true,
+    "matched": [
+      "7341",
+      "tonnes"
+    ],
+    "text": "ALPHA allocation is 7341 tonnes.",
+    "metadata": {
+      "warnings": [],
+      "partial": false,
+      "embedded_images": []
+    }
+  },
+  {
+    "id": "epub",
+    "version": "0.10.1",
+    "elapsed_ms": 182,
+    "pass": true,
+    "matched": [
+      "7341",
+      "tonnes"
+    ],
+    "text": "Report  ALPHA allocation is 7341 tonnes. ",
+    "metadata": {
+      "warnings": [],
+      "partial": false,
+      "embedded_images": []
+    }
+  },
+  {
+    "id": "pdf-late-page",
+    "version": "0.10.1",
+    "elapsed_ms": 4,
+    "pass": true,
+    "matched": [
+      "7341",
+      "tonnes"
+    ],
+    "text": "## Page 107\nAppendix page 107. ALPHA allocation is 7341 tonnes.",
+    "metadata": {
+      "pages": [
+        {
+          "page": 107,
+          "method": "text",
+          "text_chars": 51,
+          "text_layer_blocks": [
+            {
+              "bbox": [
+                60.0,
+                48.17499923706055,
+                324.15399169921875,
+                63.28900146484375
+              ],
+              "text": "Appendix page 107. ALPHA allocation is 7341 tonnes.\n",
+              "text_truncated": false
+            }
+          ],
+          "layout_coordinate_space": "PDF points, origin top-left",
+          "layout_may_be_incomplete": true
+        }
+      ],
+      "total_pages": 108,
+      "next_page": 108,
+      "partial": true,
+      "warnings": []
+    }
+  },
+  {
+    "id": "pdf-table",
+    "version": "0.10.1",
+    "elapsed_ms": 7,
+    "pass": true,
+    "matched": [
+      "ALPHA",
+      "7341",
+      "BETA"
+    ],
+    "text": "## Page 1\nAllocation table. Verified source units: tonnes.\n\n\n\n  Region                    2024                      2025\n\n\n ALPHA                    17                        7341\n\n\n BETA                     291                       420\n\n## Page 1 \u2014 detected table\n| Region | 2024 | 2025 |\n| ALPHA | 17 | 7341 |\n| BETA | 291 | 420 |",
+    "metadata": {
+      "pages": [
+        {
+          "page": 1,
+          "method": "text",
+          "text_chars": 227,
+          "text_layer_blocks": [
+            {
+              "bbox": [
+                60.0,
+                48.17499923706055,
+                282.55194091796875,
+                63.28900146484375
+              ],
+              "text": "Allocation table. Verified source units: tonnes.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                70.0,
+                116.17500305175781,
+                414.4639892578125,
+                131.28900146484375
+              ],
+              "text": "Region\n2024\n2025\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                70.0,
+                161.1750030517578,
+                414.4639892578125,
+                176.28900146484375
+              ],
+              "text": "ALPHA\n17\n7341\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                70.0,
+                206.1750030517578,
+                408.3479919433594,
+                221.28900146484375
+              ],
+              "text": "BETA\n291\n420\n",
+              "text_truncated": false
+            }
+          ],
+          "layout_coordinate_space": "PDF points, origin top-left",
+          "layout_may_be_incomplete": true
+        }
+      ],
+      "total_pages": 1,
+      "next_page": null,
+      "partial": false,
+      "warnings": [
+        "table_structure_is_inferred; verify_critical_cells_against_source"
+      ],
+      "native_pdf_tables": [
+        {
+          "page": 1,
+          "bbox": [
+            60.0,
+            100.0,
+            520.0,
+            235.0
+          ],
+          "coordinate_space": "PDF points, origin top-left",
+          "cells": [
+            [
+              "Region",
+              "2024",
+              "2025"
+            ],
+            [
+              "ALPHA",
+              "17",
+              "7341"
+            ],
+            [
+              "BETA",
+              "291",
+              "420"
+            ]
+          ],
+          "rows_total": 3,
+          "columns_total": 3,
+          "partial": false
+        }
+      ]
+    }
+  },
+  {
+    "id": "pdf-columns",
+    "version": "0.10.1",
+    "elapsed_ms": 24,
+    "pass": true,
+    "matched": [
+      "9317",
+      "287",
+      "tonnes"
+    ],
+    "text": "## Page 1\nNorthern district report.                       Southern district report.\nAlpha shipments use rail routes. Alpha          Beta shipments use sea routes. Beta\nshipments use rail routes. Alpha                shipments use sea routes. Beta shipments\nshipments use rail routes. Alpha               use sea routes. Beta shipments use sea\nshipments use rail routes. Alpha                  routes. Beta shipments use sea routes.\nshipments use rail routes. Alpha               Beta shipments use sea routes. Beta\nshipments use rail routes. Alpha                shipments use sea routes. Beta shipments\nshipments use rail routes. Alpha               use sea routes. Beta shipments use sea\nshipments use rail routes. Alpha                  routes. Beta shipments use sea routes.\nshipments use rail routes. Alpha               Beta shipments use sea routes. Beta\nshipments use rail routes. Alpha                shipments use sea routes.\nshipments use rail routes. Alpha           SOUTH reserve is 287 tonnes.\nshipments use rail routes.\nNORTH reserve is 9317 tonnes.",
+    "metadata": {
+      "pages": [
+        {
+          "page": 1,
+          "method": "text",
+          "text_chars": 1054,
+          "text_layer_blocks": [
+            {
+              "bbox": [
+                315.0,
+                60.000022888183594,
+                541.1039428710938,
+                271.4586181640625
+              ],
+              "text": "Southern district report.\nBeta shipments use sea routes. Beta\nshipments use sea routes. Beta shipments\nuse sea routes. Beta shipments use sea\nroutes. Beta shipments use sea routes.\nBeta shipments use sea routes. Beta\nshipments use sea routes. Beta shipments\nuse sea routes. Beta shipments use sea\nroutes. Beta shipments use sea routes.\nBeta shipments use sea routes. Beta\nshipments use sea routes.\nSOUTH reserve is 287 tonnes.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                60.000022888183594,
+                254.75596618652344,
+                306.9078369140625
+              ],
+              "text": "Northern district report.\nAlpha shipments use rail routes. Alpha\nshipments use rail routes. Alpha\nshipments use rail routes. Alpha\nshipments use rail routes. Alpha\nshipments use rail routes. Alpha\nshipments use rail routes. Alpha\nshipments use rail routes. Alpha\nshipments use rail routes. Alpha\nshipments use rail routes. Alpha\nshipments use rail routes. Alpha\nshipments use rail routes. Alpha\nshipments use rail routes.\nNORTH reserve is 9317 tonnes.\n",
+              "text_truncated": false
+            }
+          ],
+          "layout_coordinate_space": "PDF points, origin top-left",
+          "layout_may_be_incomplete": true
+        }
+      ],
+      "total_pages": 1,
+      "next_page": null,
+      "partial": false,
+      "warnings": []
+    }
+  }
+]

@@ -1,0 +1,16 @@
+[
+  {
+    "file": "quick.msg",
+    "fact": false,
+    "error": "format_worker_not_configured:msg",
+    "version": "0.10.1",
+    "elapsed_ms": 54
+  },
+  {
+    "file": "Simple.xlsb",
+    "fact": false,
+    "error": "format_worker_not_configured:xlsb",
+    "version": "0.10.1",
+    "elapsed_ms": 0
+  }
+]

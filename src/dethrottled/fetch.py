@@ -45,7 +45,7 @@ from urllib.parse import urljoin, urlparse
 
 import requests
 
-from . import __version__
+from . import __version__, workers
 from .challenges import classify as challenge_kind
 from .content import decode_html, page_details, short_text
 
@@ -1048,14 +1048,14 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
             compatible = compatible and (acquisition.get("render_delay") or 0) >= (
                 _READ_OPTIONS.get().get("render_delay", 0.5))
         compatible = compatible and acquisition.get("layout_worker_configured", False) == bool(
-            os.getenv("DETHROTTLED_LAYOUT_WORKER_URL"))
+            workers.endpoint("layout"))
         # Old archive XML / flat scan OCR must not hide newly enabled readers.
         if urlparse(url).path.lower().endswith((".msg", ".xlsb")):
             compatible = compatible and acquisition.get("format_worker_configured", False) == bool(
-                os.getenv("DETHROTTLED_FORMAT_WORKER_URL"))
+                workers.endpoint("formats"))
         scanned = any("ocr" in page.get("method", "")
                       for page in (hit or {}).get("extraction", {}).get("pages", []))
-        if scanned and os.getenv("DETHROTTLED_LAYOUT_WORKER_URL"):
+        if scanned and workers.endpoint("layout"):
             compatible = compatible and acquisition.get("scan_layout_revision") == 1
         if hit is not None and compatible:
             if hit.get("reason", "").startswith("thin, best available"):
@@ -1154,9 +1154,9 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
                               "document_mode": _READ_OPTIONS.get().get("document_mode", "auto"),
                               "scan_layout_revision": 1,
                               "format_worker_configured": bool(
-                                  os.getenv("DETHROTTLED_FORMAT_WORKER_URL")),
+                                  workers.endpoint("formats")),
                               "layout_worker_configured": bool(
-                                  os.getenv("DETHROTTLED_LAYOUT_WORKER_URL"))}
+                                  workers.endpoint("layout"))}
         out.setdefault("retrieved_at", datetime.now(timezone.utc).isoformat())
         out.setdefault("cache_age_seconds", 0)
         out.setdefault("content_chars", len(out.get("text", "")))

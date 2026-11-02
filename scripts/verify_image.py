@@ -23,6 +23,8 @@ import shutil
 import subprocess
 import sys
 import zipfile
+from importlib import metadata
+from pathlib import Path
 
 FAILURES = []
 
@@ -42,6 +44,20 @@ def check(label, fn, required=True):
 
 
 def main():
+    def pinned_runtime():
+        pins = Path('/app/requirements/docker-py312.txt').read_text().splitlines()
+        count = 0
+        for line in pins:
+            if not line or line.startswith('#'):
+                continue
+            name, expected = line.split('==')
+            actual = metadata.version(name)
+            if actual != expected:
+                raise RuntimeError(f'{name}: expected {expected}, observed {actual}')
+            count += 1
+        return f'{count} declared runtime versions match'
+
+    check('Docker runtime version pins', pinned_runtime)
     print("PYTHON DEPENDENCIES")
     for module in ("requests", "feedparser", "ddgs", "trafilatura",
                    "resiliparse", "selectolax", "fastapi", "uvicorn",
@@ -93,9 +109,10 @@ def main():
           lambda: rank.available()["corpus"] or (_ for _ in ()).throw(
               RuntimeError("embedding model missing")))
 
-    def embed_inference():
+    def embed_inference(model_name="minilm"):
         from dethrottled.corpus import embed
-        vector = embed(["An isolated image can embed this sentence."])[0]
+        vector = embed(["An isolated image can embed this sentence."],
+                       model_name=model_name, query=True)[0]
         if len(vector) != 384:
             raise RuntimeError("expected 384 dimensions, got %d" % len(vector))
         norm = sum(value * value for value in vector)
@@ -104,6 +121,7 @@ def main():
         return "384-dimensional unit vector"
 
     check("corpus embedding inference", embed_inference)
+    check("multilingual embedding inference", lambda: embed_inference("e5"))
 
     print("\nDOCUMENT FORMATS (parsed from bytes built here)")
     from dethrottled import documents as docs

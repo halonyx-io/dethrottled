@@ -82,4 +82,5 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(body.encode())
 
 
-ThreadingHTTPServer(("0.0.0.0", 8099), Handler).serve_forever()
+if __name__ == "__main__":
+    ThreadingHTTPServer(("0.0.0.0", 8099), Handler).serve_forever()

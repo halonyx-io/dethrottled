@@ -9,6 +9,8 @@ search then fetch selected URLs, or research for a multi-source evidence bundle.
 is optional reusable evidence, never a compulsory first step. fetch automatically tries
 transport/format/OCR recovery and bounded content recovery. When configured, Outlook
 MSG and XLSB use the local format fallback; scanned PDF tables escalate to OCR layout.
+Compose includes the format reader and discovers started speech/layout workers automatically.
+An unready model worker with initialization=first_use_download downloads weights on first use.
 Corpus combines English and multilingual indexes; English sources can answer Chinese,
 Malay or French queries, but an empty result is not evidence of absence. Set recovery=manual for
 explicit control; explicit render=never and OCR choices are respected.

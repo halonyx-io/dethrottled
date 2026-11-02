@@ -1,36 +1,6 @@
-# Crawl4AI configuration for the dethrottled compose stack.
-#
-# A tuned copy of the image default with THREE values changed. Everything else
-# is exactly what the pinned image ships, so a diff against the image's own
-# /app/config.yml shows only what was chosen on purpose.
-#
-# The changes all say the same thing: this is meant to run on a small machine
-# that is doing other work. The upstream defaults assume a host given over to
-# crawling.
-#
-#   crawler.pool.max_pages      40 -> 8     forty concurrent Chromium tabs is
-#                                           not something a single-board
-#                                           machine can afford, and nothing
-#                                           here fetches forty pages at once.
-#   crawler.pool.idle_ttl_sec  300 -> 180   how long a pooled browser sits
-#                                           unused before the janitor closes
-#                                           it. Shorter returns the memory
-#                                           sooner on a shared box.
-#   crawler.memory_threshold_percent
-#                             95.0 -> 80.0  the point at which the pool starts
-#                                           shedding browsers. At 95% on a
-#                                           shared host, everything ELSE on the
-#                                           machine is already in trouble before
-#                                           Crawl4AI reacts.
-#
-# Not tunable, and worth knowing: Crawl4AI keeps one PERMANENT browser alive
-# from startup to shutdown. It sits outside the pool, so the janitor never
-# reaps it and idle_ttl_sec does not apply to it -- expect one warm browser for
-# the life of the container, whatever these numbers say.
-#
-# Pinned image, pinned config: this tracks the crawl4ai digest pinned in
-# docker-compose.yml. Moving that pin means re-diffing this against the new
-# image default.
+# Upstream Crawl4AI 0.9.5 config with three capacity changes:
+# pool max_pages 40 -> 8; idle_ttl_sec 300 -> 180; memory threshold 95 -> 80.
+# Keep this aligned with the pinned renderer and verify changes with the release gates.
 
 # Application Configuration
 app:
@@ -71,7 +41,7 @@ redis:
 # (the pre-hardening behavior), so you can relax or disable each one.
 limits:
   max_body_bytes: 10485760  # 10 MiB request body cap (413 if exceeded); 0 = unbounded
-  max_pages: 100            # deep-crawl page budget clamp (defense in depth)
+  max_pages: 100            # deep-crawl page budget clamp (deep crawl needs CRAWL4AI_ALLOW_DEEP_CRAWL=true); 0 = no limit
   max_depth: 5              # deep-crawl depth clamp
   wall_clock_s: 300         # per-crawl deadline in seconds (504 on timeout); 0 = no deadline
   queue:                    # background job queue for /crawl/job and /llm/job
@@ -108,7 +78,7 @@ security:
 crawler:
   base_config:
     simulate_user: true
-  memory_threshold_percent: 80.0   # tuned: was 95.0
+  memory_threshold_percent: 80.0
   rate_limiter:
     enabled: true
     base_delay: [1.0, 2.0]
@@ -116,8 +86,16 @@ crawler:
     stream_init: 30.0  # Timeout for stream initialization
     batch_process: 300.0  # Timeout for batch processing
   pool:
-    max_pages: 8                           # tuned: was 40 (GLOBAL_SEM permits)
-    idle_ttl_sec: 180                      # tuned: was 300 (janitor cutoff)
+    max_pages: 8                           # ← GLOBAL_SEM permits
+    idle_ttl_sec: 180                     # ← 30 min janitor cutoff
+    # Pooled browsers are long-lived and reuse one browser context per config.
+    # Real sites leave state in that context (cookies, localStorage, service
+    # workers) which is never cleared, and navigation gets measurably slower as
+    # it builds up. Recycling by pages served bounds it: the context is replaced
+    # inside the same Chromium process, old contexts drain on their own, and it
+    # works under sustained load — unlike the janitor, which only closes *idle*
+    # browsers and so never fires on a busy server. 0 disables. See #2231.
+    max_pages_before_recycle: 200
   browser:
     kwargs:
       headless: true

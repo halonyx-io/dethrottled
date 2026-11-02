@@ -9,6 +9,7 @@ web access, answer correctness or superiority over paid services.
 
 | Scope | Report and raw data | Interpretation |
 |---|---|---|
+| 1.0 release gates | [Evaluation](../evaluations/release/results/2026-11-02/REPORT.md), [method](../evaluations/release/README.md) | Default-stack, fidelity, browser and remote-agent evidence; native CI results and release verification are recorded in the report |
 | Native browser navigation recovery | [0.10.1 comparison](../evaluations/drive-recovery/results/2026-11-02/REPORT.md), [method](../evaluations/drive-recovery/README.md) | Reddit listing/thread recovered with native controls; no additional Crunchbase/G2 reads; single-host observations |
 | Autonomous read loop and GPU | [0.10.0 comparison](../evaluations/read-loop/results/2026-11-02/REPORT.md), [method](../evaluations/read-loop/README.md) | Five controlled recoveries 0/5 to 5/5; scoped drive handoff; AMD and software pixel checks; no new hostile-source win; Booking assertion coverage lower |
 | Mixed content and task evidence | [0.9.2 comparison](../evaluations/content-validity/results/2026-11-01/REPORT.md), [method](../evaluations/content-validity/README.md) | 6/8 labelled long-banner cases surfaced versus 0/8; all 18 fixture facts retained; 32 live observations, no new hostile-source win |

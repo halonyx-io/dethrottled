@@ -324,3 +324,31 @@ def test_backfill_native_child_is_supervised(mode):
     )
     if mode == "complete":
         assert job.state["passages"] == 291
+
+
+@pytest.mark.parametrize("lose_number", [False, True])
+def test_layout_length_guard_does_not_count_appended_native_table_twice(monkeypatch, lose_number):
+    pymupdf = pytest.importorskip("pymupdf")
+    from dethrottled import layout
+    data = (Path(__file__).resolve().parents[1] /
+            "evaluations/dependable/fixtures/table.pdf").read_bytes()
+    with pymupdf.open(stream=data, filetype="pdf") as pdf:
+        native = pdf[0].get_text()
+    candidate = ("## Page 1\nAllocation table. Verified source units: tonnes.\n"
+                 "| Region | 2024 | 2025 |\n| ALPHA | 17 | 7341 |\n| BETA | 291 | 420 |")
+    if lose_number:
+        candidate = candidate.replace("7341", "")
+    class Response:
+        def raise_for_status(self):
+            pass
+        def json(self):
+            return {"status": "success", "text": candidate, "tables": [{}], "tables_total": 1}
+    monkeypatch.setenv("DETHROTTLED_LAYOUT_WORKER_URL", "http://layout")
+    monkeypatch.setattr(layout.requests, "post", lambda *a, **k: Response())
+    text, meta = layout.read_pdf(data, native, {"pages": [{"page": 1, "method": "text"}],
+        "warnings": []}, 12000, {"document_mode": "layout"})
+    if lose_number:
+        assert "7341" in text and "layout_unavailable_or_incomplete; native_parser_used" in (
+            meta["warnings"])
+    else:
+        assert meta["parser"] == "docling" and text == candidate

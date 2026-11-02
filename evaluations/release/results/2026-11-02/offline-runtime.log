@@ -1,0 +1,53 @@
+  Docker runtime version pins        ok    71 declared runtime versions match
+PYTHON DEPENDENCIES
+  requests                           ok
+  feedparser                         ok
+  ddgs                               ok
+  trafilatura                        ok
+  resiliparse                        ok
+  selectolax                         ok
+  fastapi                            ok
+  uvicorn                            ok
+  pymupdf                            ok
+  openpyxl                           ok
+  docx                               ok
+  pptx                               ok
+  xlrd                               ok
+  odf                                ok
+  ebooklib                           ok
+  striprtf                           ok
+  youtube_transcript_api             ok
+  numpy                              ok
+  onnxruntime                        ok
+  tokenizers                         ok
+  curl_cffi                          ok
+
+SYSTEM BINARIES
+  tesseract                          ok    tesseract 5.5.0
+  tesseract language data            ok    languages: chi_sim,chi_tra,eng,msa,osd
+  curl (healthcheck uses it)         ok    /usr/bin/curl
+
+DECLARED CAPABILITIES
+  extraction cascade                 ok    trafilatura, resiliparse, selectolax
+  bm25                               ok    True
+  corpus embedding model             ok    True
+  corpus embedding inference         ok    384-dimensional unit vector
+  multilingual embedding inference   ok    384-dimensional unit vector
+
+DOCUMENT FORMATS (parsed from bytes built here)
+  detect xlsx                        ok    True
+  detect docx                        ok    True
+  detect pptx                        ok    True
+  detect odt                         ok    True
+  detect ods                         ok    True
+  detect odp                         ok    True
+  detect epub                        ok    True
+  detect rtf                         ok    True
+  all readers present                ok    10 readers
+  pdf engine                         ok    pymupdf works
+
+NO HOST LEAKAGE
+  state paths                        ok    data=/data models=/opt/dethrottled/models
+  unprivileged user                  ok    uid 10001
+
+image is self-contained: every required dependency is inside it

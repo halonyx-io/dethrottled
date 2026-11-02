@@ -1,15 +1,15 @@
 """Explicitly supported broad-format reads through an optional local Apache Tika worker."""
 
-import os
 from pathlib import PurePosixPath
 
 import requests
+
+from .workers import endpoint
 
 MIMES = {
     ".msg": "application/vnd.ms-outlook",
     ".xlsb": "application/vnd.ms-excel.sheet.binary.macroEnabled.12",
 }
-
 
 def kind(data, name):
     extension = PurePosixPath(name.split("?")[0].lower()).suffix
@@ -21,7 +21,7 @@ def kind(data, name):
 
 
 def read(data, kind, limit):
-    worker = os.getenv("DETHROTTLED_FORMAT_WORKER_URL", "").rstrip("/")
+    worker = endpoint("formats")
     if not worker:
         raise ValueError("format_worker_not_configured:" + kind)
     response = requests.post(

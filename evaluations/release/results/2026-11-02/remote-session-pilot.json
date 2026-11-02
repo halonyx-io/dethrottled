@@ -1,0 +1,10 @@
+{
+  "version": "1.0.0rc1",
+  "rest_fact_and_checkpoint_ms": 1628.22,
+  "instructions_match": true,
+  "tools": 20,
+  "native_click_ms": 399.83,
+  "rest_mcp_state_shared": true,
+  "operation_replay": true,
+  "retained_document_forwarded": true
+}

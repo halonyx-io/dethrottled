@@ -1,0 +1,349 @@
+[
+  {
+    "case": "fresh-defaults",
+    "passed": false,
+    "error": "KeyError",
+    "detail": "'formats'",
+    "elapsed_ms": 0.02
+  },
+  {
+    "case": "automatic-alternate",
+    "passed": true,
+    "evidence": {
+      "quality": "ok",
+      "document_retained": true,
+      "read_plan": {
+        "revision": 1,
+        "decisions": [
+          {
+            "action": "publisher_alternate",
+            "reason": "thin",
+            "before_quality": "thin",
+            "quality": "ok",
+            "adopted": true,
+            "acquisition_url": "http://fixture:8099/alternate",
+            "acquisition_attempts": [
+              {
+                "tier": "direct",
+                "reason": "",
+                "outcome": "extracted",
+                "elapsed_ms": 1373.97,
+                "content_assessment": {
+                  "revision": 1,
+                  "text_sha256": "56669231dc7f7d34daefe022bb213af39f4fb5ffea44d38f35990c593b7dec13",
+                  "pollution": "not_assessed",
+                  "completeness": "unknown",
+                  "usable_content": "unverified",
+                  "inspected_chars": 0,
+                  "suspected_chars": 0,
+                  "unflagged_chars": 1489
+                }
+              }
+            ],
+            "elapsed_ms": 1383.36
+          }
+        ],
+        "initial_gap": "thin",
+        "final_gap": "",
+        "answer_verified": false,
+        "stop_reason": "evidence_available",
+        "render_allowed": true,
+        "browser_configured": true,
+        "elapsed_ms": 1383.46,
+        "budget_seconds": 30.0
+      }
+    },
+    "elapsed_ms": 1583.68
+  },
+  {
+    "case": "automatic-lazy",
+    "passed": true,
+    "evidence": {
+      "quality": "ok",
+      "document_retained": true,
+      "read_plan": {
+        "revision": 1,
+        "decisions": [
+          {
+            "action": "browser_inspect",
+            "reason": "thin",
+            "before_quality": "thin",
+            "quality": "thin",
+            "adopted": false,
+            "acquisition_url": "http://fixture:8099/lazy",
+            "elapsed_ms": 146.51
+          },
+          {
+            "action": "scroll",
+            "reason": "observed_scrollable_gap",
+            "before_quality": "thin",
+            "quality": "ok",
+            "adopted": true,
+            "acquisition_url": "http://fixture:8099/lazy",
+            "elapsed_ms": 521.63
+          }
+        ],
+        "initial_gap": "thin",
+        "final_gap": "",
+        "answer_verified": false,
+        "stop_reason": "evidence_available",
+        "render_allowed": true,
+        "browser_configured": true,
+        "elapsed_ms": 685.11,
+        "budget_seconds": 30.0,
+        "browser_session": {
+          "id": "auto-read-838b4a67f7b4786551c4ea4b274e0c33",
+          "allowed_hosts": [
+            "fixture"
+          ],
+          "url": "http://fixture:8099/lazy"
+        }
+      },
+      "same_browser_handoff": true
+    },
+    "elapsed_ms": 2347.5
+  },
+  {
+    "case": "automatic-details",
+    "passed": true,
+    "evidence": {
+      "quality": "ok",
+      "document_retained": true,
+      "read_plan": {
+        "revision": 1,
+        "decisions": [
+          {
+            "action": "browser_inspect",
+            "reason": "thin",
+            "before_quality": "thin",
+            "quality": "thin",
+            "adopted": false,
+            "acquisition_url": "http://fixture:8099/details",
+            "elapsed_ms": 75.16
+          },
+          {
+            "action": "expand_details",
+            "reason": "observed_closed_details",
+            "before_quality": "thin",
+            "quality": "ok",
+            "adopted": true,
+            "acquisition_url": "http://fixture:8099/details",
+            "elapsed_ms": 345.62
+          }
+        ],
+        "initial_gap": "thin",
+        "final_gap": "",
+        "answer_verified": false,
+        "stop_reason": "evidence_available",
+        "render_allowed": true,
+        "browser_configured": true,
+        "elapsed_ms": 433.01,
+        "budget_seconds": 30.0,
+        "browser_session": {
+          "id": "auto-read-838b4a67f7b4786551c4ea4b274e0c33",
+          "allowed_hosts": [
+            "fixture"
+          ],
+          "url": "http://fixture:8099/details"
+        }
+      }
+    },
+    "elapsed_ms": 1113.44
+  },
+  {
+    "case": "automatic-network",
+    "passed": true,
+    "evidence": {
+      "quality": "ok",
+      "document_retained": true,
+      "read_plan": {
+        "revision": 1,
+        "decisions": [
+          {
+            "action": "browser_inspect",
+            "reason": "thin",
+            "before_quality": "thin",
+            "quality": "thin",
+            "adopted": false,
+            "acquisition_url": "http://fixture:8099/network",
+            "elapsed_ms": 55.91
+          },
+          {
+            "action": "network_article",
+            "reason": "unresolved_browser_gap",
+            "before_quality": "thin",
+            "quality": "ok",
+            "adopted": true,
+            "acquisition_url": "http://fixture:8099/data",
+            "elapsed_ms": 9.8
+          }
+        ],
+        "initial_gap": "thin",
+        "final_gap": "",
+        "answer_verified": false,
+        "stop_reason": "evidence_available",
+        "render_allowed": true,
+        "browser_configured": true,
+        "elapsed_ms": 74.57,
+        "budget_seconds": 30.0,
+        "browser_session": {
+          "id": "auto-read-838b4a67f7b4786551c4ea4b274e0c33",
+          "allowed_hosts": [
+            "fixture"
+          ],
+          "url": "http://fixture:8099/network"
+        }
+      }
+    },
+    "elapsed_ms": 1129.78
+  },
+  {
+    "case": "automatic-cookie-seed",
+    "passed": true,
+    "evidence": {
+      "quality": "ok",
+      "document_retained": true,
+      "read_plan": {
+        "revision": 1,
+        "decisions": [],
+        "initial_gap": "",
+        "final_gap": "",
+        "answer_verified": false,
+        "stop_reason": "evidence_available",
+        "render_allowed": true,
+        "browser_configured": true,
+        "elapsed_ms": 0.03,
+        "budget_seconds": 30.0
+      }
+    },
+    "elapsed_ms": 1435.55
+  },
+  {
+    "case": "automatic-cookie-gated",
+    "passed": true,
+    "evidence": {
+      "quality": "ok",
+      "document_retained": true,
+      "read_plan": {
+        "revision": 1,
+        "decisions": [],
+        "initial_gap": "",
+        "final_gap": "",
+        "answer_verified": false,
+        "stop_reason": "evidence_available",
+        "render_allowed": true,
+        "browser_configured": true,
+        "elapsed_ms": 0.02,
+        "budget_seconds": 30.0
+      }
+    },
+    "elapsed_ms": 1469.22
+  },
+  {
+    "case": "automatic-normal",
+    "passed": true,
+    "evidence": {
+      "quality": "ok",
+      "document_retained": true,
+      "read_plan": {
+        "revision": 1,
+        "decisions": [],
+        "initial_gap": "",
+        "final_gap": "",
+        "answer_verified": false,
+        "stop_reason": "evidence_available",
+        "render_allowed": true,
+        "browser_configured": true,
+        "elapsed_ms": 0.05,
+        "budget_seconds": 30.0
+      }
+    },
+    "elapsed_ms": 1534.48
+  },
+  {
+    "case": "poison",
+    "passed": true,
+    "evidence": {
+      "quality": "thin",
+      "fact_not_fabricated": true
+    },
+    "elapsed_ms": 3043.64
+  },
+  {
+    "case": "render-never",
+    "passed": true,
+    "evidence": {
+      "quality": "thin",
+      "fact_not_fabricated": true
+    },
+    "elapsed_ms": 1429.95
+  },
+  {
+    "case": "manual",
+    "passed": true,
+    "evidence": {
+      "quality": "thin",
+      "fact_not_fabricated": true
+    },
+    "elapsed_ms": 1511.15
+  },
+  {
+    "case": "other-caller",
+    "passed": true,
+    "evidence": {
+      "quality": "failed",
+      "fact_not_fabricated": true
+    },
+    "elapsed_ms": 1669.6
+  },
+  {
+    "case": "late-table-retention",
+    "passed": false,
+    "error": "HTTPError",
+    "detail": "HTTP Error 404: Not Found",
+    "elapsed_ms": 1356.66
+  },
+  {
+    "case": "browser-start",
+    "passed": true,
+    "evidence": {
+      "access": {
+        "status": "unknown",
+        "reason": "no_clear_content_signal",
+        "answer_verified": false,
+        "source_complete": false
+      }
+    },
+    "elapsed_ms": 167.26
+  },
+  {
+    "case": "native-frame-action",
+    "passed": true,
+    "evidence": {
+      "fact": true
+    },
+    "elapsed_ms": 80.88
+  },
+  {
+    "case": "native-popup",
+    "passed": true,
+    "evidence": {
+      "fact": true
+    },
+    "elapsed_ms": 486.07
+  },
+  {
+    "case": "native-download",
+    "passed": false,
+    "error": "KeyError",
+    "detail": "'download_b64'",
+    "elapsed_ms": 61.31
+  },
+  {
+    "case": "checkpoint-before-restart",
+    "passed": false,
+    "error": "AssertionError",
+    "detail": "['Error: Frame.evaluate: Frame was detached']",
+    "elapsed_ms": 89.47
+  }
+]

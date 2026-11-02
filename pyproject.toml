@@ -4,14 +4,14 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "dethrottled"
-version = "0.10.1"
+version = "1.0.0"
 description = "Zero-API web search, fetch and extraction. No keys, no quota, no metered pool."
 readme = "README.md"
 license = { text = "MIT" }
 requires-python = ">=3.10"
 keywords = ["search", "scraping", "extraction", "rag", "web", "no-api-key"]
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3.10",
@@ -41,6 +41,12 @@ dependencies = [
     "fastapi>=0.110",
     "uvicorn>=0.27",
 ]
+
+[project.urls]
+Homepage = "https://github.com/halonyx-io/dethrottled"
+Documentation = "https://github.com/halonyx-io/dethrottled/blob/main/docs/README.md"
+Issues = "https://github.com/halonyx-io/dethrottled/issues"
+Changelog = "https://github.com/halonyx-io/dethrottled/releases"
 
 [project.optional-dependencies]
 # Documents as text: PDF, the Office formats, OpenDocument, EPUB and RTF.
