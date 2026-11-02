@@ -471,8 +471,9 @@ def browser_search(query: str, *, max_items: int = 8, cache=None,
         if diagnostics is not None:
             diagnostics.update(status="not_configured", attempts=[])
         return []
+    cache_namespace = "browser-broad-v1" if max_items > 12 else "browser"
     if cache is not None:
-        hit = cache.get("search", "browser", query, max_items)
+        hit = cache.get("search", cache_namespace, query, max_items)
         if hit is not None:
             if diagnostics is not None:
                 diagnostics.update(status="cached", attempts=[])
@@ -507,7 +508,7 @@ def browser_search(query: str, *, max_items: int = 8, cache=None,
                               engine="web-browser-" + str(item.get("engine")
                                   or payload.get("engine") or "unknown")))
         if cache is not None and rows:
-            cache.put("search", "browser", query, max_items, value=rows)
+            cache.put("search", cache_namespace, query, max_items, value=rows)
         return rows
     except (requests.RequestException, ValueError, KeyError, TypeError) as exc:
         if diagnostics is not None and "status" not in diagnostics:
@@ -566,20 +567,31 @@ def web_search(query: str, *, max_items: int = 8, cache=None,
     # Explicit engine selections keep their old meaning for callers that
     # benchmark or request particular DDGS backends.
     if engines is None:
+        cheap = []
         if os.environ.get("DETHROTTLED_CHEAP_DISCOVERY", "0") == "1":
             direct = {}
-            found = tls_search(query, max_items=max_items, cache=cache,
+            cheap = tls_search(query, max_items=max_items, cache=cache,
                                diagnostics=direct, worker=BROWSER_SEARCH_URL)
             if diagnostics is not None:
                 diagnostics["direct"] = direct
-            if found:
+            if cheap and (max_items <= 12 or len(cheap) >= max_items):
                 if diagnostics is not None:
                     diagnostics.update(status=direct.get("status"), attempts=[])
-                return found
+                return cheap
         found = browser_search(query, max_items=max_items, cache=cache,
                                diagnostics=diagnostics)
-        if found:
-            return found
+        merged, seen = [], set()
+        for row in [*cheap, *found]:
+            key = canonical_url(row.get("url", ""))
+            if key and key not in seen:
+                seen.add(key)
+                merged.append(row)
+        if max_items > 12 and diagnostics is not None:
+            diagnostics["breadth"] = {"requested": max_items, "cheap_count": len(cheap),
+                "browser_count": len(found), "returned_count": min(len(merged), max_items),
+                "status": "fulfilled" if len(merged) >= max_items else "partial"}
+        if merged:
+            return merged[:max_items]
     try:
         from ddgs import DDGS
     except ImportError:

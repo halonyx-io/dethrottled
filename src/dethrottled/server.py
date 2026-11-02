@@ -524,8 +524,10 @@ def _attempts(meta: dict) -> list:
         rows.append({"engine": "tls-ddg-lite", "count": direct.get("count", 0),
                      "status": direct.get("status"), "reason": direct.get("reason"),
                      "elapsed_ms": direct.get("elapsed_ms", 0), "unresponsive": []})
-    if browser and browser.get("attempts"):
-        rows.append({"engine": "browser-search", "count": 0,
+    if browser and (browser.get("attempts") or browser.get("breadth")):
+        rows.append({"engine": "browser-search",
+                     "count": (browser.get("breadth") or {}).get("browser_count", 0),
+                     **({"breadth": browser["breadth"]} if browser.get("breadth") else {}),
                      "status": browser.get("status", "unknown"),
                      "elapsed_ms": browser.get("elapsed_ms", 0),
                      "queue_ms": browser.get("queue_ms", 0),

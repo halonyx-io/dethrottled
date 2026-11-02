@@ -54,3 +54,9 @@ reason. Smaller requests keep the first-usable-engine path and do not paginate.
 The API forwards the requested count; upstream availability and the finite page/time
 budgets can still produce fewer results than requested. Use facets, refined queries
 or deliberate browser interaction when further discovery is needed.
+
+Cheap TLS discovery also respects broad intent: when a request above 12 results
+gets fewer cheap results than requested, the API invokes the broader browser path
+automatically and merges unique URLs. It retains cheap results if browser recovery
+fails. Search diagnostics expose `breadth` counts and fulfilled/partial status;
+small usable cheap requests still return immediately.
