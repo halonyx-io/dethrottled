@@ -43,3 +43,14 @@ limits, concurrent-browser limits and timeouts protect useful work from exhausti
 the service. They remain separate from evidence-size and discovery ceilings.
 
 [Documentation home](README.md) · [Agent integration](AGENT-UPGRADES.md) · [Configuration](CONFIGURATION.md)
+
+## Broad browser discovery
+
+Browser search requests above 12 results collect usable results from the existing
+engines, deduplicate URLs and follow same-origin next-page controls when available.
+Each engine has at most five pages within its existing six-second service budget.
+A blocked or failed later page retains the earlier usable results and reports its
+reason. Smaller requests keep the first-usable-engine path and do not paginate.
+The API forwards the requested count; upstream availability and the finite page/time
+budgets can still produce fewer results than requested. Use facets, refined queries
+or deliberate browser interaction when further discovery is needed.

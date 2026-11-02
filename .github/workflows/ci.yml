@@ -170,6 +170,7 @@ jobs:
             sleep 2
           done
           test "$(docker inspect -f '{{.State.Health.Status}}' dethrottled-browser-ci)" = healthy
+          docker exec dethrottled-browser-ci python /app/verify_search.py
           docker rm -f dethrottled-browser-ci
 
       - name: Fresh default Compose functional gates, no GPU or dotenv

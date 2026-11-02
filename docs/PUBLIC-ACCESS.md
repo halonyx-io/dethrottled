@@ -51,7 +51,7 @@ public domains before source retrieval begins.
 
 ## Version identity and SDK upgrades
 
-MCP initialization advertises the Dethrottled release version, currently **1.1.0**.
+MCP initialization advertises the Dethrottled release version, currently **1.1.1**.
 The adapter's `/health` reports `version` separately from `sdk_version` (**1.30.0**).
 It also reports backend identity as `match`, `mismatch` or `unavailable`. The bridge
 checks at startup and refreshes on health requests after a ten-second cache.

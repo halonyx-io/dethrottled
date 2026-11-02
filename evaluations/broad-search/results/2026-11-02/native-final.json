@@ -1,0 +1,1 @@
+{"passed": true, "per_page_rows_retained": 50, "small_request_rows": 1, "small_request_first_page_only": true, "broad_unique_rows": 50, "broad_engines": 2, "max_pages_per_engine": 5, "page_limit_earlier_rows": 40, "partial_first_page_rows": 30, "blocked_next_page_retained_first_page": true}
