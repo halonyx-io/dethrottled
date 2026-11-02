@@ -452,10 +452,9 @@ def reputable_sweep(query: str, domains: list, *, max_per_domain: int = 3,
 # second gap between requests -- so those are hard blocks, not rate limits, and
 # no amount of politeness recovers them. They are not in the default list.
 #
-# duckduckgo and bing are the two that answer reliably, and duckduckgo at 96ms
-# is by a distance the fastest source in the whole stack. The rest are left
-# available but off, because an engine that fails two queries in three costs a
-# timeout every time it is asked.
+# The figures above are historical availability observations, not current
+# relevance guarantees. Default fallback is DDG only; explicitly configured
+# other backends receive the supplementary three-choice budget.
 WEB_ENGINES = [e.strip() for e in os.environ.get(
     "DETHROTTLED_WEB_ENGINES", "duckduckgo").split(",") if e.strip()]
 
@@ -761,13 +760,10 @@ def search(query: str, *, max_items: int = 8, categories: str = "",
     # Google News is discovery only: resolve a bounded number of headlines it
     # surfaced that nothing else did, then drop the rest rather than emit URLs
     # that cannot be fetched.
-    # search() returns at most 2*max_items rows. With a full, non-junk pool
-    # and no preferred domains, Google News can only append rows beyond that
-    # return window. Avoid a headline fetch and up to four Bing resolutions
-    # that no caller could see. Keep the path for thin or preference-ranked
-    # pools, where it can genuinely add coverage.
-    usable_count = sum(_domain(r.get("url", "")) not in JUNK_DOMAINS for r in merged)
-    if "news" not in sources or (usable_count >= max_items * 2 and not prefer_domains):
+    # Do not resolve more headlines when the bounded visible menu is full.
+    usable_count = len(bounded_results(
+        [r for r in merged if _domain(r.get("url", "")) not in JUNK_DOMAINS], max_items))
+    if "news" not in sources or (usable_count >= max_items and not prefer_domains):
         per_source["gnews-resolved"] = ("not_requested" if "news" not in sources
                                         else "skipped_full_pool")
     else:
@@ -813,9 +809,11 @@ def search(query: str, *, max_items: int = 8, categories: str = "",
     # must not promote a weak supplementary index into the first trusted choices.
     dropped = 0
 
+    menu = bounded_results(merged, max_items)
     meta = {
-        "ok": bool(merged),
-        "count": len(merged),
+        "ok": bool(menu),
+        "count": len(menu),
+        "candidate_pool_count": len(merged),
         # Recorded rather than omitted. A source that is switched off and a
         # source that answered with nothing are identical in a count of zero,
         # and a caller reading this to decide whether an empty result is
@@ -833,8 +831,8 @@ def search(query: str, *, max_items: int = 8, categories: str = "",
     }
     if log_fn:
         log_fn("    free-search '%s': %d results %s"
-               % (query[:44], len(merged), per_source))
-    return bounded_results(merged, max_items), meta
+               % (query[:44], len(menu), per_source))
+    return menu, meta
 
 
 # A probe query, not a real one. It must return results every day of the year
