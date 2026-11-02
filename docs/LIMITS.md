@@ -33,6 +33,10 @@ site frontier. If a known document is truncated, use `read_document` with
 agent needs to examine more context together; an extraction may still be partial
 because of parser, file, page, model or publisher limits.
 
+Research prefers publisher diversity, then fills remaining capacity with additional
+primary documents when fewer publishers are available. It does not discard every
+third document from the same publisher. Duplicate content is still assessed.
+
 Keep batches bounded and continue them. A larger batch or more workers does not
 make an upstream block disappear. Shared admission, finite queues, parser input
 limits, concurrent-browser limits and timeouts protect useful work from exhausting

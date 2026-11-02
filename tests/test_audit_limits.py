@@ -1,4 +1,5 @@
 """Broader requested coverage must survive the complete core request path."""
+import pytest
 from fastapi.testclient import TestClient
 
 from dethrottled import research, server
@@ -19,14 +20,16 @@ def test_search_returns_requested_late_sources(monkeypatch):
     assert client.post('/search', json={'query': 'allocation', 'limit': 51}).status_code == 422
 
 
-def test_research_keeps_thirty_sources_and_all_explicit_facets(monkeypatch):
+@pytest.mark.parametrize("same_publisher", [False, True])
+def test_research_keeps_thirty_sources_and_all_explicit_facets(monkeypatch, same_publisher):
     monkeypatch.setattr(research, 'public_url', lambda url: True)
     monkeypatch.setattr(server, 'index_fetched', lambda *args: 0)
     observed_queries = []
 
     def ranked(body):
         observed_queries.append(body.query)
-        return ([{'url': f'https://source{i}.example/report', 'title': f'Allocation {i}'}
+        return ([{'url': (f'https://official.example/report/{i}' if same_publisher
+                          else f'https://source{i}.example/report'), 'title': f'Allocation {i}'}
                  for i in range(30)], {'elapsed_ms': 1}, body.limit)
 
     def extracted(url, max_chars, **options):
@@ -42,3 +45,12 @@ def test_research_keeps_thirty_sources_and_all_explicit_facets(monkeypatch):
     assert len(result['sources']) == 30
     assert set(observed_queries) == {'Allocation evidence?', *(f'facet {i}' for i in range(10))}
     assert all('7341 tonnes' in row['content'] for row in result['sources'])
+
+
+def test_publisher_diversity_is_preferred_without_discarding_primary_docs(monkeypatch):
+    monkeypatch.setattr(research, 'public_url', lambda url: True)
+    primary = [{'url': f'https://official.example/{i}'} for i in range(8)]
+    other = {'url': 'https://independent.example/report'}
+    rows = research.select_sources([[*primary, other]], 6)
+    assert [row['url'] for row in rows[:3]] == [primary[0]['url'], primary[1]['url'], other['url']]
+    assert len(rows) == 6 and rows[-1]['url'] == primary[4]['url']

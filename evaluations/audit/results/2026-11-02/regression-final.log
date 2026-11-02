@@ -1,14 +1,14 @@
 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
 ........................................................................ [ 10%]
 ........................................................................ [ 21%]
-......................ssssssssssssss.................................... [ 32%]
+........................ssssssssssssss.................................. [ 32%]
 ........................................................................ [ 43%]
-............s........................................................... [ 54%]
+..............s......................................................... [ 53%]
 ........................................................................ [ 64%]
 ........................................................................ [ 75%]
 ........................................................................ [ 86%]
 ........................................................................ [ 97%]
-.................                                                        [100%]
+...................                                                      [100%]
 =============================== warnings summary ===============================
 src/dethrottled/server.py:750
   /work/src/dethrottled/server.py:750: DeprecationWarning: 
@@ -43,4 +43,4 @@ src/dethrottled/server.py:756
     from starlette.testclient import TestClient as TestClient  # noqa
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-650 passed, 15 skipped, 2 deselected, 5 warnings in 20.36s
+652 passed, 15 skipped, 2 deselected, 5 warnings in 21.97s

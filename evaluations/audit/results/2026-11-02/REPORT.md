@@ -35,8 +35,11 @@ These are request capacities, not promises that every upstream provides enough
 material or that every source becomes readable.
 
 Controlled core requests retain the 50th search result and 30 research sources
-across all eleven facets. The [regression log](regression-final.log) reports
-**650 passed, 15 skipped and two network tests deselected**. FastAPI's existing
+across all eleven facets, both across publishers and from one publisher. An
+additional hard two-per-publisher selection cap is replaced by a diversity
+preference: consider diverse publishers first, then fill remaining capacity
+with additional primary documents. URL/content deduplication remains. The [regression log](regression-final.log) reports
+**652 passed, 15 skipped and two network tests deselected**. FastAPI's existing
 startup/shutdown-event deprecations remain warnings, not silent failures.
 
 The offline adapter harness uses a real MCP client/server and deterministic local
