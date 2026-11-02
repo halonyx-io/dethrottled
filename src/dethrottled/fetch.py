@@ -1328,7 +1328,9 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
         if payload.get("browser_recovery"):
             candidate["browser_recovery"] = payload["browser_recovery"]
         pending = (payload.get("browser_recovery") or {}).get("document_ready_state") == "loading"
-        if candidate.get("content_type") == "html" and (pending or payload.get("clipped")):
+        visible_capture = candidate.get("extraction", {}).get("method") == "browser_visible_text"
+        if candidate.get("content_type") == "html" and (
+                pending or (payload.get("clipped") and not visible_capture)):
             partial_reason = "browser_document_loading" if pending else "html_capture_limit"
             candidate["extraction"] = {**candidate.get("extraction", {}),
                                        "partial": True, "partial_reason": partial_reason}
@@ -1455,6 +1457,8 @@ def _headed_read(url: str, backend: str) -> tuple:
                 html = html.get("html", "")
             headers = navigation.get("challenge_headers") if polls == 0 else None
             vendor = challenge_kind(html, headers)
+            if vendor == 'login_required':
+                return {}, 'headed_login_required', data.get('final', {}).get('url', url)
             loading = (data["steps"][-1].get("document_ready_state") == "loading"
                        and len(short_text(html).strip()) < 40)
             if not vendor and not loading:
@@ -1467,6 +1471,27 @@ def _headed_read(url: str, backend: str) -> tuple:
                           read])
             polls += 1
             loading_polls += int(loading and not vendor)
+        visible = {}
+        visible_error = None
+        if data['steps'][-1].get('truncated'):
+            # Large application DOMs can spend the entire HTML cap on scripts
+            # and navigation. Retain actual rendered evidence rather than
+            # treating that prefix as a complete read.
+            try:
+                rendered = drive([{'action': 'text', 'selector': 'body', 'max_chars': 120000}])
+            except (requests.RequestException, ValueError, _HeadedReadFailure) as exc:
+                rendered = {'steps': [{}]}
+                visible_error = type(exc).__name__
+            snapshot = rendered['steps'][-1]
+            text = snapshot.get('data', '')
+            if isinstance(text, str) and len(text.strip()) >= 220 and not challenge_kind(text):
+                visible = {'text': text, 'content_type': 'html',
+                           'extraction': {'method': 'browser_visible_text',
+                               'partial': bool(snapshot.get('truncated')),
+                               'html_capture_partial': True},
+                           'warnings': ['Rendered visible-text fallback; may include '
+                                        'navigation, ads and related content. '
+                                        'Source completeness remains unverified.']}
         # Checkpoints retain same-browser state across worker restarts. A failed
         # checkpoint must not discard acquired evidence or export credentials.
         checkpointed = True
@@ -1474,9 +1499,10 @@ def _headed_read(url: str, backend: str) -> tuple:
             drive([{"action": "checkpoint"}])
         except (requests.RequestException, ValueError):
             checkpointed = False
-        return {"html": html,
+        return {**visible, "html": html,
                 "clipped": bool(data["steps"][-1].get("truncated")),
                 "browser_recovery": {
+            "visible_text_error": visible_error,
             "restored_from_checkpoint": restored,
             "challenge_polls": polls - loading_polls, "loading_polls": loading_polls,
             "document_ready_state": data["steps"][-1].get("document_ready_state"),

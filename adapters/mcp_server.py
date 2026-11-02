@@ -257,6 +257,9 @@ Use drive for interactive pages, exports or evidence unavailable to reading: nav
 snapshot, inspect selectors, then act. Omit allowed_hosts to derive it from validated
 navigation URLs, or supply hostnames without ports. download captures a file from a
 download control. Never navigate directly to an attachment expecting a normal HTML UI.
+Drive access.status distinguishes observed content, challenges and login walls; ok
+reports step execution. Reddit navigation seeds its cookie-support preference only
+when absent and waits briefly for real post DOM. Existing preference values remain.
 Reuse the returned session.id; use operation_id for retryable actions in a named session.
 Never blindly repeat an action with an unknown outcome. Close sessions when finished.
 Use view_document_image on PDFs/images to check OCR, charts, layout

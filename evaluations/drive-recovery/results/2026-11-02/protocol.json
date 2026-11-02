@@ -1,0 +1,25 @@
+{
+  "cases": [
+    [
+      "reddit-thread",
+      "https://www.reddit.com/r/programming/comments/1xl8d57/jepsen_on_particledb_we_tested_versions_114/"
+    ],
+    [
+      "reddit-listing",
+      "https://www.reddit.com/r/programming/"
+    ],
+    [
+      "python",
+      "https://docs.python.org/3/library/sqlite3.html"
+    ],
+    [
+      "crunchbase",
+      "https://www.crunchbase.com/organization/openai"
+    ],
+    [
+      "g2",
+      "https://www.g2.com/products/notion/reviews"
+    ]
+  ],
+  "method": "Same candidate browser image/GPU configuration; recovery auto versus off; fresh sessions; no explicit wait; original action executor and scope guards. One live observation per case/engine; not a general success rate."
+}

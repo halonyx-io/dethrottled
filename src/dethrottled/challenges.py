@@ -13,6 +13,7 @@ VENDORS = {
 }
 PROMPTS = (
     "verification required",
+    "prove your humanity",
     "please wait while we verify",
     "verify you are human",
     "verifying you are human",
@@ -39,6 +40,16 @@ def classify(body, headers=None):
     visible = " ".join(visible.split()).lower()
     title = re.search(r"<title[^>]*>(.*?)</title>", lower, re.S)
     title = " ".join(title[1].split()) if title else ""
+    # A specific observed login gate, not login links embedded in a real page.
+    plain = re.sub(r"\[[^\]]*\]\([^)]*\)", " ", visible)
+    plain = re.sub(r"[\s#]+", " ", plain).strip()
+    if (len(visible) < 3000
+            and (plain.startswith(("log in to use old reddit",
+                                   "skip to main content log in to use old reddit"))
+                 or (title == "welcome to reddit"
+                     and "log in to use old reddit" in plain[:400]))
+            and "accounts are required to access old reddit" in plain[:700]):
+        return "login_required"
     # Active challenge markup plus a small interstitial, not ordinary JS detection
     # scripts embedded in full articles or documentation about bot defenses.
     brief = len(visible) < 1000
@@ -51,7 +62,8 @@ def classify(body, headers=None):
         )
     )
     starts_prompt = visible.startswith(PROMPTS)
-    titled = title.startswith(("just a moment", "verification required", "security check"))
+    titled = title.startswith(("just a moment", "verification required", "security check",
+                                  "reddit - prove your humanity"))
     # Observed Expedia wall: neither HTTP 429 nor "human side" alone suffices.
     if (brief and visible.startswith("show us your human side")
             and "can't tell if you're a human or a bot" in visible):

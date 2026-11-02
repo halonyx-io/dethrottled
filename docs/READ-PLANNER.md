@@ -15,6 +15,21 @@ flowchart TD
     C -->|No eligible action or budget spent| F[Return partial evidence and next actions]
 ```
 
+## Browser evidence when HTML is capped
+
+Large application pages can exhaust the HTML capture limit before reaching their
+article or comments. A truncated headed capture now reads the same live page's
+visible body text, preserving the original HTML provenance. The planner can also
+use visible text when HTML is partial or yields little prose. This adds no new
+browser engine or paid service. Visible text may include navigation, ads and
+related material; warnings state this explicitly. A complete text snapshot does
+not establish complete source coverage. `html_capture_partial` describes the HTML
+capture independently from the visible text's `partial` flag.
+
+The browser uses the same bounded navigation recovery as manual [drive](DRIVE.md).
+The existing acquisition ladder selects it automatically when eligible; callers
+can continue the returned scoped browser session for native interactions.
+
 ## What selects an action
 
 | Observation | Eligible recovery |

@@ -1,0 +1,1199 @@
+[
+  {
+    "case": "reddit-thread",
+    "engine": "control",
+    "elapsed_ms": 231.3,
+    "http_status": 200,
+    "content_chars": 240,
+    "title_support": false,
+    "comment_support": false,
+    "result": {
+      "ok": true,
+      "access": {
+        "status": "challenge",
+        "reason": "observed_verification_interstitial",
+        "answer_verified": false,
+        "source_complete": false
+      },
+      "navigation_recovery": null,
+      "steps": [
+        {
+          "action": "goto",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 86,
+          "data": {
+            "access": {
+              "status": "challenge",
+              "reason": "observed_verification_interstitial",
+              "answer_verified": false,
+              "source_complete": false
+            },
+            "url": "https://www.reddit.com/r/programming/comments/1xl8d57/jepsen_on_particledb_we_tested_versions_114/",
+            "status": 200,
+            "wait_until": "domcontentloaded",
+            "challenge_headers": {}
+          }
+        },
+        {
+          "action": "count",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 20,
+          "data": 0
+        },
+        {
+          "action": "text",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 28,
+          "content_chars": 240,
+          "truncated": false,
+          "evidence": {
+            "chars": 240,
+            "sha256": "92a6e680cba08274dd85fc6719c6cfa1ded40ae62affd8058705f37cfc48d6dc"
+          }
+        }
+      ],
+      "final": {
+        "url": "https://www.reddit.com/r/programming/comments/1xl8d57/jepsen_on_particledb_we_tested_versions_114/",
+        "title": "Reddit - Prove your humanity"
+      },
+      "session": {
+        "id": "comparison-ff1e5e404bda4e5b",
+        "persistent": true,
+        "closed": false,
+        "ttl_seconds": 1800,
+        "allowed_hosts": [
+          "www.reddit.com"
+        ],
+        "restored_from_checkpoint": false
+      },
+      "canary_matches": [],
+      "service_s": 0.138
+    }
+  },
+  {
+    "case": "reddit-thread-close",
+    "engine": "control",
+    "elapsed_ms": 7.45,
+    "http_status": 200,
+    "content_chars": 0,
+    "title_support": false,
+    "comment_support": false,
+    "result": {
+      "ok": true,
+      "steps": [],
+      "session": {
+        "id": "comparison-ff1e5e404bda4e5b",
+        "persistent": true,
+        "closed": true
+      },
+      "canary_matches": [],
+      "service_s": 0.0
+    }
+  },
+  {
+    "case": "reddit-thread",
+    "engine": "candidate",
+    "elapsed_ms": 1901.6,
+    "http_status": 200,
+    "content_chars": 11029,
+    "title_support": true,
+    "comment_support": true,
+    "result": {
+      "ok": true,
+      "access": {
+        "status": "content_observed",
+        "reason": "visible_text_present",
+        "answer_verified": false,
+        "source_complete": false
+      },
+      "navigation_recovery": {
+        "name": "reddit_cookie_preference",
+        "cookie_added": true,
+        "existing_preference_preserved": false,
+        "settle_ms": 5000,
+        "settled": true,
+        "elapsed_ms": 1340.37
+      },
+      "steps": [
+        {
+          "action": "goto",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 1412,
+          "data": {
+            "access": {
+              "status": "content_observed",
+              "reason": "visible_text_present",
+              "answer_verified": false,
+              "source_complete": false
+            },
+            "recovery": {
+              "name": "reddit_cookie_preference",
+              "cookie_added": true,
+              "existing_preference_preserved": false,
+              "settle_ms": 5000,
+              "settled": true,
+              "elapsed_ms": 1340.37
+            },
+            "url": "https://www.reddit.com/r/programming/comments/1xl8d57/jepsen_on_particledb_we_tested_versions_114/",
+            "status": 200,
+            "wait_until": "domcontentloaded",
+            "challenge_headers": {}
+          }
+        },
+        {
+          "action": "count",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 399,
+          "data": 16
+        },
+        {
+          "action": "text",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 14,
+          "content_chars": 11029,
+          "truncated": false,
+          "evidence": {
+            "chars": 11029,
+            "sha256": "6b5c004c149924feb466098ce4c75cd0942ebaacd65ef09aeb956d63ebcd9485"
+          }
+        }
+      ],
+      "final": {
+        "url": "https://www.reddit.com/r/programming/comments/1xl8d57/jepsen_on_particledb_we_tested_versions_114/",
+        "title": "Jepsen on ParticleDB: \"We tested versions 1.1.4 through 1.1.18.11.rc-22 and found that ParticleDB\u2019s claims of \u201cFull ACID\u201d were somewhat premature\" : r/programming"
+      },
+      "session": {
+        "id": "comparison-c2017b290c7d4aa4",
+        "persistent": true,
+        "closed": false,
+        "ttl_seconds": 1800,
+        "allowed_hosts": [
+          "www.reddit.com"
+        ],
+        "restored_from_checkpoint": false
+      },
+      "canary_matches": [],
+      "service_s": 1.84
+    }
+  },
+  {
+    "case": "reddit-sort-click",
+    "engine": "candidate",
+    "elapsed_ms": 387.36,
+    "http_status": 200,
+    "content_chars": 0,
+    "title_support": false,
+    "comment_support": false,
+    "result": {
+      "ok": true,
+      "access": {
+        "status": "content_observed",
+        "reason": "visible_text_present",
+        "answer_verified": false,
+        "source_complete": false
+      },
+      "navigation_recovery": {
+        "name": "reddit_cookie_preference",
+        "cookie_added": true,
+        "existing_preference_preserved": false,
+        "settle_ms": 5000,
+        "settled": true,
+        "elapsed_ms": 1340.37
+      },
+      "steps": [
+        {
+          "action": "click",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 74,
+          "data": true
+        },
+        {
+          "action": "count",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 84,
+          "data": 6
+        }
+      ],
+      "final": {
+        "url": "https://www.reddit.com/r/programming/comments/1xl8d57/jepsen_on_particledb_we_tested_versions_114/",
+        "title": "Jepsen on ParticleDB: \"We tested versions 1.1.4 through 1.1.18.11.rc-22 and found that ParticleDB\u2019s claims of \u201cFull ACID\u201d were somewhat premature\" : r/programming"
+      },
+      "session": {
+        "id": "comparison-c2017b290c7d4aa4",
+        "persistent": true,
+        "closed": false,
+        "ttl_seconds": 1800,
+        "allowed_hosts": [
+          "www.reddit.com"
+        ],
+        "restored_from_checkpoint": false
+      },
+      "canary_matches": [],
+      "service_s": 0.165,
+      "operation_id": "sort-open",
+      "operation_replayed": false
+    }
+  },
+  {
+    "case": "reddit-sort-retry",
+    "engine": "candidate",
+    "elapsed_ms": 2.65,
+    "http_status": 200,
+    "content_chars": 0,
+    "title_support": false,
+    "comment_support": false,
+    "result": {
+      "ok": true,
+      "access": {
+        "status": "content_observed",
+        "reason": "visible_text_present",
+        "answer_verified": false,
+        "source_complete": false
+      },
+      "navigation_recovery": {
+        "name": "reddit_cookie_preference",
+        "cookie_added": true,
+        "existing_preference_preserved": false,
+        "settle_ms": 5000,
+        "settled": true,
+        "elapsed_ms": 1340.37
+      },
+      "steps": [
+        {
+          "action": "click",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 74,
+          "data": true
+        },
+        {
+          "action": "count",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 84,
+          "data": 6
+        }
+      ],
+      "final": {
+        "url": "https://www.reddit.com/r/programming/comments/1xl8d57/jepsen_on_particledb_we_tested_versions_114/",
+        "title": "Jepsen on ParticleDB: \"We tested versions 1.1.4 through 1.1.18.11.rc-22 and found that ParticleDB\u2019s claims of \u201cFull ACID\u201d were somewhat premature\" : r/programming"
+      },
+      "session": {
+        "id": "comparison-c2017b290c7d4aa4",
+        "persistent": true,
+        "closed": false,
+        "ttl_seconds": 1800,
+        "allowed_hosts": [
+          "www.reddit.com"
+        ],
+        "restored_from_checkpoint": false
+      },
+      "canary_matches": [],
+      "service_s": 0.165,
+      "operation_id": "sort-open",
+      "operation_replayed": true
+    }
+  },
+  {
+    "case": "reddit-continuation",
+    "engine": "candidate",
+    "elapsed_ms": 53.79,
+    "http_status": 200,
+    "content_chars": 0,
+    "title_support": false,
+    "comment_support": false,
+    "result": {
+      "ok": true,
+      "access": {
+        "status": "content_observed",
+        "reason": "visible_text_present",
+        "answer_verified": false,
+        "source_complete": false
+      },
+      "navigation_recovery": {
+        "name": "reddit_cookie_preference",
+        "cookie_added": true,
+        "existing_preference_preserved": false,
+        "settle_ms": 5000,
+        "settled": true,
+        "elapsed_ms": 1340.37
+      },
+      "steps": [
+        {
+          "action": "attr",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 28,
+          "data": "true"
+        },
+        {
+          "action": "history",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 0,
+          "data": {
+            "steps": [
+              {
+                "sequence": 1,
+                "action": "count",
+                "ok": true,
+                "elapsed_ms": 399,
+                "timestamp": 1793599805.4832802,
+                "frame": false
+              },
+              {
+                "sequence": 2,
+                "action": "text",
+                "ok": true,
+                "elapsed_ms": 14,
+                "timestamp": 1793599805.497852,
+                "frame": false
+              },
+              {
+                "sequence": 3,
+                "action": "click",
+                "ok": true,
+                "elapsed_ms": 74,
+                "timestamp": 1793599805.6156166,
+                "frame": false
+              },
+              {
+                "sequence": 4,
+                "action": "count",
+                "ok": true,
+                "elapsed_ms": 84,
+                "timestamp": 1793599805.7004452,
+                "frame": false
+              },
+              {
+                "sequence": 5,
+                "action": "attr",
+                "ok": true,
+                "elapsed_ms": 28,
+                "timestamp": 1793599805.933404,
+                "frame": false
+              }
+            ],
+            "retention": "last_200_steps; checkpoint_saves_history",
+            "replays_actions": false
+          }
+        }
+      ],
+      "final": {
+        "url": "https://www.reddit.com/r/programming/comments/1xl8d57/jepsen_on_particledb_we_tested_versions_114/",
+        "title": "Jepsen on ParticleDB: \"We tested versions 1.1.4 through 1.1.18.11.rc-22 and found that ParticleDB\u2019s claims of \u201cFull ACID\u201d were somewhat premature\" : r/programming"
+      },
+      "session": {
+        "id": "comparison-c2017b290c7d4aa4",
+        "persistent": true,
+        "closed": false,
+        "ttl_seconds": 1800,
+        "allowed_hosts": [
+          "www.reddit.com"
+        ],
+        "restored_from_checkpoint": false
+      },
+      "canary_matches": [],
+      "service_s": 0.052
+    }
+  },
+  {
+    "case": "reddit-thread-close",
+    "engine": "candidate",
+    "elapsed_ms": 32.55,
+    "http_status": 200,
+    "content_chars": 0,
+    "title_support": false,
+    "comment_support": false,
+    "result": {
+      "ok": true,
+      "steps": [],
+      "session": {
+        "id": "comparison-c2017b290c7d4aa4",
+        "persistent": true,
+        "closed": true
+      },
+      "canary_matches": [],
+      "service_s": 0.0
+    }
+  },
+  {
+    "case": "reddit-listing",
+    "engine": "control",
+    "elapsed_ms": 212.48,
+    "http_status": 200,
+    "content_chars": 240,
+    "title_support": false,
+    "comment_support": false,
+    "result": {
+      "ok": true,
+      "access": {
+        "status": "challenge",
+        "reason": "observed_verification_interstitial",
+        "answer_verified": false,
+        "source_complete": false
+      },
+      "navigation_recovery": null,
+      "steps": [
+        {
+          "action": "goto",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 79,
+          "data": {
+            "access": {
+              "status": "unknown",
+              "reason": "assessment_unavailable",
+              "answer_verified": false,
+              "source_complete": false
+            },
+            "url": "https://www.reddit.com/r/programming/",
+            "status": 200,
+            "wait_until": "domcontentloaded",
+            "challenge_headers": {}
+          }
+        },
+        {
+          "action": "count",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 18,
+          "data": 0
+        },
+        {
+          "action": "text",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 34,
+          "content_chars": 240,
+          "truncated": false,
+          "evidence": {
+            "chars": 240,
+            "sha256": "92a6e680cba08274dd85fc6719c6cfa1ded40ae62affd8058705f37cfc48d6dc"
+          }
+        }
+      ],
+      "final": {
+        "url": "https://www.reddit.com/r/programming/",
+        "title": "Reddit - Prove your humanity"
+      },
+      "session": {
+        "id": "comparison-ca5ff584d61c4e71",
+        "persistent": true,
+        "closed": false,
+        "ttl_seconds": 1800,
+        "allowed_hosts": [
+          "www.reddit.com"
+        ],
+        "restored_from_checkpoint": false
+      },
+      "canary_matches": [],
+      "service_s": 0.137
+    }
+  },
+  {
+    "case": "reddit-listing-close",
+    "engine": "control",
+    "elapsed_ms": 8.56,
+    "http_status": 200,
+    "content_chars": 0,
+    "title_support": false,
+    "comment_support": false,
+    "result": {
+      "ok": true,
+      "steps": [],
+      "session": {
+        "id": "comparison-ca5ff584d61c4e71",
+        "persistent": true,
+        "closed": true
+      },
+      "canary_matches": [],
+      "service_s": 0.0
+    }
+  },
+  {
+    "case": "reddit-listing",
+    "engine": "candidate",
+    "elapsed_ms": 1629.17,
+    "http_status": 200,
+    "content_chars": 2864,
+    "title_support": true,
+    "comment_support": false,
+    "result": {
+      "ok": true,
+      "access": {
+        "status": "content_observed",
+        "reason": "visible_text_present",
+        "answer_verified": false,
+        "source_complete": false
+      },
+      "navigation_recovery": {
+        "name": "reddit_cookie_preference",
+        "cookie_added": true,
+        "existing_preference_preserved": false,
+        "settle_ms": 5000,
+        "settled": true,
+        "elapsed_ms": 1187.3
+      },
+      "steps": [
+        {
+          "action": "goto",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 1253,
+          "data": {
+            "access": {
+              "status": "content_observed",
+              "reason": "visible_text_present",
+              "answer_verified": false,
+              "source_complete": false
+            },
+            "recovery": {
+              "name": "reddit_cookie_preference",
+              "cookie_added": true,
+              "existing_preference_preserved": false,
+              "settle_ms": 5000,
+              "settled": true,
+              "elapsed_ms": 1187.3
+            },
+            "url": "https://www.reddit.com/r/programming/",
+            "status": 200,
+            "wait_until": "domcontentloaded",
+            "challenge_headers": {}
+          }
+        },
+        {
+          "action": "count",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 305,
+          "data": 0
+        },
+        {
+          "action": "text",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 3,
+          "content_chars": 2864,
+          "truncated": false,
+          "evidence": {
+            "chars": 2864,
+            "sha256": "28ab4cd952563ad69ce8fd6537de573bd9819dfcd851f21a1c7f64231406843f"
+          }
+        }
+      ],
+      "final": {
+        "url": "https://www.reddit.com/r/programming/",
+        "title": "programming"
+      },
+      "session": {
+        "id": "comparison-ed7f2b79fe7647b5",
+        "persistent": true,
+        "closed": false,
+        "ttl_seconds": 1800,
+        "allowed_hosts": [
+          "www.reddit.com"
+        ],
+        "restored_from_checkpoint": false
+      },
+      "canary_matches": [],
+      "service_s": 1.565
+    }
+  },
+  {
+    "case": "reddit-listing-close",
+    "engine": "candidate",
+    "elapsed_ms": 7.39,
+    "http_status": 200,
+    "content_chars": 0,
+    "title_support": false,
+    "comment_support": false,
+    "result": {
+      "ok": true,
+      "steps": [],
+      "session": {
+        "id": "comparison-ed7f2b79fe7647b5",
+        "persistent": true,
+        "closed": true
+      },
+      "canary_matches": [],
+      "service_s": 0.0
+    }
+  },
+  {
+    "case": "python",
+    "engine": "control",
+    "elapsed_ms": 399.88,
+    "http_status": 200,
+    "content_chars": 72720,
+    "title_support": false,
+    "comment_support": false,
+    "result": {
+      "ok": true,
+      "access": {
+        "status": "content_observed",
+        "reason": "visible_text_present",
+        "answer_verified": false,
+        "source_complete": false
+      },
+      "navigation_recovery": null,
+      "steps": [
+        {
+          "action": "goto",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 234,
+          "data": {
+            "access": {
+              "status": "content_observed",
+              "reason": "visible_text_present",
+              "answer_verified": false,
+              "source_complete": false
+            },
+            "url": "https://docs.python.org/3/library/sqlite3.html",
+            "status": 200,
+            "wait_until": "domcontentloaded",
+            "challenge_headers": {}
+          }
+        },
+        {
+          "action": "count",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 90,
+          "data": 0
+        },
+        {
+          "action": "text",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 9,
+          "content_chars": 72720,
+          "truncated": false,
+          "evidence": {
+            "chars": 72720,
+            "sha256": "5f51106d3bca54defdf370a4a37458637061f9c3f1184b284ac7322ff09d70cb"
+          }
+        }
+      ],
+      "final": {
+        "url": "https://docs.python.org/3/library/sqlite3.html",
+        "title": "sqlite3 \u2014 DB-API 2.0 interface for SQLite databases \u2014 Python 3.15.2 documentation"
+      },
+      "session": {
+        "id": "comparison-2c1aff5d82dd4cca",
+        "persistent": true,
+        "closed": false,
+        "ttl_seconds": 1800,
+        "allowed_hosts": [
+          "docs.python.org"
+        ],
+        "restored_from_checkpoint": false
+      },
+      "canary_matches": [],
+      "service_s": 0.338
+    }
+  },
+  {
+    "case": "python-close",
+    "engine": "control",
+    "elapsed_ms": 6.94,
+    "http_status": 200,
+    "content_chars": 0,
+    "title_support": false,
+    "comment_support": false,
+    "result": {
+      "ok": true,
+      "steps": [],
+      "session": {
+        "id": "comparison-2c1aff5d82dd4cca",
+        "persistent": true,
+        "closed": true
+      },
+      "canary_matches": [],
+      "service_s": 0.0
+    }
+  },
+  {
+    "case": "python",
+    "engine": "candidate",
+    "elapsed_ms": 419.37,
+    "http_status": 200,
+    "content_chars": 72720,
+    "title_support": false,
+    "comment_support": false,
+    "result": {
+      "ok": true,
+      "access": {
+        "status": "content_observed",
+        "reason": "visible_text_present",
+        "answer_verified": false,
+        "source_complete": false
+      },
+      "navigation_recovery": null,
+      "steps": [
+        {
+          "action": "goto",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 228,
+          "data": {
+            "access": {
+              "status": "content_observed",
+              "reason": "visible_text_present",
+              "answer_verified": false,
+              "source_complete": false
+            },
+            "url": "https://docs.python.org/3/library/sqlite3.html",
+            "status": 200,
+            "wait_until": "domcontentloaded",
+            "challenge_headers": {}
+          }
+        },
+        {
+          "action": "count",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 87,
+          "data": 0
+        },
+        {
+          "action": "text",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 9,
+          "content_chars": 72720,
+          "truncated": false,
+          "evidence": {
+            "chars": 72720,
+            "sha256": "5f51106d3bca54defdf370a4a37458637061f9c3f1184b284ac7322ff09d70cb"
+          }
+        }
+      ],
+      "final": {
+        "url": "https://docs.python.org/3/library/sqlite3.html",
+        "title": "sqlite3 \u2014 DB-API 2.0 interface for SQLite databases \u2014 Python 3.15.2 documentation"
+      },
+      "session": {
+        "id": "comparison-7d1fc3ad66194b2d",
+        "persistent": true,
+        "closed": false,
+        "ttl_seconds": 1800,
+        "allowed_hosts": [
+          "docs.python.org"
+        ],
+        "restored_from_checkpoint": false
+      },
+      "canary_matches": [],
+      "service_s": 0.329
+    }
+  },
+  {
+    "case": "python-close",
+    "engine": "candidate",
+    "elapsed_ms": 6.45,
+    "http_status": 200,
+    "content_chars": 0,
+    "title_support": false,
+    "comment_support": false,
+    "result": {
+      "ok": true,
+      "steps": [],
+      "session": {
+        "id": "comparison-7d1fc3ad66194b2d",
+        "persistent": true,
+        "closed": true
+      },
+      "canary_matches": [],
+      "service_s": 0.0
+    }
+  },
+  {
+    "case": "crunchbase",
+    "engine": "control",
+    "elapsed_ms": 451.77,
+    "http_status": 200,
+    "content_chars": 115,
+    "title_support": false,
+    "comment_support": false,
+    "result": {
+      "ok": true,
+      "access": {
+        "status": "http_error",
+        "reason": "navigation_http_403",
+        "answer_verified": false,
+        "source_complete": false
+      },
+      "navigation_recovery": null,
+      "steps": [
+        {
+          "action": "goto",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 363,
+          "data": {
+            "access": {
+              "status": "http_error",
+              "reason": "navigation_http_403",
+              "answer_verified": false,
+              "source_complete": false
+            },
+            "url": "https://www.crunchbase.com/organization/openai",
+            "status": 403,
+            "wait_until": "domcontentloaded",
+            "challenge_headers": {
+              "cf-mitigated": "challenge"
+            }
+          }
+        },
+        {
+          "action": "count",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 15,
+          "data": 0
+        },
+        {
+          "action": "text",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 2,
+          "content_chars": 115,
+          "truncated": false,
+          "evidence": {
+            "chars": 115,
+            "sha256": "a0b8d35afec2fb56d1ab8f97b89284667edadab9d85b5789a576534eaacaed1d"
+          }
+        }
+      ],
+      "final": {
+        "url": "https://www.crunchbase.com/organization/openai",
+        "title": "One moment, please\u2026"
+      },
+      "session": {
+        "id": "comparison-c788793e3f284603",
+        "persistent": true,
+        "closed": false,
+        "ttl_seconds": 1800,
+        "allowed_hosts": [
+          "www.crunchbase.com"
+        ],
+        "restored_from_checkpoint": false
+      },
+      "canary_matches": [],
+      "service_s": 0.383
+    }
+  },
+  {
+    "case": "crunchbase-close",
+    "engine": "control",
+    "elapsed_ms": 6.49,
+    "http_status": 200,
+    "content_chars": 0,
+    "title_support": false,
+    "comment_support": false,
+    "result": {
+      "ok": true,
+      "steps": [],
+      "session": {
+        "id": "comparison-c788793e3f284603",
+        "persistent": true,
+        "closed": true
+      },
+      "canary_matches": [],
+      "service_s": 0.0
+    }
+  },
+  {
+    "case": "crunchbase",
+    "engine": "candidate",
+    "elapsed_ms": 411.8,
+    "http_status": 200,
+    "content_chars": 115,
+    "title_support": false,
+    "comment_support": false,
+    "result": {
+      "ok": true,
+      "access": {
+        "status": "http_error",
+        "reason": "navigation_http_403",
+        "answer_verified": false,
+        "source_complete": false
+      },
+      "navigation_recovery": null,
+      "steps": [
+        {
+          "action": "goto",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 311,
+          "data": {
+            "access": {
+              "status": "http_error",
+              "reason": "navigation_http_403",
+              "answer_verified": false,
+              "source_complete": false
+            },
+            "url": "https://www.crunchbase.com/organization/openai",
+            "status": 403,
+            "wait_until": "domcontentloaded",
+            "challenge_headers": {
+              "cf-mitigated": "challenge"
+            }
+          }
+        },
+        {
+          "action": "count",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 15,
+          "data": 0
+        },
+        {
+          "action": "text",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 2,
+          "content_chars": 115,
+          "truncated": false,
+          "evidence": {
+            "chars": 115,
+            "sha256": "af383be49d222e55161851cff026262b47bce36f28890f67a78827f48358cd17"
+          }
+        }
+      ],
+      "final": {
+        "url": "https://www.crunchbase.com/organization/openai",
+        "title": "One moment, please\u2026"
+      },
+      "session": {
+        "id": "comparison-3a60f9b2f8c84b85",
+        "persistent": true,
+        "closed": false,
+        "ttl_seconds": 1800,
+        "allowed_hosts": [
+          "www.crunchbase.com"
+        ],
+        "restored_from_checkpoint": false
+      },
+      "canary_matches": [],
+      "service_s": 0.332
+    }
+  },
+  {
+    "case": "crunchbase-close",
+    "engine": "candidate",
+    "elapsed_ms": 6.57,
+    "http_status": 200,
+    "content_chars": 0,
+    "title_support": false,
+    "comment_support": false,
+    "result": {
+      "ok": true,
+      "steps": [],
+      "session": {
+        "id": "comparison-3a60f9b2f8c84b85",
+        "persistent": true,
+        "closed": true
+      },
+      "canary_matches": [],
+      "service_s": 0.0
+    }
+  },
+  {
+    "case": "g2",
+    "engine": "control",
+    "elapsed_ms": 372.89,
+    "http_status": 200,
+    "content_chars": 0,
+    "title_support": false,
+    "comment_support": false,
+    "result": {
+      "ok": true,
+      "access": {
+        "status": "http_error",
+        "reason": "navigation_http_403",
+        "answer_verified": false,
+        "source_complete": false
+      },
+      "navigation_recovery": null,
+      "steps": [
+        {
+          "action": "goto",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 260,
+          "data": {
+            "access": {
+              "status": "http_error",
+              "reason": "navigation_http_403",
+              "answer_verified": false,
+              "source_complete": false
+            },
+            "url": "https://www.g2.com/products/notion/reviews",
+            "status": 403,
+            "wait_until": "domcontentloaded",
+            "challenge_headers": {}
+          }
+        },
+        {
+          "action": "count",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 14,
+          "data": 0
+        },
+        {
+          "action": "text",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 1,
+          "content_chars": 0,
+          "truncated": false,
+          "evidence": {
+            "chars": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        }
+      ],
+      "final": {
+        "url": "https://www.g2.com/products/notion/reviews",
+        "title": "g2.com"
+      },
+      "session": {
+        "id": "comparison-fe73a816db5b47d7",
+        "persistent": true,
+        "closed": false,
+        "ttl_seconds": 1800,
+        "allowed_hosts": [
+          "www.g2.com"
+        ],
+        "restored_from_checkpoint": false
+      },
+      "canary_matches": [],
+      "service_s": 0.279
+    }
+  },
+  {
+    "case": "g2-close",
+    "engine": "control",
+    "elapsed_ms": 8.33,
+    "http_status": 200,
+    "content_chars": 0,
+    "title_support": false,
+    "comment_support": false,
+    "result": {
+      "ok": true,
+      "steps": [],
+      "session": {
+        "id": "comparison-fe73a816db5b47d7",
+        "persistent": true,
+        "closed": true
+      },
+      "canary_matches": [],
+      "service_s": 0.0
+    }
+  },
+  {
+    "case": "g2",
+    "engine": "candidate",
+    "elapsed_ms": 340.57,
+    "http_status": 200,
+    "content_chars": 0,
+    "title_support": false,
+    "comment_support": false,
+    "result": {
+      "ok": true,
+      "access": {
+        "status": "http_error",
+        "reason": "navigation_http_403",
+        "answer_verified": false,
+        "source_complete": false
+      },
+      "navigation_recovery": null,
+      "steps": [
+        {
+          "action": "goto",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 258,
+          "data": {
+            "access": {
+              "status": "http_error",
+              "reason": "navigation_http_403",
+              "answer_verified": false,
+              "source_complete": false
+            },
+            "url": "https://www.g2.com/products/notion/reviews",
+            "status": 403,
+            "wait_until": "domcontentloaded",
+            "challenge_headers": {}
+          }
+        },
+        {
+          "action": "count",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 16,
+          "data": 0
+        },
+        {
+          "action": "text",
+          "ok": true,
+          "reason": null,
+          "elapsed_ms": 1,
+          "content_chars": 0,
+          "truncated": false,
+          "evidence": {
+            "chars": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        }
+      ],
+      "final": {
+        "url": "https://www.g2.com/products/notion/reviews",
+        "title": "g2.com"
+      },
+      "session": {
+        "id": "comparison-18b12fc1744e4c29",
+        "persistent": true,
+        "closed": false,
+        "ttl_seconds": 1800,
+        "allowed_hosts": [
+          "www.g2.com"
+        ],
+        "restored_from_checkpoint": false
+      },
+      "canary_matches": [],
+      "service_s": 0.278
+    }
+  },
+  {
+    "case": "g2-close",
+    "engine": "candidate",
+    "elapsed_ms": 9.22,
+    "http_status": 200,
+    "content_chars": 0,
+    "title_support": false,
+    "comment_support": false,
+    "result": {
+      "ok": true,
+      "steps": [],
+      "session": {
+        "id": "comparison-18b12fc1744e4c29",
+        "persistent": true,
+        "closed": true
+      },
+      "canary_matches": [],
+      "service_s": 0.0
+    }
+  }
+]
