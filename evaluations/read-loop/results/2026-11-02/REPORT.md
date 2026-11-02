@@ -81,7 +81,7 @@ network tests deselected and four existing FastAPI lifecycle deprecation warning
 a three-second startup deadline in an existing child-crash fixture. The fixture now
 asserts completion before cleanup within a 15-second deadline, avoiding a deliberate
 stop being misreported as an expected crash. Runtime supervision is unchanged. CI and deployed public transport checks
-are recorded in the pull request and deployment verification, separately.
+are recorded in the pull request and [deployment verification](DEPLOYMENT.md), separately.
 
 The planner uses observed gaps and conservative predefined actions, not an LLM or
 semantic answer verifier. It can still select a view that omits useful material;

@@ -120,7 +120,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Compose file is valid
-        run: docker compose config --quiet
+        run: |
+          docker compose config --quiet
+          DETHROTTLED_GPU_RENDER_GID=1 DETHROTTLED_GPU_VIDEO_GID=2 \
+            docker compose -f docker-compose.yml -f docker-compose.gpu.yml config --quiet
+          DETHROTTLED_GPU=off COMPOSE_FILE=docker-compose.yml:docker-compose.pdf-worker.yml \
+            scripts/compose-auto.sh config --format json > /tmp/compose-selected.json
+          python3 -c 'import json; c=json.load(open("/tmp/compose-selected.json")); assert "pdf-worker" in c["services"]; assert not c["services"]["browser-search"].get("devices")'
       - name: Build API and browser images natively
         run: |
           docker build -t dethrottled:ci .

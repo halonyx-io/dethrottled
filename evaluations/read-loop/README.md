@@ -19,6 +19,11 @@ python evaluations/read-loop/compare.py \
 ```
 
 Use trusted local REST endpoints: public adapters correctly reject private fixtures.
+When using layered copies of locally Compose-built images, assign disposable
+containers a distinct `com.docker.compose.project` label: image labels can otherwise
+make production Compose commands mistake them for live service instances. Remove the
+disposable instances before production deployment.
+
 Wait for the browser worker to be ready as well as both cores. The runner generates
 new caller namespaces for each run. Cookie recovery follows an explicit seed read;
 other-caller, manual-recovery and render-never cases must not recover the fact.

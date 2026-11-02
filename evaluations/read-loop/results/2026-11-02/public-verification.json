@@ -1,0 +1,14 @@
+{
+  "version_expected": "0.10.0",
+  "started_unix": 1793595850.6013827,
+  "version": "0.10.0",
+  "rest_browser_seed": true,
+  "instructions_sha256": "b4fe8d6304963ba2067f7823f65191948102c01651b450f7c78af22bd66703e9",
+  "tools": 20,
+  "rest_to_mcp_same_browser_state": true,
+  "mcp_fetch_plan_forwarded": true,
+  "mcp_retained_document": true,
+  "different_caller_isolated": true,
+  "rest_fetch_plan_forwarded": true,
+  "completed": true
+}

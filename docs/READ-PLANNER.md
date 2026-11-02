@@ -99,7 +99,8 @@ scripts/compose-auto.sh up -d --build
 
 The host helper detects DRM nodes and exports their numeric render/card GIDs before
 loading `docker-compose.gpu.yml`. Set `DETHROTTLED_GPU=off` to skip the overlay. Additional
-Compose options, files, profiles and the command are forwarded. Use the same helper for
+Compose options, files, profiles and the command are forwarded. Existing `COMPOSE_FILE`
+selection from the process environment or default project `.env` is preserved. Use the same helper for
 later updates if you want automatic device selection preserved.
 
 The worker's `auto` mode tries ANGLE GL EGL when a render device is exposed and verifies
