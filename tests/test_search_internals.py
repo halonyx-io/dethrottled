@@ -272,7 +272,7 @@ def test_explicit_news_blends_browser_and_two_news_sources(monkeypatch):
                 "snippet": "Substantial article text", "engine": engine}
 
     monkeypatch.setattr(fs, "web_search",
-                        lambda *a, **k: [result("web-browser", i) for i in range(5)])
+                        lambda *a, **k: [result("web-browser-ddg-lite", i) for i in range(5)])
     monkeypatch.setattr(fs, "bing_news", lambda *a, **k: [result("bing-news", i) for i in range(5)])
     monkeypatch.setattr(fs, "searxng",
                         lambda *a, **k: [result("duckduckgo news", i) for i in range(5)])
@@ -280,11 +280,11 @@ def test_explicit_news_blends_browser_and_two_news_sources(monkeypatch):
 
     news, _ = fs.search("a current event", categories="news", max_items=4)
     assert [row["engine"] for row in news[:4]] == [
-        "web-browser", "bing-news", "duckduckgo news", "web-browser"]
+        "web-browser-ddg-lite", "bing-news", "duckduckgo news", "web-browser-ddg-lite"]
     assert len({row["url"] for row in news}) == len(news)
 
     default, _ = fs.search("a current event", max_items=4, profile="web")
-    assert [row["engine"] for row in default[:4]] == ["web-browser"] * 4
+    assert [row["engine"] for row in default[:4]] == ["web-browser-ddg-lite"] * 4
 
 
 def test_explicit_news_fills_missing_source_slots():
@@ -309,5 +309,5 @@ def test_full_pool_skips_unreturnable_google_news(monkeypatch):
 
     monkeypatch.setattr(fs, "google_news_headlines", unexpected)
     rows, meta = fs.search("technology", max_items=2)
-    assert len(rows) == 4
+    assert len(rows) == 2
     assert meta["per_source"]["gnews-resolved"] == "skipped_full_pool"

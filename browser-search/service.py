@@ -30,7 +30,7 @@ ENGINES = {
     "ddg-html": ("https://html.duckduckgo.com/html/?q=", "a.result__a", ".result__snippet"),
     "bing": ("https://www.bing.com/search?q=", "li.b_algo h2 a", "li.b_algo .b_caption p"),
 }
-ORDER = ("ddg-lite", "ddg-html", "bing")
+ORDER = ("ddg-lite", "ddg-html")
 SEMAPHORE = asyncio.Semaphore(3)
 STATE_LOCK = asyncio.Lock()
 DDG_LOCK = asyncio.Lock()
@@ -101,7 +101,8 @@ async def _pace_ddg():
         NEXT_DDG_START = time.monotonic() + DDG_INTERVAL
 
 
-async def _extract(page, engine: str, query: str, limit: int = 12) -> list[dict]:
+async def _extract(page, engine: str, query: str, limit: int = 10) -> list[dict]:
+    limit = min(limit, 10 if engine.startswith("ddg") else 3)
     _, selector, snippet_selector = ENGINES[engine]
     links = page.locator(selector)
     snippets = page.locator(snippet_selector)
@@ -127,8 +128,8 @@ def _usable(rows: list[dict]) -> bool:
     return len(rows) >= 3 and sum(len(r["snippet"]) >= 25 for r in rows) >= 2
 
 
-async def _engine(context, engine: str, query: str, delay: float, limit: int = 12) -> dict:
-    limit = max(3, limit)  # Keep the existing three-row usability check for small requests.
+async def _engine(context, engine: str, query: str, delay: float, limit: int = 10) -> dict:
+    limit = min(10 if engine.startswith("ddg") else 3, max(3, limit))
     if delay:
         await asyncio.sleep(delay)
     if engine.startswith("ddg"):
@@ -158,31 +159,7 @@ async def _engine(context, engine: str, query: str, delay: float, limit: int = 1
                 attempt["results"] = attempt["results"][:limit]
                 attempt["pages"] += 1
                 if _usable(attempt["results"]):
-                    if limit <= 12 or len(attempt["results"]) >= limit:
-                        return attempt
-                    if not added or attempt["pages"] >= 5:
-                        attempt["reason"] = "no_new_results" if not added else "page_limit"
-                        return attempt
-                    control = page.locator(
-                        'input[type="submit"][value*="Next" i],a.sb_pagN').first
-                    if not await control.count():
-                        attempt["reason"] = "no_next_page"
-                        return attempt
-                    target = await control.evaluate('(el) => el.href || el.form?.action || ""')
-                    destination, origin = urlparse(target), urlparse(prefix)
-                    if (destination.scheme, destination.netloc) != (origin.scheme, origin.netloc):
-                        attempt["reason"] = "pagination_origin_rejected"
-                        return attempt
-                    if engine.startswith("ddg"):
-                        await _pace_ddg()
-                    remaining_ms = int((deadline - time.monotonic()) * 1000)
-                    if remaining_ms < 1:
-                        break
-                    async with page.expect_navigation(wait_until="domcontentloaded",
-                                                      timeout=remaining_ms) as navigation:
-                        await control.click(timeout=remaining_ms)
-                    response = await navigation.value
-                    continue
+                    return attempt
             if time.monotonic() - started > 0.7:
                 try:
                     body = (await page.locator("body").inner_text(timeout=500))[:1200].lower()
@@ -207,12 +184,13 @@ async def _engine(context, engine: str, query: str, delay: float, limit: int = 1
     return attempt
 
 
-async def _race(browser, query: str, limit: int = 12) -> dict:
+async def _race(browser, query: str, limit: int = 10) -> dict:
+    limit = max(1, min(limit, 10))
     started = time.monotonic()
     context = await browser.new_context()
     pending = {asyncio.create_task(_engine(context, engine, query, i * STAGGER, limit)): engine
                for i, engine in enumerate(ORDER)}
-    attempts, winner, combined, seen = [], None, [], set()
+    attempts, winner = [], None
     try:
         while pending and time.monotonic() - started < ENGINE_TIMEOUT + 2:
             remaining = max(0.1, ENGINE_TIMEOUT + 2 - (time.monotonic() - started))
@@ -232,11 +210,7 @@ async def _race(browser, query: str, limit: int = 12) -> dict:
                 if _usable(attempt["results"]):
                     if winner is None:
                         winner = attempt
-                    for row in attempt["results"]:
-                        if row["url"] not in seen:
-                            seen.add(row["url"])
-                            combined.append(row)
-            if winner and (limit <= 12 or len(combined) >= limit):
+            if winner:
                 break
     finally:
         cancelled = list(pending.values())
@@ -250,9 +224,8 @@ async def _race(browser, query: str, limit: int = 12) -> dict:
         await context.close()
     return {"ok":winner is not None,
             "engine":winner["engine"] if winner else None,
-            "results": ((winner["results"][:limit] if limit <= 12 else combined[:limit])
-                        if winner else []),
-            "requested_limit": limit, "broad_search": limit > 12,
+            "results": winner["results"][:limit] if winner else [],
+            "requested_limit": limit, "broad_search": False,
             "attempts":attempts,
             "service_s":round(time.monotonic()-started,3)}
 
@@ -342,7 +315,7 @@ app = FastAPI(title="Dethrottled browser search worker", lifespan=lifespan)
 
 class SearchRequest(BaseModel):
     query: str = Field(min_length=2, max_length=500)
-    limit: int = Field(default=12, ge=1, le=50)
+    limit: int = Field(default=10, ge=1, le=10)
 
 
 # ---------------------------------------------------------------------------
@@ -406,7 +379,7 @@ class DriveStep(BaseModel):
     delay_ms: int = Field(default=0, ge=0, le=1000)
     name: str = Field(default="", max_length=200)
     index: int = Field(default=0, ge=0, le=500)
-    limit: int = Field(default=100, ge=1, le=200)
+    limit: int = Field(default=10, ge=1, le=10)
     max_chars: int | None = Field(default=None, ge=1, le=1000000)
 
 
@@ -1260,7 +1233,8 @@ async def _drive(state: dict, body: DriveRequest) -> dict:
         elif action == "snapshot":
             async def call(s=s, scope=scope):
                 try:
-                    return await _snapshot(scope, s.selector, s.limit)
+                    cap = 3 if (urlparse(page.url).hostname or "").endswith("bing.com") else 10
+                    return await _snapshot(scope, s.selector, min(s.limit, cap))
                 except Exception as exc:
                     target = (
                         scope.locator(s.selector).first

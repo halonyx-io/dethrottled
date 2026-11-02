@@ -1,0 +1,2161 @@
+[
+  {
+    "http_status": 200,
+    "elapsed_ms": 946.674108505249,
+    "data": {
+      "results": [
+        {
+          "url": "https://docs.python.org/3/library/glob.html",
+          "title": "glob \u2014 Unix style pathname pattern expansion \u2014 Python 3.15.2 documentation",
+          "snippet": "By default, files beginning with a dot (.) can only be matched by patterns that also start with a dot, unlike fnmatch.fnmatch () orpathlib.Path.glob(). For tilde and shell variable expansion, use os.path.expanduser () and os.path.expandvars (). For a literal match, wrap the meta-characters in brackets. For example, ' [?]' matches the character '?'. Theglobmodule defines the following ...",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "Python pathlib recursive glob documentation"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [
+            {
+              "engine": "web",
+              "count": 10,
+              "status": "ok",
+              "elapsed_ms": 885,
+              "unresponsive": []
+            },
+            {
+              "engine": "bing-news",
+              "count": 0,
+              "status": "not_requested",
+              "elapsed_ms": 885,
+              "unresponsive": []
+            },
+            {
+              "engine": "searxng",
+              "count": 0,
+              "status": "not_requested",
+              "elapsed_ms": 885,
+              "unresponsive": []
+            },
+            {
+              "engine": "gnews-resolved",
+              "count": 0,
+              "status": "not_requested",
+              "elapsed_ms": 885,
+              "unresponsive": []
+            },
+            {
+              "engine": "tls-ddg-lite",
+              "count": 10,
+              "status": "ok",
+              "reason": null,
+              "elapsed_ms": 884,
+              "unresponsive": []
+            }
+          ],
+          "search_elapsed_ms": 885,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://docs.python.org/3/library/pathlib.html",
+          "title": "pathlib \u2014 Object-oriented filesystem paths \u2014 Python 3.15.2 documentation",
+          "snippet": "Source code: Lib/pathlib/ This module offers classes representing filesystem paths with semantics appropriate for different operating systems. Path classes are divided between pure paths, which pro...",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "Python pathlib recursive glob documentation"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 885,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://stackoverflow.com/questions/50714469/recursively-iterate-through-all-subdirectories-using-pathlib",
+          "title": "Recursively iterate through all subdirectories using pathlib",
+          "snippet": "How can I usepathlibto recursively iterate over all subdirectories of a given directory? ... only seems to iterate over the immediate children of a given directory. I know this is possible with os.walk () orglob, but I want to usepathlibbecause I like working with the path objects.",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "Python pathlib recursive glob documentation"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 885,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://stackoverflow.com/questions/2186525/how-to-use-glob-to-find-files-recursively",
+          "title": "How to use glob() to find files recursively? - Stack Overflow",
+          "snippet": "Usepathlib.Path ().rglob () from thepathlibmodule, which was introduced inPython3.5. ...glob.glob() If you don't want to usepathlib, useglob.glob(): ... For cases where matching files beginning with a dot (.); like files in the current directory or hidden files on Unix based system, use the os.walk () solution below. os.walk ()",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "Python pathlib recursive glob documentation"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 885,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://www.geeksforgeeks.org/python/how-to-use-glob-function-to-find-files-recursively-in-python/",
+          "title": "How to use Glob () Function to Find Files Recursively in Python",
+          "snippet": "Globis a powerful pattern-matching technique widely used in Unix and Linux environments for matching file and directory names based on wildcard patterns.Python'sbuilt-inglobmodule provides similar functionality, enabling you to easily find files and directories matching specific patterns.",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "Python pathlib recursive glob documentation"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 885,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://pytutorial.com/python-pathlib-rglob-explained/",
+          "title": "Python Pathlib rglob () Explained - PyTutorial",
+          "snippet": "Learn how to usePython'spathlib.rglob() to recursively search for files and directories. Perfect for beginners with examples and code outputs.",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "Python pathlib recursive glob documentation"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 885,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://pathlib.readthedocs.io/",
+          "title": "pathlib \u2014 pathlib 1.0.1 documentation",
+          "snippet": "Path.glob(pattern) \u00b6Globthe given pattern in the directory represented by this path, yielding all matching files (of any kind): ... The \" ** \" pattern means \"this directory and all subdirectories, recursively\". In other words, it enablesrecursiveglobbing:",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "Python pathlib recursive glob documentation"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 885,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://pytutorial.com/python-pathlib-glob-explained/",
+          "title": "Python Pathlib glob () Explained - PyTutorial",
+          "snippet": "Learn how to usePython'spathlib.glob() for file pattern matching. This guide covers syntax, examples, and practical use cases for beginners.",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "Python pathlib recursive glob documentation"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 885,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://www.geeksforgeeks.org/python/pathlib-module-in-python/",
+          "title": "Pathlib Module in Python - GeeksforGeeks",
+          "snippet": "ListingPythonFiles in a Directory Tree To find allPythonfiles (.py) within a folder and its subfolders, use rglob () method frompathlib. It performs arecursivesearch, making it easy to scan entire directory trees for specific file types. Example: This code recursively searches for all .py files in the root directory.",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "Python pathlib recursive glob documentation"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 885,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://getdocs.org/Python/docs/3.8/library/glob",
+          "title": "glob \u2014 Unix style pathname pattern expansion \u2014 Python documentation",
+          "snippet": "glob.glob(pathname, *, recursive=False) Return a possibly-empty list of path names that match pathname, which must be a string containing a path specification. pathname can be either absolute (like /usr/src/Python-1.5/Makefile) or relative (like ../../Tools/*/*.gif), and can contain shell-style wildcards. Broken symlinks are included in the results (as in the shell). Whether or not the results ...",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "Python pathlib recursive glob documentation"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 885,
+          "ranking": [],
+          "from_corpus": false
+        }
+      ],
+      "status": "ok",
+      "attempts": [
+        {
+          "engine": "web",
+          "count": 10,
+          "status": "ok",
+          "elapsed_ms": 885,
+          "unresponsive": []
+        },
+        {
+          "engine": "bing-news",
+          "count": 0,
+          "status": "not_requested",
+          "elapsed_ms": 885,
+          "unresponsive": []
+        },
+        {
+          "engine": "searxng",
+          "count": 0,
+          "status": "not_requested",
+          "elapsed_ms": 885,
+          "unresponsive": []
+        },
+        {
+          "engine": "gnews-resolved",
+          "count": 0,
+          "status": "not_requested",
+          "elapsed_ms": 885,
+          "unresponsive": []
+        },
+        {
+          "engine": "tls-ddg-lite",
+          "count": 10,
+          "status": "ok",
+          "reason": null,
+          "elapsed_ms": 884,
+          "unresponsive": []
+        }
+      ],
+      "elapsed_ms": 885,
+      "ranking": [],
+      "profile": "web"
+    },
+    "query": "Python pathlib recursive glob documentation",
+    "profile": "web",
+    "observed_counts": {
+      "total": 10,
+      "ddg": 10,
+      "supplements": {}
+    }
+  },
+  {
+    "http_status": 200,
+    "elapsed_ms": 809.5004558563232,
+    "data": {
+      "results": [
+        {
+          "url": "https://docs.python.org/3/library/glob.html",
+          "title": "glob \u2014 Unix style pathname pattern expansion \u2014 Python 3.15.2 documentation",
+          "snippet": "By default, files beginning with a dot (.) can only be matched by patterns that also start with a dot, unlike fnmatch.fnmatch () orpathlib.Path.glob(). For tilde and shell variable expansion, use os.path.expanduser () and os.path.expandvars (). For a literal match, wrap the meta-characters in brackets. For example, ' [?]' matches the character '?'. Theglobmodule defines the following ...",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "Python pathlib recursive glob documentation"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [
+            {
+              "engine": "web",
+              "count": 10,
+              "status": "ok",
+              "elapsed_ms": 804,
+              "unresponsive": []
+            },
+            {
+              "engine": "specialist",
+              "count": 3,
+              "status": "ok",
+              "elapsed_ms": 513,
+              "unresponsive": []
+            },
+            {
+              "engine": "bing-news",
+              "count": 0,
+              "status": "not_requested",
+              "elapsed_ms": 804,
+              "unresponsive": []
+            },
+            {
+              "engine": "searxng",
+              "count": 0,
+              "status": "not_requested",
+              "elapsed_ms": 804,
+              "unresponsive": []
+            },
+            {
+              "engine": "gnews-resolved",
+              "count": 0,
+              "status": "not_requested",
+              "elapsed_ms": 804,
+              "unresponsive": []
+            },
+            {
+              "engine": "tls-ddg-lite",
+              "count": 10,
+              "status": "ok",
+              "reason": null,
+              "elapsed_ms": 803,
+              "unresponsive": []
+            }
+          ],
+          "search_elapsed_ms": 804,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://stackoverflow.com/a/51303951",
+          "title": "recursion - Python: recursive glob in s3 - Stack Overflow",
+          "snippet": "Your answer could be improved with additional supporting information. Please edit to add further details, such as citations or documentation, so that oth\u2026",
+          "publishedDate": null,
+          "engine": "mwmbl",
+          "engines": [
+            "mwmbl"
+          ],
+          "discovery": [
+            {
+              "provider": "specialist",
+              "query": "Python pathlib recursive glob documentation"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 804,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://docs.python.org/3/library/pathlib.html",
+          "title": "pathlib \u2014 Object-oriented filesystem paths \u2014 Python 3.15.2 documentation",
+          "snippet": "Source code: Lib/pathlib/ This module offers classes representing filesystem paths with semantics appropriate for different operating systems. Path classes are divided between pure paths, which pro...",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "Python pathlib recursive glob documentation"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 804,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "http://cpiekarski.com/2011/09/23/python-recursive-glob/",
+          "title": "Python \u2013 Recursive Glob & Line Counter | Chris Piekarski",
+          "snippet": "The other day I needed a recursive glob to find all the *.py files in my home directory. Much to my amazement Python doesn\u2019t have one built into the glob \u2026",
+          "publishedDate": null,
+          "engine": "mwmbl",
+          "engines": [
+            "mwmbl"
+          ],
+          "discovery": [
+            {
+              "provider": "specialist",
+              "query": "Python pathlib recursive glob documentation"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 804,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://stackoverflow.com/questions/50714469/recursively-iterate-through-all-subdirectories-using-pathlib",
+          "title": "Recursively iterate through all subdirectories using pathlib",
+          "snippet": "How can I usepathlibto recursively iterate over all subdirectories of a given directory? ... only seems to iterate over the immediate children of a given directory. I know this is possible with os.walk () orglob, but I want to usepathlibbecause I like working with the path objects.",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "Python pathlib recursive glob documentation"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 804,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://stackoverflow.com/q/55815617",
+          "title": "python - pathlib Path.rglob fails on long file paths in Windows \u2026",
+          "snippet": "I get the error: FileNotFoundError: [WinError 3] The system cannot find the path specified: The error occurs on a folder path, not a file, so I'm not sur\u2026",
+          "publishedDate": null,
+          "engine": "mwmbl",
+          "engines": [
+            "mwmbl"
+          ],
+          "discovery": [
+            {
+              "provider": "specialist",
+              "query": "Python pathlib recursive glob documentation"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 804,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://stackoverflow.com/questions/2186525/how-to-use-glob-to-find-files-recursively",
+          "title": "How to use glob() to find files recursively? - Stack Overflow",
+          "snippet": "Usepathlib.Path ().rglob () from thepathlibmodule, which was introduced inPython3.5. ...glob.glob() If you don't want to usepathlib, useglob.glob(): ... For cases where matching files beginning with a dot (.); like files in the current directory or hidden files on Unix based system, use the os.walk () solution below. os.walk ()",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "Python pathlib recursive glob documentation"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 804,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://www.geeksforgeeks.org/python/how-to-use-glob-function-to-find-files-recursively-in-python/",
+          "title": "How to use Glob () Function to Find Files Recursively in Python",
+          "snippet": "Globis a powerful pattern-matching technique widely used in Unix and Linux environments for matching file and directory names based on wildcard patterns.Python'sbuilt-inglobmodule provides similar functionality, enabling you to easily find files and directories matching specific patterns.",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "Python pathlib recursive glob documentation"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 804,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://pytutorial.com/python-pathlib-rglob-explained/",
+          "title": "Python Pathlib rglob () Explained - PyTutorial",
+          "snippet": "Learn how to usePython'spathlib.rglob() to recursively search for files and directories. Perfect for beginners with examples and code outputs.",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "Python pathlib recursive glob documentation"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 804,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://pathlib.readthedocs.io/",
+          "title": "pathlib \u2014 pathlib 1.0.1 documentation",
+          "snippet": "Path.glob(pattern) \u00b6Globthe given pattern in the directory represented by this path, yielding all matching files (of any kind): ... The \" ** \" pattern means \"this directory and all subdirectories, recursively\". In other words, it enablesrecursiveglobbing:",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "Python pathlib recursive glob documentation"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 804,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://pytutorial.com/python-pathlib-glob-explained/",
+          "title": "Python Pathlib glob () Explained - PyTutorial",
+          "snippet": "Learn how to usePython'spathlib.glob() for file pattern matching. This guide covers syntax, examples, and practical use cases for beginners.",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "Python pathlib recursive glob documentation"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 804,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://www.geeksforgeeks.org/python/pathlib-module-in-python/",
+          "title": "Pathlib Module in Python - GeeksforGeeks",
+          "snippet": "ListingPythonFiles in a Directory Tree To find allPythonfiles (.py) within a folder and its subfolders, use rglob () method frompathlib. It performs arecursivesearch, making it easy to scan entire directory trees for specific file types. Example: This code recursively searches for all .py files in the root directory.",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "Python pathlib recursive glob documentation"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 804,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://getdocs.org/Python/docs/3.8/library/glob",
+          "title": "glob \u2014 Unix style pathname pattern expansion \u2014 Python documentation",
+          "snippet": "glob.glob(pathname, *, recursive=False) Return a possibly-empty list of path names that match pathname, which must be a string containing a path specification. pathname can be either absolute (like /usr/src/Python-1.5/Makefile) or relative (like ../../Tools/*/*.gif), and can contain shell-style wildcards. Broken symlinks are included in the results (as in the shell). Whether or not the results ...",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "Python pathlib recursive glob documentation"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 804,
+          "ranking": [],
+          "from_corpus": false
+        }
+      ],
+      "status": "ok",
+      "attempts": [
+        {
+          "engine": "web",
+          "count": 10,
+          "status": "ok",
+          "elapsed_ms": 804,
+          "unresponsive": []
+        },
+        {
+          "engine": "specialist",
+          "count": 3,
+          "status": "ok",
+          "elapsed_ms": 513,
+          "unresponsive": []
+        },
+        {
+          "engine": "bing-news",
+          "count": 0,
+          "status": "not_requested",
+          "elapsed_ms": 804,
+          "unresponsive": []
+        },
+        {
+          "engine": "searxng",
+          "count": 0,
+          "status": "not_requested",
+          "elapsed_ms": 804,
+          "unresponsive": []
+        },
+        {
+          "engine": "gnews-resolved",
+          "count": 0,
+          "status": "not_requested",
+          "elapsed_ms": 804,
+          "unresponsive": []
+        },
+        {
+          "engine": "tls-ddg-lite",
+          "count": 10,
+          "status": "ok",
+          "reason": null,
+          "elapsed_ms": 803,
+          "unresponsive": []
+        }
+      ],
+      "elapsed_ms": 804,
+      "ranking": [],
+      "profile": "thorough"
+    },
+    "query": "Python pathlib recursive glob documentation",
+    "profile": "thorough",
+    "observed_counts": {
+      "total": 13,
+      "ddg": 10,
+      "supplements": {
+        "mwmbl": 3
+      }
+    },
+    "supplement_read_summary": {
+      "http_status": 200,
+      "quality": "ok",
+      "url": "https://stackoverflow.com/a/51303951",
+      "content_sha256": "d10c51ed9a54596c44f8e1841ca589d491b34fd2ca4a8438422d383cb1f46926",
+      "chars": 3004,
+      "contains_service_healthy": false,
+      "contains_pathlib": false
+    }
+  },
+  {
+    "http_status": 200,
+    "elapsed_ms": 689.2564296722412,
+    "data": {
+      "results": [
+        {
+          "url": "https://docs.docker.com/reference/compose-file/services/",
+          "title": "Define services in Docker Compose | Docker Docs - Docker Documentation",
+          "snippet": "service_healthy: Specifies that a dependency is expected to be \"healthy\" (as indicated byhealthcheck) before starting a dependent service. ... Introduced inDockerComposeversion 2.20.0.",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "Docker Compose healthcheck service_healthy documentation"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [
+            {
+              "engine": "web",
+              "count": 10,
+              "status": "ok",
+              "elapsed_ms": 684,
+              "unresponsive": []
+            },
+            {
+              "engine": "bing-news",
+              "count": 0,
+              "status": "not_requested",
+              "elapsed_ms": 684,
+              "unresponsive": []
+            },
+            {
+              "engine": "searxng",
+              "count": 0,
+              "status": "not_requested",
+              "elapsed_ms": 684,
+              "unresponsive": []
+            },
+            {
+              "engine": "gnews-resolved",
+              "count": 0,
+              "status": "not_requested",
+              "elapsed_ms": 684,
+              "unresponsive": []
+            },
+            {
+              "engine": "tls-ddg-lite",
+              "count": 10,
+              "status": "ok",
+              "reason": null,
+              "elapsed_ms": 683,
+              "unresponsive": []
+            }
+          ],
+          "search_elapsed_ms": 684,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://www.tvaidyan.com/2025/02/13/health-checks-in-docker-compose-a-practical-guide/",
+          "title": "Health Checks in Docker Compose: A Practical Guide",
+          "snippet": "Dockerprovides a built-inhealthcheckmechanism to monitor container status and react accordingly. In this blog post, we'll explore whyhealthchecksmatter, how to define them inDockerCompose, and practical examples for real-world applications.",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "Docker Compose healthcheck service_healthy documentation"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 684,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://github.com/peter-evans/docker-compose-healthcheck",
+          "title": "GitHub - peter-evans/docker-compose-healthcheck: How to wait for ...",
+          "snippet": "Thehealthcheckproperty was originally introduced in the 2.1Composefile format and is now part of theComposeSpecification used by recent versions ofDockerCompose. This allows a check to be configured in order to determine whether or not containers for a service are \"healthy.\" A particularly ...",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "Docker Compose healthcheck service_healthy documentation"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 684,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://dev.to/jjoc007/mastering-docker-defining-health-checks-in-docker-compose-4l5k",
+          "title": "Mastering Docker: Defining Health Checks in Docker Compose",
+          "snippet": "Throughdocker-compose.yml files,DockerComposeenables developers and system administrators to specify how thehealthcheckfor each service in their environment should be performed. The integration ofhealthchecksinDockerComposeis crucial for automating the monitoring and management of service health.",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "Docker Compose healthcheck service_healthy documentation"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 684,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://last9.io/blog/docker-compose-health-checks/",
+          "title": "Docker Compose Healthcheck: Setup, Examples & Best Practices | Last9",
+          "snippet": "How do you add ahealthchecktoDockerCompose? Add ahealthcheckblock to a service in yourcompose.yaml with test, interval, timeout, retries, and start_period fields. The test command runs inside the container \u2014 a zero exit code means healthy. Use depends_on with condition:service_healthyto hold dependent services until the check passes. Rundockercomposeps to see live health status ...",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "Docker Compose healthcheck service_healthy documentation"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 684,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://docs.docker.com/compose/how-tos/startup-order/",
+          "title": "Control startup and shutdown order in Compose | Docker Docs",
+          "snippet": "Learn how to manage service startup and shutdown order inDockerComposeusing depends_on andhealthchecks.",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "Docker Compose healthcheck service_healthy documentation"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 684,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://blog.gntech.me/posts/2026-05-26-docker-healthchecks-compose-service-readiness/",
+          "title": "Docker Healthchecks \u2014 Service Readiness and Dependencies in Compose",
+          "snippet": "ConfigureDockerhealthchecksinComposefor real service readiness \u2014 depends_on withservice_healthy, custom check scripts, practical examples for PostgreSQL, Nginx, Redis, and debugging common failures.",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "Docker Compose healthcheck service_healthy documentation"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 684,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://dockerbuild.com/reference/healthcheck",
+          "title": "Dockerfile HEALTHCHECK & Compose healthcheck Syntax \u2014 DockerBuild.com",
+          "snippet": "DockerfileHEALTHCHECKandDockerComposehealthchecksyntax, Node.js, Python and PHP examples without curl, reading health status, and how to disable it.",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "Docker Compose healthcheck service_healthy documentation"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 684,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://gist.github.com/supermarsx/d4c8ae4b11134247ac3f0acf75258290",
+          "title": "Docker Compose Healthchecks for containers \u00b7 GitHub",
+          "snippet": "HealthchecksletDockerverify that a container is actually ready and responding (not just \"running\"). This README gives you: A 2\u2011minute intro to howhealthcheckswork inComposeReady\u2011to\u2011paste examples for common services (MariaDB, Nextcloud FPM, Nginx, Portainer, Gitea, Registry, Redis, Drone\u2026) Patterns, best practices, and troubleshooting tips How to wirehealthchecksinto ...",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "Docker Compose healthcheck service_healthy documentation"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 684,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://www.monkey.work/2025-12-26-docker-compose-health-checks-guide/",
+          "title": "Docker Compose Health Checks: A Practical Guide for Junior Devs & Ops",
+          "snippet": "A practical guide toDockerComposehealthcheckscovering configuration in Dockerfile anddocker-compose.yml, debugging techniques, dependency management, and copy-paste templates for common scenarios.",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "Docker Compose healthcheck service_healthy documentation"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 684,
+          "ranking": [],
+          "from_corpus": false
+        }
+      ],
+      "status": "ok",
+      "attempts": [
+        {
+          "engine": "web",
+          "count": 10,
+          "status": "ok",
+          "elapsed_ms": 684,
+          "unresponsive": []
+        },
+        {
+          "engine": "bing-news",
+          "count": 0,
+          "status": "not_requested",
+          "elapsed_ms": 684,
+          "unresponsive": []
+        },
+        {
+          "engine": "searxng",
+          "count": 0,
+          "status": "not_requested",
+          "elapsed_ms": 684,
+          "unresponsive": []
+        },
+        {
+          "engine": "gnews-resolved",
+          "count": 0,
+          "status": "not_requested",
+          "elapsed_ms": 684,
+          "unresponsive": []
+        },
+        {
+          "engine": "tls-ddg-lite",
+          "count": 10,
+          "status": "ok",
+          "reason": null,
+          "elapsed_ms": 683,
+          "unresponsive": []
+        }
+      ],
+      "elapsed_ms": 684,
+      "ranking": [],
+      "profile": "web"
+    },
+    "query": "Docker Compose healthcheck service_healthy documentation",
+    "profile": "web",
+    "observed_counts": {
+      "total": 10,
+      "ddg": 10,
+      "supplements": {}
+    }
+  },
+  {
+    "http_status": 200,
+    "elapsed_ms": 683.9799880981445,
+    "data": {
+      "results": [
+        {
+          "url": "https://docs.docker.com/reference/compose-file/services/",
+          "title": "Define services in Docker Compose | Docker Docs - Docker Documentation",
+          "snippet": "service_healthy: Specifies that a dependency is expected to be \"healthy\" (as indicated byhealthcheck) before starting a dependent service. ... Introduced inDockerComposeversion 2.20.0.",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "Docker Compose healthcheck service_healthy documentation"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [
+            {
+              "engine": "web",
+              "count": 10,
+              "status": "ok",
+              "elapsed_ms": 679,
+              "unresponsive": []
+            },
+            {
+              "engine": "specialist",
+              "count": 3,
+              "status": "ok",
+              "elapsed_ms": 678,
+              "unresponsive": []
+            },
+            {
+              "engine": "bing-news",
+              "count": 0,
+              "status": "not_requested",
+              "elapsed_ms": 679,
+              "unresponsive": []
+            },
+            {
+              "engine": "searxng",
+              "count": 0,
+              "status": "not_requested",
+              "elapsed_ms": 679,
+              "unresponsive": []
+            },
+            {
+              "engine": "gnews-resolved",
+              "count": 0,
+              "status": "not_requested",
+              "elapsed_ms": 679,
+              "unresponsive": []
+            },
+            {
+              "engine": "tls-ddg-lite",
+              "count": 10,
+              "status": "ok",
+              "reason": null,
+              "elapsed_ms": 635,
+              "unresponsive": []
+            }
+          ],
+          "search_elapsed_ms": 679,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://quantonganh.com/2021/09/09/docker-compose-healthcheck.md",
+          "title": "Docker Compose healthcheck",
+          "snippet": "",
+          "publishedDate": null,
+          "engine": "mwmbl",
+          "engines": [
+            "mwmbl"
+          ],
+          "discovery": [
+            {
+              "provider": "specialist",
+              "query": "Docker Compose healthcheck service_healthy documentation"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 679,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://github.com/peter-evans/docker-compose-healthcheck",
+          "title": "GitHub - peter-evans/docker-compose-healthcheck: How to wait for ...",
+          "snippet": "Thehealthcheckproperty was originally introduced in the 2.1Composefile format and is now part of theComposeSpecification used by recent versions ofDockerCompose. This allows a check to be configured in order to determine whether or not containers for a service are \"healthy.\" A particularly ...",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "Docker Compose healthcheck service_healthy documentation"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 679,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://stackoverflow.com/q/68202592",
+          "title": "ElasticSearch Healthcheck on docker-compose failing - Stack Over\u2026",
+          "snippet": "Elasticsearch healthcheck on docker-compose stops any dependent services because the container is always unhealthy. I see this when I run docker ps -a --\u2026",
+          "publishedDate": null,
+          "engine": "mwmbl",
+          "engines": [
+            "mwmbl"
+          ],
+          "discovery": [
+            {
+              "provider": "specialist",
+              "query": "Docker Compose healthcheck service_healthy documentation"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 679,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://www.tvaidyan.com/2025/02/13/health-checks-in-docker-compose-a-practical-guide/",
+          "title": "Health Checks in Docker Compose: A Practical Guide",
+          "snippet": "Dockerprovides a built-inhealthcheckmechanism to monitor container status and react accordingly. In this blog post, we'll explore whyhealthchecksmatter, how to define them inDockerCompose, and practical examples for real-world applications.",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "Docker Compose healthcheck service_healthy documentation"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 679,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "http://stackoverflow.com/q/54988792",
+          "title": "mysql - Docker compose healthcheck use environment variables - S\u2026",
+          "snippet": "4 Answers 4 You need to use double-dollar sign ($$) in order to tell docker-compose not to parse these environment variables. Also change the way of defi\u2026",
+          "publishedDate": null,
+          "engine": "mwmbl",
+          "engines": [
+            "mwmbl"
+          ],
+          "discovery": [
+            {
+              "provider": "specialist",
+              "query": "Docker Compose healthcheck service_healthy documentation"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 679,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://docs.docker.com/compose/how-tos/startup-order/",
+          "title": "Control startup and shutdown order in Compose | Docker Docs",
+          "snippet": "Learn how to manage service startup and shutdown order inDockerComposeusing depends_on andhealthchecks.",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "Docker Compose healthcheck service_healthy documentation"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 679,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://last9.io/blog/docker-compose-health-checks/",
+          "title": "Docker Compose Healthcheck: Setup, Examples & Best Practices | Last9",
+          "snippet": "How do you add ahealthchecktoDockerCompose? Add ahealthcheckblock to a service in yourcompose.yaml with test, interval, timeout, retries, and start_period fields. The test command runs inside the container \u2014 a zero exit code means healthy. Use depends_on with condition:service_healthyto hold dependent services until the check passes. Rundockercomposeps to see live health status ...",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "Docker Compose healthcheck service_healthy documentation"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 679,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://blog.gntech.me/posts/2026-05-26-docker-healthchecks-compose-service-readiness/",
+          "title": "Docker Healthchecks \u2014 Service Readiness and Dependencies in Compose",
+          "snippet": "ConfigureDockerhealthchecksinComposefor real service readiness \u2014 depends_on withservice_healthy, custom check scripts, practical examples for PostgreSQL, Nginx, Redis, and debugging common failures.",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "Docker Compose healthcheck service_healthy documentation"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 679,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://dev.to/jjoc007/mastering-docker-defining-health-checks-in-docker-compose-4l5k",
+          "title": "Mastering Docker: Defining Health Checks in Docker Compose",
+          "snippet": "Throughdocker-compose.yml files,DockerComposeenables developers and system administrators to specify how thehealthcheckfor each service in their environment should be performed. The integration ofhealthchecksinDockerComposeis crucial for automating the monitoring and management of service health.",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "Docker Compose healthcheck service_healthy documentation"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 679,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://www.geeksforgeeks.org/devops/docker-compose-healthchecks-ensuring-container-availability/",
+          "title": "Docker Compose Healthchecks: Ensuring Container Availability",
+          "snippet": "In below figure shows that health status was healthy To get more detailed information about a container's health, use thedockerinspect command: ... ConclusionHealthchecksinDockerComposeare a very important feature to keep the reliability and availability of your containerized applications at the highest possible level.",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "Docker Compose healthcheck service_healthy documentation"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 679,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://dockerbuild.com/reference/healthcheck",
+          "title": "Dockerfile HEALTHCHECK & Compose healthcheck Syntax \u2014 DockerBuild.com",
+          "snippet": "DockerfileHEALTHCHECKandDockerComposehealthchecksyntax, Node.js, Python and PHP examples without curl, reading health status, and how to disable it.",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "Docker Compose healthcheck service_healthy documentation"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 679,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://www.monkey.work/2025-12-26-docker-compose-health-checks-guide/",
+          "title": "Docker Compose Health Checks: A Practical Guide for Junior Devs & Ops",
+          "snippet": "A practical guide toDockerComposehealthcheckscovering configuration in Dockerfile anddocker-compose.yml, debugging techniques, dependency management, and copy-paste templates for common scenarios.",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "Docker Compose healthcheck service_healthy documentation"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 679,
+          "ranking": [],
+          "from_corpus": false
+        }
+      ],
+      "status": "ok",
+      "attempts": [
+        {
+          "engine": "web",
+          "count": 10,
+          "status": "ok",
+          "elapsed_ms": 679,
+          "unresponsive": []
+        },
+        {
+          "engine": "specialist",
+          "count": 3,
+          "status": "ok",
+          "elapsed_ms": 678,
+          "unresponsive": []
+        },
+        {
+          "engine": "bing-news",
+          "count": 0,
+          "status": "not_requested",
+          "elapsed_ms": 679,
+          "unresponsive": []
+        },
+        {
+          "engine": "searxng",
+          "count": 0,
+          "status": "not_requested",
+          "elapsed_ms": 679,
+          "unresponsive": []
+        },
+        {
+          "engine": "gnews-resolved",
+          "count": 0,
+          "status": "not_requested",
+          "elapsed_ms": 679,
+          "unresponsive": []
+        },
+        {
+          "engine": "tls-ddg-lite",
+          "count": 10,
+          "status": "ok",
+          "reason": null,
+          "elapsed_ms": 635,
+          "unresponsive": []
+        }
+      ],
+      "elapsed_ms": 679,
+      "ranking": [],
+      "profile": "thorough"
+    },
+    "query": "Docker Compose healthcheck service_healthy documentation",
+    "profile": "thorough",
+    "observed_counts": {
+      "total": 13,
+      "ddg": 10,
+      "supplements": {
+        "mwmbl": 3
+      }
+    },
+    "supplement_read_summary": {
+      "http_status": 200,
+      "quality": "ok",
+      "url": "https://quantonganh.com/2021/09/09/docker-compose-healthcheck.md",
+      "content_sha256": "cd9dad5457318aff07f879b08f15dd35f1d4898d064887db0e95dc00595d69f8",
+      "chars": 4371,
+      "contains_service_healthy": true,
+      "contains_pathlib": false
+    }
+  },
+  {
+    "http_status": 200,
+    "elapsed_ms": 1984.1384887695312,
+    "data": {
+      "results": [
+        {
+          "url": "https://arxiv.org/abs/1706.03762",
+          "title": "[1706.03762] Attention Is All You Need - arXiv.org",
+          "snippet": "The dominant sequence transduction models are based on complex recurrent or convolutional neural networks in an encoder-decoder configuration. The best performing models also connect the encoder and decoder through anattentionmechanism. We propose a new simple network architecture, theTransformer, based solely onattentionmechanisms, dispensing with recurrence and convolutions entirely ...",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "Attention Is All You Need transformer Vaswani 2017 paper"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [
+            {
+              "engine": "web",
+              "count": 10,
+              "status": "ok",
+              "elapsed_ms": 1980,
+              "unresponsive": []
+            },
+            {
+              "engine": "specialist",
+              "count": 6,
+              "status": "ok",
+              "elapsed_ms": 1979,
+              "unresponsive": []
+            },
+            {
+              "engine": "bing-news",
+              "count": 0,
+              "status": "not_requested",
+              "elapsed_ms": 1980,
+              "unresponsive": []
+            },
+            {
+              "engine": "searxng",
+              "count": 0,
+              "status": "not_requested",
+              "elapsed_ms": 1980,
+              "unresponsive": []
+            },
+            {
+              "engine": "gnews-resolved",
+              "count": 0,
+              "status": "not_requested",
+              "elapsed_ms": 1980,
+              "unresponsive": []
+            },
+            {
+              "engine": "tls-ddg-lite",
+              "count": 10,
+              "status": "ok",
+              "reason": null,
+              "elapsed_ms": 1353,
+              "unresponsive": []
+            }
+          ],
+          "search_elapsed_ms": 1980,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://langtaosha.org.cn/index.php/lts/preprint/view/10",
+          "title": "Attention Is All You Need",
+          "snippet": "<jats:p>The dominant sequence transduction models are based on complex recurrent or convolutional neural networks in an encoder-decoder configuration. The best performing models also connect the encoder and decoder through an attention mechanism. We propose a new simple network architecture, the Transformer, based solely on attention mechanisms, dispensing with recurrence and convolutions entirely. Experiments on two machine translation tasks show these models to be superior in quality while being more parallelizable and requiring significantly less time to train. Our model achieves 28.4 BLEU on the WMT 2014 English-to-German translation task, improving over the existing best results, including ensembles by over 2 BLEU. On the WMT 2014 English-to-French translation task, our model establishes a new single-model state-of-the-art BLEU score of 41.8 after training for 3.5 days on eight GPUs, a small fraction of the training costs of the best models from the literature. We show that the Transformer generalizes well to other tasks by applying it successfully to English constituency parsing both with large and limited training data.</jats:p>",
+          "publishedDate": "2025-11-13T01:01:00",
+          "engine": "crossref",
+          "engines": [
+            "crossref"
+          ],
+          "discovery": [
+            {
+              "provider": "specialist",
+              "query": "Attention Is All You Need transformer Vaswani 2017 paper"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 1980,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "http://arxiv.org/abs/1809.04281v3",
+          "title": "Music Transformer",
+          "snippet": "Music relies heavily on repetition to build structure and meaning. Self-reference occurs on multiple timescales, from motifs to phrases to reusing of entire sections of music, such as in pieces with ABA structure. The Transformer (Vaswani et al., 2017), a sequence model based on self-attention, has achieved compelling results in many generation tasks that require maintaining long-range coherence. This suggests that self-attention might also be well-suited to modeling music. In musical composition and performance, however, relative timing is critically important. Existing approaches for representing relative positional information in the Transformer modulate attention based on pairwise distance (Shaw et al., 2018). This is impractical for long sequences such as musical compositions since their memory complexity for intermediate relative information is quadratic in the sequence length. We propose an algorithm that reduces their intermediate memory requirement to linear in the sequence length. This enables us to demonstrate that a Transformer with our modified relative attention mechanism can generate minute-long compositions (thousands of steps, four times the length modeled in Oore \u2026",
+          "publishedDate": "2018-09-12T07:15:26",
+          "engine": "arxiv",
+          "engines": [
+            "arxiv"
+          ],
+          "discovery": [
+            {
+              "provider": "specialist",
+              "query": "Attention Is All You Need transformer Vaswani 2017 paper"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 1980,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://doi.org/10.1109/wacv61041.2025.00924",
+          "title": "SpectFormer: Frequency and Attention is what you need in a Vision Transformer",
+          "snippet": "Vision transformers have been applied successfully for image recognition tasks. There have been either multi-headed self-attention based (ViT [12], DelT [54]) simi-lar to the original work in textual models or more re-cently based on spectral layers (Fnet [29], GFNet [46], AFNO [15]). We hypothesize that spectral layers cap-ture high-frequency information such as lines and edges, while attention layers capture token interactions. We inves-tigate this hypothesis through this work and observe that indeed mixing spectral and multi-headed attention layers provides a better transformer architecture. We thus pro-pose the novel Spectformer architecture for vision trans-formers that has initial spectral and deeper multi-headed attention layers. We believe that the resulting representation allows the transformer to capture the feature repre-sentation appropriately and it yields improved performance over other transformer representations. For instance, it im-proves the top-1 accuracy by 2% on ImageNet compared to both GFNet-H and LiT. SpectFormer-H-S reaches 84.25% top-1 accuracy on ImageNet-1 K (state of the art for small version). Further, Spectformer-H-L achieves 85.7% which is the state \u2026",
+          "publishedDate": "2025-02-26T00:00:00",
+          "engine": "openalex",
+          "engines": [
+            "openalex"
+          ],
+          "discovery": [
+            {
+              "provider": "specialist",
+              "query": "Attention Is All You Need transformer Vaswani 2017 paper"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 1980,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://arxiv.org/pdf/1706.03762",
+          "title": "Attention Is All You Need",
+          "snippet": "Figure 1: TheTransformer- model architecture. TheTransformerfollows this overall architecture using stacked self-attentionand point-wise, fully connected layers for both the encoder and decoder, shown in the left and right halves of Figure 1, respectively.",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "Attention Is All You Need transformer Vaswani 2017 paper"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 1980,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "http://arxiv.org/abs/cond-mat/0309395v2",
+          "title": "This paper has been withdrawn",
+          "snippet": "",
+          "publishedDate": "2003-09-17T01:28:07",
+          "engine": "arxiv",
+          "engines": [
+            "arxiv"
+          ],
+          "discovery": [
+            {
+              "provider": "specialist",
+              "query": "Attention Is All You Need transformer Vaswani 2017 paper"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 1980,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://doi.org/10.2139/ssrn.5967774",
+          "title": "Attention is All You Need... Unless You Are a CISO: The Inherent Incompatibility Between Transformer Architectures and Zero-Trust Environments",
+          "snippet": "",
+          "publishedDate": "2026-01-01T00:00:00",
+          "engine": "openalex",
+          "engines": [
+            "openalex"
+          ],
+          "discovery": [
+            {
+              "provider": "specialist",
+              "query": "Attention Is All You Need transformer Vaswani 2017 paper"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 1980,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://proceedings.neurips.cc/paper_files/paper/2017/file/3f5ee243547dee91fbd053c1c4a845aa-Paper.pdf",
+          "title": "PDFAttention Is All You Need - NeurIPS",
+          "snippet": "Abstract The dominant sequence transduction models are based on complex recurrent or convolutional neural networks that include an encoder and a decoder. The best performing models also connect the encoder and decoder through anattentionmechanism. We propose a new simple network architecture, theTransformer, based solely onattentionmechanisms, dispensing with recurrence and convolutions ...",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "Attention Is All You Need transformer Vaswani 2017 paper"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 1980,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "http://arxiv.org/abs/1711.11439v1",
+          "title": "The 4th Reactive Synthesis Competition (SYNTCOMP 2017): Benchmarks, Participants & Results",
+          "snippet": "We report on the fourth reactive synthesis competition (SYNTCOMP 2017). We introduce two new benchmark classes that have been added to the SYNTCOMP library, and briefly describe the benchmark selection, evaluation scheme and the experimental setup of SYNTCOMP 2017. We present the participants of SYNTCOMP 2017, with a focus on changes with respect to the previous years and on the two completely new tools that have entered the competition. Finally, we present and analyze the results of our experimental evaluation, including a ranking of tools with respect to quantity and quality of solutions.",
+          "publishedDate": "2017-11-29T04:02:14",
+          "engine": "arxiv",
+          "engines": [
+            "arxiv"
+          ],
+          "discovery": [
+            {
+              "provider": "specialist",
+              "query": "Attention Is All You Need transformer Vaswani 2017 paper"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 1980,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://dl.acm.org/doi/10.5555/3295222.3295349",
+          "title": "Attention is all you need | Proceedings of the 31st International ...",
+          "snippet": "The dominant sequence transduction models are based on complex recurrent or convolutional neural networks that include an encoder and a decoder. The best performing models also connect the encoder and decoder through anattentionmechanism. We propose a new simple network architecture, theTransformer, based solely onattentionmechanisms, dispensing with recurrence and convolutions entirely ...",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "Attention Is All You Need transformer Vaswani 2017 paper"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 1980,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://research.google/pubs/attention-is-all-you-need/",
+          "title": "Attention is All You Need - Google Research",
+          "snippet": "We propose a new simple network architecture, theTransformer, based solely onattentionmechanisms, dispensing with recurrence and convolutions entirely. Experiments on two machine translation tasks show these models to be superior in quality while being more parallelizable and requiring significantly less time to train.",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "Attention Is All You Need transformer Vaswani 2017 paper"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 1980,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://proceedings.neurips.cc/paper/2017/hash/3f5ee243547dee91fbd053c1c4a845aa-Abstract.html",
+          "title": "Attention is All you Need - NeurIPS",
+          "snippet": "AttentionisAllyouNeedAshishVaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N Gomez, \u0141ukasz Kaiser, Illia Polosukhin Advances in Neural Information Processing Systems 30 (NIPS2017) Bibtex MetadataPaperReviews",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "Attention Is All You Need transformer Vaswani 2017 paper"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 1980,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://attentionisallyouneed.uk/",
+          "title": "Attention Is All You Need \u2014 Vaswani et al., 2017",
+          "snippet": "The completeTransformerpaper\u2014AttentionIsAllYouNeed(Vaswani, Shazeer, Parmar, Uszkoreit, Jones, Gomez, Kaiser, Polosukhin; NeurIPS2017) \u2014 beautifully typeset for the web.",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "Attention Is All You Need transformer Vaswani 2017 paper"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 1980,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://en.wikipedia.org/wiki/Attention_Is_All_You_Need",
+          "title": "Attention Is All You Need - Wikipedia",
+          "snippet": "2017paperconceptualizing thetransformer-based deep learning architecture \"AttentionIsAllYouNeed\" [1] is a2017researchpaperon machine learning authored by eight scientists and engineers working at Google. Thepaperintroduced a new deep learning architecture known as thetransformer, based on theattentionmechanism proposed in 2014 by Bahdanau et al.[2] Thetransformerapproach it ...",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "Attention Is All You Need transformer Vaswani 2017 paper"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 1980,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://www.researchgate.net/publication/317558625_Attention_Is_All_You_Need",
+          "title": "Attention Is All You Need | Request PDF - ResearchGate",
+          "snippet": "Request PDF |AttentionIsAllYouNeed| The dominant sequence transduction models are based on complex recurrent or convolutional neural networks in an encoder-decoder configuration. The ...",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "Attention Is All You Need transformer Vaswani 2017 paper"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 1980,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://scispace.com/papers/attention-is-all-you-need-1hpncqdg1c",
+          "title": "(Open Access) Attention Is All You Need (2017) | Ashish Vaswani | 7237 ...",
+          "snippet": "The dominant sequence transduction models are based on complex recurrent or convolutional neural networks in an encoder-decoder configuration. The best performing models also connect the encoder and decoder through anattentionmechanism. We propose a new simple network architecture, theTransformer, based solely onattentionmechanisms, dispensing with recurrence and convolutions entirely ...",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "Attention Is All You Need transformer Vaswani 2017 paper"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 1980,
+          "ranking": [],
+          "from_corpus": false
+        }
+      ],
+      "status": "ok",
+      "attempts": [
+        {
+          "engine": "web",
+          "count": 10,
+          "status": "ok",
+          "elapsed_ms": 1980,
+          "unresponsive": []
+        },
+        {
+          "engine": "specialist",
+          "count": 6,
+          "status": "ok",
+          "elapsed_ms": 1979,
+          "unresponsive": []
+        },
+        {
+          "engine": "bing-news",
+          "count": 0,
+          "status": "not_requested",
+          "elapsed_ms": 1980,
+          "unresponsive": []
+        },
+        {
+          "engine": "searxng",
+          "count": 0,
+          "status": "not_requested",
+          "elapsed_ms": 1980,
+          "unresponsive": []
+        },
+        {
+          "engine": "gnews-resolved",
+          "count": 0,
+          "status": "not_requested",
+          "elapsed_ms": 1980,
+          "unresponsive": []
+        },
+        {
+          "engine": "tls-ddg-lite",
+          "count": 10,
+          "status": "ok",
+          "reason": null,
+          "elapsed_ms": 1353,
+          "unresponsive": []
+        }
+      ],
+      "elapsed_ms": 1980,
+      "ranking": [],
+      "profile": "academic"
+    },
+    "query": "Attention Is All You Need transformer Vaswani 2017 paper",
+    "profile": "academic",
+    "observed_counts": {
+      "total": 16,
+      "ddg": 10,
+      "supplements": {
+        "crossref": 1,
+        "arxiv": 3,
+        "openalex": 2
+      }
+    },
+    "supplement_read_summary": {
+      "http_status": 200,
+      "quality": "failed",
+      "url": "https://langtaosha.org.cn/index.php/lts/preprint/view/10",
+      "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "chars": 0,
+      "contains_service_healthy": false,
+      "contains_pathlib": false
+    }
+  }
+]

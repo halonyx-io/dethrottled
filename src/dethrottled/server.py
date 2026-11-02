@@ -171,9 +171,9 @@ class SearchBody(BaseModel):
     query: str = Field(min_length=1, max_length=500)
     # The contract's name for result count. num_results and max_items remain
     # accepted for callers already written against them; limit wins.
-    limit: int | None = Field(default=None, ge=1, le=50)
-    num_results: int = Field(default=10, ge=1, le=50)
-    max_items: int | None = Field(default=None, ge=1, le=50)
+    limit: int | None = Field(default=None, ge=1, le=16)
+    num_results: int = Field(default=10, ge=1, le=16)
+    max_items: int | None = Field(default=None, ge=1, le=16)
     # Default search includes direct web, Bing News RSS, local SearXNG and
     # resolved Google News headlines. This preserves existing callers.
     categories: Literal["", "news", "academic"] = ""
@@ -330,13 +330,13 @@ class ResearchBody(BaseModel):
 
     question: str = Field(min_length=3, max_length=500)
     queries: list[str] = Field(default_factory=list, max_length=10)
-    max_sources: int = Field(default=10, ge=1, le=30)
+    max_sources: int = Field(default=10, ge=1, le=16)
     max_chars: int = Field(default=12000, ge=500, le=120000)
     language: str = ""
     fresh: bool = False
     follow_assets: bool = True
     engines: str = ""
-    profile: Literal["web", "balanced", "thorough", "academic", "news"] = "thorough"
+    profile: Literal["web", "balanced", "thorough", "academic", "news"] = "web"
     categories: str = ""
     response_format: Literal["detailed", "concise"] = "detailed"
     evidence_namespace: str = Field(default="local", max_length=100)
@@ -456,7 +456,7 @@ class DriveStep(BaseModel):
     delay_ms: int = Field(default=0, ge=0, le=1000)
     name: str = Field(default="", max_length=200)
     index: int = Field(default=0, ge=0, le=500)
-    limit: int = Field(default=100, ge=1, le=200)
+    limit: int = Field(default=10, ge=1, le=10)
     max_chars: int | None = Field(default=None, ge=1, le=1000000)
 
 
@@ -910,11 +910,13 @@ def v2_capabilities():
         "ranking": ranker.available(),
         "corpus": {"multilingual": os.getenv("DETHROTTLED_MULTILINGUAL_CORPUS") == "1",
                    "fusion": "reciprocal_rank", "separate_model_thresholds": True},
-        "request_limits": {"search_results": 50, "fetch_urls": 10,
+        "request_limits": {"search_results": 16, "ddg_results": 10,
+                           "supplement_results_per_engine": 3, "supplement_results_total": 6,
+                           "fetch_urls": 10, "corpus_results": 10,
                            "read_chars": 1000000, "browser_text_chars": 1000000},
         "research": {"available": True, "model_used": False,
                      "partial_sources": "suspect reads retained separately from clean sources",
-                     "max_sources": 30, "max_queries": 11,
+                     "max_sources": 16, "max_queries": 11,
                      "default_sources": 10, "max_chars_per_source": 120000},
         "read": {
             "content_assessment": {"revision": 1, "non_destructive": True,
@@ -1018,7 +1020,7 @@ def _ranked(body) -> tuple:
     something for the ranker to reject.
     """
     limit = body.limit or body.max_items or body.num_results
-    pool = limit * 3 if body.rank or body.ranking != "source" else limit
+    pool = min(16, limit * 3) if body.rank or body.ranking != "source" else limit
     rows, meta = fs.search(body.query, max_items=pool,
                            categories=body.categories,
                            language=body.language or None,
@@ -1037,7 +1039,7 @@ def _ranked(body) -> tuple:
     if body.prefer_domains:
         rows = fs.rank(rows, body.prefer_domains)
         stages.append("preferred_domains")
-    rows = [r for r in rows if constrained(body.query, r)]
+    rows = fs.bounded_results([r for r in rows if constrained(body.query, r)], limit)
     # AFTER ranking, and only here. Relevance order is decided above and is
     # not touched; this moves domains that measurably never yield text to the
     # back of the queue, so the fetches about to be spent land on results that
@@ -1536,7 +1538,7 @@ def research(body: ResearchBody, background: BackgroundTasks):
         def search_one(query):
             try:
                 rows, meta, _ = _ranked(SearchBody(
-                    query=query, limit=max(8, min(50, body.max_sources)), language=body.language,
+                    query=query, limit=16, language=body.language,
                     fresh=body.fresh, categories=body.categories,
                     profile=body.profile, engines=body.engines))
                 return rows, {"query": query, "found": len(rows),
@@ -1553,8 +1555,14 @@ def research(body: ResearchBody, background: BackgroundTasks):
         searches = [rows for rows, _ in probed]
         telemetry = [meta for _, meta in probed]
 
+        interleaved = [rows[index] for index in range(max(map(len, searches), default=0))
+                       for rows in searches if index < len(rows)]
+        admitted = {fetcher.canonical_url(r["url"]) for r in fs.bounded_results(interleaved)}
+        searches = [[r for r in rows if fetcher.canonical_url(r["url"]) in admitted]
+                    for rows in searches]
+
         selected = research_engine.select_sources(
-            searches, body.max_sources + 4,
+            searches, min(16, body.max_sources + 4),
             official_first=not body.queries)
 
         def read(item):
@@ -1644,12 +1652,14 @@ def research(body: ResearchBody, background: BackgroundTasks):
             item["id"] = "P%d" % index
         background.add_task(index_fetched, _harvest(sources))
         coverage = research_engine.coverage_ledger(queries, searches, sources, skipped)
+        coverage["candidate_scope"] = "shared_bounded_pool"
+        coverage["candidate_limits"] = {"ddg": 10, "per_supplement": 3, "total": 16}
         if body.response_format == "concise":
             sources = [compact_row(row) for row in sources]
             partial_sources = [compact_row(row) for row in partial_sources]
         return {"coverage": coverage, "question": body.question, "queries": telemetry,
                 "sources": sources, "partial_sources": partial_sources, "skipped": skipped,
-                "summary": {"candidates": sum(len(rows) for rows in searches),
+                "summary": {"candidates": len(admitted),
                             "selected": len(sources),
                             "read": len(sources),
                             "partial": len(partial_sources),
@@ -1675,9 +1685,10 @@ def corpus_search(q: str, limit: int = 10, floor: float | None = None,
     calibrated for whichever model is in use -- the two do not share a scale.
     """
     try:
-        hits = shared_corpus().search(q, limit=max(1, min(limit, 50)), floor=floor, mode=mode)
+        hits = shared_corpus().search(q, limit=max(1, min(limit, 10)), floor=floor, mode=mode)
     except Exception as exc:
         return {"ok": False, "reason": str(exc)[:200], "results": []}
+    hits = hits[:10]
     return {"ok": True, "count": len(hits), "results": hits}
 
 

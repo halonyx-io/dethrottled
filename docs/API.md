@@ -29,14 +29,21 @@ Source order is default. `rank=true`/`ranking="bm25"` selects lexical ranking;
 and stored `corpus` candidates are explicit refinements. Neural `rerank=true`
 is rejected. Optional keyed engines are never implicitly added to defaults.
 
-Normal HTTP and MCP searches default to ten choices. Read promising sources
-before expanding to `limit=20` or rewriting around a missing fact. The
-[120-question evaluation](../evaluations/agent-search/results/2026-11-03/REPORT.md)
-supports retaining source order on the tested host; it does not justify adding
-Bing/Brave to every menu. DDG Lite/HTML/TLS/browser are alternative acquisition
-paths within one provider family. A display limit is not an upstream-request
-budget: browser races and pagination can make several requests. Inspect each
-row's actual `engine` and the envelope's `attempts`.
+Normal HTTP and MCP searches default to ten choices. DDG acquisition is hard
+capped at ten across Lite/HTML/TLS/browser; it does not paginate automatically.
+Each supplementary engine contributes at most three URLs, with six supplementary
+URLs total and sixteen unique choices in a complete menu. Requests above sixteen
+are rejected, not treated as permission to collect fifty DDG results. Web-only
+requests return at most ten. Existing cache entries obey the same limits.
+
+If evidence is missing, read promising choices or rewrite the query around the
+missing fact. Deliberate academic/news/thorough profiles can add bounded specialist
+choices; Bing/Brave remain excluded from automatic general-web supplementation.
+A successful response or a novel URL alone does not establish relevance.
+Research shares these budgets across its facets, including unread/failure choices.
+The [source-choice study](../evaluations/agent-search/results/2026-11-03/REPORT.md)
+is historical evidence for source order; its larger expansion settings are no
+longer supported. Document text limits remain separate from search menus.
 
 ## Read known URLs
 

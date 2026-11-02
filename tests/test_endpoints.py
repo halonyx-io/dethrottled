@@ -85,11 +85,12 @@ def test_default_menu_and_expansion_reach_acquisition(client, monkeypatch, path)
 
     def source(query, **kwargs):
         requested.append(kwargs["max_items"])
-        return ([dict(FAKE_ROWS[0], url=f"https://example.com/{i}")
+        return ([dict(FAKE_ROWS[0], url=f"https://example.com/{i}",
+                          engine="web-ddg-lite")
                  for i in range(25)], dict(FAKE_META))
 
     monkeypatch.setattr(srv.fs, "search", source)
-    for body, count in [({}, 10), ({"limit": 20}, 20),
+    for body, count in [({}, 10), ({"limit": 16}, 10),
                         ({"num_results": 5}, 5), ({"max_items": 3}, 3)]:
         response = client.post(path, json={"query": "One", **body})
         assert response.status_code == 200
@@ -98,7 +99,7 @@ def test_default_menu_and_expansion_reach_acquisition(client, monkeypatch, path)
             rows = rows["results"]
         assert len(rows) == count
         assert rows[0]["ranking"] == []
-        assert requested[-1] == count
+        assert requested[-1] == body.get("limit", count)
 
 
 @pytest.mark.parametrize("path", ["/fetch", "/extract"])
@@ -253,3 +254,15 @@ def test_language_is_declared_because_it_is_honoured(client):
     assert "language" in declared["search"]
     assert "engines" in declared["search"]
     assert "profile" in declared["search"]
+
+
+def test_local_corpus_cannot_return_a_fifty_url_menu(client, monkeypatch):
+    class Corpus:
+        def search(self, query, **options):
+            assert options['limit'] == 10
+            return [{'url': f'https://example.com/{i}'} for i in range(50)]
+
+    monkeypatch.setattr(srv, 'shared_corpus', Corpus)
+    result = client.get('/corpus/search', params={'q': 'One', 'limit': 50})
+    assert result.status_code == 200
+    assert result.json()['count'] == 10

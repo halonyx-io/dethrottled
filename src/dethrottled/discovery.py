@@ -24,12 +24,13 @@ _NEXT = 0.0
 
 def tls_search(query, *, max_items=8, cache=None, diagnostics=None, worker=""):
     """Accept useful SERPs only. A 202 challenge never means 'no matches'."""
+    max_items = max(1, min(max_items, 10))
     diagnostics = diagnostics if diagnostics is not None else {}
     if cache is not None:
         hit = cache.get("search", "tls-ddg-lite", query, max_items)
         if hit is not None:
             diagnostics.update(status="cached", count=len(hit))
-            return hit
+            return hit[:max_items]
     started = time.monotonic()
     attempt = {"engine": "tls-ddg-lite", "status": "unavailable", "count": 0}
     try:

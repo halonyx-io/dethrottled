@@ -49,41 +49,32 @@ async def verify(base):
         browser = await playwright.chromium.launch(headless=False)
         try:
             service.ENGINES = {name: (f'{base}/{name}?q=', 'a.result-link', '.result-snippet')
-                               for name in service.ORDER}
+                               for name in service.ENGINES}
             context = await browser.new_context()
             page = await context.new_page()
             await page.goto(base + '/large')
-            fifty = await service._extract(page, 'ddg-lite', 'fixture', 50)
-            assert len(fifty) == 50 and fifty[-1]['url'].endswith('/1/49')
+            primary = await service._extract(page, 'ddg-lite', 'fixture', 50)
+            assert len(primary) == 10
+            secondary = await service._extract(page, 'bing', 'fixture', 50)
+            assert len(secondary) == 3
+            REQUESTS.clear()
             capped = await service._engine(context, 'bing', 'cap', 0, 50)
-            assert capped['pages'] == 5 and len(capped['results']) == 40
-            assert capped['reason'] == 'page_limit'
+            assert capped['pages'] == 1 and len(capped['results']) == 3
+            assert all(number == 1 for _, number in REQUESTS)
             await context.close()
             REQUESTS.clear()
             small = await service._race(browser, 'fixture', 1)
             assert small['ok'] and len(small['results']) == 1
-            assert all(number == 1 for _, number in REQUESTS)
             REQUESTS.clear()
-            broad = await service._race(browser, 'fixture', 50)
-            assert broad['ok'] and len(broad['results']) == 50
-            assert len({r['url'] for r in broad['results']}) == 50
-            assert max(number for _, number in REQUESTS) <= 5
-            assert any(number > 1 for _, number in REQUESTS)
-            assert len({r['engine'] for r in broad['results']}) >= 2
-            partial = await service._race(browser, 'blocked', 50)
-            assert partial['ok'] and partial['results']
-            assert len(partial['results']) <= 50
-            assert any(a.get('reason') == 'http_403' for a in partial['attempts'])
-            assert all('/1/' in r['url'] for r in partial['results'])
-            print(json.dumps({'passed': True, 'per_page_rows_retained': len(fifty),
-                              'small_request_rows': len(small['results']),
-                              'small_request_first_page_only': True,
-                              'broad_unique_rows': len(broad['results']),
-                              'broad_engines': len({r['engine'] for r in broad['results']}),
-                              'max_pages_per_engine': 5,
-                              'page_limit_earlier_rows': len(capped['results']),
-                              'partial_first_page_rows': len(partial['results']),
-                              'blocked_next_page_retained_first_page': True}))
+            capped_race = await service._race(browser, 'fixture', 50)
+            assert capped_race['ok'] and 3 <= len(capped_race['results']) <= 10
+            assert all(number == 1 for _, number in REQUESTS)
+            assert all(r['engine'].startswith('ddg') for r in capped_race['results'])
+            print(json.dumps({'passed': True, 'ddg_cap': len(primary),
+                              'supplement_cap': len(secondary),
+                              'race_request50_returned': len(capped_race['results']),
+                              'automatic_pagination': False,
+                              'small_request_rows': len(small['results'])}))
         finally:
             await browser.close()
 

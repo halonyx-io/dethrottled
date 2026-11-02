@@ -5,6 +5,10 @@ present behavior; the reports below retain their recorded versions, protocols
 and failures. Neither a health check nor a passing fixture establishes universal
 web access, answer correctness or superiority over paid services.
 
+Current source-menu policy is [compact discovery](../evaluations/compact-search/results/2026-11-03/REPORT.md):
+ten DDG choices, three per supplementary engine, six supplements and sixteen
+unique choices total. Earlier larger-pool measurements remain historical evidence.
+
 ## Recorded evaluations
 
 | Scope | Report and raw data | Interpretation |

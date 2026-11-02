@@ -2,16 +2,22 @@
 
 from urllib.parse import urlsplit
 
+PRIMARY_SEARCH_LIMIT = 10
+SUPPLEMENT_SEARCH_LIMIT = 3
+SEARCH_MENU_LIMIT = 16
+
 INSTRUCTIONS = """Dethrottled discovers and reads sources.
 Prioritize grounded coverage and accuracy.
-For normal discovery start with profile=web, limit=10, ranking=source. Read promising
-sources before expanding. If evidence is missing, request limit=20 or rewrite the
-query around the missing fact; use academic/news profiles for those source types.
-DDG Lite/HTML/TLS/browser are acquisition paths within one provider family, not
-independent corroboration. Check each result's engine and search_attempts. Extra
-providers and source/lexical fusion are optional, not evidence of greater accuracy.
-If coverage is insufficient, search accepts limit up to 50. Research accepts up to
-30 sources and 10 additional query facets, with up to 120000 characters per source.
+For discovery start with profile=web, limit=10, ranking=source. DDG Lite/HTML/TLS/browser
+share a hard ten-result budget, with no automatic search pagination. Supplementary
+engines contribute at most three URLs each; the complete menu is at most sixteen.
+Bing/Brave are not automatic general-web supplements. If evidence is missing, read
+promising sources or rewrite around the missing fact; do not request fifty choices.
+Use academic/news/thorough profiles deliberately when those sources fit the task.
+Alternative DDG acquisition paths are one provider family, not independent votes.
+Research shares the same family/menu budgets across its query facets, with up to
+sixteen selected sources and up to 120000 characters per source. Drive snapshots
+and network lists show at most ten items; inspect narrower selectors as needed.
 Fetch and read_document allow up to 1000000 characters; use retained-document offsets
 for longer sources. Defaults are smaller than ceilings; request more when justified.
 Known URL: call fetch directly, normally with focus set to the question. Unknown sources:

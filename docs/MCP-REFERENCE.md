@@ -97,11 +97,11 @@ Gather cited sources and relevant excerpts across multiple searches.
 |---|---|---|
 | `question` | str | required |
 | `queries` | list[str] \| None | None |
-| `max_sources` | Annotated[int, Field(ge=1, le=30)] | 10 |
+| `max_sources` | Annotated[int, Field(ge=1, le=16)] | 10 |
 | `max_chars` | Annotated[int, Field(ge=500, le=120000)] | 12000 |
 | `fresh` | bool | False |
 | `engines` | str | '' |
-| `profile` | Literal['web', 'balanced', 'thorough', 'academic', 'news'] | 'thorough' |
+| `profile` | Literal['web', 'balanced', 'thorough', 'academic', 'news'] | 'web' |
 | `follow_assets` | bool | True |
 | `categories` | Literal['', 'news', 'academic'] | '' |
 | `response_format` | Literal['detailed', 'concise'] | 'detailed' |
@@ -227,7 +227,7 @@ Search passages already stored in the local semantic corpus.
 | Argument | Type/choices | Required/default |
 |---|---|---|
 | `query` | str | required |
-| `limit` | int | 5 |
+| `limit` | Annotated[int, Field(ge=1, le=10)] | 5 |
 | `floor` | float \| None | None |
 | `mode` | Literal['auto', 'semantic', 'lexical'] | 'auto' |
 ## corpus_stats
