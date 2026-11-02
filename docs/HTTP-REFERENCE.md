@@ -208,7 +208,7 @@ Framework `/docs` and `/openapi.json` routes are available separately.
 |---|---|---|---|
 | `query` | string | required | minLength=1; maxLength=500 |
 | `limit` | integer or null | factory/default; see runtime schema | minimum=1.0; maximum=50.0 |
-| `num_results` | integer | 8 | minimum=1.0; maximum=50.0 |
+| `num_results` | integer | 10 | minimum=1.0; maximum=50.0 |
 | `max_items` | integer or null | factory/default; see runtime schema | minimum=1.0; maximum=50.0 |
 | `categories` | "", "news", "academic" | "" |  |
 | `language` | string | "" |  |
@@ -230,7 +230,7 @@ Framework `/docs` and `/openapi.json` routes are available separately.
 |---|---|---|---|
 | `query` | string | required | minLength=1; maxLength=500 |
 | `limit` | integer or null | factory/default; see runtime schema | minimum=1.0; maximum=50.0 |
-| `num_results` | integer | 8 | minimum=1.0; maximum=50.0 |
+| `num_results` | integer | 10 | minimum=1.0; maximum=50.0 |
 | `max_items` | integer or null | factory/default; see runtime schema | minimum=1.0; maximum=50.0 |
 | `categories` | "", "news", "academic" | "" |  |
 | `language` | string | "" |  |

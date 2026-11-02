@@ -123,6 +123,29 @@ has its own two-request semaphore. Optional workers expose private readiness and
 metrics. Record exact URLs, expected facts, timestamps, input controls and raw
 results; distinguish missing source evidence from a transport or limiter failure.
 
+## Search upstream cooldowns
+
+The core rests refused SearXNG/DDGS engines for
+`DETHROTTLED_ENGINE_REST_SECONDS` (default 1800 seconds). A sole selected engine
+and an entirely blocked selection stay rested too; neither bypasses the timer.
+SearXNG also has its own suspensions. The pinned image's measured defaults are
+180 seconds for ordinary access-denied/429 responses and 3600 for CAPTCHA,
+with longer Cloudflare/reCAPTCHA policies. These are separate layers.
+
+The default Compose stack mounts a small SearXNG plugin that extends refusal
+suspension when `Retry-After` specifies a longer delay, accepting seconds or
+HTTP dates. Keep both plugin mounts and its settings entry together when
+customizing Compose. Existing stronger suspension policies are preserved. A
+source-installed Python API using an independently managed SearXNG does not
+install that Compose plugin automatically.
+
+A local cooldown expiring does not establish upstream recovery. Preserve the
+next probe's actual status and usable results. In the recorded study Brave
+still returned HTTP429 just over 30 minutes after its first refusal. Do not
+repeatedly probe it per search. See the
+[source-choice report](../evaluations/agent-search/results/2026-11-03/REPORT.md)
+for effective settings and negative observations.
+
 ## Documentation parity
 
 The API image includes `/app/README.md`, `/app/docs` and recorded evaluation

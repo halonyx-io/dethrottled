@@ -16,6 +16,7 @@ from pathlib import Path
 
 import httpx
 from dethrottled_version import __version__
+from dethrottled_workflow import INSTRUCTIONS
 from mcp import ClientSession
 from mcp.client.streamable_http import streamablehttp_client
 
@@ -68,6 +69,7 @@ async def verify(url, rest_url, token, registry):
                 init = await client.initialize()
                 assert init.serverInfo.version == __version__, init.serverInfo
                 assert init.instructions and 'read_document' in init.instructions
+                assert init.instructions == INSTRUCTIONS
                 listing = await client.list_tools()
                 assert len(listing.tools) == 20
                 drive = next(t for t in listing.tools if t.name == 'drive')

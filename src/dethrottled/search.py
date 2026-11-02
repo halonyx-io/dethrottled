@@ -103,10 +103,9 @@ def _rested(engines: str, *, namespace: str = "") -> str:
 
     alive = [e for e in wanted
              if now - last_failure(e) > _HEALTH_TTL]
-    # Never rest the last one standing: a wrong health record must not be able
-    # to turn every search into an empty result. If all are rested, retry only
-    # the one whose failure is oldest; retrying ALL of them defeats resting.
-    return ",".join(alive or [min(wanted, key=last_failure)])
+    # An explicitly selected blocked engine must rest too. Returning it here
+    # made every request another retry when there was only one provider.
+    return ",".join(alive)
 
 
 def _record_failure(name: str, reason: str, *, namespace: str = "") -> None:
@@ -193,6 +192,10 @@ def searxng(query: str, *, max_items: int = 8, categories: str = "",
             diagnostics.update(status="not_configured")
         return []
     engines = _rested(engines or DEFAULT_ENGINES, namespace="searxng")
+    if not engines:
+        if diagnostics is not None:
+            diagnostics.update(status="cooldown", elapsed_ms=0)
+        return []  # Empty engines would otherwise select SearXNG's defaults.
     if cache is not None:
         hit = cache.get("search", "sx", query, engines, categories, max_items,
                         language)

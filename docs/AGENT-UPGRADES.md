@@ -44,6 +44,14 @@ gaps; it does not verify semantic support or operate arbitrary application contr
 6. Assess source authority, date, agreement and semantic support yourself. Stop
    when the question is supported, not merely when a tool reports success.
 
+For ordinary discovery, start with `profile="web", limit=10, ranking="source"`.
+When useful evidence is missing, expand to 20, rewrite around the missing fact
+or choose the appropriate specialist profile. More providers do not guarantee
+better choices: the [recorded source-menu study](../evaluations/agent-search/results/2026-11-03/REPORT.md)
+found unrelated Bing results and a blocked Brave route on the tested host.
+Treat the DDG acquisition variants as one family; confirm facts in the pages
+you read rather than counting agreement between those variants.
+
 ## Preserve the evidence contract
 
 Keep `document_id`, `document_sha256`, `workflow`, `warnings`, `source_partial`,

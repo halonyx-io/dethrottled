@@ -12,6 +12,12 @@
 
 use_default_settings: true
 
+# The pinned upstream version otherwise ignores Retry-After on HTTP refusals.
+# This adapter extends its suspension; it never shortens the CAPTCHA policy.
+plugins:
+  searx.plugins.dethrottled_guard.SXNGPlugin:
+    active: true
+
 general:
   instance_name: "dethrottled"
   # Nothing here should be advertising itself.
