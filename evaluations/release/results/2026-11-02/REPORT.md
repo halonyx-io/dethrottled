@@ -1,10 +1,9 @@
 # 1.0 candidate evaluation — 2 November 2026
 
-This work prepares **1.0.0rc1** locally. It has not been pushed, released or
-deployed to the public service. Published 0.10.1 remains the baseline. The local
-functional gates pass; native candidate ARM64 CI and promotion checks remain
-required. An earlier release's green CI is not evidence that this candidate has
-passed those jobs.
+The local measurements below used **1.0.0rc1**, compared with the 0.10.1
+baseline. The candidate was subsequently pushed for native CI and prepared as
+1.0.0 with version, packaging and documentation changes. Publishing a release
+does not update the public deployment. Release verification is recorded below.
 
 ## Outcomes and limits
 
@@ -13,10 +12,10 @@ passed those jobs.
 | Autonomous acquisition | 20/20 fresh default-stack contracts and 1/1 restart contract pass | Broader sources and real agent populations are not covered by synthetic fixtures |
 | Browser/blocker recovery | Three fresh Reddit thread sessions per CPU/GPU configuration returned the predefined fact and exercised native controls; listing reads also passed | Crunchbase/G2 remained 403; CarGurus yielded no usable text; no general hostile-source breakthrough is claimed |
 | Content fidelity | 22/22 parser tasks pass; known pollution detections improve 6/8 → 8/8, false flags remain 0/10 and facts 18/18 | This is a known regression set, not an independent accuracy sample |
-| Portable defaults | Normal Dockerfiles build; fresh volumes and an empty environment file pass without GPU or host model mounts | Native ARM64 candidate execution and Windows/macOS Docker Desktop behavior are not certified here |
+| Portable defaults | Normal Dockerfiles build; fresh volumes and an empty environment file pass without GPU or host model mounts | Native AMD64/ARM64 execution subsequently passes in CI; Windows/macOS Docker Desktop behavior remains untested |
 | Optional resources | Started profile workers are discovered automatically; speech and PDF layout conversions return supported evidence | Initial model downloads and resource requirements still apply |
 | Agent contract | Actual authenticated REST/MCP checks pass; corrected fresh-agent task completes through published tools | One model conversation is not a general agent reliability estimate |
-| Runtime/docs | 648 unit/contract tests pass; offline verifier validates 71 package versions, reader dependencies and actual MiniLM/E5 inference | Remote native CI must run after a candidate branch is authorized for publication |
+| Runtime/docs | 648 unit/contract tests pass; offline verifier validates 71 package versions, reader dependencies and actual MiniLM/E5 inference | Native CI results are recorded below; final release metadata is checked separately |
 
 The [source hashes](source-sha256.json) identify the implementation inputs tested.
 Full controlled results and summarized live observations accompany this report.
@@ -177,8 +176,28 @@ package or image byte. [ARM wheel preflight](arm-wheel-manifest.json) found all 
 selected native-package wheels; it does not replace native execution.
 
 [Regression log](regression-final.log): **648 passed, 15 skipped, two network tests
-deselected**. Lint and documentation contracts pass. New native AMD64/ARM64 CI runs
-are prepared to repeat the default-stack functional suite and retain failures,
-but have not been triggered because publication remains on hold. Candidate
-promotion must also verify the deployed code, packaged docs and remote instruction
-hashes. No public release or public service update is authorized by this report.
+deselected**. Lint and documentation contracts pass.
+
+## Native CI and release verification
+
+[Candidate CI](https://github.com/halonyx-io/dethrottled/actions/runs/41413525014)
+passes all 14 checks at commit `44e4d1ac64c98d833d1fe8922f333d1ce304a741`.
+Both native AMD64 and ARM64 build the normal API/browser images, run the offline
+runtime and packaged-document checks, start headed Chromium, and pass **20/20
+fresh-stack contracts plus 1/1 restart restoration**. The stack uses fresh volumes,
+an empty environment file and software rendering. [Summary](ci-candidate.json),
+[AMD64 contracts](ci-amd64/contracts.json), [AMD64 restore](ci-amd64/restore.json),
+[ARM64 contracts](ci-arm64/contracts.json) and [ARM64 restore](ci-arm64/restore.json)
+are preserved. This is actual native execution, beyond the earlier wheel preflight.
+
+Release preparation changes the version to **1.0.0**, updates the current guides,
+adds canonical PyPI project links and a release tag/package-version check. The
+wheel and source archive both build, pass `twine check`, and install/import in
+separate clean environments outside the source tree. The installed base wheel
+starts its HTTP server and reports 1.0.0 from health and capabilities. These checks
+do not assert that a Python install includes Docker workers or system OCR tools.
+The exact release commit must also pass all CI checks before tagging.
+
+The public deployment remains independently versioned; no production runtime
+upgrade is part of these publication checks. Public adapter code and remote
+plugin captures must be verified separately when that installation is upgraded.

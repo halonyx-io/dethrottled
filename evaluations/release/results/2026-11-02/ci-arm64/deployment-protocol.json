@@ -1,0 +1,8 @@
+{
+  "project": "dethrottled-gate-d4d66e9834",
+  "empty_env_file": true,
+  "gpu_passthrough": false,
+  "fresh_volumes": true,
+  "port": 19087,
+  "status": "passed"
+}

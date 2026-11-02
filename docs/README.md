@@ -30,8 +30,8 @@ policy and shared admission; they are optional services, not built-in API
 routes. Base Compose includes five services, including broad-format parsing. Speech and
 PDF layout use automatically connected profiles; public adapters use an overlay.
 
-The [1.0 candidate](ONE-ZERO.md) explains the release gates and which checks
-remain before promotion.
+The [1.0 release gates](ONE-ZERO.md) explain measured capabilities, portability
+checks and remaining limits.
 
 ## Current guides and historical evidence
 

@@ -34,6 +34,18 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Verify release tag matches the package
+        if: github.event_name == 'release'
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          python - <<'PY'
+          import os, tomllib
+          from pathlib import Path
+          version = tomllib.loads(Path("pyproject.toml").read_text())["project"]["version"]
+          assert os.environ["RELEASE_TAG"] == "v" + version, "release tag/package version mismatch"
+          PY
+
       - name: Build sdist and wheel
         run: |
           python -m pip install --upgrade pip build twine

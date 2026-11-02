@@ -39,6 +39,28 @@ Speech/layout profiles live in the base file and connect automatically. Use
 [configuration](CONFIGURATION.md). Public adapters
 are a separate profile or host-managed deployment.
 
+## Publishing a release
+
+The canonical repository is `halonyx-io/dethrottled`. Prepare a pull request with
+matching versions in `pyproject.toml`, `src/dethrottled/__init__.py`, the Compose
+user agent and `.env.example`. Update current guides while leaving dated test
+records intact. Require all CI checks, including native AMD64/ARM64 fresh-stack
+contracts, before merging and tagging `v<version>` at the tested commit.
+
+Publishing a GitHub release triggers `.github/workflows/release.yml`. It checks
+the tag against package metadata, builds a wheel and source archive, checks the
+rendered metadata, and installs/imports the wheel in a clean environment before
+uploading to PyPI. The workflow uses Trusted Publishing, not a stored API token.
+Configure the existing PyPI project's GitHub publisher with owner `halonyx-io`,
+repository `dethrottled`, workflow `release.yml` and environment `pypi`. A publisher
+for an old repository does not authorize this repository. Remove obsolete
+publishers after verifying the new one. TestPyPI requires its own publisher.
+
+Verify the release workflow and PyPI version/download hashes after upload; a
+GitHub release alone does not prove PyPI publication. Attach the tested wheel,
+source archive and SHA256 manifest to the GitHub release. Updating source, a
+GitHub release or PyPI never upgrades an already running Docker deployment.
+
 ## State and backups
 
 | Storage | Contents |
