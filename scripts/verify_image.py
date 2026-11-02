@@ -58,6 +58,13 @@ def main():
         return f'{count} declared runtime versions match'
 
     check('Docker runtime version pins', pinned_runtime)
+
+    def dependency_closure():
+        result = subprocess.run([sys.executable, '-m', 'pip', 'check'],
+                                capture_output=True, text=True, check=True)
+        return result.stdout.strip()
+
+    check('Python dependency closure', dependency_closure)
     print("PYTHON DEPENDENCIES")
     for module in ("requests", "feedparser", "ddgs", "trafilatura",
                    "resiliparse", "selectolax", "fastapi", "uvicorn",

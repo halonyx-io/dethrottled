@@ -16,7 +16,7 @@ Find pages. Returns ranked results with url, title and snippet.
 | Argument | Type/choices | Required/default |
 |---|---|---|
 | `query` | str | required |
-| `limit` | int | 10 |
+| `limit` | Annotated[int, Field(ge=1, le=MAX_RESULTS)] | 10 |
 | `fresh` | bool | False |
 | `rank` | bool | False |
 | `corpus` | int | 0 |
@@ -37,7 +37,7 @@ Read pages you already have URLs for.
 | Argument | Type/choices | Required/default |
 |---|---|---|
 | `urls` | list[str] | required |
-| `max_chars` | int | 12000 |
+| `max_chars` | Annotated[int, Field(ge=1, le=MAX_CHARS)] | 12000 |
 | `format` | Literal['text', 'links', 'html'] | 'text' |
 | `render` | Literal['auto', 'always', 'never'] | 'auto' |
 | `fresh` | bool | False |
@@ -65,7 +65,7 @@ Read public URLs while retaining resolved outbound links.
 | Argument | Type/choices | Required/default |
 |---|---|---|
 | `urls` | list[str] | required |
-| `max_chars` | int | 12000 |
+| `max_chars` | Annotated[int, Field(ge=1, le=MAX_CHARS)] | 12000 |
 | `render` | Literal['auto', 'always', 'never'] | 'auto' |
 | `fresh` | bool | False |
 ## search_and_fetch
@@ -75,8 +75,8 @@ Find pages and read them in one call.
 | Argument | Type/choices | Required/default |
 |---|---|---|
 | `query` | str | required |
-| `limit` | int | 5 |
-| `max_chars` | int | 3000 |
+| `limit` | Annotated[int, Field(ge=1, le=MAX_RESULTS)] | 5 |
+| `max_chars` | Annotated[int, Field(ge=1, le=MAX_CHARS)] | 3000 |
 | `rank` | bool | False |
 | `render` | Literal['auto', 'always', 'never'] | 'auto' |
 | `fresh` | bool | False |
@@ -97,8 +97,8 @@ Gather cited sources and relevant excerpts across multiple searches.
 |---|---|---|
 | `question` | str | required |
 | `queries` | list[str] \| None | None |
-| `max_sources` | int | 6 |
-| `max_chars` | int | 5000 |
+| `max_sources` | Annotated[int, Field(ge=1, le=30)] | 10 |
+| `max_chars` | Annotated[int, Field(ge=500, le=120000)] | 12000 |
 | `fresh` | bool | False |
 | `engines` | str | '' |
 | `profile` | Literal['web', 'balanced', 'thorough', 'academic', 'news'] | 'thorough' |
@@ -132,7 +132,7 @@ Reopen retained source evidence without another origin request.
 | `document_id` | str | required |
 | `focus` | str | '' |
 | `offset` | int | 0 |
-| `max_chars` | Annotated[int, Field(ge=1, le=120000)] | 12000 |
+| `max_chars` | Annotated[int, Field(ge=1, le=1000000)] | 12000 |
 | `response_format` | Literal['detailed', 'concise'] | 'detailed' |
 | `reparse` | bool | False |
 | `row_start` | int | 1 |
@@ -164,7 +164,7 @@ Start durable page reads and receive sources as they finish via read_fetch_job.
 | `operation_id` | str | '' |
 | `focus` | str | '' |
 | `render` | Literal['auto', 'always', 'never'] | 'auto' |
-| `max_chars` | Annotated[int, Field(ge=1, le=120000)] | 12000 |
+| `max_chars` | Annotated[int, Field(ge=1, le=1000000)] | 12000 |
 | `wait_for` | str | '' |
 | `fresh` | bool | False |
 | `ocr_language` | str | '' |

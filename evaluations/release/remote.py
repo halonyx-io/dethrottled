@@ -34,7 +34,8 @@ def unpack(result):
     assert not result.isError
     value = result.structuredContent
     if value is None:
-        value = json.loads(result.content[0].text)
+        values = [json.loads(block.text) for block in result.content if block.type == "text"]
+        value = values[0] if len(values) == 1 else values
     return value.get("result", value) if isinstance(value, dict) else value
 
 

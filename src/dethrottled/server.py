@@ -171,9 +171,9 @@ class SearchBody(BaseModel):
     query: str = Field(min_length=1, max_length=500)
     # The contract's name for result count. num_results and max_items remain
     # accepted for callers already written against them; limit wins.
-    limit: int | None = Field(default=None, ge=1, le=10)
-    num_results: int = Field(default=8, ge=1, le=10)
-    max_items: int | None = Field(default=None, ge=1, le=10)
+    limit: int | None = Field(default=None, ge=1, le=50)
+    num_results: int = Field(default=8, ge=1, le=50)
+    max_items: int | None = Field(default=None, ge=1, le=50)
     # Default search includes direct web, Bing News RSS, local SearXNG and
     # resolved Google News headlines. This preserves existing callers.
     categories: Literal["", "news", "academic"] = ""
@@ -267,7 +267,7 @@ class FetchBody(BaseModel):
     # is 500 to 800 -- this endpoint was truncating typical articles. Not
     # 10,000, because past roughly eight thousand most sites are into
     # related-articles and footer.
-    max_chars: int = Field(default=8000, ge=1, le=120000)
+    max_chars: int = Field(default=8000, ge=1, le=1000000)
     fresh: bool = False
     cache_mode: Literal["use", "refresh", "bypass"] = "use"
     max_age: float | None = Field(default=None, ge=0, le=1814400)
@@ -321,7 +321,7 @@ class SearchFetchBody(SearchBody):
     # of results, and it is the ranking path, where measurement says less text
     # ranks better -- titles plus 240 characters beat 3,000 characters of body.
     # 3000 is the measured sweet spot for the ranking path.
-    max_chars: int = Field(default=3000, ge=1, le=120000)
+    max_chars: int = Field(default=3000, ge=1, le=1000000)
 
 
 class ResearchBody(BaseModel):
@@ -329,9 +329,9 @@ class ResearchBody(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     question: str = Field(min_length=3, max_length=500)
-    queries: list[str] = Field(default_factory=list, max_length=3)
-    max_sources: int = Field(default=6, ge=1, le=6)
-    max_chars: int = Field(default=5000, ge=500, le=6000)
+    queries: list[str] = Field(default_factory=list, max_length=10)
+    max_sources: int = Field(default=10, ge=1, le=30)
+    max_chars: int = Field(default=12000, ge=500, le=120000)
     language: str = ""
     fresh: bool = False
     follow_assets: bool = True
@@ -364,7 +364,7 @@ class DocumentReadBody(BaseModel):
     ocr_mode: Literal["auto", "always", "never"] = "auto"
     ocr_language: str = Field(default="", pattern=r"^[a-z_]*(?:\+[a-z_]+)*$", max_length=100)
     offset: int = Field(default=0, ge=0)
-    max_chars: int = Field(default=12000, ge=1, le=120000)
+    max_chars: int = Field(default=12000, ge=1, le=1000000)
     response_format: Literal["detailed", "concise"] = "detailed"
     evidence_namespace: str = Field(default="local", max_length=100)
 
@@ -457,7 +457,7 @@ class DriveStep(BaseModel):
     name: str = Field(default="", max_length=200)
     index: int = Field(default=0, ge=0, le=500)
     limit: int = Field(default=100, ge=1, le=200)
-    max_chars: int | None = Field(default=None, ge=1, le=120000)
+    max_chars: int | None = Field(default=None, ge=1, le=1000000)
 
 
 class DriveBody(BaseModel):
@@ -901,16 +901,19 @@ def v2_capabilities():
             "tabs": ["tabs", "switch_tab"],
             "action_history": "bounded outcome history; checkpoint persists it",
             "download_reading": True,
-            "text_max_chars": 120000,
+            "text_max_chars": 1000000,
         },
         "tiers_resting": fetcher.tier_rest_state(),
         "extract": [k for k, v in fx.available().items() if v],
         "ranking": ranker.available(),
         "corpus": {"multilingual": os.getenv("DETHROTTLED_MULTILINGUAL_CORPUS") == "1",
                    "fusion": "reciprocal_rank", "separate_model_thresholds": True},
+        "request_limits": {"search_results": 50, "fetch_urls": 10,
+                           "read_chars": 1000000, "browser_text_chars": 1000000},
         "research": {"available": True, "model_used": False,
                      "partial_sources": "suspect reads retained separately from clean sources",
-                     "max_sources": 6, "max_queries": 4},
+                     "max_sources": 30, "max_queries": 11,
+                     "default_sources": 10, "max_chars_per_source": 120000},
         "read": {
             "content_assessment": {"revision": 1, "non_destructive": True,
                                    "scope": "heuristic website error-banner pollution",
@@ -1531,7 +1534,7 @@ def research(body: ResearchBody, background: BackgroundTasks):
         def search_one(query):
             try:
                 rows, meta, _ = _ranked(SearchBody(
-                    query=query, limit=8, language=body.language,
+                    query=query, limit=max(8, min(50, body.max_sources)), language=body.language,
                     fresh=body.fresh, categories=body.categories,
                     profile=body.profile, engines=body.engines))
                 return rows, {"query": query, "found": len(rows),

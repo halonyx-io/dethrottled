@@ -56,7 +56,7 @@ def queries_for(question: str, supplied: list[str] | None = None) -> list[str]:
         if text and key not in seen:
             seen.add(key)
             out.append(text)
-        if len(out) >= 4:
+        if len(out) >= 11:
             break
     return out
 
@@ -130,7 +130,7 @@ def select_sources(searches: list[list[dict]], limit: int,
     official documents there while a broad first query could lead with Reddit
     or local news. Caller-supplied facets keep their given order.
     """
-    selected, by_url, per_host = [], {}, {}
+    selected, by_url, per_host, deferred = [], {}, {}, []
     width = max((len(rows) for rows in searches), default=0)
     query_order = list(range(len(searches)))
     if official_first and len(query_order) > 1:
@@ -146,18 +146,23 @@ def select_sources(searches: list[list[dict]], limit: int,
                 continue
             key = canonical_url(url)
             if key in by_url:
-                by_url[key]["query_indexes"].append(query_index)
+                if query_index not in by_url[key]["query_indexes"]:
+                    by_url[key]["query_indexes"].append(query_index)
                 continue
             host = urlsplit(url).hostname or ""
-            if per_host.get(host, 0) >= 2 or len(selected) >= limit:
-                continue
             item = {"url": url, "title": row.get("title") or "",
                     "snippet": row.get("snippet") or "",
                     "publishedDate": row.get("publishedDate"),
                     "query_indexes": [query_index], "search_rank": rank + 1}
-            selected.append(item)
             by_url[key] = item
-            per_host[host] = per_host.get(host, 0) + 1
+            if per_host.get(host, 0) < 2 and len(selected) < limit:
+                selected.append(item)
+                per_host[host] = per_host.get(host, 0) + 1
+            else:
+                deferred.append(item)
+    # Prefer publisher diversity, but do not discard needed official documents
+    # when fewer publishers are available. Deferred rows retain query provenance.
+    selected.extend(deferred[:max(0, limit - len(selected))])
     return selected
 
 

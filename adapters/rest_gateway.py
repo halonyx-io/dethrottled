@@ -158,7 +158,8 @@ async def upstream(
                              'limiter': 'rest_gateway', 'retryable': True}, status_code=429,
                             headers={'Retry-After': '5', 'X-Dethrottled-Limiter': 'rest_gateway'})
     try:
-        timeout = 240.0
+        timeout = 600.0 if path in {'/research', '/search-and-fetch',
+                                  '/search-and-extract'} else 240.0
         if path == '/drive' and payload:
             timeout = max(timeout, float(payload.get('timeout_ms', 45_000)) / 1000 + 20)
         async with httpx.AsyncClient(timeout=timeout, trust_env=False) as client:
@@ -225,18 +226,18 @@ async def dispatch(path: str, request: Request):
         if not isinstance(query, str) or not 0 < len(query.strip()) <= MAX_QUERY:
             return JSONResponse({'error': 'invalid query'}, status_code=400)
         if route in SEARCH_PATHS and 'limit' in payload and (
-                type(payload['limit']) is not int or not 1 <= payload['limit'] <= 10):
+                type(payload['limit']) is not int or not 1 <= payload['limit'] <= 50):
             return JSONResponse({'error': 'invalid limit'}, status_code=400)
         if route == '/research':
             queries = payload.get('queries', [])
-            if (not isinstance(queries, list) or len(queries) > 3 or
+            if (not isinstance(queries, list) or len(queries) > 10 or
                     any(not isinstance(q, str) or not 0 < len(q.strip()) <= MAX_QUERY
                         for q in queries)):
                 return JSONResponse({'error': 'invalid research queries'}, status_code=400)
-            sources = payload.get('max_sources', 6)
-            chars = payload.get('max_chars', 5000)
-            if (type(sources) is not int or not 1 <= sources <= 6 or
-                    type(chars) is not int or not 500 <= chars <= 6000):
+            sources = payload.get('max_sources', 10)
+            chars = payload.get('max_chars', 12000)
+            if (type(sources) is not int or not 1 <= sources <= 30 or
+                    type(chars) is not int or not 500 <= chars <= 120000):
                 return JSONResponse({'error': 'invalid research limits'}, status_code=400)
     elif route in FETCH_PATHS | {'/site/crawl'}:
         urls = payload.get('urls')

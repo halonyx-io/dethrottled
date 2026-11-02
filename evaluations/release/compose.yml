@@ -4,6 +4,8 @@ services:
     image: dethrottled:one-zero-candidate
   browser-search:
     image: dethrottled-browser-search:one-zero-candidate
+  format-worker:
+    image: dethrottled-formats:one-zero-candidate
   fixture:
     image: python:3.12-slim
     volumes:

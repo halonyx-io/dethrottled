@@ -1,0 +1,62 @@
+[
+  {
+    "name": "python",
+    "url": "https://docs.python.org/3/library/sqlite3.html",
+    "curl_cffi": "0.17.0",
+    "profile": "chrome",
+    "http_status": 200,
+    "chars": 68405,
+    "blocker": "",
+    "facts": {
+      "sqlite3": true,
+      "Connection": true
+    },
+    "sha256": "4cb69513b5f7dd4ad671bd0cb9de99088ed6165efa820194fce19a4ba0e2e428",
+    "elapsed_ms": 511.71
+  },
+  {
+    "name": "reddit",
+    "url": "https://www.reddit.com/r/programming/comments/1xl8d57/jepsen_on_particledb_we_tested_versions_114/",
+    "curl_cffi": "0.17.0",
+    "profile": "chrome",
+    "http_status": 200,
+    "chars": 0,
+    "blocker": "",
+    "facts": {
+      "ParticleDB": false,
+      "WHERE 4 = 5": false
+    },
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "elapsed_ms": 161.05
+  },
+  {
+    "name": "crunchbase",
+    "url": "https://www.crunchbase.com/organization/openai",
+    "curl_cffi": "0.17.0",
+    "profile": "chrome",
+    "http_status": 403,
+    "chars": 0,
+    "blocker": "cloudflare",
+    "facts": {
+      "OpenAI": false,
+      "2015": false
+    },
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "elapsed_ms": 351.43
+  },
+  {
+    "name": "g2",
+    "url": "https://www.g2.com/products/notion/reviews",
+    "curl_cffi": "0.17.0",
+    "profile": "chrome",
+    "http_status": 403,
+    "chars": 0,
+    "blocker": "cloudflare",
+    "facts": {
+      "Notion": false,
+      "What do you like best": false
+    },
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "elapsed_ms": 286.69
+  }
+]

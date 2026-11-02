@@ -60,7 +60,7 @@ try:
                 "browser-search/Dockerfile",
                 "browser-search",
             ),
-            ("dethrottled-formats:local", "format-worker/Dockerfile", "."),
+            ("dethrottled-formats:one-zero-candidate", "format-worker/Dockerfile", "."),
         ]:
             run(["docker", "build", "-f", dockerfile, "-t", tag, context])
     run([*compose, "up", "-d", "--no-build"])

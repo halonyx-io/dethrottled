@@ -4,9 +4,11 @@ import contextvars
 import hashlib
 import ipaddress
 import json
+import logging
 import os
 import secrets
 import socket
+import time
 from importlib.metadata import version as package_version
 from pathlib import Path
 from typing import Annotated, Any, Literal
@@ -32,8 +34,8 @@ MCP_BACKEND_URL = os.getenv("MCP_BACKEND_URL", "http://127.0.0.1:8787").rstrip("
 KEYS_PATH = Path(os.getenv("MCP_KEYS_PATH", "/etc/dethrottled-mcp/keys.json"))
 REQUEST_TIMEOUT = float(os.getenv("MCP_REQUEST_TIMEOUT", "90"))
 MAX_URLS = int(os.getenv("MCP_MAX_URLS", "10"))
-MAX_RESULTS = int(os.getenv("MCP_MAX_RESULTS", "10"))
-MAX_CHARS = int(os.getenv("MCP_MAX_CHARS", "120000"))
+MAX_RESULTS = int(os.getenv("MCP_MAX_RESULTS", "50"))
+MAX_CHARS = int(os.getenv("MCP_MAX_CHARS", "1000000"))
 ALLOWED_HOSTS = [
     host.strip()
     for host in os.getenv(
@@ -45,6 +47,50 @@ ALLOWED_HOSTS = [
 
 
 SDK_VERSION = package_version("mcp")
+
+
+_BACKEND_IDENTITY = {}
+_BACKEND_IDENTITY_AT = 0.0
+
+
+async def backend_identity():
+    global _BACKEND_IDENTITY, _BACKEND_IDENTITY_AT
+    now = time.monotonic()
+    if _BACKEND_IDENTITY and now - _BACKEND_IDENTITY_AT < 10:
+        return _BACKEND_IDENTITY
+    try:
+        async with httpx.AsyncClient(timeout=3, trust_env=False) as client:
+            response = await client.get(MCP_BACKEND_URL + "/health")
+            response.raise_for_status()
+            observed = response.json().get("version")
+            if not isinstance(observed, str) or not observed:
+                raise ValueError("missing backend version")
+        result = {"version": observed,
+                  "status": "match" if observed == ADAPTER_VERSION else "mismatch"}
+    except (httpx.HTTPError, ValueError, TypeError, AttributeError) as exc:
+        result = {"version": None, "status": "unavailable", "reason": type(exc).__name__}
+    if result != _BACKEND_IDENTITY and result["status"] != "match":
+        logging.getLogger(__name__).warning(
+            "MCP backend identity %s: adapter=%s backend=%s", result["status"],
+            ADAPTER_VERSION, result.get("version"))
+    _BACKEND_IDENTITY, _BACKEND_IDENTITY_AT = result, now
+    return result
+
+
+class BackendIdentityMiddleware:
+    def __init__(self, app):
+        self.app = app
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] == "lifespan":
+            original_receive = receive
+
+            async def receive():
+                message = await original_receive()
+                if message["type"] == "lifespan.startup":
+                    await backend_identity()
+                return message
+        await self.app(scope, receive, send)
 
 
 class AuthError(Exception):
@@ -73,7 +119,8 @@ class BearerAuthMiddleware:
         path = scope.get("path", "")
         if path == "/health":
             response = JSONResponse({"status": "ok", "service": "dethrottled-mcp",
-                                     "version": ADAPTER_VERSION, "sdk_version": SDK_VERSION})
+                                     "version": ADAPTER_VERSION, "sdk_version": SDK_VERSION,
+                                     "backend": await backend_identity()})
             await response(scope, receive, send)
             return
 
@@ -214,7 +261,8 @@ async def _backend_post(
                 "/jobs/cancel", "/jobs/resume", "/documents/structure", "/site/crawl", "/drive"}:
         payload = dict(payload, evidence_namespace=CLAIMS.get()["namespace"])
     if path in {"/fetch", "/extract-with-links", "/research", "/search-and-fetch"}:
-        timeout = max(timeout or REQUEST_TIMEOUT, 240)
+        timeout = max(timeout or REQUEST_TIMEOUT,
+                      600 if path in {"/research", "/search-and-fetch"} else 240)
     async with httpx.AsyncClient(
         timeout=timeout or REQUEST_TIMEOUT, trust_env=False
     ) as client:
@@ -225,6 +273,10 @@ async def _backend_post(
 
 AGENT_WORKFLOW = """Dethrottled discovers and reads sources.
 Prioritize grounded coverage and accuracy.
+If coverage is insufficient, search accepts limit up to 50. Research accepts up to
+30 sources and 10 additional query facets, with up to 120000 characters per source.
+Fetch and read_document allow up to 1000000 characters; use retained-document offsets
+for longer sources. Defaults are smaller than ceilings; request more when justified.
 Known URL: call fetch directly, normally with focus set to the question. Unknown sources:
 search then fetch selected URLs, or research for a multi-source evidence bundle. Corpus
 is optional reusable evidence, never a compulsory first step. fetch automatically tries
@@ -309,8 +361,36 @@ available for deliberate shortcuts and stronger acquisition when the task justif
 """
 
 
+def _compact_tool_result(result):
+    """Keep every content block and structured payload; compact JSON text only."""
+    def blocks(items):
+        out = []
+        for block in items:
+            if isinstance(block, TextContent):
+                try:
+                    value = json.loads(block.text)
+                except (ValueError, TypeError):
+                    pass
+                else:
+                    block = block.model_copy(update={"text": json.dumps(
+                        value, ensure_ascii=False, separators=(",", ":"))})
+            out.append(block)
+        return out
+
+    if isinstance(result, CallToolResult):
+        return result.model_copy(update={"content": blocks(result.content)})
+    if isinstance(result, tuple) and len(result) == 2 and isinstance(result[1], dict):
+        return blocks(result[0]), result[1]
+    if isinstance(result, (list, tuple)):
+        return blocks(result)
+    return result
+
+
 class StrictFastMCP(FastMCP):
     """Validate unexpected tool arguments before the SDK can silently drop them."""
+    async def call_tool(self, name, arguments):
+        return _compact_tool_result(await super().call_tool(name, arguments))
+
     def add_tool(self, fn, *args, **kwargs):
         super().add_tool(fn, *args, **kwargs)
         name = kwargs.get("name") or (args[0] if args else None) or fn.__name__
@@ -345,7 +425,7 @@ mcp._mcp_server.version = ADAPTER_VERSION
 @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, openWorldHint=True))
 async def search(
     query: str,
-    limit: int = 10,
+    limit: Annotated[int, Field(ge=1, le=MAX_RESULTS)] = 10,
     fresh: bool = False,
     rank: bool = False,
     corpus: int = 0,
@@ -383,7 +463,7 @@ async def search(
 @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, openWorldHint=True))
 async def fetch(
     urls: list[str],
-    max_chars: int = 12000,
+    max_chars: Annotated[int, Field(ge=1, le=MAX_CHARS)] = 12000,
     format: Literal["text", "links", "html"] = "text",
     render: Literal["auto", "always", "never"] = "auto",
     fresh: bool = False,
@@ -445,7 +525,7 @@ async def fetch(
 @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, openWorldHint=True))
 async def extract_with_links(
     urls: list[str],
-    max_chars: int = 12000,
+    max_chars: Annotated[int, Field(ge=1, le=MAX_CHARS)] = 12000,
     render: Literal["auto", "always", "never"] = "auto",
     fresh: bool = False,
 ) -> Any:
@@ -461,8 +541,8 @@ async def extract_with_links(
 @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, openWorldHint=True))
 async def search_and_fetch(
     query: str,
-    limit: int = 5,
-    max_chars: int = 3000,
+    limit: Annotated[int, Field(ge=1, le=MAX_RESULTS)] = 5,
+    max_chars: Annotated[int, Field(ge=1, le=MAX_CHARS)] = 3000,
     rank: bool = False,
     render: Literal["auto", "always", "never"] = "auto",
     fresh: bool = False,
@@ -498,8 +578,8 @@ async def search_and_fetch(
 async def research(
     question: str,
     queries: list[str] | None = None,
-    max_sources: int = 6,
-    max_chars: int = 5000,
+    max_sources: Annotated[int, Field(ge=1, le=30)] = 10,
+    max_chars: Annotated[int, Field(ge=500, le=120000)] = 12000,
     fresh: bool = False,
     engines: str = "",
     profile: Literal["web", "balanced", "thorough", "academic", "news"] = "thorough",
@@ -514,16 +594,16 @@ async def research(
     coverage distinguishes readable evidence, unread candidates and failures.
     It never verifies answers.
     """
-    if len(queries or []) > 3:
-        raise ValueError("at most three research facets are supported")
+    if len(queries or []) > 10:
+        raise ValueError("at most ten research facets are supported")
     return await _backend_post("/research", {
         "question": question,
         "queries": queries or [],
-        "max_sources": _bounded_int(max_sources, 1, 6),
-        "max_chars": _bounded_int(max_chars, 500, 6000),
+        "max_sources": _bounded_int(max_sources, 1, 30),
+        "max_chars": _bounded_int(max_chars, 500, 120000),
         "fresh": fresh, "follow_assets": follow_assets, "engines": engines, "profile": profile,
         "categories": categories, "response_format": response_format,
-    })
+    }, timeout=600)
 
 
 class BrowserStep(BaseModel):
@@ -542,7 +622,7 @@ class BrowserStep(BaseModel):
     name: str = Field(default="", max_length=200)
     index: int = Field(default=0, ge=0, le=500)
     limit: int = Field(default=100, ge=1, le=200, description="Snapshot/network list limit")
-    max_chars: int | None = Field(default=None, ge=1, le=120000,
+    max_chars: int | None = Field(default=None, ge=1, le=1000000,
                                  description="Text/HTML output limit; preserves existing defaults")
 
 
@@ -653,7 +733,7 @@ async def drive(
 
 @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, openWorldHint=False))
 async def read_document(document_id: str, focus: str = "", offset: int = 0,
-                        max_chars: Annotated[int, Field(ge=1, le=120000)] = 12000,
+                        max_chars: Annotated[int, Field(ge=1, le=1000000)] = 12000,
                         response_format: Literal["detailed", "concise"] = "detailed",
                         reparse: bool = False, row_start: int = 1, row_end: int | None = None,
                         sheet: str = "", max_cell_chars: int | None = None,
@@ -701,7 +781,7 @@ async def view_document_image(document_id: str, page: int = 1,
 @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, openWorldHint=True))
 async def start_fetch_job(urls: list[str], operation_id: str = "", focus: str = "",
                            render: Literal["auto", "always", "never"] = "auto",
-                           max_chars: Annotated[int, Field(ge=1, le=120000)] = 12000,
+                           max_chars: Annotated[int, Field(ge=1, le=1000000)] = 12000,
                            wait_for: str = "", fresh: bool = False,
                            ocr_language: str = "", page_start: int = 1,
                            document_mode: Literal["auto", "native", "layout"] = "auto",
@@ -833,4 +913,5 @@ async def stats() -> dict[str, Any]:
 
 
 
-app = AccessMiddleware(BearerAuthMiddleware(mcp.streamable_http_app()))
+app = BackendIdentityMiddleware(AccessMiddleware(
+    BearerAuthMiddleware(mcp.streamable_http_app())))

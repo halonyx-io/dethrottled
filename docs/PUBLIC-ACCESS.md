@@ -31,7 +31,9 @@ There is no shipped default public bearer token.
 
 ## Host-managed deployments
 
-Install `requirements/adapters.txt` in the adapter virtualenvs.
+Install the full `requirements/adapters.lock` in adapter virtualenvs.
+`requirements/adapters.txt` records the direct requirements used to regenerate it;
+installing only that shorter file does not freeze the transitive dependencies.
 `adapters/mcp_server.py` uses the MCP SDK/httpx; `adapters/rest_gateway.py` uses
 FastAPI/httpx. Install the shared `src/dethrottled/access.py` as
 `dethrottled_access.py` on their PYTHONPATH. Also install
@@ -49,8 +51,12 @@ public domains before source retrieval begins.
 
 ## Version identity and SDK upgrades
 
-MCP initialization advertises the Dethrottled release version, currently **1.0.1**.
+MCP initialization advertises the Dethrottled release version, currently **1.1.0**.
 The adapter's `/health` reports `version` separately from `sdk_version` (**1.30.0**).
+It also reports backend identity as `match`, `mismatch` or `unavailable`. The bridge
+checks at startup and refreshes on health requests after a ten-second cache.
+Mismatch/unavailable transitions are logged; rolling upgrades remain possible.
+Matching version strings alone do not prove matching code or correct retrieval.
 The backend capabilities version identifies the engine actually reached. These
 can differ during a rolling upgrade; the SDK number is not an engine version.
 
@@ -78,6 +84,15 @@ can read the same workflow policy from capabilities. A client that strips fields
 or hides tool results can defeat server-side affordances. After upgrades, refresh
 tool schemas and compare the initialization/workflow hash. Remote plugin code
 activation remains the client operator's responsibility.
+
+## Result content and client parsing
+
+Legacy list-returning tools such as search and fetch emit one complete JSON value
+per `content[].text` entry. Parse each entry separately; joining the text and
+parsing once loses the result-set contract. Tools with structured output also
+return `structuredContent`; prefer it when present. Preserve native image blocks
+separately. JSON text is compact, but parsed values, entry order and block types
+are unchanged. Plain diagnostic text is not assumed to be JSON.
 
 ## Identity, limits and network policy
 

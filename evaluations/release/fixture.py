@@ -56,6 +56,15 @@ class Handler(loop.Handler):
             self.send_header("Content-Type", "text/csv")
             self.end_headers()
             self.wfile.write(text.encode())
+        elif path == "/long-read":
+            text = "<html><body><article>" + "".join(
+                f"<p>Entry {i}: This record provides allocation coverage evidence.</p>"
+                for i in range(2500)) + "<p>ALLOCATION_TOTAL_7341</p></article></body></html>"
+            self.send_response(200)
+            self.send_header("Content-Type", "text/html")
+            self.send_header("Content-Length", str(len(text.encode())))
+            self.end_headers()
+            self.wfile.write(text.encode())
         elif path == "/missing":
             self.send_error(404)
         else:

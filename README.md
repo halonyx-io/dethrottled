@@ -56,6 +56,8 @@ why recovery stopped. Optional GPU setup is described in the same guide.
 An agent should inspect `quality`, `warnings`, `read_plan`, `source_partial`, `truncated`,
 `document_id` and `workflow.next_actions`. The [agent guide](https://github.com/halonyx-io/dethrottled/blob/main/docs/AGENT-UPGRADES.md)
 explains the workflow and what an MCP client must forward to its model.
+[Coverage limits](https://github.com/halonyx-io/dethrottled/blob/main/docs/LIMITS.md)
+allow up to 50 search results, 30 research sources and million-character reads.
 
 ## Documentation
 
@@ -95,7 +97,7 @@ The fetch ladder does not consult `robots.txt`. The raw API can access trusted
 LAN targets; public adapters enforce a narrower policy, which is not a substitute
 for deployment-level network isolation.
 
-This checkout is **1.0.1**. Check `/health` and `/v2/capabilities`
+This checkout is **1.1.0**. Check `/health` and `/v2/capabilities`
 on the installation you use; a repository branch or remote plugin may differ
 from the deployed service. Historical reports describe their recorded versions.
 
