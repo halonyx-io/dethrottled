@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "max_chars": 120000,
+  "scope": "Small public-source observation, not Bert's unavailable 24-URL replay. Assertions are necessary task evidence for manual review, not semantic truth verification.",
+  "strategies": [
+    {"id": "auto", "arguments": {"render": "auto"}},
+    {"id": "rendered-wait", "arguments": {"render": "always", "render_delay": 2, "headed_fallback": true}}
+  ],
+  "cases": [
+    {"id": "python-control", "url": "https://docs.python.org/3/library/sqlite3.html", "task": "Find the documented sqlite3 connection function and its database argument.", "facts": [
+      {"id": "connect-signature", "pattern": "(?:sqlite3\\.)?connect\\s*\\(\\s*database"}
+    ]},
+    {"id": "crunchbase-openai", "url": "https://www.crunchbase.com/organization/openai", "task": "Read OpenAI's founding year and headquarters from this company profile.", "facts": [
+      {"id": "company", "pattern": "\\bOpenAI\\b"},
+      {"id": "founding-year", "pattern": "(?:Founded|Founding|founded)[^.]{0,100}\\b2015\\b"},
+      {"id": "headquarters", "pattern": "\\bSan Francisco\\b"}
+    ]},
+    {"id": "g2-notion", "url": "https://www.g2.com/products/notion/reviews", "task": "Recover Notion review text with pros and cons; structural assertions alone need manual review.", "facts": [
+      {"id": "product", "pattern": "\\bNotion\\b"},
+      {"id": "review-positive-section", "pattern": "What do you like best about Notion"},
+      {"id": "review-negative-section", "pattern": "What do you dislike about Notion"}
+    ]},
+    {"id": "booking", "url": "https://www.booking.com/", "task": "Read the accommodation search interface; this is navigation coverage, not a recovered booking or price.", "facts": [
+      {"id": "destination-input", "pattern": "Where are you going"},
+      {"id": "arrival-date", "pattern": "Check[ -]?in"},
+      {"id": "departure-date", "pattern": "Check[ -]?out"}
+    ]}
+  ]
+}

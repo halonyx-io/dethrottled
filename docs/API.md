@@ -60,7 +60,7 @@ OCR, captions, speech, retained text and source inspection.
 
 | Field | Meaning |
 |---|---|
-| `quality` | `ok`: extracted; `thin`: short HTML with uncertain coverage; `failed`: no useful read |
+| `quality` | `ok`: extracted; `thin`: short HTML with uncertain coverage; `suspect`: possible error-banner pollution retained after recovery; `failed`: no useful read |
 | `tier` | Acquisition/extractor path, such as `headed/trafilatura` |
 | `failure_reason`, `acquisition_attempts` | Actual failures and attempted tiers; a cache hit is not an invented acquisition |
 | `warnings`, `extraction`, `source_partial` | Parser/OCR/layout limits and incomplete source coverage |
@@ -68,10 +68,39 @@ OCR, captions, speech, retained text and source inspection.
 | `document_id`, `document_sha256` | Scoped retained version for continuation and citations |
 | `workflow.next_actions` | Relevant follow-ups with exact tool names and arguments |
 | `browser_recovery` | Queue/poll timing, ready state, checkpoint restoration and initial navigation |
+| `content_assessment` | Non-destructive error-banner signals, exact full-extraction spans and text hash; not an answer verifier |
 
 HTTP 200 does not mean every URL succeeded. Extraction success does not verify
 the answer or complete source coverage. `response_format="concise"` reduces
 duplicate representations; detailed is default and warnings/provenance remain.
+
+`content_assessment.pollution` is `suspected`, `none_detected` or `not_assessed`.
+Structured documents are not classified as website UI. A narrow set of leading
+error instructions and small source HTML alert containers can flag mixed content;
+quoted/code examples are excluded where identifiable. Unknown phrases and languages
+can be missed. `none_detected` does not certify clean text. `completeness` remains
+`unknown` and `usable_content` remains `unverified`.
+
+Each span supplies `start`, `end`, `quote`, `kind`, `signal` and
+`offset_in="full_extraction"`. Positions are Unicode character offsets in the full
+retained extraction identified by `text_sha256`, before focus, clipping or HTML/link
+output transforms. They may lie outside the returned excerpt. Use the retained
+document to inspect the range. `unflagged_chars` counts characters outside suspect
+spans; it does not measure usable evidence.
+
+Suspect HTML automatically continues through available acquisition tiers, including
+the headed browser when allowed and within budget. A substantial clean extraction
+is preferred; if recovery fails, the mixed text is retained with `quality="suspect"`,
+warnings and `workflow.state="needs_inspection"`. Short clean fragments do not silently
+replace a richer mixed result. `render="never"` and the fast profile prevent rendering.
+Cache hits retain diagnostics without pretending to attempt fresh recovery; old cached
+text is assessed on read, with HTML-only signals unavailable if no HTML was retained.
+Non-cache acquisition attempts include `elapsed_ms` and extraction assessment summaries
+when text was produced. An attempted browser tier is not proof of successful navigation.
+
+`research` returns suspect reads under `partial_sources`, preserving their content,
+warnings and document references while seeking clean `sources`. These partial reads
+are not silently indexed into the corpus or counted as clean evidence.
 
 ## Combine discovery and evidence
 

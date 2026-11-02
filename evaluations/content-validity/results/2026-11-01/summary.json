@@ -1,0 +1,30 @@
+{
+  "baseline/auto": {
+    "requests": 8,
+    "http_success": 8,
+    "extraction_success": 4,
+    "complete_task_assertions": 2,
+    "supported_assertions": 6
+  },
+  "baseline/rendered-wait": {
+    "requests": 8,
+    "http_success": 8,
+    "extraction_success": 4,
+    "complete_task_assertions": 0,
+    "supported_assertions": 4
+  },
+  "candidate/auto": {
+    "requests": 8,
+    "http_success": 8,
+    "extraction_success": 4,
+    "complete_task_assertions": 2,
+    "supported_assertions": 4
+  },
+  "candidate/rendered-wait": {
+    "requests": 8,
+    "http_success": 8,
+    "extraction_success": 4,
+    "complete_task_assertions": 0,
+    "supported_assertions": 4
+  }
+}

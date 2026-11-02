@@ -9,6 +9,7 @@ web access, answer correctness or superiority over paid services.
 
 | Scope | Report and raw data | Interpretation |
 |---|---|---|
+| Mixed content and task evidence | [0.9.2 comparison](../evaluations/content-validity/results/2026-11-01/REPORT.md), [method](../evaluations/content-validity/README.md) | 6/8 labelled long-banner cases surfaced versus 0/8; all 18 fixture facts retained; 32 live observations, no new hostile-source win |
 | Current recovery and software graphics | [0.9.0 to 0.9.1](RECOVERY-GAPS.md), [raw bundle](benchmarks/2026-11-01-recovery-next/README.md) | Headed contention 1/6 to 6/6; two JS fixtures 0/2 to 2/2 under defaults; real WebGL pixel test; four hostile sources still unreadable |
 | Bot findings and challenge wiring | [0.9 review](REVIEWED-BOT-FINDINGS.md), [raw bundle](benchmarks/2026-11-01-findings/README.md) | Controlled clearance 0/4 to 4/4; strict MCP inputs; no new hostile-source success |
 | Workers, corpus and formats | [0.8 measured changes](MEASURED-IMPROVEMENTS.md), [raw bundle](benchmarks/2026-11-01-measured/README.md) | Controlled admission, MSG/XLSB, scanned tables, worker supervision and dual corpus; bounded fixture quality |

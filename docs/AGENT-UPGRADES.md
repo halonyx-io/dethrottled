@@ -43,9 +43,12 @@ See [public access](PUBLIC-ACCESS.md) for authentication and deployment.
 ## Preserve the evidence contract
 
 Keep `document_id`, `document_sha256`, `workflow`, `warnings`, `source_partial`,
-`truncated`, `extraction`, `acquisition_attempts` and continuation fields in the
+`truncated`, `extraction`, `acquisition_attempts`, `content_assessment` and continuation fields in the
 model-visible result. `quality=ok` means extraction succeeded; `thin` retains
-short HTML evidence with uncertain coverage; `failed` means acquisition failed.
+short HTML evidence with uncertain coverage; `suspect` retains possible error-banner
+pollution after available recovery; `failed` means acquisition failed. Inspect exact
+suspect ranges against the full retained document, not a clipped or focused excerpt.
+Research keeps these reads in `partial_sources` while seeking clean sources.
 Structured short documents can still be valid. `answer_verified` is not set true
 by a successful read or lexical match.
 
