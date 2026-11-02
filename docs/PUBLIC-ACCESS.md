@@ -31,9 +31,12 @@ There is no shipped default public bearer token.
 
 ## Host-managed deployments
 
+Install `requirements/adapters.txt` in the adapter virtualenvs.
 `adapters/mcp_server.py` uses the MCP SDK/httpx; `adapters/rest_gateway.py` uses
 FastAPI/httpx. Install the shared `src/dethrottled/access.py` as
-`dethrottled_access.py` on their PYTHONPATH. Separate virtualenvs are supported.
+`dethrottled_access.py` on their PYTHONPATH. Also install
+`src/dethrottled/__init__.py` as `dethrottled_version.py` beside the MCP adapter.
+Separate virtualenvs are supported.
 Set `MCP_BACKEND_URL` and `MCP_ALLOWED_HOSTS` as appropriate.
 
 `DETHROTTLED_TOKEN_REGISTRY` defaults to `/etc/dethrottled-access/tokens.json`;
@@ -43,6 +46,21 @@ directory access. Registry replacement/revocation reloads on request and fails
 closed. A strict systemd filesystem sandbox needs the admission write path. REST
 validation also needs DNS access; a loopback-only IP sandbox can reject valid
 public domains before source retrieval begins.
+
+## Version identity and SDK upgrades
+
+MCP initialization advertises the Dethrottled release version, currently **1.0.1**.
+The adapter's `/health` reports `version` separately from `sdk_version` (**1.30.0**).
+The backend capabilities version identifies the engine actually reached. These
+can differ during a rolling upgrade; the SDK number is not an engine version.
+
+The adapter pins the maintained MCP SDK 1.x line. Version 1.30.0 adds same-origin
+HTTP redirect checks and bounded idle stateful sessions; this adapter remains
+stateless. The [SDK 1.30.0 release notes](https://github.com/modelcontextprotocol/python-sdk/releases/tag/v1.30.0)
+explain those changes. SDK 2.x requires a separate
+[API migration](https://py.sdk.modelcontextprotocol.io/migration/). Native image CI executes
+`verify_adapter.py` offline, checking the real handshake, tools, strict arguments,
+authentication, revocation and private-target rejection before deployment.
 
 ## Client contract and routes
 

@@ -1,0 +1,6 @@
+# Shared by the container and host-managed REST/MCP virtualenvs.
+# MCP 1.x is intentional: 2.x needs an explicit application API migration.
+mcp==1.30.0
+httpx==0.28.1
+uvicorn==0.54.0
+fastapi==0.143.0

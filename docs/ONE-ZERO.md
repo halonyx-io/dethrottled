@@ -6,7 +6,7 @@ insufficient. The default Compose stack works without keys or a host-specific se
 Automatic discovery removes redundant configuration; resource-intensive inference
 and authenticated public access still require an explicit deployment choice.
 
-This checkout is **1.0.0**. The [evaluation report](../evaluations/release/results/2026-11-02/REPORT.md)
+This checkout is **1.0.1**. The [evaluation report](../evaluations/release/results/2026-11-02/REPORT.md)
 records the tested candidate and release verification. Publishing a release does
 not update an existing installation; inspect its runtime version and capabilities.
 

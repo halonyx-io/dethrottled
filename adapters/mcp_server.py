@@ -7,6 +7,7 @@ import json
 import os
 import secrets
 import socket
+from importlib.metadata import version as package_version
 from pathlib import Path
 from typing import Annotated, Any, Literal
 from urllib.parse import urlsplit
@@ -19,6 +20,7 @@ from dethrottled_access import (
     automatic_session,
     require_scope,
 )
+from dethrottled_version import __version__ as ADAPTER_VERSION
 from mcp.server.fastmcp import FastMCP
 from mcp.server.transport_security import TransportSecuritySettings
 from mcp.types import CallToolResult, ImageContent, TextContent, ToolAnnotations
@@ -40,6 +42,9 @@ ALLOWED_HOSTS = [
     ).split(",")
     if host.strip()
 ]
+
+
+SDK_VERSION = package_version("mcp")
 
 
 class AuthError(Exception):
@@ -67,7 +72,8 @@ class BearerAuthMiddleware:
 
         path = scope.get("path", "")
         if path == "/health":
-            response = JSONResponse({"status": "ok", "service": "dethrottled-mcp"})
+            response = JSONResponse({"status": "ok", "service": "dethrottled-mcp",
+                                     "version": ADAPTER_VERSION, "sdk_version": SDK_VERSION})
             await response(scope, receive, send)
             return
 
@@ -327,6 +333,11 @@ mcp = StrictFastMCP(
     json_response=True,
     transport_security=TransportSecuritySettings(allowed_hosts=ALLOWED_HOSTS),
 )
+
+
+# SDK 1.x exposes version on its low-level server, not the FastMCP constructor.
+# Keep the wire application identity distinct from the SDK dependency version.
+mcp._mcp_server.version = ADAPTER_VERSION
 
 
 
