@@ -27,6 +27,8 @@ Raw acquisition, all label attempts, full page bodies, model matrices and a veri
 
 ## Implementation checks
 
-Regression cases cover the 15-choice ceiling, DDG-first order, alternating bounded supplements, an empty/failed provider, explicit single-page engine parameters and original provider ranks, 20-source research, and a 24-attempt primary-URL ceiling under failed reads. Core and MCP schemas, capability metadata, defaults and docs use the same policy. Live deployment checks are recorded separately in this directory.
+Regression cases cover the 15-choice ceiling, DDG-first order, alternating bounded supplements, an empty/failed provider, explicit single-page engine parameters and original provider ranks, 20-source research, and a 24-attempt primary-URL ceiling under failed reads. Core and MCP schemas, capability metadata, defaults and docs use the same policy. The local suite passed 615 tests (67 skipped, two network tests deselected); lint and documentation checks passed. [Real offline adapter checks](offline-adapters.json) exercised 15 search results, 20 research sources, validation, native images and backend identity replacement. [Staged Compose searches](staged-search.json) returned 11/12/11 unique choices in 0.6–1.3 seconds.
+
+[Deployed public REST/MCP checks](deployed-public.json) confirmed 1.3.0 end to end: the public default search returned twelve unique choices in 1.24 seconds; a two-source research smoke test read two sources from fifteen candidates in 10.2 seconds. MCP initialization/workflow hash, tool schemas, excess-limit rejection and matching backend identity passed. These are deployment smoke checks, not an additional relevance benchmark.
 
 A larger default menu is not proof of better answers. Read and verify selected sources; no-fetch events remain unknown rather than automatic negative relevance labels.
