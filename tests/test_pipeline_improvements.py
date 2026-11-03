@@ -181,7 +181,8 @@ def test_source_profile_avoids_news_for_web_queries(monkeypatch):
     monkeypatch.setattr(search, "bing_news", lambda *a, **k: calls.append("news") or [])
     monkeypatch.setattr(search, "searxng", lambda *a, **k: calls.append("searxng") or [])
     rows, meta = search.search("a question", profile="web")
-    assert rows and not calls and meta["sources"] == ["web"]
+    assert rows and calls == ["searxng", "searxng"]
+    assert meta["sources"] == ["web", "yahoo", "yandex"]
 
 
 def test_opaque_identifier_corpus_does_not_return_semantic_near_misses(tmp_path):

@@ -1,0 +1,110 @@
+[
+  {
+    "requested_training_queries": 60,
+    "training_queries": 60,
+    "training_audit": {
+      "removed_ambiguous_rows": 265,
+      "effective_distinct_grade_pairs": 12258,
+      "queries_with_effective_pairs": 57,
+      "training_rows": 1961
+    },
+    "metrics": {
+      "primary": {
+        "useful3": 2.51,
+        "offtopic3": 0.19,
+        "ndcg3": 0.7882945160057593,
+        "useful5": 4.08,
+        "offtopic5": 0.31,
+        "ndcg5": 0.789137586232516,
+        "useful10": 7.46,
+        "offtopic10": 0.79,
+        "ndcg10": 0.8016620839100291,
+        "facet_coverage": 0.905
+      },
+      "secondary": {
+        "useful3": 2.1,
+        "offtopic3": 0.58,
+        "ndcg3": 0.702158374315751,
+        "useful5": 3.35,
+        "offtopic5": 1.07,
+        "ndcg5": 0.7035941404607654,
+        "useful10": 6.1,
+        "offtopic10": 2.57,
+        "ndcg10": 0.7283129623637254,
+        "facet_coverage": 0.755
+      }
+    }
+  },
+  {
+    "requested_training_queries": 150,
+    "training_queries": 150,
+    "training_audit": {
+      "removed_ambiguous_rows": 630,
+      "effective_distinct_grade_pairs": 32364,
+      "queries_with_effective_pairs": 142,
+      "training_rows": 4953
+    },
+    "metrics": {
+      "primary": {
+        "useful3": 2.56,
+        "offtopic3": 0.18,
+        "ndcg3": 0.8029100497777668,
+        "useful5": 4.12,
+        "offtopic5": 0.31,
+        "ndcg5": 0.8018128927293028,
+        "useful10": 7.56,
+        "offtopic10": 0.66,
+        "ndcg10": 0.8149176019284402,
+        "facet_coverage": 0.9
+      },
+      "secondary": {
+        "useful3": 2.14,
+        "offtopic3": 0.58,
+        "ndcg3": 0.7157120855674374,
+        "useful5": 3.41,
+        "offtopic5": 1.04,
+        "ndcg5": 0.7130582786535835,
+        "useful10": 6.14,
+        "offtopic10": 2.51,
+        "ndcg10": 0.7352084307501265,
+        "facet_coverage": 0.745
+      }
+    }
+  },
+  {
+    "requested_training_queries": 300,
+    "training_queries": 299,
+    "training_audit": {
+      "removed_ambiguous_rows": 1420,
+      "effective_distinct_grade_pairs": 61221,
+      "queries_with_effective_pairs": 285,
+      "training_rows": 9771
+    },
+    "metrics": {
+      "primary": {
+        "useful3": 2.52,
+        "offtopic3": 0.21,
+        "ndcg3": 0.8064765090201816,
+        "useful5": 4.06,
+        "offtopic5": 0.33,
+        "ndcg5": 0.7946340985450827,
+        "useful10": 7.52,
+        "offtopic10": 0.65,
+        "ndcg10": 0.80928507899073,
+        "facet_coverage": 0.905
+      },
+      "secondary": {
+        "useful3": 2.12,
+        "offtopic3": 0.57,
+        "ndcg3": 0.7130006727570066,
+        "useful5": 3.37,
+        "offtopic5": 1.06,
+        "ndcg5": 0.7141889544998697,
+        "useful10": 6.05,
+        "offtopic10": 2.5,
+        "ndcg10": 0.7303838802120654,
+        "facet_coverage": 0.75
+      }
+    }
+  }
+]

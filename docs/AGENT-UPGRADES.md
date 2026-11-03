@@ -44,12 +44,13 @@ gaps; it does not verify semantic support or operate arbitrary application contr
 6. Assess source authority, date, agreement and semantic support yourself. Stop
    when the question is supported, not merely when a tool reports success.
 
-For ordinary discovery, start with `profile="web", limit=10, ranking="source"`.
+For ordinary discovery, start with `profile="web", limit=15, ranking="source"`.
 When useful evidence is missing, read the promising choices, rewrite around the
 missing fact or choose the appropriate specialist profile. DDG is hard capped at
 ten across its acquisition routes; each supplementary engine gets three, with six
-supplements and sixteen unique choices total. Research shares the budget across
-facets. Drive snapshots/network lists are capped at ten; narrow selectors for more
+supplements and fifteen unique choices total. Yahoo/Yandex supplement DDG by
+default; fast is DDG-only. Research admits 24 unique candidates across facets and
+reads ten sources by default, up to twenty when requested. Drive snapshots/network lists are capped at ten; narrow selectors for more
 specific inspection. More providers do not guarantee
 better choices: the [recorded source-menu study](../evaluations/agent-search/results/2026-11-03/REPORT.md)
 found unrelated Bing results and a blocked Brave route on the tested host.

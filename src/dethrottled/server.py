@@ -92,7 +92,13 @@ from .content import compact_row, constrained, passage_excerpt
 from .corpus import index_fetched, shared_corpus
 from .evidence import Documents
 from .jobs import JobError, Jobs
-from .workflow import INSTRUCTIONS, guidance
+from .workflow import (
+    INSTRUCTIONS,
+    RESEARCH_CANDIDATE_LIMIT,
+    RESEARCH_SOURCE_LIMIT,
+    SEARCH_MENU_LIMIT,
+    guidance,
+)
 
 _jobs = None
 _jobs_lock = threading.Lock()
@@ -171,11 +177,11 @@ class SearchBody(BaseModel):
     query: str = Field(min_length=1, max_length=500)
     # The contract's name for result count. num_results and max_items remain
     # accepted for callers already written against them; limit wins.
-    limit: int | None = Field(default=None, ge=1, le=16)
-    num_results: int = Field(default=10, ge=1, le=16)
-    max_items: int | None = Field(default=None, ge=1, le=16)
-    # Default search includes direct web, Bing News RSS, local SearXNG and
-    # resolved Google News headlines. This preserves existing callers.
+    limit: int | None = Field(default=None, ge=1, le=15)
+    num_results: int = Field(default=15, ge=1, le=15)
+    max_items: int | None = Field(default=None, ge=1, le=15)
+    # Default search combines DDG with small Yahoo/Yandex supplements.
+    # News feeds are selected through an explicit news profile/category.
     categories: Literal["", "news", "academic"] = ""
     # SearXNG uses this hint. Direct web engines are
     # English-centric and do not take it, so it biases rather than constrains.
@@ -186,6 +192,7 @@ class SearchBody(BaseModel):
     @classmethod
     def validate_sources(cls, value):
         allowed = {"auto", "web", "news", "mwmbl", "crossref", "openalex", "arxiv",
+                   "yahoo", "yandex",
                    "exa", "tavily", "parallel"}
         if any(x.strip() not in allowed for x in value.split(",") if x.strip()):
             raise ValueError("supported sources: " + ", ".join(sorted(allowed)))
@@ -330,7 +337,7 @@ class ResearchBody(BaseModel):
 
     question: str = Field(min_length=3, max_length=500)
     queries: list[str] = Field(default_factory=list, max_length=10)
-    max_sources: int = Field(default=10, ge=1, le=16)
+    max_sources: int = Field(default=10, ge=1, le=RESEARCH_SOURCE_LIMIT)
     max_chars: int = Field(default=12000, ge=500, le=120000)
     language: str = ""
     fresh: bool = False
@@ -517,6 +524,7 @@ def _attempts(meta: dict) -> list:
                      "elapsed_ms": meta.get("elapsed_ms", 0),
                      "unresponsive": [],
                      **(meta.get("source_reports") or {}).get(name, {}),
+                     **(meta.get("source_reports") or {}).get("supplements", {}).get(name, {}),
                      **(meta.get("source_reports") or {}).get("providers", {}).get(name, {})})
     browser = meta.get("browser_search") or {}
     if browser.get("direct"):
@@ -910,13 +918,14 @@ def v2_capabilities():
         "ranking": ranker.available(),
         "corpus": {"multilingual": os.getenv("DETHROTTLED_MULTILINGUAL_CORPUS") == "1",
                    "fusion": "reciprocal_rank", "separate_model_thresholds": True},
-        "request_limits": {"search_results": 16, "ddg_results": 10,
+        "request_limits": {"search_results": SEARCH_MENU_LIMIT, "ddg_results": 10,
                            "supplement_results_per_engine": 3, "supplement_results_total": 6,
                            "fetch_urls": 10, "corpus_results": 10,
                            "read_chars": 1000000, "browser_text_chars": 1000000},
         "research": {"available": True, "model_used": False,
                      "partial_sources": "suspect reads retained separately from clean sources",
-                     "max_sources": 16, "max_queries": 11,
+                     "max_sources": RESEARCH_SOURCE_LIMIT, "max_queries": 11,
+                     "max_candidates": RESEARCH_CANDIDATE_LIMIT, "replacement_candidates": 4,
                      "default_sources": 10, "max_chars_per_source": 120000},
         "read": {
             "content_assessment": {"revision": 1, "non_destructive": True,
@@ -1020,7 +1029,7 @@ def _ranked(body) -> tuple:
     something for the ranker to reject.
     """
     limit = body.limit or body.max_items or body.num_results
-    pool = min(16, limit * 3) if body.rank or body.ranking != "source" else limit
+    pool = min(15, limit * 3) if body.rank or body.ranking != "source" else limit
     rows, meta = fs.search(body.query, max_items=pool,
                            categories=body.categories,
                            language=body.language or None,
@@ -1538,7 +1547,7 @@ def research(body: ResearchBody, background: BackgroundTasks):
         def search_one(query):
             try:
                 rows, meta, _ = _ranked(SearchBody(
-                    query=query, limit=16, language=body.language,
+                    query=query, limit=15, language=body.language,
                     fresh=body.fresh, categories=body.categories,
                     profile=body.profile, engines=body.engines))
                 return rows, {"query": query, "found": len(rows),
@@ -1557,12 +1566,21 @@ def research(body: ResearchBody, background: BackgroundTasks):
 
         interleaved = [rows[index] for index in range(max(map(len, searches), default=0))
                        for rows in searches if index < len(rows)]
-        admitted = {fetcher.canonical_url(r["url"]) for r in fs.bounded_results(interleaved)}
+        # Each facet already obeys the 15-choice/10-DDG/3-per-engine budget.
+        # A separate global URL ceiling keeps multi-facet research bounded,
+        # without discarding later facets solely for using the same provider.
+        admitted = set()
+        for row in interleaved:
+            key = fetcher.canonical_url(row["url"])
+            if key:
+                admitted.add(key)
+            if len(admitted) >= RESEARCH_CANDIDATE_LIMIT:
+                break
         searches = [[r for r in rows if fetcher.canonical_url(r["url"]) in admitted]
                     for rows in searches]
 
         selected = research_engine.select_sources(
-            searches, min(16, body.max_sources + 4),
+            searches, min(RESEARCH_CANDIDATE_LIMIT, body.max_sources + 4),
             official_first=not body.queries)
 
         def read(item):
@@ -1653,7 +1671,8 @@ def research(body: ResearchBody, background: BackgroundTasks):
         background.add_task(index_fetched, _harvest(sources))
         coverage = research_engine.coverage_ledger(queries, searches, sources, skipped)
         coverage["candidate_scope"] = "shared_bounded_pool"
-        coverage["candidate_limits"] = {"ddg": 10, "per_supplement": 3, "total": 16}
+        coverage["candidate_limits"] = {"ddg_per_query": 10, "per_supplement_per_query": 3,
+                                        "per_query": 15, "total": 24, "max_sources": 20}
         if body.response_format == "concise":
             sources = [compact_row(row) for row in sources]
             partial_sources = [compact_row(row) for row in partial_sources]

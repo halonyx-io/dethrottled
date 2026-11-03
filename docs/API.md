@@ -19,32 +19,41 @@ curl -sS http://127.0.0.1:8787/v2/search \
 
 `/search` returns an array; `/v2/search` returns a diagnostic envelope including
 empty results. First-row telemetry on the array includes attempts/ranking.
-Search defaults to web; news/balanced add news, thorough adds Mwmbl and academic
-adds academic sources. Explicit comma-separated `engines` selects sources.
-`categories="news"` and `language` remain supported controls. Use plural
-`categories`; a misspelled field is not an engine choice.
+Search defaults to `profile="web"`: DDG Lite/HTML/TLS/browser acquire up to ten
+primary choices while SearXNG Yahoo and Yandex each contribute up to three.
+The normal menu defaults to and is capped at **15 unique URLs**. Duplicate
+supplements do not displace primary choices. Source order is preserved, with
+novel Yandex/Yahoo choices alternating after DDG. Partial provider failures leave
+healthy sources available; fewer than fifteen results is normal.
+
+`profile="fast"` uses DDG alone. `balanced` uses the normal web combination;
+`thorough` also requests Mwmbl. Explicit news and academic profiles retain their
+specialist sources. `engines="web"` deliberately requests only the primary route;
+`engines="web,yandex,yahoo"` explicitly requests the default combination.
+`categories="news"` and `language` remain supported controls. Unknown fields and
+requests above fifteen are rejected. Existing cached provider rows obey the caps.
+
+SearXNG supplements use separate explicit engine calls and one first page, with
+`language="all"` when no language is supplied. Their SERPs may contain more rows,
+but Dethrottled admits at most three per engine. No search pagination or article
+fetching is triggered just to fill a menu. DDG acquisition alternatives count as
+one provider family. Provenance records supplementary engine, original rank and
+page before URL deduplication. Bing/Brave/Google are not automatic web supplements.
 
 Source order is default. `rank=true`/`ranking="bm25"` selects lexical ranking;
 `ranking="fusion"` combines source and lexical order. `prefer_domains`, `recency`
 and stored `corpus` candidates are explicit refinements. Neural `rerank=true`
 is rejected. Optional keyed engines are never implicitly added to defaults.
+The [ranking evaluation](../evaluations/search-policy/results/2026-11-03/REPORT.md)
+does not justify adding XGBoost or semantic inference to the default runtime.
 
-Normal HTTP and MCP searches default to ten choices. DDG acquisition is hard
-capped at ten across Lite/HTML/TLS/browser; it does not paginate automatically.
-Each supplementary engine contributes at most three URLs, with six supplementary
-URLs total and sixteen unique choices in a complete menu. Requests above sixteen
-are rejected, not treated as permission to collect fifty DDG results. Web-only
-requests return at most ten. Existing cache entries obey the same limits.
-
-If evidence is missing, read promising choices or rewrite the query around the
-missing fact. Deliberate academic/news/thorough profiles can add bounded specialist
-choices with `limit=16`; primary DDG order is preserved before appended
-supplements. Bing/Brave remain excluded from automatic general-web supplementation.
-A successful response or a novel URL alone does not establish relevance.
-Research shares these budgets across its facets, including unread/failure choices.
-The [source-choice study](../evaluations/agent-search/results/2026-11-03/REPORT.md)
-is historical evidence for source order; its larger expansion settings are no
-longer supported. Document text limits remain separate from search menus.
+Research uses up to fifteen choices per query and interleaves facets into a
+**24-URL global candidate pool**. `max_sources` defaults to ten and allows up to
+twenty. It selects at most `max_sources + 4` primary URLs (never above 24), using
+replacement candidates only when reads fail or duplicate earlier content.
+This ceiling concerns selected primary URLs; automatic transport recovery and
+optional attachment reading can make additional acquisition attempts. Known-URL
+fetching and retained-document text limits are separate from discovery menus.
 
 ## Read known URLs
 

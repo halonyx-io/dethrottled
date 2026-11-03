@@ -150,7 +150,7 @@ def test_google_news_resolution_bounds_failed_lookups(monkeypatch):
         return []
 
     monkeypatch.setattr(fs, "bing_news", no_match)
-    fs.search("any query", max_items=24)
+    fs.search("any query", max_items=24, profile="news")
     # One initial Bing News call plus the bounded headline lookups.
     assert len(calls) == 1 + fs.MAX_GNEWS_LOOKUPS
 
@@ -221,13 +221,13 @@ def test_web_search_without_ddgs_is_empty_not_fatal(monkeypatch):
     assert fs.web_search("anything") == []
 
 
-def test_default_search_keeps_news_sources(monkeypatch):
+def test_explicit_news_keeps_news_sources(monkeypatch):
     monkeypatch.setattr(fs, "web_search", lambda *a, **k: [])
     calls = []
     monkeypatch.setattr(fs, "bing_news", lambda *a, **k: calls.append("bing") or [])
     monkeypatch.setattr(fs, "searxng", lambda *a, **k: calls.append("searxng") or [])
     monkeypatch.setattr(fs, "google_news_headlines", lambda *a, **k: calls.append("google") or [])
-    fs.search("latest news")
+    fs.search("latest news", profile="news")
     assert set(calls[:2]) == {"bing", "searxng"}
     assert calls[-1] == "google"
 
@@ -257,7 +257,7 @@ def test_discovery_sources_overlap_but_keep_web_news_order(monkeypatch):
     monkeypatch.setattr(fs, "google_news_headlines", lambda *a, **k: [])
     try:
         release.set()
-        rows, _ = fs.search("current story", max_items=3)
+        rows, _ = fs.search("current story", max_items=3, profile="news")
     finally:
         release.set()
     assert [r["engine"] for r in rows] == [
@@ -313,6 +313,71 @@ def test_full_pool_skips_unreturnable_google_news(monkeypatch):
         raise AssertionError("Google News cannot enter the returned pool")
 
     monkeypatch.setattr(fs, "google_news_headlines", unexpected)
-    rows, meta = fs.search("technology", max_items=2)
+    rows, meta = fs.search("technology", max_items=2, profile="news")
     assert len(rows) == 2
     assert meta["per_source"]["gnews-resolved"] == "skipped_full_pool"
+
+
+def test_default_menu_preserves_ddg_then_alternates_bounded_supplements(monkeypatch):
+    calls = []
+    def result(engine, i):
+        return {'url': f'https://example.org/{engine}/{i}', 'title': f'Evidence {i}',
+                'engine': engine}
+    monkeypatch.setattr(fs, 'SEARXNG_URL', 'http://searxng')
+    monkeypatch.setattr(fs, 'web_search', lambda *a, **k: [
+        result('web-ddg-lite', i) for i in range(10)])
+    def supplement(query, **kwargs):
+        calls.append((kwargs['engines'], kwargs['max_items']))
+        return [result(kwargs['engines'], i) for i in range(3)]
+    monkeypatch.setattr(fs, 'searxng', supplement)
+    monkeypatch.setattr(fs, 'bing_news', lambda *a, **k: pytest.fail('Not a news search'))
+    menu, meta = fs.search('evidence')
+    assert [r['engine'] for r in menu] == ['web-ddg-lite'] * 10 + [
+        'yandex', 'yahoo', 'yandex', 'yahoo', 'yandex']
+    assert sorted(calls) == [('yahoo', 3), ('yandex', 3)]
+    assert meta['policy']['automatic_pagination'] is False
+    assert meta['per_source']['searxng'] == 6
+
+
+def test_default_supplements_recover_an_empty_primary_without_raising_budget(monkeypatch):
+    monkeypatch.setattr(fs, 'web_search', lambda *a, **k: [])
+    monkeypatch.setattr(fs, 'searxng', lambda *a, **k: [
+        {'url': f"https://example.org/{k['engines']}/{i}", 'engine': k['engines']}
+        for i in range(50)])
+    menu, _ = fs.search('evidence')
+    assert len(menu) == 6
+    assert sum(r['engine'] == 'yandex' for r in menu) == 3
+    assert sum(r['engine'] == 'yahoo' for r in menu) == 3
+
+
+def test_supplement_failure_does_not_drop_primary_or_healthy_engine(monkeypatch):
+    monkeypatch.setattr(fs, 'web_search', lambda *a, **k: [
+        {'url': 'https://example.org/primary', 'engine': 'web-ddg-lite'}])
+    def supplement(query, **kwargs):
+        if kwargs['engines'] == 'yahoo':
+            raise RuntimeError('worker failed')
+        return [{'url': 'https://example.org/backup', 'engine': 'yandex'}]
+    monkeypatch.setattr(fs, 'searxng', supplement)
+    menu, meta = fs.search('evidence')
+    assert len(menu) == 2
+    assert meta['per_source']['yahoo'] == 'failed'
+
+
+def test_searxng_single_page_parameters_and_original_ranks(monkeypatch):
+    monkeypatch.setattr(fs, 'SEARXNG_URL', 'http://searxng')
+    seen = []
+    class Response:
+        status_code = 200
+        def json(self):
+            return {'results': [{'url': f'https://example.org/{i}', 'engine': 'yahoo'}
+                                for i in range(20)]}
+    def get(url, **kwargs):
+        seen.append(kwargs['params'])
+        return Response()
+    monkeypatch.setattr(fs.requests, 'get', get)
+    menu = fs.searxng('evidence', engines='yahoo', max_items=3)
+    assert len(seen) == 1
+    assert seen[0] == dict(q='evidence', format='json', engines='yahoo',
+                          pageno=1, language='all', safesearch=0)
+    assert [r['discovery'][0]['rank'] for r in menu] == [1, 2, 3]
+    assert all(r['discovery'][0]['provider'] == 'searxng:yahoo' for r in menu)

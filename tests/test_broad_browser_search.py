@@ -63,11 +63,11 @@ def test_ddg_variants_share_one_budget_and_supplements_do_not_refill_duplicates(
     pool = [*rows('web-tls-ddg-lite', 7), *rows('web-browser-ddg-html', 8, 7),
             *rows('crossref', 8, 15), *rows('openalex', 8, 23)]
     menu = search.bounded_results(pool)
-    assert len(menu) == 16
+    assert len(menu) == 15
     assert sum(search.result_family(r) == 'ddg' for r in menu) == 10
     assert sum(r['engine'] == 'crossref' for r in menu) == 3
-    assert sum(r['engine'] == 'openalex' for r in menu) == 3
-    assert len({r['url'] for r in menu}) == 16
+    assert sum(r['engine'] == 'openalex' for r in menu) == 2
+    assert len({r['url'] for r in menu}) == 15
 
 
 def test_searxng_caps_each_engine_even_for_cached_results(monkeypatch, tmp_path):

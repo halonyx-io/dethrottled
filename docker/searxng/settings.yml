@@ -39,10 +39,15 @@ search:
     - json
 
 # General web discovery uses the separate headed DDG worker. These scraped
-# engines failed or returned unrelated rows in the local October 31 evaluation.
+# Bing/Brave/Google failed or returned unrelated rows in local evaluations.
+# November 3 paced tests support Yahoo/Yandex as bounded supplements.
 # Retain the working news engines and explicitly enable specialist complements.
 # Select sources per request; do not indiscriminately merge academic/local news.
 engines:
+  - name: yahoo
+    disabled: false
+  - name: yandex
+    disabled: false
   - name: google
     disabled: true
   - name: brave

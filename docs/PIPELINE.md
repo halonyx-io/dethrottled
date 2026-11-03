@@ -29,15 +29,18 @@ with shared pacing, three active searches and bounded waiting. A usable race
 winner needs real result URLs and useful text, not just HTTP 200. Direct keyless
 DuckDuckGo is the default direct fallback. All DDG acquisition paths share ten
 choices, with no automatic pagination; deliberate supplementary sources have
-three choices each, six total, and the complete unique menu is capped at sixteen.
+three choices each, six total, and the complete unique menu defaults to and is capped at fifteen.
 
-Profiles select web, web/news, Mwmbl or academic sources. News uses RSS and the
+Normal web/balanced profiles acquire DDG and separate first-page Yahoo/Yandex
+supplements concurrently; source order is preserved and novel supplements alternate.
+Fast is DDG-only. Thorough adds Mwmbl; academic adds specialist sources. News uses RSS and the
 configured SearXNG news engines; academic can add Crossref, OpenAlex and arXiv.
 Explicit engines can select optional metered providers only when configured.
 URL deduplication merges provenance; identical titles alone do not remove
 independent URLs. Lexical ranking/fusion and optional stored-corpus candidates
 operate before selected sources are fetched. Research can remove near-duplicate
-source content after acquisition.
+source content after acquisition. Research admits at most 24 unique candidates
+across facets, reads ten sources by default, and allows twenty when requested.
 
 ## Acquisition and parsing
 

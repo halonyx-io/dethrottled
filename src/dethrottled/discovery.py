@@ -12,9 +12,9 @@ from .content import constrained
 
 SOURCE_PROFILES = {
     "fast": ("web",),
-    "web": ("web",),
-    "balanced": ("web", "news"),
-    "thorough": ("web", "mwmbl"),
+    "web": ("web", "yandex", "yahoo"),
+    "balanced": ("web", "yandex", "yahoo"),
+    "thorough": ("web", "yandex", "yahoo", "mwmbl"),
     "news": ("web", "news"),
     "academic": ("web", "crossref", "openalex", "arxiv"),
 }
