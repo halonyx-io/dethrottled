@@ -58,7 +58,12 @@ def main():
     with tempfile.TemporaryDirectory(prefix="dethrottled-doc-check-") as directory:
         os.environ["DETHROTTLED_DATA_DIR"] = directory
         sys.path.insert(0, str(ROOT / "src"))
+        from dethrottled import __version__
         from dethrottled.server import app
+
+        readme = (ROOT / "README.md").read_text()
+        if f"This checkout is **{__version__}**" not in readme:
+            errors.append("README.md: checkout version does not match the package")
 
         models = {
             route.path: get_type_hints(route.endpoint)[route.dependant.body_params[0].name]

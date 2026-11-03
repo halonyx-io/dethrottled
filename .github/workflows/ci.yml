@@ -72,6 +72,7 @@ jobs:
         run: |
           python scripts/docs_reference.py --check
           python scripts/check_docs.py
+          python evaluations/search-policy/verify.py
 
       - name: Server starts and answers with nothing configured
         # The degradation promise, tested. No SearXNG, no renderer, no relay --

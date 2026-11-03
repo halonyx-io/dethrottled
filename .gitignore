@@ -27,10 +27,8 @@ engine-health.json
 .DS_Store
 .idea/
 .vscode/
-.ruff_cache/
 .coverage
 .coverage.*
 htmlcov/
-dist/
 *.whl
 *.tar.gz

@@ -1,0 +1,13 @@
+{
+  "ATTRIBUTION.md": "36540bb091be9f480d9e10745014f19ff6e1365f53d6d971976cb11dfa1f98a2",
+  "REPORT.md": "efc902a094de56cb17bb16f546ee6a97b69d01613ce1dbf7ddb14b759c957bfb",
+  "STACK-ATTRIBUTION.json": "98b7bc1a3f92e96e06a0e5601c3871460d33fc1b520839b68b047b7aa30536d9",
+  "deployed-public.json": "2c2be78bc5e5640716678e7c6feb66f747a666dd7f17c9ef50e2b8aaa8f87914",
+  "experiment-stats.json": "6486c2b00096ed4a870da1fb6447c9b50d5aa16a7033e30be5fef7bc127f78a1",
+  "learning-curves.json": "fdef6392084edf8e423858a292079607ec6b0a12d9a4f823dee518d7b22b9fb9",
+  "offline-adapters.json": "3a90724e77101ebe2f18cdb125c91a7315f70a64432559e7f0b053f2ed8a6b08",
+  "per-query-comparison.csv": "84dbb74943dce5f9ec38ec5f66094a7341fc8028e68098d30f95afdb70bc349e",
+  "read-summary.json": "04f50fbb3b2b27e3a31a70a8950105a70fecac1e37b2cc7836a19d2ae92ef399",
+  "staged-search.json": "75ea614ebf1c6c4bb0480775839e4f14d0c8200af92eb4b210ed287f64bd2e47",
+  "test-summary.json": "8b2ca2c3cf02d31ae02d2833597a6bbbeddb2f8752cc3589e72cd21e3d1d6549"
+}
