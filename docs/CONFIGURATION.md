@@ -32,7 +32,7 @@ application settings need an `environment` entry in a local override. Inspect
 | `DETHROTTLED_DRIVE_SESSION_TTL`, `DETHROTTLED_DRIVE_MAX_SESSIONS` | `1800`, `8` | Browser session expiry and capacity |
 | `DETHROTTLED_BROWSER_GRAPHICS` | `auto` in Compose | Verify exposed hardware through GL EGL, fall back to software; `mesa` retains GL, `default` retains original args |
 | `DETHROTTLED_READ_PLAN_SECONDS` | `30` | Additional recovery admission budget, clamped to 0–120; in-flight operations retain their transport timeout |
-| `DETHROTTLED_USER_AGENT` | `dethrottled/1.2.0 (automated fetcher)` | Article-fetch identity |
+| `DETHROTTLED_USER_AGENT` | `dethrottled/1.3.0 (automated fetcher)` | Article-fetch identity |
 
 The base file maps internal worker URLs and optional worker/key variables.
 The complete interpolation map is in `docker-compose.yml` and the agents overlay;

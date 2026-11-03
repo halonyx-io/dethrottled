@@ -58,8 +58,10 @@ An agent should inspect `quality`, `warnings`, `read_plan`, `source_partial`, `t
 explains the workflow and what an MCP client must forward to its model.
 [Coverage limits](https://github.com/halonyx-io/dethrottled/blob/main/docs/LIMITS.md)
 keep discovery compact: ten DDG choices, at most three per supplementary engine,
-six supplements and sixteen unique candidates total. Research shares these budgets;
-million-character document reads remain available.
+up to six supplements and fifteen unique choices total. Yahoo and Yandex supplement
+DDG by default, preserving its order. Research reads ten sources by default, allows
+twenty on request and admits at most twenty-four unique candidates across facets.
+Million-character document reads remain available.
 
 ## Documentation
 

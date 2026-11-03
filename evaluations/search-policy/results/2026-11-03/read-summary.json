@@ -1,0 +1,37 @@
+{
+  "promoted": {
+    "urls": 17,
+    "qualities": {
+      "ok": 16,
+      "failed": 1
+    },
+    "tasks": 17,
+    "useful": 14,
+    "supported": 12,
+    "accepted_excerpts": 18,
+    "errors": 0
+  },
+  "displaced": {
+    "urls": 17,
+    "qualities": {
+      "ok": 16,
+      "thin": 1
+    },
+    "tasks": 17,
+    "useful": 13,
+    "supported": 12,
+    "accepted_excerpts": 20,
+    "errors": 0
+  },
+  "unchanged_control": {
+    "urls": 1,
+    "qualities": {
+      "ok": 1
+    },
+    "tasks": 1,
+    "useful": 1,
+    "supported": 1,
+    "accepted_excerpts": 1,
+    "errors": 0
+  }
+}

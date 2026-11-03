@@ -5,14 +5,16 @@ present behavior; the reports below retain their recorded versions, protocols
 and failures. Neither a health check nor a passing fixture establishes universal
 web access, answer correctness or superiority over paid services.
 
-Current source-menu policy is [compact discovery](../evaluations/compact-search/results/2026-11-03/REPORT.md):
-ten DDG choices, three per supplementary engine, six supplements and sixteen
-unique choices total. Earlier larger-pool measurements remain historical evidence.
+Current source-menu policy follows the [expanded ranking evaluation](../evaluations/search-policy/results/2026-11-03/REPORT.md):
+ten DDG choices, Yahoo/Yandex supplements of at most three each and fifteen unique
+choices total. Research has a separate 24-candidate/20-source ceiling. Earlier
+larger-pool measurements remain historical evidence.
 
 ## Recorded evaluations
 
 | Scope | Report and raw data | Interpretation |
 |---|---|---|
+| Expanded ranking and default policy | [400-query experiment](../evaluations/search-policy/results/2026-11-03/REPORT.md) | 299 usable train/100 fresh test, two model judges; modest XGBoost improvement, no demonstrated fresh-read gain; compact supplements retained, learned ranking not deployed |
 | Agent source choices | [120-question study](../evaluations/agent-search/results/2026-11-03/REPORT.md) | Frozen 80/40 split, source/RRF menu replay, blinded model judgements, 283 fetched URLs, live pacing/bursts and preserved refusals; supports source order on this host, not general paid-provider superiority |
 | Automatic discovery breadth | [Whole-path correction](../evaluations/search-breadth/results/2026-11-02/REPORT.md) | Records the failed public check and the staged MCP → API → TLS/browser recovery before promotion |
 | Browser discovery depth | [Broad-search follow-up](../evaluations/broad-search/results/2026-11-02/REPORT.md) | Requested count reaches the worker; bounded same-origin pagination and pooled results; native and live observations |

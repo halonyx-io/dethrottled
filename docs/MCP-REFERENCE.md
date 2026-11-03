@@ -16,7 +16,7 @@ Find pages. Returns ranked results with url, title and snippet.
 | Argument | Type/choices | Required/default |
 |---|---|---|
 | `query` | str | required |
-| `limit` | Annotated[int, Field(ge=1, le=MAX_RESULTS)] | 10 |
+| `limit` | Annotated[int, Field(ge=1, le=MAX_RESULTS)] | 15 |
 | `fresh` | bool | False |
 | `rank` | bool | False |
 | `corpus` | int | 0 |
@@ -97,7 +97,7 @@ Gather cited sources and relevant excerpts across multiple searches.
 |---|---|---|
 | `question` | str | required |
 | `queries` | list[str] \| None | None |
-| `max_sources` | Annotated[int, Field(ge=1, le=16)] | 10 |
+| `max_sources` | Annotated[int, Field(ge=1, le=20)] | 10 |
 | `max_chars` | Annotated[int, Field(ge=500, le=120000)] | 12000 |
 | `fresh` | bool | False |
 | `engines` | str | '' |

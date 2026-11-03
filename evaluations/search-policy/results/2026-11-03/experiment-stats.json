@@ -1,0 +1,214 @@
+{
+  "pools": {
+    "small": {
+      "test_candidates": {
+        "n": 100,
+        "mean": 11.64,
+        "median": 12.0,
+        "p95": 13.049999999999997,
+        "max": 14
+      },
+      "oracle_useful": {
+        "primary": {
+          "n": 100,
+          "mean": 8.15,
+          "median": 9.0,
+          "p95": 12.0,
+          "max": 12
+        },
+        "secondary": {
+          "n": 100,
+          "mean": 6.58,
+          "median": 7.0,
+          "p95": 11.0,
+          "max": 12
+        }
+      }
+    },
+    "page1": {
+      "test_candidates": {
+        "n": 100,
+        "mean": 23.64,
+        "median": 24.0,
+        "p95": 26.049999999999997,
+        "max": 27
+      },
+      "oracle_useful": {
+        "primary": {
+          "n": 100,
+          "mean": 11.33,
+          "median": 12.0,
+          "p95": 20.0,
+          "max": 22
+        },
+        "secondary": {
+          "n": 100,
+          "mean": 9.41,
+          "median": 10.0,
+          "p95": 19.0,
+          "max": 22
+        }
+      }
+    },
+    "deep": {
+      "test_candidates": {
+        "n": 100,
+        "mean": 39.09,
+        "median": 40.0,
+        "p95": 42.0,
+        "max": 44
+      },
+      "oracle_useful": {
+        "primary": {
+          "n": 100,
+          "mean": 15.23,
+          "median": 16.0,
+          "p95": 29.0,
+          "max": 33
+        },
+        "secondary": {
+          "n": 100,
+          "mean": 12.76,
+          "median": 12.5,
+          "p95": 27.049999999999997,
+          "max": 36
+        }
+      }
+    }
+  },
+  "acquisition": {
+    "yahoo": {
+      "fresh_page_requests": 694,
+      "skipped_page_slots": 6,
+      "empty_pages": 13,
+      "errors": {
+        "[['yahoo', 'parsing error']]": 3,
+        "[['yahoo', 'Suspended: HTTP error']]": 1,
+        "[['yahoo', 'HTTP error']]": 1
+      },
+      "elapsed_ms": {
+        "n": 694,
+        "mean": 717.5936599423632,
+        "median": 659.55,
+        "p95": 1127.87,
+        "max": 1744.7
+      }
+    },
+    "yandex": {
+      "fresh_page_requests": 700,
+      "skipped_page_slots": 0,
+      "empty_pages": 1,
+      "errors": {},
+      "elapsed_ms": {
+        "n": 700,
+        "mean": 610.9708571428572,
+        "median": 594.3,
+        "p95": 741.67,
+        "max": 1048.2
+      }
+    },
+    "capture_keys": [
+      "yahoo",
+      "yandex",
+      "ddg",
+      "id",
+      "split",
+      "partition",
+      "query",
+      "started_at",
+      "elapsed_ms"
+    ],
+    "ddg_keys": [
+      "payload",
+      "api_status",
+      "started_at",
+      "elapsed_ms"
+    ],
+    "actual_statuses": {
+      "307": 2,
+      "200": 1396,
+      "None": 1
+    },
+    "retry_after_count": 0
+  },
+  "inference": {
+    "small": {
+      "prediction_ms": {
+        "n": 100,
+        "mean": 0.14252870809286833,
+        "median": 0.1353020779788494,
+        "p95": 0.15783687122166157,
+        "max": 0.6155511364340782
+      },
+      "lexical_features_ms": {
+        "n": 100,
+        "mean": 1.213021408766508,
+        "median": 1.2019113637506962,
+        "p95": 1.5286917099729178,
+        "max": 1.792379654943943
+      },
+      "model_bytes": 30745,
+      "feature_mode": "full"
+    },
+    "page1": {
+      "prediction_ms": {
+        "n": 100,
+        "mean": 0.14798222575336695,
+        "median": 0.14059245586395264,
+        "p95": 0.17157676629722118,
+        "max": 0.43346500024199486
+      },
+      "lexical_features_ms": {
+        "n": 100,
+        "mean": 2.253654352389276,
+        "median": 2.2197836078703403,
+        "p95": 2.8947311919182535,
+        "max": 3.3550728112459183
+      },
+      "model_bytes": 4289,
+      "feature_mode": "full"
+    },
+    "deep": {
+      "prediction_ms": {
+        "n": 100,
+        "mean": 0.17096970696002245,
+        "median": 0.16371696256101131,
+        "p95": 0.2113809576258063,
+        "max": 0.4732199013233185
+      },
+      "lexical_features_ms": {
+        "n": 100,
+        "mean": 3.6156772961840034,
+        "median": 3.6039568949490786,
+        "p95": 4.344379645772278,
+        "max": 5.143206100910902
+      },
+      "model_bytes": 31154,
+      "feature_mode": "full"
+    }
+  },
+  "judges": {
+    "train": {
+      "pairs": 1177,
+      "grade_agreement": 0.4367034834324554,
+      "usefulness_agreement": 0.8232795242141037
+    },
+    "test": {
+      "pairs": 3909,
+      "grade_agreement": 0.5505244308007163,
+      "usefulness_agreement": 0.8564850345356869
+    }
+  },
+  "corpus": {
+    "training_queries": 300,
+    "queries_with_matches": 60,
+    "matched_query_url_pairs": 85
+  },
+  "semantic_elapsed_ms": {
+    "n": 400,
+    "mean": 1110.5865615454968,
+    "median": 1030.3868500050157,
+    "p95": 1658.1779155880208,
+    "max": 3034.7802410833538
+  }
+}

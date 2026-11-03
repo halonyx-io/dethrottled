@@ -191,7 +191,7 @@ Framework `/docs` and `/openapi.json` routes are available separately.
 |---|---|---|---|
 | `question` | string | required | minLength=3; maxLength=500 |
 | `queries` | array of string | factory/default; see runtime schema | maxItems=10 |
-| `max_sources` | integer | 10 | minimum=1.0; maximum=16.0 |
+| `max_sources` | integer | 10 | minimum=1.0; maximum=20.0 |
 | `max_chars` | integer | 12000 | minimum=500.0; maximum=120000.0 |
 | `language` | string | "" |  |
 | `fresh` | boolean | false |  |
@@ -207,9 +207,9 @@ Framework `/docs` and `/openapi.json` routes are available separately.
 | Field | Type/choices | Required/default | Bounds |
 |---|---|---|---|
 | `query` | string | required | minLength=1; maxLength=500 |
-| `limit` | integer or null | factory/default; see runtime schema | minimum=1.0; maximum=16.0 |
-| `num_results` | integer | 10 | minimum=1.0; maximum=16.0 |
-| `max_items` | integer or null | factory/default; see runtime schema | minimum=1.0; maximum=16.0 |
+| `limit` | integer or null | factory/default; see runtime schema | minimum=1.0; maximum=15.0 |
+| `num_results` | integer | 15 | minimum=1.0; maximum=15.0 |
+| `max_items` | integer or null | factory/default; see runtime schema | minimum=1.0; maximum=15.0 |
 | `categories` | "", "news", "academic" | "" |  |
 | `language` | string | "" |  |
 | `engines` | string | "" |  |
@@ -229,9 +229,9 @@ Framework `/docs` and `/openapi.json` routes are available separately.
 | Field | Type/choices | Required/default | Bounds |
 |---|---|---|---|
 | `query` | string | required | minLength=1; maxLength=500 |
-| `limit` | integer or null | factory/default; see runtime schema | minimum=1.0; maximum=16.0 |
-| `num_results` | integer | 10 | minimum=1.0; maximum=16.0 |
-| `max_items` | integer or null | factory/default; see runtime schema | minimum=1.0; maximum=16.0 |
+| `limit` | integer or null | factory/default; see runtime schema | minimum=1.0; maximum=15.0 |
+| `num_results` | integer | 15 | minimum=1.0; maximum=15.0 |
+| `max_items` | integer or null | factory/default; see runtime schema | minimum=1.0; maximum=15.0 |
 | `categories` | "", "news", "academic" | "" |  |
 | `language` | string | "" |  |
 | `engines` | string | "" |  |

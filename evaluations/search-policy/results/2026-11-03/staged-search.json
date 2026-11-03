@@ -1,0 +1,1323 @@
+[
+  {
+    "query": "python pathlib recursive glob",
+    "elapsed_ms": 1330,
+    "response": {
+      "results": [
+        {
+          "url": "https://stackoverflow.com/questions/2186525/how-to-use-glob-to-find-files-recursively",
+          "title": "python - How to use glob () to find files recursively? - Stack Overflow",
+          "snippet": "Usepathlib.Path ().rglob () from thepathlibmodule, which was introduced inPython3.5. ...glob.glob() If you don't want to usepathlib, useglob.glob(): ... For cases where matching files beginning with a dot (.); like files in the current directory or hidden files on Unix based system, use the os.walk () solution below. os.walk ()",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "python pathlib recursive glob"
+            },
+            {
+              "provider": "searxng:yahoo",
+              "query": "python pathlib recursive glob",
+              "rank": 1,
+              "page": 1
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [
+            {
+              "engine": "web",
+              "count": 10,
+              "status": "ok",
+              "elapsed_ms": 1261,
+              "unresponsive": []
+            },
+            {
+              "engine": "yandex",
+              "count": 1,
+              "status": "ok",
+              "elapsed_ms": 1261,
+              "unresponsive": []
+            },
+            {
+              "engine": "yahoo",
+              "count": 0,
+              "status": "ok",
+              "elapsed_ms": 1261,
+              "unresponsive": []
+            },
+            {
+              "engine": "searxng",
+              "count": 1,
+              "status": "ok",
+              "elapsed_ms": 1261,
+              "unresponsive": []
+            },
+            {
+              "engine": "bing-news",
+              "count": 0,
+              "status": "not_requested",
+              "elapsed_ms": 1261,
+              "unresponsive": []
+            },
+            {
+              "engine": "gnews-resolved",
+              "count": 0,
+              "status": "not_requested",
+              "elapsed_ms": 1261,
+              "unresponsive": []
+            },
+            {
+              "engine": "tls-ddg-lite",
+              "count": 10,
+              "status": "ok",
+              "reason": null,
+              "elapsed_ms": 793,
+              "unresponsive": []
+            }
+          ],
+          "search_elapsed_ms": 1261,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://stackoverflow.com/questions/50714469/recursively-iterate-through-all-subdirectories-using-pathlib",
+          "title": "Recursively iterate through all subdirectories using pathlib",
+          "snippet": "pathlibhasglobmethod where we can provide pattern as an argument. For example : Path ('abc').glob ('**/*.txt') - It will look for current folder abc and all other subdirectories recursively to locate all txt files.",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "python pathlib recursive glob"
+            },
+            {
+              "provider": "searxng:yandex",
+              "query": "python pathlib recursive glob",
+              "rank": 1,
+              "page": 1
+            },
+            {
+              "provider": "searxng:yahoo",
+              "query": "python pathlib recursive glob",
+              "rank": 2,
+              "page": 1
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 1261,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://docs.python.org/3/library/pathlib.html",
+          "title": "pathlib \u2014 Object-oriented filesystem paths \u2014 Python 3.15.2 documentation",
+          "snippet": "The values returned frompathlib'spath.glob() and path.rglob () include the path as a prefix, unlike the results ofglob.glob(root_dir=path). The values returned frompathlib'spath.glob() and path.rglob () may include path itself, for example when globbing \" ** \", whereas the results ofglob.glob(root_dir=path) never include an ...",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "python pathlib recursive glob"
+            },
+            {
+              "provider": "searxng:yandex",
+              "query": "python pathlib recursive glob",
+              "rank": 2,
+              "page": 1
+            },
+            {
+              "provider": "searxng:yahoo",
+              "query": "python pathlib recursive glob",
+              "rank": 3,
+              "page": 1
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 1261,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://www.geeksforgeeks.org/python/how-to-use-glob-function-to-find-files-recursively-in-python/",
+          "title": "How to use Glob () Function to Find Files Recursively in Python",
+          "snippet": "Globis a powerful pattern-matching technique widely used in Unix and Linux environments for matching file and directory names based on wildcard patterns.Python'sbuilt-inglobmodule provides similar functionality, enabling you to easily find files and directories matching specific patterns.",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "python pathlib recursive glob"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 1261,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://pytutorial.com/python-pathlib-glob-explained/",
+          "title": "Python Pathlib glob () Explained - PyTutorial",
+          "snippet": "Learn how to usePython'spathlib.glob() for file pattern matching. This guide covers syntax, examples, and practical use cases for beginners.",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "python pathlib recursive glob"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 1261,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://pytutorial.com/python-pathlib-rglob-explained/",
+          "title": "Python Pathlib rglob () Explained - PyTutorial",
+          "snippet": "Learn how to usePython'spathlib.rglob() to recursively search for files and directories. Perfect for beginners with examples and code outputs.",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "python pathlib recursive glob"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 1261,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://docs.python.org/3/library/glob.html",
+          "title": "glob \u2014 Unix style pathname pattern expansion \u2014 Python 3.15.2 documentation",
+          "snippet": "By default, files beginning with a dot (.) can only be matched by patterns that also start with a dot, unlike fnmatch.fnmatch () orpathlib.Path.glob(). For tilde and shell variable expansion, use os.path.expanduser () and os.path.expandvars (). For a literal match, wrap the meta-characters in brackets. For example, ' [?]' matches the character '?'. Theglobmodule defines the following ...",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "python pathlib recursive glob"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 1261,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://www.geeksforgeeks.org/python/python-list-all-files-in-directory-and-subdirectories/",
+          "title": "Python List All Files In Directory And Subdirectories",
+          "snippet": "Output: List All Files In Directory And Subdirectories UsingglobModule In this example, thePythonfunction `list_files_glob` uses the `glob` module to list and print the full paths of files matching a specified pattern (`'./**/*'` by default). The `recursive` parameter is set to `True` by default, allowing it to recursively search subdirectories. The function demonstrates a concise way to ...",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "python pathlib recursive glob"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 1261,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://runebook.dev/en/docs/python/library/glob/glob.glob",
+          "title": "python - Beyond the Asterisk: Solving glob.glob () Problems with ...",
+          "snippet": "Thepathlibmodule, introduced inPython3.4, offers a much cleaner, object-oriented way to handle file system paths. Its Path.glob() and Path.rglob () methods are excellent alternatives.",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "python pathlib recursive glob"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 1261,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://www.inspiredpython.com/tip/python-pathlib-tips-recursively-listing-files-and-directories",
+          "title": "Python Pathlib Tips: Recursively listing files and directories",
+          "snippet": "Recursively listing files and directories - with wildcards - is trivial with thepathlibPath class and much easier than using scandir () in the os module. The rglob method returns a generator so you can consume a single match at a time.",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "python pathlib recursive glob"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 1261,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://csatlas.com/python-list-directory/",
+          "title": "Python 3: List the Contents of a Directory, Including Recursively...",
+          "snippet": "Since Python versions lower than 3.5 do not have a recursive glob option, and Python versions 3.5 and up have pathlib.Path.rglob, we'll skip recursive examples of glob.glob here. os.walk.",
+          "publishedDate": null,
+          "engine": "yandex",
+          "engines": [
+            "yandex"
+          ],
+          "discovery": [
+            {
+              "provider": "searxng:yandex",
+              "query": "python pathlib recursive glob",
+              "rank": 3,
+              "page": 1
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 1261,
+          "ranking": [],
+          "from_corpus": false
+        }
+      ],
+      "status": "ok",
+      "attempts": [
+        {
+          "engine": "web",
+          "count": 10,
+          "status": "ok",
+          "elapsed_ms": 1261,
+          "unresponsive": []
+        },
+        {
+          "engine": "yandex",
+          "count": 1,
+          "status": "ok",
+          "elapsed_ms": 1261,
+          "unresponsive": []
+        },
+        {
+          "engine": "yahoo",
+          "count": 0,
+          "status": "ok",
+          "elapsed_ms": 1261,
+          "unresponsive": []
+        },
+        {
+          "engine": "searxng",
+          "count": 1,
+          "status": "ok",
+          "elapsed_ms": 1261,
+          "unresponsive": []
+        },
+        {
+          "engine": "bing-news",
+          "count": 0,
+          "status": "not_requested",
+          "elapsed_ms": 1261,
+          "unresponsive": []
+        },
+        {
+          "engine": "gnews-resolved",
+          "count": 0,
+          "status": "not_requested",
+          "elapsed_ms": 1261,
+          "unresponsive": []
+        },
+        {
+          "engine": "tls-ddg-lite",
+          "count": 10,
+          "status": "ok",
+          "reason": null,
+          "elapsed_ms": 793,
+          "unresponsive": []
+        }
+      ],
+      "elapsed_ms": 1261,
+      "ranking": [],
+      "profile": "web"
+    }
+  },
+  {
+    "query": "docker compose healthcheck",
+    "elapsed_ms": 631,
+    "response": {
+      "results": [
+        {
+          "url": "https://docs.docker.com/reference/compose-file/services/",
+          "title": "Define services in Docker Compose",
+          "snippet": "Introduced inDockerComposeversion 2.17.0. ... service_healthy: Specifies that a dependency is expected to be \"healthy\" (as indicated byhealthcheck) before starting a dependent service.",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "docker compose healthcheck"
+            },
+            {
+              "provider": "searxng:yahoo",
+              "query": "docker compose healthcheck",
+              "rank": 1,
+              "page": 1
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [
+            {
+              "engine": "web",
+              "count": 10,
+              "status": "ok",
+              "elapsed_ms": 627,
+              "unresponsive": []
+            },
+            {
+              "engine": "yandex",
+              "count": 2,
+              "status": "ok",
+              "elapsed_ms": 627,
+              "unresponsive": []
+            },
+            {
+              "engine": "yahoo",
+              "count": 0,
+              "status": "ok",
+              "elapsed_ms": 627,
+              "unresponsive": []
+            },
+            {
+              "engine": "searxng",
+              "count": 2,
+              "status": "ok",
+              "elapsed_ms": 627,
+              "unresponsive": []
+            },
+            {
+              "engine": "bing-news",
+              "count": 0,
+              "status": "not_requested",
+              "elapsed_ms": 627,
+              "unresponsive": []
+            },
+            {
+              "engine": "gnews-resolved",
+              "count": 0,
+              "status": "not_requested",
+              "elapsed_ms": 627,
+              "unresponsive": []
+            },
+            {
+              "engine": "tls-ddg-lite",
+              "count": 10,
+              "status": "ok",
+              "reason": null,
+              "elapsed_ms": 592,
+              "unresponsive": []
+            }
+          ],
+          "search_elapsed_ms": 627,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://www.tvaidyan.com/2025/02/13/health-checks-in-docker-compose-a-practical-guide/",
+          "title": "Health Checks in Docker Compose: A Practical Guide",
+          "snippet": "Dockerprovides a built-inhealthcheckmechanism to monitor container status and react accordingly. In this blog post, we'll explore whyhealthchecksmatter, how to define them inDockerCompose, and practical examples for real-world applications.",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "docker compose healthcheck"
+            },
+            {
+              "provider": "searxng:yahoo",
+              "query": "docker compose healthcheck",
+              "rank": 2,
+              "page": 1
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 627,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://dockerbuild.com/reference/healthcheck",
+          "title": "Dockerfile HEALTHCHECK & Compose healthcheck Syntax \u2014 DockerBuild.com",
+          "snippet": "DockerfileHEALTHCHECKandDockerComposehealthchecksyntax, Node.js, Python and PHP examples without curl, reading health status, and how to disable it.",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "docker compose healthcheck"
+            },
+            {
+              "provider": "searxng:yahoo",
+              "query": "docker compose healthcheck",
+              "rank": 3,
+              "page": 1
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 627,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://dev.to/jjoc007/mastering-docker-defining-health-checks-in-docker-compose-4l5k",
+          "title": "Mastering Docker: Defining Health Checks in Docker Compose",
+          "snippet": "DockerCompose, a tool for defining and running multi-containerDockerapplications, natively integrates the concept ofhealthchecksinto its configurations. Throughdocker-compose.yml files,DockerComposeenables developers and system administrators to specify how thehealthcheckfor each service in their environment should be performed.",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "docker compose healthcheck"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 627,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://github.com/peter-evans/docker-compose-healthcheck",
+          "title": "GitHub - peter-evans/docker-compose-healthcheck: How to wait for ...",
+          "snippet": "Thehealthcheckproperty was originally introduced in the 2.1Composefile format and is now part of theComposeSpecification used by recent versions ofDockerCompose. This allows a check to be configured in order to determine whether or not containers for a service are \"healthy.\" A particularly ...",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "docker compose healthcheck"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 627,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://gist.github.com/supermarsx/d4c8ae4b11134247ac3f0acf75258290",
+          "title": "Docker Compose Healthchecks for containers \u00b7 GitHub",
+          "snippet": "Composehealthcheckconfigures the probe per deployment \u2014 flexible per environment. It's fine to combine: an image may define a defaultHEALTHCHECK, which you override or extend inComposeif needed.",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "docker compose healthcheck"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 627,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://medium.com/@saklani1408/configuring-healthcheck-in-docker-compose-3fa6439ee280",
+          "title": "Configuring HealthCheck in docker-compose - Medium",
+          "snippet": "Thehealthcheckproperty was originally introduced in the 2.1Composefile format and is now part of theComposeSpecification used by recent versions ofDockerCompose. This post will help us ...",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "docker compose healthcheck"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 627,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://last9.io/blog/docker-compose-health-checks/",
+          "title": "Docker Compose Healthcheck: Setup, Examples & Best Practices | Last9",
+          "snippet": "ConfigureDockerComposehealthchecksto detect unhealthy containers, control startup order, and improve reliability of multi-container apps.",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "docker compose healthcheck"
+            },
+            {
+              "provider": "searxng:yandex",
+              "query": "docker compose healthcheck",
+              "rank": 1,
+              "page": 1
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 627,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://oneuptime.com/blog/post/2026-02-08-how-to-use-docker-compose-healthcheck-configuration/view",
+          "title": "How to Use Docker Compose healthcheck Configuration",
+          "snippet": "Learn how to configureDockerComposehealthcheckdirectives to monitor container health and build resilient service deployments.",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "docker compose healthcheck"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 627,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://docs.docker.com/compose/how-tos/startup-order/",
+          "title": "Control startup and shutdown order in Compose | Docker Docs",
+          "snippet": "Learn how to manage service startup and shutdown order inDockerComposeusing depends_on andhealthchecks.",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "docker compose healthcheck"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 627,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://www.warp.dev/terminus/docker-compose-health-check",
+          "title": "How To Perform A Health Check In Docker Compose | Warp",
+          "snippet": "Entering docker compose health checks in the AI question input will prompt a human-readable step-by-step guide, including code snippets. Customizing the health check settings.",
+          "publishedDate": null,
+          "engine": "yandex",
+          "engines": [
+            "yandex"
+          ],
+          "discovery": [
+            {
+              "provider": "searxng:yandex",
+              "query": "docker compose healthcheck",
+              "rank": 2,
+              "page": 1
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 627,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://cyberpanel.net/blog/docker-compose-healthcheck",
+          "title": "Comprehensive Guide to Docker Compose Healthcheck for DevOps",
+          "snippet": "A healthcheck in Docker Compose is defined as a section in the docker-compose.yml. That allows you to specify which commands to perform checks on how often the checks should be...",
+          "publishedDate": null,
+          "engine": "yandex",
+          "engines": [
+            "yandex"
+          ],
+          "discovery": [
+            {
+              "provider": "searxng:yandex",
+              "query": "docker compose healthcheck",
+              "rank": 3,
+              "page": 1
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 627,
+          "ranking": [],
+          "from_corpus": false
+        }
+      ],
+      "status": "ok",
+      "attempts": [
+        {
+          "engine": "web",
+          "count": 10,
+          "status": "ok",
+          "elapsed_ms": 627,
+          "unresponsive": []
+        },
+        {
+          "engine": "yandex",
+          "count": 2,
+          "status": "ok",
+          "elapsed_ms": 627,
+          "unresponsive": []
+        },
+        {
+          "engine": "yahoo",
+          "count": 0,
+          "status": "ok",
+          "elapsed_ms": 627,
+          "unresponsive": []
+        },
+        {
+          "engine": "searxng",
+          "count": 2,
+          "status": "ok",
+          "elapsed_ms": 627,
+          "unresponsive": []
+        },
+        {
+          "engine": "bing-news",
+          "count": 0,
+          "status": "not_requested",
+          "elapsed_ms": 627,
+          "unresponsive": []
+        },
+        {
+          "engine": "gnews-resolved",
+          "count": 0,
+          "status": "not_requested",
+          "elapsed_ms": 627,
+          "unresponsive": []
+        },
+        {
+          "engine": "tls-ddg-lite",
+          "count": 10,
+          "status": "ok",
+          "reason": null,
+          "elapsed_ms": 592,
+          "unresponsive": []
+        }
+      ],
+      "elapsed_ms": 627,
+      "ranking": [],
+      "profile": "web"
+    }
+  },
+  {
+    "query": "promql rate vs irate",
+    "elapsed_ms": 669,
+    "response": {
+      "results": [
+        {
+          "url": "https://medium.com/@kavyaprathyusha/rate-vs-irate-in-promql-a172e3d9c38f",
+          "title": "rate () vs irate () in promQL. These two functions are ... - Medium",
+          "snippet": "rate()vsirate() inpromQLThese two functions are something that have been confusing to me for a long time. But, no more now!",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "promql rate vs irate"
+            },
+            {
+              "provider": "searxng:yandex",
+              "query": "promql rate vs irate",
+              "rank": 1,
+              "page": 1
+            },
+            {
+              "provider": "searxng:yahoo",
+              "query": "promql rate vs irate",
+              "rank": 1,
+              "page": 1
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [
+            {
+              "engine": "web",
+              "count": 10,
+              "status": "ok",
+              "elapsed_ms": 665,
+              "unresponsive": []
+            },
+            {
+              "engine": "yandex",
+              "count": 1,
+              "status": "ok",
+              "elapsed_ms": 665,
+              "unresponsive": []
+            },
+            {
+              "engine": "yahoo",
+              "count": 0,
+              "status": "ok",
+              "elapsed_ms": 665,
+              "unresponsive": []
+            },
+            {
+              "engine": "searxng",
+              "count": 1,
+              "status": "ok",
+              "elapsed_ms": 665,
+              "unresponsive": []
+            },
+            {
+              "engine": "bing-news",
+              "count": 0,
+              "status": "not_requested",
+              "elapsed_ms": 665,
+              "unresponsive": []
+            },
+            {
+              "engine": "gnews-resolved",
+              "count": 0,
+              "status": "not_requested",
+              "elapsed_ms": 665,
+              "unresponsive": []
+            },
+            {
+              "engine": "tls-ddg-lite",
+              "count": 10,
+              "status": "ok",
+              "reason": null,
+              "elapsed_ms": 604,
+              "unresponsive": []
+            }
+          ],
+          "search_elapsed_ms": 665,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://devopsaitoolkit.com/blog/promql-rate-irate-increase-when-each-one-lies/",
+          "title": "PromQL rate () vs irate () vs increase (): When Each One Lies",
+          "snippet": "A working SRE's guide toPromQLrate,irate, and increase on counters: extrapolation, lookback gotchas, when each misleads, and reviewing AI-drafted queries.",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "promql rate vs irate"
+            },
+            {
+              "provider": "searxng:yandex",
+              "query": "promql rate vs irate",
+              "rank": 2,
+              "page": 1
+            },
+            {
+              "provider": "searxng:yahoo",
+              "query": "promql rate vs irate",
+              "rank": 3,
+              "page": 1
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 665,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://medium.com/@bhupender.rawat4/demystifying-prometheus-a-deep-dive-into-rate-and-irate-ce02745231fc",
+          "title": "Demystifying Prometheus: A Deep Dive into rate() and irate()",
+          "snippet": "Understanding this structure is essential for correctly interpreting howrate() andirate() calculate therateof change over time.",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "promql rate vs irate"
+            },
+            {
+              "provider": "searxng:yahoo",
+              "query": "promql rate vs irate",
+              "rank": 2,
+              "page": 1
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 665,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://prometheus.io/docs/prometheus/latest/querying/functions/",
+          "title": "Query functions - Prometheus",
+          "snippet": "irateshould only be used when graphing volatile, fast-moving counters. Useratefor alerts and slow-moving counters, as brief changes in theratecan reset the FOR clause and graphs consisting entirely of rare spikes are hard to read.",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "promql rate vs irate"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 665,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://community.grafana.com/t/rate-and-irate-display-very-different-values/6590",
+          "title": "Rate and irate display very different values - Prometheus - Grafana ...",
+          "snippet": "No,iratedoesn't capture spikes - it just returns random sample of data points for the given time series. On the other hand,rateconsistently returns the averagerateover the duration in square brackets. If you want capturing spikes, then take a look at rollup_rate function from VictoriaMetrics' ExtendedPromQL. It is explained in details in the article mentioned above.",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "promql rate vs irate"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 665,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://www.cosmiclearn.com/prometheus/rate-irate.php",
+          "title": "Prometheus Understanding rate () vs irate () - cosmiclearn.com",
+          "snippet": "Prometheus Understandingrate()vsirate() One of the most frequent sources of confusion for engineers writingPromQLqueries is deciding whether to use therate() function or theirate() function. Both functions are designed to calculate the per-secondrateof change for a counter metric over a specified window of time. However, they use completely different mathematical approaches under ...",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "promql rate vs irate"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 665,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://techprephq.com/question/devops/monitoring/promql-rate-irate-increase",
+          "title": "What is the difference between rate(), irate(), and increase() in ...",
+          "snippet": "Short answerrate() averages per-secondrateof a counter over a time window and handles resets correctly.irate() uses the last two data points to detect short bursts with maximum sensitivity. increase () returns total counter growth over the window. Userate() for general dashboards,irate() for spike detection, and increase () for billing or capacity.",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "promql rate vs irate"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 665,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://tryssh.com/blog/promql-rate-vs-irate.html",
+          "title": "PromQL rate vs irate: choose by alerting and graph resolution",
+          "snippet": "ForPromQLratevsirate, the safest approach is a bounded operational change, not a command pasted without context. This runbook starts with effective state, shows the smallest candidate action, and finishes by repeating the real user or system path.",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "promql rate vs irate"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 665,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://techannotation.wordpress.com/2021/07/19/irate-vs-rate-whatre-they-telling-you/",
+          "title": "irate() vs rate() - What're they telling you? - Tech Annotation",
+          "snippet": "Prometheus makes available great functions for data aggregation by timeline. Among these functions, I focused my analysis onirate() andrate() which give us similar outcomes but they work in different way. Let's see, by making an example, what happens under the hood to understand how it works. Prometheus is a very powerfull data collector and Grafana makes you able to build useful graphs ...",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "promql rate vs irate"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 665,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://kylewin.github.io/posts/rate-irate-increase/",
+          "title": "rate () vs irate () vs increase () in Prometheus - Kyle Nguyen",
+          "snippet": "Comparision of Prometheusrate()vsirate()vsincrease ().rate()irate() increase () When to use what",
+          "publishedDate": null,
+          "engine": "web-tls-ddg-lite",
+          "engines": [
+            "web-tls-ddg-lite"
+          ],
+          "discovery": [
+            {
+              "provider": "web",
+              "query": "promql rate vs irate"
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 665,
+          "ranking": [],
+          "from_corpus": false
+        },
+        {
+          "url": "https://www.youtube.com/watch?v=RC1ivt-ZN_U",
+          "title": "PromQL Tutorial: A COMPLETE Guide to Prometheus... - YouTube",
+          "snippet": "Prometheus rate vs irate 17:10 - Prometheus CPU Monitoring 17:56 - Aggregation Operators 21:00 - Aggregation Over Time 24:15 - Prometheus Histogram Query: histogram_quantile 28:36 - Prometheus Averages and Totals 31:55 - PromQL Function: increase 34:40...",
+          "publishedDate": null,
+          "engine": "yandex",
+          "engines": [
+            "yandex"
+          ],
+          "discovery": [
+            {
+              "provider": "searxng:yandex",
+              "query": "promql rate vs irate",
+              "rank": 3,
+              "page": 1
+            }
+          ],
+          "category": null,
+          "score": null,
+          "cached": false,
+          "retrieved_at": null,
+          "cache_age_seconds": null,
+          "upstream_rank": null,
+          "search_attempts": [],
+          "search_elapsed_ms": 665,
+          "ranking": [],
+          "from_corpus": false
+        }
+      ],
+      "status": "ok",
+      "attempts": [
+        {
+          "engine": "web",
+          "count": 10,
+          "status": "ok",
+          "elapsed_ms": 665,
+          "unresponsive": []
+        },
+        {
+          "engine": "yandex",
+          "count": 1,
+          "status": "ok",
+          "elapsed_ms": 665,
+          "unresponsive": []
+        },
+        {
+          "engine": "yahoo",
+          "count": 0,
+          "status": "ok",
+          "elapsed_ms": 665,
+          "unresponsive": []
+        },
+        {
+          "engine": "searxng",
+          "count": 1,
+          "status": "ok",
+          "elapsed_ms": 665,
+          "unresponsive": []
+        },
+        {
+          "engine": "bing-news",
+          "count": 0,
+          "status": "not_requested",
+          "elapsed_ms": 665,
+          "unresponsive": []
+        },
+        {
+          "engine": "gnews-resolved",
+          "count": 0,
+          "status": "not_requested",
+          "elapsed_ms": 665,
+          "unresponsive": []
+        },
+        {
+          "engine": "tls-ddg-lite",
+          "count": 10,
+          "status": "ok",
+          "reason": null,
+          "elapsed_ms": 604,
+          "unresponsive": []
+        }
+      ],
+      "elapsed_ms": 665,
+      "ranking": [],
+      "profile": "web"
+    }
+  }
+]

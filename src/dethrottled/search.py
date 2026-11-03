@@ -156,7 +156,7 @@ DEFAULT_ENGINES = os.environ.get(
 # A scientific or technical subject gets far more from crossref and openalex
 # than from another news aggregator; a market question gets nothing from either.
 ENGINE_GROUPS = {
-    "web": "bing,yahoo",
+    "web": "yandex,yahoo",
     "news": "google news,bing news,duckduckgo news,reuters",
     "academic": "arxiv,crossref,openalex,semantic scholar",
 }
@@ -227,14 +227,17 @@ def searxng(query: str, *, max_items: int = 8, categories: str = "",
             diagnostics.update(status="cooldown", elapsed_ms=0)
         return []  # Empty engines would otherwise select SearXNG's defaults.
     if cache is not None:
-        hit = cache.get("search", "sx", query, engines, categories, max_items,
+        hit = cache.get("search", "sx-single-page-v2", query, engines, categories, max_items,
                         language)
         if hit is not None:
             if diagnostics is not None:
-                diagnostics.update(status="cached", elapsed_ms=0)
+                diagnostics.update(status="cached", elapsed_ms=0,
+                                   admitted_count=len(bounded_results(
+                                       hit, max_items, primary_limit=SUPPLEMENT_SEARCH_LIMIT)))
             return bounded_results(hit, max_items, primary_limit=SUPPLEMENT_SEARCH_LIMIT)
 
-    params = {"q": query, "format": "json", "engines": engines}
+    params = {"q": query, "format": "json", "engines": engines,
+              "pageno": 1, "language": language or "all", "safesearch": 0}
     if categories:
         params["categories"] = categories
     # Worth as much as translating the query. A French query without it returns
@@ -266,13 +269,18 @@ def searxng(query: str, *, max_items: int = 8, categories: str = "",
                     print("  [dethrottled] engine %r is not answering: %s "
                           "(resting it for %d min)"
                           % (name, reason, _HEALTH_TTL // 60), flush=True)
+            ranks = {}
             for item in payload.get("results") or []:
                 if item.get("url"):
-                    rows.append(_norm(
+                    engine = item.get("engine", "searxng")
+                    ranks[engine] = ranks.get(engine, 0) + 1
+                    rows.append(dict(_norm(
                         title=item.get("title", ""), url=item["url"],
                         snippet=item.get("content", ""),
                         published=item.get("publishedDate") or "",
-                        engine=item.get("engine", "searxng")))
+                        engine=engine), discovery=[{
+                            "provider": "searxng:" + engine, "query": query,
+                            "rank": ranks[engine], "page": 1}]))
         elif diagnostics is not None:
             diagnostics.update(status="http_" + str(response.status_code))
     except Exception as exc:
@@ -283,8 +291,9 @@ def searxng(query: str, *, max_items: int = 8, categories: str = "",
     rows = bounded_results(rows, max_items, primary_limit=SUPPLEMENT_SEARCH_LIMIT)
     if diagnostics is not None:
         diagnostics["elapsed_ms"] = int((time.monotonic() - started) * 1000)
+        diagnostics["admitted_count"] = len(rows)
     if cache is not None and rows:
-        cache.put("search", "sx", query, engines, categories, max_items,
+        cache.put("search", "sx-single-page-v2", query, engines, categories, max_items,
                   language, value=rows)
     return rows
 
@@ -690,9 +699,9 @@ def _blend_news(rows: list) -> list:
     return mixed
 
 
-def search(query: str, *, max_items: int = 8, categories: str = "",
+def search(query: str, *, max_items: int = SEARCH_MENU_LIMIT, categories: str = "",
            cache=None, log_fn=None, prefer_domains=None, language=None,
-           profile="balanced", engines="") -> tuple:
+           profile="web", engines="") -> tuple:
     """Query every free source and merge. Returns (rows, meta)."""
     max_items = max(1, min(max_items, SEARCH_MENU_LIMIT))
     started = time.time()
@@ -712,7 +721,9 @@ def search(query: str, *, max_items: int = 8, categories: str = "",
             if not key:
                 continue
             row = dict(row)
-            provenance = row.setdefault("discovery", [{"provider": tag, "query": query}])
+            provenance = [dict(entry) for entry in row.get(
+                "discovery", [{"provider": tag, "query": query}])]
+            row["discovery"] = provenance
             if key in seen:
                 for entry in provenance:
                     if entry not in seen[key]["discovery"]:
@@ -723,15 +734,24 @@ def search(query: str, *, max_items: int = 8, categories: str = "",
             seen[key] = row
             merged.append(row)
             added += 1
-        per_source[tag] = per_source.get(tag, 0) + added
+        if per_source.get(tag) != "failed":
+            per_source[tag] = per_source.get(tag, 0) + added
 
     browser_diagnostics = {}
     tasks = {}
-    source_reports = {"searxng": {}, "specialist": {}}
+    source_reports = {"searxng": {}, "specialist": {}, "supplements": {}}
     if "web" in sources:
         tasks["web"] = _SOURCE_POOL.submit(
             web_search, query, max_items=min(max_items, PRIMARY_SEARCH_LIMIT), cache=cache,
             diagnostics=browser_diagnostics)
+    # Separate engine calls preserve each provider's original order/rank.
+    # Exactly one first page; SearXNG engines do not accept a result-count hint.
+    for engine in ("yandex", "yahoo"):
+        if engine in sources:
+            report = source_reports["supplements"].setdefault(engine, {})
+            tasks[engine] = _SOURCE_POOL.submit(
+                searxng, query, max_items=SUPPLEMENT_SEARCH_LIMIT, engines=engine,
+                cache=cache, language=language, timeout=8, diagnostics=report)
     if "news" in sources:
         tasks["bing-news"] = _SOURCE_POOL.submit(
             bing_news, query, max_items=min(max_items, SUPPLEMENT_SEARCH_LIMIT), cache=cache)
@@ -749,11 +769,27 @@ def search(query: str, *, max_items: int = 8, categories: str = "",
             report = source_reports["providers"].setdefault(provider, {})
             tasks[provider] = _SOURCE_POOL.submit(
                 providers.search, provider, query, min(max_items, SUPPLEMENT_SEARCH_LIMIT), report)
+    completed = {}
     for name, task in tasks.items():
         try:
-            add(task.result(), name)
+            completed[name] = task.result()
         except Exception:
+            completed[name] = []
             per_source[name] = "failed"
+    if "web" in completed:
+        add(completed["web"], "web")
+    # Primary order stays intact. Alternate small supplements rather than
+    # letting one engine occupy all remaining slots of the 15-choice menu.
+    for index in range(SUPPLEMENT_SEARCH_LIMIT):
+        for engine in ("yandex", "yahoo"):
+            if engine in completed:
+                add(completed[engine][index:index + 1], engine)
+    for name, rows in completed.items():
+        if name not in {"web", "yandex", "yahoo"}:
+            add(rows, name)
+    if source_reports["supplements"] and "searxng" not in completed:
+        per_source["searxng"] = sum(v for e in ("yandex", "yahoo")
+                                           if isinstance(v := per_source.get(e, 0), int))
     for name in ("web", "bing-news", "searxng"):
         per_source.setdefault(name, "not_requested")
 
@@ -814,6 +850,9 @@ def search(query: str, *, max_items: int = 8, categories: str = "",
         "ok": bool(menu),
         "count": len(menu),
         "candidate_pool_count": len(merged),
+        "policy": {"ranking": "source", "primary_limit": PRIMARY_SEARCH_LIMIT,
+                   "per_supplement_limit": SUPPLEMENT_SEARCH_LIMIT,
+                   "menu_limit": SEARCH_MENU_LIMIT, "automatic_pagination": False},
         # Recorded rather than omitted. A source that is switched off and a
         # source that answered with nothing are identical in a count of zero,
         # and a caller reading this to decide whether an empty result is

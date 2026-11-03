@@ -35,7 +35,7 @@ MCP_BACKEND_URL = os.getenv("MCP_BACKEND_URL", "http://127.0.0.1:8787").rstrip("
 KEYS_PATH = Path(os.getenv("MCP_KEYS_PATH", "/etc/dethrottled-mcp/keys.json"))
 REQUEST_TIMEOUT = float(os.getenv("MCP_REQUEST_TIMEOUT", "90"))
 MAX_URLS = int(os.getenv("MCP_MAX_URLS", "10"))
-MAX_RESULTS = min(16, int(os.getenv("MCP_MAX_RESULTS", "16")))
+MAX_RESULTS = min(15, int(os.getenv("MCP_MAX_RESULTS", "15")))
 MAX_CHARS = int(os.getenv("MCP_MAX_CHARS", "1000000"))
 ALLOWED_HOSTS = [
     host.strip()
@@ -339,7 +339,7 @@ mcp._mcp_server.version = ADAPTER_VERSION
 @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, openWorldHint=True))
 async def search(
     query: str,
-    limit: Annotated[int, Field(ge=1, le=MAX_RESULTS)] = 10,
+    limit: Annotated[int, Field(ge=1, le=MAX_RESULTS)] = 15,
     fresh: bool = False,
     rank: bool = False,
     corpus: int = 0,
@@ -492,7 +492,7 @@ async def search_and_fetch(
 async def research(
     question: str,
     queries: list[str] | None = None,
-    max_sources: Annotated[int, Field(ge=1, le=16)] = 10,
+    max_sources: Annotated[int, Field(ge=1, le=20)] = 10,
     max_chars: Annotated[int, Field(ge=500, le=120000)] = 12000,
     fresh: bool = False,
     engines: str = "",
@@ -513,7 +513,7 @@ async def research(
     return await _backend_post("/research", {
         "question": question,
         "queries": queries or [],
-        "max_sources": _bounded_int(max_sources, 1, 16),
+        "max_sources": _bounded_int(max_sources, 1, 20),
         "max_chars": _bounded_int(max_chars, 500, 120000),
         "fresh": fresh, "follow_assets": follow_assets, "engines": engines, "profile": profile,
         "categories": categories, "response_format": response_format,

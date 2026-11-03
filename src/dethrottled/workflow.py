@@ -4,20 +4,23 @@ from urllib.parse import urlsplit
 
 PRIMARY_SEARCH_LIMIT = 10
 SUPPLEMENT_SEARCH_LIMIT = 3
-SEARCH_MENU_LIMIT = 16
+SEARCH_MENU_LIMIT = 15
+RESEARCH_SOURCE_LIMIT = 20
+RESEARCH_CANDIDATE_LIMIT = 24
 
 INSTRUCTIONS = """Dethrottled discovers and reads sources.
 Prioritize grounded coverage and accuracy.
-For discovery start with profile=web, limit=10, ranking=source. DDG Lite/HTML/TLS/browser
+For discovery start with profile=web, limit=15, ranking=source. DDG Lite/HTML/TLS/browser
 share a hard ten-result budget, with no automatic search pagination. Supplementary
-engines contribute at most three URLs each; the complete menu is at most sixteen.
+engines contribute at most three URLs each; the complete menu is at most fifteen.
 Bing/Brave are not automatic general-web supplements. If evidence is missing, read
 promising sources or rewrite around the missing fact; do not request fifty choices.
 Use academic/news/thorough profiles deliberately when those sources fit the task.
-For a supplemented menu request limit=16; DDG choices stay first, supplements append.
+Yahoo and Yandex supply small default supplements; DDG choices stay first.
 Alternative DDG acquisition paths are one provider family, not independent votes.
-Research shares the same family/menu budgets across its query facets, with up to
-sixteen selected sources and up to 120000 characters per source. Drive snapshots
+Research uses the same per-query search budgets, then admits at most 24 unique
+candidates across facets. It reads ten sources by default, up to twenty when requested,
+with at most four replacement candidates and 120000 characters per source. Drive snapshots
 and network lists show at most ten items; inspect narrower selectors as needed.
 Fetch and read_document allow up to 1000000 characters; use retained-document offsets
 for longer sources. Defaults are smaller than ceilings; request more when justified.

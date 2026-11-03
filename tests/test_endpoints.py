@@ -90,7 +90,7 @@ def test_default_menu_and_expansion_reach_acquisition(client, monkeypatch, path)
                  for i in range(25)], dict(FAKE_META))
 
     monkeypatch.setattr(srv.fs, "search", source)
-    for body, count in [({}, 10), ({"limit": 16}, 10),
+    for body, count in [({}, 10), ({"limit": 15}, 10),
                         ({"num_results": 5}, 5), ({"max_items": 3}, 3)]:
         response = client.post(path, json={"query": "One", **body})
         assert response.status_code == 200
@@ -99,7 +99,8 @@ def test_default_menu_and_expansion_reach_acquisition(client, monkeypatch, path)
             rows = rows["results"]
         assert len(rows) == count
         assert rows[0]["ranking"] == []
-        assert requested[-1] == body.get("limit", count)
+        expected = body.get("limit", body.get("num_results", body.get("max_items", 15)))
+        assert requested[-1] == expected
 
 
 @pytest.mark.parametrize("path", ["/fetch", "/extract"])

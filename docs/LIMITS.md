@@ -7,9 +7,9 @@ will succeed. Inspect actual coverage, partial flags and continuation handles.
 
 | Operation | Default | Supported ceiling |
 |---|---|---|
-| Search choices | HTTP/MCP 10 | DDG family 10; each supplement 3; supplements 6 total; complete menu 16 |
+| Search choices | HTTP/MCP 15 | DDG family 10; each supplement 3; supplements 6 total; complete menu 15 |
 | Local corpus search | HTTP 10; MCP 5 | 10 matches |
-| Research sources | 10 | 16 unique candidates across all facets, sharing search family budgets |
+| Research sources | 10 | 20 readable sources; 24 unique candidates across facets; at most four replacement primary URLs |
 | Research additional facets | Automatic primary-source probe | 10 additional queries, plus the question |
 | Research excerpt per source | 12,000 characters | 120,000 characters |
 | Fetch text | HTTP 8,000; MCP 12,000 characters | 1,000,000 characters per URL |

@@ -226,7 +226,7 @@ async def dispatch(path: str, request: Request):
         if not isinstance(query, str) or not 0 < len(query.strip()) <= MAX_QUERY:
             return JSONResponse({'error': 'invalid query'}, status_code=400)
         if route in SEARCH_PATHS and 'limit' in payload and (
-                type(payload['limit']) is not int or not 1 <= payload['limit'] <= 16):
+                type(payload['limit']) is not int or not 1 <= payload['limit'] <= 15):
             return JSONResponse({'error': 'invalid limit'}, status_code=400)
         if route == '/research':
             queries = payload.get('queries', [])
@@ -236,7 +236,7 @@ async def dispatch(path: str, request: Request):
                 return JSONResponse({'error': 'invalid research queries'}, status_code=400)
             sources = payload.get('max_sources', 10)
             chars = payload.get('max_chars', 12000)
-            if (type(sources) is not int or not 1 <= sources <= 16 or
+            if (type(sources) is not int or not 1 <= sources <= 20 or
                     type(chars) is not int or not 500 <= chars <= 120000):
                 return JSONResponse({'error': 'invalid research limits'}, status_code=400)
     elif route in FETCH_PATHS | {'/site/crawl'}:
