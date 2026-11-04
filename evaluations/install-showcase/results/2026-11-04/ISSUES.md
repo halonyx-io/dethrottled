@@ -76,3 +76,13 @@ through 1.3.0 from the ordinary package index. The gate stopped; its stderr and
 index response are retained. Once the index exposed 1.4.0, a separate fresh virtual
 environment installed normally. This was an external index propagation delay;
 no published package was overwritten. Both actual installation routes then passed.
+
+## Test-driver prerequisites
+
+Two additional driver errors are retained separately from engine failures: an
+optional-library install command quoted `~` literally instead of expanding its
+home path, and one diagnostic media request ran before the fixture HTTP server
+was listening. The first was repeated with an absolute path while its environment
+was still empty; the second was repeated after fixture readiness. Later fresh
+published-package installations and all inference gates passed. An extra fourth
+szbox warm speech request is also retained outside the paired three-warm timing.
