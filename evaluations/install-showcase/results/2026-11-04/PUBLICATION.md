@@ -1,6 +1,6 @@
 # Published 1.4.0 installation verification
 
-Recorded 4 November 2026 after publication. **Both actual installation routes passed on Q6A.**
+Recorded 4 November 2026 after publication. **Both actual installation routes passed on ARM64 edge device.**
 
 The fresh GitHub clone used release tag `v1.4.0`, commit `e8bb9b4741f7e064cdbab254524a334a2ccdeb9e`. The Python route downloaded `dethrottled==1.4.0` from the ordinary public PyPI index into a new Python 3.12 virtual environment. A second fresh environment installed `[all]`. Commands ran outside a source checkout; the managed stack used its bundled deployment context.
 
@@ -13,7 +13,7 @@ The fresh GitHub clone used release tag `v1.4.0`, commit `e8bb9b4741f7e064cdbab2
 | PyPI functional / restart checks | 21/21 contracts; 1/1 four-storage-type restoration |
 | Fresh GitHub tag clone | Default Compose build and all five services ready |
 | GitHub functional / restart checks | 21/21 contracts; 1/1 four-storage-type restoration |
-| Final Q6A state | Package-managed default stack ready at `127.0.0.1:8787` |
+| Final ARM64 edge device state | Package-managed default stack ready at `127.0.0.1:8787` |
 
 The optional workers’ successful inference and model costs were measured separately in the [two-device report](REPORT.md). This publication check verifies their distribution/startup and truthful initialization state; it does not claim freshly downloaded full-profile weights were exercised again.
 
@@ -49,14 +49,14 @@ The first install attempt failed because the normal PyPI Simple index still list
 
 The installed API matches all 37 frozen non-management modules. The only changed API-package module is `stack.py`, which received prerequisite/port diagnostics after the HTTP workload was frozen. Browser runtime behavior is the same candidate implementation tested in the report.
 
-Release publishing [workflow](https://github.com/halonyx-io/dethrottled/actions/runs/41817102684) and feature [CI](https://github.com/halonyx-io/dethrottled/actions/runs/41816369909) passed. szbox production remains 1.3.0; benchmark projects were stopped and their data preserved.
+Release publishing [workflow](https://github.com/halonyx-io/dethrottled/actions/runs/41817102684) and feature [CI](https://github.com/halonyx-io/dethrottled/actions/runs/41816369909) passed. x86_64 mini PC production remains 1.3.0; benchmark projects were stopped and their data preserved.
 
 ## Documentation presentation check
 
-All seven showcase graphics were rasterized and visually reviewed. The recovery
+All eight showcase graphics were rasterized and visually reviewed. The recovery
 diagram now separates the recovery/reassessment loop from agent continuation;
 chart legends no longer overlap results. Measurements are unchanged. GitHub's
-Markdown rendering API confirmed all twelve showcase image placements across six
+Markdown rendering API confirmed all fourteen showcase image placements across six
 pages remain inline without image links when wrapped in `<picture>`. The
 [rendering record](publication/showcase-rendering.json) retains page counts and
 rendered HTML hashes. Offline documentation checks also validate HTML image paths.
@@ -70,7 +70,12 @@ The macOS Python job now pins GitHub's
 and runs the same tests. Native Linux AMD64/ARM64 container gates are unchanged.
 This is an infrastructure failure, not an application test failure.
 
-For Q6A operations:
+The current showcase uses architecture and device-class labels, with CPU/RAM
+specifications. Its palette follows [Halonyx](https://halonyx.io/): charcoal
+`#0F1720`, off-white `#F8FAFC` and cyan `#22D3EE`. Stable capture IDs remain in
+raw evidence paths; recorded measurements are unchanged.
+
+For ARM64 edge device operations:
 
 ```sh
 ~/dethrottled-release-1.4.0/pypi/bin/dethrottled stack status

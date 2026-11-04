@@ -7,7 +7,7 @@ an evaluation of all supported document layouts.
 
 ## Installation gates
 
-Use an Ubuntu ARM64 Q6A with Python 3.12. Create separate, fresh core and `[all]`
+Use an Ubuntu ARM64 ARM64 edge device with Python 3.12. Create separate, fresh core and `[all]`
 virtual environments. Save pip installation reports and dependency inventories.
 Build a wheel, record its SHA-256, and run it from outside the source checkout.
 The package must not start services or acquire model weights during installation.
@@ -60,7 +60,7 @@ serial live host runs avoid competing for upstream quotas.
 ```sh
 python evaluations/install-showcase/benchmark.py \
   --manifest evaluations/install-showcase/manifest.json \
-  --out results/q6a-formats --phase formats
+  --out results/arm64-formats --phase formats
 ```
 
 Run phases `formats`, `concurrency`, `search-fresh`, `search-warm`, `fetch-fresh`,
@@ -70,7 +70,7 @@ three and six callers in three rounds. It never bursts a public search engine.
 
 Each device gets 50 English search questions, 30 fixed public fetch targets and
 six research tasks. Fresh search starts are at least three seconds apart. Run
-Q6A then szbox for fresh acquisition, reversing order for cache-enabled repeats.
+ARM64 edge device then x86_64 mini PC for fresh acquisition, reversing order for cache-enabled repeats.
 Keep empty, thin, suspect, blocked, failed and timed-out cases. Preserve provider
 attempts and cached-row flags. Cache-enabled does not guarantee a cache hit.
 

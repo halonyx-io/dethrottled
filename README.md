@@ -1,7 +1,7 @@
 # Dethrottled
 
 <picture>
-  <img src="https://raw.githubusercontent.com/halonyx-io/dethrottled/main/docs/assets/hero.svg" alt="Dethrottled: discover, read, drive and retain web evidence">
+  <img src="https://raw.githubusercontent.com/halonyx-io/dethrottled/main/docs/assets/hero.svg?v=1.4.1" alt="Dethrottled: discover, read, drive and retain web evidence">
 </picture>
 
 **One local engine for agents that need the web.** Dethrottled discovers sources,
@@ -66,7 +66,7 @@ for remote agents. The raw API has no caller authentication.
 | Research | A bounded evidence bundle with explicit coverage gaps; ten sources by default, twenty on request |
 
 <picture>
-  <img src="https://raw.githubusercontent.com/halonyx-io/dethrottled/main/docs/assets/escalation.svg" alt="Automatic acquisition, assessment, recovery and agent continuation">
+  <img src="https://raw.githubusercontent.com/halonyx-io/dethrottled/main/docs/assets/escalation.svg?v=1.4.1" alt="Automatic acquisition, assessment, recovery and agent continuation">
 </picture>
 
 A normal fetch runs the recovery policy automatically. When content remains
@@ -89,13 +89,17 @@ or audio. Interactive challenges can remain unresolved.
 ## Measured on two machines
 
 The [current installation and benchmark report](https://github.com/halonyx-io/dethrottled/blob/main/evaluations/install-showcase/results/2026-11-04/REPORT.md)
-compares a Radxa Dragon Q6A ARM64 board with an AMD Ryzen szbox. It preserves
+compares an ARM64 edge device with an x86_64 mini PC. It preserves
 installation failures and fixes, controlled browser/document checks, 50 live
 search questions, 30 fixed fetch targets and six research tasks per device.
 Fresh acquisition, cache-enabled repeats and optional workers are reported
 separately. Every plotted value is generated from retained case data.
 
-| Recorded check | Q6A | szbox |
+<picture>
+  <img src="https://raw.githubusercontent.com/halonyx-io/dethrottled/main/docs/assets/hardware.svg?v=1.4.1" alt="ARM64 edge device: eight Cortex-A55/A78 cores and 11.29 GiB OS-visible RAM. x86_64 mini PC: Ryzen 7 5800U, eight cores and sixteen threads, 30.76 GiB OS-visible RAM.">
+</picture>
+
+| Recorded check | ARM64 edge device | x86_64 mini PC |
 |---|---:|---:|
 | Browser/document contracts, three runs | 63/63 | 63/63 |
 | Controlled format fact retained, eleven fixtures × three runs | 33/33 | 33/33 |
@@ -107,7 +111,7 @@ The live `ok` label is the engine's assessment, not verified answer correctness.
 The report separately records topic-marker retention, thin results and failures.
 
 <picture>
-  <img src="https://raw.githubusercontent.com/halonyx-io/dethrottled/main/docs/assets/latency.svg" alt="Measured latency on Q6A and szbox, including failed requests">
+  <img src="https://raw.githubusercontent.com/halonyx-io/dethrottled/main/docs/assets/latency.svg?v=1.4.1" alt="Measured latency on ARM64 edge device and x86_64 mini PC, including failed requests">
 </picture>
 
 These are observed workloads, not universal minimum requirements or a paid-service
@@ -138,7 +142,7 @@ The fetch ladder does not consult `robots.txt`. Raw API access to trusted LAN
 targets requires care; public adapters enforce narrower policies, alongside
 operator-provided network isolation. See [operations](https://github.com/halonyx-io/dethrottled/blob/main/docs/OPERATIONS.md).
 
-This checkout is **1.4.0**. Check `/health` and `/v2/capabilities` on the service you
+This checkout is **1.4.1**. Check `/health` and `/v2/capabilities` on the service you
 actually use; deployed services and remote plugins can differ from a checkout.
 
 [MIT license](https://github.com/halonyx-io/dethrottled/blob/main/LICENSE) · Maintained by [Halonyx](https://github.com/halonyx-io)

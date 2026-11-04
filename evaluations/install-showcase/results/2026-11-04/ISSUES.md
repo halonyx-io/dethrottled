@@ -1,6 +1,6 @@
 # Installation issues and original failures
 
-## Q6A package-manager prerequisite
+## ARM64 edge device package-manager prerequisite
 
 The first standard Docker installation stopped at `apt update`: the host's existing
 signed Radxa repository changed Origin (`noble` to `Radxa`) and Label (`noble` to
@@ -27,7 +27,7 @@ checks that this self-build prerequisite is copied. The original failing log is 
 
 ## Repeated headed browser interaction
 
-The first Q6A contract run passed 21/21. Reusing its session in the second run failed
+The first ARM64 edge device contract run passed 21/21. Reusing its session in the second run failed
 three click checks (iframe, popup and checkpoint). A separate diagnostic confirmed
 that the button was attached, visible, enabled, stable and received pointer events,
 but Chromium timed out waiting for actionability. A previously opened popup had left
@@ -40,7 +40,7 @@ Reference: https://playwright.dev/python/docs/api/class-page#page-bring-to-front
 
 ## Initial popup navigation race on ARM64
 
-The rebuilt Q6A run passed 20/21: the popup click succeeded but `switch_tab`,
+The rebuilt ARM64 edge device run passed 20/21: the popup click succeeded but `switch_tab`,
 200 ms later, rejected its still-blank initial URL. A later tabs inspection showed
 that the same tab had reached the allowed fixture URL. Tab selection now waits
 within the caller's step/run deadline for creation and initial navigation; an
@@ -49,7 +49,7 @@ blank navigation, forbidden hosts and timeout. The original failed run is preser
 
 ## Intermittent IndexedDB restoration
 
-One szbox worker-restart check restored cookies/local/session storage but lost the
+One x86_64 mini PC worker-restart check restored cookies/local/session storage but lost the
 IndexedDB record. The on-disk checkpoint still contained it. A minimal test and five
 further worker-restart restores recovered the original value; the underlying
 intermittent driver/timing cause is not conclusively identified. The browser now
@@ -85,4 +85,4 @@ home path, and one diagnostic media request ran before the fixture HTTP server
 was listening. The first was repeated with an absolute path while its environment
 was still empty; the second was repeated after fixture readiness. Later fresh
 published-package installations and all inference gates passed. An extra fourth
-szbox warm speech request is also retained outside the paired three-warm timing.
+x86_64 mini PC warm speech request is also retained outside the paired three-warm timing.

@@ -5,21 +5,21 @@
   "pages": [
     {
       "page": "README.md",
-      "images": 3,
+      "images": 4,
       "linked_images": 0,
-      "rendered_html_sha256": "ef994e7ccbafafa3a9f12000fbb64dda3a7eb95ee66e571b221f1d1368159ace"
+      "rendered_html_sha256": "25122baa9b14c242bfd56b314162a42df01b631e4c497c5bd37ccfc11e658041"
     },
     {
       "page": "docs/BENCHMARKS.md",
-      "images": 3,
+      "images": 4,
       "linked_images": 0,
-      "rendered_html_sha256": "95b5c77d9c412137bc13678f155d11268a7b78ca40195a86e2f0e57188f39a1f"
+      "rendered_html_sha256": "bd3f40f4e12b109e3295dd72bb60d404b5f372742a726a77c0a6602ff179bf1d"
     },
     {
       "page": "docs/CONFIGURATION.md",
       "images": 1,
       "linked_images": 0,
-      "rendered_html_sha256": "fb5b1557d78670ebd798cae9eab06cf25facdc116dd5acd3cc4e379b4863220a"
+      "rendered_html_sha256": "b56562e49aea421912efb6d2287b3557c0e972eefa6a1f4b12cb1a5805ff7373"
     },
     {
       "page": "docs/PIPELINE.md",
@@ -31,13 +31,13 @@
       "page": "docs/REQUIREMENTS.md",
       "images": 1,
       "linked_images": 0,
-      "rendered_html_sha256": "a687cc74cf2730139607eb928fa8e1fd92aadab277283c5429faf99d77bff545"
+      "rendered_html_sha256": "c430a70c92def0e745f5d0edf27d9c5f8bb6dce5907d21a822af1366a9e3b78c"
     },
     {
       "page": "evaluations/install-showcase/results/2026-11-04/REPORT.md",
       "images": 3,
       "linked_images": 0,
-      "rendered_html_sha256": "f69d007a7ebb2112f255b5e6abd6347dca0b3ca4e914584ac29c26613383ca2d"
+      "rendered_html_sha256": "e818e30046a336f4c4da1afcbc84d8b98ebe99783120ee740e997ef1d5b3c302"
     }
   ]
 }
