@@ -1,0 +1,122 @@
+{
+  "status": "ok",
+  "workers": {
+    "browser": {
+      "status": "ready",
+      "http_status": 200,
+      "graphics": {
+        "webgl": true,
+        "renderer": "ANGLE (Mesa, llvmpipe (LLVM 19.1.7 256 bits), OpenGL 4.5)",
+        "hardware_verified": false,
+        "requested_mode": "auto"
+      },
+      "probe_ms": 3
+    },
+    "renderer": {
+      "status": "ready",
+      "http_status": 200,
+      "probe_ms": 3
+    },
+    "layout": {
+      "status": "not_configured"
+    },
+    "speech": {
+      "status": "not_configured"
+    },
+    "formats": {
+      "status": "ready",
+      "http_status": 200,
+      "metrics": {
+        "completed": 18,
+        "failed": 0,
+        "timed_out": 0,
+        "cancelled": 0,
+        "rejected": 0,
+        "active": 0,
+        "active_seconds": 0,
+        "deadline_seconds": 60,
+        "max_input_bytes": 52428800
+      },
+      "probe_ms": 4
+    }
+  },
+  "multilingual_backfill": {
+    "status": "complete",
+    "passages": 0
+  },
+  "components": {
+    "searxng": {
+      "status": "ok"
+    },
+    "bing_news_rss": {
+      "status": "ok"
+    }
+  },
+  "providers": {
+    "trafilatura": {
+      "configured": true
+    },
+    "resiliparse": {
+      "configured": true
+    },
+    "selectolax": {
+      "configured": true
+    }
+  },
+  "profiles": {
+    "fast": {
+      "sources": [
+        "web"
+      ]
+    },
+    "web": {
+      "sources": [
+        "web",
+        "yandex",
+        "yahoo"
+      ]
+    },
+    "balanced": {
+      "sources": [
+        "web",
+        "yandex",
+        "yahoo"
+      ]
+    },
+    "thorough": {
+      "sources": [
+        "web",
+        "yandex",
+        "yahoo",
+        "mwmbl"
+      ]
+    },
+    "news": {
+      "sources": [
+        "web",
+        "news"
+      ]
+    },
+    "academic": {
+      "sources": [
+        "web",
+        "crossref",
+        "openalex",
+        "arxiv"
+      ]
+    }
+  },
+  "cost": {
+    "api_calls": null,
+    "daily_caps": null,
+    "keys_required": false,
+    "default_search": "keyless",
+    "optional_metered": {
+      "exa": false,
+      "tavily": false,
+      "parallel": false
+    },
+    "accounting": "per_request_attempts; cumulative_usage_unavailable"
+  },
+  "uptime_seconds": 84
+}

@@ -1,0 +1,26 @@
+[
+  {
+    "device": "szbox",
+    "worker": "media",
+    "command": "du -sk /models",
+    "stdout": "474900\t/models"
+  },
+  {
+    "device": "szbox",
+    "worker": "layout",
+    "command": "du -sk /models",
+    "stdout": "517876\t/models"
+  },
+  {
+    "device": "q6a",
+    "worker": "media",
+    "command": "du -sk /models",
+    "stdout": "474896\t/models"
+  },
+  {
+    "device": "q6a",
+    "worker": "layout",
+    "command": "du -sk /models",
+    "stdout": "517872\t/models"
+  }
+]

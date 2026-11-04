@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "default": true,
+  "media": true,
+  "layout": true,
+  "full": true,
+  "retained_document": true,
+  "volume_names": [
+    "dethrottled-benchmark_browser-state",
+    "dethrottled-benchmark_dethrottled-data"
+  ]
+}

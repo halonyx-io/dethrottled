@@ -1,0 +1,59 @@
+# Installation choices and measured requirements
+
+Use the **managed stack** for the complete default engine. A Python-only install
+is useful as a library or lightweight HTTP server, but Python extras cannot
+supply Docker workers, Chromium, Tesseract or legacy system converters.
+
+| Route | Prerequisites | Capabilities |
+|---|---|---|
+| `pip install dethrottled` then `dethrottled stack up` | Python 3.10+, running Linux Docker Engine and Compose plugin v2+; native AMD64 or ARM64 | Five default services, matching sources bundled in the distribution |
+| GitHub clone then `docker compose up -d --build` | Git, Linux Docker Engine and Compose | Same five default services; checkout supplies deployment sources |
+| Standalone `dethrottled` or direct library calls | Python 3.10+; optional libraries/system tools/workers as needed | Available features depend on what is installed and configured |
+
+Docker Desktop must use Linux containers. Native Linux AMD64/ARM64 stacks were
+measured; Windows/macOS **Python** CI is not a full Docker Desktop performance
+evaluation. A GPU is optional. Default measurements use software rendering on
+both devices. [GPU setup](READ-PLANNER.md) and dated GPU evidence remain separate.
+
+Package installation starts no services and downloads no model weights. Explicit
+startup downloads/builds images and acquires corpus weights during the API image
+build. First use of speech/layout downloads their models into separate volumes.
+Network access and free disk space are required for these steps. The CLI checks
+Docker, Compose, platform and the requested port, reports host CPU/RAM, and never
+installs system packages, elevates privileges or changes firewall settings.
+
+## What the measurements establish
+
+The [1.4.0 two-device report](../evaluations/install-showcase/results/2026-11-04/REPORT.md)
+records tested hardware, sampled working-set memory/CPU, image sizes, startup
+and model initialization. Those are observed costs for a fixed workload,
+**not universal minimum requirements**. Public source availability can change,
+and ordinary services remained active on the hosts.
+
+Docker image sizes are logical uncompressed sizes, not download sizes or additive
+unique disk requirements. Shared layers, architecture, build cache, retained
+source data, corpus growth and optional model caches change actual disk use.
+A named volume surviving shutdown is expected; `stack down` does not reclaim it.
+
+## Optional workers
+
+![Worker/profile breakdown](assets/profiles.svg)
+
+| Profile | Adds | Resource policy |
+|---|---|---|
+| Default | API, headed browser, SearXNG, Crawl4AI, format worker | API/browser have no total Compose RAM cap; format worker capped at 2 GiB |
+| `media` | CPU speech recognition | Faster-Whisper `small`, int8; 3 GiB container cap; persistent model cache |
+| `layout` | PDF layout, OCR/table inference | Docling/CPU PyTorch; 8 GiB container cap, four CPUs; persistent model cache |
+| `full` | Both optional inference workers | Combined workload and model/cache costs; not required for default readers |
+
+Container caps are safety ceilings, not memory reservations or proven minima.
+More concurrent pages, large workbooks, longer audio and corpus indexing can cost
+more than these fixtures. Input/page/row limits and supervisor deadlines still
+apply. Read [configuration](CONFIGURATION.md) before increasing them.
+
+Selecting a different profile adds/updates its services; it does not remove
+previously started optional services. To return to a precise smaller selection,
+run `stack down`, then `stack up --profile default` (or `media`/`layout`). Data
+and model volumes remain available across that cycle.
+
+[Benchmark results](BENCHMARKS.md) · [Python installation](PYTHON.md) · [Operations](OPERATIONS.md)

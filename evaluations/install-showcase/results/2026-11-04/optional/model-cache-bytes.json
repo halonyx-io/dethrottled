@@ -1,0 +1,13 @@
+{
+  "measured_du_kib_converted_to_bytes": {
+    "q6a": {
+      "media": 486293504,
+      "layout": 530300928
+    },
+    "szbox": {
+      "media": 486297600,
+      "layout": 530305024
+    }
+  },
+  "method": "du -sk /models after successful inference; allocated disk, not download bytes."
+}

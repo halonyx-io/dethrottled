@@ -18,7 +18,9 @@ dethrottled stack status
 dethrottled stack down
 ```
 
-Install Docker Engine and its Compose plugin first. The command checks these
+Install a local Linux Docker Engine and its Compose plugin (v2+) first.
+Managed workers support native AMD64/ARM64 Docker hosts; Docker Desktop must use
+Linux containers. See [tested costs and requirements](REQUIREMENTS.md). The command checks these
 prerequisites and never installs system packages, elevates privileges or changes
 firewall configuration itself. First startup builds/downloads API and worker images,
 including corpus weights. Optional speech/layout models initialize on first use.
@@ -34,7 +36,9 @@ separate from Git-checkout production images. Project ownership is checked befor
 changing existing containers. The extracted context and project settings live under
 `~/.local/share/dethrottled/stacks` (LOCALAPPDATA on Windows); override with
 `DETHROTTLED_STACK_HOME`. Commands ignore unrelated parent Compose/application secrets.
-`stack down` keeps data volumes and downloaded models. A package upgrade supplies a
+`stack down` keeps data volumes and downloaded models. Profile changes add/update
+services; use down then up with a smaller profile to remove previously enabled
+optional services while retaining their caches. A package upgrade supplies a
 new matched context; run `stack up` explicitly to rebuild/update its managed services.
 
 ## Standalone Python server

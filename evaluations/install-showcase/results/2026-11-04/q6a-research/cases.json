@@ -1,0 +1,2834 @@
+[
+  {
+    "id": "r0",
+    "status": 200,
+    "response_bytes": 35177,
+    "elapsed_ms": 10851.97,
+    "summary": {
+      "candidates": 22,
+      "selected": 4,
+      "read": 4,
+      "partial": 0,
+      "attempted": 4,
+      "elapsed_ms": 10801,
+      "model_used": false
+    },
+    "coverage": {
+      "method": "retrieval_and_lexical_accounting",
+      "answer_verified": false,
+      "warning": "Readable text and matched terms do not establish an answer, truth, agreement, or completeness.",
+      "facets": [
+        {
+          "query": "What changed in the Python 3.12 release?",
+          "state": "evidence_available",
+          "candidates": 13,
+          "evidence": [
+            {
+              "source_id": "S1",
+              "url": "https://docs.python.org/3/whatsnew/3.12.html",
+              "document_id": "doc_d7dee286228d43f4b8bfde8e5da5edbe",
+              "matched_terms": [
+                "changed",
+                "python",
+                "release"
+              ],
+              "missing_terms": [],
+              "source_partial": false,
+              "excerpt_truncated": true
+            },
+            {
+              "source_id": "S2",
+              "url": "https://www.python.org/downloads/release/python-3120/",
+              "document_id": "doc_df076458e1104f83a9cc898371b828e4",
+              "matched_terms": [
+                "changed",
+                "python",
+                "release"
+              ],
+              "missing_terms": [],
+              "source_partial": false,
+              "excerpt_truncated": false
+            },
+            {
+              "source_id": "S3",
+              "url": "https://docs.python.org/3.12/whatsnew/index.html",
+              "document_id": "doc_798cc2527b284131a627e653cae814ce",
+              "matched_terms": [
+                "changed",
+                "python",
+                "release"
+              ],
+              "missing_terms": [],
+              "source_partial": false,
+              "excerpt_truncated": true
+            }
+          ],
+          "unread": [
+            "https://dev.to/matheus_releaserun/python-312-vs-313-vs-314-what-actually-changed-and-which-should-you-use-4kc0",
+            "https://www.python.org/downloads/release/python-3129/",
+            "https://www.andy-pearce.com/blog/posts/2024/Mar/whats-new-in-python-312-library-changes/",
+            "https://versionlog.com/python/3.12/",
+            "https://realpython.com/courses/new-features-python-312/",
+            "https://realpython.com/python312-new-features/",
+            "https://www.py4u.org/python-tutorial/what-s-new-in-the-latest-python-release/",
+            "https://www.bitecode.dev/p/python-312-what-didnt-make-the-headlines",
+            "https://docs.python.org/3/whatsnew/3.11.html",
+            "https://readmedium.com/what-you-need-to-know-about-python-3-12-typing-dc5b810fa700"
+          ],
+          "failed_or_duplicate": [],
+          "next_actions": [
+            {
+              "tool": "fetch",
+              "arguments": {
+                "urls": [
+                  "https://dev.to/matheus_releaserun/python-312-vs-313-vs-314-what-actually-changed-and-which-should-you-use-4kc0",
+                  "https://www.python.org/downloads/release/python-3129/",
+                  "https://www.andy-pearce.com/blog/posts/2024/Mar/whats-new-in-python-312-library-changes/"
+                ],
+                "focus": "What changed in the Python 3.12 release?"
+              },
+              "reason": "Discovered sources remain unread."
+            }
+          ],
+          "answer_verified": false
+        },
+        {
+          "query": "What changed in the Python 3.12 release official source",
+          "state": "evidence_available",
+          "candidates": 13,
+          "evidence": [
+            {
+              "source_id": "S1",
+              "url": "https://docs.python.org/3/whatsnew/3.12.html",
+              "document_id": "doc_d7dee286228d43f4b8bfde8e5da5edbe",
+              "matched_terms": [
+                "changed",
+                "python",
+                "release"
+              ],
+              "missing_terms": [
+                "official",
+                "source"
+              ],
+              "source_partial": false,
+              "excerpt_truncated": true
+            },
+            {
+              "source_id": "S2",
+              "url": "https://www.python.org/downloads/release/python-3120/",
+              "document_id": "doc_df076458e1104f83a9cc898371b828e4",
+              "matched_terms": [
+                "changed",
+                "python",
+                "release",
+                "source"
+              ],
+              "missing_terms": [
+                "official"
+              ],
+              "source_partial": false,
+              "excerpt_truncated": false
+            },
+            {
+              "source_id": "S4",
+              "url": "https://www.python.org/downloads/release/python-31216/",
+              "document_id": "doc_d2f854bde1a84b7796c6edc792447d28",
+              "matched_terms": [
+                "python",
+                "release",
+                "source"
+              ],
+              "missing_terms": [
+                "changed",
+                "official"
+              ],
+              "source_partial": false,
+              "excerpt_truncated": false
+            }
+          ],
+          "unread": [
+            "https://docs.python.org/3.12/whatsnew/changelog.html",
+            "https://github.com/python/cpython/blob/main/Doc/whatsnew/3.12.rst",
+            "https://versionlog.com/python/3.12/",
+            "http://www.programmation-python.org/index-155.html",
+            "https://blog.python.org/2024/10/python-3127-released/",
+            "https://blog.python.org/2023/10/python-3120-final-now-available/",
+            "https://www.py4u.org/python-tutorial/what-s-new-in-the-latest-python-release/",
+            "https://www.python.org/downloads/release/python-3137/",
+            "https://www.devteam-app.com/article/273/exploring-python-3-12-new-features",
+            "https://python.plainenglish.io/python-3-12-transforming-code-clarity-and-precision-646cf433452a"
+          ],
+          "failed_or_duplicate": [],
+          "next_actions": [
+            {
+              "tool": "fetch",
+              "arguments": {
+                "urls": [
+                  "https://docs.python.org/3.12/whatsnew/changelog.html",
+                  "https://github.com/python/cpython/blob/main/Doc/whatsnew/3.12.rst",
+                  "https://versionlog.com/python/3.12/"
+                ],
+                "focus": "What changed in the Python 3.12 release official source"
+              },
+              "reason": "Discovered sources remain unread."
+            }
+          ],
+          "answer_verified": false
+        }
+      ],
+      "candidate_scope": "shared_bounded_pool",
+      "candidate_limits": {
+        "ddg_per_query": 10,
+        "per_supplement_per_query": 3,
+        "per_query": 15,
+        "total": 24,
+        "max_sources": 20
+      }
+    },
+    "query_telemetry": [
+      {
+        "query": "What changed in the Python 3.12 release?",
+        "found": 13,
+        "elapsed_ms": 3184,
+        "attempts": [
+          {
+            "engine": "web",
+            "count": 10,
+            "status": "ok",
+            "elapsed_ms": 3184,
+            "unresponsive": []
+          },
+          {
+            "engine": "yandex",
+            "count": 3,
+            "status": "ok",
+            "elapsed_ms": 1205,
+            "unresponsive": [],
+            "admitted_count": 3
+          },
+          {
+            "engine": "yahoo",
+            "count": 0,
+            "status": "ok",
+            "elapsed_ms": 865,
+            "unresponsive": [],
+            "admitted_count": 0
+          },
+          {
+            "engine": "searxng",
+            "count": 3,
+            "status": "ok",
+            "elapsed_ms": 3184,
+            "unresponsive": []
+          },
+          {
+            "engine": "bing-news",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 3184,
+            "unresponsive": []
+          },
+          {
+            "engine": "gnews-resolved",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 3184,
+            "unresponsive": []
+          },
+          {
+            "engine": "tls-ddg-lite",
+            "count": 0,
+            "status": "challenge_or_http_error",
+            "reason": null,
+            "elapsed_ms": 147,
+            "unresponsive": []
+          },
+          {
+            "engine": "browser-search",
+            "count": 0,
+            "status": "ok",
+            "elapsed_ms": 3017,
+            "queue_ms": 0,
+            "unresponsive": []
+          },
+          {
+            "engine": "browser-ddg-lite",
+            "count": 10,
+            "status": 200,
+            "reason": null,
+            "elapsed_ms": 1870,
+            "unresponsive": []
+          },
+          {
+            "engine": "browser-ddg-html",
+            "count": 0,
+            "status": null,
+            "reason": "cancelled_by_winner",
+            "elapsed_ms": 0,
+            "unresponsive": []
+          }
+        ]
+      },
+      {
+        "query": "What changed in the Python 3.12 release official source",
+        "found": 13,
+        "elapsed_ms": 1339,
+        "attempts": [
+          {
+            "engine": "web",
+            "count": 10,
+            "status": "ok",
+            "elapsed_ms": 1339,
+            "unresponsive": []
+          },
+          {
+            "engine": "yandex",
+            "count": 3,
+            "status": "ok",
+            "elapsed_ms": 1165,
+            "unresponsive": [],
+            "admitted_count": 3
+          },
+          {
+            "engine": "yahoo",
+            "count": 0,
+            "status": "ok",
+            "elapsed_ms": 835,
+            "unresponsive": [],
+            "admitted_count": 0
+          },
+          {
+            "engine": "searxng",
+            "count": 3,
+            "status": "ok",
+            "elapsed_ms": 1339,
+            "unresponsive": []
+          },
+          {
+            "engine": "bing-news",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 1339,
+            "unresponsive": []
+          },
+          {
+            "engine": "gnews-resolved",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 1339,
+            "unresponsive": []
+          },
+          {
+            "engine": "tls-ddg-lite",
+            "count": 10,
+            "status": "ok",
+            "reason": null,
+            "elapsed_ms": 1334,
+            "unresponsive": []
+          }
+        ]
+      }
+    ],
+    "skipped": [],
+    "partial_sources": [],
+    "sources": [
+      {
+        "url": "https://docs.python.org/3/whatsnew/3.12.html",
+        "quality": "ok",
+        "tier": "direct/trafilatura",
+        "warnings": [],
+        "document_id": "doc_d7dee286228d43f4b8bfde8e5da5edbe",
+        "evidence": [
+          {
+            "offset": 59001,
+            "matched_terms": [
+              "changed",
+              "python",
+              "release"
+            ],
+            "offset_in": "full_extraction",
+            "content_start": 0,
+            "content_end": 999
+          },
+          {
+            "offset": 0,
+            "matched_terms": [
+              "python",
+              "release"
+            ],
+            "offset_in": "full_extraction",
+            "content_start": 1001,
+            "content_end": 2001
+          },
+          {
+            "offset": 39000,
+            "matched_terms": [
+              "python",
+              "release"
+            ],
+            "offset_in": "full_extraction",
+            "content_start": 2003,
+            "content_end": 3003
+          },
+          {
+            "offset": 78001,
+            "matched_terms": [
+              "python",
+              "release"
+            ],
+            "offset_in": "full_extraction",
+            "content_start": 3005,
+            "content_end": 4004
+          }
+        ]
+      },
+      {
+        "url": "https://www.python.org/downloads/release/python-3120/",
+        "quality": "ok",
+        "tier": "direct/trafilatura",
+        "warnings": [],
+        "document_id": "doc_df076458e1104f83a9cc898371b828e4",
+        "evidence": [
+          {
+            "offset": 1650,
+            "matched_terms": [
+              "changed",
+              "python",
+              "release"
+            ],
+            "content_start": 1650,
+            "content_end": 2350
+          },
+          {
+            "offset": 0,
+            "matched_terms": [
+              "python",
+              "release"
+            ],
+            "content_start": 0,
+            "content_end": 700
+          }
+        ]
+      },
+      {
+        "url": "https://docs.python.org/3.12/whatsnew/index.html",
+        "quality": "ok",
+        "tier": "crawl4ai/crawl4ai-native",
+        "warnings": [],
+        "document_id": "doc_798cc2527b284131a627e653cae814ce",
+        "evidence": [
+          {
+            "offset": 17000,
+            "matched_terms": [
+              "changed",
+              "python",
+              "release"
+            ],
+            "offset_in": "full_extraction",
+            "content_start": 0,
+            "content_end": 1000
+          },
+          {
+            "offset": 51000,
+            "matched_terms": [
+              "python",
+              "release"
+            ],
+            "offset_in": "full_extraction",
+            "content_start": 1002,
+            "content_end": 2002
+          },
+          {
+            "offset": 48000,
+            "matched_terms": [
+              "python",
+              "release"
+            ],
+            "offset_in": "full_extraction",
+            "content_start": 2004,
+            "content_end": 3004
+          },
+          {
+            "offset": 49000,
+            "matched_terms": [
+              "python",
+              "release"
+            ],
+            "offset_in": "full_extraction",
+            "content_start": 3006,
+            "content_end": 4006
+          }
+        ]
+      },
+      {
+        "url": "https://www.python.org/downloads/release/python-31216/",
+        "quality": "ok",
+        "tier": "direct/trafilatura",
+        "warnings": [],
+        "document_id": "doc_d2f854bde1a84b7796c6edc792447d28",
+        "evidence": [
+          {
+            "offset": 0,
+            "matched_terms": [
+              "python",
+              "release"
+            ],
+            "content_start": 0,
+            "content_end": 700
+          },
+          {
+            "offset": 1100,
+            "matched_terms": [
+              "python",
+              "release"
+            ],
+            "content_start": 1100,
+            "content_end": 1800
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "r1",
+    "status": 200,
+    "response_bytes": 52386,
+    "elapsed_ms": 18107.25,
+    "summary": {
+      "candidates": 19,
+      "selected": 4,
+      "read": 4,
+      "partial": 0,
+      "attempted": 4,
+      "elapsed_ms": 18091,
+      "model_used": false
+    },
+    "coverage": {
+      "method": "retrieval_and_lexical_accounting",
+      "answer_verified": false,
+      "warning": "Readable text and matched terms do not establish an answer, truth, agreement, or completeness.",
+      "facets": [
+        {
+          "query": "What are the current EU AI Act implementation dates?",
+          "state": "evidence_available",
+          "candidates": 13,
+          "evidence": [
+            {
+              "source_id": "S1",
+              "url": "https://ai-act-service-desk.ec.europa.eu/en/ai-act/timeline/timeline-implementation-eu-ai-act",
+              "document_id": "doc_6293058822cb45698c08724e96941f4c",
+              "matched_terms": [
+                "act"
+              ],
+              "missing_terms": [
+                "current",
+                "dates",
+                "implementation"
+              ],
+              "source_partial": false,
+              "excerpt_truncated": false
+            },
+            {
+              "source_id": "S2",
+              "url": "https://ai-act-service-desk.ec.europa.eu/en/ai-act/faq/when-does-ai-act-go-effect-what-its-timeline-implementation",
+              "document_id": "doc_2c49ce6377a64a058458dd8872504f6b",
+              "matched_terms": [
+                "act"
+              ],
+              "missing_terms": [
+                "current",
+                "dates",
+                "implementation"
+              ],
+              "source_partial": false,
+              "excerpt_truncated": false
+            },
+            {
+              "source_id": "S3",
+              "url": "https://artificialintelligenceact.eu/implementation-timeline/",
+              "document_id": "doc_8c5b994acbcb4b1ba9b62315f0911452",
+              "matched_terms": [
+                "act",
+                "dates",
+                "implementation"
+              ],
+              "missing_terms": [
+                "current"
+              ],
+              "source_partial": false,
+              "excerpt_truncated": false
+            }
+          ],
+          "unread": [
+            "https://www.regulation-ai.eu/en/ai-act/",
+            "https://aiact-navigator.com/timeline",
+            "https://governancedocs.com/eu-ai-act-deadlines/",
+            "https://www.regulation-ai.eu/en/deadlines/",
+            "https://policy-insider.ai/eu-ai-act-timeline-key-compliance-deadlines-for-2027-2028/",
+            "https://decodethefuture.org/en/eu-ai-act-explained/",
+            "https://aiactindex.eu/eu-ai-act/timeline",
+            "https://fpf.org/blog/the-ai-act-implementation-timeline-what-changes-under-the-ai-omnibus/",
+            "https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai",
+            "https://www.deepinspect.ai/blog/eu-ai-act-implementation-timeline"
+          ],
+          "failed_or_duplicate": [],
+          "next_actions": [
+            {
+              "tool": "fetch",
+              "arguments": {
+                "urls": [
+                  "https://www.regulation-ai.eu/en/ai-act/",
+                  "https://aiact-navigator.com/timeline",
+                  "https://governancedocs.com/eu-ai-act-deadlines/"
+                ],
+                "focus": "What are the current EU AI Act implementation dates?"
+              },
+              "reason": "Discovered sources remain unread."
+            }
+          ],
+          "answer_verified": false
+        },
+        {
+          "query": "What are the current EU AI Act implementation dates official source",
+          "state": "evidence_available",
+          "candidates": 13,
+          "evidence": [
+            {
+              "source_id": "S1",
+              "url": "https://ai-act-service-desk.ec.europa.eu/en/ai-act/timeline/timeline-implementation-eu-ai-act",
+              "document_id": "doc_6293058822cb45698c08724e96941f4c",
+              "matched_terms": [
+                "act"
+              ],
+              "missing_terms": [
+                "current",
+                "dates",
+                "implementation",
+                "official",
+                "source"
+              ],
+              "source_partial": false,
+              "excerpt_truncated": false
+            },
+            {
+              "source_id": "S2",
+              "url": "https://ai-act-service-desk.ec.europa.eu/en/ai-act/faq/when-does-ai-act-go-effect-what-its-timeline-implementation",
+              "document_id": "doc_2c49ce6377a64a058458dd8872504f6b",
+              "matched_terms": [
+                "act"
+              ],
+              "missing_terms": [
+                "current",
+                "dates",
+                "implementation",
+                "official",
+                "source"
+              ],
+              "source_partial": false,
+              "excerpt_truncated": false
+            },
+            {
+              "source_id": "S3",
+              "url": "https://artificialintelligenceact.eu/implementation-timeline/",
+              "document_id": "doc_8c5b994acbcb4b1ba9b62315f0911452",
+              "matched_terms": [
+                "act",
+                "dates",
+                "implementation",
+                "official"
+              ],
+              "missing_terms": [
+                "current",
+                "source"
+              ],
+              "source_partial": false,
+              "excerpt_truncated": false
+            },
+            {
+              "source_id": "S4",
+              "url": "https://www.europarl.europa.eu/RegData/etudes/ATAG/2025/772906/EPRS_ATA(2025)772906_EN.pdf",
+              "document_id": "doc_70f8c1431ca343d596559bdb6bd365b8",
+              "matched_terms": [
+                "act",
+                "dates",
+                "implementation",
+                "official",
+                "source"
+              ],
+              "missing_terms": [
+                "current"
+              ],
+              "source_partial": false,
+              "excerpt_truncated": false
+            }
+          ],
+          "unread": [
+            "https://www.consilium.europa.eu/en/policies/artificial-intelligence-act/timeline-artificial-intelligence/",
+            "https://digital-strategy.ec.europa.eu/en/news/commission-starts-enforcing-ai-act-rules-and-new-transparency-requirements-2-august",
+            "https://fpf.org/wp-content/uploads/2026/07/FPF-EU-AI-Act-Timeline-2026-R2.pdf",
+            "https://www.regulation-ai.eu/en/deadlines/",
+            "https://www.regulation-ai.eu/en/ai-act/",
+            "https://www.europarl.europa.eu/thinktank/en/document/EPRS_ATA(2025)772906",
+            "https://fpf.org/blog/the-ai-act-implementation-timeline-what-changes-under-the-ai-omnibus/",
+            "https://artificialintelligenceact.eu/",
+            "https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai"
+          ],
+          "failed_or_duplicate": [],
+          "next_actions": [
+            {
+              "tool": "fetch",
+              "arguments": {
+                "urls": [
+                  "https://www.consilium.europa.eu/en/policies/artificial-intelligence-act/timeline-artificial-intelligence/",
+                  "https://digital-strategy.ec.europa.eu/en/news/commission-starts-enforcing-ai-act-rules-and-new-transparency-requirements-2-august",
+                  "https://fpf.org/wp-content/uploads/2026/07/FPF-EU-AI-Act-Timeline-2026-R2.pdf"
+                ],
+                "focus": "What are the current EU AI Act implementation dates official source"
+              },
+              "reason": "Discovered sources remain unread."
+            }
+          ],
+          "answer_verified": false
+        }
+      ],
+      "candidate_scope": "shared_bounded_pool",
+      "candidate_limits": {
+        "ddg_per_query": 10,
+        "per_supplement_per_query": 3,
+        "per_query": 15,
+        "total": 24,
+        "max_sources": 20
+      }
+    },
+    "query_telemetry": [
+      {
+        "query": "What are the current EU AI Act implementation dates?",
+        "found": 13,
+        "elapsed_ms": 953,
+        "attempts": [
+          {
+            "engine": "web",
+            "count": 10,
+            "status": "ok",
+            "elapsed_ms": 953,
+            "unresponsive": []
+          },
+          {
+            "engine": "yandex",
+            "count": 3,
+            "status": "ok",
+            "elapsed_ms": 812,
+            "unresponsive": [],
+            "admitted_count": 3
+          },
+          {
+            "engine": "yahoo",
+            "count": 0,
+            "status": "ok",
+            "elapsed_ms": 938,
+            "unresponsive": [],
+            "admitted_count": 0
+          },
+          {
+            "engine": "searxng",
+            "count": 3,
+            "status": "ok",
+            "elapsed_ms": 953,
+            "unresponsive": []
+          },
+          {
+            "engine": "bing-news",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 953,
+            "unresponsive": []
+          },
+          {
+            "engine": "gnews-resolved",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 953,
+            "unresponsive": []
+          },
+          {
+            "engine": "tls-ddg-lite",
+            "count": 10,
+            "status": "ok",
+            "reason": null,
+            "elapsed_ms": 769,
+            "unresponsive": []
+          }
+        ]
+      },
+      {
+        "query": "What are the current EU AI Act implementation dates official source",
+        "found": 13,
+        "elapsed_ms": 5544,
+        "attempts": [
+          {
+            "engine": "web",
+            "count": 10,
+            "status": "ok",
+            "elapsed_ms": 5544,
+            "unresponsive": []
+          },
+          {
+            "engine": "yandex",
+            "count": 3,
+            "status": "ok",
+            "elapsed_ms": 926,
+            "unresponsive": [],
+            "admitted_count": 3
+          },
+          {
+            "engine": "yahoo",
+            "count": 0,
+            "status": "ok",
+            "elapsed_ms": 913,
+            "unresponsive": [],
+            "admitted_count": 0
+          },
+          {
+            "engine": "searxng",
+            "count": 3,
+            "status": "ok",
+            "elapsed_ms": 5544,
+            "unresponsive": []
+          },
+          {
+            "engine": "bing-news",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 5544,
+            "unresponsive": []
+          },
+          {
+            "engine": "gnews-resolved",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 5544,
+            "unresponsive": []
+          },
+          {
+            "engine": "tls-ddg-lite",
+            "count": 0,
+            "status": "challenge_or_http_error",
+            "reason": null,
+            "elapsed_ms": 672,
+            "unresponsive": []
+          },
+          {
+            "engine": "browser-search",
+            "count": 0,
+            "status": "ok",
+            "elapsed_ms": 4792,
+            "queue_ms": 0,
+            "unresponsive": []
+          },
+          {
+            "engine": "browser-ddg-lite",
+            "count": 10,
+            "status": 200,
+            "reason": null,
+            "elapsed_ms": 3726,
+            "unresponsive": []
+          },
+          {
+            "engine": "browser-ddg-html",
+            "count": 0,
+            "status": null,
+            "reason": "cancelled_by_winner",
+            "elapsed_ms": 0,
+            "unresponsive": []
+          }
+        ]
+      }
+    ],
+    "skipped": [],
+    "partial_sources": [],
+    "sources": [
+      {
+        "url": "https://ai-act-service-desk.ec.europa.eu/en/ai-act/timeline/timeline-implementation-eu-ai-act",
+        "quality": "ok",
+        "tier": "direct/trafilatura",
+        "warnings": [],
+        "document_id": "doc_6293058822cb45698c08724e96941f4c",
+        "evidence": [
+          {
+            "offset": 0,
+            "matched_terms": [
+              "act"
+            ],
+            "content_start": 0,
+            "content_end": 700
+          },
+          {
+            "offset": 1100,
+            "matched_terms": [
+              "act"
+            ],
+            "content_start": 1100,
+            "content_end": 1800
+          }
+        ]
+      },
+      {
+        "url": "https://ai-act-service-desk.ec.europa.eu/en/ai-act/faq/when-does-ai-act-go-effect-what-its-timeline-implementation",
+        "quality": "ok",
+        "tier": "direct/trafilatura",
+        "warnings": [],
+        "document_id": "doc_2c49ce6377a64a058458dd8872504f6b",
+        "evidence": [
+          {
+            "offset": 0,
+            "matched_terms": [
+              "act"
+            ],
+            "content_start": 0,
+            "content_end": 700
+          }
+        ]
+      },
+      {
+        "url": "https://artificialintelligenceact.eu/implementation-timeline/",
+        "quality": "ok",
+        "tier": "direct/trafilatura",
+        "warnings": [],
+        "document_id": "doc_8c5b994acbcb4b1ba9b62315f0911452",
+        "evidence": [
+          {
+            "offset": 0,
+            "matched_terms": [
+              "act",
+              "dates",
+              "implementation"
+            ],
+            "content_start": 0,
+            "content_end": 700
+          },
+          {
+            "offset": 2750,
+            "matched_terms": [
+              "act",
+              "implementation"
+            ],
+            "content_start": 2750,
+            "content_end": 3449
+          }
+        ]
+      },
+      {
+        "url": "https://www.europarl.europa.eu/RegData/etudes/ATAG/2025/772906/EPRS_ATA(2025)772906_EN.pdf",
+        "quality": "ok",
+        "tier": "tls/tls-native",
+        "warnings": [],
+        "document_id": "doc_70f8c1431ca343d596559bdb6bd365b8",
+        "evidence": [
+          {
+            "offset": 2750,
+            "matched_terms": [
+              "act",
+              "dates",
+              "implementation"
+            ],
+            "content_start": 2750,
+            "content_end": 3450
+          },
+          {
+            "offset": 0,
+            "matched_terms": [
+              "act",
+              "implementation"
+            ],
+            "content_start": 0,
+            "content_end": 700
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "r2",
+    "status": 200,
+    "response_bytes": 254558,
+    "elapsed_ms": 63251.19,
+    "summary": {
+      "candidates": 21,
+      "selected": 4,
+      "read": 4,
+      "partial": 0,
+      "attempted": 4,
+      "elapsed_ms": 63220,
+      "model_used": false
+    },
+    "coverage": {
+      "method": "retrieval_and_lexical_accounting",
+      "answer_verified": false,
+      "warning": "Readable text and matched terms do not establish an answer, truth, agreement, or completeness.",
+      "facets": [
+        {
+          "query": "What does the IPCC AR6 synthesis report say about warming?",
+          "state": "evidence_available",
+          "candidates": 12,
+          "evidence": [
+            {
+              "source_id": "S1",
+              "url": "https://www.ipcc.ch/report/sixth-assessment-report-cycle/",
+              "document_id": "doc_8f053dcff44243cc8a74bb3d0cf69e31",
+              "matched_terms": [
+                "ar6",
+                "ipcc",
+                "report",
+                "synthesis",
+                "warming"
+              ],
+              "missing_terms": [
+                "about",
+                "say"
+              ],
+              "source_partial": false,
+              "excerpt_truncated": false
+            },
+            {
+              "source_id": "S2",
+              "url": "https://www.ipcc.ch/report/ar6/syr/resources/spm-headline-statements/",
+              "document_id": "doc_99358792f8ad4228b6442ab03aa65759",
+              "matched_terms": [
+                "warming"
+              ],
+              "missing_terms": [
+                "about",
+                "ar6",
+                "ipcc",
+                "report",
+                "say",
+                "synthesis"
+              ],
+              "source_partial": false,
+              "excerpt_truncated": false
+            },
+            {
+              "source_id": "S4",
+              "url": "https://apps.ipcc.ch/outreach/documents/707/1687757865.pdf",
+              "document_id": "doc_afc14178d99d467ba26ea89dde52ce88",
+              "matched_terms": [
+                "about",
+                "ar6",
+                "ipcc",
+                "report",
+                "synthesis",
+                "warming"
+              ],
+              "missing_terms": [
+                "say"
+              ],
+              "source_partial": false,
+              "excerpt_truncated": true
+            }
+          ],
+          "unread": [
+            "https://digitallibrary.un.org/nanna/record/4008082/files/IPCC_AR6_SYR_SPM.pdf?withWatermark=0&withMetadata=0&registerDownload=1&version=1",
+            "https://ncalf.org/wp-content/uploads/3.-IPCC_AR6_SYR-Full-Report.pdf",
+            "https://www.weforum.org/stories/nature-and-biodiversity/the-ipcc-just-published-its-summary-of-5-years-of-reports-here-s-what-you-need-to-know",
+            "https://ecobio.fi/en/the-2023-ipcc-ar6-synthesis-report-a-final-wake-up-call-for-climate-action/",
+            "https://www.wri.org/insights/2023-ipcc-ar6-synthesis-report-climate-change-findings",
+            "https://www.climate-chance.org/en/library/synthesis-report-of-the-sixth-assessment-report/",
+            "https://ieaghg.org/insights/ipcc-synthesis-report-of-the-6th-assessment-cycle-2023-07/",
+            "https://weval.org/analysis/ipcc-ar6-synthesis-report-spm/1482bfb9ea3e1d02/2025-08-10T03-14-15-554Z",
+            "https://www.vox.com/22613027/un-ipcc-climate-change-report-ar6-disaster"
+          ],
+          "failed_or_duplicate": [],
+          "next_actions": [
+            {
+              "tool": "fetch",
+              "arguments": {
+                "urls": [
+                  "https://digitallibrary.un.org/nanna/record/4008082/files/IPCC_AR6_SYR_SPM.pdf?withWatermark=0&withMetadata=0&registerDownload=1&version=1",
+                  "https://ncalf.org/wp-content/uploads/3.-IPCC_AR6_SYR-Full-Report.pdf",
+                  "https://www.weforum.org/stories/nature-and-biodiversity/the-ipcc-just-published-its-summary-of-5-years-of-reports-here-s-what-you-need-to-know"
+                ],
+                "focus": "What does the IPCC AR6 synthesis report say about warming?"
+              },
+              "reason": "Discovered sources remain unread."
+            }
+          ],
+          "answer_verified": false
+        },
+        {
+          "query": "What does the IPCC AR6 synthesis report say about warming official source",
+          "state": "evidence_available",
+          "candidates": 15,
+          "evidence": [
+            {
+              "source_id": "S1",
+              "url": "https://www.ipcc.ch/report/sixth-assessment-report-cycle/",
+              "document_id": "doc_8f053dcff44243cc8a74bb3d0cf69e31",
+              "matched_terms": [
+                "ar6",
+                "ipcc",
+                "report",
+                "synthesis",
+                "warming"
+              ],
+              "missing_terms": [
+                "about",
+                "official",
+                "say",
+                "source"
+              ],
+              "source_partial": false,
+              "excerpt_truncated": false
+            },
+            {
+              "source_id": "S2",
+              "url": "https://www.ipcc.ch/report/ar6/syr/resources/spm-headline-statements/",
+              "document_id": "doc_99358792f8ad4228b6442ab03aa65759",
+              "matched_terms": [
+                "warming"
+              ],
+              "missing_terms": [
+                "about",
+                "ar6",
+                "ipcc",
+                "official",
+                "report",
+                "say",
+                "source",
+                "synthesis"
+              ],
+              "source_partial": false,
+              "excerpt_truncated": false
+            },
+            {
+              "source_id": "S3",
+              "url": "https://ntrs.nasa.gov/api/citations/20230009525/downloads/ARuaneIPCC6thAssessSynthesisAccepted.pdf",
+              "document_id": "doc_ba6edd45d07e40d2adf09ff03ea1b9a8",
+              "matched_terms": [
+                "about",
+                "ar6",
+                "ipcc",
+                "report",
+                "synthesis",
+                "warming"
+              ],
+              "missing_terms": [
+                "official",
+                "say",
+                "source"
+              ],
+              "source_partial": false,
+              "excerpt_truncated": true
+            },
+            {
+              "source_id": "S4",
+              "url": "https://apps.ipcc.ch/outreach/documents/707/1687757865.pdf",
+              "document_id": "doc_afc14178d99d467ba26ea89dde52ce88",
+              "matched_terms": [
+                "about",
+                "ar6",
+                "ipcc",
+                "report",
+                "source",
+                "synthesis",
+                "warming"
+              ],
+              "missing_terms": [
+                "official",
+                "say"
+              ],
+              "source_partial": false,
+              "excerpt_truncated": true
+            }
+          ],
+          "unread": [
+            "https://report.ipcc.ch/ar6syr/index.html",
+            "https://digitallibrary.un.org/nanna/record/4008082/files/IPCC_AR6_SYR_SPM.pdf?withWatermark=0&withMetadata=0&registerDownload=1&version=1",
+            "https://unfccc.int/sites/default/files/resource/20230828_ipcc_fida.pdf",
+            "https://digitallibrary.un.org/record/4008074?v=['pdf']",
+            "https://unfccc.int/sites/default/files/resource/Prsn_P1_IPCC.pdf",
+            "https://ncalf.org/wp-content/uploads/3.-IPCC_AR6_SYR-Full-Report.pdf",
+            "https://www.vox.com/22613027/un-ipcc-climate-change-report-ar6-disaster",
+            "https://support.google.com/websearch/thread/426722984/the-searches-disappeared?hl=en",
+            "https://support.google.com/websearch/answer/2539428?hl=en&co=GENIE.Platform%3DDesktop",
+            "https://static1.squarespace.com/static/5dbabbd2a0f57b08967cf745/t/644015368b3ec8664739235f/1681921352098/IPCC+AR6+synthesis+%28Gardner%29++.pdf",
+            "https://support.google.com/websearch/answer/464?hl=en-uk"
+          ],
+          "failed_or_duplicate": [],
+          "next_actions": [
+            {
+              "tool": "fetch",
+              "arguments": {
+                "urls": [
+                  "https://report.ipcc.ch/ar6syr/index.html",
+                  "https://digitallibrary.un.org/nanna/record/4008082/files/IPCC_AR6_SYR_SPM.pdf?withWatermark=0&withMetadata=0&registerDownload=1&version=1",
+                  "https://unfccc.int/sites/default/files/resource/20230828_ipcc_fida.pdf"
+                ],
+                "focus": "What does the IPCC AR6 synthesis report say about warming official source"
+              },
+              "reason": "Discovered sources remain unread."
+            }
+          ],
+          "answer_verified": false
+        }
+      ],
+      "candidate_scope": "shared_bounded_pool",
+      "candidate_limits": {
+        "ddg_per_query": 10,
+        "per_supplement_per_query": 3,
+        "per_query": 15,
+        "total": 24,
+        "max_sources": 20
+      }
+    },
+    "query_telemetry": [
+      {
+        "query": "What does the IPCC AR6 synthesis report say about warming?",
+        "found": 12,
+        "elapsed_ms": 1299,
+        "attempts": [
+          {
+            "engine": "web",
+            "count": 10,
+            "status": "ok",
+            "elapsed_ms": 1299,
+            "unresponsive": []
+          },
+          {
+            "engine": "yandex",
+            "count": 2,
+            "status": "ok",
+            "elapsed_ms": 737,
+            "unresponsive": [],
+            "admitted_count": 3
+          },
+          {
+            "engine": "yahoo",
+            "count": 0,
+            "status": "ok",
+            "elapsed_ms": 795,
+            "unresponsive": [],
+            "admitted_count": 0
+          },
+          {
+            "engine": "searxng",
+            "count": 2,
+            "status": "ok",
+            "elapsed_ms": 1299,
+            "unresponsive": []
+          },
+          {
+            "engine": "bing-news",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 1299,
+            "unresponsive": []
+          },
+          {
+            "engine": "gnews-resolved",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 1299,
+            "unresponsive": []
+          },
+          {
+            "engine": "tls-ddg-lite",
+            "count": 10,
+            "status": "ok",
+            "reason": null,
+            "elapsed_ms": 1292,
+            "unresponsive": []
+          }
+        ]
+      },
+      {
+        "query": "What does the IPCC AR6 synthesis report say about warming official source",
+        "found": 15,
+        "elapsed_ms": 917,
+        "attempts": [
+          {
+            "engine": "web",
+            "count": 10,
+            "status": "ok",
+            "elapsed_ms": 917,
+            "unresponsive": []
+          },
+          {
+            "engine": "yandex",
+            "count": 2,
+            "status": "ok",
+            "elapsed_ms": 801,
+            "unresponsive": [],
+            "admitted_count": 3
+          },
+          {
+            "engine": "yahoo",
+            "count": 3,
+            "status": "ok",
+            "elapsed_ms": 893,
+            "unresponsive": [],
+            "admitted_count": 3
+          },
+          {
+            "engine": "searxng",
+            "count": 5,
+            "status": "ok",
+            "elapsed_ms": 917,
+            "unresponsive": []
+          },
+          {
+            "engine": "bing-news",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 917,
+            "unresponsive": []
+          },
+          {
+            "engine": "gnews-resolved",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 917,
+            "unresponsive": []
+          },
+          {
+            "engine": "tls-ddg-lite",
+            "count": 10,
+            "status": "ok",
+            "reason": null,
+            "elapsed_ms": 883,
+            "unresponsive": []
+          }
+        ]
+      }
+    ],
+    "skipped": [],
+    "partial_sources": [],
+    "sources": [
+      {
+        "url": "https://www.ipcc.ch/report/sixth-assessment-report-cycle/",
+        "quality": "ok",
+        "tier": "tls/trafilatura",
+        "warnings": [],
+        "document_id": "doc_8f053dcff44243cc8a74bb3d0cf69e31",
+        "evidence": [
+          {
+            "offset": 0,
+            "matched_terms": [
+              "ipcc",
+              "report",
+              "synthesis",
+              "warming"
+            ],
+            "content_start": 0,
+            "content_end": 700
+          },
+          {
+            "offset": 1100,
+            "matched_terms": [
+              "ar6",
+              "ipcc",
+              "report",
+              "synthesis"
+            ],
+            "content_start": 1101,
+            "content_end": 1799
+          }
+        ]
+      },
+      {
+        "url": "https://www.ipcc.ch/report/ar6/syr/resources/spm-headline-statements/",
+        "quality": "ok",
+        "tier": "tls/trafilatura",
+        "warnings": [],
+        "document_id": "doc_99358792f8ad4228b6442ab03aa65759",
+        "evidence": [
+          {
+            "offset": 0,
+            "matched_terms": [
+              "warming"
+            ],
+            "content_start": 0,
+            "content_end": 699
+          },
+          {
+            "offset": 1650,
+            "matched_terms": [
+              "warming"
+            ],
+            "content_start": 1650,
+            "content_end": 2350
+          }
+        ]
+      },
+      {
+        "url": "https://ntrs.nasa.gov/api/citations/20230009525/downloads/ARuaneIPCC6thAssessSynthesisAccepted.pdf",
+        "quality": "ok",
+        "tier": "direct/direct-native",
+        "warnings": [
+          "table_structure_is_inferred; verify_critical_cells_against_source"
+        ],
+        "document_id": "doc_ba6edd45d07e40d2adf09ff03ea1b9a8",
+        "evidence": [
+          {
+            "offset": 12000,
+            "matched_terms": [
+              "about",
+              "ar6",
+              "ipcc",
+              "report",
+              "synthesis",
+              "warming"
+            ],
+            "offset_in": "full_extraction",
+            "content_start": 0,
+            "content_end": 1000
+          },
+          {
+            "offset": 9500,
+            "matched_terms": [
+              "ar6",
+              "ipcc",
+              "report",
+              "synthesis",
+              "warming"
+            ],
+            "offset_in": "full_extraction",
+            "content_start": 1002,
+            "content_end": 2002
+          },
+          {
+            "offset": 6000,
+            "matched_terms": [
+              "ar6",
+              "ipcc",
+              "report",
+              "synthesis"
+            ],
+            "offset_in": "full_extraction",
+            "content_start": 2004,
+            "content_end": 3004
+          },
+          {
+            "offset": 0,
+            "matched_terms": [
+              "ar6",
+              "ipcc",
+              "report",
+              "synthesis"
+            ],
+            "offset_in": "full_extraction",
+            "content_start": 3006,
+            "content_end": 4006
+          }
+        ]
+      },
+      {
+        "url": "https://apps.ipcc.ch/outreach/documents/707/1687757865.pdf",
+        "quality": "ok",
+        "tier": "direct/direct-native",
+        "warnings": [
+          "OCR can misread numbers, layout and tables; verify against the source image. Word confidence is not an accuracy probability."
+        ],
+        "document_id": "doc_afc14178d99d467ba26ea89dde52ce88",
+        "evidence": [
+          {
+            "offset": 3500,
+            "matched_terms": [
+              "about",
+              "ar6",
+              "ipcc",
+              "report",
+              "synthesis",
+              "warming"
+            ],
+            "offset_in": "full_extraction",
+            "content_start": 0,
+            "content_end": 1000
+          },
+          {
+            "offset": 0,
+            "matched_terms": [
+              "about",
+              "ar6",
+              "ipcc",
+              "report",
+              "synthesis"
+            ],
+            "offset_in": "full_extraction",
+            "content_start": 1002,
+            "content_end": 2002
+          },
+          {
+            "offset": 1500,
+            "matched_terms": [
+              "ar6",
+              "ipcc",
+              "report",
+              "synthesis",
+              "warming"
+            ],
+            "offset_in": "full_extraction",
+            "content_start": 2004,
+            "content_end": 3002
+          },
+          {
+            "offset": 9500,
+            "matched_terms": [
+              "ar6",
+              "ipcc",
+              "report",
+              "synthesis",
+              "warming"
+            ],
+            "offset_in": "full_extraction",
+            "content_start": 3004,
+            "content_end": 4004
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "r3",
+    "status": 200,
+    "response_bytes": 182725,
+    "elapsed_ms": 92106.06,
+    "summary": {
+      "candidates": 10,
+      "selected": 4,
+      "read": 4,
+      "partial": 0,
+      "attempted": 8,
+      "elapsed_ms": 92034,
+      "model_used": false
+    },
+    "coverage": {
+      "method": "retrieval_and_lexical_accounting",
+      "answer_verified": false,
+      "warning": "Readable text and matched terms do not establish an answer, truth, agreement, or completeness.",
+      "facets": [
+        {
+          "query": "What are the documented causes of lithium ion battery degradation?",
+          "state": "no_candidates",
+          "candidates": 0,
+          "evidence": [],
+          "unread": [],
+          "failed_or_duplicate": [],
+          "next_actions": [
+            {
+              "tool": "search",
+              "arguments": {
+                "query": "What are the documented causes of lithium ion battery degradation?",
+                "profile": "thorough"
+              },
+              "reason": "No readable evidence for this facet; refine the query."
+            }
+          ],
+          "answer_verified": false
+        },
+        {
+          "query": "What are the documented causes of lithium ion battery degradation official source",
+          "state": "evidence_available",
+          "candidates": 10,
+          "evidence": [
+            {
+              "source_id": "S1",
+              "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8510069/",
+              "document_id": "doc_30682f942aed45bfb96bff458e346aad",
+              "matched_terms": [
+                "battery",
+                "causes",
+                "degradation",
+                "ion",
+                "lithium"
+              ],
+              "missing_terms": [
+                "documented",
+                "official",
+                "source"
+              ],
+              "source_partial": false,
+              "excerpt_truncated": true
+            },
+            {
+              "source_id": "S2",
+              "url": "https://www.mdpi.com/1996-1073/18/2/342",
+              "document_id": "doc_a57dee8510484db89b0c5df3fed4cf80",
+              "matched_terms": [
+                "battery",
+                "causes",
+                "degradation",
+                "ion",
+                "lithium"
+              ],
+              "missing_terms": [
+                "documented",
+                "official",
+                "source"
+              ],
+              "source_partial": false,
+              "excerpt_truncated": true
+            },
+            {
+              "source_id": "S3",
+              "url": "https://www.annualreviews.org/content/journals/10.1146/annurev-matsci-080522-104112",
+              "document_id": "doc_34e073be301b4cc2be023e267b105717",
+              "matched_terms": [
+                "battery",
+                "degradation",
+                "ion",
+                "lithium"
+              ],
+              "missing_terms": [
+                "causes",
+                "documented",
+                "official",
+                "source"
+              ],
+              "source_partial": false,
+              "excerpt_truncated": true
+            },
+            {
+              "source_id": "S4",
+              "url": "https://research-information.bris.ac.uk/ws/portalfiles/portal/286803843/Full_text_PDF_final_published_version_.pdf",
+              "document_id": "doc_72eb90d2943a437da6cb3b3489da2965",
+              "matched_terms": [
+                "battery",
+                "causes",
+                "degradation",
+                "ion",
+                "lithium"
+              ],
+              "missing_terms": [
+                "documented",
+                "official",
+                "source"
+              ],
+              "source_partial": false,
+              "excerpt_truncated": true
+            }
+          ],
+          "unread": [
+            "https://pubs.aip.org/aip/apr/article/12/3/031320/3360369/Degradation-factors-of-commercial-lithium-ion",
+            "https://www.mdpi.com/2313-0105/10/7/220"
+          ],
+          "failed_or_duplicate": [
+            {
+              "url": "https://www.sciencedirect.com/science/article/pii/S2352152X26009345",
+              "reason": "direct:http_403 | tls:tls_challenge_detected | crawl4ai:crawl4ai_Blocked by anti-bot protection: Cloudflare interstitial (HTTP 403, 1268565 bytes) | headed:head"
+            },
+            {
+              "url": "https://www.sciencedirect.com/science/article/pii/S037877532501078X",
+              "reason": "direct:http_403 | tls:tls_challenge_detected | crawl4ai:crawl4ai_target_http_403 | headed:headed_challenge_unresolved:cloudflare"
+            },
+            {
+              "url": "https://www.researchgate.net/publication/388025392_Lithium_Battery_Degradation_and_Failure_Mechanisms_A_State-of-the-Art_Review/fulltext/67877e6b1afb4e11f5e7066b/Lithium-Battery-Degradation-and-Failure-Mechanisms-A-State-of-the-Art-Review.pdf",
+              "reason": "direct:http_403 | tls:tls_challenge_detected | crawl4ai:crawl4ai_Blocked by anti-bot protection: DataDome captcha | headed:headed_challenge_unresolved:cloudflar"
+            },
+            {
+              "url": "https://www.researchgate.net/publication/388025392_Lithium_Battery_Degradation_and_Failure_Mechanisms_A_State-of-the-Art_Review",
+              "reason": "direct:http_403 | tls:tls_challenge_detected | crawl4ai:resting | headed:fetched_but_no_extractor_succeeded"
+            }
+          ],
+          "next_actions": [
+            {
+              "tool": "fetch",
+              "arguments": {
+                "urls": [
+                  "https://pubs.aip.org/aip/apr/article/12/3/031320/3360369/Degradation-factors-of-commercial-lithium-ion",
+                  "https://www.mdpi.com/2313-0105/10/7/220"
+                ],
+                "focus": "What are the documented causes of lithium ion battery degradation official source"
+              },
+              "reason": "Discovered sources remain unread."
+            }
+          ],
+          "answer_verified": false
+        }
+      ],
+      "candidate_scope": "shared_bounded_pool",
+      "candidate_limits": {
+        "ddg_per_query": 10,
+        "per_supplement_per_query": 3,
+        "per_query": 15,
+        "total": 24,
+        "max_sources": 20
+      }
+    },
+    "query_telemetry": [
+      {
+        "query": "What are the documented causes of lithium ion battery degradation?",
+        "found": 0,
+        "elapsed_ms": 7373,
+        "attempts": [
+          {
+            "engine": "web",
+            "count": 0,
+            "status": "ok",
+            "elapsed_ms": 7373,
+            "unresponsive": []
+          },
+          {
+            "engine": "yandex",
+            "count": 0,
+            "status": "degraded",
+            "elapsed_ms": 3179,
+            "unresponsive": [
+              [
+                "yandex",
+                "timeout"
+              ]
+            ],
+            "admitted_count": 0
+          },
+          {
+            "engine": "yahoo",
+            "count": 0,
+            "status": "ok",
+            "elapsed_ms": 914,
+            "unresponsive": [],
+            "admitted_count": 0
+          },
+          {
+            "engine": "searxng",
+            "count": 0,
+            "status": "ok",
+            "elapsed_ms": 7373,
+            "unresponsive": []
+          },
+          {
+            "engine": "bing-news",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 7373,
+            "unresponsive": []
+          },
+          {
+            "engine": "gnews-resolved",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 7373,
+            "unresponsive": []
+          },
+          {
+            "engine": "tls-ddg-lite",
+            "count": 0,
+            "status": "challenge_or_http_error",
+            "reason": null,
+            "elapsed_ms": 181,
+            "unresponsive": []
+          },
+          {
+            "engine": "browser-search",
+            "count": 0,
+            "status": "http_503",
+            "elapsed_ms": 0,
+            "queue_ms": 0,
+            "unresponsive": []
+          },
+          {
+            "engine": "browser-ddg-html",
+            "count": 0,
+            "status": 202,
+            "reason": "http_202",
+            "elapsed_ms": 760,
+            "unresponsive": []
+          },
+          {
+            "engine": "browser-ddg-lite",
+            "count": 0,
+            "status": 200,
+            "reason": "TimeoutError: ",
+            "elapsed_ms": 5341,
+            "unresponsive": []
+          }
+        ]
+      },
+      {
+        "query": "What are the documented causes of lithium ion battery degradation official source",
+        "found": 10,
+        "elapsed_ms": 7844,
+        "attempts": [
+          {
+            "engine": "web",
+            "count": 10,
+            "status": "ok",
+            "elapsed_ms": 7844,
+            "unresponsive": []
+          },
+          {
+            "engine": "yandex",
+            "count": 0,
+            "status": "degraded",
+            "elapsed_ms": 3163,
+            "unresponsive": [
+              [
+                "yandex",
+                "timeout"
+              ]
+            ],
+            "admitted_count": 0
+          },
+          {
+            "engine": "yahoo",
+            "count": 0,
+            "status": "ok",
+            "elapsed_ms": 921,
+            "unresponsive": [],
+            "admitted_count": 0
+          },
+          {
+            "engine": "searxng",
+            "count": 0,
+            "status": "ok",
+            "elapsed_ms": 7844,
+            "unresponsive": []
+          },
+          {
+            "engine": "bing-news",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 7844,
+            "unresponsive": []
+          },
+          {
+            "engine": "gnews-resolved",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 7844,
+            "unresponsive": []
+          },
+          {
+            "engine": "tls-ddg-lite",
+            "count": 0,
+            "status": "challenge_or_http_error",
+            "reason": null,
+            "elapsed_ms": 1133,
+            "unresponsive": []
+          },
+          {
+            "engine": "browser-search",
+            "count": 0,
+            "status": "ok",
+            "elapsed_ms": 6667,
+            "queue_ms": 1,
+            "unresponsive": []
+          },
+          {
+            "engine": "browser-ddg-html",
+            "count": 10,
+            "status": 200,
+            "reason": null,
+            "elapsed_ms": 4074,
+            "unresponsive": []
+          },
+          {
+            "engine": "browser-ddg-lite",
+            "count": 0,
+            "status": null,
+            "reason": "cancelled_by_winner",
+            "elapsed_ms": 0,
+            "unresponsive": []
+          }
+        ]
+      }
+    ],
+    "skipped": [
+      {
+        "url": "https://www.sciencedirect.com/science/article/pii/S2352152X26009345",
+        "reason": "direct:http_403 | tls:tls_challenge_detected | crawl4ai:crawl4ai_Blocked by anti-bot protection: Cloudflare interstitial (HTTP 403, 1268565 bytes) | headed:head"
+      },
+      {
+        "url": "https://www.sciencedirect.com/science/article/pii/S037877532501078X",
+        "reason": "direct:http_403 | tls:tls_challenge_detected | crawl4ai:crawl4ai_target_http_403 | headed:headed_challenge_unresolved:cloudflare"
+      },
+      {
+        "url": "https://www.researchgate.net/publication/388025392_Lithium_Battery_Degradation_and_Failure_Mechanisms_A_State-of-the-Art_Review/fulltext/67877e6b1afb4e11f5e7066b/Lithium-Battery-Degradation-and-Failure-Mechanisms-A-State-of-the-Art-Review.pdf",
+        "reason": "direct:http_403 | tls:tls_challenge_detected | crawl4ai:crawl4ai_Blocked by anti-bot protection: DataDome captcha | headed:headed_challenge_unresolved:cloudflar"
+      },
+      {
+        "url": "https://www.researchgate.net/publication/388025392_Lithium_Battery_Degradation_and_Failure_Mechanisms_A_State-of-the-Art_Review",
+        "reason": "direct:http_403 | tls:tls_challenge_detected | crawl4ai:resting | headed:fetched_but_no_extractor_succeeded"
+      }
+    ],
+    "partial_sources": [],
+    "sources": [
+      {
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8510069/",
+        "quality": "ok",
+        "tier": "direct/trafilatura",
+        "warnings": [],
+        "document_id": "doc_30682f942aed45bfb96bff458e346aad",
+        "evidence": [
+          {
+            "offset": 35500,
+            "matched_terms": [
+              "battery",
+              "causes",
+              "degradation"
+            ],
+            "offset_in": "full_extraction",
+            "content_start": 0,
+            "content_end": 1000
+          },
+          {
+            "offset": 33000,
+            "matched_terms": [
+              "battery",
+              "degradation",
+              "ion",
+              "lithium"
+            ],
+            "offset_in": "full_extraction",
+            "content_start": 1002,
+            "content_end": 2002
+          },
+          {
+            "offset": 37001,
+            "matched_terms": [
+              "battery",
+              "degradation",
+              "ion"
+            ],
+            "offset_in": "full_extraction",
+            "content_start": 2004,
+            "content_end": 3002
+          },
+          {
+            "offset": 58000,
+            "matched_terms": [
+              "battery",
+              "causes"
+            ],
+            "offset_in": "full_extraction",
+            "content_start": 3004,
+            "content_end": 4004
+          }
+        ]
+      },
+      {
+        "url": "https://www.mdpi.com/1996-1073/18/2/342",
+        "quality": "ok",
+        "tier": "headed/headed-native",
+        "warnings": [
+          "Rendered visible-text fallback; may include navigation, ads and related content. Source completeness remains unverified."
+        ],
+        "document_id": "doc_a57dee8510484db89b0c5df3fed4cf80",
+        "evidence": [
+          {
+            "offset": 24000,
+            "matched_terms": [
+              "battery",
+              "causes",
+              "degradation",
+              "lithium"
+            ],
+            "offset_in": "full_extraction",
+            "content_start": 0,
+            "content_end": 999
+          },
+          {
+            "offset": 41500,
+            "matched_terms": [
+              "battery",
+              "causes",
+              "degradation",
+              "lithium"
+            ],
+            "offset_in": "full_extraction",
+            "content_start": 1001,
+            "content_end": 2001
+          },
+          {
+            "offset": 5000,
+            "matched_terms": [
+              "battery",
+              "causes",
+              "degradation",
+              "lithium"
+            ],
+            "offset_in": "full_extraction",
+            "content_start": 2003,
+            "content_end": 3003
+          },
+          {
+            "offset": 118500,
+            "matched_terms": [
+              "battery",
+              "degradation",
+              "ion",
+              "lithium"
+            ],
+            "offset_in": "full_extraction",
+            "content_start": 3005,
+            "content_end": 4005
+          }
+        ]
+      },
+      {
+        "url": "https://www.annualreviews.org/content/journals/10.1146/annurev-matsci-080522-104112",
+        "quality": "ok",
+        "tier": "tls/trafilatura",
+        "warnings": [],
+        "document_id": "doc_34e073be301b4cc2be023e267b105717",
+        "evidence": [
+          {
+            "offset": 2000,
+            "matched_terms": [
+              "battery",
+              "degradation",
+              "ion",
+              "lithium"
+            ],
+            "offset_in": "full_extraction",
+            "content_start": 0,
+            "content_end": 1000
+          },
+          {
+            "offset": 6000,
+            "matched_terms": [
+              "battery",
+              "degradation",
+              "ion",
+              "lithium"
+            ],
+            "offset_in": "full_extraction",
+            "content_start": 1002,
+            "content_end": 2002
+          },
+          {
+            "offset": 3500,
+            "matched_terms": [
+              "battery",
+              "degradation",
+              "ion",
+              "lithium"
+            ],
+            "offset_in": "full_extraction",
+            "content_start": 2004,
+            "content_end": 3003
+          },
+          {
+            "offset": 30000,
+            "matched_terms": [
+              "battery",
+              "degradation",
+              "ion"
+            ],
+            "offset_in": "full_extraction",
+            "content_start": 3005,
+            "content_end": 4004
+          }
+        ]
+      },
+      {
+        "url": "https://research-information.bris.ac.uk/ws/portalfiles/portal/286803843/Full_text_PDF_final_published_version_.pdf",
+        "quality": "ok",
+        "tier": "direct/direct-native",
+        "warnings": [
+          "table_structure_is_inferred; verify_critical_cells_against_source"
+        ],
+        "document_id": "doc_72eb90d2943a437da6cb3b3489da2965",
+        "evidence": [
+          {
+            "offset": 86000,
+            "matched_terms": [
+              "battery",
+              "causes",
+              "degradation",
+              "lithium"
+            ],
+            "offset_in": "full_extraction",
+            "content_start": 0,
+            "content_end": 1000
+          },
+          {
+            "offset": 1000,
+            "matched_terms": [
+              "battery",
+              "degradation",
+              "ion",
+              "lithium"
+            ],
+            "offset_in": "full_extraction",
+            "content_start": 1002,
+            "content_end": 2002
+          },
+          {
+            "offset": 100000,
+            "matched_terms": [
+              "battery",
+              "degradation",
+              "ion",
+              "lithium"
+            ],
+            "offset_in": "full_extraction",
+            "content_start": 2004,
+            "content_end": 3004
+          },
+          {
+            "offset": 5000,
+            "matched_terms": [
+              "battery",
+              "degradation",
+              "ion",
+              "lithium"
+            ],
+            "offset_in": "full_extraction",
+            "content_start": 3006,
+            "content_end": 4006
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "r4",
+    "status": 200,
+    "response_bytes": 3588,
+    "elapsed_ms": 8481.51,
+    "summary": {
+      "candidates": 0,
+      "selected": 0,
+      "read": 0,
+      "partial": 0,
+      "attempted": 0,
+      "elapsed_ms": 8474,
+      "model_used": false
+    },
+    "coverage": {
+      "method": "retrieval_and_lexical_accounting",
+      "answer_verified": false,
+      "warning": "Readable text and matched terms do not establish an answer, truth, agreement, or completeness.",
+      "facets": [
+        {
+          "query": "How does PostgreSQL EXPLAIN ANALYZE report query time?",
+          "state": "no_candidates",
+          "candidates": 0,
+          "evidence": [],
+          "unread": [],
+          "failed_or_duplicate": [],
+          "next_actions": [
+            {
+              "tool": "search",
+              "arguments": {
+                "query": "How does PostgreSQL EXPLAIN ANALYZE report query time?",
+                "profile": "thorough"
+              },
+              "reason": "No readable evidence for this facet; refine the query."
+            }
+          ],
+          "answer_verified": false
+        },
+        {
+          "query": "How does PostgreSQL EXPLAIN ANALYZE report query time official source",
+          "state": "no_candidates",
+          "candidates": 0,
+          "evidence": [],
+          "unread": [],
+          "failed_or_duplicate": [],
+          "next_actions": [
+            {
+              "tool": "search",
+              "arguments": {
+                "query": "How does PostgreSQL EXPLAIN ANALYZE report query time official source",
+                "profile": "thorough"
+              },
+              "reason": "No readable evidence for this facet; refine the query."
+            }
+          ],
+          "answer_verified": false
+        }
+      ],
+      "candidate_scope": "shared_bounded_pool",
+      "candidate_limits": {
+        "ddg_per_query": 10,
+        "per_supplement_per_query": 3,
+        "per_query": 15,
+        "total": 24,
+        "max_sources": 20
+      }
+    },
+    "query_telemetry": [
+      {
+        "query": "How does PostgreSQL EXPLAIN ANALYZE report query time?",
+        "found": 0,
+        "elapsed_ms": 8002,
+        "attempts": [
+          {
+            "engine": "web",
+            "count": 0,
+            "status": "ok",
+            "elapsed_ms": 8002,
+            "unresponsive": []
+          },
+          {
+            "engine": "yandex",
+            "count": 0,
+            "status": "cooldown",
+            "elapsed_ms": 0,
+            "unresponsive": []
+          },
+          {
+            "engine": "yahoo",
+            "count": 0,
+            "status": "ok",
+            "elapsed_ms": 897,
+            "unresponsive": [],
+            "admitted_count": 0
+          },
+          {
+            "engine": "searxng",
+            "count": 0,
+            "status": "ok",
+            "elapsed_ms": 8002,
+            "unresponsive": []
+          },
+          {
+            "engine": "bing-news",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 8002,
+            "unresponsive": []
+          },
+          {
+            "engine": "gnews-resolved",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 8002,
+            "unresponsive": []
+          },
+          {
+            "engine": "tls-ddg-lite",
+            "count": 0,
+            "status": "challenge_or_http_error",
+            "reason": null,
+            "elapsed_ms": 646,
+            "unresponsive": []
+          },
+          {
+            "engine": "browser-search",
+            "count": 0,
+            "status": "http_503",
+            "elapsed_ms": 0,
+            "queue_ms": 0,
+            "unresponsive": []
+          },
+          {
+            "engine": "browser-ddg-html",
+            "count": 0,
+            "status": 200,
+            "reason": "TimeoutError: ",
+            "elapsed_ms": 5533,
+            "unresponsive": []
+          },
+          {
+            "engine": "browser-ddg-lite",
+            "count": 0,
+            "status": 200,
+            "reason": "TimeoutError: ",
+            "elapsed_ms": 5835,
+            "unresponsive": []
+          }
+        ]
+      },
+      {
+        "query": "How does PostgreSQL EXPLAIN ANALYZE report query time official source",
+        "found": 0,
+        "elapsed_ms": 8463,
+        "attempts": [
+          {
+            "engine": "web",
+            "count": 0,
+            "status": "ok",
+            "elapsed_ms": 8463,
+            "unresponsive": []
+          },
+          {
+            "engine": "yandex",
+            "count": 0,
+            "status": "cooldown",
+            "elapsed_ms": 0,
+            "unresponsive": []
+          },
+          {
+            "engine": "yahoo",
+            "count": 0,
+            "status": "ok",
+            "elapsed_ms": 1385,
+            "unresponsive": [],
+            "admitted_count": 0
+          },
+          {
+            "engine": "searxng",
+            "count": 0,
+            "status": "ok",
+            "elapsed_ms": 8463,
+            "unresponsive": []
+          },
+          {
+            "engine": "bing-news",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 8463,
+            "unresponsive": []
+          },
+          {
+            "engine": "gnews-resolved",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 8463,
+            "unresponsive": []
+          },
+          {
+            "engine": "tls-ddg-lite",
+            "count": 0,
+            "status": "challenge_or_http_error",
+            "reason": null,
+            "elapsed_ms": 1088,
+            "unresponsive": []
+          },
+          {
+            "engine": "browser-search",
+            "count": 0,
+            "status": "http_503",
+            "elapsed_ms": 0,
+            "queue_ms": 0,
+            "unresponsive": []
+          },
+          {
+            "engine": "browser-ddg-lite",
+            "count": 0,
+            "status": 200,
+            "reason": "TimeoutError: ",
+            "elapsed_ms": 4970,
+            "unresponsive": []
+          },
+          {
+            "engine": "browser-ddg-html",
+            "count": 0,
+            "status": 200,
+            "reason": "TimeoutError: ",
+            "elapsed_ms": 4944,
+            "unresponsive": []
+          }
+        ]
+      }
+    ],
+    "skipped": [],
+    "partial_sources": [],
+    "sources": []
+  },
+  {
+    "id": "r5",
+    "status": 200,
+    "response_bytes": 49529,
+    "elapsed_ms": 9548.58,
+    "summary": {
+      "candidates": 16,
+      "selected": 4,
+      "read": 4,
+      "partial": 0,
+      "attempted": 4,
+      "elapsed_ms": 9527,
+      "model_used": false
+    },
+    "coverage": {
+      "method": "retrieval_and_lexical_accounting",
+      "answer_verified": false,
+      "warning": "Readable text and matched terms do not establish an answer, truth, agreement, or completeness.",
+      "facets": [
+        {
+          "query": "What are NASA's current Artemis mission milestones?",
+          "state": "evidence_available",
+          "candidates": 10,
+          "evidence": [
+            {
+              "source_id": "S2",
+              "url": "https://www.scientificworldinfo.com/2026/04/current-timeline-for-nasa-artemis-mission-to-the-moon.html",
+              "document_id": "doc_418c09836882459eb3dc3251b6eaacdd",
+              "matched_terms": [
+                "artemis",
+                "current",
+                "milestones",
+                "mission",
+                "nasa"
+              ],
+              "missing_terms": [],
+              "source_partial": false,
+              "excerpt_truncated": true
+            },
+            {
+              "source_id": "S3",
+              "url": "https://www.nasa.gov/humans-in-space/artemis/",
+              "document_id": "doc_c9db3180fa824192bfc8f1b93b212ec5",
+              "matched_terms": [
+                "artemis",
+                "mission",
+                "nasa"
+              ],
+              "missing_terms": [
+                "current",
+                "milestones"
+              ],
+              "source_partial": false,
+              "excerpt_truncated": false
+            }
+          ],
+          "unread": [
+            "https://www.nasa.gov/blogs/missions/2026/10/23/nasa-shares-artemis-acceleration-plans-for-moon-missions/",
+            "https://newspaceeconomy.ca/2026/10/24/nasas-artemis-readiness-plan-details-centaur-v-spacesuit-and-launch-hardware-milestones/",
+            "https://artemistracker.com/artemis-news/",
+            "https://tesorb.com/artemis-program-tracker-missions-timeline/",
+            "https://payloadspace.com/nasa-outlines-the-details-of-artemis-iii-and-iv-missions/",
+            "https://www.spacelaunchschedule.com/news/artemis-program-timeline/",
+            "https://www.sciencetimes.com/articles/61602/20260406/artemis-ii-update-what-has-happened-since-launch-latest-mission-progress.htm",
+            "https://newspacetracker.com/articles/artemis-program-complete-timeline/"
+          ],
+          "failed_or_duplicate": [],
+          "next_actions": [
+            {
+              "tool": "fetch",
+              "arguments": {
+                "urls": [
+                  "https://www.nasa.gov/blogs/missions/2026/10/23/nasa-shares-artemis-acceleration-plans-for-moon-missions/",
+                  "https://newspaceeconomy.ca/2026/10/24/nasas-artemis-readiness-plan-details-centaur-v-spacesuit-and-launch-hardware-milestones/",
+                  "https://artemistracker.com/artemis-news/"
+                ],
+                "focus": "What are NASA's current Artemis mission milestones?"
+              },
+              "reason": "Discovered sources remain unread."
+            }
+          ],
+          "answer_verified": false
+        },
+        {
+          "query": "What are NASA's current Artemis mission milestones official source",
+          "state": "evidence_available",
+          "candidates": 10,
+          "evidence": [
+            {
+              "source_id": "S1",
+              "url": "https://www.nasa.gov/centers-and-facilities/johnson/artemis-ii-mission-milestones-an-image-and-video-recap/",
+              "document_id": "doc_36396e6dc3ab4b3b85ff9cf21b405f5b",
+              "matched_terms": [
+                "artemis",
+                "mission",
+                "nasa",
+                "official"
+              ],
+              "missing_terms": [
+                "current",
+                "milestones",
+                "source"
+              ],
+              "source_partial": false,
+              "excerpt_truncated": false
+            },
+            {
+              "source_id": "S2",
+              "url": "https://www.scientificworldinfo.com/2026/04/current-timeline-for-nasa-artemis-mission-to-the-moon.html",
+              "document_id": "doc_418c09836882459eb3dc3251b6eaacdd",
+              "matched_terms": [
+                "artemis",
+                "current",
+                "milestones",
+                "mission",
+                "nasa"
+              ],
+              "missing_terms": [
+                "official",
+                "source"
+              ],
+              "source_partial": false,
+              "excerpt_truncated": true
+            },
+            {
+              "source_id": "S3",
+              "url": "https://www.nasa.gov/humans-in-space/artemis/",
+              "document_id": "doc_c9db3180fa824192bfc8f1b93b212ec5",
+              "matched_terms": [
+                "artemis",
+                "mission",
+                "nasa"
+              ],
+              "missing_terms": [
+                "current",
+                "milestones",
+                "official",
+                "source"
+              ],
+              "source_partial": false,
+              "excerpt_truncated": false
+            },
+            {
+              "source_id": "S4",
+              "url": "https://spacenow.space/missions/artemis",
+              "document_id": "doc_fafd26d3762041149f35a5d3dbfefdd9",
+              "matched_terms": [
+                "artemis",
+                "current",
+                "milestones",
+                "mission",
+                "nasa",
+                "source"
+              ],
+              "missing_terms": [
+                "official"
+              ],
+              "source_partial": false,
+              "excerpt_truncated": false
+            }
+          ],
+          "unread": [
+            "https://artemistracker.io/",
+            "https://science.nasa.gov/missions/artemis/artemis-2/nasas-artemis-ii-moon-mission-research-continues-on-earth/",
+            "https://payloadspace.com/nasa-outlines-the-details-of-artemis-iii-and-iv-missions/",
+            "https://artemistracker.com/artemis-news/",
+            "https://svs.gsfc.nasa.gov/5632",
+            "https://www3.nasa.gov/specials/artemis/"
+          ],
+          "failed_or_duplicate": [],
+          "next_actions": [
+            {
+              "tool": "fetch",
+              "arguments": {
+                "urls": [
+                  "https://artemistracker.io/",
+                  "https://science.nasa.gov/missions/artemis/artemis-2/nasas-artemis-ii-moon-mission-research-continues-on-earth/",
+                  "https://payloadspace.com/nasa-outlines-the-details-of-artemis-iii-and-iv-missions/"
+                ],
+                "focus": "What are NASA's current Artemis mission milestones official source"
+              },
+              "reason": "Discovered sources remain unread."
+            }
+          ],
+          "answer_verified": false
+        }
+      ],
+      "candidate_scope": "shared_bounded_pool",
+      "candidate_limits": {
+        "ddg_per_query": 10,
+        "per_supplement_per_query": 3,
+        "per_query": 15,
+        "total": 24,
+        "max_sources": 20
+      }
+    },
+    "query_telemetry": [
+      {
+        "query": "What are NASA's current Artemis mission milestones?",
+        "found": 10,
+        "elapsed_ms": 3791,
+        "attempts": [
+          {
+            "engine": "web",
+            "count": 10,
+            "status": "ok",
+            "elapsed_ms": 3791,
+            "unresponsive": []
+          },
+          {
+            "engine": "yandex",
+            "count": 0,
+            "status": "cooldown",
+            "elapsed_ms": 0,
+            "unresponsive": []
+          },
+          {
+            "engine": "yahoo",
+            "count": 0,
+            "status": "ok",
+            "elapsed_ms": 799,
+            "unresponsive": [],
+            "admitted_count": 0
+          },
+          {
+            "engine": "searxng",
+            "count": 0,
+            "status": "ok",
+            "elapsed_ms": 3791,
+            "unresponsive": []
+          },
+          {
+            "engine": "bing-news",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 3791,
+            "unresponsive": []
+          },
+          {
+            "engine": "gnews-resolved",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 3791,
+            "unresponsive": []
+          },
+          {
+            "engine": "tls-ddg-lite",
+            "count": 0,
+            "status": "challenge_or_http_error",
+            "reason": null,
+            "elapsed_ms": 647,
+            "unresponsive": []
+          },
+          {
+            "engine": "browser-search",
+            "count": 0,
+            "status": "ok",
+            "elapsed_ms": 3120,
+            "queue_ms": 0,
+            "unresponsive": []
+          },
+          {
+            "engine": "browser-ddg-lite",
+            "count": 0,
+            "status": 202,
+            "reason": "http_202",
+            "elapsed_ms": 205,
+            "unresponsive": []
+          },
+          {
+            "engine": "browser-ddg-html",
+            "count": 10,
+            "status": 200,
+            "reason": null,
+            "elapsed_ms": 1884,
+            "unresponsive": []
+          }
+        ]
+      },
+      {
+        "query": "What are NASA's current Artemis mission milestones official source",
+        "found": 10,
+        "elapsed_ms": 4188,
+        "attempts": [
+          {
+            "engine": "web",
+            "count": 10,
+            "status": "ok",
+            "elapsed_ms": 4188,
+            "unresponsive": []
+          },
+          {
+            "engine": "yandex",
+            "count": 0,
+            "status": "cooldown",
+            "elapsed_ms": 0,
+            "unresponsive": []
+          },
+          {
+            "engine": "yahoo",
+            "count": 0,
+            "status": "ok",
+            "elapsed_ms": 850,
+            "unresponsive": [],
+            "admitted_count": 0
+          },
+          {
+            "engine": "searxng",
+            "count": 0,
+            "status": "ok",
+            "elapsed_ms": 4188,
+            "unresponsive": []
+          },
+          {
+            "engine": "bing-news",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 4188,
+            "unresponsive": []
+          },
+          {
+            "engine": "gnews-resolved",
+            "count": 0,
+            "status": "not_requested",
+            "elapsed_ms": 4188,
+            "unresponsive": []
+          },
+          {
+            "engine": "tls-ddg-lite",
+            "count": 0,
+            "status": "challenge_or_http_error",
+            "reason": null,
+            "elapsed_ms": 1156,
+            "unresponsive": []
+          },
+          {
+            "engine": "browser-search",
+            "count": 0,
+            "status": "ok",
+            "elapsed_ms": 2982,
+            "queue_ms": 0,
+            "unresponsive": []
+          },
+          {
+            "engine": "browser-ddg-lite",
+            "count": 10,
+            "status": 200,
+            "reason": null,
+            "elapsed_ms": 1812,
+            "unresponsive": []
+          },
+          {
+            "engine": "browser-ddg-html",
+            "count": 0,
+            "status": null,
+            "reason": "cancelled_by_winner",
+            "elapsed_ms": 0,
+            "unresponsive": []
+          }
+        ]
+      }
+    ],
+    "skipped": [],
+    "partial_sources": [],
+    "sources": [
+      {
+        "url": "https://www.nasa.gov/centers-and-facilities/johnson/artemis-ii-mission-milestones-an-image-and-video-recap/",
+        "quality": "ok",
+        "tier": "direct/trafilatura",
+        "warnings": [],
+        "document_id": "doc_36396e6dc3ab4b3b85ff9cf21b405f5b",
+        "evidence": [
+          {
+            "offset": 550,
+            "matched_terms": [
+              "artemis",
+              "mission",
+              "nasa"
+            ],
+            "content_start": 550,
+            "content_end": 1250
+          },
+          {
+            "offset": 1650,
+            "matched_terms": [
+              "artemis",
+              "mission",
+              "nasa"
+            ],
+            "content_start": 1650,
+            "content_end": 2350
+          }
+        ]
+      },
+      {
+        "url": "https://www.scientificworldinfo.com/2026/04/current-timeline-for-nasa-artemis-mission-to-the-moon.html",
+        "quality": "ok",
+        "tier": "direct/trafilatura",
+        "warnings": [],
+        "document_id": "doc_418c09836882459eb3dc3251b6eaacdd",
+        "evidence": [
+          {
+            "offset": 0,
+            "matched_terms": [
+              "artemis",
+              "current",
+              "milestones",
+              "mission",
+              "nasa"
+            ],
+            "offset_in": "full_extraction",
+            "content_start": 0,
+            "content_end": 1000
+          },
+          {
+            "offset": 7000,
+            "matched_terms": [
+              "current",
+              "milestones",
+              "nasa"
+            ],
+            "offset_in": "full_extraction",
+            "content_start": 1002,
+            "content_end": 2002
+          },
+          {
+            "offset": 8000,
+            "matched_terms": [
+              "artemis",
+              "milestones",
+              "mission",
+              "nasa"
+            ],
+            "offset_in": "full_extraction",
+            "content_start": 2004,
+            "content_end": 3004
+          },
+          {
+            "offset": 3000,
+            "matched_terms": [
+              "artemis",
+              "mission",
+              "nasa"
+            ],
+            "offset_in": "full_extraction",
+            "content_start": 3006,
+            "content_end": 4006
+          }
+        ]
+      },
+      {
+        "url": "https://www.nasa.gov/humans-in-space/artemis/",
+        "quality": "ok",
+        "tier": "direct/trafilatura",
+        "warnings": [],
+        "document_id": "doc_c9db3180fa824192bfc8f1b93b212ec5",
+        "evidence": [
+          {
+            "offset": 0,
+            "matched_terms": [
+              "artemis",
+              "mission",
+              "nasa"
+            ],
+            "content_start": 0,
+            "content_end": 700
+          },
+          {
+            "offset": 1100,
+            "matched_terms": [
+              "artemis",
+              "nasa"
+            ],
+            "content_start": 1100,
+            "content_end": 1799
+          }
+        ]
+      },
+      {
+        "url": "https://spacenow.space/missions/artemis",
+        "quality": "ok",
+        "tier": "direct/trafilatura",
+        "warnings": [],
+        "document_id": "doc_fafd26d3762041149f35a5d3dbfefdd9",
+        "evidence": [
+          {
+            "offset": 0,
+            "matched_terms": [
+              "artemis",
+              "current",
+              "milestones",
+              "mission",
+              "nasa"
+            ],
+            "content_start": 0,
+            "content_end": 700
+          },
+          {
+            "offset": 2200,
+            "matched_terms": [
+              "artemis",
+              "current",
+              "milestones",
+              "mission",
+              "nasa"
+            ],
+            "content_start": 2200,
+            "content_end": 2791
+          }
+        ]
+      }
+    ]
+  }
+]

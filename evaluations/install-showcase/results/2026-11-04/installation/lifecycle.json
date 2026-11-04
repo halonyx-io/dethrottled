@@ -1,0 +1,665 @@
+{
+  "default-status": {
+    "project": "dethrottled-benchmark",
+    "package_version": "1.4.0",
+    "profile": "default",
+    "endpoint": "http://127.0.0.1:19087",
+    "services": {
+      "dethrottled": {
+        "state": "ready",
+        "container_state": "running",
+        "health": "healthy"
+      },
+      "browser-search": {
+        "state": "ready",
+        "container_state": "running",
+        "health": "healthy",
+        "probe": {
+          "status": "ready",
+          "http_status": 200,
+          "graphics": {
+            "webgl": true,
+            "renderer": "ANGLE (Mesa, llvmpipe (LLVM 19.1.7 128 bits), OpenGL 4.5)",
+            "hardware_verified": false,
+            "requested_mode": "auto"
+          },
+          "probe_ms": 22
+        }
+      },
+      "crawl4ai": {
+        "state": "ready",
+        "container_state": "running",
+        "health": "healthy",
+        "probe": {
+          "status": "ready",
+          "http_status": 200,
+          "probe_ms": 18
+        }
+      },
+      "format-worker": {
+        "state": "ready",
+        "container_state": "running",
+        "health": "healthy",
+        "probe": {
+          "status": "ready",
+          "http_status": 200,
+          "metrics": {
+            "completed": 16,
+            "failed": 0,
+            "timed_out": 0,
+            "cancelled": 0,
+            "rejected": 0,
+            "active": 0,
+            "active_seconds": 0,
+            "deadline_seconds": 60,
+            "max_input_bytes": 52428800
+          },
+          "probe_ms": 21
+        }
+      },
+      "searxng": {
+        "state": "ready",
+        "container_state": "running",
+        "health": null,
+        "probe": {
+          "status": "ready"
+        }
+      }
+    },
+    "ready": true,
+    "volumes_preserved_on_down": true,
+    "selected_services": [
+      "dethrottled",
+      "browser-search",
+      "searxng",
+      "crawl4ai",
+      "format-worker"
+    ]
+  },
+  "worker-unavailable": {
+    "project": "dethrottled-benchmark",
+    "package_version": "1.4.0",
+    "profile": "default",
+    "endpoint": "http://127.0.0.1:19087",
+    "services": {
+      "dethrottled": {
+        "state": "ready",
+        "container_state": "running",
+        "health": "healthy"
+      },
+      "browser-search": {
+        "state": "ready",
+        "container_state": "running",
+        "health": "healthy",
+        "probe": {
+          "status": "ready",
+          "http_status": 200,
+          "graphics": {
+            "webgl": true,
+            "renderer": "ANGLE (Mesa, llvmpipe (LLVM 19.1.7 128 bits), OpenGL 4.5)",
+            "hardware_verified": false,
+            "requested_mode": "auto"
+          },
+          "probe_ms": 28
+        }
+      },
+      "crawl4ai": {
+        "state": "ready",
+        "container_state": "running",
+        "health": "healthy",
+        "probe": {
+          "status": "ready",
+          "http_status": 200,
+          "probe_ms": 12
+        }
+      },
+      "format-worker": {
+        "state": "unavailable",
+        "container_state": "exited",
+        "health": "unhealthy",
+        "probe": {
+          "status": "not_configured"
+        }
+      },
+      "searxng": {
+        "state": "ready",
+        "container_state": "running",
+        "health": null,
+        "probe": {
+          "status": "ready"
+        }
+      }
+    },
+    "ready": false,
+    "volumes_preserved_on_down": true,
+    "selected_services": [
+      "dethrottled",
+      "browser-search",
+      "searxng",
+      "crawl4ai",
+      "format-worker"
+    ]
+  },
+  "default-down": {
+    "project": "dethrottled-benchmark",
+    "state": "stopped",
+    "volumes_preserved": true
+  },
+  "default-restart": {
+    "project": "dethrottled-benchmark",
+    "package_version": "1.4.0",
+    "profile": "default",
+    "endpoint": "http://127.0.0.1:19087",
+    "services": {
+      "dethrottled": {
+        "state": "ready",
+        "container_state": "running",
+        "health": "healthy"
+      },
+      "crawl4ai": {
+        "state": "ready",
+        "container_state": "running",
+        "health": "healthy",
+        "probe": {
+          "status": "ready",
+          "http_status": 200,
+          "probe_ms": 12
+        }
+      },
+      "format-worker": {
+        "state": "ready",
+        "container_state": "running",
+        "health": "healthy",
+        "probe": {
+          "status": "ready",
+          "http_status": 200,
+          "metrics": {
+            "completed": 0,
+            "failed": 0,
+            "timed_out": 0,
+            "cancelled": 0,
+            "rejected": 0,
+            "active": 0,
+            "active_seconds": 0,
+            "deadline_seconds": 60,
+            "max_input_bytes": 52428800
+          },
+          "probe_ms": 14
+        }
+      },
+      "browser-search": {
+        "state": "ready",
+        "container_state": "running",
+        "health": "starting",
+        "probe": {
+          "status": "ready",
+          "http_status": 200,
+          "graphics": {
+            "webgl": true,
+            "renderer": "ANGLE (Mesa, llvmpipe (LLVM 19.1.7 128 bits), OpenGL 4.5)",
+            "hardware_verified": false,
+            "requested_mode": "auto"
+          },
+          "probe_ms": 9
+        }
+      },
+      "searxng": {
+        "state": "ready",
+        "container_state": "running",
+        "health": null,
+        "probe": {
+          "status": "ready"
+        }
+      }
+    },
+    "ready": true,
+    "volumes_preserved_on_down": true,
+    "selected_services": [
+      "dethrottled",
+      "browser-search",
+      "searxng",
+      "crawl4ai",
+      "format-worker"
+    ],
+    "startup_seconds": 27.76,
+    "started": true
+  },
+  "media-up": {
+    "project": "dethrottled-benchmark",
+    "package_version": "1.4.0",
+    "profile": "media",
+    "endpoint": "http://127.0.0.1:19087",
+    "services": {
+      "media-worker": {
+        "state": "initializing",
+        "container_state": "running",
+        "health": "starting",
+        "probe": {
+          "status": "unready",
+          "http_status": 503,
+          "reason": "model_not_cached",
+          "initialization": "first_use_download",
+          "probe_ms": 127
+        }
+      },
+      "dethrottled": {
+        "state": "ready",
+        "container_state": "running",
+        "health": "healthy"
+      },
+      "crawl4ai": {
+        "state": "ready",
+        "container_state": "running",
+        "health": "healthy",
+        "probe": {
+          "status": "ready",
+          "http_status": 200,
+          "probe_ms": 16
+        }
+      },
+      "format-worker": {
+        "state": "ready",
+        "container_state": "running",
+        "health": "healthy",
+        "probe": {
+          "status": "ready",
+          "http_status": 200,
+          "metrics": {
+            "completed": 0,
+            "failed": 0,
+            "timed_out": 0,
+            "cancelled": 0,
+            "rejected": 0,
+            "active": 0,
+            "active_seconds": 0,
+            "deadline_seconds": 60,
+            "max_input_bytes": 52428800
+          },
+          "probe_ms": 14
+        }
+      },
+      "browser-search": {
+        "state": "ready",
+        "container_state": "running",
+        "health": "healthy",
+        "probe": {
+          "status": "ready",
+          "http_status": 200,
+          "graphics": {
+            "webgl": true,
+            "renderer": "ANGLE (Mesa, llvmpipe (LLVM 19.1.7 128 bits), OpenGL 4.5)",
+            "hardware_verified": false,
+            "requested_mode": "auto"
+          },
+          "probe_ms": 17
+        }
+      },
+      "searxng": {
+        "state": "ready",
+        "container_state": "running",
+        "health": null,
+        "probe": {
+          "status": "ready"
+        }
+      }
+    },
+    "ready": false,
+    "volumes_preserved_on_down": true,
+    "selected_services": [
+      "dethrottled",
+      "browser-search",
+      "searxng",
+      "crawl4ai",
+      "format-worker",
+      "media-worker"
+    ],
+    "startup_seconds": 8.39,
+    "started": true
+  },
+  "media-down": {
+    "project": "dethrottled-benchmark",
+    "state": "stopped",
+    "volumes_preserved": true
+  },
+  "layout-up": {
+    "project": "dethrottled-benchmark",
+    "package_version": "1.4.0",
+    "profile": "layout",
+    "endpoint": "http://127.0.0.1:19087",
+    "services": {
+      "dethrottled": {
+        "state": "ready",
+        "container_state": "running",
+        "health": "healthy"
+      },
+      "crawl4ai": {
+        "state": "ready",
+        "container_state": "running",
+        "health": "healthy",
+        "probe": {
+          "status": "ready",
+          "http_status": 200,
+          "probe_ms": 17
+        }
+      },
+      "format-worker": {
+        "state": "ready",
+        "container_state": "running",
+        "health": "healthy",
+        "probe": {
+          "status": "ready",
+          "http_status": 200,
+          "metrics": {
+            "completed": 0,
+            "failed": 0,
+            "timed_out": 0,
+            "cancelled": 0,
+            "rejected": 0,
+            "active": 0,
+            "active_seconds": 0,
+            "deadline_seconds": 60,
+            "max_input_bytes": 52428800
+          },
+          "probe_ms": 18
+        }
+      },
+      "browser-search": {
+        "state": "ready",
+        "container_state": "running",
+        "health": "starting",
+        "probe": {
+          "status": "ready",
+          "http_status": 200,
+          "graphics": {
+            "webgl": true,
+            "renderer": "ANGLE (Mesa, llvmpipe (LLVM 19.1.7 128 bits), OpenGL 4.5)",
+            "hardware_verified": false,
+            "requested_mode": "auto"
+          },
+          "probe_ms": 15
+        }
+      },
+      "docling-worker": {
+        "state": "initializing",
+        "container_state": "running",
+        "health": "healthy",
+        "probe": {
+          "status": "unready",
+          "http_status": 503,
+          "reason": "model_not_cached",
+          "initialization": "first_use_download",
+          "probe_ms": 19
+        }
+      },
+      "searxng": {
+        "state": "ready",
+        "container_state": "running",
+        "health": null,
+        "probe": {
+          "status": "ready"
+        }
+      }
+    },
+    "ready": false,
+    "volumes_preserved_on_down": true,
+    "selected_services": [
+      "dethrottled",
+      "browser-search",
+      "searxng",
+      "crawl4ai",
+      "format-worker",
+      "docling-worker"
+    ],
+    "startup_seconds": 12.73,
+    "started": true
+  },
+  "full-up": {
+    "project": "dethrottled-benchmark",
+    "package_version": "1.4.0",
+    "profile": "full",
+    "endpoint": "http://127.0.0.1:19087",
+    "services": {
+      "media-worker": {
+        "state": "ready",
+        "container_state": "running",
+        "health": "starting",
+        "probe": {
+          "status": "ready",
+          "http_status": 200,
+          "metrics": {
+            "completed": 0,
+            "failed": 0,
+            "timed_out": 0,
+            "cancelled": 0,
+            "rejected": 0,
+            "active": 0,
+            "active_seconds": 0,
+            "deadline_seconds": 570,
+            "max_input_bytes": 52428800
+          },
+          "probe_ms": 106
+        }
+      },
+      "dethrottled": {
+        "state": "ready",
+        "container_state": "running",
+        "health": "healthy"
+      },
+      "crawl4ai": {
+        "state": "ready",
+        "container_state": "running",
+        "health": "healthy",
+        "probe": {
+          "status": "ready",
+          "http_status": 200,
+          "probe_ms": 14
+        }
+      },
+      "format-worker": {
+        "state": "ready",
+        "container_state": "running",
+        "health": "healthy",
+        "probe": {
+          "status": "ready",
+          "http_status": 200,
+          "metrics": {
+            "completed": 0,
+            "failed": 0,
+            "timed_out": 0,
+            "cancelled": 0,
+            "rejected": 0,
+            "active": 0,
+            "active_seconds": 0,
+            "deadline_seconds": 60,
+            "max_input_bytes": 52428800
+          },
+          "probe_ms": 35
+        }
+      },
+      "browser-search": {
+        "state": "ready",
+        "container_state": "running",
+        "health": "healthy",
+        "probe": {
+          "status": "ready",
+          "http_status": 200,
+          "graphics": {
+            "webgl": true,
+            "renderer": "ANGLE (Mesa, llvmpipe (LLVM 19.1.7 128 bits), OpenGL 4.5)",
+            "hardware_verified": false,
+            "requested_mode": "auto"
+          },
+          "probe_ms": 14
+        }
+      },
+      "docling-worker": {
+        "state": "ready",
+        "container_state": "running",
+        "health": "healthy",
+        "probe": {
+          "status": "ready",
+          "http_status": 200,
+          "metrics": {
+            "completed": 4,
+            "failed": 0,
+            "timed_out": 0,
+            "cancelled": 0,
+            "rejected": 0,
+            "active": 0,
+            "active_seconds": 0,
+            "deadline_seconds": 180,
+            "max_input_bytes": 52428800
+          },
+          "probe_ms": 44
+        }
+      },
+      "searxng": {
+        "state": "ready",
+        "container_state": "running",
+        "health": null,
+        "probe": {
+          "status": "ready"
+        }
+      }
+    },
+    "ready": true,
+    "volumes_preserved_on_down": true,
+    "selected_services": [
+      "dethrottled",
+      "browser-search",
+      "searxng",
+      "crawl4ai",
+      "format-worker",
+      "media-worker",
+      "docling-worker"
+    ],
+    "startup_seconds": 7.14,
+    "started": true
+  },
+  "full-status": {
+    "project": "dethrottled-benchmark",
+    "package_version": "1.4.0",
+    "profile": "full",
+    "endpoint": "http://127.0.0.1:19087",
+    "services": {
+      "media-worker": {
+        "state": "ready",
+        "container_state": "running",
+        "health": "starting",
+        "probe": {
+          "status": "ready",
+          "http_status": 200,
+          "metrics": {
+            "completed": 0,
+            "failed": 0,
+            "timed_out": 0,
+            "cancelled": 0,
+            "rejected": 0,
+            "active": 0,
+            "active_seconds": 0,
+            "deadline_seconds": 570,
+            "max_input_bytes": 52428800
+          },
+          "probe_ms": 23
+        }
+      },
+      "dethrottled": {
+        "state": "ready",
+        "container_state": "running",
+        "health": "healthy"
+      },
+      "crawl4ai": {
+        "state": "ready",
+        "container_state": "running",
+        "health": "healthy",
+        "probe": {
+          "status": "ready",
+          "http_status": 200,
+          "probe_ms": 19
+        }
+      },
+      "format-worker": {
+        "state": "ready",
+        "container_state": "running",
+        "health": "healthy",
+        "probe": {
+          "status": "ready",
+          "http_status": 200,
+          "metrics": {
+            "completed": 0,
+            "failed": 0,
+            "timed_out": 0,
+            "cancelled": 0,
+            "rejected": 0,
+            "active": 0,
+            "active_seconds": 0,
+            "deadline_seconds": 60,
+            "max_input_bytes": 52428800
+          },
+          "probe_ms": 35
+        }
+      },
+      "browser-search": {
+        "state": "ready",
+        "container_state": "running",
+        "health": "healthy",
+        "probe": {
+          "status": "ready",
+          "http_status": 200,
+          "graphics": {
+            "webgl": true,
+            "renderer": "ANGLE (Mesa, llvmpipe (LLVM 19.1.7 128 bits), OpenGL 4.5)",
+            "hardware_verified": false,
+            "requested_mode": "auto"
+          },
+          "probe_ms": 15
+        }
+      },
+      "docling-worker": {
+        "state": "ready",
+        "container_state": "running",
+        "health": "healthy",
+        "probe": {
+          "status": "ready",
+          "http_status": 200,
+          "metrics": {
+            "completed": 4,
+            "failed": 0,
+            "timed_out": 0,
+            "cancelled": 0,
+            "rejected": 0,
+            "active": 0,
+            "active_seconds": 0,
+            "deadline_seconds": 180,
+            "max_input_bytes": 52428800
+          },
+          "probe_ms": 34
+        }
+      },
+      "searxng": {
+        "state": "ready",
+        "container_state": "running",
+        "health": null,
+        "probe": {
+          "status": "ready"
+        }
+      }
+    },
+    "ready": true,
+    "volumes_preserved_on_down": true,
+    "selected_services": [
+      "dethrottled",
+      "browser-search",
+      "searxng",
+      "crawl4ai",
+      "format-worker",
+      "media-worker",
+      "docling-worker"
+    ]
+  },
+  "full-down": {
+    "project": "dethrottled-benchmark",
+    "state": "stopped",
+    "volumes_preserved": true
+  }
+}

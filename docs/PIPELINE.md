@@ -1,5 +1,7 @@
 # Architecture and data flow
 
+![Local service architecture](assets/architecture.svg)
+
 Dethrottled separates discovery, reading, browser operation and evidence storage.
 The API can run alone with reduced capabilities; full Compose provides the local
 browser and renderer paths.

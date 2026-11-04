@@ -13,7 +13,7 @@ assets and public adapters may differ.
 | Request broader coverage | [Limits and continuation](LIMITS.md) | [Agent integration](AGENT-UPGRADES.md) |
 | Read a source or file | [Reading and evidence](DEPENDABLE-WORKFLOWS.md) | [HTTP API](API.md), [browser operation](DRIVE.md) |
 | Understand automatic escalation | [Read planner](READ-PLANNER.md) | [Agent integration](AGENT-UPGRADES.md), [evidence](EVIDENCE.md) |
-| Install or extend the stack | [Configuration](CONFIGURATION.md) | [Operations](OPERATIONS.md), [architecture](PIPELINE.md) |
+| Install or extend the stack | [Python and managed installation](PYTHON.md) | [Requirements](REQUIREMENTS.md), [configuration](CONFIGURATION.md) |
 | Call from application code | [HTTP API](API.md) | [Request reference](HTTP-REFERENCE.md), [Python API](PYTHON.md) |
 | Assess capabilities and quality | [Feature inventory](FEATURES.md) | [Evidence and limits](EVIDENCE.md) |
 | Print supplied HTML as PDF | [HTML-to-PDF worker](PDF_WORKER.md) | [Configuration](CONFIGURATION.md) |
@@ -31,6 +31,7 @@ policy and shared admission; they are optional services, not built-in API
 routes. Base Compose includes five services, including broad-format parsing. Speech and
 PDF layout use automatically connected profiles; public adapters use an overlay.
 
+The [current two-device evaluation](BENCHMARKS.md) records installation and workload measurements.
 The [1.0 release gates](ONE-ZERO.md) explain measured capabilities, portability
 checks and remaining limits.
 

@@ -140,4 +140,21 @@ checkpoints. It does not export their cookies to curl or share them between
 clients. Its early-commit read policy differs from ordinary drive navigation,
 which waits for DOMContentLoaded. See [architecture](PIPELINE.md).
 
+
+## Repeated interaction and checkpoint verification
+
+The worker activates a selected headed tab before clicks and when switching tabs.
+`switch_tab` waits within its step/run deadline for a new popup to leave its initial
+blank page; a nonblank URL outside `allowed_hosts` still fails. This avoids requiring
+an agent to guess a fixed popup delay on slower hardware.
+
+When restoring a checkpoint containing IndexedDB, the worker compares a read-back
+snapshot with the saved representation before allowing page scripts to run. It
+closes and retries an incomplete context up to three times, then fails while keeping
+the checkpoint. `session.indexeddb_restore_attempts` reports verified restoration
+attempts (zero when no IndexedDB verification was needed). This checks the captured
+representation, not arbitrary application semantics or every browser serialization
+type. The [recorded restart failure and follow-up checks](../evaluations/install-showcase/results/2026-11-04/ISSUES.md)
+explain the observed limitation and safeguard.
+
 [Documentation home](README.md) · [Agent guide](AGENT-UPGRADES.md) · [API](API.md) · [Evidence](EVIDENCE.md)

@@ -89,16 +89,18 @@ s += box(
     True,
 )
 s += arrow(295, 193, 345, 193)
+s += (f'<path d="M750 258 V290 H175 M750 290 H1030" '
+      f'stroke="{CYAN}" stroke-width="2" fill="none"/>')
 for i, (name, lines) in enumerate(
     [
-        ("Browser", ["Headed Chromium", "DDG + interaction"]),
+        ("Browser", ["Headed Chromium", "DDG + interaction", "Sessions + checkpoints"]),
         ("SearXNG", ["Supplementary search", "Private engine gateway"]),
         ("Crawl4AI", ["JavaScript rendering", "Private Chromium pool"]),
         ("Format reader", ["MSG and XLSB", "Private Apache Tika"]),
     ]
 ):
     x = 45 + i * 285
-    s += arrow(x + 130, 270, x + 130, 307)
+    s += arrow(x + 130, 290, x + 130, 307)
     s += box(x, 317, 260, 144, name, lines)
 s += box(
     45,
@@ -175,7 +177,7 @@ s += box(
 )
 s += arrow(575, 320, 220, 328) + arrow(575, 320, 600, 328) + arrow(575, 320, 980, 328)
 s += (
-    '<path d="M600 485 V525 H1170 V200 H1157" stroke="'
+    '<path d="M600 485 V510 H790 V200 H765" stroke="'
     + CYAN
     + '" stroke-width="2" fill="none" marker-end="url(#arrow)"/>'
 )

@@ -1,0 +1,996 @@
+[
+  {
+    "at": 1793788089.430319,
+    "rows": [
+      {
+        "BlockIO": "84MB / 0B",
+        "CPUPerc": "58.33%",
+        "Container": "8caa00da59f6",
+        "ID": "8caa00da59f6",
+        "MemPerc": "4.87%",
+        "MemUsage": "149.5MiB / 3GiB",
+        "Name": "dethrottled-benchmark-media-worker-1",
+        "NetIO": "2.08MB / 22.2kB",
+        "PIDs": "37"
+      },
+      {
+        "BlockIO": "19.4MB / 32.8kB",
+        "CPUPerc": "0.37%",
+        "Container": "6cd08d74b751",
+        "ID": "6cd08d74b751",
+        "MemPerc": "0.49%",
+        "MemUsage": "56.86MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-dethrottled-1",
+        "NetIO": "1.43MB / 1.19MB",
+        "PIDs": "3"
+      },
+      {
+        "BlockIO": "162MB / 315kB",
+        "CPUPerc": "1.35%",
+        "Container": "f07056602f53",
+        "ID": "f07056602f53",
+        "MemPerc": "3.38%",
+        "MemUsage": "391.1MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-crawl4ai-1",
+        "NetIO": "4.76kB / 3.19kB",
+        "PIDs": "75"
+      },
+      {
+        "BlockIO": "365kB / 0B",
+        "CPUPerc": "0.34%",
+        "Container": "4175680a5514",
+        "ID": "4175680a5514",
+        "MemPerc": "1.55%",
+        "MemUsage": "31.66MiB / 2GiB",
+        "Name": "dethrottled-benchmark-format-worker-1",
+        "NetIO": "8.38kB / 5.9kB",
+        "PIDs": "3"
+      },
+      {
+        "BlockIO": "223MB / 7.29MB",
+        "CPUPerc": "0.36%",
+        "Container": "8439630cad6c",
+        "ID": "8439630cad6c",
+        "MemPerc": "3.49%",
+        "MemUsage": "402.9MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-browser-search-1",
+        "NetIO": "79.9kB / 44.4kB",
+        "PIDs": "100"
+      },
+      {
+        "BlockIO": "39.7MB / 545kB",
+        "CPUPerc": "0.00%",
+        "Container": "c90c0f0e52fc",
+        "ID": "c90c0f0e52fc",
+        "MemPerc": "1.21%",
+        "MemUsage": "139.9MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-searxng-1",
+        "NetIO": "4.67kB / 237kB",
+        "PIDs": "8"
+      }
+    ]
+  },
+  {
+    "at": 1793788093.7693458,
+    "rows": [
+      {
+        "BlockIO": "84.4MB / 0B",
+        "CPUPerc": "76.70%",
+        "Container": "8caa00da59f6",
+        "ID": "8caa00da59f6",
+        "MemPerc": "5.49%",
+        "MemUsage": "168.5MiB / 3GiB",
+        "Name": "dethrottled-benchmark-media-worker-1",
+        "NetIO": "212MB / 1.34MB",
+        "PIDs": "36"
+      },
+      {
+        "BlockIO": "19.4MB / 32.8kB",
+        "CPUPerc": "0.43%",
+        "Container": "6cd08d74b751",
+        "ID": "6cd08d74b751",
+        "MemPerc": "0.49%",
+        "MemUsage": "56.27MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-dethrottled-1",
+        "NetIO": "1.43MB / 1.19MB",
+        "PIDs": "3"
+      },
+      {
+        "BlockIO": "162MB / 315kB",
+        "CPUPerc": "1.10%",
+        "Container": "f07056602f53",
+        "ID": "f07056602f53",
+        "MemPerc": "3.38%",
+        "MemUsage": "391.1MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-crawl4ai-1",
+        "NetIO": "4.76kB / 3.19kB",
+        "PIDs": "75"
+      },
+      {
+        "BlockIO": "365kB / 0B",
+        "CPUPerc": "0.43%",
+        "Container": "4175680a5514",
+        "ID": "4175680a5514",
+        "MemPerc": "1.55%",
+        "MemUsage": "31.66MiB / 2GiB",
+        "Name": "dethrottled-benchmark-format-worker-1",
+        "NetIO": "8.38kB / 5.9kB",
+        "PIDs": "3"
+      },
+      {
+        "BlockIO": "223MB / 7.3MB",
+        "CPUPerc": "0.35%",
+        "Container": "8439630cad6c",
+        "ID": "8439630cad6c",
+        "MemPerc": "3.48%",
+        "MemUsage": "402.2MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-browser-search-1",
+        "NetIO": "79.9kB / 44.4kB",
+        "PIDs": "100"
+      },
+      {
+        "BlockIO": "39.7MB / 545kB",
+        "CPUPerc": "0.00%",
+        "Container": "c90c0f0e52fc",
+        "ID": "c90c0f0e52fc",
+        "MemPerc": "1.21%",
+        "MemUsage": "139.6MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-searxng-1",
+        "NetIO": "4.67kB / 237kB",
+        "PIDs": "8"
+      }
+    ]
+  },
+  {
+    "at": 1793788098.1094942,
+    "rows": [
+      {
+        "BlockIO": "84.4MB / 205MB",
+        "CPUPerc": "57.94%",
+        "Container": "8caa00da59f6",
+        "ID": "8caa00da59f6",
+        "MemPerc": "10.03%",
+        "MemUsage": "308.1MiB / 3GiB",
+        "Name": "dethrottled-benchmark-media-worker-1",
+        "NetIO": "420MB / 2.59MB",
+        "PIDs": "36"
+      },
+      {
+        "BlockIO": "19.4MB / 32.8kB",
+        "CPUPerc": "0.42%",
+        "Container": "6cd08d74b751",
+        "ID": "6cd08d74b751",
+        "MemPerc": "0.49%",
+        "MemUsage": "56.27MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-dethrottled-1",
+        "NetIO": "1.43MB / 1.19MB",
+        "PIDs": "3"
+      },
+      {
+        "BlockIO": "162MB / 315kB",
+        "CPUPerc": "1.29%",
+        "Container": "f07056602f53",
+        "ID": "f07056602f53",
+        "MemPerc": "3.39%",
+        "MemUsage": "392MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-crawl4ai-1",
+        "NetIO": "4.83kB / 3.19kB",
+        "PIDs": "75"
+      },
+      {
+        "BlockIO": "365kB / 0B",
+        "CPUPerc": "0.43%",
+        "Container": "4175680a5514",
+        "ID": "4175680a5514",
+        "MemPerc": "1.55%",
+        "MemUsage": "31.66MiB / 2GiB",
+        "Name": "dethrottled-benchmark-format-worker-1",
+        "NetIO": "8.38kB / 5.9kB",
+        "PIDs": "3"
+      },
+      {
+        "BlockIO": "223MB / 7.3MB",
+        "CPUPerc": "2.11%",
+        "Container": "8439630cad6c",
+        "ID": "8439630cad6c",
+        "MemPerc": "3.49%",
+        "MemUsage": "402.9MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-browser-search-1",
+        "NetIO": "86.3kB / 47.9kB",
+        "PIDs": "100"
+      },
+      {
+        "BlockIO": "39.7MB / 545kB",
+        "CPUPerc": "0.00%",
+        "Container": "c90c0f0e52fc",
+        "ID": "c90c0f0e52fc",
+        "MemPerc": "1.21%",
+        "MemUsage": "139.5MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-searxng-1",
+        "NetIO": "4.67kB / 237kB",
+        "PIDs": "8"
+      }
+    ]
+  },
+  {
+    "at": 1793788102.3658903,
+    "rows": [
+      {
+        "BlockIO": "111MB / 487MB",
+        "CPUPerc": "365.02%",
+        "Container": "8caa00da59f6",
+        "ID": "8caa00da59f6",
+        "MemPerc": "21.62%",
+        "MemUsage": "664.2MiB / 3GiB",
+        "Name": "dethrottled-benchmark-media-worker-1",
+        "NetIO": "488MB / 2.77MB",
+        "PIDs": "40"
+      },
+      {
+        "BlockIO": "19.4MB / 32.8kB",
+        "CPUPerc": "0.55%",
+        "Container": "6cd08d74b751",
+        "ID": "6cd08d74b751",
+        "MemPerc": "0.49%",
+        "MemUsage": "56.27MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-dethrottled-1",
+        "NetIO": "1.43MB / 1.19MB",
+        "PIDs": "3"
+      },
+      {
+        "BlockIO": "162MB / 315kB",
+        "CPUPerc": "1.47%",
+        "Container": "f07056602f53",
+        "ID": "f07056602f53",
+        "MemPerc": "3.40%",
+        "MemUsage": "392.9MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-crawl4ai-1",
+        "NetIO": "4.83kB / 3.19kB",
+        "PIDs": "75"
+      },
+      {
+        "BlockIO": "365kB / 0B",
+        "CPUPerc": "0.59%",
+        "Container": "4175680a5514",
+        "ID": "4175680a5514",
+        "MemPerc": "1.55%",
+        "MemUsage": "31.66MiB / 2GiB",
+        "Name": "dethrottled-benchmark-format-worker-1",
+        "NetIO": "8.45kB / 5.9kB",
+        "PIDs": "3"
+      },
+      {
+        "BlockIO": "228MB / 7.38MB",
+        "CPUPerc": "6.80%",
+        "Container": "8439630cad6c",
+        "ID": "8439630cad6c",
+        "MemPerc": "3.52%",
+        "MemUsage": "407.1MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-browser-search-1",
+        "NetIO": "86.9kB / 48kB",
+        "PIDs": "100"
+      },
+      {
+        "BlockIO": "39.7MB / 545kB",
+        "CPUPerc": "0.00%",
+        "Container": "c90c0f0e52fc",
+        "ID": "c90c0f0e52fc",
+        "MemPerc": "1.21%",
+        "MemUsage": "139.5MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-searxng-1",
+        "NetIO": "4.74kB / 237kB",
+        "PIDs": "8"
+      }
+    ]
+  },
+  {
+    "at": 1793788106.7565696,
+    "rows": [
+      {
+        "BlockIO": "112MB / 487MB",
+        "CPUPerc": "372.73%",
+        "Container": "8caa00da59f6",
+        "ID": "8caa00da59f6",
+        "MemPerc": "24.57%",
+        "MemUsage": "754.9MiB / 3GiB",
+        "Name": "dethrottled-benchmark-media-worker-1",
+        "NetIO": "488MB / 2.77MB",
+        "PIDs": "41"
+      },
+      {
+        "BlockIO": "19.4MB / 32.8kB",
+        "CPUPerc": "0.67%",
+        "Container": "6cd08d74b751",
+        "ID": "6cd08d74b751",
+        "MemPerc": "0.50%",
+        "MemUsage": "57.25MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-dethrottled-1",
+        "NetIO": "1.43MB / 1.19MB",
+        "PIDs": "4"
+      },
+      {
+        "BlockIO": "171MB / 315kB",
+        "CPUPerc": "1.60%",
+        "Container": "f07056602f53",
+        "ID": "f07056602f53",
+        "MemPerc": "3.46%",
+        "MemUsage": "399.6MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-crawl4ai-1",
+        "NetIO": "4.83kB / 3.19kB",
+        "PIDs": "75"
+      },
+      {
+        "BlockIO": "365kB / 0B",
+        "CPUPerc": "0.54%",
+        "Container": "4175680a5514",
+        "ID": "4175680a5514",
+        "MemPerc": "1.57%",
+        "MemUsage": "32.19MiB / 2GiB",
+        "Name": "dethrottled-benchmark-format-worker-1",
+        "NetIO": "8.45kB / 5.9kB",
+        "PIDs": "3"
+      },
+      {
+        "BlockIO": "228MB / 7.43MB",
+        "CPUPerc": "0.66%",
+        "Container": "8439630cad6c",
+        "ID": "8439630cad6c",
+        "MemPerc": "3.52%",
+        "MemUsage": "407.2MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-browser-search-1",
+        "NetIO": "87.5kB / 48.8kB",
+        "PIDs": "100"
+      },
+      {
+        "BlockIO": "39.7MB / 545kB",
+        "CPUPerc": "0.00%",
+        "Container": "c90c0f0e52fc",
+        "ID": "c90c0f0e52fc",
+        "MemPerc": "1.21%",
+        "MemUsage": "139.5MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-searxng-1",
+        "NetIO": "4.74kB / 237kB",
+        "PIDs": "8"
+      }
+    ]
+  },
+  {
+    "at": 1793788111.0261388,
+    "rows": [
+      {
+        "BlockIO": "120MB / 488MB",
+        "CPUPerc": "132.33%",
+        "Container": "8caa00da59f6",
+        "ID": "8caa00da59f6",
+        "MemPerc": "3.69%",
+        "MemUsage": "113.2MiB / 3GiB",
+        "Name": "dethrottled-benchmark-media-worker-1",
+        "NetIO": "489MB / 2.77MB",
+        "PIDs": "19"
+      },
+      {
+        "BlockIO": "213MB / 168kB",
+        "CPUPerc": "165.84%",
+        "Container": "6cd08d74b751",
+        "ID": "6cd08d74b751",
+        "MemPerc": "2.67%",
+        "MemUsage": "309.1MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-dethrottled-1",
+        "NetIO": "2.58MB / 2.35MB",
+        "PIDs": "26"
+      },
+      {
+        "BlockIO": "171MB / 315kB",
+        "CPUPerc": "1.17%",
+        "Container": "f07056602f53",
+        "ID": "f07056602f53",
+        "MemPerc": "3.46%",
+        "MemUsage": "399.7MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-crawl4ai-1",
+        "NetIO": "4.83kB / 3.19kB",
+        "PIDs": "75"
+      },
+      {
+        "BlockIO": "365kB / 0B",
+        "CPUPerc": "0.40%",
+        "Container": "4175680a5514",
+        "ID": "4175680a5514",
+        "MemPerc": "1.55%",
+        "MemUsage": "31.66MiB / 2GiB",
+        "Name": "dethrottled-benchmark-format-worker-1",
+        "NetIO": "8.45kB / 5.9kB",
+        "PIDs": "3"
+      },
+      {
+        "BlockIO": "228MB / 7.43MB",
+        "CPUPerc": "0.44%",
+        "Container": "8439630cad6c",
+        "ID": "8439630cad6c",
+        "MemPerc": "3.52%",
+        "MemUsage": "407.2MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-browser-search-1",
+        "NetIO": "88.2kB / 48.9kB",
+        "PIDs": "100"
+      },
+      {
+        "BlockIO": "39.7MB / 545kB",
+        "CPUPerc": "0.00%",
+        "Container": "c90c0f0e52fc",
+        "ID": "c90c0f0e52fc",
+        "MemPerc": "1.21%",
+        "MemUsage": "139.5MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-searxng-1",
+        "NetIO": "4.74kB / 237kB",
+        "PIDs": "8"
+      }
+    ]
+  },
+  {
+    "at": 1793788115.3014722,
+    "rows": [
+      {
+        "BlockIO": "120MB / 488MB",
+        "CPUPerc": "365.26%",
+        "Container": "8caa00da59f6",
+        "ID": "8caa00da59f6",
+        "MemPerc": "15.03%",
+        "MemUsage": "461.7MiB / 3GiB",
+        "Name": "dethrottled-benchmark-media-worker-1",
+        "NetIO": "489MB / 2.77MB",
+        "PIDs": "31"
+      },
+      {
+        "BlockIO": "624MB / 213kB",
+        "CPUPerc": "0.52%",
+        "Container": "6cd08d74b751",
+        "ID": "6cd08d74b751",
+        "MemPerc": "8.05%",
+        "MemUsage": "930.6MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-dethrottled-1",
+        "NetIO": "2.58MB / 2.35MB",
+        "PIDs": "26"
+      },
+      {
+        "BlockIO": "171MB / 315kB",
+        "CPUPerc": "1.92%",
+        "Container": "f07056602f53",
+        "ID": "f07056602f53",
+        "MemPerc": "3.46%",
+        "MemUsage": "400.2MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-crawl4ai-1",
+        "NetIO": "4.83kB / 3.19kB",
+        "PIDs": "75"
+      },
+      {
+        "BlockIO": "365kB / 0B",
+        "CPUPerc": "0.55%",
+        "Container": "4175680a5514",
+        "ID": "4175680a5514",
+        "MemPerc": "1.55%",
+        "MemUsage": "31.66MiB / 2GiB",
+        "Name": "dethrottled-benchmark-format-worker-1",
+        "NetIO": "8.45kB / 5.9kB",
+        "PIDs": "3"
+      },
+      {
+        "BlockIO": "228MB / 7.45MB",
+        "CPUPerc": "0.53%",
+        "Container": "8439630cad6c",
+        "ID": "8439630cad6c",
+        "MemPerc": "3.52%",
+        "MemUsage": "407.2MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-browser-search-1",
+        "NetIO": "88.2kB / 48.9kB",
+        "PIDs": "100"
+      },
+      {
+        "BlockIO": "39.7MB / 545kB",
+        "CPUPerc": "0.00%",
+        "Container": "c90c0f0e52fc",
+        "ID": "c90c0f0e52fc",
+        "MemPerc": "1.21%",
+        "MemUsage": "139.5MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-searxng-1",
+        "NetIO": "4.74kB / 237kB",
+        "PIDs": "8"
+      }
+    ]
+  },
+  {
+    "at": 1793788119.741905,
+    "rows": [
+      {
+        "BlockIO": "120MB / 488MB",
+        "CPUPerc": "374.44%",
+        "Container": "8caa00da59f6",
+        "ID": "8caa00da59f6",
+        "MemPerc": "19.98%",
+        "MemUsage": "613.7MiB / 3GiB",
+        "Name": "dethrottled-benchmark-media-worker-1",
+        "NetIO": "489MB / 2.77MB",
+        "PIDs": "32"
+      },
+      {
+        "BlockIO": "624MB / 246kB",
+        "CPUPerc": "0.50%",
+        "Container": "6cd08d74b751",
+        "ID": "6cd08d74b751",
+        "MemPerc": "8.05%",
+        "MemUsage": "930.6MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-dethrottled-1",
+        "NetIO": "2.58MB / 2.35MB",
+        "PIDs": "26"
+      },
+      {
+        "BlockIO": "171MB / 315kB",
+        "CPUPerc": "1.61%",
+        "Container": "f07056602f53",
+        "ID": "f07056602f53",
+        "MemPerc": "3.46%",
+        "MemUsage": "400.5MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-crawl4ai-1",
+        "NetIO": "4.83kB / 3.19kB",
+        "PIDs": "75"
+      },
+      {
+        "BlockIO": "365kB / 0B",
+        "CPUPerc": "0.40%",
+        "Container": "4175680a5514",
+        "ID": "4175680a5514",
+        "MemPerc": "1.55%",
+        "MemUsage": "31.66MiB / 2GiB",
+        "Name": "dethrottled-benchmark-format-worker-1",
+        "NetIO": "8.45kB / 5.9kB",
+        "PIDs": "3"
+      },
+      {
+        "BlockIO": "228MB / 8.07MB",
+        "CPUPerc": "43.58%",
+        "Container": "8439630cad6c",
+        "ID": "8439630cad6c",
+        "MemPerc": "3.53%",
+        "MemUsage": "407.9MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-browser-search-1",
+        "NetIO": "88.4kB / 49.1kB",
+        "PIDs": "100"
+      },
+      {
+        "BlockIO": "39.7MB / 545kB",
+        "CPUPerc": "0.00%",
+        "Container": "c90c0f0e52fc",
+        "ID": "c90c0f0e52fc",
+        "MemPerc": "1.21%",
+        "MemUsage": "139.5MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-searxng-1",
+        "NetIO": "4.74kB / 237kB",
+        "PIDs": "8"
+      }
+    ]
+  },
+  {
+    "at": 1793788123.9822059,
+    "rows": [
+      {
+        "BlockIO": "120MB / 488MB",
+        "CPUPerc": "132.55%",
+        "Container": "8caa00da59f6",
+        "ID": "8caa00da59f6",
+        "MemPerc": "18.53%",
+        "MemUsage": "569.2MiB / 3GiB",
+        "Name": "dethrottled-benchmark-media-worker-1",
+        "NetIO": "491MB / 2.78MB",
+        "PIDs": "23"
+      },
+      {
+        "BlockIO": "624MB / 393kB",
+        "CPUPerc": "0.42%",
+        "Container": "6cd08d74b751",
+        "ID": "6cd08d74b751",
+        "MemPerc": "8.07%",
+        "MemUsage": "932.2MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-dethrottled-1",
+        "NetIO": "3.75MB / 3.51MB",
+        "PIDs": "26"
+      },
+      {
+        "BlockIO": "171MB / 315kB",
+        "CPUPerc": "1.26%",
+        "Container": "f07056602f53",
+        "ID": "f07056602f53",
+        "MemPerc": "3.46%",
+        "MemUsage": "399.7MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-crawl4ai-1",
+        "NetIO": "4.83kB / 3.19kB",
+        "PIDs": "75"
+      },
+      {
+        "BlockIO": "365kB / 0B",
+        "CPUPerc": "0.38%",
+        "Container": "4175680a5514",
+        "ID": "4175680a5514",
+        "MemPerc": "1.55%",
+        "MemUsage": "31.66MiB / 2GiB",
+        "Name": "dethrottled-benchmark-format-worker-1",
+        "NetIO": "8.45kB / 5.9kB",
+        "PIDs": "3"
+      },
+      {
+        "BlockIO": "228MB / 8.18MB",
+        "CPUPerc": "0.42%",
+        "Container": "8439630cad6c",
+        "ID": "8439630cad6c",
+        "MemPerc": "3.52%",
+        "MemUsage": "407.4MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-browser-search-1",
+        "NetIO": "88.5kB / 49.2kB",
+        "PIDs": "100"
+      },
+      {
+        "BlockIO": "39.7MB / 545kB",
+        "CPUPerc": "0.00%",
+        "Container": "c90c0f0e52fc",
+        "ID": "c90c0f0e52fc",
+        "MemPerc": "1.21%",
+        "MemUsage": "139.5MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-searxng-1",
+        "NetIO": "4.74kB / 237kB",
+        "PIDs": "8"
+      }
+    ]
+  },
+  {
+    "at": 1793788128.3653805,
+    "rows": [
+      {
+        "BlockIO": "120MB / 488MB",
+        "CPUPerc": "371.38%",
+        "Container": "8caa00da59f6",
+        "ID": "8caa00da59f6",
+        "MemPerc": "18.79%",
+        "MemUsage": "577.4MiB / 3GiB",
+        "Name": "dethrottled-benchmark-media-worker-1",
+        "NetIO": "491MB / 2.78MB",
+        "PIDs": "32"
+      },
+      {
+        "BlockIO": "624MB / 393kB",
+        "CPUPerc": "0.47%",
+        "Container": "6cd08d74b751",
+        "ID": "6cd08d74b751",
+        "MemPerc": "8.06%",
+        "MemUsage": "932MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-dethrottled-1",
+        "NetIO": "3.75MB / 3.51MB",
+        "PIDs": "26"
+      },
+      {
+        "BlockIO": "171MB / 315kB",
+        "CPUPerc": "1.60%",
+        "Container": "f07056602f53",
+        "ID": "f07056602f53",
+        "MemPerc": "3.46%",
+        "MemUsage": "400.2MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-crawl4ai-1",
+        "NetIO": "4.9kB / 3.19kB",
+        "PIDs": "75"
+      },
+      {
+        "BlockIO": "365kB / 0B",
+        "CPUPerc": "0.62%",
+        "Container": "4175680a5514",
+        "ID": "4175680a5514",
+        "MemPerc": "1.55%",
+        "MemUsage": "31.66MiB / 2GiB",
+        "Name": "dethrottled-benchmark-format-worker-1",
+        "NetIO": "8.45kB / 5.9kB",
+        "PIDs": "3"
+      },
+      {
+        "BlockIO": "228MB / 8.32MB",
+        "CPUPerc": "0.67%",
+        "Container": "8439630cad6c",
+        "ID": "8439630cad6c",
+        "MemPerc": "3.52%",
+        "MemUsage": "407.4MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-browser-search-1",
+        "NetIO": "88.6kB / 49.2kB",
+        "PIDs": "100"
+      },
+      {
+        "BlockIO": "39.7MB / 545kB",
+        "CPUPerc": "0.00%",
+        "Container": "c90c0f0e52fc",
+        "ID": "c90c0f0e52fc",
+        "MemPerc": "1.21%",
+        "MemUsage": "139.5MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-searxng-1",
+        "NetIO": "4.74kB / 237kB",
+        "PIDs": "8"
+      }
+    ]
+  },
+  {
+    "at": 1793788132.7183013,
+    "rows": [
+      {
+        "BlockIO": "120MB / 488MB",
+        "CPUPerc": "494.07%",
+        "Container": "8caa00da59f6",
+        "ID": "8caa00da59f6",
+        "MemPerc": "20.00%",
+        "MemUsage": "614.4MiB / 3GiB",
+        "Name": "dethrottled-benchmark-media-worker-1",
+        "NetIO": "491MB / 2.78MB",
+        "PIDs": "32"
+      },
+      {
+        "BlockIO": "624MB / 393kB",
+        "CPUPerc": "0.36%",
+        "Container": "6cd08d74b751",
+        "ID": "6cd08d74b751",
+        "MemPerc": "8.06%",
+        "MemUsage": "931.6MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-dethrottled-1",
+        "NetIO": "3.75MB / 3.51MB",
+        "PIDs": "26"
+      },
+      {
+        "BlockIO": "171MB / 315kB",
+        "CPUPerc": "1.09%",
+        "Container": "f07056602f53",
+        "ID": "f07056602f53",
+        "MemPerc": "3.46%",
+        "MemUsage": "400MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-crawl4ai-1",
+        "NetIO": "4.9kB / 3.19kB",
+        "PIDs": "75"
+      },
+      {
+        "BlockIO": "365kB / 0B",
+        "CPUPerc": "0.35%",
+        "Container": "4175680a5514",
+        "ID": "4175680a5514",
+        "MemPerc": "1.55%",
+        "MemUsage": "31.66MiB / 2GiB",
+        "Name": "dethrottled-benchmark-format-worker-1",
+        "NetIO": "8.45kB / 5.9kB",
+        "PIDs": "3"
+      },
+      {
+        "BlockIO": "232MB / 8.33MB",
+        "CPUPerc": "15.84%",
+        "Container": "8439630cad6c",
+        "ID": "8439630cad6c",
+        "MemPerc": "3.56%",
+        "MemUsage": "411MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-browser-search-1",
+        "NetIO": "158kB / 63.7kB",
+        "PIDs": "100"
+      },
+      {
+        "BlockIO": "39.7MB / 545kB",
+        "CPUPerc": "0.00%",
+        "Container": "c90c0f0e52fc",
+        "ID": "c90c0f0e52fc",
+        "MemPerc": "1.21%",
+        "MemUsage": "139.5MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-searxng-1",
+        "NetIO": "4.74kB / 237kB",
+        "PIDs": "8"
+      }
+    ]
+  },
+  {
+    "at": 1793788136.9483783,
+    "rows": [
+      {
+        "BlockIO": "120MB / 488MB",
+        "CPUPerc": "154.55%",
+        "Container": "8caa00da59f6",
+        "ID": "8caa00da59f6",
+        "MemPerc": "19.02%",
+        "MemUsage": "584.3MiB / 3GiB",
+        "Name": "dethrottled-benchmark-media-worker-1",
+        "NetIO": "492MB / 2.79MB",
+        "PIDs": "23"
+      },
+      {
+        "BlockIO": "624MB / 483kB",
+        "CPUPerc": "0.39%",
+        "Container": "6cd08d74b751",
+        "ID": "6cd08d74b751",
+        "MemPerc": "8.06%",
+        "MemUsage": "931.8MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-dethrottled-1",
+        "NetIO": "4.91MB / 4.68MB",
+        "PIDs": "26"
+      },
+      {
+        "BlockIO": "171MB / 315kB",
+        "CPUPerc": "1.13%",
+        "Container": "f07056602f53",
+        "ID": "f07056602f53",
+        "MemPerc": "3.46%",
+        "MemUsage": "400MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-crawl4ai-1",
+        "NetIO": "4.9kB / 3.19kB",
+        "PIDs": "75"
+      },
+      {
+        "BlockIO": "365kB / 0B",
+        "CPUPerc": "0.42%",
+        "Container": "4175680a5514",
+        "ID": "4175680a5514",
+        "MemPerc": "1.56%",
+        "MemUsage": "31.93MiB / 2GiB",
+        "Name": "dethrottled-benchmark-format-worker-1",
+        "NetIO": "8.45kB / 5.9kB",
+        "PIDs": "3"
+      },
+      {
+        "BlockIO": "232MB / 8.33MB",
+        "CPUPerc": "0.63%",
+        "Container": "8439630cad6c",
+        "ID": "8439630cad6c",
+        "MemPerc": "3.64%",
+        "MemUsage": "420.9MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-browser-search-1",
+        "NetIO": "3.83MB / 74.8kB",
+        "PIDs": "100"
+      },
+      {
+        "BlockIO": "39.7MB / 545kB",
+        "CPUPerc": "0.00%",
+        "Container": "c90c0f0e52fc",
+        "ID": "c90c0f0e52fc",
+        "MemPerc": "1.21%",
+        "MemUsage": "139.5MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-searxng-1",
+        "NetIO": "4.81kB / 237kB",
+        "PIDs": "8"
+      }
+    ]
+  },
+  {
+    "at": 1793788141.2923431,
+    "rows": [
+      {
+        "BlockIO": "120MB / 488MB",
+        "CPUPerc": "349.50%",
+        "Container": "8caa00da59f6",
+        "ID": "8caa00da59f6",
+        "MemPerc": "19.17%",
+        "MemUsage": "588.8MiB / 3GiB",
+        "Name": "dethrottled-benchmark-media-worker-1",
+        "NetIO": "492MB / 2.79MB",
+        "PIDs": "32"
+      },
+      {
+        "BlockIO": "624MB / 483kB",
+        "CPUPerc": "0.50%",
+        "Container": "6cd08d74b751",
+        "ID": "6cd08d74b751",
+        "MemPerc": "8.06%",
+        "MemUsage": "931.6MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-dethrottled-1",
+        "NetIO": "4.91MB / 4.68MB",
+        "PIDs": "26"
+      },
+      {
+        "BlockIO": "171MB / 315kB",
+        "CPUPerc": "1.47%",
+        "Container": "f07056602f53",
+        "ID": "f07056602f53",
+        "MemPerc": "3.46%",
+        "MemUsage": "399.9MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-crawl4ai-1",
+        "NetIO": "4.9kB / 3.19kB",
+        "PIDs": "75"
+      },
+      {
+        "BlockIO": "365kB / 0B",
+        "CPUPerc": "0.49%",
+        "Container": "4175680a5514",
+        "ID": "4175680a5514",
+        "MemPerc": "1.55%",
+        "MemUsage": "31.66MiB / 2GiB",
+        "Name": "dethrottled-benchmark-format-worker-1",
+        "NetIO": "8.52kB / 5.9kB",
+        "PIDs": "3"
+      },
+      {
+        "BlockIO": "232MB / 8.33MB",
+        "CPUPerc": "0.56%",
+        "Container": "8439630cad6c",
+        "ID": "8439630cad6c",
+        "MemPerc": "3.65%",
+        "MemUsage": "421.3MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-browser-search-1",
+        "NetIO": "3.83MB / 74.8kB",
+        "PIDs": "100"
+      },
+      {
+        "BlockIO": "39.7MB / 545kB",
+        "CPUPerc": "0.00%",
+        "Container": "c90c0f0e52fc",
+        "ID": "c90c0f0e52fc",
+        "MemPerc": "1.21%",
+        "MemUsage": "139.5MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-searxng-1",
+        "NetIO": "4.81kB / 237kB",
+        "PIDs": "8"
+      }
+    ]
+  },
+  {
+    "at": 1793788145.6039944,
+    "rows": [
+      {
+        "BlockIO": "120MB / 488MB",
+        "CPUPerc": "520.14%",
+        "Container": "8caa00da59f6",
+        "ID": "8caa00da59f6",
+        "MemPerc": "20.13%",
+        "MemUsage": "618.5MiB / 3GiB",
+        "Name": "dethrottled-benchmark-media-worker-1",
+        "NetIO": "492MB / 2.79MB",
+        "PIDs": "32"
+      },
+      {
+        "BlockIO": "624MB / 639kB",
+        "CPUPerc": "0.51%",
+        "Container": "6cd08d74b751",
+        "ID": "6cd08d74b751",
+        "MemPerc": "8.06%",
+        "MemUsage": "931.6MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-dethrottled-1",
+        "NetIO": "4.91MB / 4.68MB",
+        "PIDs": "26"
+      },
+      {
+        "BlockIO": "171MB / 315kB",
+        "CPUPerc": "1.10%",
+        "Container": "f07056602f53",
+        "ID": "f07056602f53",
+        "MemPerc": "3.46%",
+        "MemUsage": "400.4MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-crawl4ai-1",
+        "NetIO": "4.9kB / 3.19kB",
+        "PIDs": "75"
+      },
+      {
+        "BlockIO": "365kB / 0B",
+        "CPUPerc": "0.55%",
+        "Container": "4175680a5514",
+        "ID": "4175680a5514",
+        "MemPerc": "1.55%",
+        "MemUsage": "31.66MiB / 2GiB",
+        "Name": "dethrottled-benchmark-format-worker-1",
+        "NetIO": "8.52kB / 5.9kB",
+        "PIDs": "3"
+      },
+      {
+        "BlockIO": "232MB / 8.37MB",
+        "CPUPerc": "0.69%",
+        "Container": "8439630cad6c",
+        "ID": "8439630cad6c",
+        "MemPerc": "3.64%",
+        "MemUsage": "421.3MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-browser-search-1",
+        "NetIO": "3.83MB / 74.8kB",
+        "PIDs": "100"
+      },
+      {
+        "BlockIO": "39.7MB / 545kB",
+        "CPUPerc": "0.00%",
+        "Container": "c90c0f0e52fc",
+        "ID": "c90c0f0e52fc",
+        "MemPerc": "1.21%",
+        "MemUsage": "139.5MiB / 11.29GiB",
+        "Name": "dethrottled-benchmark-searxng-1",
+        "NetIO": "4.81kB / 237kB",
+        "PIDs": "8"
+      }
+    ]
+  }
+]

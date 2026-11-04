@@ -1,0 +1,570 @@
+[
+  {
+    "url": "http://fixture:8099/formats/scan.pdf",
+    "content_type": "application/pdf",
+    "quality": "ok",
+    "tier": "direct/direct-native",
+    "cached": false,
+    "title": "",
+    "published": "",
+    "retrieved_at": "2026-11-04T10:30:00.964518+00:00",
+    "cache_age_seconds": 0,
+    "cache_expires_at": null,
+    "truncated": false,
+    "content_chars": 379,
+    "content_status": "complete",
+    "assets": [],
+    "warnings": [
+      "OCR can misread numbers, layout and tables; verify against the source image. Word confidence is not an accuracy probability.",
+      "layout_is_model_inferred; verify_critical_cells_against_source"
+    ],
+    "source_alternatives": [],
+    "source_canonical": "http://fixture:8099/formats/scan.pdf",
+    "content_assessment": {
+      "revision": 1,
+      "text_sha256": "7f93e99b28cf7fdbd92ed492bd187949887fb825f0eb0979a7cc7309e0a8f269",
+      "pollution": "not_assessed",
+      "completeness": "unknown",
+      "usable_content": "unverified",
+      "inspected_chars": 0,
+      "suspected_chars": 0,
+      "unflagged_chars": 379,
+      "spans": []
+    },
+    "acquisition": {
+      "rendered": false,
+      "wait_for": "",
+      "render_delay": null,
+      "extraction_limit": 1000000,
+      "page_start": 1,
+      "page_end": 1,
+      "ocr_language": "",
+      "ocr_mode": "auto",
+      "ocr_allowed": true,
+      "row_start": 1,
+      "row_end": null,
+      "sheet": "",
+      "max_cell_chars": null,
+      "document_mode": "layout",
+      "scan_layout_revision": 1,
+      "format_worker_configured": true,
+      "layout_worker_configured": true
+    },
+    "browser_recovery": null,
+    "acquisition_attempts": [
+      {
+        "tier": "direct",
+        "reason": "",
+        "outcome": "extracted",
+        "elapsed_ms": 34127.05,
+        "content_assessment": {
+          "revision": 1,
+          "text_sha256": "7f93e99b28cf7fdbd92ed492bd187949887fb825f0eb0979a7cc7309e0a8f269",
+          "pollution": "not_assessed",
+          "completeness": "unknown",
+          "usable_content": "unverified",
+          "inspected_chars": 0,
+          "suspected_chars": 0,
+          "unflagged_chars": 379
+        }
+      }
+    ],
+    "extraction": {
+      "pages": [
+        {
+          "page": 1,
+          "method": "ocr",
+          "text_chars": 369,
+          "text_layer_blocks": [],
+          "layout_coordinate_space": "PDF points, origin top-left",
+          "layout_may_be_incomplete": true
+        }
+      ],
+      "total_pages": 1,
+      "next_page": null,
+      "partial": false,
+      "warnings": [
+        "OCR can misread numbers, layout and tables; verify against the source image. Word confidence is not an accuracy probability.",
+        "layout_is_model_inferred; verify_critical_cells_against_source"
+      ],
+      "parser": "docling",
+      "ocr_layout": true,
+      "layout_tables": [],
+      "layout_tables_total": 0,
+      "source_sha256": "98586db1f826f0b621ee5c20539ab70cd4407a332492e150f78700d3b4b08909",
+      "source_bytes": 3783567
+    },
+    "source_partial": false,
+    "final_url": "http://fixture:8099/formats/scan.pdf",
+    "source_sha256": "98586db1f826f0b621ee5c20539ab70cd4407a332492e150f78700d3b4b08909",
+    "document_id": "doc_baab2d5bbef34460b9c8f7c569ffba95",
+    "document_sha256": "7f93e99b28cf7fdbd92ed492bd187949887fb825f0eb0979a7cc7309e0a8f269",
+    "document_chars": 379,
+    "document_expires_at": 1794393000.9983509,
+    "read_plan": {
+      "revision": 1,
+      "decisions": [],
+      "initial_gap": "",
+      "final_gap": "",
+      "answer_verified": false,
+      "stop_reason": "evidence_available",
+      "render_allowed": true,
+      "browser_configured": true,
+      "elapsed_ms": 0.08,
+      "budget_seconds": 30.0
+    },
+    "workflow": {
+      "state": "evidence_available",
+      "answer_verified": false,
+      "source_complete": null,
+      "response_truncated": false,
+      "source_bytes_retained": false,
+      "source_bytes_reacquirable": true,
+      "next_actions": [
+        {
+          "tool": "view_document_image",
+          "endpoint": "/documents/image",
+          "arguments": {
+            "document_id": "doc_baab2d5bbef34460b9c8f7c569ffba95",
+            "page": 1
+          },
+          "reason": "Check source pixels; missing bytes are reacquired only if their hash matches.",
+          "automatic": false
+        }
+      ],
+      "instruction": "Use relevant follow-ups until the question is supported; extraction success is not answer verification."
+    },
+    "content_sha256": "7f93e99b28cf7fdbd92ed492bd187949887fb825f0eb0979a7cc7309e0a8f269",
+    "chars": 379,
+    "fact": true,
+    "worker_used": true,
+    "attempt": 0,
+    "elapsed_ms": 34223.79868500866
+  },
+  {
+    "url": "http://fixture:8099/formats/scan.pdf",
+    "content_type": "application/pdf",
+    "quality": "ok",
+    "tier": "direct/direct-native",
+    "cached": false,
+    "title": "",
+    "published": "",
+    "retrieved_at": "2026-11-04T10:30:19.147714+00:00",
+    "cache_age_seconds": 0,
+    "cache_expires_at": null,
+    "truncated": false,
+    "content_chars": 379,
+    "content_status": "complete",
+    "assets": [],
+    "warnings": [
+      "OCR can misread numbers, layout and tables; verify against the source image. Word confidence is not an accuracy probability.",
+      "layout_is_model_inferred; verify_critical_cells_against_source"
+    ],
+    "source_alternatives": [],
+    "source_canonical": "http://fixture:8099/formats/scan.pdf",
+    "content_assessment": {
+      "revision": 1,
+      "text_sha256": "7f93e99b28cf7fdbd92ed492bd187949887fb825f0eb0979a7cc7309e0a8f269",
+      "pollution": "not_assessed",
+      "completeness": "unknown",
+      "usable_content": "unverified",
+      "inspected_chars": 0,
+      "suspected_chars": 0,
+      "unflagged_chars": 379,
+      "spans": []
+    },
+    "acquisition": {
+      "rendered": false,
+      "wait_for": "",
+      "render_delay": null,
+      "extraction_limit": 1000000,
+      "page_start": 1,
+      "page_end": 1,
+      "ocr_language": "",
+      "ocr_mode": "auto",
+      "ocr_allowed": true,
+      "row_start": 1,
+      "row_end": null,
+      "sheet": "",
+      "max_cell_chars": null,
+      "document_mode": "layout",
+      "scan_layout_revision": 1,
+      "format_worker_configured": true,
+      "layout_worker_configured": true
+    },
+    "browser_recovery": null,
+    "acquisition_attempts": [
+      {
+        "tier": "direct",
+        "reason": "",
+        "outcome": "extracted",
+        "elapsed_ms": 18115.69,
+        "content_assessment": {
+          "revision": 1,
+          "text_sha256": "7f93e99b28cf7fdbd92ed492bd187949887fb825f0eb0979a7cc7309e0a8f269",
+          "pollution": "not_assessed",
+          "completeness": "unknown",
+          "usable_content": "unverified",
+          "inspected_chars": 0,
+          "suspected_chars": 0,
+          "unflagged_chars": 379
+        }
+      }
+    ],
+    "extraction": {
+      "pages": [
+        {
+          "page": 1,
+          "method": "ocr",
+          "text_chars": 369,
+          "text_layer_blocks": [],
+          "layout_coordinate_space": "PDF points, origin top-left",
+          "layout_may_be_incomplete": true
+        }
+      ],
+      "total_pages": 1,
+      "next_page": null,
+      "partial": false,
+      "warnings": [
+        "OCR can misread numbers, layout and tables; verify against the source image. Word confidence is not an accuracy probability.",
+        "layout_is_model_inferred; verify_critical_cells_against_source"
+      ],
+      "parser": "docling",
+      "ocr_layout": true,
+      "layout_tables": [],
+      "layout_tables_total": 0,
+      "source_sha256": "98586db1f826f0b621ee5c20539ab70cd4407a332492e150f78700d3b4b08909",
+      "source_bytes": 3783567
+    },
+    "source_partial": false,
+    "final_url": "http://fixture:8099/formats/scan.pdf",
+    "source_sha256": "98586db1f826f0b621ee5c20539ab70cd4407a332492e150f78700d3b4b08909",
+    "document_id": "doc_baab2d5bbef34460b9c8f7c569ffba95",
+    "document_sha256": "7f93e99b28cf7fdbd92ed492bd187949887fb825f0eb0979a7cc7309e0a8f269",
+    "document_chars": 379,
+    "document_expires_at": 1794393019.15612,
+    "read_plan": {
+      "revision": 1,
+      "decisions": [],
+      "initial_gap": "",
+      "final_gap": "",
+      "answer_verified": false,
+      "stop_reason": "evidence_available",
+      "render_allowed": true,
+      "browser_configured": true,
+      "elapsed_ms": 0.13,
+      "budget_seconds": 30.0
+    },
+    "workflow": {
+      "state": "evidence_available",
+      "answer_verified": false,
+      "source_complete": null,
+      "response_truncated": false,
+      "source_bytes_retained": false,
+      "source_bytes_reacquirable": true,
+      "next_actions": [
+        {
+          "tool": "view_document_image",
+          "endpoint": "/documents/image",
+          "arguments": {
+            "document_id": "doc_baab2d5bbef34460b9c8f7c569ffba95",
+            "page": 1
+          },
+          "reason": "Check source pixels; missing bytes are reacquired only if their hash matches.",
+          "automatic": false
+        }
+      ],
+      "instruction": "Use relevant follow-ups until the question is supported; extraction success is not answer verification."
+    },
+    "content_sha256": "7f93e99b28cf7fdbd92ed492bd187949887fb825f0eb0979a7cc7309e0a8f269",
+    "chars": 379,
+    "fact": true,
+    "worker_used": true,
+    "attempt": 1,
+    "elapsed_ms": 18147.72895188071
+  },
+  {
+    "url": "http://fixture:8099/formats/scan.pdf",
+    "content_type": "application/pdf",
+    "quality": "ok",
+    "tier": "direct/direct-native",
+    "cached": false,
+    "title": "",
+    "published": "",
+    "retrieved_at": "2026-11-04T10:30:37.398615+00:00",
+    "cache_age_seconds": 0,
+    "cache_expires_at": null,
+    "truncated": false,
+    "content_chars": 379,
+    "content_status": "complete",
+    "assets": [],
+    "warnings": [
+      "OCR can misread numbers, layout and tables; verify against the source image. Word confidence is not an accuracy probability.",
+      "layout_is_model_inferred; verify_critical_cells_against_source"
+    ],
+    "source_alternatives": [],
+    "source_canonical": "http://fixture:8099/formats/scan.pdf",
+    "content_assessment": {
+      "revision": 1,
+      "text_sha256": "7f93e99b28cf7fdbd92ed492bd187949887fb825f0eb0979a7cc7309e0a8f269",
+      "pollution": "not_assessed",
+      "completeness": "unknown",
+      "usable_content": "unverified",
+      "inspected_chars": 0,
+      "suspected_chars": 0,
+      "unflagged_chars": 379,
+      "spans": []
+    },
+    "acquisition": {
+      "rendered": false,
+      "wait_for": "",
+      "render_delay": null,
+      "extraction_limit": 1000000,
+      "page_start": 1,
+      "page_end": 1,
+      "ocr_language": "",
+      "ocr_mode": "auto",
+      "ocr_allowed": true,
+      "row_start": 1,
+      "row_end": null,
+      "sheet": "",
+      "max_cell_chars": null,
+      "document_mode": "layout",
+      "scan_layout_revision": 1,
+      "format_worker_configured": true,
+      "layout_worker_configured": true
+    },
+    "browser_recovery": null,
+    "acquisition_attempts": [
+      {
+        "tier": "direct",
+        "reason": "",
+        "outcome": "extracted",
+        "elapsed_ms": 18216.77,
+        "content_assessment": {
+          "revision": 1,
+          "text_sha256": "7f93e99b28cf7fdbd92ed492bd187949887fb825f0eb0979a7cc7309e0a8f269",
+          "pollution": "not_assessed",
+          "completeness": "unknown",
+          "usable_content": "unverified",
+          "inspected_chars": 0,
+          "suspected_chars": 0,
+          "unflagged_chars": 379
+        }
+      }
+    ],
+    "extraction": {
+      "pages": [
+        {
+          "page": 1,
+          "method": "ocr",
+          "text_chars": 369,
+          "text_layer_blocks": [],
+          "layout_coordinate_space": "PDF points, origin top-left",
+          "layout_may_be_incomplete": true
+        }
+      ],
+      "total_pages": 1,
+      "next_page": null,
+      "partial": false,
+      "warnings": [
+        "OCR can misread numbers, layout and tables; verify against the source image. Word confidence is not an accuracy probability.",
+        "layout_is_model_inferred; verify_critical_cells_against_source"
+      ],
+      "parser": "docling",
+      "ocr_layout": true,
+      "layout_tables": [],
+      "layout_tables_total": 0,
+      "source_sha256": "98586db1f826f0b621ee5c20539ab70cd4407a332492e150f78700d3b4b08909",
+      "source_bytes": 3783567
+    },
+    "source_partial": false,
+    "final_url": "http://fixture:8099/formats/scan.pdf",
+    "source_sha256": "98586db1f826f0b621ee5c20539ab70cd4407a332492e150f78700d3b4b08909",
+    "document_id": "doc_baab2d5bbef34460b9c8f7c569ffba95",
+    "document_sha256": "7f93e99b28cf7fdbd92ed492bd187949887fb825f0eb0979a7cc7309e0a8f269",
+    "document_chars": 379,
+    "document_expires_at": 1794393037.4122574,
+    "read_plan": {
+      "revision": 1,
+      "decisions": [],
+      "initial_gap": "",
+      "final_gap": "",
+      "answer_verified": false,
+      "stop_reason": "evidence_available",
+      "render_allowed": true,
+      "browser_configured": true,
+      "elapsed_ms": 0.1,
+      "budget_seconds": 30.0
+    },
+    "workflow": {
+      "state": "evidence_available",
+      "answer_verified": false,
+      "source_complete": null,
+      "response_truncated": false,
+      "source_bytes_retained": false,
+      "source_bytes_reacquirable": true,
+      "next_actions": [
+        {
+          "tool": "view_document_image",
+          "endpoint": "/documents/image",
+          "arguments": {
+            "document_id": "doc_baab2d5bbef34460b9c8f7c569ffba95",
+            "page": 1
+          },
+          "reason": "Check source pixels; missing bytes are reacquired only if their hash matches.",
+          "automatic": false
+        }
+      ],
+      "instruction": "Use relevant follow-ups until the question is supported; extraction success is not answer verification."
+    },
+    "content_sha256": "7f93e99b28cf7fdbd92ed492bd187949887fb825f0eb0979a7cc7309e0a8f269",
+    "chars": 379,
+    "fact": true,
+    "worker_used": true,
+    "attempt": 2,
+    "elapsed_ms": 18267.42900395766
+  },
+  {
+    "url": "http://fixture:8099/formats/scan.pdf",
+    "content_type": "application/pdf",
+    "quality": "ok",
+    "tier": "direct/direct-native",
+    "cached": false,
+    "title": "",
+    "published": "",
+    "retrieved_at": "2026-11-04T10:30:55.561323+00:00",
+    "cache_age_seconds": 0,
+    "cache_expires_at": null,
+    "truncated": false,
+    "content_chars": 379,
+    "content_status": "complete",
+    "assets": [],
+    "warnings": [
+      "OCR can misread numbers, layout and tables; verify against the source image. Word confidence is not an accuracy probability.",
+      "layout_is_model_inferred; verify_critical_cells_against_source"
+    ],
+    "source_alternatives": [],
+    "source_canonical": "http://fixture:8099/formats/scan.pdf",
+    "content_assessment": {
+      "revision": 1,
+      "text_sha256": "7f93e99b28cf7fdbd92ed492bd187949887fb825f0eb0979a7cc7309e0a8f269",
+      "pollution": "not_assessed",
+      "completeness": "unknown",
+      "usable_content": "unverified",
+      "inspected_chars": 0,
+      "suspected_chars": 0,
+      "unflagged_chars": 379,
+      "spans": []
+    },
+    "acquisition": {
+      "rendered": false,
+      "wait_for": "",
+      "render_delay": null,
+      "extraction_limit": 1000000,
+      "page_start": 1,
+      "page_end": 1,
+      "ocr_language": "",
+      "ocr_mode": "auto",
+      "ocr_allowed": true,
+      "row_start": 1,
+      "row_end": null,
+      "sheet": "",
+      "max_cell_chars": null,
+      "document_mode": "layout",
+      "scan_layout_revision": 1,
+      "format_worker_configured": true,
+      "layout_worker_configured": true
+    },
+    "browser_recovery": null,
+    "acquisition_attempts": [
+      {
+        "tier": "direct",
+        "reason": "",
+        "outcome": "extracted",
+        "elapsed_ms": 18103.36,
+        "content_assessment": {
+          "revision": 1,
+          "text_sha256": "7f93e99b28cf7fdbd92ed492bd187949887fb825f0eb0979a7cc7309e0a8f269",
+          "pollution": "not_assessed",
+          "completeness": "unknown",
+          "usable_content": "unverified",
+          "inspected_chars": 0,
+          "suspected_chars": 0,
+          "unflagged_chars": 379
+        }
+      }
+    ],
+    "extraction": {
+      "pages": [
+        {
+          "page": 1,
+          "method": "ocr",
+          "text_chars": 369,
+          "text_layer_blocks": [],
+          "layout_coordinate_space": "PDF points, origin top-left",
+          "layout_may_be_incomplete": true
+        }
+      ],
+      "total_pages": 1,
+      "next_page": null,
+      "partial": false,
+      "warnings": [
+        "OCR can misread numbers, layout and tables; verify against the source image. Word confidence is not an accuracy probability.",
+        "layout_is_model_inferred; verify_critical_cells_against_source"
+      ],
+      "parser": "docling",
+      "ocr_layout": true,
+      "layout_tables": [],
+      "layout_tables_total": 0,
+      "source_sha256": "98586db1f826f0b621ee5c20539ab70cd4407a332492e150f78700d3b4b08909",
+      "source_bytes": 3783567
+    },
+    "source_partial": false,
+    "final_url": "http://fixture:8099/formats/scan.pdf",
+    "source_sha256": "98586db1f826f0b621ee5c20539ab70cd4407a332492e150f78700d3b4b08909",
+    "document_id": "doc_baab2d5bbef34460b9c8f7c569ffba95",
+    "document_sha256": "7f93e99b28cf7fdbd92ed492bd187949887fb825f0eb0979a7cc7309e0a8f269",
+    "document_chars": 379,
+    "document_expires_at": 1794393055.5692158,
+    "read_plan": {
+      "revision": 1,
+      "decisions": [],
+      "initial_gap": "",
+      "final_gap": "",
+      "answer_verified": false,
+      "stop_reason": "evidence_available",
+      "render_allowed": true,
+      "browser_configured": true,
+      "elapsed_ms": 0.16,
+      "budget_seconds": 30.0
+    },
+    "workflow": {
+      "state": "evidence_available",
+      "answer_verified": false,
+      "source_complete": null,
+      "response_truncated": false,
+      "source_bytes_retained": false,
+      "source_bytes_reacquirable": true,
+      "next_actions": [
+        {
+          "tool": "view_document_image",
+          "endpoint": "/documents/image",
+          "arguments": {
+            "document_id": "doc_baab2d5bbef34460b9c8f7c569ffba95",
+            "page": 1
+          },
+          "reason": "Check source pixels; missing bytes are reacquired only if their hash matches.",
+          "automatic": false
+        }
+      ],
+      "instruction": "Use relevant follow-ups until the question is supported; extraction success is not answer verification."
+    },
+    "content_sha256": "7f93e99b28cf7fdbd92ed492bd187949887fb825f0eb0979a7cc7309e0a8f269",
+    "chars": 379,
+    "fact": true,
+    "worker_used": true,
+    "attempt": 3,
+    "elapsed_ms": 18152.47202385217
+  }
+]

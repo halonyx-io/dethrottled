@@ -51,6 +51,7 @@ metrics = {
 }
 for host in ("q6a", "szbox"):
     device = metrics["devices"][host] = {}
+    all_cpu, all_memory = [], []
     for folder in sorted(A.results.glob(host + "-*")):
         if not folder.is_dir():
             continue
@@ -96,6 +97,8 @@ for host in ("q6a", "szbox"):
                 sample = samples[row["at"]]
                 sample["bytes"] += memory_bytes(row["memory"].split("/")[0])
                 sample["cpu"] += float(row["cpu_percent_one_core"].rstrip("%"))
+            all_cpu.extend(v["cpu"] for v in samples.values())
+            all_memory.extend(v["bytes"] for v in samples.values())
             result["resources"] = dict(
                 samples=len(samples),
                 peak_working_set_bytes=max((v["bytes"] for v in samples.values()), default=0),
@@ -103,6 +106,16 @@ for host in ("q6a", "szbox"):
             )
             result["run"] = read(folder / "summary.json")
             device[phase] = result
+    ordered_cpu = sorted(all_cpu)
+    device["resources_overall"] = dict(
+        snapshots=len(all_cpu),
+        peak_working_set_bytes=max(all_memory),
+        median_cpu_percent_one_core=statistics.median(all_cpu),
+        p95_cpu_percent_one_core=ordered_cpu[math.ceil(0.95 * len(ordered_cpu)) - 1],
+        max_reported_cpu_percent_one_core=max(all_cpu),
+        caveat=("Docker per-container CPU intervals are not exactly aligned; "
+                "summed peaks may overstate instantaneous use."),
+    )
     contracts = [
         r for i in (1, 2, 3) for r in read(A.results / f"{host}-contracts-{i}/contracts.json")
     ]
@@ -130,10 +143,11 @@ plt.rcParams.update(
         "axes.edgecolor": "#29404d",
         "font.family": "DejaVu Sans",
         "svg.fonttype": "none",
+        "svg.hashsalt": "dethrottled-1.4.0",
     }
 )
 A.assets.mkdir(parents=True, exist_ok=True)
-fig, axes = plt.subplots(2, 2, figsize=(12, 7))
+fig, axes = plt.subplots(2, 2, figsize=(12, 8))
 for ax, (phase, title) in zip(
     axes.flat,
     [
@@ -160,7 +174,26 @@ for ax, (phase, title) in zip(
             label="median" if i == 0 else "",
         )
     ax.set_yticks([0, 1], ["Q6A", "szbox"])
-    ax.set_title(title + f" · n={metrics['devices']['q6a'][phase]['n']} per device", loc="left")
+
+    def failures(host, phase):
+        row = metrics["devices"][host][phase]
+        if phase == "formats":
+            return row["n"] - row["literal_assertions_pass"], "Fact misses"
+        if phase.startswith("search"):
+            return row["n"] - row["nonempty"], "Empty menus"
+        if phase == "research":
+            return row["n"] - row["tasks_with_sources"], "Zero-source tasks"
+        return sum(row["quality"].get(k, 0) for k in ("failed", "request_error")), "Failed reads"
+
+    failed_q, kind = failures("q6a", phase)
+    failed_s, _ = failures("szbox", phase)
+    ax.set_title(
+        title
+        + f" · n={metrics['devices']['q6a'][phase]['n']}/device\n"
+        + f"{kind}: Q6A {failed_q} · szbox {failed_s}",
+        loc="left",
+        fontsize=11,
+    )
     ax.set_xlabel("Seconds per request · failures included")
     ax.spines[["top", "right"]].set_visible(False)
     ax.legend(frameon=False, labelcolor="#9eb2bf", fontsize=9)
@@ -168,7 +201,10 @@ fig.suptitle("Same workload. Two native architectures. Software rendering.", fon
 fig.tight_layout(rect=(0, 0, 1, 0.94))
 fig.savefig(
     A.assets / "latency.svg",
-    metadata={"Description": "Derived from metrics.json and per-case JSON; all outcomes included."},
+    metadata={
+        "Description": "Derived from metrics.json and per-case JSON; all outcomes included.",
+        "Date": None,
+    },
 )
 plt.close(fig)
 
@@ -195,7 +231,43 @@ fig.tight_layout()
 fig.savefig(
     A.assets / "live-outcomes.svg",
     metadata={
-        "Description": "quality labels from fetch-fresh/cases.json; not semantic verification."
+        "Description": "quality labels from fetch-fresh/cases.json; not semantic verification.",
+        "Date": None,
+    },
+)
+plt.close(fig)
+
+fig, axes = plt.subplots(1, 2, figsize=(12, 4))
+for metric, ax, label, divisor in zip(
+    ("peak_working_set_bytes", "p95_cpu_percent_one_core"),
+    axes,
+    ("Peak container working set (GiB)", "p95 Docker CPU % (100% = one logical core)"),
+    (1024**3, 1),
+):
+    for i, host in enumerate(("q6a", "szbox")):
+        value = metrics["devices"][host]["resources_overall"][metric] / divisor
+        ax.barh(i, value, color="#43e0d0" if i == 0 else "#82baff", height=0.5)
+        ax.text(value, i, f" {value:.2f}", va="center", color="#f0f7fa")
+    ax.set_yticks([0, 1], ["Q6A", "szbox"])
+    ax.set_xlabel(label)
+    ax.spines[["top", "right"]].set_visible(False)
+fig.suptitle(
+    "Default-stack memory and CPU · host activity and fixture server excluded", fontsize=14
+)
+counts = [metrics["devices"][h]["resources_overall"]["snapshots"] for h in ("q6a", "szbox")]
+fig.text(
+    0.5,
+    0.02,
+    f"Snapshots: Q6A n={counts[0]}, szbox n={counts[1]}. Sampling can miss spikes.",
+    ha="center",
+    color="#9eb2bf",
+)
+fig.tight_layout(rect=(0, 0.08, 1, 0.9))
+fig.savefig(
+    A.assets / "resources.svg",
+    metadata={
+        "Date": None,
+        "Description": "Derived from Docker stats resource snapshots; not total host memory.",
     },
 )
 plt.close(fig)

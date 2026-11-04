@@ -1,0 +1,4403 @@
+[
+  {
+    "id": "article.html-repeat0",
+    "status": 200,
+    "response_bytes": 14624,
+    "elapsed_ms": 76.77,
+    "quality": "ok",
+    "tier": "direct/trafilatura",
+    "chars": 12000,
+    "text_sha256": "ea63984c1cd66715e81447cf69b2cd2376d9bd7f22fbc313799a37a6f3d3723c",
+    "warnings": [],
+    "assertions": {
+      "5120 megawatts": true
+    },
+    "assertions_pass": true,
+    "document_id": "doc_e357c344822d40c682724db1684c230a",
+    "truncated": true,
+    "content_assessment": {
+      "revision": 1,
+      "text_sha256": "7a1bfe438872e7461eb5d134cccc5736a99483b3312e95a11183b41ba29ffcad",
+      "pollution": "none_detected",
+      "completeness": "unknown",
+      "usable_content": "unverified",
+      "inspected_chars": 13534,
+      "suspected_chars": 0,
+      "unflagged_chars": 13534,
+      "spans": []
+    },
+    "cached": false,
+    "failure_reason": null,
+    "source_partial": false,
+    "extraction": {},
+    "acquisition": {
+      "rendered": false,
+      "wait_for": "",
+      "render_delay": null,
+      "extraction_limit": 1000000,
+      "page_start": 1,
+      "page_end": null,
+      "ocr_language": "",
+      "ocr_mode": "auto",
+      "ocr_allowed": true,
+      "row_start": 1,
+      "row_end": null,
+      "sheet": "",
+      "max_cell_chars": null,
+      "document_mode": "auto",
+      "scan_layout_revision": 1,
+      "format_worker_configured": true,
+      "layout_worker_configured": false
+    },
+    "retained_assertions_pass": true,
+    "retained_ms": 20.58
+  },
+  {
+    "id": "table.html-repeat0",
+    "status": 200,
+    "response_bytes": 14119,
+    "elapsed_ms": 1491.68,
+    "quality": "ok",
+    "tier": "direct/trafilatura",
+    "chars": 11769,
+    "text_sha256": "ab0144f3742f129071d428e82e975ad09e9c951c146d1413043df811875e1c2b",
+    "warnings": [],
+    "assertions": {
+      "5120 megawatts": true
+    },
+    "assertions_pass": true,
+    "document_id": "doc_c36e8d879fce45d48bebfb8dc31ab79d",
+    "truncated": false,
+    "content_assessment": {
+      "revision": 1,
+      "text_sha256": "ab0144f3742f129071d428e82e975ad09e9c951c146d1413043df811875e1c2b",
+      "pollution": "none_detected",
+      "completeness": "unknown",
+      "usable_content": "unverified",
+      "inspected_chars": 11769,
+      "suspected_chars": 0,
+      "unflagged_chars": 11769,
+      "spans": []
+    },
+    "cached": false,
+    "failure_reason": null,
+    "source_partial": false,
+    "extraction": {},
+    "acquisition": {
+      "rendered": false,
+      "wait_for": "",
+      "render_delay": null,
+      "extraction_limit": 1000000,
+      "page_start": 1,
+      "page_end": null,
+      "ocr_language": "",
+      "ocr_mode": "auto",
+      "ocr_allowed": true,
+      "row_start": 1,
+      "row_end": null,
+      "sheet": "",
+      "max_cell_chars": null,
+      "document_mode": "auto",
+      "scan_layout_revision": 1,
+      "format_worker_configured": true,
+      "layout_worker_configured": false
+    },
+    "retained_assertions_pass": true,
+    "retained_ms": 22.67
+  },
+  {
+    "id": "values.csv-repeat0",
+    "status": 200,
+    "response_bytes": 15279,
+    "elapsed_ms": 1532.11,
+    "quality": "ok",
+    "tier": "direct/direct-native",
+    "chars": 12000,
+    "text_sha256": "31b4a4babdfc29d2d163e1fce9bb86d787859832e638c0613ff3f82314fc6be1",
+    "warnings": [],
+    "assertions": {
+      "5120 megawatts": true
+    },
+    "assertions_pass": true,
+    "document_id": "doc_d4e51221ae3e47d5b6e2c475399ebe54",
+    "truncated": true,
+    "content_assessment": {
+      "revision": 1,
+      "text_sha256": "afca0bb0dd6135d6b993e1844cb169eb12660a571e16409f63f635986ed58375",
+      "pollution": "not_assessed",
+      "completeness": "unknown",
+      "usable_content": "unverified",
+      "inspected_chars": 0,
+      "suspected_chars": 0,
+      "unflagged_chars": 51927,
+      "spans": []
+    },
+    "cached": false,
+    "failure_reason": null,
+    "source_partial": false,
+    "extraction": {
+      "warnings": [],
+      "partial": false,
+      "tables": [
+        {
+          "sheet": "",
+          "total_rows": 501,
+          "row_start": 1,
+          "last_row": 501,
+          "returned_rows": 501,
+          "next_row": null,
+          "cell_encoding": "HTML entities for ampersands and pipe separators"
+        }
+      ],
+      "source_sha256": "54fa219ca5368a8c70b709648d35a884c3419878ce98f6d9fa64279cda7a4446",
+      "source_bytes": 46918
+    },
+    "acquisition": {
+      "rendered": false,
+      "wait_for": "",
+      "render_delay": null,
+      "extraction_limit": 1000000,
+      "page_start": 1,
+      "page_end": null,
+      "ocr_language": "",
+      "ocr_mode": "auto",
+      "ocr_allowed": true,
+      "row_start": 1,
+      "row_end": null,
+      "sheet": "",
+      "max_cell_chars": null,
+      "document_mode": "auto",
+      "scan_layout_revision": 1,
+      "format_worker_configured": true,
+      "layout_worker_configured": false
+    },
+    "retained_assertions_pass": true,
+    "retained_ms": 31.16
+  },
+  {
+    "id": "report.pdf-repeat0",
+    "status": 200,
+    "response_bytes": 21652,
+    "elapsed_ms": 6140.18,
+    "quality": "ok",
+    "tier": "direct/direct-native",
+    "chars": 5704,
+    "text_sha256": "f3bff21d7de30321417c8e4350659faddfc64329c8caa3ef80a16cdbce4a227d",
+    "warnings": [],
+    "assertions": {
+      "5120 megawatts": true
+    },
+    "assertions_pass": true,
+    "document_id": "doc_8e8a18bed6e143238229df635313182d",
+    "truncated": false,
+    "content_assessment": {
+      "revision": 1,
+      "text_sha256": "f3bff21d7de30321417c8e4350659faddfc64329c8caa3ef80a16cdbce4a227d",
+      "pollution": "not_assessed",
+      "completeness": "unknown",
+      "usable_content": "unverified",
+      "inspected_chars": 0,
+      "suspected_chars": 0,
+      "unflagged_chars": 5704,
+      "spans": []
+    },
+    "cached": false,
+    "failure_reason": null,
+    "source_partial": false,
+    "extraction": {
+      "pages": [
+        {
+          "page": 1,
+          "method": "text",
+          "text_chars": 1890,
+          "text_layer_blocks": [
+            {
+              "bbox": [
+                50.0,
+                51.724998474121094,
+                258.8279724121094,
+                75.08300018310547
+              ],
+              "text": "Cedar energy report page 1\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                89.25,
+                409.60986328125,
+                102.98999786376953
+              ],
+              "text": "1. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                109.25,
+                409.60986328125,
+                122.98999786376953
+              ],
+              "text": "2. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                129.25,
+                409.60986328125,
+                142.99000549316406
+              ],
+              "text": "3. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                149.25,
+                409.60986328125,
+                162.99000549316406
+              ],
+              "text": "4. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                169.25,
+                409.60986328125,
+                182.99000549316406
+              ],
+              "text": "5. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                189.25,
+                409.60986328125,
+                202.99000549316406
+              ],
+              "text": "6. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                209.25,
+                409.60986328125,
+                222.99000549316406
+              ],
+              "text": "7. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                229.25,
+                409.60986328125,
+                242.99000549316406
+              ],
+              "text": "8. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                249.25,
+                409.60986328125,
+                262.989990234375
+              ],
+              "text": "9. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                269.25,
+                415.1698913574219,
+                282.989990234375
+              ],
+              "text": "10. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                289.25,
+                415.1698913574219,
+                302.989990234375
+              ],
+              "text": "11. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                309.25,
+                415.1698913574219,
+                322.989990234375
+              ],
+              "text": "12. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                329.25,
+                415.1698913574219,
+                342.989990234375
+              ],
+              "text": "13. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                349.25,
+                415.1698913574219,
+                362.989990234375
+              ],
+              "text": "14. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                369.25,
+                415.1698913574219,
+                382.989990234375
+              ],
+              "text": "15. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                389.25,
+                415.1698913574219,
+                402.989990234375
+              ],
+              "text": "16. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                409.25,
+                415.1698913574219,
+                422.989990234375
+              ],
+              "text": "17. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                429.25,
+                415.1698913574219,
+                442.989990234375
+              ],
+              "text": "18. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                449.25,
+                415.1698913574219,
+                462.989990234375
+              ],
+              "text": "19. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                469.25,
+                415.1698913574219,
+                482.989990234375
+              ],
+              "text": "20. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                489.25,
+                415.1698913574219,
+                502.989990234375
+              ],
+              "text": "21. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                509.25,
+                415.1698913574219,
+                522.989990234375
+              ],
+              "text": "22. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                529.25,
+                415.1698913574219,
+                542.989990234375
+              ],
+              "text": "23. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                549.25,
+                415.1698913574219,
+                562.989990234375
+              ],
+              "text": "24. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            }
+          ],
+          "layout_coordinate_space": "PDF points, origin top-left",
+          "layout_may_be_incomplete": true
+        },
+        {
+          "page": 2,
+          "method": "text",
+          "text_chars": 1890,
+          "text_layer_blocks": [
+            {
+              "bbox": [
+                50.0,
+                51.724998474121094,
+                258.8279724121094,
+                75.08300018310547
+              ],
+              "text": "Cedar energy report page 2\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                89.25,
+                409.60986328125,
+                102.98999786376953
+              ],
+              "text": "1. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                109.25,
+                409.60986328125,
+                122.98999786376953
+              ],
+              "text": "2. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                129.25,
+                409.60986328125,
+                142.99000549316406
+              ],
+              "text": "3. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                149.25,
+                409.60986328125,
+                162.99000549316406
+              ],
+              "text": "4. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                169.25,
+                409.60986328125,
+                182.99000549316406
+              ],
+              "text": "5. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                189.25,
+                409.60986328125,
+                202.99000549316406
+              ],
+              "text": "6. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                209.25,
+                409.60986328125,
+                222.99000549316406
+              ],
+              "text": "7. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                229.25,
+                409.60986328125,
+                242.99000549316406
+              ],
+              "text": "8. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                249.25,
+                409.60986328125,
+                262.989990234375
+              ],
+              "text": "9. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                269.25,
+                415.1698913574219,
+                282.989990234375
+              ],
+              "text": "10. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                289.25,
+                415.1698913574219,
+                302.989990234375
+              ],
+              "text": "11. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                309.25,
+                415.1698913574219,
+                322.989990234375
+              ],
+              "text": "12. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                329.25,
+                415.1698913574219,
+                342.989990234375
+              ],
+              "text": "13. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                349.25,
+                415.1698913574219,
+                362.989990234375
+              ],
+              "text": "14. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                369.25,
+                415.1698913574219,
+                382.989990234375
+              ],
+              "text": "15. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                389.25,
+                415.1698913574219,
+                402.989990234375
+              ],
+              "text": "16. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                409.25,
+                415.1698913574219,
+                422.989990234375
+              ],
+              "text": "17. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                429.25,
+                415.1698913574219,
+                442.989990234375
+              ],
+              "text": "18. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                449.25,
+                415.1698913574219,
+                462.989990234375
+              ],
+              "text": "19. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                469.25,
+                415.1698913574219,
+                482.989990234375
+              ],
+              "text": "20. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                489.25,
+                415.1698913574219,
+                502.989990234375
+              ],
+              "text": "21. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                509.25,
+                415.1698913574219,
+                522.989990234375
+              ],
+              "text": "22. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                529.25,
+                415.1698913574219,
+                542.989990234375
+              ],
+              "text": "23. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                549.25,
+                415.1698913574219,
+                562.989990234375
+              ],
+              "text": "24. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            }
+          ],
+          "layout_coordinate_space": "PDF points, origin top-left",
+          "layout_may_be_incomplete": true
+        },
+        {
+          "page": 3,
+          "method": "text",
+          "text_chars": 1890,
+          "text_layer_blocks": [
+            {
+              "bbox": [
+                50.0,
+                51.724998474121094,
+                258.8279724121094,
+                75.08300018310547
+              ],
+              "text": "Cedar energy report page 3\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                89.25,
+                409.60986328125,
+                102.98999786376953
+              ],
+              "text": "1. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                109.25,
+                409.60986328125,
+                122.98999786376953
+              ],
+              "text": "2. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                129.25,
+                409.60986328125,
+                142.99000549316406
+              ],
+              "text": "3. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                149.25,
+                409.60986328125,
+                162.99000549316406
+              ],
+              "text": "4. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                169.25,
+                409.60986328125,
+                182.99000549316406
+              ],
+              "text": "5. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                189.25,
+                409.60986328125,
+                202.99000549316406
+              ],
+              "text": "6. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                209.25,
+                409.60986328125,
+                222.99000549316406
+              ],
+              "text": "7. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                229.25,
+                409.60986328125,
+                242.99000549316406
+              ],
+              "text": "8. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                249.25,
+                409.60986328125,
+                262.989990234375
+              ],
+              "text": "9. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                269.25,
+                415.1698913574219,
+                282.989990234375
+              ],
+              "text": "10. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                289.25,
+                415.1698913574219,
+                302.989990234375
+              ],
+              "text": "11. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                309.25,
+                415.1698913574219,
+                322.989990234375
+              ],
+              "text": "12. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                329.25,
+                415.1698913574219,
+                342.989990234375
+              ],
+              "text": "13. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                349.25,
+                415.1698913574219,
+                362.989990234375
+              ],
+              "text": "14. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                369.25,
+                415.1698913574219,
+                382.989990234375
+              ],
+              "text": "15. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                389.25,
+                415.1698913574219,
+                402.989990234375
+              ],
+              "text": "16. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                409.25,
+                415.1698913574219,
+                422.989990234375
+              ],
+              "text": "17. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                429.25,
+                415.1698913574219,
+                442.989990234375
+              ],
+              "text": "18. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                449.25,
+                415.1698913574219,
+                462.989990234375
+              ],
+              "text": "19. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                469.25,
+                415.1698913574219,
+                482.989990234375
+              ],
+              "text": "20. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                489.25,
+                415.1698913574219,
+                502.989990234375
+              ],
+              "text": "21. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                509.25,
+                415.1698913574219,
+                522.989990234375
+              ],
+              "text": "22. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                529.25,
+                415.1698913574219,
+                542.989990234375
+              ],
+              "text": "23. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                549.25,
+                415.1698913574219,
+                562.989990234375
+              ],
+              "text": "24. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            }
+          ],
+          "layout_coordinate_space": "PDF points, origin top-left",
+          "layout_may_be_incomplete": true
+        }
+      ],
+      "total_pages": 3,
+      "next_page": null,
+      "partial": false,
+      "warnings": [],
+      "source_sha256": "e7dd5544b282db015c886fa9e33a0ce26e766f817caf0f42b37a07db1e8d1128",
+      "source_bytes": 19195
+    },
+    "acquisition": {
+      "rendered": false,
+      "wait_for": "",
+      "render_delay": null,
+      "extraction_limit": 1000000,
+      "page_start": 1,
+      "page_end": null,
+      "ocr_language": "",
+      "ocr_mode": "auto",
+      "ocr_allowed": true,
+      "row_start": 1,
+      "row_end": null,
+      "sheet": "",
+      "max_cell_chars": null,
+      "document_mode": "auto",
+      "scan_layout_revision": 1,
+      "format_worker_configured": true,
+      "layout_worker_configured": false
+    },
+    "retained_assertions_pass": true,
+    "retained_ms": 12.49
+  },
+  {
+    "id": "scan.pdf-repeat0",
+    "status": 200,
+    "response_bytes": 3587,
+    "elapsed_ms": 3505.09,
+    "quality": "ok",
+    "tier": "direct/direct-native",
+    "chars": 379,
+    "text_sha256": "de6e2078da6dc631237c399f1ad7ad517f6851f140b9276506159e983616cca9",
+    "warnings": [
+      "OCR can misread numbers, layout and tables; verify against the source image. Word confidence is not an accuracy probability."
+    ],
+    "assertions": {
+      "5120 megawatts": true
+    },
+    "assertions_pass": true,
+    "document_id": "doc_f29475e0a73546709b125594a02167c1",
+    "truncated": false,
+    "content_assessment": {
+      "revision": 1,
+      "text_sha256": "de6e2078da6dc631237c399f1ad7ad517f6851f140b9276506159e983616cca9",
+      "pollution": "not_assessed",
+      "completeness": "unknown",
+      "usable_content": "unverified",
+      "inspected_chars": 0,
+      "suspected_chars": 0,
+      "unflagged_chars": 379,
+      "spans": []
+    },
+    "cached": false,
+    "failure_reason": null,
+    "source_partial": false,
+    "extraction": {
+      "pages": [
+        {
+          "page": 1,
+          "method": "ocr",
+          "text_chars": 369,
+          "text_layer_blocks": [],
+          "layout_coordinate_space": "PDF points, origin top-left",
+          "layout_may_be_incomplete": true
+        }
+      ],
+      "total_pages": 1,
+      "next_page": null,
+      "partial": false,
+      "warnings": [
+        "OCR can misread numbers, layout and tables; verify against the source image. Word confidence is not an accuracy probability."
+      ],
+      "source_sha256": "98586db1f826f0b621ee5c20539ab70cd4407a332492e150f78700d3b4b08909",
+      "source_bytes": 3783567
+    },
+    "acquisition": {
+      "rendered": false,
+      "wait_for": "",
+      "render_delay": null,
+      "extraction_limit": 1000000,
+      "page_start": 1,
+      "page_end": null,
+      "ocr_language": "",
+      "ocr_mode": "auto",
+      "ocr_allowed": true,
+      "row_start": 1,
+      "row_end": null,
+      "sheet": "",
+      "max_cell_chars": null,
+      "document_mode": "auto",
+      "scan_layout_revision": 1,
+      "format_worker_configured": true,
+      "layout_worker_configured": false
+    },
+    "retained_assertions_pass": true,
+    "retained_ms": 4.95
+  },
+  {
+    "id": "report.docx-repeat0",
+    "status": 200,
+    "response_bytes": 9882,
+    "elapsed_ms": 590.61,
+    "quality": "ok",
+    "tier": "direct/direct-native",
+    "chars": 6749,
+    "text_sha256": "c6e5a46d4c0e61ab67d4b245e3a269b84a9b156ff5b15d03fa95364591634679",
+    "warnings": [
+      "OCR can misread numbers, layout and tables; verify against the source image. Word confidence is not an accuracy probability."
+    ],
+    "assertions": {
+      "5120 megawatts": true
+    },
+    "assertions_pass": true,
+    "document_id": "doc_aab8dea452b4489297b11ea0ae6119a8",
+    "truncated": false,
+    "content_assessment": {
+      "revision": 1,
+      "text_sha256": "c6e5a46d4c0e61ab67d4b245e3a269b84a9b156ff5b15d03fa95364591634679",
+      "pollution": "not_assessed",
+      "completeness": "unknown",
+      "usable_content": "unverified",
+      "inspected_chars": 0,
+      "suspected_chars": 0,
+      "unflagged_chars": 6749,
+      "spans": []
+    },
+    "cached": false,
+    "failure_reason": null,
+    "source_partial": false,
+    "extraction": {
+      "warnings": [
+        "OCR can misread numbers, layout and tables; verify against the source image. Word confidence is not an accuracy probability."
+      ],
+      "partial": false,
+      "embedded_images": [
+        "docProps/thumbnail.jpeg"
+      ],
+      "source_sha256": "f1759ba40ef34985e022091ba500be608258226348d7178d7b29551d3c18dd1b",
+      "source_bytes": 36825
+    },
+    "acquisition": {
+      "rendered": false,
+      "wait_for": "",
+      "render_delay": null,
+      "extraction_limit": 1000000,
+      "page_start": 1,
+      "page_end": null,
+      "ocr_language": "",
+      "ocr_mode": "auto",
+      "ocr_allowed": true,
+      "row_start": 1,
+      "row_end": null,
+      "sheet": "",
+      "max_cell_chars": null,
+      "document_mode": "auto",
+      "scan_layout_revision": 1,
+      "format_worker_configured": true,
+      "layout_worker_configured": false
+    },
+    "retained_assertions_pass": true,
+    "retained_ms": 6.64
+  },
+  {
+    "id": "report.xlsx-repeat0",
+    "status": 200,
+    "response_bytes": 15394,
+    "elapsed_ms": 1289.4,
+    "quality": "ok",
+    "tier": "direct/direct-native",
+    "chars": 12000,
+    "text_sha256": "a9d60476060cefaa05dc3e0f835303338191a45af7a482640f5af1daff2f0002",
+    "warnings": [],
+    "assertions": {
+      "5120 megawatts": true
+    },
+    "assertions_pass": true,
+    "document_id": "doc_66fc903506fe4e488a4547715d33ebb1",
+    "truncated": true,
+    "content_assessment": {
+      "revision": 1,
+      "text_sha256": "5fa93e420477083122633d0be3c673b62529f876be46db3eb11f6728e7e7283c",
+      "pollution": "not_assessed",
+      "completeness": "unknown",
+      "usable_content": "unverified",
+      "inspected_chars": 0,
+      "suspected_chars": 0,
+      "unflagged_chars": 51936,
+      "spans": []
+    },
+    "cached": false,
+    "failure_reason": null,
+    "source_partial": false,
+    "extraction": {
+      "warnings": [],
+      "partial": false,
+      "available_sheets": [
+        "Sheet"
+      ],
+      "tables": [
+        {
+          "sheet": "Sheet",
+          "total_rows": 501,
+          "row_start": 1,
+          "last_row": 501,
+          "returned_rows": 501,
+          "next_row": null,
+          "cell_encoding": "HTML entities for ampersands and pipe separators"
+        }
+      ],
+      "embedded_images": [],
+      "source_sha256": "a94e143086e48c7c0fece001872703d01f38c8c4121d555793585b26d6a73ac0",
+      "source_bytes": 15393
+    },
+    "acquisition": {
+      "rendered": false,
+      "wait_for": "",
+      "render_delay": null,
+      "extraction_limit": 1000000,
+      "page_start": 1,
+      "page_end": null,
+      "ocr_language": "",
+      "ocr_mode": "auto",
+      "ocr_allowed": true,
+      "row_start": 1,
+      "row_end": null,
+      "sheet": "",
+      "max_cell_chars": null,
+      "document_mode": "auto",
+      "scan_layout_revision": 1,
+      "format_worker_configured": true,
+      "layout_worker_configured": false
+    },
+    "retained_assertions_pass": true,
+    "retained_ms": 17.66
+  },
+  {
+    "id": "report.pptx-repeat0",
+    "status": 200,
+    "response_bytes": 5571,
+    "elapsed_ms": 1879.63,
+    "quality": "ok",
+    "tier": "direct/direct-native",
+    "chars": 2439,
+    "text_sha256": "f97639f76ec58a952c216dc6794db9f58bcf52d4ea02a00a5ba36d66635e1a2b",
+    "warnings": [
+      "OCR can misread numbers, layout and tables; verify against the source image. Word confidence is not an accuracy probability."
+    ],
+    "assertions": {
+      "5120 megawatts": true
+    },
+    "assertions_pass": true,
+    "document_id": "doc_4ffae020569b4ad1a27a83632c80d13a",
+    "truncated": false,
+    "content_assessment": {
+      "revision": 1,
+      "text_sha256": "f97639f76ec58a952c216dc6794db9f58bcf52d4ea02a00a5ba36d66635e1a2b",
+      "pollution": "not_assessed",
+      "completeness": "unknown",
+      "usable_content": "unverified",
+      "inspected_chars": 0,
+      "suspected_chars": 0,
+      "unflagged_chars": 2439,
+      "spans": []
+    },
+    "cached": false,
+    "failure_reason": null,
+    "source_partial": false,
+    "extraction": {
+      "warnings": [
+        "OCR can misread numbers, layout and tables; verify against the source image. Word confidence is not an accuracy probability."
+      ],
+      "partial": false,
+      "embedded_images": [
+        "docProps/thumbnail.jpeg"
+      ],
+      "source_sha256": "53e9c9850116cb4dce6c0f74a935128c240597417056a6b04452db45cd9d7716",
+      "source_bytes": 34912
+    },
+    "acquisition": {
+      "rendered": false,
+      "wait_for": "",
+      "render_delay": null,
+      "extraction_limit": 1000000,
+      "page_start": 1,
+      "page_end": null,
+      "ocr_language": "",
+      "ocr_mode": "auto",
+      "ocr_allowed": true,
+      "row_start": 1,
+      "row_end": null,
+      "sheet": "",
+      "max_cell_chars": null,
+      "document_mode": "auto",
+      "scan_layout_revision": 1,
+      "format_worker_configured": true,
+      "layout_worker_configured": false
+    },
+    "retained_assertions_pass": true,
+    "retained_ms": 7.12
+  },
+  {
+    "id": "report.odt-repeat0",
+    "status": 200,
+    "response_bytes": 9276,
+    "elapsed_ms": 840.86,
+    "quality": "ok",
+    "tier": "direct/direct-native",
+    "chars": 6729,
+    "text_sha256": "8aa8b533df6935a81f87ccbd6552baac9a4314c1382d11233dd40f8efd4807f6",
+    "warnings": [],
+    "assertions": {
+      "5120 megawatts": true
+    },
+    "assertions_pass": true,
+    "document_id": "doc_d73dd01f128e4eb9ae9ecc7934b0b484",
+    "truncated": false,
+    "content_assessment": {
+      "revision": 1,
+      "text_sha256": "8aa8b533df6935a81f87ccbd6552baac9a4314c1382d11233dd40f8efd4807f6",
+      "pollution": "not_assessed",
+      "completeness": "unknown",
+      "usable_content": "unverified",
+      "inspected_chars": 0,
+      "suspected_chars": 0,
+      "unflagged_chars": 6729,
+      "spans": []
+    },
+    "cached": false,
+    "failure_reason": null,
+    "source_partial": false,
+    "extraction": {
+      "warnings": [],
+      "partial": false,
+      "embedded_images": [],
+      "source_sha256": "1b1da6c3e9de5c774d80d60681cc23b225fc036ab51fa856f26da5f15779c0dc",
+      "source_bytes": 1617
+    },
+    "acquisition": {
+      "rendered": false,
+      "wait_for": "",
+      "render_delay": null,
+      "extraction_limit": 1000000,
+      "page_start": 1,
+      "page_end": null,
+      "ocr_language": "",
+      "ocr_mode": "auto",
+      "ocr_allowed": true,
+      "row_start": 1,
+      "row_end": null,
+      "sheet": "",
+      "max_cell_chars": null,
+      "document_mode": "auto",
+      "scan_layout_revision": 1,
+      "format_worker_configured": true,
+      "layout_worker_configured": false
+    },
+    "retained_assertions_pass": true,
+    "retained_ms": 9.09
+  },
+  {
+    "id": "report.epub-repeat0",
+    "status": 200,
+    "response_bytes": 14813,
+    "elapsed_ms": 1373.72,
+    "quality": "ok",
+    "tier": "direct/direct-native",
+    "chars": 12000,
+    "text_sha256": "ea63984c1cd66715e81447cf69b2cd2376d9bd7f22fbc313799a37a6f3d3723c",
+    "warnings": [],
+    "assertions": {
+      "5120 megawatts": true
+    },
+    "assertions_pass": true,
+    "document_id": "doc_e2ab2eac0af34bc4902d02b6754d8be0",
+    "truncated": true,
+    "content_assessment": {
+      "revision": 1,
+      "text_sha256": "7a1bfe438872e7461eb5d134cccc5736a99483b3312e95a11183b41ba29ffcad",
+      "pollution": "not_assessed",
+      "completeness": "unknown",
+      "usable_content": "unverified",
+      "inspected_chars": 0,
+      "suspected_chars": 0,
+      "unflagged_chars": 13534,
+      "spans": []
+    },
+    "cached": false,
+    "failure_reason": null,
+    "source_partial": false,
+    "extraction": {
+      "warnings": [],
+      "partial": false,
+      "embedded_images": [],
+      "source_sha256": "a656955d943aa1abd620a261994abac85d70e2df363c6d8b1a108c2c2ae11187",
+      "source_bytes": 16985
+    },
+    "acquisition": {
+      "rendered": false,
+      "wait_for": "",
+      "render_delay": null,
+      "extraction_limit": 1000000,
+      "page_start": 1,
+      "page_end": null,
+      "ocr_language": "",
+      "ocr_mode": "auto",
+      "ocr_allowed": true,
+      "row_start": 1,
+      "row_end": null,
+      "sheet": "",
+      "max_cell_chars": null,
+      "document_mode": "auto",
+      "scan_layout_revision": 1,
+      "format_worker_configured": true,
+      "layout_worker_configured": false
+    },
+    "retained_assertions_pass": true,
+    "retained_ms": 6.71
+  },
+  {
+    "id": "report.rtf-repeat0",
+    "status": 200,
+    "response_bytes": 4761,
+    "elapsed_ms": 1491.8,
+    "quality": "ok",
+    "tier": "direct/direct-native",
+    "chars": 2219,
+    "text_sha256": "849333027138356460afbf307114d0b7ef9df219a5514bd2bcd010c9aa61d13a",
+    "warnings": [],
+    "assertions": {
+      "5120 megawatts": true
+    },
+    "assertions_pass": true,
+    "document_id": "doc_9737bb683af84845a0246f62a5ce88d5",
+    "truncated": false,
+    "content_assessment": {
+      "revision": 1,
+      "text_sha256": "849333027138356460afbf307114d0b7ef9df219a5514bd2bcd010c9aa61d13a",
+      "pollution": "not_assessed",
+      "completeness": "unknown",
+      "usable_content": "unverified",
+      "inspected_chars": 0,
+      "suspected_chars": 0,
+      "unflagged_chars": 2219,
+      "spans": []
+    },
+    "cached": false,
+    "failure_reason": null,
+    "source_partial": false,
+    "extraction": {
+      "warnings": [],
+      "partial": false,
+      "source_sha256": "4bab3f2107d1d82b7d66f26aa9919839b5775205c9aa208414ef934365bfc8c6",
+      "source_bytes": 2354
+    },
+    "acquisition": {
+      "rendered": false,
+      "wait_for": "",
+      "render_delay": null,
+      "extraction_limit": 1000000,
+      "page_start": 1,
+      "page_end": null,
+      "ocr_language": "",
+      "ocr_mode": "auto",
+      "ocr_allowed": true,
+      "row_start": 1,
+      "row_end": null,
+      "sheet": "",
+      "max_cell_chars": null,
+      "document_mode": "auto",
+      "scan_layout_revision": 1,
+      "format_worker_configured": true,
+      "layout_worker_configured": false
+    },
+    "retained_assertions_pass": true,
+    "retained_ms": 23.99
+  },
+  {
+    "id": "article.html-repeat1",
+    "status": 200,
+    "response_bytes": 14627,
+    "elapsed_ms": 1486.01,
+    "quality": "ok",
+    "tier": "direct/trafilatura",
+    "chars": 12000,
+    "text_sha256": "ea63984c1cd66715e81447cf69b2cd2376d9bd7f22fbc313799a37a6f3d3723c",
+    "warnings": [],
+    "assertions": {
+      "5120 megawatts": true
+    },
+    "assertions_pass": true,
+    "document_id": "doc_e357c344822d40c682724db1684c230a",
+    "truncated": true,
+    "content_assessment": {
+      "revision": 1,
+      "text_sha256": "7a1bfe438872e7461eb5d134cccc5736a99483b3312e95a11183b41ba29ffcad",
+      "pollution": "none_detected",
+      "completeness": "unknown",
+      "usable_content": "unverified",
+      "inspected_chars": 13534,
+      "suspected_chars": 0,
+      "unflagged_chars": 13534,
+      "spans": []
+    },
+    "cached": false,
+    "failure_reason": null,
+    "source_partial": false,
+    "extraction": {},
+    "acquisition": {
+      "rendered": false,
+      "wait_for": "",
+      "render_delay": null,
+      "extraction_limit": 1000000,
+      "page_start": 1,
+      "page_end": null,
+      "ocr_language": "",
+      "ocr_mode": "auto",
+      "ocr_allowed": true,
+      "row_start": 1,
+      "row_end": null,
+      "sheet": "",
+      "max_cell_chars": null,
+      "document_mode": "auto",
+      "scan_layout_revision": 1,
+      "format_worker_configured": true,
+      "layout_worker_configured": false
+    },
+    "retained_assertions_pass": true,
+    "retained_ms": 7.79
+  },
+  {
+    "id": "table.html-repeat1",
+    "status": 200,
+    "response_bytes": 14120,
+    "elapsed_ms": 1454.77,
+    "quality": "ok",
+    "tier": "direct/trafilatura",
+    "chars": 11769,
+    "text_sha256": "ab0144f3742f129071d428e82e975ad09e9c951c146d1413043df811875e1c2b",
+    "warnings": [],
+    "assertions": {
+      "5120 megawatts": true
+    },
+    "assertions_pass": true,
+    "document_id": "doc_c36e8d879fce45d48bebfb8dc31ab79d",
+    "truncated": false,
+    "content_assessment": {
+      "revision": 1,
+      "text_sha256": "ab0144f3742f129071d428e82e975ad09e9c951c146d1413043df811875e1c2b",
+      "pollution": "none_detected",
+      "completeness": "unknown",
+      "usable_content": "unverified",
+      "inspected_chars": 11769,
+      "suspected_chars": 0,
+      "unflagged_chars": 11769,
+      "spans": []
+    },
+    "cached": false,
+    "failure_reason": null,
+    "source_partial": false,
+    "extraction": {},
+    "acquisition": {
+      "rendered": false,
+      "wait_for": "",
+      "render_delay": null,
+      "extraction_limit": 1000000,
+      "page_start": 1,
+      "page_end": null,
+      "ocr_language": "",
+      "ocr_mode": "auto",
+      "ocr_allowed": true,
+      "row_start": 1,
+      "row_end": null,
+      "sheet": "",
+      "max_cell_chars": null,
+      "document_mode": "auto",
+      "scan_layout_revision": 1,
+      "format_worker_configured": true,
+      "layout_worker_configured": false
+    },
+    "retained_assertions_pass": true,
+    "retained_ms": 12.17
+  },
+  {
+    "id": "values.csv-repeat1",
+    "status": 200,
+    "response_bytes": 15279,
+    "elapsed_ms": 1451.4,
+    "quality": "ok",
+    "tier": "direct/direct-native",
+    "chars": 12000,
+    "text_sha256": "31b4a4babdfc29d2d163e1fce9bb86d787859832e638c0613ff3f82314fc6be1",
+    "warnings": [],
+    "assertions": {
+      "5120 megawatts": true
+    },
+    "assertions_pass": true,
+    "document_id": "doc_d4e51221ae3e47d5b6e2c475399ebe54",
+    "truncated": true,
+    "content_assessment": {
+      "revision": 1,
+      "text_sha256": "afca0bb0dd6135d6b993e1844cb169eb12660a571e16409f63f635986ed58375",
+      "pollution": "not_assessed",
+      "completeness": "unknown",
+      "usable_content": "unverified",
+      "inspected_chars": 0,
+      "suspected_chars": 0,
+      "unflagged_chars": 51927,
+      "spans": []
+    },
+    "cached": false,
+    "failure_reason": null,
+    "source_partial": false,
+    "extraction": {
+      "warnings": [],
+      "partial": false,
+      "tables": [
+        {
+          "sheet": "",
+          "total_rows": 501,
+          "row_start": 1,
+          "last_row": 501,
+          "returned_rows": 501,
+          "next_row": null,
+          "cell_encoding": "HTML entities for ampersands and pipe separators"
+        }
+      ],
+      "source_sha256": "54fa219ca5368a8c70b709648d35a884c3419878ce98f6d9fa64279cda7a4446",
+      "source_bytes": 46918
+    },
+    "acquisition": {
+      "rendered": false,
+      "wait_for": "",
+      "render_delay": null,
+      "extraction_limit": 1000000,
+      "page_start": 1,
+      "page_end": null,
+      "ocr_language": "",
+      "ocr_mode": "auto",
+      "ocr_allowed": true,
+      "row_start": 1,
+      "row_end": null,
+      "sheet": "",
+      "max_cell_chars": null,
+      "document_mode": "auto",
+      "scan_layout_revision": 1,
+      "format_worker_configured": true,
+      "layout_worker_configured": false
+    },
+    "retained_assertions_pass": true,
+    "retained_ms": 7.78
+  },
+  {
+    "id": "report.pdf-repeat1",
+    "status": 200,
+    "response_bytes": 21652,
+    "elapsed_ms": 2529.6,
+    "quality": "ok",
+    "tier": "direct/direct-native",
+    "chars": 5704,
+    "text_sha256": "f3bff21d7de30321417c8e4350659faddfc64329c8caa3ef80a16cdbce4a227d",
+    "warnings": [],
+    "assertions": {
+      "5120 megawatts": true
+    },
+    "assertions_pass": true,
+    "document_id": "doc_8e8a18bed6e143238229df635313182d",
+    "truncated": false,
+    "content_assessment": {
+      "revision": 1,
+      "text_sha256": "f3bff21d7de30321417c8e4350659faddfc64329c8caa3ef80a16cdbce4a227d",
+      "pollution": "not_assessed",
+      "completeness": "unknown",
+      "usable_content": "unverified",
+      "inspected_chars": 0,
+      "suspected_chars": 0,
+      "unflagged_chars": 5704,
+      "spans": []
+    },
+    "cached": false,
+    "failure_reason": null,
+    "source_partial": false,
+    "extraction": {
+      "pages": [
+        {
+          "page": 1,
+          "method": "text",
+          "text_chars": 1890,
+          "text_layer_blocks": [
+            {
+              "bbox": [
+                50.0,
+                51.724998474121094,
+                258.8279724121094,
+                75.08300018310547
+              ],
+              "text": "Cedar energy report page 1\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                89.25,
+                409.60986328125,
+                102.98999786376953
+              ],
+              "text": "1. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                109.25,
+                409.60986328125,
+                122.98999786376953
+              ],
+              "text": "2. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                129.25,
+                409.60986328125,
+                142.99000549316406
+              ],
+              "text": "3. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                149.25,
+                409.60986328125,
+                162.99000549316406
+              ],
+              "text": "4. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                169.25,
+                409.60986328125,
+                182.99000549316406
+              ],
+              "text": "5. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                189.25,
+                409.60986328125,
+                202.99000549316406
+              ],
+              "text": "6. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                209.25,
+                409.60986328125,
+                222.99000549316406
+              ],
+              "text": "7. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                229.25,
+                409.60986328125,
+                242.99000549316406
+              ],
+              "text": "8. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                249.25,
+                409.60986328125,
+                262.989990234375
+              ],
+              "text": "9. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                269.25,
+                415.1698913574219,
+                282.989990234375
+              ],
+              "text": "10. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                289.25,
+                415.1698913574219,
+                302.989990234375
+              ],
+              "text": "11. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                309.25,
+                415.1698913574219,
+                322.989990234375
+              ],
+              "text": "12. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                329.25,
+                415.1698913574219,
+                342.989990234375
+              ],
+              "text": "13. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                349.25,
+                415.1698913574219,
+                362.989990234375
+              ],
+              "text": "14. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                369.25,
+                415.1698913574219,
+                382.989990234375
+              ],
+              "text": "15. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                389.25,
+                415.1698913574219,
+                402.989990234375
+              ],
+              "text": "16. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                409.25,
+                415.1698913574219,
+                422.989990234375
+              ],
+              "text": "17. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                429.25,
+                415.1698913574219,
+                442.989990234375
+              ],
+              "text": "18. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                449.25,
+                415.1698913574219,
+                462.989990234375
+              ],
+              "text": "19. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                469.25,
+                415.1698913574219,
+                482.989990234375
+              ],
+              "text": "20. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                489.25,
+                415.1698913574219,
+                502.989990234375
+              ],
+              "text": "21. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                509.25,
+                415.1698913574219,
+                522.989990234375
+              ],
+              "text": "22. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                529.25,
+                415.1698913574219,
+                542.989990234375
+              ],
+              "text": "23. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                549.25,
+                415.1698913574219,
+                562.989990234375
+              ],
+              "text": "24. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            }
+          ],
+          "layout_coordinate_space": "PDF points, origin top-left",
+          "layout_may_be_incomplete": true
+        },
+        {
+          "page": 2,
+          "method": "text",
+          "text_chars": 1890,
+          "text_layer_blocks": [
+            {
+              "bbox": [
+                50.0,
+                51.724998474121094,
+                258.8279724121094,
+                75.08300018310547
+              ],
+              "text": "Cedar energy report page 2\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                89.25,
+                409.60986328125,
+                102.98999786376953
+              ],
+              "text": "1. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                109.25,
+                409.60986328125,
+                122.98999786376953
+              ],
+              "text": "2. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                129.25,
+                409.60986328125,
+                142.99000549316406
+              ],
+              "text": "3. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                149.25,
+                409.60986328125,
+                162.99000549316406
+              ],
+              "text": "4. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                169.25,
+                409.60986328125,
+                182.99000549316406
+              ],
+              "text": "5. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                189.25,
+                409.60986328125,
+                202.99000549316406
+              ],
+              "text": "6. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                209.25,
+                409.60986328125,
+                222.99000549316406
+              ],
+              "text": "7. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                229.25,
+                409.60986328125,
+                242.99000549316406
+              ],
+              "text": "8. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                249.25,
+                409.60986328125,
+                262.989990234375
+              ],
+              "text": "9. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                269.25,
+                415.1698913574219,
+                282.989990234375
+              ],
+              "text": "10. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                289.25,
+                415.1698913574219,
+                302.989990234375
+              ],
+              "text": "11. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                309.25,
+                415.1698913574219,
+                322.989990234375
+              ],
+              "text": "12. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                329.25,
+                415.1698913574219,
+                342.989990234375
+              ],
+              "text": "13. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                349.25,
+                415.1698913574219,
+                362.989990234375
+              ],
+              "text": "14. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                369.25,
+                415.1698913574219,
+                382.989990234375
+              ],
+              "text": "15. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                389.25,
+                415.1698913574219,
+                402.989990234375
+              ],
+              "text": "16. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                409.25,
+                415.1698913574219,
+                422.989990234375
+              ],
+              "text": "17. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                429.25,
+                415.1698913574219,
+                442.989990234375
+              ],
+              "text": "18. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                449.25,
+                415.1698913574219,
+                462.989990234375
+              ],
+              "text": "19. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                469.25,
+                415.1698913574219,
+                482.989990234375
+              ],
+              "text": "20. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                489.25,
+                415.1698913574219,
+                502.989990234375
+              ],
+              "text": "21. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                509.25,
+                415.1698913574219,
+                522.989990234375
+              ],
+              "text": "22. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                529.25,
+                415.1698913574219,
+                542.989990234375
+              ],
+              "text": "23. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                549.25,
+                415.1698913574219,
+                562.989990234375
+              ],
+              "text": "24. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            }
+          ],
+          "layout_coordinate_space": "PDF points, origin top-left",
+          "layout_may_be_incomplete": true
+        },
+        {
+          "page": 3,
+          "method": "text",
+          "text_chars": 1890,
+          "text_layer_blocks": [
+            {
+              "bbox": [
+                50.0,
+                51.724998474121094,
+                258.8279724121094,
+                75.08300018310547
+              ],
+              "text": "Cedar energy report page 3\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                89.25,
+                409.60986328125,
+                102.98999786376953
+              ],
+              "text": "1. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                109.25,
+                409.60986328125,
+                122.98999786376953
+              ],
+              "text": "2. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                129.25,
+                409.60986328125,
+                142.99000549316406
+              ],
+              "text": "3. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                149.25,
+                409.60986328125,
+                162.99000549316406
+              ],
+              "text": "4. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                169.25,
+                409.60986328125,
+                182.99000549316406
+              ],
+              "text": "5. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                189.25,
+                409.60986328125,
+                202.99000549316406
+              ],
+              "text": "6. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                209.25,
+                409.60986328125,
+                222.99000549316406
+              ],
+              "text": "7. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                229.25,
+                409.60986328125,
+                242.99000549316406
+              ],
+              "text": "8. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                249.25,
+                409.60986328125,
+                262.989990234375
+              ],
+              "text": "9. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                269.25,
+                415.1698913574219,
+                282.989990234375
+              ],
+              "text": "10. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                289.25,
+                415.1698913574219,
+                302.989990234375
+              ],
+              "text": "11. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                309.25,
+                415.1698913574219,
+                322.989990234375
+              ],
+              "text": "12. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                329.25,
+                415.1698913574219,
+                342.989990234375
+              ],
+              "text": "13. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                349.25,
+                415.1698913574219,
+                362.989990234375
+              ],
+              "text": "14. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                369.25,
+                415.1698913574219,
+                382.989990234375
+              ],
+              "text": "15. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                389.25,
+                415.1698913574219,
+                402.989990234375
+              ],
+              "text": "16. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                409.25,
+                415.1698913574219,
+                422.989990234375
+              ],
+              "text": "17. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                429.25,
+                415.1698913574219,
+                442.989990234375
+              ],
+              "text": "18. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                449.25,
+                415.1698913574219,
+                462.989990234375
+              ],
+              "text": "19. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                469.25,
+                415.1698913574219,
+                482.989990234375
+              ],
+              "text": "20. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                489.25,
+                415.1698913574219,
+                502.989990234375
+              ],
+              "text": "21. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                509.25,
+                415.1698913574219,
+                522.989990234375
+              ],
+              "text": "22. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                529.25,
+                415.1698913574219,
+                542.989990234375
+              ],
+              "text": "23. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                549.25,
+                415.1698913574219,
+                562.989990234375
+              ],
+              "text": "24. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            }
+          ],
+          "layout_coordinate_space": "PDF points, origin top-left",
+          "layout_may_be_incomplete": true
+        }
+      ],
+      "total_pages": 3,
+      "next_page": null,
+      "partial": false,
+      "warnings": [],
+      "source_sha256": "e7dd5544b282db015c886fa9e33a0ce26e766f817caf0f42b37a07db1e8d1128",
+      "source_bytes": 19195
+    },
+    "acquisition": {
+      "rendered": false,
+      "wait_for": "",
+      "render_delay": null,
+      "extraction_limit": 1000000,
+      "page_start": 1,
+      "page_end": null,
+      "ocr_language": "",
+      "ocr_mode": "auto",
+      "ocr_allowed": true,
+      "row_start": 1,
+      "row_end": null,
+      "sheet": "",
+      "max_cell_chars": null,
+      "document_mode": "auto",
+      "scan_layout_revision": 1,
+      "format_worker_configured": true,
+      "layout_worker_configured": false
+    },
+    "retained_assertions_pass": true,
+    "retained_ms": 7.98
+  },
+  {
+    "id": "scan.pdf-repeat1",
+    "status": 200,
+    "response_bytes": 3587,
+    "elapsed_ms": 1781.37,
+    "quality": "ok",
+    "tier": "direct/direct-native",
+    "chars": 379,
+    "text_sha256": "de6e2078da6dc631237c399f1ad7ad517f6851f140b9276506159e983616cca9",
+    "warnings": [
+      "OCR can misread numbers, layout and tables; verify against the source image. Word confidence is not an accuracy probability."
+    ],
+    "assertions": {
+      "5120 megawatts": true
+    },
+    "assertions_pass": true,
+    "document_id": "doc_f29475e0a73546709b125594a02167c1",
+    "truncated": false,
+    "content_assessment": {
+      "revision": 1,
+      "text_sha256": "de6e2078da6dc631237c399f1ad7ad517f6851f140b9276506159e983616cca9",
+      "pollution": "not_assessed",
+      "completeness": "unknown",
+      "usable_content": "unverified",
+      "inspected_chars": 0,
+      "suspected_chars": 0,
+      "unflagged_chars": 379,
+      "spans": []
+    },
+    "cached": false,
+    "failure_reason": null,
+    "source_partial": false,
+    "extraction": {
+      "pages": [
+        {
+          "page": 1,
+          "method": "ocr",
+          "text_chars": 369,
+          "text_layer_blocks": [],
+          "layout_coordinate_space": "PDF points, origin top-left",
+          "layout_may_be_incomplete": true
+        }
+      ],
+      "total_pages": 1,
+      "next_page": null,
+      "partial": false,
+      "warnings": [
+        "OCR can misread numbers, layout and tables; verify against the source image. Word confidence is not an accuracy probability."
+      ],
+      "source_sha256": "98586db1f826f0b621ee5c20539ab70cd4407a332492e150f78700d3b4b08909",
+      "source_bytes": 3783567
+    },
+    "acquisition": {
+      "rendered": false,
+      "wait_for": "",
+      "render_delay": null,
+      "extraction_limit": 1000000,
+      "page_start": 1,
+      "page_end": null,
+      "ocr_language": "",
+      "ocr_mode": "auto",
+      "ocr_allowed": true,
+      "row_start": 1,
+      "row_end": null,
+      "sheet": "",
+      "max_cell_chars": null,
+      "document_mode": "auto",
+      "scan_layout_revision": 1,
+      "format_worker_configured": true,
+      "layout_worker_configured": false
+    },
+    "retained_assertions_pass": true,
+    "retained_ms": 3.52
+  },
+  {
+    "id": "report.docx-repeat1",
+    "status": 200,
+    "response_bytes": 9882,
+    "elapsed_ms": 567.97,
+    "quality": "ok",
+    "tier": "direct/direct-native",
+    "chars": 6749,
+    "text_sha256": "c6e5a46d4c0e61ab67d4b245e3a269b84a9b156ff5b15d03fa95364591634679",
+    "warnings": [
+      "OCR can misread numbers, layout and tables; verify against the source image. Word confidence is not an accuracy probability."
+    ],
+    "assertions": {
+      "5120 megawatts": true
+    },
+    "assertions_pass": true,
+    "document_id": "doc_aab8dea452b4489297b11ea0ae6119a8",
+    "truncated": false,
+    "content_assessment": {
+      "revision": 1,
+      "text_sha256": "c6e5a46d4c0e61ab67d4b245e3a269b84a9b156ff5b15d03fa95364591634679",
+      "pollution": "not_assessed",
+      "completeness": "unknown",
+      "usable_content": "unverified",
+      "inspected_chars": 0,
+      "suspected_chars": 0,
+      "unflagged_chars": 6749,
+      "spans": []
+    },
+    "cached": false,
+    "failure_reason": null,
+    "source_partial": false,
+    "extraction": {
+      "warnings": [
+        "OCR can misread numbers, layout and tables; verify against the source image. Word confidence is not an accuracy probability."
+      ],
+      "partial": false,
+      "embedded_images": [
+        "docProps/thumbnail.jpeg"
+      ],
+      "source_sha256": "f1759ba40ef34985e022091ba500be608258226348d7178d7b29551d3c18dd1b",
+      "source_bytes": 36825
+    },
+    "acquisition": {
+      "rendered": false,
+      "wait_for": "",
+      "render_delay": null,
+      "extraction_limit": 1000000,
+      "page_start": 1,
+      "page_end": null,
+      "ocr_language": "",
+      "ocr_mode": "auto",
+      "ocr_allowed": true,
+      "row_start": 1,
+      "row_end": null,
+      "sheet": "",
+      "max_cell_chars": null,
+      "document_mode": "auto",
+      "scan_layout_revision": 1,
+      "format_worker_configured": true,
+      "layout_worker_configured": false
+    },
+    "retained_assertions_pass": true,
+    "retained_ms": 22.06
+  },
+  {
+    "id": "report.xlsx-repeat1",
+    "status": 200,
+    "response_bytes": 15395,
+    "elapsed_ms": 1299.57,
+    "quality": "ok",
+    "tier": "direct/direct-native",
+    "chars": 12000,
+    "text_sha256": "a9d60476060cefaa05dc3e0f835303338191a45af7a482640f5af1daff2f0002",
+    "warnings": [],
+    "assertions": {
+      "5120 megawatts": true
+    },
+    "assertions_pass": true,
+    "document_id": "doc_66fc903506fe4e488a4547715d33ebb1",
+    "truncated": true,
+    "content_assessment": {
+      "revision": 1,
+      "text_sha256": "5fa93e420477083122633d0be3c673b62529f876be46db3eb11f6728e7e7283c",
+      "pollution": "not_assessed",
+      "completeness": "unknown",
+      "usable_content": "unverified",
+      "inspected_chars": 0,
+      "suspected_chars": 0,
+      "unflagged_chars": 51936,
+      "spans": []
+    },
+    "cached": false,
+    "failure_reason": null,
+    "source_partial": false,
+    "extraction": {
+      "warnings": [],
+      "partial": false,
+      "available_sheets": [
+        "Sheet"
+      ],
+      "tables": [
+        {
+          "sheet": "Sheet",
+          "total_rows": 501,
+          "row_start": 1,
+          "last_row": 501,
+          "returned_rows": 501,
+          "next_row": null,
+          "cell_encoding": "HTML entities for ampersands and pipe separators"
+        }
+      ],
+      "embedded_images": [],
+      "source_sha256": "a94e143086e48c7c0fece001872703d01f38c8c4121d555793585b26d6a73ac0",
+      "source_bytes": 15393
+    },
+    "acquisition": {
+      "rendered": false,
+      "wait_for": "",
+      "render_delay": null,
+      "extraction_limit": 1000000,
+      "page_start": 1,
+      "page_end": null,
+      "ocr_language": "",
+      "ocr_mode": "auto",
+      "ocr_allowed": true,
+      "row_start": 1,
+      "row_end": null,
+      "sheet": "",
+      "max_cell_chars": null,
+      "document_mode": "auto",
+      "scan_layout_revision": 1,
+      "format_worker_configured": true,
+      "layout_worker_configured": false
+    },
+    "retained_assertions_pass": true,
+    "retained_ms": 21.5
+  },
+  {
+    "id": "report.pptx-repeat1",
+    "status": 200,
+    "response_bytes": 5570,
+    "elapsed_ms": 1556.38,
+    "quality": "ok",
+    "tier": "direct/direct-native",
+    "chars": 2439,
+    "text_sha256": "f97639f76ec58a952c216dc6794db9f58bcf52d4ea02a00a5ba36d66635e1a2b",
+    "warnings": [
+      "OCR can misread numbers, layout and tables; verify against the source image. Word confidence is not an accuracy probability."
+    ],
+    "assertions": {
+      "5120 megawatts": true
+    },
+    "assertions_pass": true,
+    "document_id": "doc_4ffae020569b4ad1a27a83632c80d13a",
+    "truncated": false,
+    "content_assessment": {
+      "revision": 1,
+      "text_sha256": "f97639f76ec58a952c216dc6794db9f58bcf52d4ea02a00a5ba36d66635e1a2b",
+      "pollution": "not_assessed",
+      "completeness": "unknown",
+      "usable_content": "unverified",
+      "inspected_chars": 0,
+      "suspected_chars": 0,
+      "unflagged_chars": 2439,
+      "spans": []
+    },
+    "cached": false,
+    "failure_reason": null,
+    "source_partial": false,
+    "extraction": {
+      "warnings": [
+        "OCR can misread numbers, layout and tables; verify against the source image. Word confidence is not an accuracy probability."
+      ],
+      "partial": false,
+      "embedded_images": [
+        "docProps/thumbnail.jpeg"
+      ],
+      "source_sha256": "53e9c9850116cb4dce6c0f74a935128c240597417056a6b04452db45cd9d7716",
+      "source_bytes": 34912
+    },
+    "acquisition": {
+      "rendered": false,
+      "wait_for": "",
+      "render_delay": null,
+      "extraction_limit": 1000000,
+      "page_start": 1,
+      "page_end": null,
+      "ocr_language": "",
+      "ocr_mode": "auto",
+      "ocr_allowed": true,
+      "row_start": 1,
+      "row_end": null,
+      "sheet": "",
+      "max_cell_chars": null,
+      "document_mode": "auto",
+      "scan_layout_revision": 1,
+      "format_worker_configured": true,
+      "layout_worker_configured": false
+    },
+    "retained_assertions_pass": true,
+    "retained_ms": 23.54
+  },
+  {
+    "id": "report.odt-repeat1",
+    "status": 200,
+    "response_bytes": 9277,
+    "elapsed_ms": 1098.04,
+    "quality": "ok",
+    "tier": "direct/direct-native",
+    "chars": 6729,
+    "text_sha256": "8aa8b533df6935a81f87ccbd6552baac9a4314c1382d11233dd40f8efd4807f6",
+    "warnings": [],
+    "assertions": {
+      "5120 megawatts": true
+    },
+    "assertions_pass": true,
+    "document_id": "doc_d73dd01f128e4eb9ae9ecc7934b0b484",
+    "truncated": false,
+    "content_assessment": {
+      "revision": 1,
+      "text_sha256": "8aa8b533df6935a81f87ccbd6552baac9a4314c1382d11233dd40f8efd4807f6",
+      "pollution": "not_assessed",
+      "completeness": "unknown",
+      "usable_content": "unverified",
+      "inspected_chars": 0,
+      "suspected_chars": 0,
+      "unflagged_chars": 6729,
+      "spans": []
+    },
+    "cached": false,
+    "failure_reason": null,
+    "source_partial": false,
+    "extraction": {
+      "warnings": [],
+      "partial": false,
+      "embedded_images": [],
+      "source_sha256": "1b1da6c3e9de5c774d80d60681cc23b225fc036ab51fa856f26da5f15779c0dc",
+      "source_bytes": 1617
+    },
+    "acquisition": {
+      "rendered": false,
+      "wait_for": "",
+      "render_delay": null,
+      "extraction_limit": 1000000,
+      "page_start": 1,
+      "page_end": null,
+      "ocr_language": "",
+      "ocr_mode": "auto",
+      "ocr_allowed": true,
+      "row_start": 1,
+      "row_end": null,
+      "sheet": "",
+      "max_cell_chars": null,
+      "document_mode": "auto",
+      "scan_layout_revision": 1,
+      "format_worker_configured": true,
+      "layout_worker_configured": false
+    },
+    "retained_assertions_pass": true,
+    "retained_ms": 29.51
+  },
+  {
+    "id": "report.epub-repeat1",
+    "status": 200,
+    "response_bytes": 14812,
+    "elapsed_ms": 1521.11,
+    "quality": "ok",
+    "tier": "direct/direct-native",
+    "chars": 12000,
+    "text_sha256": "ea63984c1cd66715e81447cf69b2cd2376d9bd7f22fbc313799a37a6f3d3723c",
+    "warnings": [],
+    "assertions": {
+      "5120 megawatts": true
+    },
+    "assertions_pass": true,
+    "document_id": "doc_e2ab2eac0af34bc4902d02b6754d8be0",
+    "truncated": true,
+    "content_assessment": {
+      "revision": 1,
+      "text_sha256": "7a1bfe438872e7461eb5d134cccc5736a99483b3312e95a11183b41ba29ffcad",
+      "pollution": "not_assessed",
+      "completeness": "unknown",
+      "usable_content": "unverified",
+      "inspected_chars": 0,
+      "suspected_chars": 0,
+      "unflagged_chars": 13534,
+      "spans": []
+    },
+    "cached": false,
+    "failure_reason": null,
+    "source_partial": false,
+    "extraction": {
+      "warnings": [],
+      "partial": false,
+      "embedded_images": [],
+      "source_sha256": "a656955d943aa1abd620a261994abac85d70e2df363c6d8b1a108c2c2ae11187",
+      "source_bytes": 16985
+    },
+    "acquisition": {
+      "rendered": false,
+      "wait_for": "",
+      "render_delay": null,
+      "extraction_limit": 1000000,
+      "page_start": 1,
+      "page_end": null,
+      "ocr_language": "",
+      "ocr_mode": "auto",
+      "ocr_allowed": true,
+      "row_start": 1,
+      "row_end": null,
+      "sheet": "",
+      "max_cell_chars": null,
+      "document_mode": "auto",
+      "scan_layout_revision": 1,
+      "format_worker_configured": true,
+      "layout_worker_configured": false
+    },
+    "retained_assertions_pass": true,
+    "retained_ms": 10.47
+  },
+  {
+    "id": "report.rtf-repeat1",
+    "status": 200,
+    "response_bytes": 4762,
+    "elapsed_ms": 1354.5,
+    "quality": "ok",
+    "tier": "direct/direct-native",
+    "chars": 2219,
+    "text_sha256": "849333027138356460afbf307114d0b7ef9df219a5514bd2bcd010c9aa61d13a",
+    "warnings": [],
+    "assertions": {
+      "5120 megawatts": true
+    },
+    "assertions_pass": true,
+    "document_id": "doc_9737bb683af84845a0246f62a5ce88d5",
+    "truncated": false,
+    "content_assessment": {
+      "revision": 1,
+      "text_sha256": "849333027138356460afbf307114d0b7ef9df219a5514bd2bcd010c9aa61d13a",
+      "pollution": "not_assessed",
+      "completeness": "unknown",
+      "usable_content": "unverified",
+      "inspected_chars": 0,
+      "suspected_chars": 0,
+      "unflagged_chars": 2219,
+      "spans": []
+    },
+    "cached": false,
+    "failure_reason": null,
+    "source_partial": false,
+    "extraction": {
+      "warnings": [],
+      "partial": false,
+      "source_sha256": "4bab3f2107d1d82b7d66f26aa9919839b5775205c9aa208414ef934365bfc8c6",
+      "source_bytes": 2354
+    },
+    "acquisition": {
+      "rendered": false,
+      "wait_for": "",
+      "render_delay": null,
+      "extraction_limit": 1000000,
+      "page_start": 1,
+      "page_end": null,
+      "ocr_language": "",
+      "ocr_mode": "auto",
+      "ocr_allowed": true,
+      "row_start": 1,
+      "row_end": null,
+      "sheet": "",
+      "max_cell_chars": null,
+      "document_mode": "auto",
+      "scan_layout_revision": 1,
+      "format_worker_configured": true,
+      "layout_worker_configured": false
+    },
+    "retained_assertions_pass": true,
+    "retained_ms": 22.63
+  },
+  {
+    "id": "article.html-repeat2",
+    "status": 200,
+    "response_bytes": 14627,
+    "elapsed_ms": 1531.59,
+    "quality": "ok",
+    "tier": "direct/trafilatura",
+    "chars": 12000,
+    "text_sha256": "ea63984c1cd66715e81447cf69b2cd2376d9bd7f22fbc313799a37a6f3d3723c",
+    "warnings": [],
+    "assertions": {
+      "5120 megawatts": true
+    },
+    "assertions_pass": true,
+    "document_id": "doc_e357c344822d40c682724db1684c230a",
+    "truncated": true,
+    "content_assessment": {
+      "revision": 1,
+      "text_sha256": "7a1bfe438872e7461eb5d134cccc5736a99483b3312e95a11183b41ba29ffcad",
+      "pollution": "none_detected",
+      "completeness": "unknown",
+      "usable_content": "unverified",
+      "inspected_chars": 13534,
+      "suspected_chars": 0,
+      "unflagged_chars": 13534,
+      "spans": []
+    },
+    "cached": false,
+    "failure_reason": null,
+    "source_partial": false,
+    "extraction": {},
+    "acquisition": {
+      "rendered": false,
+      "wait_for": "",
+      "render_delay": null,
+      "extraction_limit": 1000000,
+      "page_start": 1,
+      "page_end": null,
+      "ocr_language": "",
+      "ocr_mode": "auto",
+      "ocr_allowed": true,
+      "row_start": 1,
+      "row_end": null,
+      "sheet": "",
+      "max_cell_chars": null,
+      "document_mode": "auto",
+      "scan_layout_revision": 1,
+      "format_worker_configured": true,
+      "layout_worker_configured": false
+    },
+    "retained_assertions_pass": true,
+    "retained_ms": 18.97
+  },
+  {
+    "id": "table.html-repeat2",
+    "status": 200,
+    "response_bytes": 14120,
+    "elapsed_ms": 1476.39,
+    "quality": "ok",
+    "tier": "direct/trafilatura",
+    "chars": 11769,
+    "text_sha256": "ab0144f3742f129071d428e82e975ad09e9c951c146d1413043df811875e1c2b",
+    "warnings": [],
+    "assertions": {
+      "5120 megawatts": true
+    },
+    "assertions_pass": true,
+    "document_id": "doc_c36e8d879fce45d48bebfb8dc31ab79d",
+    "truncated": false,
+    "content_assessment": {
+      "revision": 1,
+      "text_sha256": "ab0144f3742f129071d428e82e975ad09e9c951c146d1413043df811875e1c2b",
+      "pollution": "none_detected",
+      "completeness": "unknown",
+      "usable_content": "unverified",
+      "inspected_chars": 11769,
+      "suspected_chars": 0,
+      "unflagged_chars": 11769,
+      "spans": []
+    },
+    "cached": false,
+    "failure_reason": null,
+    "source_partial": false,
+    "extraction": {},
+    "acquisition": {
+      "rendered": false,
+      "wait_for": "",
+      "render_delay": null,
+      "extraction_limit": 1000000,
+      "page_start": 1,
+      "page_end": null,
+      "ocr_language": "",
+      "ocr_mode": "auto",
+      "ocr_allowed": true,
+      "row_start": 1,
+      "row_end": null,
+      "sheet": "",
+      "max_cell_chars": null,
+      "document_mode": "auto",
+      "scan_layout_revision": 1,
+      "format_worker_configured": true,
+      "layout_worker_configured": false
+    },
+    "retained_assertions_pass": true,
+    "retained_ms": 18.63
+  },
+  {
+    "id": "values.csv-repeat2",
+    "status": 200,
+    "response_bytes": 15278,
+    "elapsed_ms": 1382.48,
+    "quality": "ok",
+    "tier": "direct/direct-native",
+    "chars": 12000,
+    "text_sha256": "31b4a4babdfc29d2d163e1fce9bb86d787859832e638c0613ff3f82314fc6be1",
+    "warnings": [],
+    "assertions": {
+      "5120 megawatts": true
+    },
+    "assertions_pass": true,
+    "document_id": "doc_d4e51221ae3e47d5b6e2c475399ebe54",
+    "truncated": true,
+    "content_assessment": {
+      "revision": 1,
+      "text_sha256": "afca0bb0dd6135d6b993e1844cb169eb12660a571e16409f63f635986ed58375",
+      "pollution": "not_assessed",
+      "completeness": "unknown",
+      "usable_content": "unverified",
+      "inspected_chars": 0,
+      "suspected_chars": 0,
+      "unflagged_chars": 51927,
+      "spans": []
+    },
+    "cached": false,
+    "failure_reason": null,
+    "source_partial": false,
+    "extraction": {
+      "warnings": [],
+      "partial": false,
+      "tables": [
+        {
+          "sheet": "",
+          "total_rows": 501,
+          "row_start": 1,
+          "last_row": 501,
+          "returned_rows": 501,
+          "next_row": null,
+          "cell_encoding": "HTML entities for ampersands and pipe separators"
+        }
+      ],
+      "source_sha256": "54fa219ca5368a8c70b709648d35a884c3419878ce98f6d9fa64279cda7a4446",
+      "source_bytes": 46918
+    },
+    "acquisition": {
+      "rendered": false,
+      "wait_for": "",
+      "render_delay": null,
+      "extraction_limit": 1000000,
+      "page_start": 1,
+      "page_end": null,
+      "ocr_language": "",
+      "ocr_mode": "auto",
+      "ocr_allowed": true,
+      "row_start": 1,
+      "row_end": null,
+      "sheet": "",
+      "max_cell_chars": null,
+      "document_mode": "auto",
+      "scan_layout_revision": 1,
+      "format_worker_configured": true,
+      "layout_worker_configured": false
+    },
+    "retained_assertions_pass": true,
+    "retained_ms": 22.64
+  },
+  {
+    "id": "report.pdf-repeat2",
+    "status": 200,
+    "response_bytes": 21652,
+    "elapsed_ms": 2348.98,
+    "quality": "ok",
+    "tier": "direct/direct-native",
+    "chars": 5704,
+    "text_sha256": "f3bff21d7de30321417c8e4350659faddfc64329c8caa3ef80a16cdbce4a227d",
+    "warnings": [],
+    "assertions": {
+      "5120 megawatts": true
+    },
+    "assertions_pass": true,
+    "document_id": "doc_8e8a18bed6e143238229df635313182d",
+    "truncated": false,
+    "content_assessment": {
+      "revision": 1,
+      "text_sha256": "f3bff21d7de30321417c8e4350659faddfc64329c8caa3ef80a16cdbce4a227d",
+      "pollution": "not_assessed",
+      "completeness": "unknown",
+      "usable_content": "unverified",
+      "inspected_chars": 0,
+      "suspected_chars": 0,
+      "unflagged_chars": 5704,
+      "spans": []
+    },
+    "cached": false,
+    "failure_reason": null,
+    "source_partial": false,
+    "extraction": {
+      "pages": [
+        {
+          "page": 1,
+          "method": "text",
+          "text_chars": 1890,
+          "text_layer_blocks": [
+            {
+              "bbox": [
+                50.0,
+                51.724998474121094,
+                258.8279724121094,
+                75.08300018310547
+              ],
+              "text": "Cedar energy report page 1\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                89.25,
+                409.60986328125,
+                102.98999786376953
+              ],
+              "text": "1. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                109.25,
+                409.60986328125,
+                122.98999786376953
+              ],
+              "text": "2. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                129.25,
+                409.60986328125,
+                142.99000549316406
+              ],
+              "text": "3. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                149.25,
+                409.60986328125,
+                162.99000549316406
+              ],
+              "text": "4. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                169.25,
+                409.60986328125,
+                182.99000549316406
+              ],
+              "text": "5. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                189.25,
+                409.60986328125,
+                202.99000549316406
+              ],
+              "text": "6. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                209.25,
+                409.60986328125,
+                222.99000549316406
+              ],
+              "text": "7. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                229.25,
+                409.60986328125,
+                242.99000549316406
+              ],
+              "text": "8. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                249.25,
+                409.60986328125,
+                262.989990234375
+              ],
+              "text": "9. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                269.25,
+                415.1698913574219,
+                282.989990234375
+              ],
+              "text": "10. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                289.25,
+                415.1698913574219,
+                302.989990234375
+              ],
+              "text": "11. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                309.25,
+                415.1698913574219,
+                322.989990234375
+              ],
+              "text": "12. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                329.25,
+                415.1698913574219,
+                342.989990234375
+              ],
+              "text": "13. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                349.25,
+                415.1698913574219,
+                362.989990234375
+              ],
+              "text": "14. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                369.25,
+                415.1698913574219,
+                382.989990234375
+              ],
+              "text": "15. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                389.25,
+                415.1698913574219,
+                402.989990234375
+              ],
+              "text": "16. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                409.25,
+                415.1698913574219,
+                422.989990234375
+              ],
+              "text": "17. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                429.25,
+                415.1698913574219,
+                442.989990234375
+              ],
+              "text": "18. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                449.25,
+                415.1698913574219,
+                462.989990234375
+              ],
+              "text": "19. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                469.25,
+                415.1698913574219,
+                482.989990234375
+              ],
+              "text": "20. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                489.25,
+                415.1698913574219,
+                502.989990234375
+              ],
+              "text": "21. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                509.25,
+                415.1698913574219,
+                522.989990234375
+              ],
+              "text": "22. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                529.25,
+                415.1698913574219,
+                542.989990234375
+              ],
+              "text": "23. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                549.25,
+                415.1698913574219,
+                562.989990234375
+              ],
+              "text": "24. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            }
+          ],
+          "layout_coordinate_space": "PDF points, origin top-left",
+          "layout_may_be_incomplete": true
+        },
+        {
+          "page": 2,
+          "method": "text",
+          "text_chars": 1890,
+          "text_layer_blocks": [
+            {
+              "bbox": [
+                50.0,
+                51.724998474121094,
+                258.8279724121094,
+                75.08300018310547
+              ],
+              "text": "Cedar energy report page 2\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                89.25,
+                409.60986328125,
+                102.98999786376953
+              ],
+              "text": "1. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                109.25,
+                409.60986328125,
+                122.98999786376953
+              ],
+              "text": "2. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                129.25,
+                409.60986328125,
+                142.99000549316406
+              ],
+              "text": "3. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                149.25,
+                409.60986328125,
+                162.99000549316406
+              ],
+              "text": "4. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                169.25,
+                409.60986328125,
+                182.99000549316406
+              ],
+              "text": "5. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                189.25,
+                409.60986328125,
+                202.99000549316406
+              ],
+              "text": "6. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                209.25,
+                409.60986328125,
+                222.99000549316406
+              ],
+              "text": "7. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                229.25,
+                409.60986328125,
+                242.99000549316406
+              ],
+              "text": "8. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                249.25,
+                409.60986328125,
+                262.989990234375
+              ],
+              "text": "9. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                269.25,
+                415.1698913574219,
+                282.989990234375
+              ],
+              "text": "10. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                289.25,
+                415.1698913574219,
+                302.989990234375
+              ],
+              "text": "11. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                309.25,
+                415.1698913574219,
+                322.989990234375
+              ],
+              "text": "12. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                329.25,
+                415.1698913574219,
+                342.989990234375
+              ],
+              "text": "13. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                349.25,
+                415.1698913574219,
+                362.989990234375
+              ],
+              "text": "14. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                369.25,
+                415.1698913574219,
+                382.989990234375
+              ],
+              "text": "15. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                389.25,
+                415.1698913574219,
+                402.989990234375
+              ],
+              "text": "16. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                409.25,
+                415.1698913574219,
+                422.989990234375
+              ],
+              "text": "17. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                429.25,
+                415.1698913574219,
+                442.989990234375
+              ],
+              "text": "18. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                449.25,
+                415.1698913574219,
+                462.989990234375
+              ],
+              "text": "19. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                469.25,
+                415.1698913574219,
+                482.989990234375
+              ],
+              "text": "20. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                489.25,
+                415.1698913574219,
+                502.989990234375
+              ],
+              "text": "21. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                509.25,
+                415.1698913574219,
+                522.989990234375
+              ],
+              "text": "22. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                529.25,
+                415.1698913574219,
+                542.989990234375
+              ],
+              "text": "23. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                549.25,
+                415.1698913574219,
+                562.989990234375
+              ],
+              "text": "24. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            }
+          ],
+          "layout_coordinate_space": "PDF points, origin top-left",
+          "layout_may_be_incomplete": true
+        },
+        {
+          "page": 3,
+          "method": "text",
+          "text_chars": 1890,
+          "text_layer_blocks": [
+            {
+              "bbox": [
+                50.0,
+                51.724998474121094,
+                258.8279724121094,
+                75.08300018310547
+              ],
+              "text": "Cedar energy report page 3\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                89.25,
+                409.60986328125,
+                102.98999786376953
+              ],
+              "text": "1. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                109.25,
+                409.60986328125,
+                122.98999786376953
+              ],
+              "text": "2. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                129.25,
+                409.60986328125,
+                142.99000549316406
+              ],
+              "text": "3. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                149.25,
+                409.60986328125,
+                162.99000549316406
+              ],
+              "text": "4. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                169.25,
+                409.60986328125,
+                182.99000549316406
+              ],
+              "text": "5. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                189.25,
+                409.60986328125,
+                202.99000549316406
+              ],
+              "text": "6. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                209.25,
+                409.60986328125,
+                222.99000549316406
+              ],
+              "text": "7. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                229.25,
+                409.60986328125,
+                242.99000549316406
+              ],
+              "text": "8. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                249.25,
+                409.60986328125,
+                262.989990234375
+              ],
+              "text": "9. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                269.25,
+                415.1698913574219,
+                282.989990234375
+              ],
+              "text": "10. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                289.25,
+                415.1698913574219,
+                302.989990234375
+              ],
+              "text": "11. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                309.25,
+                415.1698913574219,
+                322.989990234375
+              ],
+              "text": "12. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                329.25,
+                415.1698913574219,
+                342.989990234375
+              ],
+              "text": "13. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                349.25,
+                415.1698913574219,
+                362.989990234375
+              ],
+              "text": "14. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                369.25,
+                415.1698913574219,
+                382.989990234375
+              ],
+              "text": "15. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                389.25,
+                415.1698913574219,
+                402.989990234375
+              ],
+              "text": "16. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                409.25,
+                415.1698913574219,
+                422.989990234375
+              ],
+              "text": "17. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                429.25,
+                415.1698913574219,
+                442.989990234375
+              ],
+              "text": "18. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                449.25,
+                415.1698913574219,
+                462.989990234375
+              ],
+              "text": "19. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                469.25,
+                415.1698913574219,
+                482.989990234375
+              ],
+              "text": "20. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                489.25,
+                415.1698913574219,
+                502.989990234375
+              ],
+              "text": "21. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                509.25,
+                415.1698913574219,
+                522.989990234375
+              ],
+              "text": "22. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                529.25,
+                415.1698913574219,
+                542.989990234375
+              ],
+              "text": "23. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            },
+            {
+              "bbox": [
+                50.0,
+                549.25,
+                415.1698913574219,
+                562.989990234375
+              ],
+              "text": "24. Dethrottled benchmark: cedar observatory measured 5120 megawatts in 2026.\n",
+              "text_truncated": false
+            }
+          ],
+          "layout_coordinate_space": "PDF points, origin top-left",
+          "layout_may_be_incomplete": true
+        }
+      ],
+      "total_pages": 3,
+      "next_page": null,
+      "partial": false,
+      "warnings": [],
+      "source_sha256": "e7dd5544b282db015c886fa9e33a0ce26e766f817caf0f42b37a07db1e8d1128",
+      "source_bytes": 19195
+    },
+    "acquisition": {
+      "rendered": false,
+      "wait_for": "",
+      "render_delay": null,
+      "extraction_limit": 1000000,
+      "page_start": 1,
+      "page_end": null,
+      "ocr_language": "",
+      "ocr_mode": "auto",
+      "ocr_allowed": true,
+      "row_start": 1,
+      "row_end": null,
+      "sheet": "",
+      "max_cell_chars": null,
+      "document_mode": "auto",
+      "scan_layout_revision": 1,
+      "format_worker_configured": true,
+      "layout_worker_configured": false
+    },
+    "retained_assertions_pass": true,
+    "retained_ms": 7.25
+  },
+  {
+    "id": "scan.pdf-repeat2",
+    "status": 200,
+    "response_bytes": 3586,
+    "elapsed_ms": 1981.03,
+    "quality": "ok",
+    "tier": "direct/direct-native",
+    "chars": 379,
+    "text_sha256": "de6e2078da6dc631237c399f1ad7ad517f6851f140b9276506159e983616cca9",
+    "warnings": [
+      "OCR can misread numbers, layout and tables; verify against the source image. Word confidence is not an accuracy probability."
+    ],
+    "assertions": {
+      "5120 megawatts": true
+    },
+    "assertions_pass": true,
+    "document_id": "doc_f29475e0a73546709b125594a02167c1",
+    "truncated": false,
+    "content_assessment": {
+      "revision": 1,
+      "text_sha256": "de6e2078da6dc631237c399f1ad7ad517f6851f140b9276506159e983616cca9",
+      "pollution": "not_assessed",
+      "completeness": "unknown",
+      "usable_content": "unverified",
+      "inspected_chars": 0,
+      "suspected_chars": 0,
+      "unflagged_chars": 379,
+      "spans": []
+    },
+    "cached": false,
+    "failure_reason": null,
+    "source_partial": false,
+    "extraction": {
+      "pages": [
+        {
+          "page": 1,
+          "method": "ocr",
+          "text_chars": 369,
+          "text_layer_blocks": [],
+          "layout_coordinate_space": "PDF points, origin top-left",
+          "layout_may_be_incomplete": true
+        }
+      ],
+      "total_pages": 1,
+      "next_page": null,
+      "partial": false,
+      "warnings": [
+        "OCR can misread numbers, layout and tables; verify against the source image. Word confidence is not an accuracy probability."
+      ],
+      "source_sha256": "98586db1f826f0b621ee5c20539ab70cd4407a332492e150f78700d3b4b08909",
+      "source_bytes": 3783567
+    },
+    "acquisition": {
+      "rendered": false,
+      "wait_for": "",
+      "render_delay": null,
+      "extraction_limit": 1000000,
+      "page_start": 1,
+      "page_end": null,
+      "ocr_language": "",
+      "ocr_mode": "auto",
+      "ocr_allowed": true,
+      "row_start": 1,
+      "row_end": null,
+      "sheet": "",
+      "max_cell_chars": null,
+      "document_mode": "auto",
+      "scan_layout_revision": 1,
+      "format_worker_configured": true,
+      "layout_worker_configured": false
+    },
+    "retained_assertions_pass": true,
+    "retained_ms": 3.62
+  },
+  {
+    "id": "report.docx-repeat2",
+    "status": 200,
+    "response_bytes": 9882,
+    "elapsed_ms": 444.64,
+    "quality": "ok",
+    "tier": "direct/direct-native",
+    "chars": 6749,
+    "text_sha256": "c6e5a46d4c0e61ab67d4b245e3a269b84a9b156ff5b15d03fa95364591634679",
+    "warnings": [
+      "OCR can misread numbers, layout and tables; verify against the source image. Word confidence is not an accuracy probability."
+    ],
+    "assertions": {
+      "5120 megawatts": true
+    },
+    "assertions_pass": true,
+    "document_id": "doc_aab8dea452b4489297b11ea0ae6119a8",
+    "truncated": false,
+    "content_assessment": {
+      "revision": 1,
+      "text_sha256": "c6e5a46d4c0e61ab67d4b245e3a269b84a9b156ff5b15d03fa95364591634679",
+      "pollution": "not_assessed",
+      "completeness": "unknown",
+      "usable_content": "unverified",
+      "inspected_chars": 0,
+      "suspected_chars": 0,
+      "unflagged_chars": 6749,
+      "spans": []
+    },
+    "cached": false,
+    "failure_reason": null,
+    "source_partial": false,
+    "extraction": {
+      "warnings": [
+        "OCR can misread numbers, layout and tables; verify against the source image. Word confidence is not an accuracy probability."
+      ],
+      "partial": false,
+      "embedded_images": [
+        "docProps/thumbnail.jpeg"
+      ],
+      "source_sha256": "f1759ba40ef34985e022091ba500be608258226348d7178d7b29551d3c18dd1b",
+      "source_bytes": 36825
+    },
+    "acquisition": {
+      "rendered": false,
+      "wait_for": "",
+      "render_delay": null,
+      "extraction_limit": 1000000,
+      "page_start": 1,
+      "page_end": null,
+      "ocr_language": "",
+      "ocr_mode": "auto",
+      "ocr_allowed": true,
+      "row_start": 1,
+      "row_end": null,
+      "sheet": "",
+      "max_cell_chars": null,
+      "document_mode": "auto",
+      "scan_layout_revision": 1,
+      "format_worker_configured": true,
+      "layout_worker_configured": false
+    },
+    "retained_assertions_pass": true,
+    "retained_ms": 17.37
+  },
+  {
+    "id": "report.xlsx-repeat2",
+    "status": 200,
+    "response_bytes": 15395,
+    "elapsed_ms": 1155.55,
+    "quality": "ok",
+    "tier": "direct/direct-native",
+    "chars": 12000,
+    "text_sha256": "a9d60476060cefaa05dc3e0f835303338191a45af7a482640f5af1daff2f0002",
+    "warnings": [],
+    "assertions": {
+      "5120 megawatts": true
+    },
+    "assertions_pass": true,
+    "document_id": "doc_66fc903506fe4e488a4547715d33ebb1",
+    "truncated": true,
+    "content_assessment": {
+      "revision": 1,
+      "text_sha256": "5fa93e420477083122633d0be3c673b62529f876be46db3eb11f6728e7e7283c",
+      "pollution": "not_assessed",
+      "completeness": "unknown",
+      "usable_content": "unverified",
+      "inspected_chars": 0,
+      "suspected_chars": 0,
+      "unflagged_chars": 51936,
+      "spans": []
+    },
+    "cached": false,
+    "failure_reason": null,
+    "source_partial": false,
+    "extraction": {
+      "warnings": [],
+      "partial": false,
+      "available_sheets": [
+        "Sheet"
+      ],
+      "tables": [
+        {
+          "sheet": "Sheet",
+          "total_rows": 501,
+          "row_start": 1,
+          "last_row": 501,
+          "returned_rows": 501,
+          "next_row": null,
+          "cell_encoding": "HTML entities for ampersands and pipe separators"
+        }
+      ],
+      "embedded_images": [],
+      "source_sha256": "a94e143086e48c7c0fece001872703d01f38c8c4121d555793585b26d6a73ac0",
+      "source_bytes": 15393
+    },
+    "acquisition": {
+      "rendered": false,
+      "wait_for": "",
+      "render_delay": null,
+      "extraction_limit": 1000000,
+      "page_start": 1,
+      "page_end": null,
+      "ocr_language": "",
+      "ocr_mode": "auto",
+      "ocr_allowed": true,
+      "row_start": 1,
+      "row_end": null,
+      "sheet": "",
+      "max_cell_chars": null,
+      "document_mode": "auto",
+      "scan_layout_revision": 1,
+      "format_worker_configured": true,
+      "layout_worker_configured": false
+    },
+    "retained_assertions_pass": true,
+    "retained_ms": 18.77
+  },
+  {
+    "id": "report.pptx-repeat2",
+    "status": 200,
+    "response_bytes": 5570,
+    "elapsed_ms": 1678.37,
+    "quality": "ok",
+    "tier": "direct/direct-native",
+    "chars": 2439,
+    "text_sha256": "f97639f76ec58a952c216dc6794db9f58bcf52d4ea02a00a5ba36d66635e1a2b",
+    "warnings": [
+      "OCR can misread numbers, layout and tables; verify against the source image. Word confidence is not an accuracy probability."
+    ],
+    "assertions": {
+      "5120 megawatts": true
+    },
+    "assertions_pass": true,
+    "document_id": "doc_4ffae020569b4ad1a27a83632c80d13a",
+    "truncated": false,
+    "content_assessment": {
+      "revision": 1,
+      "text_sha256": "f97639f76ec58a952c216dc6794db9f58bcf52d4ea02a00a5ba36d66635e1a2b",
+      "pollution": "not_assessed",
+      "completeness": "unknown",
+      "usable_content": "unverified",
+      "inspected_chars": 0,
+      "suspected_chars": 0,
+      "unflagged_chars": 2439,
+      "spans": []
+    },
+    "cached": false,
+    "failure_reason": null,
+    "source_partial": false,
+    "extraction": {
+      "warnings": [
+        "OCR can misread numbers, layout and tables; verify against the source image. Word confidence is not an accuracy probability."
+      ],
+      "partial": false,
+      "embedded_images": [
+        "docProps/thumbnail.jpeg"
+      ],
+      "source_sha256": "53e9c9850116cb4dce6c0f74a935128c240597417056a6b04452db45cd9d7716",
+      "source_bytes": 34912
+    },
+    "acquisition": {
+      "rendered": false,
+      "wait_for": "",
+      "render_delay": null,
+      "extraction_limit": 1000000,
+      "page_start": 1,
+      "page_end": null,
+      "ocr_language": "",
+      "ocr_mode": "auto",
+      "ocr_allowed": true,
+      "row_start": 1,
+      "row_end": null,
+      "sheet": "",
+      "max_cell_chars": null,
+      "document_mode": "auto",
+      "scan_layout_revision": 1,
+      "format_worker_configured": true,
+      "layout_worker_configured": false
+    },
+    "retained_assertions_pass": true,
+    "retained_ms": 20.76
+  },
+  {
+    "id": "report.odt-repeat2",
+    "status": 200,
+    "response_bytes": 9277,
+    "elapsed_ms": 1115.77,
+    "quality": "ok",
+    "tier": "direct/direct-native",
+    "chars": 6729,
+    "text_sha256": "8aa8b533df6935a81f87ccbd6552baac9a4314c1382d11233dd40f8efd4807f6",
+    "warnings": [],
+    "assertions": {
+      "5120 megawatts": true
+    },
+    "assertions_pass": true,
+    "document_id": "doc_d73dd01f128e4eb9ae9ecc7934b0b484",
+    "truncated": false,
+    "content_assessment": {
+      "revision": 1,
+      "text_sha256": "8aa8b533df6935a81f87ccbd6552baac9a4314c1382d11233dd40f8efd4807f6",
+      "pollution": "not_assessed",
+      "completeness": "unknown",
+      "usable_content": "unverified",
+      "inspected_chars": 0,
+      "suspected_chars": 0,
+      "unflagged_chars": 6729,
+      "spans": []
+    },
+    "cached": false,
+    "failure_reason": null,
+    "source_partial": false,
+    "extraction": {
+      "warnings": [],
+      "partial": false,
+      "embedded_images": [],
+      "source_sha256": "1b1da6c3e9de5c774d80d60681cc23b225fc036ab51fa856f26da5f15779c0dc",
+      "source_bytes": 1617
+    },
+    "acquisition": {
+      "rendered": false,
+      "wait_for": "",
+      "render_delay": null,
+      "extraction_limit": 1000000,
+      "page_start": 1,
+      "page_end": null,
+      "ocr_language": "",
+      "ocr_mode": "auto",
+      "ocr_allowed": true,
+      "row_start": 1,
+      "row_end": null,
+      "sheet": "",
+      "max_cell_chars": null,
+      "document_mode": "auto",
+      "scan_layout_revision": 1,
+      "format_worker_configured": true,
+      "layout_worker_configured": false
+    },
+    "retained_assertions_pass": true,
+    "retained_ms": 17.6
+  },
+  {
+    "id": "report.epub-repeat2",
+    "status": 200,
+    "response_bytes": 14813,
+    "elapsed_ms": 1478.45,
+    "quality": "ok",
+    "tier": "direct/direct-native",
+    "chars": 12000,
+    "text_sha256": "ea63984c1cd66715e81447cf69b2cd2376d9bd7f22fbc313799a37a6f3d3723c",
+    "warnings": [],
+    "assertions": {
+      "5120 megawatts": true
+    },
+    "assertions_pass": true,
+    "document_id": "doc_e2ab2eac0af34bc4902d02b6754d8be0",
+    "truncated": true,
+    "content_assessment": {
+      "revision": 1,
+      "text_sha256": "7a1bfe438872e7461eb5d134cccc5736a99483b3312e95a11183b41ba29ffcad",
+      "pollution": "not_assessed",
+      "completeness": "unknown",
+      "usable_content": "unverified",
+      "inspected_chars": 0,
+      "suspected_chars": 0,
+      "unflagged_chars": 13534,
+      "spans": []
+    },
+    "cached": false,
+    "failure_reason": null,
+    "source_partial": false,
+    "extraction": {
+      "warnings": [],
+      "partial": false,
+      "embedded_images": [],
+      "source_sha256": "a656955d943aa1abd620a261994abac85d70e2df363c6d8b1a108c2c2ae11187",
+      "source_bytes": 16985
+    },
+    "acquisition": {
+      "rendered": false,
+      "wait_for": "",
+      "render_delay": null,
+      "extraction_limit": 1000000,
+      "page_start": 1,
+      "page_end": null,
+      "ocr_language": "",
+      "ocr_mode": "auto",
+      "ocr_allowed": true,
+      "row_start": 1,
+      "row_end": null,
+      "sheet": "",
+      "max_cell_chars": null,
+      "document_mode": "auto",
+      "scan_layout_revision": 1,
+      "format_worker_configured": true,
+      "layout_worker_configured": false
+    },
+    "retained_assertions_pass": true,
+    "retained_ms": 11.25
+  },
+  {
+    "id": "report.rtf-repeat2",
+    "status": 200,
+    "response_bytes": 4762,
+    "elapsed_ms": 1391.15,
+    "quality": "ok",
+    "tier": "direct/direct-native",
+    "chars": 2219,
+    "text_sha256": "849333027138356460afbf307114d0b7ef9df219a5514bd2bcd010c9aa61d13a",
+    "warnings": [],
+    "assertions": {
+      "5120 megawatts": true
+    },
+    "assertions_pass": true,
+    "document_id": "doc_9737bb683af84845a0246f62a5ce88d5",
+    "truncated": false,
+    "content_assessment": {
+      "revision": 1,
+      "text_sha256": "849333027138356460afbf307114d0b7ef9df219a5514bd2bcd010c9aa61d13a",
+      "pollution": "not_assessed",
+      "completeness": "unknown",
+      "usable_content": "unverified",
+      "inspected_chars": 0,
+      "suspected_chars": 0,
+      "unflagged_chars": 2219,
+      "spans": []
+    },
+    "cached": false,
+    "failure_reason": null,
+    "source_partial": false,
+    "extraction": {
+      "warnings": [],
+      "partial": false,
+      "source_sha256": "4bab3f2107d1d82b7d66f26aa9919839b5775205c9aa208414ef934365bfc8c6",
+      "source_bytes": 2354
+    },
+    "acquisition": {
+      "rendered": false,
+      "wait_for": "",
+      "render_delay": null,
+      "extraction_limit": 1000000,
+      "page_start": 1,
+      "page_end": null,
+      "ocr_language": "",
+      "ocr_mode": "auto",
+      "ocr_allowed": true,
+      "row_start": 1,
+      "row_end": null,
+      "sheet": "",
+      "max_cell_chars": null,
+      "document_mode": "auto",
+      "scan_layout_revision": 1,
+      "format_worker_configured": true,
+      "layout_worker_configured": false
+    },
+    "retained_assertions_pass": true,
+    "retained_ms": 20.23
+  }
+]

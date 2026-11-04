@@ -1,0 +1,11 @@
+[
+  {
+    "case": "restore-after-worker-restart",
+    "passed": true,
+    "evidence": {
+      "four_storage_types": true,
+      "restored": true
+    },
+    "elapsed_ms": 1224.36
+  }
+]

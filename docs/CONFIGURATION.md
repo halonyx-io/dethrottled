@@ -1,5 +1,7 @@
 # Configuration
 
+![Default stack and optional profiles](assets/profiles.svg)
+
 Base Compose runs five services: API, browser-search, SearXNG, Crawl4AI and the
 MSG/XLSB format reader. Optional profiles add local speech and PDF layout.
 Authenticated remote adapters are a separate overlay. The API image already contains native readers, Tesseract and
@@ -79,8 +81,9 @@ resource caps; the base API/browser services have no explicit Compose CPU quota
 or overall memory cap. `shm_size` is not a total RAM limit.
 
 `WHISPER_MODEL` and `MEDIA_MAX_SECONDS` are mapped by the media overlay. Larger
-speech models need separate memory/quality measurements. ARM64 runtime evaluation
-of the base stack does not certify every newer optional worker or graphics profile.
+speech models need separate memory/quality measurements. The [1.4.0 evaluation](../evaluations/install-showcase/results/2026-11-04/REPORT.md)
+exercised both inference workers on AMD64 and ARM64 with fixed fixtures. That
+does not certify arbitrary documents, longer audio or every graphics profile.
 
 ## Corpus models
 

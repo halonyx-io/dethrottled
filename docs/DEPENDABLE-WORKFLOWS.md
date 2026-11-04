@@ -20,7 +20,7 @@ the [HTTP](HTTP-REFERENCE.md) and [MCP](MCP-REFERENCE.md) references.
 | Raster images | Tesseract OCR when enabled; layout and chart relationships need pixel inspection |
 | VTT/SRT and YouTube captions | Timed text when available; a blocked YouTube page or missing caption is not a universal media download path |
 | Direct audio/video files | Optional local speech worker; transcription covers speech, not video frames or verified speaker identity |
-| MSG/XLSB | Optional Tika worker, limited to these measured fallback formats; attachment completeness and physical cell structure unverified |
+| MSG/XLSB | Tika worker in the default stack; external worker needed for standalone Python; attachment completeness and physical cell structure unverified |
 
 Byte signatures take precedence where reliable. CSV/TSV require a URL or MIME
 hint. An HTML error page advertised as an Office file is not parsed as a valid
