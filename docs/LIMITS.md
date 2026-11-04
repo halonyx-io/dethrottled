@@ -47,19 +47,18 @@ the service. They remain separate from evidence-size and discovery ceilings.
 
 [Documentation home](README.md) · [Agent integration](AGENT-UPGRADES.md) · [Configuration](CONFIGURATION.md)
 
-## Broad browser discovery
+## Browser acquisition and historical broad search
 
-Browser search requests above 12 results collect usable results from the existing
-engines, deduplicate URLs and follow same-origin next-page controls when available.
-Each engine has at most five pages within its existing six-second service budget.
-A blocked or failed later page retains the earlier usable results and reports its
-reason. Smaller requests keep the first-usable-engine path and do not paginate.
-The API forwards the requested count; upstream availability and the finite page/time
-budgets can still produce fewer results than requested. Use facets, refined queries
-or deliberate browser interaction when further discovery is needed.
+The current search API caps the DDG provider family at ten choices before calling
+its TLS/browser acquisition paths. It does not automatically paginate DDG to fill
+a fifteen-result menu: the remaining choices come from the bounded supplementary
+providers. Lite, HTML, TLS and browser fallbacks are acquisition alternatives
+within that same DDG budget.
 
-Cheap TLS discovery also respects broad intent: when a request above 12 results
-gets fewer cheap results than requested, the API invokes the broader browser path
-automatically and merges unique URLs. It retains cheap results if browser recovery
-fails. Search diagnostics expose `breadth` counts and fulfilled/partial status;
-small usable cheap requests still return immediately.
+The private browser worker retains a broader collection path for direct requests
+above twelve results, including bounded same-origin pagination. This is an
+internal capability, not a way to raise the normal public search ceiling. The
+[earlier broad-search evaluation](../evaluations/broad-search/results/2026-11-02/REPORT.md)
+records its original behavior before compact menus were adopted. For broader
+evidence now, refine queries, use research facets within their shared budget,
+follow an observed site frontier or deliberately operate the browser.

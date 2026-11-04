@@ -21,12 +21,12 @@ services; a supported format does not guarantee a correct or complete extraction
 | Local corpus | `corpus_search`, `/corpus/search` | MiniLM and optional E5/FTS retrieval of previously indexed evidence |
 | Speech | Fetch direct audio/video | Optional media worker; captions do not require the speech worker |
 | Advanced PDF layout | `document_mode="layout"` | Optional Docling worker; native parsing/table detection/OCR also have local paths |
-| MSG and XLSB | Normal fetch/read | Optional Tika format worker for these two measured formats |
+| MSG and XLSB | Normal fetch/read | Tika format worker included in the default stack for these two measured formats |
 | HTML-to-PDF output | Separate worker `POST :8788/pdf` | Optional overlay; offline printing of supplied HTML |
 
 The base API image includes HTML and document parsers, Tesseract language data
 and MiniLM/E5 corpus weights. The base Compose stack adds browser-search,
-SearXNG and Crawl4AI. Media/layout model downloads may be needed on first use;
+SearXNG, Crawl4AI and the format reader. Media/layout model downloads may be needed on first use;
 format parsing uses its own worker. See the [format matrix](DEPENDABLE-WORKFLOWS.md)
 and [setup](CONFIGURATION.md).
 

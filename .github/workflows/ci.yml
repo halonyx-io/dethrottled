@@ -28,7 +28,9 @@ jobs:
           # The base install has to work where the heavy extras may not. These
           # two run without [all] on purpose: if an optional import is not
           # properly guarded, this is where it shows up.
-          - os: macos-latest
+          # Pin the standard Intel runner: hosted macOS ARM capacity cancelled
+          # a queued job without executing any steps (4 November 2026).
+          - os: macos-15-intel
             python: "3.12"
             extras: dev
           - os: windows-latest

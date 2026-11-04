@@ -113,8 +113,10 @@ for host in ("q6a", "szbox"):
         median_cpu_percent_one_core=statistics.median(all_cpu),
         p95_cpu_percent_one_core=ordered_cpu[math.ceil(0.95 * len(ordered_cpu)) - 1],
         max_reported_cpu_percent_one_core=max(all_cpu),
-        caveat=("Docker per-container CPU intervals are not exactly aligned; "
-                "summed peaks may overstate instantaneous use."),
+        caveat=(
+            "Docker per-container CPU intervals are not exactly aligned; "
+            "summed peaks may overstate instantaneous use."
+        ),
     )
     contracts = [
         r for i in (1, 2, 3) for r in read(A.results / f"{host}-contracts-{i}/contracts.json")
@@ -170,7 +172,7 @@ for ax, (phase, title) in zip(
             i - 0.14,
             r["median_ms"] / 1000,
             height=0.25,
-            color="#43e0d0" if host == "q6a" else "#82baff",
+            color="#43e0d0",
             label="median" if i == 0 else "",
         )
     ax.set_yticks([0, 1], ["Q6A", "szbox"])
@@ -223,9 +225,16 @@ ax.set_yticks([0, 1], ["Q6A", "szbox"])
 ax.set_xlim(0, metrics["devices"]["q6a"]["fetch-fresh"]["n"])
 ax.set_xlabel("Fixed public targets · n=30 per device · fresh acquisition")
 ax.set_title(
-    "Live reads: useful-looking text, thin results and failures stay separate", loc="left", pad=22
+    "Live fetch outcomes · engine assessment, not verified answer correctness", loc="left", pad=48
 )
-ax.legend(frameon=False, labelcolor="#9eb2bf", ncols=4, loc="lower right")
+ax.legend(
+    frameon=False,
+    labelcolor="#9eb2bf",
+    ncols=4,
+    loc="lower left",
+    bbox_to_anchor=(0, 1.01),
+    borderaxespad=0,
+)
 ax.spines[["top", "right"]].set_visible(False)
 fig.tight_layout()
 fig.savefig(
@@ -271,6 +280,10 @@ fig.savefig(
     },
 )
 plt.close(fig)
+
+for name in ("latency.svg", "live-outcomes.svg", "resources.svg"):
+    path = A.assets / name
+    path.write_text("\n".join(line.rstrip() for line in path.read_text().splitlines()) + "\n")
 
 checksums = {
     str(p.relative_to(A.results)): hashlib.sha256(p.read_bytes()).hexdigest()

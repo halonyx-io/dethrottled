@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "version": "1.4.0",
+  "fresh_core": true,
+  "fresh_optional_libraries": true,
+  "no_services_started_by_pip": true,
+  "pypi_default": true,
+  "pypi_full_initialization": true,
+  "github_default": true,
+  "contracts_per_route": 21,
+  "restart_checks_per_route": 1,
+  "final_endpoint": "http://127.0.0.1:8787"
+}

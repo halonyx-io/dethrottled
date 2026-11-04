@@ -1,0 +1,396 @@
+[
+  {
+    "case": "fresh-defaults",
+    "passed": true,
+    "evidence": {
+      "format_worker_discovered": true,
+      "keys_required": false,
+      "graphics": {
+        "webgl": true,
+        "renderer": "ANGLE (Mesa, llvmpipe (LLVM 19.1.7 128 bits), OpenGL 4.5)",
+        "hardware_verified": false,
+        "requested_mode": "auto"
+      }
+    },
+    "elapsed_ms": 0.06
+  },
+  {
+    "case": "long-browser-read",
+    "passed": true,
+    "evidence": {
+      "late_fact_retained": true,
+      "content_chars": 158911
+    },
+    "elapsed_ms": 706.61
+  },
+  {
+    "case": "automatic-alternate",
+    "passed": true,
+    "evidence": {
+      "quality": "ok",
+      "document_retained": true,
+      "read_plan": {
+        "revision": 1,
+        "decisions": [
+          {
+            "action": "publisher_alternate",
+            "reason": "thin",
+            "before_quality": "thin",
+            "quality": "ok",
+            "adopted": true,
+            "acquisition_url": "http://fixture:8099/alternate?md=1",
+            "acquisition_attempts": [
+              {
+                "tier": "direct",
+                "reason": "",
+                "outcome": "extracted",
+                "elapsed_ms": 1237.82,
+                "content_assessment": {
+                  "revision": 1,
+                  "text_sha256": "56669231dc7f7d34daefe022bb213af39f4fb5ffea44d38f35990c593b7dec13",
+                  "pollution": "not_assessed",
+                  "completeness": "unknown",
+                  "usable_content": "unverified",
+                  "inspected_chars": 0,
+                  "suspected_chars": 0,
+                  "unflagged_chars": 1489
+                }
+              }
+            ],
+            "elapsed_ms": 1262.59
+          }
+        ],
+        "initial_gap": "thin",
+        "final_gap": "",
+        "answer_verified": false,
+        "stop_reason": "evidence_available",
+        "render_allowed": true,
+        "browser_configured": true,
+        "elapsed_ms": 1262.99,
+        "budget_seconds": 30.0
+      }
+    },
+    "elapsed_ms": 1657.12
+  },
+  {
+    "case": "automatic-lazy",
+    "passed": true,
+    "evidence": {
+      "quality": "ok",
+      "document_retained": true,
+      "read_plan": {
+        "revision": 1,
+        "decisions": [
+          {
+            "action": "browser_inspect",
+            "reason": "thin",
+            "before_quality": "thin",
+            "quality": "thin",
+            "adopted": false,
+            "acquisition_url": "http://fixture:8099/lazy",
+            "elapsed_ms": 579.9
+          },
+          {
+            "action": "scroll",
+            "reason": "observed_scrollable_gap",
+            "before_quality": "thin",
+            "quality": "ok",
+            "adopted": true,
+            "acquisition_url": "http://fixture:8099/lazy",
+            "elapsed_ms": 657.41
+          }
+        ],
+        "initial_gap": "thin",
+        "final_gap": "",
+        "answer_verified": false,
+        "stop_reason": "evidence_available",
+        "render_allowed": true,
+        "browser_configured": true,
+        "elapsed_ms": 1422.37,
+        "budget_seconds": 30.0,
+        "browser_session": {
+          "id": "auto-read-838b4a67f7b4786551c4ea4b274e0c33",
+          "allowed_hosts": [
+            "fixture"
+          ],
+          "url": "http://fixture:8099/lazy"
+        }
+      },
+      "same_browser_handoff": true
+    },
+    "elapsed_ms": 4372.16
+  },
+  {
+    "case": "automatic-details",
+    "passed": true,
+    "evidence": {
+      "quality": "ok",
+      "document_retained": true,
+      "read_plan": {
+        "revision": 1,
+        "decisions": [
+          {
+            "action": "browser_inspect",
+            "reason": "thin",
+            "before_quality": "thin",
+            "quality": "thin",
+            "adopted": false,
+            "acquisition_url": "http://fixture:8099/details",
+            "elapsed_ms": 335.51
+          },
+          {
+            "action": "expand_details",
+            "reason": "observed_closed_details",
+            "before_quality": "thin",
+            "quality": "ok",
+            "adopted": true,
+            "acquisition_url": "http://fixture:8099/details",
+            "elapsed_ms": 760.82
+          }
+        ],
+        "initial_gap": "thin",
+        "final_gap": "",
+        "answer_verified": false,
+        "stop_reason": "evidence_available",
+        "render_allowed": true,
+        "browser_configured": true,
+        "elapsed_ms": 1186.0,
+        "budget_seconds": 30.0,
+        "browser_session": {
+          "id": "auto-read-838b4a67f7b4786551c4ea4b274e0c33",
+          "allowed_hosts": [
+            "fixture"
+          ],
+          "url": "http://fixture:8099/details"
+        }
+      }
+    },
+    "elapsed_ms": 1606.78
+  },
+  {
+    "case": "automatic-network",
+    "passed": true,
+    "evidence": {
+      "quality": "ok",
+      "document_retained": true,
+      "read_plan": {
+        "revision": 1,
+        "decisions": [
+          {
+            "action": "browser_inspect",
+            "reason": "thin",
+            "before_quality": "thin",
+            "quality": "thin",
+            "adopted": false,
+            "acquisition_url": "http://fixture:8099/network",
+            "elapsed_ms": 461.27
+          },
+          {
+            "action": "network_article",
+            "reason": "unresolved_browser_gap",
+            "before_quality": "thin",
+            "quality": "ok",
+            "adopted": true,
+            "acquisition_url": "http://fixture:8099/data",
+            "elapsed_ms": 65.43
+          }
+        ],
+        "initial_gap": "thin",
+        "final_gap": "",
+        "answer_verified": false,
+        "stop_reason": "evidence_available",
+        "render_allowed": true,
+        "browser_configured": true,
+        "elapsed_ms": 620.09,
+        "budget_seconds": 30.0,
+        "browser_session": {
+          "id": "auto-read-838b4a67f7b4786551c4ea4b274e0c33",
+          "allowed_hosts": [
+            "fixture"
+          ],
+          "url": "http://fixture:8099/network"
+        }
+      }
+    },
+    "elapsed_ms": 813.86
+  },
+  {
+    "case": "automatic-cookie-seed",
+    "passed": true,
+    "evidence": {
+      "quality": "ok",
+      "document_retained": true,
+      "read_plan": {
+        "revision": 1,
+        "decisions": [],
+        "initial_gap": "",
+        "final_gap": "",
+        "answer_verified": false,
+        "stop_reason": "evidence_available",
+        "render_allowed": true,
+        "browser_configured": true,
+        "elapsed_ms": 0.02,
+        "budget_seconds": 30.0
+      }
+    },
+    "elapsed_ms": 838.15
+  },
+  {
+    "case": "automatic-cookie-gated",
+    "passed": true,
+    "evidence": {
+      "quality": "ok",
+      "document_retained": true,
+      "read_plan": {
+        "revision": 1,
+        "decisions": [],
+        "initial_gap": "",
+        "final_gap": "",
+        "answer_verified": false,
+        "stop_reason": "evidence_available",
+        "render_allowed": true,
+        "browser_configured": true,
+        "elapsed_ms": 0.11,
+        "budget_seconds": 30.0
+      }
+    },
+    "elapsed_ms": 1383.46
+  },
+  {
+    "case": "automatic-normal",
+    "passed": true,
+    "evidence": {
+      "quality": "ok",
+      "document_retained": true,
+      "read_plan": {
+        "revision": 1,
+        "decisions": [],
+        "initial_gap": "",
+        "final_gap": "",
+        "answer_verified": false,
+        "stop_reason": "evidence_available",
+        "render_allowed": true,
+        "browser_configured": true,
+        "elapsed_ms": 0.09,
+        "budget_seconds": 30.0
+      }
+    },
+    "elapsed_ms": 1509.21
+  },
+  {
+    "case": "poison",
+    "passed": true,
+    "evidence": {
+      "quality": "thin",
+      "fact_not_fabricated": true
+    },
+    "elapsed_ms": 3474.33
+  },
+  {
+    "case": "render-never",
+    "passed": true,
+    "evidence": {
+      "quality": "thin",
+      "fact_not_fabricated": true
+    },
+    "elapsed_ms": 1122.74
+  },
+  {
+    "case": "manual",
+    "passed": true,
+    "evidence": {
+      "quality": "thin",
+      "fact_not_fabricated": true
+    },
+    "elapsed_ms": 1590.67
+  },
+  {
+    "case": "other-caller",
+    "passed": true,
+    "evidence": {
+      "quality": "failed",
+      "fact_not_fabricated": true
+    },
+    "elapsed_ms": 1879.21
+  },
+  {
+    "case": "late-table-retention",
+    "passed": true,
+    "evidence": {
+      "late_fact": true,
+      "retained_range": true
+    },
+    "elapsed_ms": 2541.64
+  },
+  {
+    "case": "default-msg-read",
+    "passed": true,
+    "evidence": {
+      "known_fact": true,
+      "parser": "apache-tika",
+      "warnings": [
+        "Fallback parser text; attachment completeness and physical table cells are not verified."
+      ]
+    },
+    "elapsed_ms": 3724.93
+  },
+  {
+    "case": "default-xlsb-read",
+    "passed": true,
+    "evidence": {
+      "known_fact": true,
+      "parser": "apache-tika",
+      "warnings": [
+        "Fallback parser text; attachment completeness and physical table cells are not verified."
+      ]
+    },
+    "elapsed_ms": 2253.04
+  },
+  {
+    "case": "browser-start",
+    "passed": true,
+    "evidence": {
+      "access": {
+        "status": "unknown",
+        "reason": "no_clear_content_signal",
+        "answer_verified": false,
+        "source_complete": false
+      }
+    },
+    "elapsed_ms": 592.35
+  },
+  {
+    "case": "native-frame-action",
+    "passed": true,
+    "evidence": {
+      "fact": true
+    },
+    "elapsed_ms": 667.68
+  },
+  {
+    "case": "native-popup",
+    "passed": true,
+    "evidence": {
+      "fact": true
+    },
+    "elapsed_ms": 588.56
+  },
+  {
+    "case": "native-download",
+    "passed": true,
+    "evidence": {
+      "csv_fact": true,
+      "bytes": 44,
+      "retained": true
+    },
+    "elapsed_ms": 130.57
+  },
+  {
+    "case": "checkpoint-before-restart",
+    "passed": true,
+    "evidence": {
+      "four_storage_types": true
+    },
+    "elapsed_ms": 508.98
+  }
+]

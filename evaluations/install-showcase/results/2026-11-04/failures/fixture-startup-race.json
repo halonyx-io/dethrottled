@@ -1,0 +1,29 @@
+{
+  "elapsed_ms": 308.4797649644315,
+  "result": {
+    "quality": "failed",
+    "failure_reason": "direct:ConnectionError | tls:tls_ConnectionError | crawl4ai:crawl4ai_http_400",
+    "tier": "crawl4ai",
+    "acquisition_attempts": [
+      {
+        "tier": "direct",
+        "reason": "ConnectionError",
+        "outcome": "failed",
+        "elapsed_ms": 2.01
+      },
+      {
+        "tier": "tls",
+        "reason": "tls_ConnectionError",
+        "outcome": "failed",
+        "elapsed_ms": 35.03
+      },
+      {
+        "tier": "crawl4ai",
+        "reason": "crawl4ai_http_400",
+        "outcome": "failed",
+        "elapsed_ms": 21.52
+      }
+    ]
+  },
+  "scope": "Diagnostic request before the newly started fixture HTTP server was listening; retry after readiness passed."
+}

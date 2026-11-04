@@ -24,6 +24,19 @@ installs system packages, elevates privileges or changes firewall settings.
 
 ## What the measurements establish
 
+| Recorded default-stack workload | Q6A (ARM64) | szbox (AMD64) |
+|---|---:|---:|
+| CPU | 4 Cortex-A55 + 4 Cortex-A78 cores | Ryzen 7 5800U, 8 cores / 16 threads |
+| RAM visible to the OS | 11.29 GiB | 30.76 GiB |
+| Peak sampled container working set | 4.99 GiB | 6.63 GiB |
+| Logical uncompressed Crawl4AI image alone | 10.08 GiB | 7.62 GiB |
+
+These memory figures cover the default services during the recorded workload,
+excluding other host processes. They are neither idle consumption nor a safe
+total-RAM recommendation. Optional inference, concurrency and larger inputs add
+cost. The renderer image is the largest individual default image; allow space
+for the other images, builds and retained data as well.
+
 The [1.4.0 two-device report](../evaluations/install-showcase/results/2026-11-04/REPORT.md)
 records tested hardware, sampled working-set memory/CPU, image sizes, startup
 and model initialization. Those are observed costs for a fixed workload,
@@ -37,7 +50,9 @@ A named volume surviving shutdown is expected; `stack down` does not reclaim it.
 
 ## Optional workers
 
-![Worker/profile breakdown](assets/profiles.svg)
+<picture>
+  <img src="assets/profiles.svg" alt="Worker/profile breakdown">
+</picture>
 
 | Profile | Adds | Resource policy |
 |---|---|---|

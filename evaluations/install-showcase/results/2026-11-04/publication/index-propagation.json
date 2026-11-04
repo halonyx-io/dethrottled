@@ -1,0 +1,31 @@
+{
+  "at": 1793789769.3721042,
+  "headers": {
+    "Age": null,
+    "Date": "Wed, 04 Nov 2026 10:55:33 GMT",
+    "Cache-Control": "max-age=600, public",
+    "X-Cache": "MISS, HIT, HIT"
+  },
+  "files": [
+    "dethrottled-0.1.1-py3-none-any.whl",
+    "dethrottled-0.1.1.tar.gz",
+    "dethrottled-0.1.2-py3-none-any.whl",
+    "dethrottled-0.1.2.tar.gz",
+    "dethrottled-1.0.0-py3-none-any.whl",
+    "dethrottled-1.0.0.tar.gz",
+    "dethrottled-1.0.1-py3-none-any.whl",
+    "dethrottled-1.0.1.tar.gz",
+    "dethrottled-1.1.0-py3-none-any.whl",
+    "dethrottled-1.1.0.tar.gz",
+    "dethrottled-1.1.1-py3-none-any.whl",
+    "dethrottled-1.1.1.tar.gz",
+    "dethrottled-1.1.2-py3-none-any.whl",
+    "dethrottled-1.1.2.tar.gz",
+    "dethrottled-1.1.3-py3-none-any.whl",
+    "dethrottled-1.1.3.tar.gz",
+    "dethrottled-1.2.0-py3-none-any.whl",
+    "dethrottled-1.2.0.tar.gz",
+    "dethrottled-1.3.0-py3-none-any.whl",
+    "dethrottled-1.3.0.tar.gz"
+  ]
+}
