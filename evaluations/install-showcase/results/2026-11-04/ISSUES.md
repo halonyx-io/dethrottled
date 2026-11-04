@@ -46,3 +46,15 @@ that the same tab had reached the allowed fixture URL. Tab selection now waits
 within the caller's step/run deadline for creation and initial navigation; an
 out-of-scope nonblank URL still fails immediately. Unit cases cover delayed creation,
 blank navigation, forbidden hosts and timeout. The original failed run is preserved.
+
+## Intermittent IndexedDB restoration
+
+One szbox worker-restart check restored cookies/local/session storage but lost the
+IndexedDB record. The on-disk checkpoint still contained it. A minimal test and five
+further worker-restart restores recovered the original value; the underlying
+intermittent driver/timing cause is not conclusively identified. The browser now
+reads back IndexedDB immediately after restoring a context, before page scripts
+run. A mismatch closes that context and retries up to three times. Continued loss
+fails explicitly and preserves the original checkpoint, rather than claiming a
+complete session. Fault-injection unit tests cover recovery and persistent loss;
+the original failure and repeated real restores remain evidence.

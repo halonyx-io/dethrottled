@@ -127,6 +127,7 @@ def summary(cases):
 thread = threading.Thread(target=sample, daemon=True)
 thread.start()
 cases = []
+batches = []
 started = time.time()
 load_before = os.getloadavg()
 try:
@@ -135,11 +136,18 @@ try:
                 for i in range(3) for x in M['formats']]
     elif A.phase == 'concurrency':
         work = []
-        for concurrency in (1, 3, 6):
-            batch = [dict(M['formats'][0], id=f'c{concurrency}-{i}') for i in range(12)]
-            with concurrent.futures.ThreadPoolExecutor(max_workers=concurrency) as pool:
-                cases.extend(dict(x, concurrency=concurrency) for x in pool.map(one, batch))
-            (A.out / 'cases.json').write_text(json.dumps(cases, indent=2))
+        for repeat in range(3):
+            for concurrency in (1, 3, 6):
+                batch = [dict(M['formats'][0], id=f'r{repeat}-c{concurrency}-{i}')
+                         for i in range(12)]
+                batch_start = time.monotonic()
+                with concurrent.futures.ThreadPoolExecutor(max_workers=concurrency) as pool:
+                    cases.extend(dict(x, concurrency=concurrency, repeat=repeat)
+                                 for x in pool.map(one, batch))
+                batches.append(dict(repeat=repeat, concurrency=concurrency, requests=12,
+                                    elapsed_seconds=time.monotonic() - batch_start))
+                (A.out / 'batches.json').write_text(json.dumps(batches, indent=2))
+                (A.out / 'cases.json').write_text(json.dumps(cases, indent=2))
     else:
         work = M['queries'] if A.phase.startswith('search') else M[
             'research' if A.phase == 'research' else 'fetches']

@@ -564,10 +564,33 @@ async def _navigate(state, body, url, timeout, deadline):
                                   if response and "cf-mitigated" in response.headers else {})}
 
 
+def _indexeddb_state(storage):
+    return {origin["origin"]: sorted(origin["indexedDB"], key=lambda db: db["name"])
+            for origin in storage.get("origins", []) if origin.get("indexedDB")}
+
+
+async def _restored_context(browser, storage_state):
+    """Verify IndexedDB before handing a restored context to page scripts."""
+    expected = _indexeddb_state(storage_state or {})
+    for attempt in range(3):
+        context = await browser.new_context(accept_downloads=True,
+            **({"storage_state": storage_state} if storage_state else {}))
+        if not expected:
+            return context, 0
+        try:
+            actual = _indexeddb_state(await context.storage_state(indexed_db=True))
+        except BaseException:
+            await context.close()
+            raise
+        if all(actual.get(origin) == databases for origin, databases in expected.items()):
+            return context, attempt + 1
+        await context.close()
+    raise ValueError("checkpoint_indexeddb_restore_incomplete; original_checkpoint_preserved")
+
+
 async def _make_drive_state(browser, allowed_hosts: list[str], public_only=False,
                             storage_state=None, session_storage=None) -> dict:
-    options = {"storage_state": storage_state} if storage_state else {}
-    context = await browser.new_context(accept_downloads=True, **options)
+    context, restore_attempts = await _restored_context(browser, storage_state)
     if session_storage:
         await context.add_init_script("""(() => {
           const saved = %s;
@@ -604,6 +627,7 @@ async def _make_drive_state(browser, allowed_hosts: list[str], public_only=False
     context.on("page", capture_page)
     return {"context": context, "page": page, "events": events, "responses": responses,
             "allowed_hosts": list(allowed_hosts), "public_only": public_only,
+            "indexeddb_restore_attempts": restore_attempts,
             "lock": asyncio.Lock(), "history": deque(maxlen=200),
             "last_used": time.monotonic()}
 
@@ -1364,7 +1388,8 @@ async def _drive(state: dict, body: DriveRequest) -> dict:
         "session": {"id": body.session or None, "persistent": bool(body.session),
                     "closed": False, "ttl_seconds": DRIVE_SESSION_TTL if body.session else 0,
                     "allowed_hosts": state["allowed_hosts"],
-                    "restored_from_checkpoint": state.get("restored", False)},
+                    "restored_from_checkpoint": state.get("restored", False),
+                    "indexeddb_restore_attempts": state.get("indexeddb_restore_attempts", 0)},
         "canary_matches": matches,
         "service_s": round(time.monotonic() - started, 3),
     }
