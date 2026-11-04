@@ -564,10 +564,33 @@ async def _navigate(state, body, url, timeout, deadline):
                                   if response and "cf-mitigated" in response.headers else {})}
 
 
+def _indexeddb_state(storage):
+    return {origin["origin"]: sorted(origin["indexedDB"], key=lambda db: db["name"])
+            for origin in storage.get("origins", []) if origin.get("indexedDB")}
+
+
+async def _restored_context(browser, storage_state):
+    """Verify IndexedDB before handing a restored context to page scripts."""
+    expected = _indexeddb_state(storage_state or {})
+    for attempt in range(3):
+        context = await browser.new_context(accept_downloads=True,
+            **({"storage_state": storage_state} if storage_state else {}))
+        if not expected:
+            return context, 0
+        try:
+            actual = _indexeddb_state(await context.storage_state(indexed_db=True))
+        except BaseException:
+            await context.close()
+            raise
+        if all(actual.get(origin) == databases for origin, databases in expected.items()):
+            return context, attempt + 1
+        await context.close()
+    raise ValueError("checkpoint_indexeddb_restore_incomplete; original_checkpoint_preserved")
+
+
 async def _make_drive_state(browser, allowed_hosts: list[str], public_only=False,
                             storage_state=None, session_storage=None) -> dict:
-    options = {"storage_state": storage_state} if storage_state else {}
-    context = await browser.new_context(accept_downloads=True, **options)
+    context, restore_attempts = await _restored_context(browser, storage_state)
     if session_storage:
         await context.add_init_script("""(() => {
           const saved = %s;
@@ -604,6 +627,7 @@ async def _make_drive_state(browser, allowed_hosts: list[str], public_only=False
     context.on("page", capture_page)
     return {"context": context, "page": page, "events": events, "responses": responses,
             "allowed_hosts": list(allowed_hosts), "public_only": public_only,
+            "indexeddb_restore_attempts": restore_attempts,
             "lock": asyncio.Lock(), "history": deque(maxlen=200),
             "last_used": time.monotonic()}
 
@@ -1026,6 +1050,21 @@ async def _download(page, target, timeout):
                 await download.delete()
 
 
+async def _ready_tab(context, index, allowed_hosts, timeout_ms):
+    """Wait for a new popup to navigate, but never accept an out-of-scope URL."""
+    deadline = time.monotonic() + timeout_ms / 1000
+    while True:
+        tabs = context.pages
+        if index < len(tabs) and tabs[index].url not in {"", "about:blank"}:
+            if not _host_allowed(tabs[index].url, allowed_hosts):
+                raise ValueError("tab_missing_or_outside_allowed_hosts")
+            return tabs[index]
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            raise ValueError("tab_missing_or_outside_allowed_hosts")
+        await asyncio.sleep(min(0.025, remaining))
+
+
 async def _drive(state: dict, body: DriveRequest) -> dict:
     """Run a bounded sequence against an ephemeral or named persistent page.
 
@@ -1117,6 +1156,9 @@ async def _drive(state: dict, body: DriveRequest) -> dict:
             async def call(s=s, scope=scope):
                 target = locator(s)
                 try:
+                    # A popup can leave this headed tab in the background. Activate it
+                    # before waiting for stable animation frames during actionability.
+                    await page.bring_to_front()
                     await target.click(timeout=s.ms or 8000)
                 except Exception as exc:
                     await diagnosed_failure("click", target, exc, "actionability")
@@ -1294,11 +1336,9 @@ async def _drive(state: dict, body: DriveRequest) -> dict:
         elif action == "switch_tab":
             async def call(s=s):
                 nonlocal page, scope
-                tabs = state["context"].pages
-                if s.index >= len(tabs) or not _host_allowed(
-                        tabs[s.index].url, state["allowed_hosts"]):
-                    raise ValueError("tab_missing_or_outside_allowed_hosts")
-                page = tabs[s.index]
+                page = await _ready_tab(state["context"], s.index, state["allowed_hosts"],
+                                        s.ms or 8000)
+                await page.bring_to_front()
                 scope = page
                 state["page"] = page
                 return {"index": s.index, "url": page.url}
@@ -1348,7 +1388,8 @@ async def _drive(state: dict, body: DriveRequest) -> dict:
         "session": {"id": body.session or None, "persistent": bool(body.session),
                     "closed": False, "ttl_seconds": DRIVE_SESSION_TTL if body.session else 0,
                     "allowed_hosts": state["allowed_hosts"],
-                    "restored_from_checkpoint": state.get("restored", False)},
+                    "restored_from_checkpoint": state.get("restored", False),
+                    "indexeddb_restore_attempts": state.get("indexeddb_restore_attempts", 0)},
         "canary_matches": matches,
         "service_s": round(time.monotonic() - started, 3),
     }

@@ -42,7 +42,6 @@ engine-health.json
 
 # Not needed to build or run the service.
 tests/
-docker/
 examples/
 *.md
 !README.md

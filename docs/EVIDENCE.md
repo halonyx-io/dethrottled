@@ -14,6 +14,7 @@ larger-pool measurements remain historical evidence.
 
 | Scope | Report and raw data | Interpretation |
 |---|---|---|
+| Complete installation and two-device performance | [1.4.0 validation](../evaluations/install-showcase/results/2026-11-04/REPORT.md), [reproduction](../evaluations/install-showcase/README.md) | PyPI-managed workers, native software rendering, retained controlled facts and live outcomes; original failures preserved |
 | Expanded ranking and default policy | [400-query experiment](../evaluations/search-policy/results/2026-11-03/REPORT.md) | 299 usable train/100 fresh test, two model judges; modest XGBoost improvement, no demonstrated fresh-read gain; compact supplements retained, learned ranking not deployed |
 | Agent source choices | [120-question study](../evaluations/agent-search/results/2026-11-03/REPORT.md) | Frozen 80/40 split, source/RRF menu replay, blinded model judgements, 283 fetched URLs, live pacing/bursts and preserved refusals; supports source order on this host, not general paid-provider superiority |
 | Automatic discovery breadth | [Whole-path correction](../evaluations/search-breadth/results/2026-11-02/REPORT.md) | Records the failed public check and the staged MCP → API → TLS/browser recovery before promotion |
@@ -30,7 +31,7 @@ larger-pool measurements remain historical evidence.
 | Source/format/browser coverage | [0.6 to 0.7](../evaluations/dependable/results/2026-11-01/REPORT.md), [method](../evaluations/dependable/README.md) | 99/110 to 109/110 mechanical checks; not 110 independent research questions |
 | Agent behavior | [Cold-agent method](../evaluations/agent-workflow/README.md), [confirmation](../evaluations/agent-workflow/results/2026-11-01/RESULTS.md), [six-upgrade results](../evaluations/agent-workflow/results/2026-11-01-six-upgrades/RESULTS.md) | Model-, task- and client-specific; includes pilot tuning and failures |
 | Installed worker audit | [Audit](../evaluations/worker-audit/2026-11-01/REPORT.md) | Snapshot before later changes; upgrade proposals are not current deployed facts |
-| Host performance | [4 October comparison](BENCHMARKS.md), [raw JSON directory](benchmarks/2026-10-04/) | Historical x86_64/ARM64 comparison, not current latency or coverage guarantees |
+| Host performance | [4 October comparison](BENCHMARKS-2026-10-04.md), [raw JSON directory](benchmarks/2026-10-04/) | Historical x86_64/ARM64 comparison, not current latency or coverage guarantees |
 
 The 0.9.1 regression snapshot reports 578 passed, 15 skipped and two network tests
 deselected. Public MCP/REST and actual SDK checks are recorded separately. Search

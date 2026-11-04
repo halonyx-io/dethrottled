@@ -1,45 +1,75 @@
 # Dethrottled
 
-Dethrottled gives agents one interface for web discovery, source reading and
-browser interaction. It returns traceable evidence and concrete continuation
-steps, rather than writing an answer on the agent's behalf.
+![Dethrottled: discover, read, drive and retain web evidence](https://raw.githubusercontent.com/halonyx-io/dethrottled/main/docs/assets/hero.svg)
 
-The default search and reading stack is self-hosted and keyless. There are no
-purchased search quotas or required model APIs. Public websites can still block
-requests, and local queues, timeouts and storage limits apply. Optional metered
-discovery providers are available only when an operator configures keys and a
-caller explicitly selects them.
+**One local engine for agents that need the web.** Dethrottled discovers sources,
+reads pages and files, operates a real browser, and retains evidence for follow-up.
+It returns source references, warnings and concrete continuation steps. Your agent
+or application decides what the evidence supports.
 
-## What agents can do
+The default stack needs **no API key, paid search subscription or model API**.
+It runs on native AMD64 and ARM64 Docker hosts. Public sites can still block
+requests; retries, queues and storage have limits. Optional paid discovery
+integrations remain opt-in and are not required by the default workflow.
 
-- Discover sources through web, news and academic search, or a bounded site crawl.
-- Read pages, documents, tables, archives, captions and direct media files.
-- Continue retained documents by question, text offset, PDF page or table row.
-- Inspect source structure and retained source pixels where available.
-- Operate a headed browser: navigate, use controls, inspect frames and popups,
-  read application responses, collect downloads and restore checkpoints.
-  [Navigation recovery](https://github.com/halonyx-io/dethrottled/blob/main/docs/DRIVE.md#navigation-recovery-and-access-evidence) also
-  applies when the reading ladder reaches the browser.
-- Assemble research evidence with source references and explicit coverage gaps.
+## Install the complete engine
 
-Recovery escalates from direct HTTP through TLS, rendering and the headed
-browser when appropriate. Challenges and script-only shells can trigger browser
-recovery automatically. A failed or partial read remains visible in the result;
-HTTP 200 and extracted text alone do not establish answer accuracy.
-
-## Run locally
+Install [Docker Engine and Compose](https://docs.docker.com/engine/install/), then:
 
 ```sh
-docker compose up -d --build
-curl -fsS http://127.0.0.1:8787/health
-curl -fsS http://127.0.0.1:8787/v2/capabilities
+python3 -m venv .venv
+. .venv/bin/activate
+pip install dethrottled
+dethrottled stack up
+dethrottled stack status
 ```
 
-Base Compose runs the API, headed browser worker, SearXNG, Crawl4AI and MSG/XLSB reader. The API
-binds to `127.0.0.1:8787` and has no caller authentication. Use the optional
-[public adapters](https://github.com/halonyx-io/dethrottled/blob/main/docs/PUBLIC-ACCESS.md) and an authenticated TLS deployment for
-remote clients. Speech and PDF layout have optional local
-workers; see [configuration](https://github.com/halonyx-io/dethrottled/blob/main/docs/CONFIGURATION.md).
+The Python distribution includes matching deployment sources: **no Git clone is
+needed**. `stack up` builds/downloads the five default services and waits for
+readiness. Installing the package alone starts nothing and downloads no models.
+
+```sh
+dethrottled stack up --profile full  # add local speech and PDF layout workers
+dethrottled stack down               # keep documents, cache and model volumes
+```
+
+Use `--project NAME --port PORT` for an isolated installation. Speech/layout model
+weights initialize on first use; status reports this separately from readiness.
+See [installation choices](https://github.com/halonyx-io/dethrottled/blob/main/docs/PYTHON.md)
+and [measured requirements](https://github.com/halonyx-io/dethrottled/blob/main/docs/REQUIREMENTS.md).
+Standalone Python/library use remains available, with capabilities determined by
+its installed libraries, system tools and external workers.
+
+Prefer a checkout? Both routes run the same default services:
+
+```sh
+git clone https://github.com/halonyx-io/dethrottled.git
+cd dethrottled
+docker compose up -d --build
+```
+
+The API listens on **`127.0.0.1:8787`**. Connect locally over REST, or configure the
+optional [authenticated REST/MCP adapters](https://github.com/halonyx-io/dethrottled/blob/main/docs/PUBLIC-ACCESS.md)
+for remote agents. The raw API has no caller authentication.
+
+## Follow the evidence
+
+| Capability | What the agent receives |
+|---|---|
+| Search | Compact source choices: up to ten DDG results, at most three per supplementary engine, fifteen unique URLs total |
+| Read | Extracted pages, documents, tables, archives, captions and media; quality and provenance remain attached |
+| Recover | Observed publisher alternatives, TLS acquisition, JavaScript rendering and scoped headed-browser interaction |
+| Drive | Native controls, frames, tabs, application responses, downloads, screenshots and checkpointed sessions |
+| Retain | Document IDs with text, page and table ranges; focused follow-up without fetching the source again |
+| Research | A bounded evidence bundle with explicit coverage gaps; ten sources by default, twenty on request |
+
+![Automatic acquisition, assessment, recovery and agent continuation](https://raw.githubusercontent.com/halonyx-io/dethrottled/main/docs/assets/escalation.svg)
+
+A normal fetch runs the recovery policy automatically. When content remains
+incomplete, `read_plan` and `workflow.next_actions` expose useful continuations,
+including reuse of the same browser session. Agents can also operate `/drive`
+directly. Read the [agent integration guide](https://github.com/halonyx-io/dethrottled/blob/main/docs/AGENT-UPGRADES.md)
+for tool selection and response contracts.
 
 ```sh
 curl -sS http://127.0.0.1:8787/fetch \
@@ -47,64 +77,62 @@ curl -sS http://127.0.0.1:8787/fetch \
   -d '{"urls":["https://docs.python.org/3/library/sqlite3.html"],"focus":"in-memory database"}'
 ```
 
-Ordinary reads run an [observed-gap recovery loop](https://github.com/halonyx-io/dethrottled/blob/main/docs/READ-PLANNER.md): acquire,
-inspect, select a justified publisher or browser strategy, then reassess. The loop
-can discover primary representations, scroll lazy content, open standard details
-and read observed primary JSON responses. It preserves partial evidence and records
-why recovery stopped. Optional GPU setup is described in the same guide.
+Preserve `quality`, `warnings`, `source_partial`, `truncated`, `document_id` and
+continuation metadata. A successful HTTP response is not proof of a complete,
+relevant or correct read. OCR and speech may need checking against source pixels
+or audio. Interactive challenges can remain unresolved.
 
-An agent should inspect `quality`, `warnings`, `read_plan`, `source_partial`, `truncated`,
-`document_id` and `workflow.next_actions`. The [agent guide](https://github.com/halonyx-io/dethrottled/blob/main/docs/AGENT-UPGRADES.md)
-explains the workflow and what an MCP client must forward to its model.
-[Coverage limits](https://github.com/halonyx-io/dethrottled/blob/main/docs/LIMITS.md)
-keep discovery compact: ten DDG choices, at most three per supplementary engine,
-up to six supplements and fifteen unique choices total. Yahoo and Yandex supplement
-DDG by default, preserving its order. Research reads ten sources by default, allows
-twenty on request and admits at most twenty-four unique candidates across facets.
-Million-character document reads remain available.
+## Measured on two machines
 
-## Documentation
+The [current installation and benchmark report](https://github.com/halonyx-io/dethrottled/blob/main/evaluations/install-showcase/results/2026-11-04/REPORT.md)
+compares a Radxa Dragon Q6A ARM64 board with an AMD Ryzen szbox. It preserves
+installation failures and fixes, controlled browser/document checks, 50 live
+search questions, 30 fixed fetch targets and six research tasks per device.
+Fresh acquisition, cache-enabled repeats and optional workers are reported
+separately. Every plotted value is generated from retained case data.
 
-Start at the [documentation home](https://github.com/halonyx-io/dethrottled/blob/main/docs/README.md). The
-[1.0 release gates](https://github.com/halonyx-io/dethrottled/blob/main/docs/ONE-ZERO.md) describe measured capabilities and limits.
+| Recorded check | Q6A | szbox |
+|---|---:|---:|
+| Browser/document contracts, three runs | 63/63 | 63/63 |
+| Controlled format fact retained, eleven fixtures × three runs | 33/33 | 33/33 |
+| Worker-restart storage restoration | 3/3 | 3/3 |
+| Nonempty live search menus | 50/50 | 50/50 |
+| Fresh public fetches assessed `ok` | 26/30 | 27/30 |
 
-| Page | Use it for |
+The live `ok` label is the engine's assessment, not verified answer correctness.
+The report separately records topic-marker retention, thin results and failures.
+
+![Measured latency on Q6A and szbox, including failed requests](https://raw.githubusercontent.com/halonyx-io/dethrottled/main/docs/assets/latency.svg)
+
+These are observed workloads, not universal minimum requirements or a paid-service
+superiority claim. Earlier evaluations proved native Reddit interaction and
+recovery on specific pages; Crunchbase and G2 remained blocked. Current live
+outcomes, historical reports and limits are linked in the
+[evidence index](https://github.com/halonyx-io/dethrottled/blob/main/docs/EVIDENCE.md).
+Neural live-web reranking remains disabled.
+
+## Explore the engine
+
+| Guide | Purpose |
 |---|---|
-| [Agent integration](https://github.com/halonyx-io/dethrottled/blob/main/docs/AGENT-UPGRADES.md) | Autonomous workflow, tool selection and client contracts |
-| [Reading and evidence](https://github.com/halonyx-io/dethrottled/blob/main/docs/DEPENDABLE-WORKFLOWS.md) | Formats, OCR, tables, media, citations and resumable jobs |
-| [HTTP API](https://github.com/halonyx-io/dethrottled/blob/main/docs/API.md) | Routes, examples, response semantics and generated request reference |
-| [Browser operation](https://github.com/halonyx-io/dethrottled/blob/main/docs/DRIVE.md) | Actions, sessions, scope, checkpoints, screenshots and downloads |
-| [Configuration](https://github.com/halonyx-io/dethrottled/blob/main/docs/CONFIGURATION.md) | Base stack, optional workers, models and workload controls |
-| [Operations](https://github.com/halonyx-io/dethrottled/blob/main/docs/OPERATIONS.md) | Build, verification, backups, updates and remote deployment |
-| [Architecture](https://github.com/halonyx-io/dethrottled/blob/main/docs/PIPELINE.md) | Search/read/research paths, corpus models and service boundaries |
-| [Evidence and limits](https://github.com/halonyx-io/dethrottled/blob/main/docs/EVIDENCE.md) | Dated measurements, raw results and unresolved failures |
+| [Documentation home](https://github.com/halonyx-io/dethrottled/blob/main/docs/README.md) | Find the right integration or operations guide |
+| [Architecture](https://github.com/halonyx-io/dethrottled/blob/main/docs/PIPELINE.md) | Service boundaries, search, reading, research and corpus |
+| [HTTP API](https://github.com/halonyx-io/dethrottled/blob/main/docs/API.md) | Routes, examples and generated request reference |
+| [Browser operation](https://github.com/halonyx-io/dethrottled/blob/main/docs/DRIVE.md) | Actions, scope, sessions, checkpoints and downloads |
+| [Requirements and measurements](https://github.com/halonyx-io/dethrottled/blob/main/docs/REQUIREMENTS.md) | Tested hardware, memory, disk and optional-profile costs |
+| [Configuration](https://github.com/halonyx-io/dethrottled/blob/main/docs/CONFIGURATION.md) | Workers, models, profiles and workload controls |
+| [Operations](https://github.com/halonyx-io/dethrottled/blob/main/docs/OPERATIONS.md) | Updates, backups, verification and remote deployment |
 
-## Deployment and limits
+The default API image includes native document readers, Tesseract and MiniLM/E5
+corpus models. Mutable evidence, jobs, cache and corpus use a named data volume;
+browser checkpoints and optional model caches have their own volumes. GPU access
+is optional. No `.env` file or worker URL is required for the default stack.
 
-Default Compose also starts the MSG/XLSB reader. Speech/layout are selected with
-`--profile full` (or individually with `media`/`layout`) and connect automatically.
-No `.env` file, worker URL or GPU is required for the default stack.
+The fetch ladder does not consult `robots.txt`. Raw API access to trusted LAN
+targets requires care; public adapters enforce narrower policies, alongside
+operator-provided network isolation. See [operations](https://github.com/halonyx-io/dethrottled/blob/main/docs/OPERATIONS.md).
 
-The API image includes document libraries, Tesseract and MiniLM/E5 corpus
-models. Mutable evidence, jobs, cache and corpus live in a named data volume;
-browser checkpoints use a separate volume. Source installs require Python 3.10+
-and explicitly installed optional dependencies and services.
+This checkout is **1.4.0**. Check `/health` and `/v2/capabilities` on the service you
+actually use; deployed services and remote plugins can differ from a checkout.
 
-Dethrottled does not guarantee access to every website or file. OCR and speech
-can be wrong, scans and charts may require visual inspection, and interactive
-challenges may remain unresolved. The 1.0 evaluation recovered predefined Reddit thread facts and exercised native
-controls in three fresh sessions each on software and GPU rendering. Crunchbase
-and G2 remained blocked; CarGurus yielded no usable text. See the [recorded evidence](https://github.com/halonyx-io/dethrottled/blob/main/docs/EVIDENCE.md)
-for methods and limits. Neural live-web reranking remains disabled.
-
-The fetch ladder does not consult `robots.txt`. The raw API can access trusted
-LAN targets; public adapters enforce a narrower policy, which is not a substitute
-for deployment-level network isolation.
-
-This checkout is **1.3.0**. Check `/health` and `/v2/capabilities`
-on the installation you use; a repository branch or remote plugin may differ
-from the deployed service. Historical reports describe their recorded versions.
-
-## License
-
-[MIT](https://github.com/halonyx-io/dethrottled/blob/main/LICENSE). Maintained by [Halonyx](https://github.com/halonyx-io).
+[MIT license](https://github.com/halonyx-io/dethrottled/blob/main/LICENSE) · Maintained by [Halonyx](https://github.com/halonyx-io)

@@ -1,0 +1,24 @@
+{
+  "cases": 6,
+  "http_200": 6,
+  "median_ms": 7961.31,
+  "p95_ms": 59451.57,
+  "assertions_pass": 0,
+  "readable_ok": 0,
+  "host": "szbox",
+  "arch": "x86_64",
+  "manifest_sha256": "ca24518d44c26b9d75e881c03fd4bd92e6892ce38f8baab1ff09aa51facb0b10",
+  "started_at": 1793787986.4107263,
+  "finished_at": 1793788106.6507313,
+  "phase": "research",
+  "host_load_before": [
+    1.591796875,
+    2.017578125,
+    1.994140625
+  ],
+  "host_load_after": [
+    5.994140625,
+    3.64990234375,
+    2.6005859375
+  ]
+}

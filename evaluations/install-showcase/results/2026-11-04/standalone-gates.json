@@ -1,0 +1,16 @@
+[
+  {
+    "mode": "core",
+    "version": "1.4.0",
+    "quality": "ok",
+    "fact": true,
+    "elapsed_ms": 219.5356769952923
+  },
+  {
+    "mode": "all",
+    "version": "1.4.0",
+    "quality": "ok",
+    "fact": true,
+    "elapsed_ms": 1809.1561449691653
+  }
+]

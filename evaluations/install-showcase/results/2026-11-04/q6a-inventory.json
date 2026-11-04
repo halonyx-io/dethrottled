@@ -1,0 +1,131 @@
+{
+  "timestamp": 1793785541.1455567,
+  "architecture": "aarch64",
+  "kernel": "6.18.2-3-qcom",
+  "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+  "cpus": 8,
+  "load": [
+    1.3544921875,
+    1.07763671875,
+    1.06640625
+  ],
+  "os_release": {
+    "returncode": 0,
+    "stdout": "PRETTY_NAME=\"Ubuntu 24.04.5 LTS\"\nNAME=\"Ubuntu\"\nVERSION_ID=\"24.04\"\nVERSION=\"24.04.5 LTS (Noble Numbat)\"\nVERSION_CODENAME=noble\nID=ubuntu\nID_LIKE=debian\nHOME_URL=\"https://www.ubuntu.com/\"\nSUPPORT_URL=\"https://help.ubuntu.com/\"\nBUG_REPORT_URL=\"https://bugs.launchpad.net/ubuntu/\"\nPRIVACY_POLICY_URL=\"https://www.ubuntu.com/legal/terms-and-policies/privacy-policy\"\nUBUNTU_CODENAME=noble\nLOGO=ubuntu-logo\n",
+    "stderr": ""
+  },
+  "cpu": {
+    "returncode": 0,
+    "stdout": "Architecture:                            aarch64\nCPU op-mode(s):                          32-bit, 64-bit\nByte Order:                              Little Endian\nCPU(s):                                  8\nOn-line CPU(s) list:                     0-7\nVendor ID:                               ARM\nModel name:                              Cortex-A55\nModel:                                   0\nThread(s) per core:                      1\nCore(s) per socket:                      4\nSocket(s):                               1\nStepping:                                r2p0\nFrequency boost:                         enabled\nCPU(s) scaling MHz:                      83%\nCPU max MHz:                             1958.4000\nCPU min MHz:                             300.0000\nBogoMIPS:                                38.40\nFlags:                                   fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp\nModel name:                              Cortex-A78\nModel:                                   1\nThread(s) per core:                      1\nCore(s) per socket:                      4\nSocket(s):                               1\nStepping:                                r1p1\nCPU(s) scaling MHz:                      65%\nCPU max MHz:                             2707.2000\nCPU min MHz:                             691.2000\nBogoMIPS:                                38.40\nFlags:                                   fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp\nNUMA node(s):                            1\nNUMA node0 CPU(s):                       0-7\nVulnerability Gather data sampling:      Not affected\nVulnerability Ghostwrite:                Not affected\nVulnerability Indirect target selection: Not affected\nVulnerability Itlb multihit:             Not affected\nVulnerability L1tf:                      Not affected\nVulnerability Mds:                       Not affected\nVulnerability Meltdown:                  Not affected\nVulnerability Mmio stale data:           Not affected\nVulnerability Old microcode:             Not affected\nVulnerability Reg file data sampling:    Not affected\nVulnerability Retbleed:                  Not affected\nVulnerability Spec rstack overflow:      Not affected\nVulnerability Spec store bypass:         Mitigation; Speculative Store Bypass disabled via prctl\nVulnerability Spectre v1:                Mitigation; __user pointer sanitization\nVulnerability Spectre v2:                Mitigation; CSV2, BHB\nVulnerability Srbds:                     Not affected\nVulnerability Tsa:                       Not affected\nVulnerability Tsx async abort:           Not affected\nVulnerability Vmscape:                   Not affected\n",
+    "stderr": ""
+  },
+  "memory": {
+    "returncode": 0,
+    "stdout": "               total        used        free      shared  buff/cache   available\nMem:     12119908352  7951835136   809684992    39833600  3825168384  4168073216\nSwap:     6059950080    74346496  5985603584\n",
+    "stderr": ""
+  },
+  "filesystem": {
+    "total": 250830680064,
+    "used": 63318003712,
+    "free": 177251868672
+  },
+  "docker": {
+    "returncode": 0,
+    "stdout": "Client: Docker Engine - Community\n Version:           29.9.3\n API version:       1.56\n Go version:        go1.26.10\n Git commit:        5457199\n Built:             Tue Nov  3 21:41:21 2026\n OS/Arch:           linux/arm64\n Context:           default\n\nServer: Docker Engine - Community\n Engine:\n  Version:          29.9.3\n  API version:      1.56 (minimum version 1.40)\n  Go version:       go1.26.10\n  Git commit:       70efc0e\n  Built:            Tue Nov  3 21:41:21 2026\n  OS/Arch:          linux/arm64\n  Experimental:     false\n containerd:\n  Version:          v2.4.2\n  GitCommit:        b7a25261e029d68978bbf290df0a62fc819b3c51\n runc:\n  Version:          1.5.2\n  GitCommit:        v1.5.2-0-g29dd3dc2\n docker-init:\n  Version:          0.19.0\n  GitCommit:        de40ad0\n",
+    "stderr": ""
+  },
+  "compose": {
+    "returncode": 0,
+    "stdout": "Docker Compose version v5.7.0\n",
+    "stderr": ""
+  },
+  "image_disk": {
+    "returncode": 0,
+    "stdout": "TYPE            TOTAL     ACTIVE    SIZE      RECLAIMABLE\nImages          9         6         26.25GB   10.92GB (41%)\nContainers      6         6         22.82MB   0B (0%)\nLocal Volumes   3         3         4.604MB   0B (0%)\nBuild Cache     66        11        4.389GB   3.353GB\n",
+    "stderr": ""
+  },
+  "containers": [
+    {
+      "service": "dethrottled",
+      "image_id": "sha256:7acbe311e9cb678f4f37f8fd645d332cf8f1d3096dbb36f9e02bcb1b07caae97",
+      "memory_limit": 0,
+      "nano_cpus": 0,
+      "state": "running",
+      "gpu_devices": null
+    },
+    {
+      "service": "crawl4ai",
+      "image_id": "sha256:0b05666882bfb67f45d559a5b827839c54127b74aedd723f8ab338a3571b5fc9",
+      "memory_limit": 0,
+      "nano_cpus": 0,
+      "state": "running",
+      "gpu_devices": null
+    },
+    {
+      "service": "format-worker",
+      "image_id": "sha256:578c09b68478dedfe1132a601b41028dd87e7cea0ec1a34e8cdd016c91a7e8a0",
+      "memory_limit": 2147483648,
+      "nano_cpus": 2000000000,
+      "state": "running",
+      "gpu_devices": null
+    },
+    {
+      "service": "browser-search",
+      "image_id": "sha256:481089a50759125e625d09818eb74c75f225f2c6088a4327821efb9e2c3c1801",
+      "memory_limit": 0,
+      "nano_cpus": 0,
+      "state": "running",
+      "gpu_devices": null
+    },
+    {
+      "service": "searxng",
+      "image_id": "sha256:c642712fcedcdaa78fac44f71eada86aff510745826ba1bd1a368211fea2ce7f",
+      "memory_limit": 0,
+      "nano_cpus": 0,
+      "state": "running",
+      "gpu_devices": null
+    }
+  ],
+  "images": [
+    {
+      "Id": "sha256:0b05666882bfb67f45d559a5b827839c54127b74aedd723f8ab338a3571b5fc9",
+      "RepoTags": [
+        "unclecode/crawl4ai@sha256:0b05666882bfb67f45d559a5b827839c54127b74aedd723f8ab338a3571b5fc9"
+      ],
+      "Architecture": "arm64",
+      "Size": 10826628395
+    },
+    {
+      "Id": "sha256:481089a50759125e625d09818eb74c75f225f2c6088a4327821efb9e2c3c1801",
+      "RepoTags": [
+        "dethrottled-managed-browser-search:1.4.0"
+      ],
+      "Architecture": "arm64",
+      "Size": 1513013438
+    },
+    {
+      "Id": "sha256:578c09b68478dedfe1132a601b41028dd87e7cea0ec1a34e8cdd016c91a7e8a0",
+      "RepoTags": [
+        "dethrottled-managed-format-worker:1.4.0"
+      ],
+      "Architecture": "arm64",
+      "Size": 657485982
+    },
+    {
+      "Id": "sha256:7acbe311e9cb678f4f37f8fd645d332cf8f1d3096dbb36f9e02bcb1b07caae97",
+      "RepoTags": [
+        "dethrottled-managed-dethrottled:1.4.0"
+      ],
+      "Architecture": "arm64",
+      "Size": 2142594660
+    },
+    {
+      "Id": "sha256:c642712fcedcdaa78fac44f71eada86aff510745826ba1bd1a368211fea2ce7f",
+      "RepoTags": [
+        "searxng/searxng@sha256:c642712fcedcdaa78fac44f71eada86aff510745826ba1bd1a368211fea2ce7f"
+      ],
+      "Architecture": "arm64",
+      "Size": 377025040
+    }
+  ]
+}

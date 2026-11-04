@@ -1,0 +1,1202 @@
+[
+  {
+    "at": 1793786970.067084,
+    "service": "dethrottled-benchmark-dethrottled-1",
+    "cpu_percent_one_core": "1.57%",
+    "memory": "322MiB / 30.76GiB"
+  },
+  {
+    "at": 1793786970.067084,
+    "service": "dethrottled-benchmark-browser-search-1",
+    "cpu_percent_one_core": "10.85%",
+    "memory": "307.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793786970.067084,
+    "service": "dethrottled-benchmark-crawl4ai-1",
+    "cpu_percent_one_core": "0.40%",
+    "memory": "319.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793786970.067084,
+    "service": "dethrottled-benchmark-format-worker-1",
+    "cpu_percent_one_core": "7.28%",
+    "memory": "68.06MiB / 2GiB"
+  },
+  {
+    "at": 1793786970.067084,
+    "service": "dethrottled-benchmark-searxng-1",
+    "cpu_percent_one_core": "0.18%",
+    "memory": "123.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793786974.1217408,
+    "service": "dethrottled-benchmark-dethrottled-1",
+    "cpu_percent_one_core": "1.81%",
+    "memory": "322.3MiB / 30.76GiB"
+  },
+  {
+    "at": 1793786974.1217408,
+    "service": "dethrottled-benchmark-browser-search-1",
+    "cpu_percent_one_core": "9.72%",
+    "memory": "313.3MiB / 30.76GiB"
+  },
+  {
+    "at": 1793786974.1217408,
+    "service": "dethrottled-benchmark-crawl4ai-1",
+    "cpu_percent_one_core": "0.28%",
+    "memory": "319.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793786974.1217408,
+    "service": "dethrottled-benchmark-format-worker-1",
+    "cpu_percent_one_core": "0.12%",
+    "memory": "68.05MiB / 2GiB"
+  },
+  {
+    "at": 1793786974.1217408,
+    "service": "dethrottled-benchmark-searxng-1",
+    "cpu_percent_one_core": "0.21%",
+    "memory": "123.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793786978.171839,
+    "service": "dethrottled-benchmark-dethrottled-1",
+    "cpu_percent_one_core": "0.14%",
+    "memory": "322MiB / 30.76GiB"
+  },
+  {
+    "at": 1793786978.171839,
+    "service": "dethrottled-benchmark-browser-search-1",
+    "cpu_percent_one_core": "0.40%",
+    "memory": "313.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793786978.171839,
+    "service": "dethrottled-benchmark-crawl4ai-1",
+    "cpu_percent_one_core": "0.31%",
+    "memory": "319.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793786978.171839,
+    "service": "dethrottled-benchmark-format-worker-1",
+    "cpu_percent_one_core": "0.12%",
+    "memory": "68.05MiB / 2GiB"
+  },
+  {
+    "at": 1793786978.171839,
+    "service": "dethrottled-benchmark-searxng-1",
+    "cpu_percent_one_core": "0.17%",
+    "memory": "123.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793786982.2303991,
+    "service": "dethrottled-benchmark-dethrottled-1",
+    "cpu_percent_one_core": "1.99%",
+    "memory": "322MiB / 30.76GiB"
+  },
+  {
+    "at": 1793786982.2303991,
+    "service": "dethrottled-benchmark-browser-search-1",
+    "cpu_percent_one_core": "0.31%",
+    "memory": "313.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793786982.2303991,
+    "service": "dethrottled-benchmark-crawl4ai-1",
+    "cpu_percent_one_core": "0.35%",
+    "memory": "319.5MiB / 30.76GiB"
+  },
+  {
+    "at": 1793786982.2303991,
+    "service": "dethrottled-benchmark-format-worker-1",
+    "cpu_percent_one_core": "0.14%",
+    "memory": "68.05MiB / 2GiB"
+  },
+  {
+    "at": 1793786982.2303991,
+    "service": "dethrottled-benchmark-searxng-1",
+    "cpu_percent_one_core": "0.21%",
+    "memory": "123.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793786986.2837296,
+    "service": "dethrottled-benchmark-dethrottled-1",
+    "cpu_percent_one_core": "2.61%",
+    "memory": "322.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793786986.2837296,
+    "service": "dethrottled-benchmark-browser-search-1",
+    "cpu_percent_one_core": "0.23%",
+    "memory": "313.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793786986.2837296,
+    "service": "dethrottled-benchmark-crawl4ai-1",
+    "cpu_percent_one_core": "0.47%",
+    "memory": "319.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793786986.2837296,
+    "service": "dethrottled-benchmark-format-worker-1",
+    "cpu_percent_one_core": "0.16%",
+    "memory": "68.05MiB / 2GiB"
+  },
+  {
+    "at": 1793786986.2837296,
+    "service": "dethrottled-benchmark-searxng-1",
+    "cpu_percent_one_core": "0.25%",
+    "memory": "123.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793786990.338624,
+    "service": "dethrottled-benchmark-dethrottled-1",
+    "cpu_percent_one_core": "0.17%",
+    "memory": "322.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793786990.338624,
+    "service": "dethrottled-benchmark-browser-search-1",
+    "cpu_percent_one_core": "0.33%",
+    "memory": "313.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793786990.338624,
+    "service": "dethrottled-benchmark-crawl4ai-1",
+    "cpu_percent_one_core": "0.43%",
+    "memory": "319.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793786990.338624,
+    "service": "dethrottled-benchmark-format-worker-1",
+    "cpu_percent_one_core": "0.19%",
+    "memory": "68.05MiB / 2GiB"
+  },
+  {
+    "at": 1793786990.338624,
+    "service": "dethrottled-benchmark-searxng-1",
+    "cpu_percent_one_core": "0.25%",
+    "memory": "123.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793786994.3949707,
+    "service": "dethrottled-benchmark-dethrottled-1",
+    "cpu_percent_one_core": "1.62%",
+    "memory": "323.6MiB / 30.76GiB"
+  },
+  {
+    "at": 1793786994.3949707,
+    "service": "dethrottled-benchmark-browser-search-1",
+    "cpu_percent_one_core": "2.60%",
+    "memory": "313.3MiB / 30.76GiB"
+  },
+  {
+    "at": 1793786994.3949707,
+    "service": "dethrottled-benchmark-crawl4ai-1",
+    "cpu_percent_one_core": "0.41%",
+    "memory": "319.5MiB / 30.76GiB"
+  },
+  {
+    "at": 1793786994.3949707,
+    "service": "dethrottled-benchmark-format-worker-1",
+    "cpu_percent_one_core": "0.16%",
+    "memory": "68.05MiB / 2GiB"
+  },
+  {
+    "at": 1793786994.3949707,
+    "service": "dethrottled-benchmark-searxng-1",
+    "cpu_percent_one_core": "0.21%",
+    "memory": "123.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793786998.4471874,
+    "service": "dethrottled-benchmark-dethrottled-1",
+    "cpu_percent_one_core": "1.54%",
+    "memory": "323.9MiB / 30.76GiB"
+  },
+  {
+    "at": 1793786998.4471874,
+    "service": "dethrottled-benchmark-browser-search-1",
+    "cpu_percent_one_core": "0.12%",
+    "memory": "313.3MiB / 30.76GiB"
+  },
+  {
+    "at": 1793786998.4471874,
+    "service": "dethrottled-benchmark-crawl4ai-1",
+    "cpu_percent_one_core": "3.68%",
+    "memory": "319.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793786998.4471874,
+    "service": "dethrottled-benchmark-format-worker-1",
+    "cpu_percent_one_core": "0.11%",
+    "memory": "68.05MiB / 2GiB"
+  },
+  {
+    "at": 1793786998.4471874,
+    "service": "dethrottled-benchmark-searxng-1",
+    "cpu_percent_one_core": "0.21%",
+    "memory": "123.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787002.4962537,
+    "service": "dethrottled-benchmark-dethrottled-1",
+    "cpu_percent_one_core": "1.98%",
+    "memory": "324MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787002.4962537,
+    "service": "dethrottled-benchmark-browser-search-1",
+    "cpu_percent_one_core": "0.15%",
+    "memory": "313.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787002.4962537,
+    "service": "dethrottled-benchmark-crawl4ai-1",
+    "cpu_percent_one_core": "0.29%",
+    "memory": "319.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787002.4962537,
+    "service": "dethrottled-benchmark-format-worker-1",
+    "cpu_percent_one_core": "0.13%",
+    "memory": "68.05MiB / 2GiB"
+  },
+  {
+    "at": 1793787002.4962537,
+    "service": "dethrottled-benchmark-searxng-1",
+    "cpu_percent_one_core": "0.22%",
+    "memory": "123.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787006.5529168,
+    "service": "dethrottled-benchmark-dethrottled-1",
+    "cpu_percent_one_core": "0.17%",
+    "memory": "324.4MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787006.5529168,
+    "service": "dethrottled-benchmark-browser-search-1",
+    "cpu_percent_one_core": "0.18%",
+    "memory": "313.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787006.5529168,
+    "service": "dethrottled-benchmark-crawl4ai-1",
+    "cpu_percent_one_core": "0.40%",
+    "memory": "319.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787006.5529168,
+    "service": "dethrottled-benchmark-format-worker-1",
+    "cpu_percent_one_core": "0.16%",
+    "memory": "68.05MiB / 2GiB"
+  },
+  {
+    "at": 1793787006.5529168,
+    "service": "dethrottled-benchmark-searxng-1",
+    "cpu_percent_one_core": "0.22%",
+    "memory": "123.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787010.607616,
+    "service": "dethrottled-benchmark-dethrottled-1",
+    "cpu_percent_one_core": "4.30%",
+    "memory": "325.4MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787010.607616,
+    "service": "dethrottled-benchmark-browser-search-1",
+    "cpu_percent_one_core": "0.31%",
+    "memory": "313.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787010.607616,
+    "service": "dethrottled-benchmark-crawl4ai-1",
+    "cpu_percent_one_core": "0.52%",
+    "memory": "319.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787010.607616,
+    "service": "dethrottled-benchmark-format-worker-1",
+    "cpu_percent_one_core": "0.16%",
+    "memory": "68.05MiB / 2GiB"
+  },
+  {
+    "at": 1793787010.607616,
+    "service": "dethrottled-benchmark-searxng-1",
+    "cpu_percent_one_core": "0.20%",
+    "memory": "123.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787014.6689827,
+    "service": "dethrottled-benchmark-dethrottled-1",
+    "cpu_percent_one_core": "2.19%",
+    "memory": "326.9MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787014.6689827,
+    "service": "dethrottled-benchmark-browser-search-1",
+    "cpu_percent_one_core": "0.24%",
+    "memory": "313.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787014.6689827,
+    "service": "dethrottled-benchmark-crawl4ai-1",
+    "cpu_percent_one_core": "0.38%",
+    "memory": "319.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787014.6689827,
+    "service": "dethrottled-benchmark-format-worker-1",
+    "cpu_percent_one_core": "0.16%",
+    "memory": "68.05MiB / 2GiB"
+  },
+  {
+    "at": 1793787014.6689827,
+    "service": "dethrottled-benchmark-searxng-1",
+    "cpu_percent_one_core": "0.17%",
+    "memory": "123.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787018.7260969,
+    "service": "dethrottled-benchmark-dethrottled-1",
+    "cpu_percent_one_core": "0.12%",
+    "memory": "327MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787018.7260969,
+    "service": "dethrottled-benchmark-browser-search-1",
+    "cpu_percent_one_core": "0.15%",
+    "memory": "313.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787018.7260969,
+    "service": "dethrottled-benchmark-crawl4ai-1",
+    "cpu_percent_one_core": "0.32%",
+    "memory": "319.5MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787018.7260969,
+    "service": "dethrottled-benchmark-format-worker-1",
+    "cpu_percent_one_core": "0.17%",
+    "memory": "68.05MiB / 2GiB"
+  },
+  {
+    "at": 1793787018.7260969,
+    "service": "dethrottled-benchmark-searxng-1",
+    "cpu_percent_one_core": "0.22%",
+    "memory": "123.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787022.7809668,
+    "service": "dethrottled-benchmark-dethrottled-1",
+    "cpu_percent_one_core": "0.14%",
+    "memory": "327.3MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787022.7809668,
+    "service": "dethrottled-benchmark-browser-search-1",
+    "cpu_percent_one_core": "8.34%",
+    "memory": "281.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787022.7809668,
+    "service": "dethrottled-benchmark-crawl4ai-1",
+    "cpu_percent_one_core": "0.31%",
+    "memory": "319.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787022.7809668,
+    "service": "dethrottled-benchmark-format-worker-1",
+    "cpu_percent_one_core": "0.14%",
+    "memory": "68.05MiB / 2GiB"
+  },
+  {
+    "at": 1793787022.7809668,
+    "service": "dethrottled-benchmark-searxng-1",
+    "cpu_percent_one_core": "0.18%",
+    "memory": "123.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787026.8370664,
+    "service": "dethrottled-benchmark-dethrottled-1",
+    "cpu_percent_one_core": "1.74%",
+    "memory": "327.4MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787026.8370664,
+    "service": "dethrottled-benchmark-browser-search-1",
+    "cpu_percent_one_core": "0.29%",
+    "memory": "280.9MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787026.8370664,
+    "service": "dethrottled-benchmark-crawl4ai-1",
+    "cpu_percent_one_core": "0.44%",
+    "memory": "319.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787026.8370664,
+    "service": "dethrottled-benchmark-format-worker-1",
+    "cpu_percent_one_core": "0.18%",
+    "memory": "68.05MiB / 2GiB"
+  },
+  {
+    "at": 1793787026.8370664,
+    "service": "dethrottled-benchmark-searxng-1",
+    "cpu_percent_one_core": "0.26%",
+    "memory": "123.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787030.8966403,
+    "service": "dethrottled-benchmark-dethrottled-1",
+    "cpu_percent_one_core": "1.72%",
+    "memory": "327.5MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787030.8966403,
+    "service": "dethrottled-benchmark-browser-search-1",
+    "cpu_percent_one_core": "0.17%",
+    "memory": "280.9MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787030.8966403,
+    "service": "dethrottled-benchmark-crawl4ai-1",
+    "cpu_percent_one_core": "0.42%",
+    "memory": "319.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787030.8966403,
+    "service": "dethrottled-benchmark-format-worker-1",
+    "cpu_percent_one_core": "0.11%",
+    "memory": "68.05MiB / 2GiB"
+  },
+  {
+    "at": 1793787030.8966403,
+    "service": "dethrottled-benchmark-searxng-1",
+    "cpu_percent_one_core": "0.19%",
+    "memory": "123.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787034.9544604,
+    "service": "dethrottled-benchmark-dethrottled-1",
+    "cpu_percent_one_core": "0.13%",
+    "memory": "327.5MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787034.9544604,
+    "service": "dethrottled-benchmark-browser-search-1",
+    "cpu_percent_one_core": "0.12%",
+    "memory": "280.8MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787034.9544604,
+    "service": "dethrottled-benchmark-crawl4ai-1",
+    "cpu_percent_one_core": "0.32%",
+    "memory": "319.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787034.9544604,
+    "service": "dethrottled-benchmark-format-worker-1",
+    "cpu_percent_one_core": "0.11%",
+    "memory": "68.05MiB / 2GiB"
+  },
+  {
+    "at": 1793787034.9544604,
+    "service": "dethrottled-benchmark-searxng-1",
+    "cpu_percent_one_core": "0.17%",
+    "memory": "123.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787039.0042505,
+    "service": "dethrottled-benchmark-dethrottled-1",
+    "cpu_percent_one_core": "0.12%",
+    "memory": "327.6MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787039.0042505,
+    "service": "dethrottled-benchmark-browser-search-1",
+    "cpu_percent_one_core": "0.16%",
+    "memory": "280.8MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787039.0042505,
+    "service": "dethrottled-benchmark-crawl4ai-1",
+    "cpu_percent_one_core": "0.34%",
+    "memory": "319.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787039.0042505,
+    "service": "dethrottled-benchmark-format-worker-1",
+    "cpu_percent_one_core": "0.12%",
+    "memory": "68.05MiB / 2GiB"
+  },
+  {
+    "at": 1793787039.0042505,
+    "service": "dethrottled-benchmark-searxng-1",
+    "cpu_percent_one_core": "0.20%",
+    "memory": "123.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787043.0641818,
+    "service": "dethrottled-benchmark-dethrottled-1",
+    "cpu_percent_one_core": "2.02%",
+    "memory": "327.9MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787043.0641818,
+    "service": "dethrottled-benchmark-browser-search-1",
+    "cpu_percent_one_core": "0.13%",
+    "memory": "280.6MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787043.0641818,
+    "service": "dethrottled-benchmark-crawl4ai-1",
+    "cpu_percent_one_core": "0.31%",
+    "memory": "319.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787043.0641818,
+    "service": "dethrottled-benchmark-format-worker-1",
+    "cpu_percent_one_core": "0.12%",
+    "memory": "68.05MiB / 2GiB"
+  },
+  {
+    "at": 1793787043.0641818,
+    "service": "dethrottled-benchmark-searxng-1",
+    "cpu_percent_one_core": "0.21%",
+    "memory": "123.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787047.1167395,
+    "service": "dethrottled-benchmark-dethrottled-1",
+    "cpu_percent_one_core": "0.15%",
+    "memory": "328.1MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787047.1167395,
+    "service": "dethrottled-benchmark-browser-search-1",
+    "cpu_percent_one_core": "0.17%",
+    "memory": "280.6MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787047.1167395,
+    "service": "dethrottled-benchmark-crawl4ai-1",
+    "cpu_percent_one_core": "0.45%",
+    "memory": "319.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787047.1167395,
+    "service": "dethrottled-benchmark-format-worker-1",
+    "cpu_percent_one_core": "0.14%",
+    "memory": "68.05MiB / 2GiB"
+  },
+  {
+    "at": 1793787047.1167395,
+    "service": "dethrottled-benchmark-searxng-1",
+    "cpu_percent_one_core": "0.18%",
+    "memory": "123.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787051.168513,
+    "service": "dethrottled-benchmark-dethrottled-1",
+    "cpu_percent_one_core": "2.15%",
+    "memory": "328.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787051.168513,
+    "service": "dethrottled-benchmark-browser-search-1",
+    "cpu_percent_one_core": "0.17%",
+    "memory": "280.6MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787051.168513,
+    "service": "dethrottled-benchmark-crawl4ai-1",
+    "cpu_percent_one_core": "0.41%",
+    "memory": "319.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787051.168513,
+    "service": "dethrottled-benchmark-format-worker-1",
+    "cpu_percent_one_core": "0.16%",
+    "memory": "68.05MiB / 2GiB"
+  },
+  {
+    "at": 1793787051.168513,
+    "service": "dethrottled-benchmark-searxng-1",
+    "cpu_percent_one_core": "0.24%",
+    "memory": "123.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787055.218327,
+    "service": "dethrottled-benchmark-dethrottled-1",
+    "cpu_percent_one_core": "1.51%",
+    "memory": "328.4MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787055.218327,
+    "service": "dethrottled-benchmark-browser-search-1",
+    "cpu_percent_one_core": "0.11%",
+    "memory": "280.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787055.218327,
+    "service": "dethrottled-benchmark-crawl4ai-1",
+    "cpu_percent_one_core": "0.43%",
+    "memory": "319.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787055.218327,
+    "service": "dethrottled-benchmark-format-worker-1",
+    "cpu_percent_one_core": "0.12%",
+    "memory": "68.05MiB / 2GiB"
+  },
+  {
+    "at": 1793787055.218327,
+    "service": "dethrottled-benchmark-searxng-1",
+    "cpu_percent_one_core": "0.22%",
+    "memory": "123.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787059.267793,
+    "service": "dethrottled-benchmark-dethrottled-1",
+    "cpu_percent_one_core": "0.12%",
+    "memory": "328.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787059.267793,
+    "service": "dethrottled-benchmark-browser-search-1",
+    "cpu_percent_one_core": "0.10%",
+    "memory": "280.6MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787059.267793,
+    "service": "dethrottled-benchmark-crawl4ai-1",
+    "cpu_percent_one_core": "0.28%",
+    "memory": "319.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787059.267793,
+    "service": "dethrottled-benchmark-format-worker-1",
+    "cpu_percent_one_core": "0.12%",
+    "memory": "68.05MiB / 2GiB"
+  },
+  {
+    "at": 1793787059.267793,
+    "service": "dethrottled-benchmark-searxng-1",
+    "cpu_percent_one_core": "0.21%",
+    "memory": "123.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787063.325282,
+    "service": "dethrottled-benchmark-dethrottled-1",
+    "cpu_percent_one_core": "1.60%",
+    "memory": "328.8MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787063.325282,
+    "service": "dethrottled-benchmark-browser-search-1",
+    "cpu_percent_one_core": "0.15%",
+    "memory": "280.6MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787063.325282,
+    "service": "dethrottled-benchmark-crawl4ai-1",
+    "cpu_percent_one_core": "0.39%",
+    "memory": "319.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787063.325282,
+    "service": "dethrottled-benchmark-format-worker-1",
+    "cpu_percent_one_core": "0.13%",
+    "memory": "68.05MiB / 2GiB"
+  },
+  {
+    "at": 1793787063.325282,
+    "service": "dethrottled-benchmark-searxng-1",
+    "cpu_percent_one_core": "0.19%",
+    "memory": "123.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787067.3762362,
+    "service": "dethrottled-benchmark-dethrottled-1",
+    "cpu_percent_one_core": "2.19%",
+    "memory": "329.1MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787067.3762362,
+    "service": "dethrottled-benchmark-browser-search-1",
+    "cpu_percent_one_core": "0.16%",
+    "memory": "280.6MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787067.3762362,
+    "service": "dethrottled-benchmark-crawl4ai-1",
+    "cpu_percent_one_core": "0.32%",
+    "memory": "319.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787067.3762362,
+    "service": "dethrottled-benchmark-format-worker-1",
+    "cpu_percent_one_core": "0.16%",
+    "memory": "68.05MiB / 2GiB"
+  },
+  {
+    "at": 1793787067.3762362,
+    "service": "dethrottled-benchmark-searxng-1",
+    "cpu_percent_one_core": "0.23%",
+    "memory": "123.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787071.427103,
+    "service": "dethrottled-benchmark-dethrottled-1",
+    "cpu_percent_one_core": "4.42%",
+    "memory": "329.1MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787071.427103,
+    "service": "dethrottled-benchmark-browser-search-1",
+    "cpu_percent_one_core": "0.13%",
+    "memory": "280.6MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787071.427103,
+    "service": "dethrottled-benchmark-crawl4ai-1",
+    "cpu_percent_one_core": "0.45%",
+    "memory": "319.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787071.427103,
+    "service": "dethrottled-benchmark-format-worker-1",
+    "cpu_percent_one_core": "0.12%",
+    "memory": "68.05MiB / 2GiB"
+  },
+  {
+    "at": 1793787071.427103,
+    "service": "dethrottled-benchmark-searxng-1",
+    "cpu_percent_one_core": "0.21%",
+    "memory": "123.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787075.4816236,
+    "service": "dethrottled-benchmark-dethrottled-1",
+    "cpu_percent_one_core": "0.48%",
+    "memory": "329.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787075.4816236,
+    "service": "dethrottled-benchmark-browser-search-1",
+    "cpu_percent_one_core": "0.14%",
+    "memory": "280.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787075.4816236,
+    "service": "dethrottled-benchmark-crawl4ai-1",
+    "cpu_percent_one_core": "0.48%",
+    "memory": "319.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787075.4816236,
+    "service": "dethrottled-benchmark-format-worker-1",
+    "cpu_percent_one_core": "0.16%",
+    "memory": "68.05MiB / 2GiB"
+  },
+  {
+    "at": 1793787075.4816236,
+    "service": "dethrottled-benchmark-searxng-1",
+    "cpu_percent_one_core": "0.16%",
+    "memory": "123.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787079.5370965,
+    "service": "dethrottled-benchmark-dethrottled-1",
+    "cpu_percent_one_core": "1.66%",
+    "memory": "329.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787079.5370965,
+    "service": "dethrottled-benchmark-browser-search-1",
+    "cpu_percent_one_core": "0.19%",
+    "memory": "280.6MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787079.5370965,
+    "service": "dethrottled-benchmark-crawl4ai-1",
+    "cpu_percent_one_core": "0.41%",
+    "memory": "319.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787079.5370965,
+    "service": "dethrottled-benchmark-format-worker-1",
+    "cpu_percent_one_core": "0.14%",
+    "memory": "68.05MiB / 2GiB"
+  },
+  {
+    "at": 1793787079.5370965,
+    "service": "dethrottled-benchmark-searxng-1",
+    "cpu_percent_one_core": "0.24%",
+    "memory": "123.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787083.5955572,
+    "service": "dethrottled-benchmark-dethrottled-1",
+    "cpu_percent_one_core": "2.23%",
+    "memory": "329.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787083.5955572,
+    "service": "dethrottled-benchmark-browser-search-1",
+    "cpu_percent_one_core": "0.16%",
+    "memory": "280.6MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787083.5955572,
+    "service": "dethrottled-benchmark-crawl4ai-1",
+    "cpu_percent_one_core": "0.29%",
+    "memory": "319.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787083.5955572,
+    "service": "dethrottled-benchmark-format-worker-1",
+    "cpu_percent_one_core": "0.13%",
+    "memory": "68.05MiB / 2GiB"
+  },
+  {
+    "at": 1793787083.5955572,
+    "service": "dethrottled-benchmark-searxng-1",
+    "cpu_percent_one_core": "0.21%",
+    "memory": "123.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787087.6536117,
+    "service": "dethrottled-benchmark-dethrottled-1",
+    "cpu_percent_one_core": "0.12%",
+    "memory": "329.1MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787087.6536117,
+    "service": "dethrottled-benchmark-browser-search-1",
+    "cpu_percent_one_core": "0.16%",
+    "memory": "280.6MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787087.6536117,
+    "service": "dethrottled-benchmark-crawl4ai-1",
+    "cpu_percent_one_core": "0.35%",
+    "memory": "319.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787087.6536117,
+    "service": "dethrottled-benchmark-format-worker-1",
+    "cpu_percent_one_core": "0.19%",
+    "memory": "68.05MiB / 2GiB"
+  },
+  {
+    "at": 1793787087.6536117,
+    "service": "dethrottled-benchmark-searxng-1",
+    "cpu_percent_one_core": "0.18%",
+    "memory": "123.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787091.7126498,
+    "service": "dethrottled-benchmark-dethrottled-1",
+    "cpu_percent_one_core": "1.72%",
+    "memory": "329.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787091.7126498,
+    "service": "dethrottled-benchmark-browser-search-1",
+    "cpu_percent_one_core": "0.13%",
+    "memory": "280.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787091.7126498,
+    "service": "dethrottled-benchmark-crawl4ai-1",
+    "cpu_percent_one_core": "0.27%",
+    "memory": "319.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787091.7126498,
+    "service": "dethrottled-benchmark-format-worker-1",
+    "cpu_percent_one_core": "0.10%",
+    "memory": "68.05MiB / 2GiB"
+  },
+  {
+    "at": 1793787091.7126498,
+    "service": "dethrottled-benchmark-searxng-1",
+    "cpu_percent_one_core": "0.18%",
+    "memory": "123.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787095.7633407,
+    "service": "dethrottled-benchmark-dethrottled-1",
+    "cpu_percent_one_core": "1.85%",
+    "memory": "329.3MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787095.7633407,
+    "service": "dethrottled-benchmark-browser-search-1",
+    "cpu_percent_one_core": "0.15%",
+    "memory": "280.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787095.7633407,
+    "service": "dethrottled-benchmark-crawl4ai-1",
+    "cpu_percent_one_core": "0.43%",
+    "memory": "319.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787095.7633407,
+    "service": "dethrottled-benchmark-format-worker-1",
+    "cpu_percent_one_core": "0.12%",
+    "memory": "68.05MiB / 2GiB"
+  },
+  {
+    "at": 1793787095.7633407,
+    "service": "dethrottled-benchmark-searxng-1",
+    "cpu_percent_one_core": "0.21%",
+    "memory": "123.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787099.8239841,
+    "service": "dethrottled-benchmark-dethrottled-1",
+    "cpu_percent_one_core": "0.14%",
+    "memory": "329.3MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787099.8239841,
+    "service": "dethrottled-benchmark-browser-search-1",
+    "cpu_percent_one_core": "0.12%",
+    "memory": "280.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787099.8239841,
+    "service": "dethrottled-benchmark-crawl4ai-1",
+    "cpu_percent_one_core": "0.27%",
+    "memory": "319.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787099.8239841,
+    "service": "dethrottled-benchmark-format-worker-1",
+    "cpu_percent_one_core": "0.10%",
+    "memory": "68.05MiB / 2GiB"
+  },
+  {
+    "at": 1793787099.8239841,
+    "service": "dethrottled-benchmark-searxng-1",
+    "cpu_percent_one_core": "0.18%",
+    "memory": "123.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787103.874799,
+    "service": "dethrottled-benchmark-dethrottled-1",
+    "cpu_percent_one_core": "1.81%",
+    "memory": "329.3MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787103.874799,
+    "service": "dethrottled-benchmark-browser-search-1",
+    "cpu_percent_one_core": "0.16%",
+    "memory": "280.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787103.874799,
+    "service": "dethrottled-benchmark-crawl4ai-1",
+    "cpu_percent_one_core": "0.40%",
+    "memory": "319.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787103.874799,
+    "service": "dethrottled-benchmark-format-worker-1",
+    "cpu_percent_one_core": "0.12%",
+    "memory": "68.05MiB / 2GiB"
+  },
+  {
+    "at": 1793787103.874799,
+    "service": "dethrottled-benchmark-searxng-1",
+    "cpu_percent_one_core": "0.23%",
+    "memory": "123.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787107.9271734,
+    "service": "dethrottled-benchmark-dethrottled-1",
+    "cpu_percent_one_core": "1.78%",
+    "memory": "329.4MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787107.9271734,
+    "service": "dethrottled-benchmark-browser-search-1",
+    "cpu_percent_one_core": "0.15%",
+    "memory": "280.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787107.9271734,
+    "service": "dethrottled-benchmark-crawl4ai-1",
+    "cpu_percent_one_core": "0.39%",
+    "memory": "319.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787107.9271734,
+    "service": "dethrottled-benchmark-format-worker-1",
+    "cpu_percent_one_core": "0.18%",
+    "memory": "68.05MiB / 2GiB"
+  },
+  {
+    "at": 1793787107.9271734,
+    "service": "dethrottled-benchmark-searxng-1",
+    "cpu_percent_one_core": "0.20%",
+    "memory": "123.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787111.9840205,
+    "service": "dethrottled-benchmark-dethrottled-1",
+    "cpu_percent_one_core": "1.99%",
+    "memory": "329.4MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787111.9840205,
+    "service": "dethrottled-benchmark-browser-search-1",
+    "cpu_percent_one_core": "0.19%",
+    "memory": "280.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787111.9840205,
+    "service": "dethrottled-benchmark-crawl4ai-1",
+    "cpu_percent_one_core": "0.43%",
+    "memory": "319.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787111.9840205,
+    "service": "dethrottled-benchmark-format-worker-1",
+    "cpu_percent_one_core": "0.14%",
+    "memory": "68.05MiB / 2GiB"
+  },
+  {
+    "at": 1793787111.9840205,
+    "service": "dethrottled-benchmark-searxng-1",
+    "cpu_percent_one_core": "0.23%",
+    "memory": "123.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787116.041783,
+    "service": "dethrottled-benchmark-dethrottled-1",
+    "cpu_percent_one_core": "0.15%",
+    "memory": "329.5MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787116.041783,
+    "service": "dethrottled-benchmark-browser-search-1",
+    "cpu_percent_one_core": "0.17%",
+    "memory": "280.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787116.041783,
+    "service": "dethrottled-benchmark-crawl4ai-1",
+    "cpu_percent_one_core": "0.42%",
+    "memory": "319.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787116.041783,
+    "service": "dethrottled-benchmark-format-worker-1",
+    "cpu_percent_one_core": "0.14%",
+    "memory": "68.05MiB / 2GiB"
+  },
+  {
+    "at": 1793787116.041783,
+    "service": "dethrottled-benchmark-searxng-1",
+    "cpu_percent_one_core": "0.17%",
+    "memory": "123.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787120.100565,
+    "service": "dethrottled-benchmark-dethrottled-1",
+    "cpu_percent_one_core": "2.17%",
+    "memory": "329.6MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787120.100565,
+    "service": "dethrottled-benchmark-browser-search-1",
+    "cpu_percent_one_core": "0.22%",
+    "memory": "280.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787120.100565,
+    "service": "dethrottled-benchmark-crawl4ai-1",
+    "cpu_percent_one_core": "0.36%",
+    "memory": "319.5MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787120.100565,
+    "service": "dethrottled-benchmark-format-worker-1",
+    "cpu_percent_one_core": "7.35%",
+    "memory": "68.05MiB / 2GiB"
+  },
+  {
+    "at": 1793787120.100565,
+    "service": "dethrottled-benchmark-searxng-1",
+    "cpu_percent_one_core": "0.17%",
+    "memory": "123.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787124.153673,
+    "service": "dethrottled-benchmark-dethrottled-1",
+    "cpu_percent_one_core": "2.06%",
+    "memory": "329.6MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787124.153673,
+    "service": "dethrottled-benchmark-browser-search-1",
+    "cpu_percent_one_core": "0.18%",
+    "memory": "280.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787124.153673,
+    "service": "dethrottled-benchmark-crawl4ai-1",
+    "cpu_percent_one_core": "0.29%",
+    "memory": "319.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787124.153673,
+    "service": "dethrottled-benchmark-format-worker-1",
+    "cpu_percent_one_core": "0.17%",
+    "memory": "68.05MiB / 2GiB"
+  },
+  {
+    "at": 1793787124.153673,
+    "service": "dethrottled-benchmark-searxng-1",
+    "cpu_percent_one_core": "0.18%",
+    "memory": "123.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787128.2085137,
+    "service": "dethrottled-benchmark-dethrottled-1",
+    "cpu_percent_one_core": "0.15%",
+    "memory": "329.6MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787128.2085137,
+    "service": "dethrottled-benchmark-browser-search-1",
+    "cpu_percent_one_core": "0.14%",
+    "memory": "280.7MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787128.2085137,
+    "service": "dethrottled-benchmark-crawl4ai-1",
+    "cpu_percent_one_core": "0.37%",
+    "memory": "319.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787128.2085137,
+    "service": "dethrottled-benchmark-format-worker-1",
+    "cpu_percent_one_core": "0.14%",
+    "memory": "68.05MiB / 2GiB"
+  },
+  {
+    "at": 1793787128.2085137,
+    "service": "dethrottled-benchmark-searxng-1",
+    "cpu_percent_one_core": "0.21%",
+    "memory": "123.7MiB / 30.76GiB"
+  }
+]

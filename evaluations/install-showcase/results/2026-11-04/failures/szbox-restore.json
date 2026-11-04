@@ -1,0 +1,9 @@
+[
+  {
+    "case": "restore-after-worker-restart",
+    "passed": false,
+    "error": "AssertionError",
+    "detail": "",
+    "elapsed_ms": 317.1
+  }
+]

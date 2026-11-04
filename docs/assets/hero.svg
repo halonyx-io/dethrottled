@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="470"
+viewBox="0 0 1200 470"
+role="img" aria-labelledby="title"><title id="title">Dethrottled: discover, read, drive and retain web evidence</title>
+<defs>
+
+<marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4"
+orient="auto"><path d="M0,0 L8,4 L0,8" fill="#43e0d0"/></marker>
+
+<pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+<path d="M40 0H0V40" fill="none" stroke="#29404d" stroke-opacity=".22"/></pattern>
+
+</defs>
+<rect width="1200" height="470" rx="22" fill="#0b1118"/>
+<rect width="1200" height="470" fill="url(#grid)"/>
+<g font-family="Inter,DejaVu Sans,Arial,sans-serif"><text x="55" y="64" fill="#43e0d0" font-size="17" font-weight="600">LOCAL-FIRST WEB INFRASTRUCTURE</text><text x="50" y="155" fill="#f0f7fa" font-size="88" font-weight="700">dethrottled</text><text x="55" y="207" fill="#9eb2bf" font-size="29" font-weight="400">Web evidence. One local engine.</text><text x="55" y="252" fill="#f0f7fa" font-size="21" font-weight="400">Discover sources. Read deeply. Drive the browser.</text><text x="55" y="291" fill="#9eb2bf" font-size="18" font-weight="400">Keyless default stack · Python + Docker · REST + MCP</text><rect x="55" y="335" width="260" height="100" rx="16" fill="#14212c" stroke="#29404d"/><text x="77" y="371" fill="#f0f7fa" font-size="22" font-weight="600">SEARCH</text><text x="77" y="403" fill="#9eb2bf" font-size="17" font-weight="400">Compact source choices</text><path d="M318,385 L334,385" fill="none" stroke="#43e0d0" stroke-width="2" marker-end="url(#arrow)"/><rect x="340" y="335" width="260" height="100" rx="16" fill="#14212c" stroke="#29404d"/><text x="362" y="371" fill="#f0f7fa" font-size="22" font-weight="600">READ</text><text x="362" y="403" fill="#9eb2bf" font-size="17" font-weight="400">Pages, files and tables</text><path d="M603,385 L619,385" fill="none" stroke="#43e0d0" stroke-width="2" marker-end="url(#arrow)"/><rect x="625" y="335" width="260" height="100" rx="16" fill="#14212c" stroke="#43e0d0"/><text x="647" y="371" fill="#43e0d0" font-size="22" font-weight="600">DRIVE</text><text x="647" y="403" fill="#9eb2bf" font-size="17" font-weight="400">Native browser actions</text><path d="M888,385 L904,385" fill="none" stroke="#43e0d0" stroke-width="2" marker-end="url(#arrow)"/><rect x="910" y="335" width="260" height="100" rx="16" fill="#14212c" stroke="#29404d"/><text x="932" y="371" fill="#f0f7fa" font-size="22" font-weight="600">RETAIN</text><text x="932" y="403" fill="#9eb2bf" font-size="17" font-weight="400">Evidence you can revisit</text></g></svg>

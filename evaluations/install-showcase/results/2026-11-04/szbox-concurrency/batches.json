@@ -1,0 +1,56 @@
+[
+  {
+    "repeat": 0,
+    "concurrency": 1,
+    "requests": 12,
+    "elapsed_seconds": 17.96541986335069
+  },
+  {
+    "repeat": 0,
+    "concurrency": 3,
+    "requests": 12,
+    "elapsed_seconds": 17.986966451164335
+  },
+  {
+    "repeat": 0,
+    "concurrency": 6,
+    "requests": 12,
+    "elapsed_seconds": 18.004574958235025
+  },
+  {
+    "repeat": 1,
+    "concurrency": 1,
+    "requests": 12,
+    "elapsed_seconds": 17.9988471721299
+  },
+  {
+    "repeat": 1,
+    "concurrency": 3,
+    "requests": 12,
+    "elapsed_seconds": 18.01413681777194
+  },
+  {
+    "repeat": 1,
+    "concurrency": 6,
+    "requests": 12,
+    "elapsed_seconds": 17.9951140913181
+  },
+  {
+    "repeat": 2,
+    "concurrency": 1,
+    "requests": 12,
+    "elapsed_seconds": 17.987039600964636
+  },
+  {
+    "repeat": 2,
+    "concurrency": 3,
+    "requests": 12,
+    "elapsed_seconds": 18.00982701871544
+  },
+  {
+    "repeat": 2,
+    "concurrency": 6,
+    "requests": 12,
+    "elapsed_seconds": 17.995862846262753
+  }
+]

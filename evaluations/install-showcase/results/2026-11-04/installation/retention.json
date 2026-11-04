@@ -1,0 +1,8 @@
+{
+  "volumes_preserved": [
+    "dethrottled-benchmark_browser-state",
+    "dethrottled-benchmark_dethrottled-data"
+  ],
+  "document_id": "doc_e357c344822d40c682724db1684c230a",
+  "fact_retained": true
+}

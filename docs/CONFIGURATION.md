@@ -1,11 +1,20 @@
 # Configuration
 
+![Default stack and optional profiles](assets/profiles.svg)
+
 Base Compose runs five services: API, browser-search, SearXNG, Crawl4AI and the
 MSG/XLSB format reader. Optional profiles add local speech and PDF layout.
 Authenticated remote adapters are a separate overlay. The API image already contains native readers, Tesseract and
 corpus weights; a source install requires explicit dependencies and setup.
 
-## Base installation
+## PyPI-managed installation
+
+After `pip install dethrottled`, use `dethrottled stack up` to start the complete
+default stack without a Git clone. Docker Engine and Compose are prerequisites.
+See [Python installation and worker management](PYTHON.md) for profiles, state
+locations and lifecycle commands.
+
+## GitHub base installation
 
 ```sh
 docker compose up -d --build
@@ -32,7 +41,7 @@ application settings need an `environment` entry in a local override. Inspect
 | `DETHROTTLED_DRIVE_SESSION_TTL`, `DETHROTTLED_DRIVE_MAX_SESSIONS` | `1800`, `8` | Browser session expiry and capacity |
 | `DETHROTTLED_BROWSER_GRAPHICS` | `auto` in Compose | Verify exposed hardware through GL EGL, fall back to software; `mesa` retains GL, `default` retains original args |
 | `DETHROTTLED_READ_PLAN_SECONDS` | `30` | Additional recovery admission budget, clamped to 0–120; in-flight operations retain their transport timeout |
-| `DETHROTTLED_USER_AGENT` | `dethrottled/1.3.0 (automated fetcher)` | Article-fetch identity |
+| `DETHROTTLED_USER_AGENT` | `dethrottled/1.4.0 (automated fetcher)` | Article-fetch identity |
 
 The base file maps internal worker URLs and optional worker/key variables.
 The complete interpolation map is in `docker-compose.yml` and the agents overlay;
@@ -72,8 +81,9 @@ resource caps; the base API/browser services have no explicit Compose CPU quota
 or overall memory cap. `shm_size` is not a total RAM limit.
 
 `WHISPER_MODEL` and `MEDIA_MAX_SECONDS` are mapped by the media overlay. Larger
-speech models need separate memory/quality measurements. ARM64 runtime evaluation
-of the base stack does not certify every newer optional worker or graphics profile.
+speech models need separate memory/quality measurements. The [1.4.0 evaluation](../evaluations/install-showcase/results/2026-11-04/REPORT.md)
+exercised both inference workers on AMD64 and ARM64 with fixed fixtures. That
+does not certify arbitrary documents, longer audio or every graphics profile.
 
 ## Corpus models
 

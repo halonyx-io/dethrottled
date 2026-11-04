@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="540"
+viewBox="0 0 1200 540"
+role="img" aria-labelledby="title"><title id="title">Default stack and optional worker profiles</title>
+<defs>
+
+<marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4"
+orient="auto"><path d="M0,0 L8,4 L0,8" fill="#43e0d0"/></marker>
+
+<pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+<path d="M40 0H0V40" fill="none" stroke="#29404d" stroke-opacity=".22"/></pattern>
+
+</defs>
+<rect width="1200" height="540" rx="22" fill="#0b1118"/>
+<rect width="1200" height="540" fill="url(#grid)"/>
+<g font-family="Inter,DejaVu Sans,Arial,sans-serif"><text x="45" y="55" fill="#f0f7fa" font-size="28" font-weight="600">CHOOSE CAPABILITY, KEEP THE SAME WORKFLOW</text><text x="45" y="90" fill="#9eb2bf" font-size="18" font-weight="400">Installing the Python package starts nothing. Explicit stack up builds and starts services.</text><rect x="45" y="135" width="545" height="215" rx="16" fill="#14212c" stroke="#43e0d0"/><text x="67" y="171" fill="#43e0d0" font-size="22" font-weight="600">DEFAULT · FIVE SERVICES</text><text x="67" y="203" fill="#9eb2bf" font-size="17" font-weight="400">API + document libraries + OCR + corpus models</text><text x="67" y="229" fill="#9eb2bf" font-size="17" font-weight="400">Headed browser + SearXNG + Crawl4AI</text><text x="67" y="255" fill="#9eb2bf" font-size="17" font-weight="400">Format reader for MSG / XLSB</text><text x="67" y="281" fill="#9eb2bf" font-size="17" font-weight="400">No GPU, worker URL or API key required</text><rect x="620" y="135" width="535" height="100" rx="16" fill="#14212c" stroke="#29404d"/><text x="642" y="171" fill="#f0f7fa" font-size="22" font-weight="600">MEDIA PROFILE</text><text x="642" y="203" fill="#9eb2bf" font-size="17" font-weight="400">Adds CPU speech recognition; first-use model download</text><rect x="620" y="255" width="535" height="100" rx="16" fill="#14212c" stroke="#29404d"/><text x="642" y="291" fill="#f0f7fa" font-size="22" font-weight="600">LAYOUT PROFILE</text><text x="642" y="323" fill="#9eb2bf" font-size="17" font-weight="400">Adds PDF layout / tables; first-use model download</text><rect x="45" y="390" width="545" height="110" rx="16" fill="#14212c" stroke="#29404d"/><text x="67" y="426" fill="#f0f7fa" font-size="22" font-weight="600">FULL PROFILE</text><text x="67" y="458" fill="#9eb2bf" font-size="17" font-weight="400">Default + media + layout; costs measured separately</text><rect x="620" y="390" width="535" height="110" rx="16" fill="#14212c" stroke="#29404d"/><text x="642" y="426" fill="#f0f7fa" font-size="22" font-weight="600">STANDALONE PYTHON</text><text x="642" y="458" fill="#9eb2bf" font-size="17" font-weight="400">HTTP/library server; external worker capabilities vary</text></g></svg>

@@ -1,0 +1,11 @@
+{
+  "api_modules": 38,
+  "all_match": true,
+  "browser_modules": [
+    "service.py",
+    "recovery.py"
+  ],
+  "browser_match": true,
+  "runtime_commit": "a69b5bc",
+  "later_changes": "Stack CLI prerequisite/port diagnostics, documentation and evidence tooling; HTTP runtime modules unchanged."
+}

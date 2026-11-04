@@ -1,0 +1,32 @@
+[
+  {
+    "at": 1793787454.747712,
+    "service": "dethrottled-benchmark-dethrottled-1",
+    "cpu_percent_one_core": "2.58%",
+    "memory": "336.8MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787454.747712,
+    "service": "dethrottled-benchmark-browser-search-1",
+    "cpu_percent_one_core": "0.20%",
+    "memory": "279.6MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787454.747712,
+    "service": "dethrottled-benchmark-crawl4ai-1",
+    "cpu_percent_one_core": "0.31%",
+    "memory": "319.2MiB / 30.76GiB"
+  },
+  {
+    "at": 1793787454.747712,
+    "service": "dethrottled-benchmark-format-worker-1",
+    "cpu_percent_one_core": "0.15%",
+    "memory": "68.05MiB / 2GiB"
+  },
+  {
+    "at": 1793787454.747712,
+    "service": "dethrottled-benchmark-searxng-1",
+    "cpu_percent_one_core": "1.05%",
+    "memory": "141.7MiB / 30.76GiB"
+  }
+]

@@ -1,0 +1,24 @@
+{
+  "cases": 30,
+  "http_200": 30,
+  "median_ms": 743.095,
+  "p95_ms": 13700.94,
+  "assertions_pass": 25,
+  "readable_ok": 27,
+  "host": "szbox",
+  "arch": "x86_64",
+  "manifest_sha256": "ca24518d44c26b9d75e881c03fd4bd92e6892ce38f8baab1ff09aa51facb0b10",
+  "started_at": 1793787592.2835925,
+  "finished_at": 1793787656.3362486,
+  "phase": "fetch-fresh",
+  "host_load_before": [
+    2.513671875,
+    1.892578125,
+    1.89599609375
+  ],
+  "host_load_after": [
+    3.2607421875,
+    2.20751953125,
+    2.00439453125
+  ]
+}

@@ -1,0 +1,163 @@
+{
+  "reports": {
+    "q6a": {
+      "project": "dethrottled-benchmark",
+      "package_version": "1.4.0",
+      "profile": "default",
+      "endpoint": "http://127.0.0.1:19087",
+      "services": {
+        "dethrottled": {
+          "state": "ready",
+          "container_state": "running",
+          "health": "healthy"
+        },
+        "crawl4ai": {
+          "state": "ready",
+          "container_state": "running",
+          "health": "healthy",
+          "probe": {
+            "status": "ready",
+            "http_status": 200,
+            "probe_ms": 12
+          }
+        },
+        "format-worker": {
+          "state": "ready",
+          "container_state": "running",
+          "health": "healthy",
+          "probe": {
+            "status": "ready",
+            "http_status": 200,
+            "metrics": {
+              "completed": 0,
+              "failed": 0,
+              "timed_out": 0,
+              "cancelled": 0,
+              "rejected": 0,
+              "active": 0,
+              "active_seconds": 0,
+              "deadline_seconds": 60,
+              "max_input_bytes": 52428800
+            },
+            "probe_ms": 12
+          }
+        },
+        "browser-search": {
+          "state": "ready",
+          "container_state": "running",
+          "health": "starting",
+          "probe": {
+            "status": "ready",
+            "http_status": 200,
+            "graphics": {
+              "webgl": true,
+              "renderer": "ANGLE (Mesa, llvmpipe (LLVM 19.1.7 128 bits), OpenGL 4.5)",
+              "hardware_verified": false,
+              "requested_mode": "auto"
+            },
+            "probe_ms": 30
+          }
+        },
+        "searxng": {
+          "state": "ready",
+          "container_state": "running",
+          "health": null,
+          "probe": {
+            "status": "ready"
+          }
+        }
+      },
+      "ready": true,
+      "volumes_preserved_on_down": true,
+      "selected_services": [
+        "dethrottled",
+        "browser-search",
+        "searxng",
+        "crawl4ai",
+        "format-worker"
+      ],
+      "startup_seconds": 239.73,
+      "started": true
+    },
+    "szbox": {
+      "project": "dethrottled-benchmark",
+      "package_version": "1.4.0",
+      "profile": "default",
+      "endpoint": "http://127.0.0.1:19087",
+      "services": {
+        "dethrottled": {
+          "state": "ready",
+          "container_state": "running",
+          "health": "healthy"
+        },
+        "crawl4ai": {
+          "state": "ready",
+          "container_state": "running",
+          "health": "healthy",
+          "probe": {
+            "status": "ready",
+            "http_status": 200,
+            "probe_ms": 4
+          }
+        },
+        "format-worker": {
+          "state": "ready",
+          "container_state": "running",
+          "health": "healthy",
+          "probe": {
+            "status": "ready",
+            "http_status": 200,
+            "metrics": {
+              "completed": 0,
+              "failed": 0,
+              "timed_out": 0,
+              "cancelled": 0,
+              "rejected": 0,
+              "active": 0,
+              "active_seconds": 0,
+              "deadline_seconds": 60,
+              "max_input_bytes": 52428800
+            },
+            "probe_ms": 5
+          }
+        },
+        "browser-search": {
+          "state": "ready",
+          "container_state": "running",
+          "health": "healthy",
+          "probe": {
+            "status": "ready",
+            "http_status": 200,
+            "graphics": {
+              "webgl": true,
+              "renderer": "ANGLE (Mesa, llvmpipe (LLVM 19.1.7 256 bits), OpenGL 4.5)",
+              "hardware_verified": false,
+              "requested_mode": "auto"
+            },
+            "probe_ms": 3
+          }
+        },
+        "searxng": {
+          "state": "ready",
+          "container_state": "running",
+          "health": null,
+          "probe": {
+            "status": "ready"
+          }
+        }
+      },
+      "ready": true,
+      "volumes_preserved_on_down": true,
+      "selected_services": [
+        "dethrottled",
+        "browser-search",
+        "searxng",
+        "crawl4ai",
+        "format-worker"
+      ],
+      "startup_seconds": 199.75,
+      "started": true
+    }
+  },
+  "caveat": "Build caches and earlier failed attempts preceded these successful startups; not clean-download timings."
+}

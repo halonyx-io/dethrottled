@@ -1,0 +1,335 @@
+[
+  {
+    "label": "install-manager",
+    "command": [
+      "<validation-root>/wheel/bin/pip",
+      "install",
+      "--no-deps",
+      "--force-reinstall",
+      "<validation-root>/install/dethrottled-1.4.0-py3-none-any.whl"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 1.742811979027465
+  },
+  {
+    "label": "default-status",
+    "command": [
+      "<validation-root>/wheel/bin/dethrottled",
+      "stack",
+      "status",
+      "--project",
+      "dethrottled-benchmark",
+      "--port",
+      "19087"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 1.7641604160889983
+  },
+  {
+    "label": "port-conflict",
+    "command": [
+      "<validation-root>/wheel/bin/dethrottled",
+      "stack",
+      "up",
+      "--project",
+      "dethrottled-port-check",
+      "--port",
+      "19087"
+    ],
+    "returncode": 1,
+    "elapsed_seconds": 0.45449885400012136
+  },
+  {
+    "label": "stop-formats",
+    "command": [
+      "docker",
+      "stop",
+      "dethrottled-benchmark-format-worker-1"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.5644544269889593
+  },
+  {
+    "label": "worker-unavailable",
+    "command": [
+      "<validation-root>/wheel/bin/dethrottled",
+      "stack",
+      "status",
+      "--project",
+      "dethrottled-benchmark",
+      "--port",
+      "19087"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 2.6032901029102504
+  },
+  {
+    "label": "restart-formats",
+    "command": [
+      "docker",
+      "start",
+      "dethrottled-benchmark-format-worker-1"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.47007791604846716
+  },
+  {
+    "label": "fixture-down-6",
+    "command": [
+      "docker",
+      "rm",
+      "-f",
+      "dethrottled-benchmark-fixture"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.4539535939693451
+  },
+  {
+    "label": "default-down",
+    "command": [
+      "<validation-root>/wheel/bin/dethrottled",
+      "stack",
+      "down",
+      "--project",
+      "dethrottled-benchmark",
+      "--port",
+      "19087"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 14.760458692908287
+  },
+  {
+    "label": "default-restart",
+    "command": [
+      "<validation-root>/wheel/bin/dethrottled",
+      "stack",
+      "up",
+      "--project",
+      "dethrottled-benchmark",
+      "--port",
+      "19087",
+      "--profile",
+      "default"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 28.586550197098404
+  },
+  {
+    "label": "fixture-up-9",
+    "command": [
+      "docker",
+      "run",
+      "-d",
+      "--name",
+      "dethrottled-benchmark-fixture",
+      "--network",
+      "dethrottled-benchmark_default",
+      "--network-alias",
+      "fixture",
+      "-v",
+      "<validation-root>/harness/evaluations:/evaluations:ro",
+      "-v",
+      "<validation-root>/formats:/formats:ro",
+      "python:3.12-slim",
+      "python",
+      "/evaluations/install-showcase/fixture.py"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.6511880732141435
+  },
+  {
+    "label": "media-up",
+    "command": [
+      "<validation-root>/wheel/bin/dethrottled",
+      "stack",
+      "up",
+      "--project",
+      "dethrottled-benchmark",
+      "--port",
+      "19087",
+      "--profile",
+      "media"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 9.00675890292041
+  },
+  {
+    "label": "media-inference",
+    "command": [
+      "python3",
+      "<validation-root>/harness/evaluations/install-showcase/optional.py",
+      "--api",
+      "http://127.0.0.1:19087",
+      "--kind",
+      "media",
+      "--project",
+      "dethrottled-benchmark",
+      "--out",
+      "<validation-root>/q6a-media"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 59.973145809955895
+  },
+  {
+    "label": "fixture-down-12",
+    "command": [
+      "docker",
+      "rm",
+      "-f",
+      "dethrottled-benchmark-fixture"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.44488375005312264
+  },
+  {
+    "label": "media-down",
+    "command": [
+      "<validation-root>/wheel/bin/dethrottled",
+      "stack",
+      "down",
+      "--project",
+      "dethrottled-benchmark",
+      "--port",
+      "19087"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 4.89248926914297
+  },
+  {
+    "label": "layout-up",
+    "command": [
+      "<validation-root>/wheel/bin/dethrottled",
+      "stack",
+      "up",
+      "--project",
+      "dethrottled-benchmark",
+      "--port",
+      "19087",
+      "--profile",
+      "layout"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 13.21951410989277
+  },
+  {
+    "label": "fixture-up-15",
+    "command": [
+      "docker",
+      "run",
+      "-d",
+      "--name",
+      "dethrottled-benchmark-fixture",
+      "--network",
+      "dethrottled-benchmark_default",
+      "--network-alias",
+      "fixture",
+      "-v",
+      "<validation-root>/harness/evaluations:/evaluations:ro",
+      "-v",
+      "<validation-root>/formats:/formats:ro",
+      "python:3.12-slim",
+      "python",
+      "/evaluations/install-showcase/fixture.py"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.4900953641626984
+  },
+  {
+    "label": "layout-inference",
+    "command": [
+      "python3",
+      "<validation-root>/harness/evaluations/install-showcase/optional.py",
+      "--api",
+      "http://127.0.0.1:19087",
+      "--kind",
+      "layout",
+      "--project",
+      "dethrottled-benchmark",
+      "--out",
+      "<validation-root>/q6a-layout"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 88.94173012208194
+  },
+  {
+    "label": "full-up",
+    "command": [
+      "<validation-root>/wheel/bin/dethrottled",
+      "stack",
+      "up",
+      "--project",
+      "dethrottled-benchmark",
+      "--port",
+      "19087",
+      "--profile",
+      "full"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 7.851324007846415
+  },
+  {
+    "label": "full-status",
+    "command": [
+      "<validation-root>/wheel/bin/dethrottled",
+      "stack",
+      "status",
+      "--project",
+      "dethrottled-benchmark",
+      "--port",
+      "19087"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 1.3068490100558847
+  },
+  {
+    "label": "media-models",
+    "command": [
+      "docker",
+      "exec",
+      "dethrottled-benchmark-media-worker-1",
+      "du",
+      "-sk",
+      "/models"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.16190583282150328
+  },
+  {
+    "label": "docling-models",
+    "command": [
+      "docker",
+      "exec",
+      "dethrottled-benchmark-docling-worker-1",
+      "du",
+      "-sk",
+      "/models"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.10795401106588542
+  },
+  {
+    "label": "fixture-down-21",
+    "command": [
+      "docker",
+      "rm",
+      "-f",
+      "dethrottled-benchmark-fixture"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.3933030730113387
+  },
+  {
+    "label": "full-down",
+    "command": [
+      "<validation-root>/wheel/bin/dethrottled",
+      "stack",
+      "down",
+      "--project",
+      "dethrottled-benchmark",
+      "--port",
+      "19087"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 4.9608186960686
+  }
+]

@@ -1,0 +1,16 @@
+include Dockerfile README.md LICENSE pyproject.toml setup.py .dockerignore
+include docker-compose*.yml
+recursive-include requirements *
+recursive-include browser-search *
+recursive-include workers *
+recursive-include format-worker *
+recursive-include media-worker *
+recursive-include docling-worker *
+recursive-include docker *
+recursive-include adapters *
+recursive-include scripts *
+recursive-include docs *
+recursive-include evaluations *
+global-exclude *.py[cod]
+global-exclude __pycache__
+prune src/dethrottled/_stack

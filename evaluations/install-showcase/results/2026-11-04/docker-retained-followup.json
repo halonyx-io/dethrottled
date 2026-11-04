@@ -1,0 +1,140 @@
+{
+  "device": "szbox",
+  "initial_assertion": false,
+  "initial_truncated": true,
+  "retained_followup_assertion": true,
+  "elapsed_ms": 17.52621913328767,
+  "read_metadata": {
+    "url": "https://docs.docker.com/reference/compose-file/services/",
+    "content_type": "text/html",
+    "quality": "ok",
+    "tier": "direct/trafilatura",
+    "cached": false,
+    "title": "Define services in Docker Compose",
+    "published": "2026-11-03",
+    "retrieved_at": "2026-11-04T10:20:58.933002+00:00",
+    "cache_age_seconds": 0,
+    "cache_expires_at": null,
+    "truncated": true,
+    "content_chars": 69707,
+    "content_status": "complete",
+    "assets": [],
+    "warnings": [],
+    "source_alternatives": [
+      {
+        "url": "https://docs.docker.com/reference/compose-file/services.md",
+        "type": "text/markdown",
+        "relationship": "alternate"
+      }
+    ],
+    "source_canonical": "https://docs.docker.com/reference/compose-file/services/",
+    "content_assessment": {
+      "revision": 1,
+      "text_sha256": "8aee191e466a8f7be9067bd6b253b5947577e537a04f9e2163b2d667e15dd536",
+      "pollution": "none_detected",
+      "completeness": "unknown",
+      "usable_content": "unverified",
+      "inspected_chars": 69707,
+      "suspected_chars": 0,
+      "unflagged_chars": 69707,
+      "spans": []
+    },
+    "acquisition": {
+      "rendered": false,
+      "wait_for": "",
+      "render_delay": null,
+      "extraction_limit": 1000000,
+      "page_start": 1,
+      "page_end": null,
+      "ocr_language": "",
+      "ocr_mode": "auto",
+      "ocr_allowed": true,
+      "row_start": 1,
+      "row_end": null,
+      "sheet": "",
+      "max_cell_chars": null,
+      "document_mode": "auto",
+      "scan_layout_revision": 1,
+      "format_worker_configured": true,
+      "layout_worker_configured": false
+    },
+    "browser_recovery": null,
+    "acquisition_attempts": [
+      {
+        "tier": "direct",
+        "reason": "",
+        "outcome": "extracted",
+        "elapsed_ms": 66.23,
+        "content_assessment": {
+          "revision": 1,
+          "text_sha256": "8aee191e466a8f7be9067bd6b253b5947577e537a04f9e2163b2d667e15dd536",
+          "pollution": "none_detected",
+          "completeness": "unknown",
+          "usable_content": "unverified",
+          "inspected_chars": 69707,
+          "suspected_chars": 0,
+          "unflagged_chars": 69707
+        }
+      }
+    ],
+    "extraction": {},
+    "source_partial": false,
+    "final_url": "https://docs.docker.com/reference/compose-file/services/",
+    "source_sha256": null,
+    "document_chars": 69707,
+    "document_expires_at": 1794392458.9496512,
+    "read_plan": {
+      "revision": 1,
+      "decisions": [],
+      "initial_gap": "",
+      "final_gap": "",
+      "answer_verified": false,
+      "stop_reason": "evidence_available",
+      "render_allowed": true,
+      "browser_configured": true,
+      "elapsed_ms": 0.02,
+      "budget_seconds": 30.0
+    },
+    "document_id": "doc_134eccc44c3949148a8e49198bbf37fb",
+    "document_sha256": "8aee191e466a8f7be9067bd6b253b5947577e537a04f9e2163b2d667e15dd536",
+    "evidence": [
+      {
+        "offset": 28500,
+        "excerpt": "oup_add. services: myservice: image: alpine group_add: - mail Running id inside the created container must show that the user belongs to the mail group, which would not have been the case if group_add were not declared. healthcheck The healthcheck attribute declares a check that's run to determine whether or not the service containers are \"healthy\". It works in the same way, and has the same default values, as the HEALTHCHECK Dockerfile instruction set by the service's Docker image. Your Compose file can override the values set in the Dockerfile. For more information on HEALTHCHECK, see the Dockerfile reference. healthcheck: test: [\"CMD\", \"curl\", \"-f\", \"http://localhost\"] interval: 1m30s timeout: 10s retries: 3 start_period: 40s start_interval: 5s interval, timeout, start_period, and start_interval are specified as durations. Introduced in Docker Compose version 2.20.2 test defines the command Compose runs to check container health. It can be either a string or a list. If it's a list,",
+        "matched_terms": [
+          "healthcheck"
+        ],
+        "offset_in": "full_extraction"
+      },
+      {
+        "offset": 29500,
+        "excerpt": "the first item must be either NONE, CMD or CMD-SHELL. If it's a string, it's equivalent to specifying CMD-SHELL followed by that string. # Hit the local web app test: [\"CMD\", \"curl\", \"-f\", \"http://localhost\"] Using CMD-SHELL runs the command configured as a string using the container's default shell (/bin/sh for Linux). Both of the following forms are equivalent: test: [\"CMD-SHELL\", \"curl -f http://localhost || exit 1\"]test: curl -f https://localhost || exit 1 NONE disables the healthcheck, and is mostly useful to disable the Healthcheck Dockerfile instruction set by the service's Docker image. Alternatively, the healthcheck set by the image can be disabled by setting disable: true: healthcheck: disable: true hostname hostname declares a custom host name to use for the service container. It must be a valid RFC 1123 hostname. image image specifies the image to start the container from. image must follow the Open Container Specification addressable image format, as [<registry>/][<project",
+        "matched_terms": [
+          "healthcheck"
+        ],
+        "offset_in": "full_extraction"
+      },
+      {
+        "offset": 23000,
+        "excerpt": "he current Compose file and the referenced one specified by extends, are merged in the following way: - Mappings: Keys in mappings of the main service definition override keys in mappings of the referenced service definition. Keys that aren't overridden are included as is. - Sequences: Items are combined together into a new sequence. The order of elements is preserved with the referenced items coming first and main items after. - Scalars: Keys in the main service definition take precedence over keys in the referenced one. Mappings The following keys should be treated as mappings: annotations, build.args, build.labels, build.extra_hosts, deploy.labels, deploy.update_config, deploy.rollback_config, deploy.restart_policy, deploy.resources.limits, environment, healthcheck, labels, logging.options, sysctls, storage_opt, extra_hosts, ulimits. One exception that applies to healthcheck is that the main mapping cannot specify disable: true unless the referenced mapping also specifies disable: t",
+        "matched_terms": [
+          "healthcheck"
+        ],
+        "offset_in": "full_extraction"
+      }
+    ],
+    "focus": "healthcheck",
+    "focus_status": "term_matches",
+    "next_offset": null,
+    "workflow": {
+      "state": "evidence_available",
+      "answer_verified": false,
+      "source_complete": null,
+      "response_truncated": true,
+      "source_bytes_retained": false,
+      "source_bytes_reacquirable": false,
+      "next_actions": [],
+      "instruction": "Use relevant follow-ups until the question is supported; extraction success is not answer verification."
+    }
+  }
+}

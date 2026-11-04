@@ -1,0 +1,24 @@
+{
+  "cases": 50,
+  "http_200": 50,
+  "median_ms": 2356.2749999999996,
+  "p95_ms": 2781.86,
+  "assertions_pass": 0,
+  "readable_ok": 0,
+  "host": "q6a",
+  "arch": "aarch64",
+  "manifest_sha256": "ca24518d44c26b9d75e881c03fd4bd92e6892ce38f8baab1ff09aa51facb0b10",
+  "started_at": 1793787185.0782034,
+  "finished_at": 1793787336.6736403,
+  "phase": "search-fresh",
+  "host_load_before": [
+    0.27685546875,
+    0.8154296875,
+    0.9375
+  ],
+  "host_load_after": [
+    2.5400390625,
+    1.46337890625,
+    1.15625
+  ]
+}

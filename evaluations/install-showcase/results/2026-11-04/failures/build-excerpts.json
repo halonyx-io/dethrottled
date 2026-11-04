@@ -1,0 +1,32 @@
+[
+  {
+    "file": "api-nested-build.log",
+    "original_sha256": "7940eda8b9323e971d8a8cbb078a6046449b34cdebbe8cab375086b6fe1d2282",
+    "excerpt": [
+      "#42 1.998   ERROR: Failed building wheel for dethrottled",
+      "#42 1.998 Failed to build dethrottled",
+      "#42 1.999 error: failed-wheel-build-for-install",
+      "#42 1.999 \u00d7 Failed to build installable wheels for some pyproject.toml based projects",
+      "#42 ERROR: process \"/bin/sh -c pip install --no-cache-dir --no-deps .\" did not complete successfully: exit code: 1",
+      "1.998       RuntimeError: Incomplete deployment source context: /app/Dockerfile",
+      "1.998   ERROR: Failed building wheel for dethrottled",
+      "1.998 Failed to build dethrottled",
+      "1.999 error: failed-wheel-build-for-install",
+      "1.999 \u00d7 Failed to build installable wheels for some pyproject.toml based projects",
+      "target dethrottled: failed to solve: process \"/bin/sh -c pip install --no-cache-dir --no-deps .\" did not complete successfully: exit code: 1",
+      "{\"error\": \"Command failed: docker compose --env-file /dev/null --project-name dethrottled-benchmark -f /home/adminion/Documents/Codex/2026-11-04/dethrottled-validation/managed/dethrottled-benchmark/1.4.0/docker-compose.yml -f /home/adminion/Documents/Codex/2026-11-04/dethrottled-validation/managed/dethrottled-benchmark/1.4.0/managed.json up -d --build\", \"action\": \"up\"}"
+    ]
+  },
+  {
+    "file": "missing-context-copy.log",
+    "original_sha256": "f077581338191136d4ad41ddfd8a86d96e3b111e66b483f9ab054cfaf60bcdd4",
+    "excerpt": [
+      "#30 [dethrottled 15/29] COPY pdf-worker/ ./pdf-worker/",
+      "#30 ERROR: failed to calculate checksum of ref w01kjr0hoyyz54s41p5hmt99v::wtg6nottqzugxnvtruqtr266x: \"/pdf-worker\": not found",
+      " > [dethrottled 15/29] COPY pdf-worker/ ./pdf-worker/:",
+      "  72 | >>> COPY pdf-worker/ ./pdf-worker/",
+      "target dethrottled: failed to solve: failed to compute cache key: failed to calculate checksum of ref w01kjr0hoyyz54s41p5hmt99v::wtg6nottqzugxnvtruqtr266x: \"/pdf-worker\": not found",
+      "{\"error\": \"Command failed: docker compose --env-file /dev/null --project-name dethrottled-benchmark -f /home/adminion/Documents/Codex/2026-11-04/dethrottled-validation/managed/dethrottled-benchmark/1.4.0/docker-compose.yml -f /home/adminion/Documents/Codex/2026-11-04/dethrottled-validation/managed/dethrottled-benchmark/1.4.0/managed.json up -d --build\", \"action\": \"up\"}"
+    ]
+  }
+]
