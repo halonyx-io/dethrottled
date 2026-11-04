@@ -24,7 +24,7 @@ installs system packages, elevates privileges or changes firewall settings.
 
 ## What the measurements establish
 
-| Recorded default-stack workload | Q6A (ARM64) | szbox (AMD64) |
+| Recorded default-stack workload | ARM64 edge device | x86_64 mini PC |
 |---|---:|---:|
 | CPU | 4 Cortex-A55 + 4 Cortex-A78 cores | Ryzen 7 5800U, 8 cores / 16 threads |
 | RAM visible to the OS | 11.29 GiB | 30.76 GiB |

@@ -136,18 +136,34 @@ import matplotlib.pyplot as plt  # noqa: E402
 
 plt.rcParams.update(
     {
-        "figure.facecolor": "#0b1118",
-        "axes.facecolor": "#0b1118",
-        "text.color": "#f0f7fa",
-        "axes.labelcolor": "#9eb2bf",
-        "xtick.color": "#9eb2bf",
-        "ytick.color": "#f0f7fa",
-        "axes.edgecolor": "#29404d",
+        "figure.facecolor": "#0F1720",
+        "axes.facecolor": "#0F1720",
+        "text.color": "#F8FAFC",
+        "axes.labelcolor": "#93A3B2",
+        "xtick.color": "#93A3B2",
+        "ytick.color": "#F8FAFC",
+        "axes.edgecolor": "#2A3540",
         "font.family": "DejaVu Sans",
         "svg.fonttype": "none",
         "svg.hashsalt": "dethrottled-1.4.0",
     }
 )
+
+
+def hardware_caption(fig):
+    fig.text(
+        0.5,
+        0.02,
+        "ARM64 edge: 8 cores (4 Cortex-A55 + 4 Cortex-A78), 11.29 GiB RAM visible to OS.\n"
+        "x86_64 mini PC: Ryzen 7 5800U, 8 cores / 16 threads, 30.76 GiB RAM visible to OS.",
+        ha="center",
+        va="bottom",
+        fontsize=9,
+        color="#93A3B2",
+        linespacing=1.4,
+    )
+
+
 A.assets.mkdir(parents=True, exist_ok=True)
 fig, axes = plt.subplots(2, 2, figsize=(12, 8))
 for ax, (phase, title) in zip(
@@ -165,17 +181,17 @@ for ax, (phase, title) in zip(
             i + 0.14,
             r["p95_ms"] / 1000,
             height=0.25,
-            color="#29404d",
+            color="#2A3540",
             label="p95" if i == 0 else "",
         )
         ax.barh(
             i - 0.14,
             r["median_ms"] / 1000,
             height=0.25,
-            color="#43e0d0",
+            color="#22D3EE",
             label="median" if i == 0 else "",
         )
-    ax.set_yticks([0, 1], ["Q6A", "szbox"])
+    ax.set_yticks([0, 1], ["ARM64\nedge device", "x86_64\nmini PC"])
 
     def failures(host, phase):
         row = metrics["devices"][host][phase]
@@ -192,15 +208,16 @@ for ax, (phase, title) in zip(
     ax.set_title(
         title
         + f" · n={metrics['devices']['q6a'][phase]['n']}/device\n"
-        + f"{kind}: Q6A {failed_q} · szbox {failed_s}",
+        + f"{kind}: ARM64 {failed_q} · x86_64 {failed_s}",
         loc="left",
         fontsize=11,
     )
     ax.set_xlabel("Seconds per request · failures included")
     ax.spines[["top", "right"]].set_visible(False)
-    ax.legend(frameon=False, labelcolor="#9eb2bf", fontsize=9)
-fig.suptitle("Same workload. Two native architectures. Software rendering.", fontsize=17)
-fig.tight_layout(rect=(0, 0, 1, 0.94))
+    ax.legend(frameon=False, labelcolor="#93A3B2", fontsize=9)
+fig.suptitle("ARM64 edge device vs x86_64 mini PC · software rendering", fontsize=17)
+hardware_caption(fig)
+fig.tight_layout(rect=(0, 0.10, 1, 0.94))
 fig.savefig(
     A.assets / "latency.svg",
     metadata={
@@ -210,8 +227,8 @@ fig.savefig(
 )
 plt.close(fig)
 
-fig, ax = plt.subplots(figsize=(12, 4))
-colors = {"ok": "#43e0d0", "thin": "#e1b76a", "failed": "#e57a88", "request_error": "#8d8cae"}
+fig, ax = plt.subplots(figsize=(12, 5))
+colors = {"ok": "#22D3EE", "thin": "#e1b76a", "failed": "#e57a88", "request_error": "#8d8cae"}
 for i, host in enumerate(("q6a", "szbox")):
     counts = metrics["devices"][host]["fetch-fresh"]["quality"]
     start = 0
@@ -219,9 +236,9 @@ for i, host in enumerate(("q6a", "szbox")):
         value = counts.get(key, 0)
         ax.barh(i, value, left=start, color=color, label=key if i == 0 else "")
         if value:
-            ax.text(start + value / 2, i, str(value), ha="center", va="center", color="#0b1118")
+            ax.text(start + value / 2, i, str(value), ha="center", va="center", color="#0F1720")
         start += value
-ax.set_yticks([0, 1], ["Q6A", "szbox"])
+ax.set_yticks([0, 1], ["ARM64\nedge device", "x86_64\nmini PC"])
 ax.set_xlim(0, metrics["devices"]["q6a"]["fetch-fresh"]["n"])
 ax.set_xlabel("Fixed public targets · n=30 per device · fresh acquisition")
 ax.set_title(
@@ -229,14 +246,15 @@ ax.set_title(
 )
 ax.legend(
     frameon=False,
-    labelcolor="#9eb2bf",
+    labelcolor="#93A3B2",
     ncols=4,
     loc="lower left",
     bbox_to_anchor=(0, 1.01),
     borderaxespad=0,
 )
 ax.spines[["top", "right"]].set_visible(False)
-fig.tight_layout()
+hardware_caption(fig)
+fig.tight_layout(rect=(0, 0.17, 1, 1))
 fig.savefig(
     A.assets / "live-outcomes.svg",
     metadata={
@@ -246,7 +264,7 @@ fig.savefig(
 )
 plt.close(fig)
 
-fig, axes = plt.subplots(1, 2, figsize=(12, 4))
+fig, axes = plt.subplots(1, 2, figsize=(12, 5))
 for metric, ax, label, divisor in zip(
     ("peak_working_set_bytes", "p95_cpu_percent_one_core"),
     axes,
@@ -255,9 +273,9 @@ for metric, ax, label, divisor in zip(
 ):
     for i, host in enumerate(("q6a", "szbox")):
         value = metrics["devices"][host]["resources_overall"][metric] / divisor
-        ax.barh(i, value, color="#43e0d0" if i == 0 else "#82baff", height=0.5)
-        ax.text(value, i, f" {value:.2f}", va="center", color="#f0f7fa")
-    ax.set_yticks([0, 1], ["Q6A", "szbox"])
+        ax.barh(i, value, color="#22D3EE" if i == 0 else "#93A3B2", height=0.5)
+        ax.text(value, i, f" {value:.2f}", va="center", color="#F8FAFC")
+    ax.set_yticks([0, 1], ["ARM64\nedge device", "x86_64\nmini PC"])
     ax.set_xlabel(label)
     ax.spines[["top", "right"]].set_visible(False)
 fig.suptitle(
@@ -266,12 +284,13 @@ fig.suptitle(
 counts = [metrics["devices"][h]["resources_overall"]["snapshots"] for h in ("q6a", "szbox")]
 fig.text(
     0.5,
-    0.02,
-    f"Snapshots: Q6A n={counts[0]}, szbox n={counts[1]}. Sampling can miss spikes.",
+    0.14,
+    f"Snapshots: ARM64 n={counts[0]}, x86_64 n={counts[1]}. Sampling can miss spikes.",
     ha="center",
-    color="#9eb2bf",
+    color="#93A3B2",
 )
-fig.tight_layout(rect=(0, 0.08, 1, 0.9))
+hardware_caption(fig)
+fig.tight_layout(rect=(0, 0.25, 1, 0.9))
 fig.savefig(
     A.assets / "resources.svg",
     metadata={

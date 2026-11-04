@@ -7,12 +7,12 @@ ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "docs/assets"
 OUT.mkdir(exist_ok=True)
 BG, PANEL, LINE, CYAN, WHITE, MUTED = (
-    "#0b1118",
-    "#14212c",
-    "#29404d",
-    "#43e0d0",
-    "#f0f7fa",
-    "#9eb2bf",
+    "#0F1720",
+    "#16212C",
+    "#2A3540",
+    "#22D3EE",
+    "#F8FAFC",
+    "#93A3B2",
 )
 
 
@@ -25,7 +25,7 @@ def text(x, y, value, size=20, color=WHITE, weight=400):
 
 def box(x, y, w, h, title, lines=(), accent=False):
     content = (
-        f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="16" '
+        f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="12" '
         f'fill="{PANEL}" stroke="{CYAN if accent else LINE}"/>'
     )
     content += text(x + 22, y + 36, title, 22, CYAN if accent else WHITE, 600)
@@ -54,8 +54,8 @@ orient="auto"><path d="M0,0 L8,4 L0,8" fill="{CYAN}"/></marker>
 <path d="M40 0H0V40" fill="none" stroke="{LINE}" stroke-opacity=".22"/></pattern>
 
 </defs>
-<rect width="1200" height="{height}" rx="22" fill="{BG}"/>
-<rect width="1200" height="{height}" fill="url(#grid)"/>
+<rect width="1200" height="{height}" rx="16" fill="{BG}"/>
+
 <g font-family="Inter,DejaVu Sans,Arial,sans-serif">{content}</g></svg>'''
     (OUT / name).write_text(svg + "\n")
 
@@ -239,3 +239,51 @@ s += box(
     ["HTTP/library server; external worker capabilities vary"],
 )
 save("profiles.svg", 540, "Default stack and optional worker profiles", s)
+
+# Device descriptions use architecture/form factor, never internal hostnames.
+s = text(45, 55, "TWO DEVICES. ONE ENGINE AND WORKLOAD.", 28, WHITE, 600)
+s += text(
+    45,
+    90,
+    "Default-stack measurements use software rendering on both native architectures.",
+    19,
+    MUTED,
+)
+s += box(
+    45,
+    130,
+    545,
+    195,
+    "ARM64 EDGE DEVICE",
+    [
+        "8 cores · 4 Cortex-A55 + 4 Cortex-A78",
+        "11.29 GiB RAM visible to the OS",
+        "Ubuntu 24.04.5 · native ARM64 containers",
+    ],
+    True,
+)
+s += box(
+    615,
+    130,
+    540,
+    195,
+    "x86_64 MINI PC",
+    [
+        "AMD Ryzen 7 5800U · 8 cores / 16 threads",
+        "30.76 GiB RAM visible to the OS",
+        "Debian 13 · native AMD64 containers",
+    ],
+)
+s += text(
+    45,
+    368,
+    "Tested hardware and observed costs; these are not universal minimum requirements.",
+    19,
+    MUTED,
+)
+save(
+    "hardware.svg",
+    410,
+    "Tested hardware: eight-core ARM64 edge device and Ryzen 7 x86_64 mini PC",
+    s,
+)

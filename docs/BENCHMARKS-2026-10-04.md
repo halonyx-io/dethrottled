@@ -1,7 +1,8 @@
-# Dethrottled benchmark: szbox and q6a
+# Dethrottled benchmark: x86_64 mini PC and ARM64 edge device
 
 > Historical evaluation: the measurements and deployment statements below describe
-> the recorded release, not current installation instructions. Use the
+> the recorded release, not current installation instructions. Device labels now use
+> architecture/form factor; original captures and measurements are unchanged. Use the
 > [current guides](README.md) and [evidence index](EVIDENCE.md) for context.
 
 For the newer 1 November 2026 coverage comparison, see the
@@ -18,10 +19,10 @@ change their responses between the two sequential runs.
 
 ## Hosts and software
 
-| | szbox | q6a |
+| | x86_64 mini PC | ARM64 edge device |
 | --- | --- | --- |
 | Architecture | x86_64 | aarch64 |
-| Processor | AMD Ryzen 7 5800U; 8 cores, 16 threads; up to 4.507 GHz | Radxa Dragon Q6A; 4 Cortex-A55 cores up to 1.958 GHz, 4 Cortex-A78 cores up to 2.707 GHz |
+| Processor | AMD Ryzen 7 5800U; 8 cores, 16 threads; up to 4.507 GHz | 4 Cortex-A55 cores up to 1.958 GHz, 4 Cortex-A78 cores up to 2.707 GHz |
 | RAM visible to OS | 30 GiB | 11 GiB |
 | Benchmark storage | Samsung MZNLN512HMJP-000L7, 476.9 GB SATA SSD | Kioxia KXG60ZNV256G, 238.5 GB NVMe |
 | OS and kernel | Debian 13.7, `6.12.111+deb13-amd64` | Ubuntu 24.04.5, `6.18.2-3-qcom` |
@@ -38,13 +39,13 @@ images were built natively for their host architecture. No CPU affinity,
 container CPU quota, or container RAM cap was set. Other normal services on
 each host remained running.
 
-szbox used an isolated Compose bridge stack bound to `127.0.0.1:18788`.
-q6a used a temporary Docker daemon with host networking and the same API
-loopback port. The q6a daemon ran with `--iptables=false`,
+x86_64 mini PC used an isolated Compose bridge stack bound to `127.0.0.1:18788`.
+ARM64 edge device used a temporary Docker daemon with host networking and the same API
+loopback port. The ARM64 edge device daemon ran with `--iptables=false`,
 `--ip6tables=false`, `--ip-forward=false`, `--ip-masq=false`, and
 `--bridge=none`; the firewall configuration was not changed. Network topology
 therefore differs slightly between hosts. The benchmark API and worker ports
-were temporary, separate from the production szbox stack.
+were temporary, separate from the production x86_64 mini PC stack.
 
 ## Method and pass criteria
 
@@ -63,7 +64,7 @@ URLs are in [`fetch-manifest.json`](benchmarks/2026-10-04/fetch-manifest.json).
   and `limit: 3`. A useful search has a URL and a title of at least ten
   characters. We separately checked whether the result set had three results
   and at least two snippets of 25 characters or more.
-- **Fetch:** One URL was frozen from each szbox search result and the exact
+- **Fetch:** One URL was frozen from each x86_64 mini PC search result and the exact
   50-URL manifest was replayed on both machines with `fresh: true`. Its
   SHA-256 is `053da7a3dbbfffceb3763f79a1c24b4a194f361a1ca5986b10fabf33a96657de`.
   A substantial page has `quality: ok` and at least 600 extracted characters.
@@ -78,7 +79,7 @@ URLs are in [`fetch-manifest.json`](benchmarks/2026-10-04/fetch-manifest.json).
 - **Renderer and PDF worker:** Ten fixed public URLs with `render: always`
   and `fresh: true`; the tier field had to confirm Crawl4AI was actually used.
   The optional HTML-to-PDF worker made ten files, checked for a valid PDF
-  signature. The q6a renderer had a separate diagnostic repeat because its
+  signature. The ARM64 edge device renderer had a separate diagnostic repeat because its
   first forced-render run fell through to direct extraction.
 - **Concurrency:** The same 50 search queries were issued with three, then
   eight concurrent callers. The local API-only run also measured health,
@@ -97,7 +98,7 @@ run.
 
 ## Live endpoint results
 
-| Test | szbox useful | szbox median / p95 | q6a useful | q6a median / p95 |
+| Test | x86_64 mini PC useful | x86_64 mini PC median / p95 | ARM64 edge device useful | ARM64 edge device median / p95 |
 | --- | ---: | ---: | ---: | ---: |
 | `/search`, serial, 50 queries | 50/50 | 1.43 / 2.86 s | 50/50 | 2.66 / 3.92 s |
 | `/search-and-fetch`, serial, 50 queries | 47/50 | 3.60 / 11.72 s | 47/50 | 5.56 / 26.03 s |
@@ -108,14 +109,14 @@ run.
 
 All 50 serial `/search` requests on both hosts returned HTTP 200, three
 results, and at least two substantial snippets. `/search-and-fetch` produced
-130 substantial page rows of 149 on szbox and 129 of 149 on q6a. The fixed
+130 substantial page rows of 149 on x86_64 mini PC and 129 of 149 on ARM64 edge device. The fixed
 `/fetch` run had the same breakdown on each host: 42 substantial, one thin,
 and seven failed. Failures included access restrictions and pages whose
-content did not meet the extraction threshold. The q6a `/research` miss was
+content did not meet the extraction threshold. The ARM64 edge device `/research` miss was
 the lithium battery question: HTTP 200, zero sources, zero evidence after
 33.6 seconds. That remains a failure in the benchmark.
 
-The first q6a forced-render run yielded 10/10 substantial pages in 0.921 s
+The first ARM64 edge device forced-render run yielded 10/10 substantial pages in 0.921 s
 median, but **all ten came from `direct/trafilatura`**. It therefore cannot
 be used as a renderer speed result. A subsequent repeat of the same ten URLs
 used `crawl4ai/crawl4ai-native` in all ten cases; its 2.21 s median appears
@@ -126,14 +127,14 @@ not confirmed.
 
 ## Concurrent search
 
-| Concurrent callers | szbox useful / rich | szbox throughput | szbox median / p95 | q6a useful / rich | q6a throughput | q6a median / p95 |
+| Concurrent callers | x86_64 mini PC useful / rich | x86_64 mini PC throughput | x86_64 mini PC median / p95 | ARM64 edge device useful / rich | ARM64 edge device throughput | ARM64 edge device median / p95 |
 | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | 3 | 50/50 / 50/50 | 1.24 queries/s | 2.15 / 3.21 s | 50/50 / 49/50 | 0.53 queries/s | 4.65 / 7.13 s |
 | 8 | 50/50 / 50/50 | 1.48 queries/s | 5.19 / 6.22 s | 48/50 / 44/50 | 0.71 queries/s | 10.56 / 14.41 s |
 
 “Rich” means three results with at least two snippets of 25 characters or
 more. More callers improved throughput modestly while increasing individual
-latency. Eight callers exposed two q6a search misses. The browser search
+latency. Eight callers exposed two ARM64 edge device search misses. The browser search
 worker, rather than the API or SearXNG, consumed most CPU during these runs.
 
 ## CPU and memory by component
@@ -143,7 +144,7 @@ The following is the 50-query serial `/search-and-fetch` run. Each cell is
 are percentages of one logical core; RAM is MiB. PDF worker was present and
 idle in this phase.
 
-| Component | szbox CPU; RAM | q6a CPU; RAM |
+| Component | x86_64 mini PC CPU; RAM | ARM64 edge device CPU; RAM |
 | --- | ---: | ---: |
 | Dethrottled API | 122.65 / 962.59%; 420.5 / 498.1 MiB | 109.89 / 631.40%; 401.6 / 459.8 MiB |
 | Browser search worker | 24.45 / 113.72%; 321.9 / 406.1 MiB | 78.72 / 419.51%; 377.8 / 578.1 MiB |
@@ -152,20 +153,20 @@ idle in this phase.
 | Optional PDF worker | 0.06 / 2.67%; 22.3 / 22.3 MiB | 0.23 / 8.14%; 22.8 / 24.1 MiB |
 
 For serial `/search` alone, the browser worker averaged 49.98% CPU and
-370.8 MiB RAM on szbox, versus 175.86% and 438.2 MiB on q6a. The API
+370.8 MiB RAM on x86_64 mini PC, versus 175.86% and 438.2 MiB on ARM64 edge device. The API
 averaged 3.26% / 53.7 MiB and 6.05% / 54.3 MiB respectively. Under eight
 concurrent search callers, the browser worker reached sampled CPU peaks of
-349.64% / 611.06% and RAM peaks of 827.3 / 966.7 MiB on szbox / q6a.
+349.64% / 611.06% and RAM peaks of 827.3 / 966.7 MiB on x86_64 mini PC / ARM64 edge device.
 The API-only controlled workload reached sampled CPU peaks of 662.99% and
 751.87%, demonstrating that the service did use multiple cores; no CPU
 pinning was applied. Full samples for **every component in every phase** are
 in the raw JSON files.
 
 When deliberately active, Crawl4AI averaged 50.80% CPU and 557.2 MiB RAM
-on szbox, versus 94.76% and 698.7 MiB on q6a's diagnostic repeat; sampled
+on x86_64 mini PC, versus 94.76% and 698.7 MiB on ARM64 edge device's diagnostic repeat; sampled
 peaks were 116.42% / 641.5 MiB and 177.68% / 754.8 MiB. The optional PDF
-worker averaged 43.65% CPU / 25.0 MiB on szbox and 109.70% / 96.2 MiB on
-q6a, with sampled peaks of 87.26% / 27.7 MiB and 160.94% / 166.9 MiB.
+worker averaged 43.65% CPU / 25.0 MiB on x86_64 mini PC and 109.70% / 96.2 MiB on
+ARM64 edge device, with sampled peaks of 87.26% / 27.7 MiB and 160.94% / 166.9 MiB.
 The PDF worker runs were short, yielding only two and three resource samples
 respectively; these figures are indicative, not reliable peak capacity
 measurements.
@@ -174,11 +175,11 @@ measurements.
 
 Both hosts met all **39/39 expected document outcomes** (11 real formats
 times three, plus the false PDF and 404 times three). The median text-PDF
-read was 30.0 ms on szbox and 106.6 ms on q6a; scanned PDF with OCR was
+read was 30.0 ms on x86_64 mini PC and 106.6 ms on ARM64 edge device; scanned PDF with OCR was
 326.9 ms and 609.4 ms. These are local fixtures and do not include Internet
 latency. Some p95 values include the normal 1.5 s per-domain pacing.
 
-| Local API-only test | szbox | q6a |
+| Local API-only test | x86_64 mini PC | ARM64 edge device |
 | --- | ---: | ---: |
 | Health, 120 requests, 1 / 8 / 32 callers | 1,500 / 2,182 / 2,400 req/s | 256 / 759 / 923 req/s |
 | HTML fixture fetch, 24 requests, 1 / 4 / 8 callers | 7.77 / 5.33 / 5.33 req/s | 7.09 / 4.85 / 5.48 req/s |
@@ -191,13 +192,13 @@ latency.
 
 ## Interpretation
 
-szbox was consistently faster on the live end-to-end paths and retained all
+x86_64 mini PC was consistently faster on the live end-to-end paths and retained all
 50 useful search results at eight concurrent callers. The observed speedup
 does not imply that CPU alone caused every difference: public engines and
 sites vary, and the hosts were not otherwise idle or identically networked.
 The paired fixed URL and controlled fixture tests support the direction of
 the comparison. Search quality still needs explicit checks because an HTTP
-200 can contain zero evidence or a thin/blocked page. The q6a renderer
+200 can contain zero evidence or a thin/blocked page. The ARM64 edge device renderer
 fallback and research miss are concrete examples.
 
 Raw JSON is retained so latency distributions, individual failures, tiers,
