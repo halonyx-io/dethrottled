@@ -1,0 +1,365 @@
+[
+  {
+    "label": "pypi-venv",
+    "command": [
+      "python3",
+      "-m",
+      "venv",
+      "<release-root>/pypi"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 3.539408124051988
+  },
+  {
+    "label": "pypi-install",
+    "command": [
+      "<release-root>/pypi/bin/pip",
+      "install",
+      "--no-cache-dir",
+      "--index-url",
+      "https://pypi.org/simple",
+      "--report",
+      "<release-root>/evidence/pypi-pip-report.json",
+      "dethrottled==1.4.0"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 12.939909370150417
+  },
+  {
+    "label": "pypi-dependencies",
+    "command": [
+      "<release-root>/pypi/bin/pip",
+      "list",
+      "--format=json"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.5463885408826172
+  },
+  {
+    "label": "pypi-help",
+    "command": [
+      "<release-root>/pypi/bin/dethrottled",
+      "--help"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.8343948430847377
+  },
+  {
+    "label": "pypi-import",
+    "command": [
+      "<release-root>/pypi/bin/python",
+      "-c",
+      "import dethrottled;from dethrottled import documents,media,corpus,stack;assert dethrottled.__version__==\"1.4.0\";print(dethrottled.__version__)"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.11021697917021811
+  },
+  {
+    "label": "optional-venv",
+    "command": [
+      "python3",
+      "-m",
+      "venv",
+      "<release-root>/optional"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 3.5150791129563004
+  },
+  {
+    "label": "optional-install",
+    "command": [
+      "<release-root>/optional/bin/pip",
+      "install",
+      "--no-cache-dir",
+      "--index-url",
+      "https://pypi.org/simple",
+      "--report",
+      "<release-root>/evidence/optional-pip-report.json",
+      "dethrottled[all]==1.4.0"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 36.886261080158874
+  },
+  {
+    "label": "optional-dependencies",
+    "command": [
+      "<release-root>/optional/bin/pip",
+      "list",
+      "--format=json"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.5832953120116144
+  },
+  {
+    "label": "optional-help",
+    "command": [
+      "<release-root>/optional/bin/dethrottled",
+      "--help"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.8291633860208094
+  },
+  {
+    "label": "optional-import",
+    "command": [
+      "<release-root>/optional/bin/python",
+      "-c",
+      "import dethrottled;from dethrottled import documents,media,corpus,stack;assert dethrottled.__version__==\"1.4.0\";print(dethrottled.__version__)"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.11081812507472932
+  },
+  {
+    "label": "pypi-stack-up",
+    "command": [
+      "<release-root>/pypi/bin/dethrottled",
+      "stack",
+      "up"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 32.14812983199954
+  },
+  {
+    "label": "dethrottled-managed-fixture-up",
+    "command": [
+      "docker",
+      "run",
+      "-d",
+      "--name",
+      "dethrottled-managed-fixture",
+      "--network",
+      "dethrottled-managed_default",
+      "--network-alias",
+      "fixture",
+      "-v",
+      "~/.local/share/dethrottled/stacks/dethrottled-managed/1.4.0/evaluations:/evaluations:ro",
+      "python:3.12-slim",
+      "python",
+      "/evaluations/release/fixture.py"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.4564181249588728
+  },
+  {
+    "label": "dethrottled-managed-contracts",
+    "command": [
+      "python3",
+      "~/.local/share/dethrottled/stacks/dethrottled-managed/1.4.0/evaluations/release/run.py",
+      "--endpoint",
+      "http://127.0.0.1:8787",
+      "--out",
+      "<release-root>/evidence/dethrottled-managed"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 33.12028936180286
+  },
+  {
+    "label": "dethrottled-managed-worker-restart",
+    "command": [
+      "docker",
+      "restart",
+      "dethrottled-managed-browser-search-1"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 1.2506106761284173
+  },
+  {
+    "label": "dethrottled-managed-restore",
+    "command": [
+      "python3",
+      "~/.local/share/dethrottled/stacks/dethrottled-managed/1.4.0/evaluations/release/run.py",
+      "--endpoint",
+      "http://127.0.0.1:8787",
+      "--phase",
+      "restore",
+      "--out",
+      "<release-root>/evidence/dethrottled-managed"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 14.858089369954541
+  },
+  {
+    "label": "dethrottled-managed-fixture-down",
+    "command": [
+      "docker",
+      "rm",
+      "-f",
+      "dethrottled-managed-fixture"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.32300942693836987
+  },
+  {
+    "label": "pypi-full-up",
+    "command": [
+      "<release-root>/pypi/bin/dethrottled",
+      "stack",
+      "up",
+      "--profile",
+      "full"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 8.122043382842094
+  },
+  {
+    "label": "pypi-stack-down",
+    "command": [
+      "<release-root>/pypi/bin/dethrottled",
+      "stack",
+      "down"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 5.353754320880398
+  },
+  {
+    "label": "github-clone",
+    "command": [
+      "git",
+      "clone",
+      "--depth",
+      "1",
+      "--branch",
+      "v1.4.0",
+      "https://github.com/halonyx-io/dethrottled.git",
+      "<release-root>/github"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 2.0137539571151137
+  },
+  {
+    "label": "github-commit",
+    "command": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.007360885851085186
+  },
+  {
+    "label": "github-stack-up",
+    "command": [
+      "docker",
+      "compose",
+      "--env-file",
+      "/dev/null",
+      "--project-name",
+      "dethrottled-github-140",
+      "-f",
+      "<release-root>/github/docker-compose.yml",
+      "up",
+      "-d",
+      "--build"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 183.17801477387547
+  },
+  {
+    "label": "dethrottled-github-140-fixture-up",
+    "command": [
+      "docker",
+      "run",
+      "-d",
+      "--name",
+      "dethrottled-github-140-fixture",
+      "--network",
+      "dethrottled-github-140_default",
+      "--network-alias",
+      "fixture",
+      "-v",
+      "<release-root>/github/evaluations:/evaluations:ro",
+      "python:3.12-slim",
+      "python",
+      "/evaluations/release/fixture.py"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.6087369790766388
+  },
+  {
+    "label": "dethrottled-github-140-contracts",
+    "command": [
+      "python3",
+      "<release-root>/github/evaluations/release/run.py",
+      "--endpoint",
+      "http://127.0.0.1:19089",
+      "--out",
+      "<release-root>/evidence/dethrottled-github-140"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 48.08348279399797
+  },
+  {
+    "label": "dethrottled-github-140-worker-restart",
+    "command": [
+      "docker",
+      "restart",
+      "dethrottled-github-140-browser-search-1"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 1.2675827068742365
+  },
+  {
+    "label": "dethrottled-github-140-restore",
+    "command": [
+      "python3",
+      "<release-root>/github/evaluations/release/run.py",
+      "--endpoint",
+      "http://127.0.0.1:19089",
+      "--phase",
+      "restore",
+      "--out",
+      "<release-root>/evidence/dethrottled-github-140"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 16.94885202497244
+  },
+  {
+    "label": "dethrottled-github-140-fixture-down",
+    "command": [
+      "docker",
+      "rm",
+      "-f",
+      "dethrottled-github-140-fixture"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.5556899469811469
+  },
+  {
+    "label": "github-stack-down",
+    "command": [
+      "docker",
+      "compose",
+      "--env-file",
+      "/dev/null",
+      "--project-name",
+      "dethrottled-github-140",
+      "-f",
+      "<release-root>/github/docker-compose.yml",
+      "down"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 3.965849166037515
+  },
+  {
+    "label": "pypi-final-up",
+    "command": [
+      "<release-root>/pypi/bin/dethrottled",
+      "stack",
+      "up",
+      "--profile",
+      "default"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 13.5600499950815
+  },
+  {
+    "label": "pypi-final-status",
+    "command": [
+      "<release-root>/pypi/bin/dethrottled",
+      "stack",
+      "status"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 1.345440885052085
+  }
+]

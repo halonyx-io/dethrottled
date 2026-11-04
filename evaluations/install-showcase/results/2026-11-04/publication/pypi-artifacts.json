@@ -1,0 +1,22 @@
+[
+  {
+    "filename": "dethrottled-1.4.0-py3-none-any.whl",
+    "size": 10118474,
+    "digests": {
+      "blake2b_256": "49efa16ec48e4e0ceca3d12ae96f76725c77023074b5a8a70d76c691603b1bf6",
+      "md5": "c617d3a4a2fcf9a3e6ca9da99b09046a",
+      "sha256": "c64d53a8bd61fb4a90fff01df02ba6eeac0bd249ab122f3f2d3a6cbbdb0579aa"
+    },
+    "url": "https://files.pythonhosted.org/packages/49/ef/a16ec48e4e0ceca3d12ae96f76725c77023074b5a8a70d76c691603b1bf6/dethrottled-1.4.0-py3-none-any.whl"
+  },
+  {
+    "filename": "dethrottled-1.4.0.tar.gz",
+    "size": 10134111,
+    "digests": {
+      "blake2b_256": "1f234eb5cb59adda42b326a51f8e06fbeb1f32a312998c13456bb5a2165d6910",
+      "md5": "dcdb823f64da88839080feb35500d877",
+      "sha256": "a7ef993a29cc0630f9d1128c88fdd87a2ef9904f10fc0dcf4d88acd14260da46"
+    },
+    "url": "https://files.pythonhosted.org/packages/1f/23/4eb5cb59adda42b326a51f8e06fbeb1f32a312998c13456bb5a2165d6910/dethrottled-1.4.0.tar.gz"
+  }
+]

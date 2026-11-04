@@ -1,0 +1,7 @@
+{
+  "api_modules_compared": 38,
+  "different_modules": [
+    "stack.py"
+  ],
+  "explanation": "Only the stack management CLI changed after the frozen HTTP workload; HTTP runtime modules match."
+}
