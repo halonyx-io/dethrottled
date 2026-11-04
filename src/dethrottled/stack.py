@@ -215,8 +215,15 @@ def main(argv=None):
             cmd = command(context, args.project)
             for selected in PROFILES[profile]:
                 cmd += ['--profile', selected]
-            run([*cmd, 'up', '-d', '--build'], capture=False,
-                env=clean_environment(port), cwd=context)
+            try:
+                run([*cmd, 'up', '-d', '--build'], capture=False,
+                    env=clean_environment(port), cwd=context)
+            except StackError as exc:
+                report = inspect_status(args.project, port, profile)
+                report.update(started=False, error=str(exc),
+                              startup_seconds=round(time.monotonic() - started, 2))
+                print(json.dumps(report, indent=2))
+                return 1
             deadline = time.monotonic() + args.timeout
             while True:
                 report = inspect_status(args.project, port, profile)

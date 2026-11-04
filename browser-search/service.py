@@ -1026,6 +1026,21 @@ async def _download(page, target, timeout):
                 await download.delete()
 
 
+async def _ready_tab(context, index, allowed_hosts, timeout_ms):
+    """Wait for a new popup to navigate, but never accept an out-of-scope URL."""
+    deadline = time.monotonic() + timeout_ms / 1000
+    while True:
+        tabs = context.pages
+        if index < len(tabs) and tabs[index].url not in {"", "about:blank"}:
+            if not _host_allowed(tabs[index].url, allowed_hosts):
+                raise ValueError("tab_missing_or_outside_allowed_hosts")
+            return tabs[index]
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            raise ValueError("tab_missing_or_outside_allowed_hosts")
+        await asyncio.sleep(min(0.025, remaining))
+
+
 async def _drive(state: dict, body: DriveRequest) -> dict:
     """Run a bounded sequence against an ephemeral or named persistent page.
 
@@ -1297,11 +1312,8 @@ async def _drive(state: dict, body: DriveRequest) -> dict:
         elif action == "switch_tab":
             async def call(s=s):
                 nonlocal page, scope
-                tabs = state["context"].pages
-                if s.index >= len(tabs) or not _host_allowed(
-                        tabs[s.index].url, state["allowed_hosts"]):
-                    raise ValueError("tab_missing_or_outside_allowed_hosts")
-                page = tabs[s.index]
+                page = await _ready_tab(state["context"], s.index, state["allowed_hosts"],
+                                        s.ms or 8000)
                 await page.bring_to_front()
                 scope = page
                 state["page"] = page

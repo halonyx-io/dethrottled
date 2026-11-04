@@ -37,3 +37,12 @@ and on `switch_tab`, using Playwright's `bring_to_front` operation. The original
 21/21 each. Final repeated measurements follow image rebuilds with this fix.
 
 Reference: https://playwright.dev/python/docs/api/class-page#page-bring-to-front
+
+## Initial popup navigation race on ARM64
+
+The rebuilt Q6A run passed 20/21: the popup click succeeded but `switch_tab`,
+200 ms later, rejected its still-blank initial URL. A later tabs inspection showed
+that the same tab had reached the allowed fixture URL. Tab selection now waits
+within the caller's step/run deadline for creation and initial navigation; an
+out-of-scope nonblank URL still fails immediately. Unit cases cover delayed creation,
+blank navigation, forbidden hosts and timeout. The original failed run is preserved.

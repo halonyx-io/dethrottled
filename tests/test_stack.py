@@ -75,3 +75,24 @@ def test_missing_docker_is_actionable_and_does_not_install(monkeypatch, capsys):
     assert stack.main(['up']) == 1
     error = json.loads(capsys.readouterr().err)
     assert 'Docker Engine' in error['error'] and 'No system packages' in error['error']
+
+
+def test_partial_start_failure_reports_workers(monkeypatch, tmp_path, capsys):
+    monkeypatch.setenv('DETHROTTLED_STACK_HOME', str(tmp_path))
+    monkeypatch.setattr(stack, 'prerequisites', lambda: None)
+    monkeypatch.setattr(stack, 'containers', lambda p: [])
+    context = tmp_path / 'test' / stack.__version__
+    context.mkdir(parents=True)
+    monkeypatch.setattr(stack, 'prepare_context', lambda root: context)
+    monkeypatch.setattr(stack, 'inspect_status', lambda *a: {
+        'ready': False, 'services': {'browser-search': {'state': 'unavailable'}}})
+
+    def fail(*args, **kwargs):
+        raise stack.StackError('worker image build failed')
+
+    monkeypatch.setattr(stack, 'run', fail)
+    assert stack.main(['up', '--project', 'test', '--port', '19089']) == 1
+    result = json.loads(capsys.readouterr().out)
+    assert result['started'] is False
+    assert result['services']['browser-search']['state'] == 'unavailable'
+    assert 'image build failed' in result['error']

@@ -37,10 +37,11 @@ def sample():
             continue
         proc = subprocess.run(['docker', 'stats', '--no-stream', '--format', '{{json .}}',
                                *ids], capture_output=True, text=True, check=False)
+        sampled_at = time.time()
         for line in proc.stdout.splitlines():
             try:
                 row = json.loads(line)
-                resource.append({'at': time.time(), 'service': row['Name'],
+                resource.append({'at': sampled_at, 'service': row['Name'],
                                  'cpu_percent_one_core': row['CPUPerc'], 'memory': row['MemUsage']})
             except (ValueError, KeyError):
                 pass
