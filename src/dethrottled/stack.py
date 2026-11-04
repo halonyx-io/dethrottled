@@ -41,8 +41,18 @@ def prerequisites():
         raise StackError('Docker Engine and the Compose plugin are required. Install them using '
                          'https://docs.docker.com/engine/install/ then retry. '
                          'No system packages or privileges were changed.')
-    run(['docker', 'info', '--format', '{{.ServerVersion}}'])
-    run(['docker', 'compose', 'version'])
+    engine = json.loads(run(['docker', 'info', '--format', '{{json .}}']))
+    if engine.get('OSType') != 'linux':
+        raise StackError('The managed workers require Linux containers. Switch Docker Desktop '
+                         'to its Linux engine, or use a Linux Docker host.')
+    if engine.get('Architecture') not in {'x86_64', 'amd64', 'aarch64', 'arm64'}:
+        raise StackError('Managed worker images are validated for native AMD64 and ARM64; '
+                         'this Docker host reports ' + str(engine.get('Architecture')) + '.')
+    compose = run(['docker', 'compose', 'version'])
+    version = re.search(r'v?(\d+)\.\d+', compose)
+    if not version or int(version[1]) < 2:
+        raise StackError('Docker Compose plugin v2 or newer is required.')
+    return {k: engine.get(k) for k in ('ServerVersion', 'Architecture', 'NCPU', 'MemTotal')}
 
 
 def clean_environment(port):
@@ -50,6 +60,18 @@ def clean_environment(port):
         ('DETHROTTLED_', 'COMPOSE_', 'CRAWL4AI_'))}
     env.update(DETHROTTLED_PORT=str(port), DETHROTTLED_BIND='127.0.0.1')
     return env
+
+
+def check_port(port):
+    with socket.socket() as sock:
+        # POSIX listeners can restart while closed connections remain in TIME_WAIT.
+        # REUSEADDR still refuses an active listener; Windows semantics differ.
+        if os.name != 'nt':
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        try:
+            sock.bind(('127.0.0.1', port))
+        except OSError as exc:
+            raise StackError(f'Port {port} is in use; choose --port.') from exc
 
 
 def stack_root(project):
@@ -158,6 +180,7 @@ def inspect_status(project, port, profile):
                                       else 'unavailable', probe=report)
             with urllib.request.urlopen(f'http://127.0.0.1:{port}/health', timeout=3) as response:
                 health = json.load(response)
+            services['dethrottled']['runtime_version'] = health.get('version')
             services['dethrottled']['state'] = ('ready' if health.get('version') == __version__
                                                 else 'unavailable')
         except (StackError, OSError, ValueError, urllib.error.URLError) as exc:
@@ -183,7 +206,7 @@ def main(argv=None):
             raise StackError('Port must be between 1 and 65535.')
         if args.timeout < 1:
             raise StackError('Timeout must be positive.')
-        prerequisites()
+        engine = prerequisites()
         root = stack_root(args.project)
         settings = root / 'project.json'
         previous = json.loads(settings.read_text()) if settings.exists() else {}
@@ -192,11 +215,7 @@ def main(argv=None):
         existing = containers(args.project)
         if args.action == 'up':
             if not existing or port != previous.get('port'):
-                with socket.socket() as sock:
-                    try:
-                        sock.bind(('127.0.0.1', port))
-                    except OSError as exc:
-                        raise StackError(f'Port {port} is in use; choose --port.') from exc
+                check_port(port)
             context = prepare_context(root)
             # Managed image names never overwrite the production :local tags.
             build_services = ['dethrottled', 'browser-search', 'format-worker',
@@ -209,6 +228,12 @@ def main(argv=None):
             (context / 'managed.json').write_text(json.dumps(override, indent=2))
             settings.write_text(json.dumps({'port': port, 'profile': profile,
                                            'version': __version__}, indent=2))
+            if engine:
+                print(f'Docker host: {engine["Architecture"]}, {engine["NCPU"]} CPUs, '
+                      f'{engine["MemTotal"] / 1024**3:.1f} GiB RAM. Selected profile: {profile}. '
+                      'Model downloads require network access and disk space; see '
+                      'https://github.com/halonyx-io/dethrottled/blob/main/docs/REQUIREMENTS.md '
+                      'for measured costs.', file=sys.stderr)
             print('Preparing selected worker images (first build downloads dependencies/models). '
                   'Optional speech/layout models initialize on first use.', file=sys.stderr)
             started = time.monotonic()

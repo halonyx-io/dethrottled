@@ -58,3 +58,13 @@ run. A mismatch closes that context and retries up to three times. Continued los
 fails explicitly and preserves the original checkpoint, rather than claiming a
 complete session. Fault-injection unit tests cover recovery and persistent loss;
 the original failure and repeated real restores remain evidence.
+
+## Immediate profile restart and port probing
+
+A `media` shutdown followed immediately by `layout` startup refused port 19088.
+The conservative bare bind probe could also reject recently closed POSIX TCP
+connections in TIME_WAIT. It now uses POSIX SO_REUSEADDR for the availability
+probe, which still rejects an active listener. Windows retains its conservative
+probe because reuse semantics differ. Real socket tests cover both an active
+listener and restart after a closed accepted connection. The failed profile
+attempt is retained and the profile gate is repeated with the corrected manager.

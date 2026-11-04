@@ -87,6 +87,10 @@ def one(item):
                               'fresh': True, 'response_format': 'concise'})
         body = r.pop('data', {})
         r.update(summary=body.get('summary'), coverage=body.get('coverage'),
+                 query_telemetry=body.get('queries'), skipped=body.get('skipped'),
+                 partial_sources=[{k: x.get(k) for k in ('url', 'quality', 'tier',
+                                  'warnings', 'failure_reason', 'document_id')}
+                                  for x in body.get('partial_sources', [])],
                  sources=[{k: x.get(k) for k in ('url', 'quality', 'tier', 'warnings',
                           'document_id', 'evidence')} for x in body.get('sources', [])])
     else:
