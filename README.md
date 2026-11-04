@@ -1,6 +1,8 @@
 # Dethrottled
 
-![Dethrottled: discover, read, drive and retain web evidence](https://raw.githubusercontent.com/halonyx-io/dethrottled/main/docs/assets/hero.svg)
+<picture>
+  <img src="https://raw.githubusercontent.com/halonyx-io/dethrottled/main/docs/assets/hero.svg" alt="Dethrottled: discover, read, drive and retain web evidence">
+</picture>
 
 **One local engine for agents that need the web.** Dethrottled discovers sources,
 reads pages and files, operates a real browser, and retains evidence for follow-up.
@@ -63,7 +65,9 @@ for remote agents. The raw API has no caller authentication.
 | Retain | Document IDs with text, page and table ranges; focused follow-up without fetching the source again |
 | Research | A bounded evidence bundle with explicit coverage gaps; ten sources by default, twenty on request |
 
-![Automatic acquisition, assessment, recovery and agent continuation](https://raw.githubusercontent.com/halonyx-io/dethrottled/main/docs/assets/escalation.svg)
+<picture>
+  <img src="https://raw.githubusercontent.com/halonyx-io/dethrottled/main/docs/assets/escalation.svg" alt="Automatic acquisition, assessment, recovery and agent continuation">
+</picture>
 
 A normal fetch runs the recovery policy automatically. When content remains
 incomplete, `read_plan` and `workflow.next_actions` expose useful continuations,
@@ -102,7 +106,9 @@ separately. Every plotted value is generated from retained case data.
 The live `ok` label is the engine's assessment, not verified answer correctness.
 The report separately records topic-marker retention, thin results and failures.
 
-![Measured latency on Q6A and szbox, including failed requests](https://raw.githubusercontent.com/halonyx-io/dethrottled/main/docs/assets/latency.svg)
+<picture>
+  <img src="https://raw.githubusercontent.com/halonyx-io/dethrottled/main/docs/assets/latency.svg" alt="Measured latency on Q6A and szbox, including failed requests">
+</picture>
 
 These are observed workloads, not universal minimum requirements or a paid-service
 superiority claim. Earlier evaluations proved native Reddit interaction and

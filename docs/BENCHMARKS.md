@@ -5,11 +5,17 @@ compares the complete default stack on Radxa Dragon Q6A ARM64 and AMD Ryzen szbo
 It includes fresh Python/wheel installation, worker lifecycle, controlled facts,
 live search/fetch/research, resource use and separate optional inference tests.
 
-![Measured latency](assets/latency.svg)
+<picture>
+  <img src="assets/latency.svg" alt="Measured latency">
+</picture>
 
-![Live read outcomes](assets/live-outcomes.svg)
+<picture>
+  <img src="assets/live-outcomes.svg" alt="Live read outcomes">
+</picture>
 
-![Measured default resources](assets/resources.svg)
+<picture>
+  <img src="assets/resources.svg" alt="Measured default resources">
+</picture>
 
 Read the report’s method before comparing devices: public sites change, host
 services remain active, and cached responses differ from fresh acquisition.

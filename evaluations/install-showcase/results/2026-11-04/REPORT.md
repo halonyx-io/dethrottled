@@ -34,7 +34,9 @@ Client wall time, including failures; p95 is nearest-rank. “Warm” means cach
 | Cache-enabled fetch | 30 | 0.959 / 16.112 s | 0.646 / 7.932 s |
 | Research | 6 | 14.480 / 92.106 s | 7.961 / 59.452 s |
 
-![Latency, including failure counts](../../../../docs/assets/latency.svg)
+<picture>
+  <img src="../../../../docs/assets/latency.svg" alt="Latency, including failure counts">
+</picture>
 
 | Outcome | Q6A | szbox |
 |---|---:|---:|
@@ -48,7 +50,9 @@ Every search menu stayed within fifteen unique choices. Fresh rows reported no c
 
 Q6A’s PostgreSQL EXPLAIN research task returned zero candidates and zero sources; it is preserved as a failure. Its battery-degradation task took 92 seconds and attempted eight reads before returning four readable sources. szbox returned four sources on every task. These bundles expose evidence and coverage gaps; neither the engine nor this benchmark verified the answers.
 
-![Live read outcome counts](../../../../docs/assets/live-outcomes.svg)
+<picture>
+  <img src="../../../../docs/assets/live-outcomes.svg" alt="Live read outcome counts">
+</picture>
 
 Live assertions mostly check topic words. The Docker service reference was truncated before `healthcheck` in its first 12,000 characters on both hosts. A separate retained-document focus read recovered that term on szbox in 17.5 ms without reacquisition; it does not change the frozen initial count. The example-domain page returned real multilingual publisher prose without our expected heading phrase. Its marker miss is retained. Brand words, `quality=ok` and HTTP 200 do not prove a hostile-source bypass.
 
@@ -99,7 +103,9 @@ Old Reddit, Bloomberg and WSJ failed in both fresh cohorts; G2 failed on Q6A. Ca
 | p95 reported CPU % | 732.18 | 1037.63 |
 | Snapshot sets | 187.00 | 149.00 |
 
-![Working set and CPU](../../../../docs/assets/resources.svg)
+<picture>
+  <img src="../../../../docs/assets/resources.svg" alt="Working set and CPU">
+</picture>
 
 Docker stats estimates working-set memory; 100% CPU represents one logical core. Host services and the fixture server are excluded. Samples can miss spikes; CPU intervals are not exactly aligned between containers, so summed raw peaks can exceed instantaneous physical capacity. The chart uses p95 CPU, and raw samples/outliers remain available. Host load before/after every phase is in its summary. Q6A had 5.6 GiB swap; szbox had 7.7 GiB. These are observed costs, not universal minimum RAM requirements.
 

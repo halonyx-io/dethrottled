@@ -1,6 +1,8 @@
 # Configuration
 
-![Default stack and optional profiles](assets/profiles.svg)
+<picture>
+  <img src="assets/profiles.svg" alt="Default stack and optional profiles">
+</picture>
 
 Base Compose runs five services: API, browser-search, SearXNG, Crawl4AI and the
 MSG/XLSB format reader. Optional profiles add local speech and PDF layout.

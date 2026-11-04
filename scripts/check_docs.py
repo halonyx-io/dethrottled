@@ -73,9 +73,17 @@ def main():
         for path in files:
             text = path.read_text()
             relative = path.relative_to(ROOT).as_posix()
-            for target in LINK.findall(FENCE.sub("", text)):
+            body = FENCE.sub("", text)
+            targets = LINK.findall(body)
+            targets += re.findall(r'<img\b[^>]*\bsrc=["\']([^"\']+)', body)
+            for target in targets:
                 target = target.strip("<>")
                 parts = urlsplit(target)
+                if parts.netloc == "raw.githubusercontent.com" and parts.path.startswith(
+                    "/halonyx-io/dethrottled/main/"
+                ):
+                    target = os.path.relpath(ROOT / parts.path.split("/main/", 1)[1], path.parent)
+                    parts = urlsplit(target)
                 if parts.scheme or parts.netloc:
                     continue
                 counts["links"] += 1

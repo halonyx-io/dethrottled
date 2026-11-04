@@ -1,0 +1,43 @@
+{
+  "recorded": "2026-11-04",
+  "method": "GitHub POST /markdown, mode gfm, repository context; parsed rendered image ancestors. Local src targets separately checked by scripts/check_docs.py.",
+  "result": "passed",
+  "pages": [
+    {
+      "page": "README.md",
+      "images": 3,
+      "linked_images": 0,
+      "rendered_html_sha256": "ef994e7ccbafafa3a9f12000fbb64dda3a7eb95ee66e571b221f1d1368159ace"
+    },
+    {
+      "page": "docs/BENCHMARKS.md",
+      "images": 3,
+      "linked_images": 0,
+      "rendered_html_sha256": "95b5c77d9c412137bc13678f155d11268a7b78ca40195a86e2f0e57188f39a1f"
+    },
+    {
+      "page": "docs/CONFIGURATION.md",
+      "images": 1,
+      "linked_images": 0,
+      "rendered_html_sha256": "fb5b1557d78670ebd798cae9eab06cf25facdc116dd5acd3cc4e379b4863220a"
+    },
+    {
+      "page": "docs/PIPELINE.md",
+      "images": 1,
+      "linked_images": 0,
+      "rendered_html_sha256": "e6c7cca96718c9077cc3f2a382a4958f96fefee5a2d144821e8dc7fe0befdfe7"
+    },
+    {
+      "page": "docs/REQUIREMENTS.md",
+      "images": 1,
+      "linked_images": 0,
+      "rendered_html_sha256": "a687cc74cf2730139607eb928fa8e1fd92aadab277283c5429faf99d77bff545"
+    },
+    {
+      "page": "evaluations/install-showcase/results/2026-11-04/REPORT.md",
+      "images": 3,
+      "linked_images": 0,
+      "rendered_html_sha256": "f69d007a7ebb2112f255b5e6abd6347dca0b3ca4e914584ac29c26613383ca2d"
+    }
+  ]
+}

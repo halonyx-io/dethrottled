@@ -1,10 +1,28 @@
 # Operations
 
-Build all enabled services from one checkout and preserve mutable state during
-updates. Runtime version, image source and agent contract are separate checks;
+Use the package-managed stack or build all enabled services from one checkout.
+Preserve mutable state during updates. Runtime version, image source and agent contract are separate checks;
 healthy processes alone do not establish useful web access.
 
+## Package-managed installations
+
+Run these commands in the Python environment used for installation:
+
+```sh
+python -m pip install --upgrade dethrottled
+dethrottled stack up
+dethrottled stack status
+```
+
+Repeat the original `--project`, `--port` and `--profile` options when using a
+custom installation. `stack up` explicitly rebuilds/recreates the managed
+services using the installed package's matching context; upgrading the package
+alone does not change running services. `stack down` preserves volumes. Use
+[the Python guide](PYTHON.md) for profiles, isolation and state locations.
+
 ## Build and verify
+
+For a Git checkout:
 
 ```sh
 docker compose build dethrottled browser-search

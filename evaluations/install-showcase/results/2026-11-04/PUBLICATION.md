@@ -51,6 +51,16 @@ The installed API matches all 37 frozen non-management modules. The only changed
 
 Release publishing [workflow](https://github.com/halonyx-io/dethrottled/actions/runs/41817102684) and feature [CI](https://github.com/halonyx-io/dethrottled/actions/runs/41816369909) passed. szbox production remains 1.3.0; benchmark projects were stopped and their data preserved.
 
+## Documentation presentation check
+
+All seven showcase graphics were rasterized and visually reviewed. The recovery
+diagram now separates the recovery/reassessment loop from agent continuation;
+chart legends no longer overlap results. Measurements are unchanged. GitHub's
+Markdown rendering API confirmed all twelve showcase image placements across six
+pages remain inline without image links when wrapped in `<picture>`. The
+[rendering record](publication/showcase-rendering.json) retains page counts and
+rendered HTML hashes. Offline documentation checks also validate HTML image paths.
+
 For Q6A operations:
 
 ```sh

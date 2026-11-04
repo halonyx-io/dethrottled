@@ -1,7 +1,7 @@
 {
   "ISSUES.md": "d8a1a44ab8957967602f9dcd18133eea6f490bece2a74b7a41afe30e066c2385",
-  "PUBLICATION.md": "eca408e478c214a767f9057ec3b45d2ef4163efac30d677a3118bac6255b893e",
-  "REPORT.md": "2007eff97ce9a9d841811130c857268bbab4db0e44ba30ad125aae57970b8281",
+  "PUBLICATION.md": "9dd88fe4c1106e5f2fdb4cb8935adbad89934c163bd78b553f84c37b6cddd23f",
+  "REPORT.md": "531fb0aff6158ad36d6b7081c767b571390329bf02aca563d1f7ab4871929824",
   "docker-retained-followup.json": "35741032dc67a6ece79d540d2ed6843c12755bbd98e25691aabca09ed01a6004",
   "export-manifest.json": "796261bc506765d42c9d64023edd8da403204cdcef2f47b3cea7dd5f465e41b4",
   "failures/build-excerpts.json": "ad2d26ac83ede12a97f5ae59e6ab4f3abda1996ca536599ac2018e502e1b884b",
@@ -74,6 +74,7 @@
   "publication/pypi-stack-down.json": "b634948db311bd5017488dc5f2b8c437477b320cdbc5c2fee200f7ebce2f7510",
   "publication/pypi-stack-up.json": "0d6c58e6f3038d316bc81c2bd061dd76cd647dad8391cd8aa449c6a775ef1d23",
   "publication/runtime-comparison.json": "3c3d84e50bc7db5f79e2487ba59002aa77702a9ac6a9dde4511e8471b90a3ec6",
+  "publication/showcase-rendering.json": "33a56d3ce867caa92122e3181e2a2af3d30c06d9fb205bce6c944aca3cf15a34",
   "q6a-concurrency/batches.json": "403a6b8b0fb3e1f605785454961eb46795d13be8ece1fddfef2a12c4f4802dc0",
   "q6a-concurrency/cases.json": "f639faa4f5a4a20bd3f0c0159d9fc965d82a5bf8635a68530ffebdc616a53082",
   "q6a-concurrency/resources.json": "18e8bf0f962c6a58539ba78dfb2d67aed335c5679b1c45adf7959df89b964f2a",

@@ -17,13 +17,17 @@ BG, PANEL, LINE, CYAN, WHITE, MUTED = (
 
 
 def text(x, y, value, size=20, color=WHITE, weight=400):
-    return (f'<text x="{x}" y="{y}" fill="{color}" font-size="{size}" '
-            f'font-weight="{weight}">{escape(value)}</text>')
+    return (
+        f'<text x="{x}" y="{y}" fill="{color}" font-size="{size}" '
+        f'font-weight="{weight}">{escape(value)}</text>'
+    )
 
 
 def box(x, y, w, h, title, lines=(), accent=False):
-    content = (f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="16" '
-               f'fill="{PANEL}" stroke="{CYAN if accent else LINE}"/>')
+    content = (
+        f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="16" '
+        f'fill="{PANEL}" stroke="{CYAN if accent else LINE}"/>'
+    )
     content += text(x + 22, y + 36, title, 22, CYAN if accent else WHITE, 600)
     for i, label in enumerate(lines):
         content += text(x + 22, y + 68 + i * 26, label, 17, MUTED)
@@ -31,8 +35,10 @@ def box(x, y, w, h, title, lines=(), accent=False):
 
 
 def arrow(x1, y1, x2, y2):
-    return (f'<path d="M{x1},{y1} L{x2},{y2}" fill="none" stroke="{CYAN}" '
-            'stroke-width="2" marker-end="url(#arrow)"/>')
+    return (
+        f'<path d="M{x1},{y1} L{x2},{y2}" fill="none" stroke="{CYAN}" '
+        'stroke-width="2" marker-end="url(#arrow)"/>'
+    )
 
 
 def save(name, height, title, content):
@@ -89,8 +95,7 @@ s += box(
     True,
 )
 s += arrow(295, 193, 345, 193)
-s += (f'<path d="M750 258 V290 H175 M750 290 H1030" '
-      f'stroke="{CYAN}" stroke-width="2" fill="none"/>')
+s += f'<path d="M750 258 V290 H175 M750 290 H1030" stroke="{CYAN}" stroke-width="2" fill="none"/>'
 for i, (name, lines) in enumerate(
     [
         ("Browser", ["Headed Chromium", "DDG + interaction", "Sessions + checkpoints"]),
@@ -127,14 +132,14 @@ s = text(45, 55, "AUTONOMOUS READING, WITH A VISIBLE STOPPING POINT", 27, WHITE,
 s += text(
     45,
     90,
-    "The reader chooses recovery from observed gaps; the agent can continue explicitly.",
+    "Recover from observed gaps. Reassess each attempt. Return evidence and useful next steps.",
     19,
     MUTED,
 )
-s += box(45, 135, 270, 130, "ACQUIRE", ["Direct HTTP / TLS", "Read source + metadata"])
+s += box(45, 150, 270, 130, "ACQUIRE", ["Direct HTTP / TLS", "Read source + metadata"])
 s += box(
     395,
-    135,
+    150,
     365,
     130,
     "ASSESS",
@@ -143,52 +148,58 @@ s += box(
 )
 s += box(
     845,
-    135,
+    150,
     310,
     130,
     "RETURN EVIDENCE",
     ["Quality + warnings + origin", "Document ID + next actions"],
 )
-s += arrow(320, 200, 385, 200) + arrow(765, 200, 835, 200)
-s += arrow(575, 270, 575, 320)
+s += arrow(315, 215, 385, 215) + arrow(760, 215, 835, 215)
 s += box(
-    45,
-    335,
-    350,
-    145,
-    "PUBLISHER REPRESENTATIONS",
-    ["Observed feed / print / structured data", "Keep original source provenance"],
+    395,
+    385,
+    365,
+    200,
+    "BOUNDED RECOVERY",
+    [
+        "Observed publisher alternatives",
+        "JavaScript rendering",
+        "Headed browser + scoped actions",
+        "Preserve source provenance",
+    ],
 )
+s += arrow(485, 280, 485, 375)
+s += text(410, 337, "Recover", 17, MUTED)
+s += arrow(680, 385, 680, 290)
+s += text(690, 337, "Reassess", 17, MUTED)
 s += box(
-    425,
-    335,
-    350,
-    145,
-    "BROWSER RECOVERY",
-    ["Render JS, then headed interaction", "Scroll, details, observed responses"],
-)
-s += box(
-    805,
-    335,
-    350,
-    145,
+    845,
+    385,
+    310,
+    200,
     "AGENT CONTINUATION",
-    ["Reuse /drive session or read ranges", "Inspect pixels and collect downloads"],
+    [
+        "Reuse /drive session",
+        "Read retained ranges",
+        "Inspect pixels / downloads",
+        "Choose the next action",
+    ],
 )
-s += arrow(575, 320, 220, 328) + arrow(575, 320, 600, 328) + arrow(575, 320, 980, 328)
-s += (
-    '<path d="M600 485 V510 H790 V200 H765" stroke="'
-    + CYAN
-    + '" stroke-width="2" fill="none" marker-end="url(#arrow)"/>'
-)
+s += arrow(1000, 280, 1000, 375)
+s += text(1015, 337, "If needed", 17, MUTED)
 s += text(
     45,
-    542,
-    "Bounded retries and deadlines. Partial, polluted and blocked outcomes stay explicit.",
+    640,
+    "Retries and deadlines are bounded. Partial, polluted and blocked outcomes stay explicit.",
     20,
     MUTED,
 )
-save("escalation.svg", 590, "Acquire, assess, recover and return inspectable evidence", s)
+save(
+    "escalation.svg",
+    685,
+    "Acquire, assess and recover in a bounded loop; return evidence for agent continuation",
+    s,
+)
 
 s = text(45, 55, "CHOOSE CAPABILITY, KEEP THE SAME WORKFLOW", 28, WHITE, 600)
 s += text(
