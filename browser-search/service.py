@@ -1117,6 +1117,9 @@ async def _drive(state: dict, body: DriveRequest) -> dict:
             async def call(s=s, scope=scope):
                 target = locator(s)
                 try:
+                    # A popup can leave this headed tab in the background. Activate it
+                    # before waiting for stable animation frames during actionability.
+                    await page.bring_to_front()
                     await target.click(timeout=s.ms or 8000)
                 except Exception as exc:
                     await diagnosed_failure("click", target, exc, "actionability")
@@ -1299,6 +1302,7 @@ async def _drive(state: dict, body: DriveRequest) -> dict:
                         tabs[s.index].url, state["allowed_hosts"]):
                     raise ValueError("tab_missing_or_outside_allowed_hosts")
                 page = tabs[s.index]
+                await page.bring_to_front()
                 scope = page
                 state["page"] = page
                 return {"index": s.index, "url": page.url}

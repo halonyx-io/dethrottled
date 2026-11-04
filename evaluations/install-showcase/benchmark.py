@@ -4,6 +4,7 @@ import concurrent.futures
 import hashlib
 import json
 import math
+import os
 import platform
 import statistics
 import subprocess
@@ -29,10 +30,13 @@ stop = threading.Event()
 
 def sample():
     while not stop.is_set():
+        ids = subprocess.check_output(['docker', 'ps', '-q', '--filter',
+              'label=com.docker.compose.project=dethrottled-benchmark'], text=True).split()
+        if not ids:
+            stop.wait(2)
+            continue
         proc = subprocess.run(['docker', 'stats', '--no-stream', '--format', '{{json .}}',
-                               *subprocess.check_output(['docker', 'ps', '-q', '--filter',
-                                'label=com.docker.compose.project=dethrottled-benchmark'],
-                                text=True).split()], capture_output=True, text=True, check=False)
+                               *ids], capture_output=True, text=True, check=False)
         for line in proc.stdout.splitlines():
             try:
                 row = json.loads(line)
@@ -70,7 +74,10 @@ def one(item):
     if A.phase.startswith('search'):
         r = call('/v2/search', {'query': item['query'], 'limit': 15,
                                'fresh': A.phase.endswith('fresh')})
-        rows = r.pop('data', {}).get('results', [])
+        envelope = r.pop('data', {})
+        rows = envelope.get('results', [])
+        r.update(attempts=envelope.get('attempts', []),
+                 acquisition_status=envelope.get('status'))
         r.update(results=rows, result_count=len(rows),
                  snippets_with_text=sum(len(x.get('snippet', '')) >= 25 for x in rows),
                  menu_budget_ok=len(rows) <= 15)
@@ -94,7 +101,10 @@ def one(item):
                  warnings=row.get('warnings', []), assertions=assertions,
                  assertions_pass=bool(assertions) and all(assertions.values()),
                  document_id=row.get('document_id'), truncated=row.get('truncated'),
-                 content_assessment=row.get('content_assessment'))
+                 content_assessment=row.get('content_assessment'),
+                 cached=row.get('cached'), failure_reason=row.get('failure_reason'),
+                 source_partial=row.get('source_partial'), extraction=row.get('extraction'),
+                 acquisition=row.get('acquisition'))
         if A.phase == 'formats' and row.get('document_id') and text:
             retained = call('/documents/read', {'document_id': row['document_id'],
                             'max_chars': 12000, 'evidence_namespace': 'two-device-benchmark'})
@@ -117,6 +127,7 @@ thread = threading.Thread(target=sample, daemon=True)
 thread.start()
 cases = []
 started = time.time()
+load_before = os.getloadavg()
 try:
     if A.phase == 'formats':
         work = [dict(x, id=x['id'] + '-repeat' + str(i))
@@ -146,4 +157,9 @@ finally:
     (A.out / 'summary.json').write_text(json.dumps(dict(
         summary(cases) if cases else {}, host=platform.node(), arch=platform.machine(),
         manifest_sha256=hashlib.sha256(manifest_bytes).hexdigest(),
-        started_at=started, finished_at=time.time(), phase=A.phase), indent=2))
+        started_at=started, finished_at=time.time(), phase=A.phase,
+        host_load_before=load_before, host_load_after=os.getloadavg()), indent=2))
+
+if A.phase in {'formats', 'concurrency'} and any(
+        not c.get('assertions_pass') or c.get('retained_assertions_pass') is False for c in cases):
+    raise SystemExit('Controlled fact retention failed; stop this gate and preserve its cases.')

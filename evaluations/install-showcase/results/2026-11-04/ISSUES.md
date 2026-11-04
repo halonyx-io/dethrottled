@@ -24,3 +24,16 @@ The corrected context exposed a second issue: the API image copied source and pa
 metadata but not its own Dockerfile into `/app`. The nested wheel build correctly
 refused an incomplete context. The Dockerfile is now included, and the package validator
 checks that this self-build prerequisite is copied. The original failing log is retained.
+
+## Repeated headed browser interaction
+
+The first Q6A contract run passed 21/21. Reusing its session in the second run failed
+three click checks (iframe, popup and checkpoint). A separate diagnostic confirmed
+that the button was attached, visible, enabled, stable and received pointer events,
+but Chromium timed out waiting for actionability. A previously opened popup had left
+the selected tab in the background. The candidate now activates a tab before clicking
+and on `switch_tab`, using Playwright's `bring_to_front` operation. The original
+18/21 run and detailed diagnostics are retained; two subsequent pilot runs passed
+21/21 each. Final repeated measurements follow image rebuilds with this fix.
+
+Reference: https://playwright.dev/python/docs/api/class-page#page-bring-to-front
