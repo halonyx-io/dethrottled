@@ -63,6 +63,23 @@ DDG by default, preserving its order. Research reads ten sources by default, all
 twenty on request and admits at most twenty-four unique candidates across facets.
 Million-character document reads remain available.
 
+## Install the complete engine from PyPI
+
+With Docker Engine and Compose installed:
+
+```sh
+python3 -m venv .venv
+. .venv/bin/activate
+pip install dethrottled
+dethrottled stack up
+dethrottled stack status
+```
+
+No source checkout is required. `--profile full` adds speech and layout workers;
+`stack down` stops services while preserving data and model volumes. Installation
+alone starts no services. See the [Python guide](docs/PYTHON.md) for standalone
+library usage, profiles and prerequisites.
+
 ## Documentation
 
 Start at the [documentation home](https://github.com/halonyx-io/dethrottled/blob/main/docs/README.md). The
@@ -101,7 +118,7 @@ The fetch ladder does not consult `robots.txt`. The raw API can access trusted
 LAN targets; public adapters enforce a narrower policy, which is not a substitute
 for deployment-level network isolation.
 
-This checkout is **1.3.0**. Check `/health` and `/v2/capabilities`
+This checkout is **1.4.0**. Check `/health` and `/v2/capabilities`
 on the installation you use; a repository branch or remote plugin may differ
 from the deployed service. Historical reports describe their recorded versions.
 

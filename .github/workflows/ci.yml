@@ -73,6 +73,9 @@ jobs:
           python scripts/docs_reference.py --check
           python scripts/check_docs.py
           python evaluations/search-policy/verify.py
+          python -m pip install build
+          python -m build
+          python scripts/verify_stack_package.py dist/*.whl
 
       - name: Server starts and answers with nothing configured
         # The degradation promise, tested. No SearXNG, no renderer, no relay --

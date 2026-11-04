@@ -1,27 +1,56 @@
 # Python API
 
-The package can be used without an HTTP server. Install the published package:
+Install the published package into a virtual environment:
 
 ```sh
-python -m pip install --upgrade 'dethrottled[all]'
+python3 -m venv .venv
+. .venv/bin/activate
+python -m pip install dethrottled
+```
+
+## Complete managed engine
+
+The package bundles version-matched deployment sources. No Git checkout is needed:
+
+```sh
+dethrottled stack up
+dethrottled stack status
+dethrottled stack down
+```
+
+Install Docker Engine and its Compose plugin first. The command checks these
+prerequisites and never installs system packages, elevates privileges or changes
+firewall configuration itself. First startup builds/downloads API and worker images,
+including corpus weights. Optional speech/layout models initialize on first use.
+
+The default stack includes API, DDG browser, SearXNG, renderer and format reader.
+Use `--profile media`, `--profile layout` or `--profile full` with `stack up` for
+optional inference workers. Status distinguishes ready, initializing and unavailable
+services. A first-use model download is reported separately from a failed worker.
+
+`--project NAME` and `--port PORT` allow isolated installations. The default project
+is `dethrottled-managed`; API publication stays on loopback. Managed image tags are
+separate from Git-checkout production images. Project ownership is checked before
+changing existing containers. The extracted context and project settings live under
+`~/.local/share/dethrottled/stacks` (LOCALAPPDATA on Windows); override with
+`DETHROTTLED_STACK_HOME`. Commands ignore unrelated parent Compose/application secrets.
+`stack down` keeps data volumes and downloaded models. A package upgrade supplies a
+new matched context; run `stack up` explicitly to rebuild/update its managed services.
+
+## Standalone Python server
+
+```sh
+python -m pip install 'dethrottled[all]'
 dethrottled --host 127.0.0.1 --port 8787
 ```
 
-A Python install enables libraries, not Docker workers, system OCR tools or
-model weights. For the complete default engine, use Docker Compose. For a
-source checkout:
-
-```sh
-python -m pip install '.[all]'
-./scripts/fetch-models.sh --multilingual
-dethrottled --host 127.0.0.1 --port 8787
-```
-
-Extras are `documents`, `media` (YouTube captions), `semantic`, `tls` and their
-union `all`. The image includes native document/OCR dependencies and both corpus
-models; source installs need weights and system converters/OCR tools explicitly.
-Set worker URLs in the process environment to use separately running services.
-The media extra alone does not install the speech worker.
+`[all]` installs the optional Python libraries, not external services or system
+OCR/conversion tools. The standalone server therefore has fewer capabilities than
+the managed stack until these are configured. Use `stack up` for the complete
+installation. Nothing starts and no models download during `pip install` itself.
+Extras are `documents`, `media` (YouTube captions), `semantic`, `tls` and `all`.
+Direct module calls remain supported. For an editable source checkout, use the
+repository Compose files for workers rather than the packaged stack commands.
 
 ## Direct calls
 

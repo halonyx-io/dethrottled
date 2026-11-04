@@ -1740,7 +1740,8 @@ def stats():
 
 def main():
     import uvicorn
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+        epilog="Worker management: dethrottled stack {up,status,down} --help")
     parser.add_argument("--host", default=os.environ.get(
         "DETHROTTLED_HOST", "127.0.0.1"),
         help="loopback by default; see docs/OPERATIONS.md before changing it")
