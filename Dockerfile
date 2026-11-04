@@ -62,7 +62,7 @@ RUN if [ "$WITH_MODELS" = "1" ]; then \
 
 # Source-only updates reuse dependency and model layers. Freeze the deployed
 # runtime independently of Python source-install compatibility ranges.
-COPY pyproject.toml setup.py MANIFEST.in README.md LICENSE .dockerignore docker-compose*.yml ./
+COPY Dockerfile pyproject.toml setup.py MANIFEST.in README.md LICENSE .dockerignore docker-compose*.yml ./
 COPY docker/ ./docker/
 COPY browser-search/ ./browser-search/
 COPY workers/ ./workers/

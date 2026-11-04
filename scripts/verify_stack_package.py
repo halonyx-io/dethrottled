@@ -30,6 +30,10 @@ with tarfile.open(fileobj=io.BytesIO(content), mode='r:gz') as archive:
                                filename, source)
                 checked += 1
     assert 'docker/searxng/settings.yml' in names and 'workers/runtime.py' in names
+    api_recipe = archive.extractfile('Dockerfile').read().decode()
+    root_sources = [s for line in api_recipe.splitlines() if line.startswith('COPY ')
+                    for s in shlex.split(line)[1:-1]]
+    assert 'Dockerfile' in root_sources, 'API nested wheel build needs its own Dockerfile'
 print(json.dumps({'passed': True, 'version': metadata['version'],
                   'context_files': len(names), 'copy_sources_checked': checked,
                   'wheel_bytes': wheel.stat().st_size}))

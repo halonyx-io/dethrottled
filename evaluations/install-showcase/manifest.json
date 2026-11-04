@@ -1,0 +1,573 @@
+{
+  "version": "1.4.0",
+  "policy": "Default software-rendered managed stack; 15-choice source order. No paid dependencies. Assertions are literal retained-text indicators, not semantic answer verification.",
+  "queries": [
+    {
+      "id": "q00",
+      "category": "news",
+      "query": "EU AI Act enforcement news 2026"
+    },
+    {
+      "id": "q01",
+      "category": "news",
+      "query": "latest NASA Artemis mission updates"
+    },
+    {
+      "id": "q02",
+      "category": "news",
+      "query": "Federal Reserve interest rate latest decision"
+    },
+    {
+      "id": "q03",
+      "category": "news",
+      "query": "semiconductor supply chain news"
+    },
+    {
+      "id": "q04",
+      "category": "news",
+      "query": "UK energy price cap October 2026"
+    },
+    {
+      "id": "q05",
+      "category": "news",
+      "query": "Australia housing policy latest news"
+    },
+    {
+      "id": "q06",
+      "category": "news",
+      "query": "renewable energy storage breakthrough news"
+    },
+    {
+      "id": "q07",
+      "category": "news",
+      "query": "cybersecurity Patch Tuesday latest"
+    },
+    {
+      "id": "q08",
+      "category": "news",
+      "query": "COP31 climate conference preparations"
+    },
+    {
+      "id": "q09",
+      "category": "news",
+      "query": "WHO measles outbreak updates"
+    },
+    {
+      "id": "q10",
+      "category": "government",
+      "query": "Nashville Tennessee zoning ordinance 2026"
+    },
+    {
+      "id": "q11",
+      "category": "government",
+      "query": "Davidson County Tennessee property tax rate"
+    },
+    {
+      "id": "q12",
+      "category": "government",
+      "query": "US Census 2025 population estimates"
+    },
+    {
+      "id": "q13",
+      "category": "government",
+      "query": "EU AI Act official regulation text"
+    },
+    {
+      "id": "q14",
+      "category": "government",
+      "query": "California building energy code 2025"
+    },
+    {
+      "id": "q15",
+      "category": "technical",
+      "query": "qBittorrent port forwarding troubleshooting"
+    },
+    {
+      "id": "q16",
+      "category": "technical",
+      "query": "Python asyncio TaskGroup documentation"
+    },
+    {
+      "id": "q17",
+      "category": "technical",
+      "query": "Rust ownership guide examples"
+    },
+    {
+      "id": "q18",
+      "category": "technical",
+      "query": "Kubernetes liveness readiness startup probes configuration"
+    },
+    {
+      "id": "q19",
+      "category": "technical",
+      "query": "PostgreSQL EXPLAIN ANALYZE guide"
+    },
+    {
+      "id": "q20",
+      "category": "technical",
+      "query": "Docker Compose healthcheck syntax"
+    },
+    {
+      "id": "q21",
+      "category": "technical",
+      "query": "React hydration mismatch troubleshooting"
+    },
+    {
+      "id": "q22",
+      "category": "technical",
+      "query": "Linux systemd linger documentation"
+    },
+    {
+      "id": "q23",
+      "category": "technical",
+      "query": "ONNX Runtime Python inference documentation"
+    },
+    {
+      "id": "q24",
+      "category": "technical",
+      "query": "Caddy reverse proxy documentation"
+    },
+    {
+      "id": "q25",
+      "category": "reference",
+      "query": "Okapi BM25 ranking function explained"
+    },
+    {
+      "id": "q26",
+      "category": "reference",
+      "query": "SQLite write ahead logging file format"
+    },
+    {
+      "id": "q27",
+      "category": "reference",
+      "query": "Unicode normalization forms NFC NFKC explanation"
+    },
+    {
+      "id": "q28",
+      "category": "reference",
+      "query": "HTTP 429 Retry-After header semantics"
+    },
+    {
+      "id": "q29",
+      "category": "reference",
+      "query": "PDF A archival standard overview"
+    },
+    {
+      "id": "q30",
+      "category": "science",
+      "query": "genome sequencing read depth explanation"
+    },
+    {
+      "id": "q31",
+      "category": "science",
+      "query": "NASA exoplanet archive API documentation"
+    },
+    {
+      "id": "q32",
+      "category": "science",
+      "query": "lithium ion battery degradation research paper"
+    },
+    {
+      "id": "q33",
+      "category": "science",
+      "query": "IPCC AR6 synthesis report PDF"
+    },
+    {
+      "id": "q34",
+      "category": "science",
+      "query": "global atmospheric carbon dioxide dataset"
+    },
+    {
+      "id": "q35",
+      "category": "documents",
+      "query": "government climate risk report PDF"
+    },
+    {
+      "id": "q36",
+      "category": "documents",
+      "query": "World Bank population data CSV download"
+    },
+    {
+      "id": "q37",
+      "category": "documents",
+      "query": "open electricity data XLSX spreadsheet"
+    },
+    {
+      "id": "q38",
+      "category": "documents",
+      "query": "renewable energy public presentation PPTX"
+    },
+    {
+      "id": "q39",
+      "category": "documents",
+      "query": "Project Gutenberg EPUB download"
+    },
+    {
+      "id": "q40",
+      "category": "community",
+      "query": "Reddit home lab Docker backup discussion"
+    },
+    {
+      "id": "q41",
+      "category": "community",
+      "query": "GitHub FastAPI memory leak issue"
+    },
+    {
+      "id": "q42",
+      "category": "community",
+      "query": "Stack Overflow pandas timezone conversion"
+    },
+    {
+      "id": "q43",
+      "category": "community",
+      "query": "Hacker News SQLite performance discussion"
+    },
+    {
+      "id": "q44",
+      "category": "community",
+      "query": "forum qBittorrent port forwarding discussion"
+    },
+    {
+      "id": "q45",
+      "category": "web",
+      "query": "React single page app client side rendering"
+    },
+    {
+      "id": "q46",
+      "category": "web",
+      "query": "Cloudflare bot challenge documentation"
+    },
+    {
+      "id": "q47",
+      "category": "web",
+      "query": "YouTube video transcript captions example"
+    },
+    {
+      "id": "q48",
+      "category": "web",
+      "query": "Wikipedia article with large data tables"
+    },
+    {
+      "id": "q49",
+      "category": "web",
+      "query": "laptop specifications comparison Ryzen 5800U 7840U"
+    }
+  ],
+  "fetches": [
+    {
+      "id": "pathlib",
+      "url": "https://docs.python.org/3/library/pathlib.html",
+      "assertions": [
+        "Path"
+      ]
+    },
+    {
+      "id": "asyncio",
+      "url": "https://docs.python.org/3/library/asyncio-task.html",
+      "assertions": [
+        "TaskGroup"
+      ]
+    },
+    {
+      "id": "docker",
+      "url": "https://docs.docker.com/reference/compose-file/services/",
+      "assertions": [
+        "healthcheck"
+      ]
+    },
+    {
+      "id": "postgres",
+      "url": "https://www.postgresql.org/docs/current/using-explain.html",
+      "assertions": [
+        "EXPLAIN"
+      ]
+    },
+    {
+      "id": "caddy",
+      "url": "https://caddyserver.com/docs/caddyfile/directives/reverse_proxy",
+      "assertions": [
+        "reverse_proxy"
+      ]
+    },
+    {
+      "id": "rust",
+      "url": "https://doc.rust-lang.org/book/ch04-01-what-is-ownership.html",
+      "assertions": [
+        "ownership"
+      ]
+    },
+    {
+      "id": "sqlite",
+      "url": "https://sqlite.org/wal.html",
+      "assertions": [
+        "checkpoint"
+      ]
+    },
+    {
+      "id": "http429",
+      "url": "https://www.rfc-editor.org/rfc/rfc6585.html",
+      "assertions": [
+        "429"
+      ]
+    },
+    {
+      "id": "unicode",
+      "url": "https://unicode.org/reports/tr15/",
+      "assertions": [
+        "Normalization"
+      ]
+    },
+    {
+      "id": "bm25",
+      "url": "https://en.wikipedia.org/wiki/Okapi_BM25",
+      "assertions": [
+        "BM25"
+      ]
+    },
+    {
+      "id": "nasa",
+      "url": "https://www.nasa.gov/humans-in-space/artemis/",
+      "assertions": [
+        "Artemis"
+      ]
+    },
+    {
+      "id": "who",
+      "url": "https://www.who.int/news-room/fact-sheets/detail/measles",
+      "assertions": [
+        "measles"
+      ]
+    },
+    {
+      "id": "ipcc",
+      "url": "https://www.ipcc.ch/report/ar6/syr/",
+      "assertions": [
+        "Synthesis"
+      ]
+    },
+    {
+      "id": "gutenberg",
+      "url": "https://www.gutenberg.org/ebooks/1342",
+      "assertions": [
+        "Pride"
+      ]
+    },
+    {
+      "id": "fastapi",
+      "url": "https://fastapi.tiangolo.com/",
+      "assertions": [
+        "FastAPI"
+      ]
+    },
+    {
+      "id": "onnx",
+      "url": "https://onnxruntime.ai/docs/",
+      "assertions": [
+        "ONNX"
+      ]
+    },
+    {
+      "id": "kubernetes",
+      "url": "https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/",
+      "assertions": [
+        "readiness"
+      ]
+    },
+    {
+      "id": "example",
+      "url": "https://example.com/",
+      "assertions": [
+        "Example Domain"
+      ]
+    },
+    {
+      "id": "hn",
+      "url": "https://news.ycombinator.com/",
+      "assertions": [
+        "Hacker News"
+      ]
+    },
+    {
+      "id": "github",
+      "url": "https://github.com/halonyx-io/dethrottled",
+      "assertions": [
+        "dethrottled"
+      ]
+    },
+    {
+      "id": "reddit",
+      "url": "https://www.reddit.com/r/python/",
+      "assertions": [
+        "Python"
+      ]
+    },
+    {
+      "id": "oldreddit",
+      "url": "https://old.reddit.com/r/python/",
+      "assertions": [
+        "Python"
+      ]
+    },
+    {
+      "id": "booking",
+      "url": "https://www.booking.com/",
+      "assertions": [
+        "Booking"
+      ]
+    },
+    {
+      "id": "crunchbase",
+      "url": "https://www.crunchbase.com/",
+      "assertions": [
+        "Crunchbase"
+      ]
+    },
+    {
+      "id": "g2",
+      "url": "https://www.g2.com/",
+      "assertions": [
+        "G2"
+      ]
+    },
+    {
+      "id": "bloomberg",
+      "url": "https://www.bloomberg.com/",
+      "assertions": [
+        "Bloomberg"
+      ]
+    },
+    {
+      "id": "wsj",
+      "url": "https://www.wsj.com/",
+      "assertions": [
+        "Wall Street"
+      ]
+    },
+    {
+      "id": "pdf",
+      "url": "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      "assertions": [
+        "Dummy PDF"
+      ]
+    },
+    {
+      "id": "csv",
+      "url": "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv",
+      "assertions": [
+        "sepal_length"
+      ]
+    },
+    {
+      "id": "robots",
+      "url": "https://www.rfc-editor.org/rfc/rfc9309.html",
+      "assertions": [
+        "Robots"
+      ]
+    }
+  ],
+  "research": [
+    {
+      "id": "r0",
+      "question": "What changed in the Python 3.12 release?"
+    },
+    {
+      "id": "r1",
+      "question": "What are the current EU AI Act implementation dates?"
+    },
+    {
+      "id": "r2",
+      "question": "What does the IPCC AR6 synthesis report say about warming?"
+    },
+    {
+      "id": "r3",
+      "question": "What are the documented causes of lithium ion battery degradation?"
+    },
+    {
+      "id": "r4",
+      "question": "How does PostgreSQL EXPLAIN ANALYZE report query time?"
+    },
+    {
+      "id": "r5",
+      "question": "What are NASA's current Artemis mission milestones?"
+    }
+  ],
+  "formats": [
+    {
+      "id": "article.html",
+      "url": "http://fixture:8099/formats/article.html",
+      "assertions": [
+        "5120 megawatts"
+      ]
+    },
+    {
+      "id": "table.html",
+      "url": "http://fixture:8099/formats/table.html",
+      "assertions": [
+        "5120 megawatts"
+      ]
+    },
+    {
+      "id": "values.csv",
+      "url": "http://fixture:8099/formats/values.csv",
+      "assertions": [
+        "5120 megawatts"
+      ]
+    },
+    {
+      "id": "report.pdf",
+      "url": "http://fixture:8099/formats/report.pdf",
+      "assertions": [
+        "5120 megawatts"
+      ]
+    },
+    {
+      "id": "scan.pdf",
+      "url": "http://fixture:8099/formats/scan.pdf",
+      "assertions": [
+        "5120 megawatts"
+      ]
+    },
+    {
+      "id": "report.docx",
+      "url": "http://fixture:8099/formats/report.docx",
+      "assertions": [
+        "5120 megawatts"
+      ]
+    },
+    {
+      "id": "report.xlsx",
+      "url": "http://fixture:8099/formats/report.xlsx",
+      "assertions": [
+        "5120 megawatts"
+      ]
+    },
+    {
+      "id": "report.pptx",
+      "url": "http://fixture:8099/formats/report.pptx",
+      "assertions": [
+        "5120 megawatts"
+      ]
+    },
+    {
+      "id": "report.odt",
+      "url": "http://fixture:8099/formats/report.odt",
+      "assertions": [
+        "5120 megawatts"
+      ]
+    },
+    {
+      "id": "report.epub",
+      "url": "http://fixture:8099/formats/report.epub",
+      "assertions": [
+        "5120 megawatts"
+      ]
+    },
+    {
+      "id": "report.rtf",
+      "url": "http://fixture:8099/formats/report.rtf",
+      "assertions": [
+        "5120 megawatts"
+      ]
+    }
+  ]
+}

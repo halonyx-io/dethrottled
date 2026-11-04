@@ -17,3 +17,10 @@ a nonexistent top-level `pdf-worker` directory. The PDF utility actually lives u
 was removed, and wheel validation now checks all Docker COPY source paths before
 starting deployment. The corrected wheel passed 47 source checks. Only the affected
 candidate builds were stopped; production containers were untouched.
+
+## Nested package build inside the API image
+
+The corrected context exposed a second issue: the API image copied source and packaging
+metadata but not its own Dockerfile into `/app`. The nested wheel build correctly
+refused an incomplete context. The Dockerfile is now included, and the package validator
+checks that this self-build prerequisite is copied. The original failing log is retained.
