@@ -61,6 +61,15 @@ pages remain inline without image links when wrapped in `<picture>`. The
 [rendering record](publication/showcase-rendering.json) retains page counts and
 rendered HTML hashes. Offline documentation checks also validate HTML image paths.
 
+The first final-documentation CI attempt passed thirteen jobs, but GitHub cancelled
+its macOS job after fifteen minutes without assigning a runner or running a test
+step. Its annotation reports hosted macOS ARM64 capacity constraints; the
+[original runner failure](publication/ci-macos-runner-capacity.json) is preserved.
+The macOS Python job now pins GitHub's
+[standard `macos-15-intel` runner](https://docs.github.com/en/actions/reference/runners/github-hosted-runners)
+and runs the same tests. Native Linux AMD64/ARM64 container gates are unchanged.
+This is an infrastructure failure, not an application test failure.
+
 For Q6A operations:
 
 ```sh

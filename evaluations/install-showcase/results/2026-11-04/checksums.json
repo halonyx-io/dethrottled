@@ -1,6 +1,6 @@
 {
   "ISSUES.md": "d8a1a44ab8957967602f9dcd18133eea6f490bece2a74b7a41afe30e066c2385",
-  "PUBLICATION.md": "9dd88fe4c1106e5f2fdb4cb8935adbad89934c163bd78b553f84c37b6cddd23f",
+  "PUBLICATION.md": "9c34e63fc185fb6a747f441157c9f267fa5091ee5005d3ce03c635b33c872e29",
   "REPORT.md": "531fb0aff6158ad36d6b7081c767b571390329bf02aca563d1f7ab4871929824",
   "docker-retained-followup.json": "35741032dc67a6ece79d540d2ed6843c12755bbd98e25691aabca09ed01a6004",
   "export-manifest.json": "796261bc506765d42c9d64023edd8da403204cdcef2f47b3cea7dd5f465e41b4",
@@ -50,6 +50,7 @@
   "provenance/szbox-format-worker.json": "211c61a6237c2d339d54b46159dccbfd42f93836be4ea1dcae2a09a63a67a500",
   "provenance/szbox-runtime-source.json": "c8d2b16bebcaa37288007eb02e7f09ab243eb40923bdd7b0b092c8f730308911",
   "publication/browser-search-dependencies.json": "5fcd2a36162346ba5ce29c094c6a140d37e57175842acac8d13fb89bf9be5138",
+  "publication/ci-macos-runner-capacity.json": "853eaa0d0eba0aec5499f0cc3d55f493479676bf1294e7a80bf9162c1cf763bd",
   "publication/commands.json": "1896b096d7cc02586a4fe2bd65d774ddbb74c99cd4f2c6e965eb31a273ffe2d7",
   "publication/crawl4ai-dependencies.json": "3a425e3cf04a8861d165c9966cd6ba86878f3b1ceaabfe19ccc20227bde018dc",
   "publication/dethrottled-dependencies.json": "6a010928500730a6a0f1c400039e94e1894c6d43d1c2d45b2dbb273ecd33b71f",
