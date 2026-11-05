@@ -34,7 +34,7 @@ class IdentityPool:
                 if transport == "tls":
                     from curl_cffi import requests
                 else:
-                    import requests
+                    from . import netfilter as requests
                 entry = dict(session=requests.Session(), users=0, at=now,
                              lock=threading.Lock())
                 if cached:
@@ -47,7 +47,7 @@ class IdentityPool:
             # Streaming response consumption happens inside this lease.
             with entry["lock"]:
                 def get(target, **kwargs):
-                    import requests as plain
+                    from . import netfilter as plain
                     if transport == "tls":
                         from curl_cffi import requests as client
                     else:
@@ -58,6 +58,8 @@ class IdentityPool:
                         # Domain cookies or populate its jar with another host.
                         request = (entry["session"].get if origin(target) == origin(url)
                                    else client.get)
+                        from .adblock import check
+                        check(target, "tls" if transport == "tls" else "http")
                         response = request(target, allow_redirects=False, **kwargs)
                         if (not follow or response.status_code not in {301, 302, 303, 307, 308}
                                 or not response.headers.get("Location")):

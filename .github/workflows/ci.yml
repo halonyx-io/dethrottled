@@ -142,7 +142,7 @@ jobs:
       - name: Build API and browser images natively
         run: |
           docker build -t dethrottled:ci .
-          docker build -t dethrottled-browser-search:ci browser-search
+          docker build -f browser-search/Dockerfile -t dethrottled-browser-search:ci .
           case "$(uname -m)" in
             x86_64) expected=amd64 ;;
             aarch64) expected=arm64 ;;

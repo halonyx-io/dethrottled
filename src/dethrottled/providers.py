@@ -3,7 +3,7 @@
 import os
 import time
 
-import requests
+from . import netfilter as requests
 
 NAMES = ("exa", "tavily", "parallel")
 

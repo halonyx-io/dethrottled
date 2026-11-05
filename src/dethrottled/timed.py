@@ -58,7 +58,7 @@ def render(segments, limit, *, method, language=None, duration=None):
 
 
 def transcribe(data, limit):
-    import requests
+    from . import netfilter as requests
 
     worker = endpoint("speech")
     if not worker:

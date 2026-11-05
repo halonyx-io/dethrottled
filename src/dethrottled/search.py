@@ -25,8 +25,8 @@ from pathlib import Path
 from urllib.parse import parse_qs, quote_plus, urlparse
 
 import feedparser
-import requests
 
+from . import netfilter as requests
 from . import paths as _paths
 from . import providers, search_diagnostics
 from .content import constrained
@@ -724,6 +724,7 @@ def _acquire_web(query: str, *, max_items: int = 8, cache=None,
             return bounded_results(merged, max_items)
     try:
         from ddgs import DDGS
+        requests.install_ddgs()
     except ImportError:
         if diagnostics is not None:
             diagnostics.update(status="unavailable", reason="DDGS_not_installed")

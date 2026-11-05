@@ -6,7 +6,7 @@ import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
 
-import requests
+from . import netfilter as requests
 
 _POOL = ThreadPoolExecutor(max_workers=6, thread_name_prefix="worker-health")
 _LOCK = threading.Lock()

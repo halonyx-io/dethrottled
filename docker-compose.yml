@@ -1,6 +1,6 @@
 # The default web and format stack, self-hosted. Nothing in here calls an API you need a key
 # for, and with the default settings nothing leaves your network except the
-# fetches you asked for.
+# fetches you asked for and the daily HaGeZi Multi PRO list update.
 #
 #     docker compose up -d
 #     curl localhost:8787/health
@@ -42,6 +42,8 @@ services:
       # meant editing this file, which meant diverging from the repo.
       - "${DETHROTTLED_BIND:-127.0.0.1}:${DETHROTTLED_PORT:-8787}:8787"
     environment:
+      DETHROTTLED_ADBLOCK: "${DETHROTTLED_ADBLOCK:-1}"
+      DETHROTTLED_ADBLOCK_DIR: /filters
       DETHROTTLED_SEARXNG_URL: http://searxng:8080
       DETHROTTLED_BROWSER_SEARCH_URL: http://browser-search:19888
       DETHROTTLED_READ_PLAN_SECONDS: "${DETHROTTLED_READ_PLAN_SECONDS:-30}"
@@ -84,6 +86,7 @@ services:
       # corpus would report itself unavailable on a stack that has everything
       # it needs.
     volumes:
+      - adblock-state:/filters
       - dethrottled-data:/data
     depends_on:
       searxng:
@@ -92,12 +95,19 @@ services:
         condition: service_started
 
   browser-search:
+    group_add: ["10001"]
     init: true
-    build: ./browser-search
+    build:
+      context: .
+      dockerfile: browser-search/Dockerfile
     image: dethrottled-browser-search:local
     restart: unless-stopped
     environment:
       DETHROTTLED_BROWSER_STATE_DIR: /state
+      DETHROTTLED_ADBLOCK: "${DETHROTTLED_ADBLOCK:-1}"
+      DETHROTTLED_ADBLOCK_DIR: /filters
+      DETHROTTLED_ADBLOCK_READER: "1"
+      DETHROTTLED_ADBLOCK_COMPONENT: browser
       DETHROTTLED_BROWSER_GRAPHICS: "${DETHROTTLED_BROWSER_GRAPHICS:-auto}"
       DETHROTTLED_BROWSER_RECOVERY: "${DETHROTTLED_BROWSER_RECOVERY:-auto}"
       DETHROTTLED_DRIVE_SESSION_TTL: "${DETHROTTLED_DRIVE_SESSION_TTL:-1800}"
@@ -106,13 +116,17 @@ services:
       - "19888"
     volumes:
       - browser-state:/state
+      - adblock-state:/filters
     shm_size: 1gb
 
   searxng:
+    group_add: ["10001"]
     # Pinned. 2026.10.2, verified with the current two-engine news config.
     image: searxng/searxng:2026.10.2-19ffbcd30@sha256:c642712fcedcdaa78fac44f71eada86aff510745826ba1bd1a368211fea2ce7f
     restart: unless-stopped
     volumes:
+      - adblock-state:/filters
+      - ./src/dethrottled/adblock.py:/usr/local/searxng/searx/plugins/dethrottled_adblock.py:ro
       - ./docker/searxng:/etc/searxng:ro
       - ./docker/searxng/dethrottled_guard.py:/usr/local/searxng/searx/plugins/dethrottled_guard.py:ro
       - ./docker/searxng/retry_after.py:/usr/local/searxng/searx/plugins/dethrottled_retry_after.py:ro
@@ -120,12 +134,17 @@ services:
       # Only ever reached from the dethrottled container on the compose
       # network, so this is not a public base URL.
       SEARXNG_BASE_URL: http://searxng:8080/
+      DETHROTTLED_ADBLOCK: "${DETHROTTLED_ADBLOCK:-1}"
+      DETHROTTLED_ADBLOCK_DIR: /filters
+      DETHROTTLED_ADBLOCK_READER: "1"
+      DETHROTTLED_ADBLOCK_COMPONENT: searxng
     # Deliberately NOT published to the host. Nothing outside this compose
     # network needs to reach it, and an open SearXNG is an open proxy.
     expose:
       - "8080"
 
   crawl4ai:
+    group_add: ["10001"]
     # Pinned 0.9.5: safer untrusted requests and correct quoted CSS extraction.
     # Verified against JS, quoted selector/wait, missing-page and rejection probes.
     image: unclecode/crawl4ai:0.9.5@sha256:0b05666882bfb67f45d559a5b827839c54127b74aedd723f8ab338a3571b5fc9
@@ -140,6 +159,11 @@ services:
       # network. The service is `expose`d and never published to the host, so
       # nothing outside this compose project can reach it either way -- but set
       # CRAWL4AI_TOKEN in .env anyway if you would rather not run a default.
+      PYTHONPATH: /opt/dethrottled-network
+      DETHROTTLED_ADBLOCK: "${DETHROTTLED_ADBLOCK:-1}"
+      DETHROTTLED_ADBLOCK_DIR: /filters
+      DETHROTTLED_ADBLOCK_READER: "1"
+      DETHROTTLED_ADBLOCK_COMPONENT: crawl4ai
       CRAWL4AI_NO_CLOUD_NOTICE: "1"
       CRAWL4AI_API_TOKEN: "${CRAWL4AI_TOKEN:-dethrottled-compose-local}"
       # Set true in .env when callers intentionally fetch trusted LAN sites.
@@ -149,6 +173,10 @@ services:
       # cutoff, and a lower memory ceiling. See the header of that file for why
       # each one moved. Without it the pool will open up to forty concurrent
       # tabs and not start shedding them until the host is at 95% memory.
+      - adblock-state:/filters
+      - ./docker/crawl4ai/sitecustomize.py:/opt/dethrottled-network/sitecustomize.py:ro
+      - ./src/dethrottled/adblock.py:/opt/dethrottled-network/dethrottled_adblock.py:ro
+      - ./src/dethrottled/adblock_browser.py:/opt/dethrottled-network/dethrottled_adblock_browser.py:ro
       - ./docker/crawl4ai/config.yml:/app/config.yml:ro
     expose:
       - "11235"
@@ -202,6 +230,7 @@ services:
     expose: ["19889"]
     mem_limit: 3g
 volumes:
+  adblock-state:
   browser-state:
   dethrottled-data:
   media-models:

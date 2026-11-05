@@ -25,6 +25,16 @@ from patchright.async_api import async_playwright
 from pydantic import BaseModel, ConfigDict, Field
 from recovery import assess_access, navigation_recipe
 
+try:
+    import dethrottled_adblock as adblock
+    import dethrottled_adblock_browser as browser_filter
+except ImportError:  # Source-checkout tests/development.
+    from dethrottled import adblock
+    from dethrottled import adblock_browser as browser_filter
+import patchright.async_api as browser_api
+
+browser_filter.install(browser_api)
+
 ENGINES = {
     "ddg-lite": ("https://lite.duckduckgo.com/lite/?q=", "a.result-link", ".result-snippet"),
     "ddg-html": ("https://html.duckduckgo.com/html/?q=", "a.result__a", ".result__snippet"),
@@ -239,6 +249,7 @@ async def _watch_browser(app):
 
 @asynccontextmanager
 async def lifespan(app):
+    adblock.FILTER.start()
     DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)
     async with async_playwright() as playwright:
         graphics = os.environ.get("DETHROTTLED_BROWSER_GRAPHICS", "default")
@@ -303,6 +314,7 @@ async def lifespan(app):
         try:
             yield
         finally:
+            adblock.FILTER.stop()
             watcher.cancel()
             session_reaper.cancel()
             await asyncio.gather(watcher, session_reaper, return_exceptions=True)
@@ -471,7 +483,7 @@ async def _install_scope_route(page, allowed_hosts: list[str], public_only=False
         if public_only:
             await route.fallback()
         else:
-            await route.continue_()
+            await route.fallback()
 
     await page.route("**/*", scoped)
 
@@ -525,6 +537,7 @@ async def _prepare_navigation(context, url):
 async def _navigate(state, body, url, timeout, deadline):
     page = state["page"]
     allowed = state["allowed_hosts"]
+    adblock.check(url, "browser")
     if allowed and not _host_allowed(url, allowed):
         raise ValueError("navigation outside allowed_hosts")
     recovery = await _prepare_navigation(state['context'], url)
@@ -555,7 +568,9 @@ async def _navigate(state, body, url, timeout, deadline):
                   'answer_verified': False, 'source_complete': False}
     state['navigation_url'] = page.url
     state['navigation_status'] = response.status if response else None
-    if response and response.status >= 400:
+    if response and response.headers.get('x-dethrottled-blocked') == 'adblock':
+        access.update(status='blocked', reason='adblock_blocked')
+    elif response and response.status >= 400:
         access.update(status='http_error', reason='navigation_http_' + str(response.status))
     return {"access": access, **({'recovery': recovery} if recovery else {}),
             "url": page.url, "status": response.status if response else None,
@@ -606,7 +621,7 @@ async def _make_drive_state(browser, allowed_hosts: list[str], public_only=False
             if _top_level_navigation(request) and not _host_allowed(request.url, allowed_hosts):
                 await route.abort("blockedbyclient")
             elif not public_only or await _public_network_target(request.url):
-                await route.continue_()
+                await route.fallback()
             else:
                 await route.abort("blockedbyclient")
         await context.route("**/*", public_route)
@@ -936,7 +951,7 @@ async def health():
     if not app.state.browser.is_connected():
         raise HTTPException(503, "browser disconnected")
     return {"ok":True,"active":ACTIVE,"waiting":WAITING,
-            "graphics": getattr(app.state, "graphics", {})}
+            "graphics": getattr(app.state, "graphics", {}), "adblock": adblock.FILTER.status()}
 
 
 @app.get("/metrics")
@@ -1393,6 +1408,7 @@ async def _drive(state: dict, body: DriveRequest) -> dict:
         "canary_matches": matches,
         "service_s": round(time.monotonic() - started, 3),
     }
+    out["adblock"] = adblock.FILTER.status()
     if body.include_events:
         out["events"] = _events_since_start(events)
     mode = _screenshot_mode(body.screenshot)

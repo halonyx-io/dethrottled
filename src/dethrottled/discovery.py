@@ -7,8 +7,7 @@ import time
 from email.utils import parsedate_to_datetime
 from urllib.parse import parse_qs, quote_plus, unquote, urljoin, urlsplit
 
-import requests
-
+from . import netfilter as requests
 from .content import constrained
 
 SOURCE_PROFILES = {
@@ -55,7 +54,7 @@ def tls_search(query, *, max_items=8, cache=None, diagnostics=None, worker=""):
                     time.sleep(delay)
                 _NEXT = time.monotonic() + 0.5
         url = "https://lite.duckduckgo.com/lite/?q=" + quote_plus(query)
-        response = tls_requests.get(url, impersonate=TLS_IMPERSONATE, timeout=1.5)
+        response = requests.get_using(tls_requests.get, url, impersonate=TLS_IMPERSONATE, timeout=1.5)
         html = response.text or ""
         attempt["http_status"] = response.status_code
         retry = (getattr(response, "headers", None) or {}).get("Retry-After", "")

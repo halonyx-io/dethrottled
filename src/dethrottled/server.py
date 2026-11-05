@@ -413,7 +413,8 @@ def _extract_once(url: str, max_chars: int, allow_ocr: bool = True,
 def _extract_row(url, max_chars, *, recovery="auto", asset_recovery=True, **options):
     """Recover known evidence gaps without guessing UI actions or hiding attempts."""
     row = _extract_once(url, max_chars, **options)
-    if recovery == "auto" and not options.get("raw") and not options.get("links"):
+    if (recovery == "auto" and not row.get("policy_blocked")
+            and not options.get("raw") and not options.get("links")):
         from .readplan import run
         row = run(url, row, read=lambda target, opts: _extract_once(target, max_chars, **opts),
                   drive=fs.browser_drive, options=options,
@@ -455,6 +456,8 @@ _BACKFILL_JOB = BackfillJob()
 
 @app.on_event("startup")
 def start_multilingual_backfill():
+    from .adblock import FILTER
+    FILTER.start()
     if os.getenv("DETHROTTLED_CORPUS_SCHEMA", "2") != "1":
         shared_corpus().start()
     elif os.getenv("DETHROTTLED_MULTILINGUAL_CORPUS") == "1":
@@ -463,6 +466,8 @@ def start_multilingual_backfill():
 
 @app.on_event("shutdown")
 def stop_multilingual_backfill():
+    from .adblock import FILTER
+    FILTER.stop()
     _BACKFILL_JOB.stop()
     from . import corpus
     if hasattr(corpus._SHARED_CORPUS, "stop"):
@@ -547,9 +552,11 @@ def v2_capabilities():
         if installed(module):
             readable.extend(formats)
 
+    from .adblock import status as adblock_status
     return {
         "service": "dethrottled",
         "optional_search_providers": providers.configured(),
+        "adblock": adblock_status(),
         "version": VERSION,
         "client_contract": {
             "workflow_sha256": hashlib.sha256(INSTRUCTIONS.encode()).hexdigest(),
@@ -1442,7 +1449,8 @@ def corpus_stats():
 @app.get("/stats")
 def stats():
     # Surface renderer admission, rolling budgets and cooldown state.
-    return {"renderer_admission": fetcher._RENDER_QUEUE.stats(),
+    from .adblock import status as adblock_status
+    return {"adblock": adblock_status(), "renderer_admission": fetcher._RENDER_QUEUE.stats(),
             "headed_admission": fetcher._HEADED_QUEUE.stats(),
             "cache": cache().stats(), "version": VERSION,
             "tiers_resting": fetcher.tier_rest_state(),

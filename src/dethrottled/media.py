@@ -105,7 +105,10 @@ def transcript(url: str, limit: int = 20000, metadata: dict | None = None) -> tu
         return "", "", "transcript_api_not_installed"
 
     try:
-        available = YouTubeTranscriptApi().list(ident)
+        from . import adblock
+        from .netfilter import Session
+        api = YouTubeTranscriptApi(http_client=Session()) if adblock.enabled() else YouTubeTranscriptApi()
+        available = api.list(ident)
         try:
             chosen = available.find_transcript(LANGUAGES)
         except NoTranscriptFound:

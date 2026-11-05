@@ -19,8 +19,8 @@ with tarfile.open(fileobj=io.BytesIO(content), mode='r:gz') as archive:
     checked = 0
     for filename in sorted(n for n in names if n.endswith('Dockerfile')):
         text = archive.extractfile(filename).read().decode()
-        # Browser-search uses its own directory as build context; other workers use root.
-        prefix = 'browser-search/' if filename == 'browser-search/Dockerfile' else ''
+        # All worker recipes use the root context to share the domain-policy source.
+        prefix = ''
         for line in text.replace('\\\n', ' ').splitlines():
             if not line.startswith('COPY ') or '--from=' in line:
                 continue
