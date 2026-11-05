@@ -259,3 +259,51 @@ def test_unchanged_public_source_rebinds_document_namespace_and_repairs_150(stor
         assert reopened.search("PUBLIC-FACT-7349213", mode="lexical")[0]["document_available"]
     finally:
         reopened.db.close()
+
+
+@pytest.mark.parametrize("status,missing", [("suspected_incomplete", 9), ("unverified", 0)])
+def test_completeness_provenance_survives_public_cross_caller_reuse(store, status, missing):
+    diagnostic = {"status": status, "assessment": "structural_samples",
+                  "sampled_anchors": 48, "missing_samples": missing,
+                  "compared_extractors": ["trafilatura", "resiliparse", "selectolax"],
+                  "selection_changed": True}
+    text = "COMPLETENESS-FACT-7349213: the quantity is 47. " * 30
+    url = "https://example.org/completeness"
+    for namespace in ("caller-a", "caller-b"):
+        document = store.documents.put(namespace, url, text, {"corpus_visibility": "public"})
+        result = admit(store, text, url=url, document_id=document["document_id"],
+                       _document_namespace=namespace, source_partial=False,
+                       extraction={"method": "html", "completeness": {
+                           **diagnostic, "samples": [text] * 100}},
+                       warnings=["extraction_missing_structural_samples"] if missing else [])
+        if namespace == "caller-a":
+            finish(store)
+        else:
+            assert result["unchanged"] and not store.run_one()
+        hit = store.search("COMPLETENESS-FACT-7349213", mode="lexical")[0]
+        assert hit["provenance"]["extraction"]["completeness"] == diagnostic
+        assert hit["document_id"] == document["document_id"] and hit["document_available"]
+        assert not hit["coverage"]["source_partial"]  # Separate from extraction uncertainty.
+        assert hit["provenance"]["warnings"] == (
+            ["extraction_missing_structural_samples"] if missing else [])
+        assert text[hit["start"]:hit["end"]] == hit["text"]
+        assert not any(k in hit["provenance"] for k in ("_document_namespace", "authenticated"))
+    assert store.db.execute("select count(*) from sources").fetchone()[0] == 1
+
+
+def test_completeness_metadata_is_bounded_and_drops_unknown_payloads(store):
+    import json
+
+    admit(store, "BOUNDED-FACT-7349213 supports a precise source fact. " * 20,
+          extraction={"completeness": {"status": "suspected_incomplete",
+              "assessment": "structural_samples", "sampled_anchors": 48,
+              "missing_samples": -1, "selection_changed": "not a boolean",
+              "compared_extractors": ["x" * 1000] * 1000,
+              "source_text": "SECRET-PAYLOAD" * 10000}})
+    provenance = json.loads(store.db.execute("select provenance from sources").fetchone()[0])
+    diagnostic = provenance["extraction"]["completeness"]
+    assert diagnostic["sampled_anchors"] == 48
+    assert "missing_samples" not in diagnostic and "selection_changed" not in diagnostic
+    assert "SECRET-PAYLOAD" not in json.dumps(provenance)
+    assert len(json.dumps(diagnostic)) < 1024
+    assert len(diagnostic["compared_extractors"]) <= 8

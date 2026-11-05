@@ -1,0 +1,145 @@
+FFFF                                                                     [100%]
+=================================== FAILURES ===================================
+_ test_completeness_provenance_survives_public_cross_caller_reuse[suspected_incomplete-9] _
+
+store = <dethrottled.corpus_v2.CorpusV2 object at 0x7f9f4b53f620>
+status = 'suspected_incomplete', missing = 9
+
+    @pytest.mark.parametrize("status,missing", [("suspected_incomplete", 9), ("unverified", 0)])
+    def test_completeness_provenance_survives_public_cross_caller_reuse(store, status, missing):
+        diagnostic = {"status": status, "assessment": "structural_samples",
+                      "sampled_anchors": 48, "missing_samples": missing,
+                      "compared_extractors": ["trafilatura", "resiliparse", "selectolax"],
+                      "selection_changed": True}
+        text = "COMPLETENESS-FACT-7349213: the quantity is 47. " * 30
+        url = "https://example.org/completeness"
+        for namespace in ("caller-a", "caller-b"):
+            document = store.documents.put(namespace, url, text, {"corpus_visibility": "public"})
+            result = admit(store, text, url=url, document_id=document["document_id"],
+                           _document_namespace=namespace, source_partial=False,
+                           extraction={"method": "html", "completeness": {
+                               **diagnostic, "samples": [text] * 100}},
+                           warnings=["extraction_missing_structural_samples"] if missing else [])
+            if namespace == "caller-a":
+                finish(store)
+            else:
+                assert result["unchanged"] and not store.run_one()
+            hit = store.search("COMPLETENESS-FACT-7349213", mode="lexical")[0]
+>           assert hit["provenance"]["extraction"]["completeness"] == diagnostic
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           KeyError: 'completeness'
+
+tests/test_corpus_v2.py:284: KeyError
+_ test_completeness_provenance_survives_public_cross_caller_reuse[unverified-0] _
+
+store = <dethrottled.corpus_v2.CorpusV2 object at 0x7f9f48db7610>
+status = 'unverified', missing = 0
+
+    @pytest.mark.parametrize("status,missing", [("suspected_incomplete", 9), ("unverified", 0)])
+    def test_completeness_provenance_survives_public_cross_caller_reuse(store, status, missing):
+        diagnostic = {"status": status, "assessment": "structural_samples",
+                      "sampled_anchors": 48, "missing_samples": missing,
+                      "compared_extractors": ["trafilatura", "resiliparse", "selectolax"],
+                      "selection_changed": True}
+        text = "COMPLETENESS-FACT-7349213: the quantity is 47. " * 30
+        url = "https://example.org/completeness"
+        for namespace in ("caller-a", "caller-b"):
+            document = store.documents.put(namespace, url, text, {"corpus_visibility": "public"})
+            result = admit(store, text, url=url, document_id=document["document_id"],
+                           _document_namespace=namespace, source_partial=False,
+                           extraction={"method": "html", "completeness": {
+                               **diagnostic, "samples": [text] * 100}},
+                           warnings=["extraction_missing_structural_samples"] if missing else [])
+            if namespace == "caller-a":
+                finish(store)
+            else:
+                assert result["unchanged"] and not store.run_one()
+            hit = store.search("COMPLETENESS-FACT-7349213", mode="lexical")[0]
+>           assert hit["provenance"]["extraction"]["completeness"] == diagnostic
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           KeyError: 'completeness'
+
+tests/test_corpus_v2.py:284: KeyError
+_______ test_completeness_metadata_is_bounded_and_drops_unknown_payloads _______
+
+store = <dethrottled.corpus_v2.CorpusV2 object at 0x7f9f487f8190>
+
+    def test_completeness_metadata_is_bounded_and_drops_unknown_payloads(store):
+        import json
+
+        admit(store, "BOUNDED-FACT-7349213 supports a precise source fact. " * 20,
+              extraction={"completeness": {"status": "suspected_incomplete",
+                  "assessment": "structural_samples", "sampled_anchors": 48,
+                  "missing_samples": -1, "selection_changed": "not a boolean",
+                  "compared_extractors": ["x" * 1000] * 1000,
+                  "source_text": "SECRET-PAYLOAD" * 10000}})
+        provenance = json.loads(store.db.execute("select provenance from sources").fetchone()[0])
+>       diagnostic = provenance["extraction"]["completeness"]
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'completeness'
+
+tests/test_corpus_v2.py:302: KeyError
+___________ test_research_preserves_authoritative_discovery_outcome ____________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f9f4879c9e0>
+
+    def test_research_preserves_authoritative_discovery_outcome(monkeypatch):
+        monkeypatch.setattr(server, "index_fetched", lambda rows: 0)
+
+        def ranked(body):
+            if body.query == "raises":
+                raise RuntimeError("controlled local failure")
+            return [], {"discovery": {"outcome": "unavailable", "degraded": True},
+                        "per_source": {"web": 0},
+                        "source_reports": {"web": {"status": "http_429"}}}, 15
+
+        monkeypatch.setattr(server, "_ranked", ranked)
+        response = TestClient(server.app).post(
+            "/research", json={"question": "unavailable", "queries": ["raises"]})
+        assert response.status_code == 200
+        first, second = response.json()["queries"]
+>       assert first["outcome"] == "unavailable" and first["degraded"]
+               ^^^^^^^^^^^^^^^^
+E       KeyError: 'outcome'
+
+tests/test_research.py:202: KeyError
+=============================== warnings summary ===============================
+../../../../../../tmp/dethrottled-audit-tools/lib/python3.13/site-packages/fastapi/testclient.py:1
+  /tmp/dethrottled-audit-tools/lib/python3.13/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+src/dethrottled/server.py:459
+  <checkout>/src/dethrottled/server.py:459: DeprecationWarning:
+          on_event is deprecated, use lifespan event handlers instead.
+
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+
+    @app.on_event("startup")
+
+../../../../../../tmp/dethrottled-audit-tools/lib/python3.13/site-packages/fastapi/applications.py:4723
+../../../../../../tmp/dethrottled-audit-tools/lib/python3.13/site-packages/fastapi/applications.py:4723
+  /tmp/dethrottled-audit-tools/lib/python3.13/site-packages/fastapi/applications.py:4723: DeprecationWarning:
+          on_event is deprecated, use lifespan event handlers instead.
+
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+
+    return self.router.on_event(event_type)  # ty: ignore[deprecated]
+
+src/dethrottled/server.py:469
+  <checkout>/src/dethrottled/server.py:469: DeprecationWarning:
+          on_event is deprecated, use lifespan event handlers instead.
+
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+
+    @app.on_event("shutdown")
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_corpus_v2.py::test_completeness_provenance_survives_public_cross_caller_reuse[suspected_incomplete-9]
+FAILED tests/test_corpus_v2.py::test_completeness_provenance_survives_public_cross_caller_reuse[unverified-0]
+FAILED tests/test_corpus_v2.py::test_completeness_metadata_is_bounded_and_drops_unknown_payloads
+FAILED tests/test_research.py::test_research_preserves_authoritative_discovery_outcome
+4 failed, 25 deselected, 5 warnings in 0.58s

@@ -1,0 +1,44 @@
+{
+  "date": "2026-11-05",
+  "runtime_base": "1.5.2 with unpublished native-adblock candidate",
+  "publication_or_deployment": false,
+  "before": {
+    "failed": 4,
+    "summary": "4 failed, 25 deselected, 5 warnings in 0.58s",
+    "cause": "enqueue drops completeness; research strips discovery outcome/degraded"
+  },
+  "after": {
+    "x86_64": "841 passed, 15 skipped, 2 deselected, 5 warnings in 46.70s",
+    "arm64": "841 passed, 15 skipped, 2 deselected, 5 warnings in 42.45s"
+  },
+  "mcp": {
+    "passed": true,
+    "application_version": "1.5.2",
+    "sdk_version": "1.30.0",
+    "tools": 20,
+    "strict_arguments": true,
+    "private_targets_rejected": true,
+    "authentication_and_revocation": true,
+    "search_results": 15,
+    "research_sources": 20,
+    "research_facets": 10,
+    "large_read_fact": true,
+    "backend_mismatch_then_match": true,
+    "rest_coverage_and_policy": true,
+    "native_images_preserved": true,
+    "compact_bytes_8_rows": 952,
+    "equivalent_pretty_bytes_8_rows": 1056
+  },
+  "original_mcp_harness_failure": "Expected structuredContent for search Any return; actual envelope is JSON text. Test corrected, wire contract unchanged.",
+  "source_sha256": {
+    "src/dethrottled/corpus_v2.py": "3d7408dd6f1236c264745383e02755026358dd8a132f3f89deda48a2ae8a241c",
+    "src/dethrottled/server.py": "7537d7f221f72a084e3d67c6a18f62ce92df9922822f2b837583937ad03a784a",
+    "src/dethrottled/workflow.py": "fa462c5c627d08210f5e4c65ce0efa082116498bda06cf2d4c25c9a126bbe766",
+    "adapters/mcp_server.py": "e03b4705bca507db14a1498e40befcf454c2569475c95c9459caaa42e4f6ae8e",
+    "scripts/verify_adapter.py": "89077ecb4ebc06e0efb6e1f3117d1db3a19f9f818ef4ac327cb2b129c03d47ff",
+    "tests/test_corpus_v2.py": "072a2d1c04f52cae72c3a56f95f4e377079435956f294e66043bf8df53eee497",
+    "tests/test_search_observability.py": "f32ba5c80ce7265d2cfda7c39e26dd87306bb0e3e19890b016b54b6869165e0d",
+    "tests/test_research.py": "2857a148c25f701641ce627bc4f6c6fd276e240e79b581e023b05b68c3ce2257"
+  },
+  "focused": "81 passed, 5 warnings in 1.21s"
+}

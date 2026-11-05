@@ -793,6 +793,7 @@ def search(body: SearchBody):
 def search_envelope(body: SearchBody):
     rows, meta, _ = _ranked(body)
     return {"results": [_search_row(r, meta, i) for i, r in enumerate(rows)],
+            # Compatibility only: outcome/degraded describe discovery health.
             "status": "ok" if rows else "no_results_or_degraded",
             "outcome": meta.get("discovery", {}).get("outcome", "indeterminate"),
             "degraded": meta.get("discovery", {}).get("degraded", True),
@@ -1268,9 +1269,12 @@ def research(body: ResearchBody, background: BackgroundTasks):
                     profile=body.profile, engines=body.engines))
                 return rows, {"query": query, "found": len(rows),
                               "elapsed_ms": meta.get("elapsed_ms", 0),
+                              "outcome": meta.get("discovery", {}).get("outcome", "indeterminate"),
+                              "degraded": meta.get("discovery", {}).get("degraded", True),
                               "attempts": _attempts(meta)}
             except Exception as exc:
                 return [], {"query": query, "found": 0,
+                            "outcome": "indeterminate", "degraded": True,
                             "error": type(exc).__name__}
 
         # Two research requests may run concurrently; at most two discovery

@@ -543,6 +543,11 @@
       "review": "Evidence maintainer: preserve observations; append explicit corrections."
     },
     {
+      "path": "evaluations/retrieval-metadata/README.md",
+      "lifecycle": "harness-guide",
+      "review": "Harness maintainer: check runnable commands and label dated assumptions."
+    },
+    {
       "path": "evaluations/retrieval-reliability/REPORT.md",
       "lifecycle": "historical-evidence",
       "review": "Evidence maintainer: preserve observations; append explicit corrections."

@@ -36,6 +36,22 @@ page markers provide page references. Generic headings provide section context,
 but chunks can span adjacent sections. OCR methods and quality warnings are
 preserved in provenance; their presence does not establish factual accuracy.
 
+## Unreleased: retained extraction completeness
+
+New admissions preserve a bounded `provenance.extraction.completeness` summary:
+status, assessment, sample/missing counts, selection change and up to eight
+extractor names. Strings are capped at 64 characters and counts must be
+nonnegative integers no larger than one million. Sample text, anchors and
+unrecognized payloads are excluded; metadata is stored once per source.
+
+This describes extraction uncertainty, separately from corpus indexing coverage,
+`source_partial` and answer verification. `unverified` never means complete.
+Public cross-caller reuse preserves the summary and current document handle.
+There is no database schema change or automatic re-fetch/backfill: diagnostics
+already discarded by older admissions remain unknown until evidence is admitted
+again. The existing versioning policy includes bounded extraction diagnostics;
+changed diagnostics can therefore require an ordinary reindex.
+
 ## Lifetimes are independent
 
 | Component | Default lifetime |

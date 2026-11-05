@@ -80,9 +80,13 @@ def test_envelope_adds_precise_outcome_without_breaking_legacy_status(monkeypatc
     monkeypatch.setattr(server, "_ranked", lambda body: (rows, meta, 15))
     body = server.search_envelope(SearchBody(query="controlled evidence"))
     assert body["outcome"] == expected
+    assert body["degraded"] == meta["discovery"]["degraded"]
+    assert body["discovery"] == meta["discovery"]
     assert body["status"] == ("ok" if count else "no_results_or_degraded")
     assert len(body["results"]) == count
     assert body["attempts"][0]["status"] == status
+    # The legacy array and envelope retain exactly the same useful source choices.
+    assert server.search(SearchBody(query="controlled evidence")) == body["results"]
 
 
 def refusal_paths(monkeypatch, *, http_status=429, browser_ok=False, retry_after=0):

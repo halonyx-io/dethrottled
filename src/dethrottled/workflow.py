@@ -24,6 +24,9 @@ Alternative DDG acquisition paths are one provider family, not independent votes
 Discovery readiness uses recent searches: unknown/stale does not mean down. Do not poll
 status to trigger upstream probes. Diagnostic search outcome/degraded distinguish partial
 results, trustworthy empty responses, unavailable providers and indeterminate outcomes.
+For those diagnostics use REST /v2/search or MCP search(diagnostics=true). Legacy status=ok
+only means results exist; it does not mean discovery was healthy. Research queries also
+carry outcome/degraded. Keep useful partial results and inspect attempts before retrying.
 Research uses the same per-query search budgets, then admits at most 24 unique
 candidates across facets. It reads ten sources by default, up to twenty when requested,
 with at most four replacement candidates and 120000 characters per source. Drive snapshots

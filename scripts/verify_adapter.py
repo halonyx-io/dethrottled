@@ -44,6 +44,17 @@ class Backend(BaseHTTPRequestHandler):
             self.answer([{'url': f'https://example.org/{i}', 'title': f'Source {i}',
                           'snippet': 'Known fact: 7341 tonnes.\nQuoted "evidence" — café.'}
                          for i in range(payload['limit'])])
+        elif self.path == '/v2/search':
+            outcome, degraded = {
+                'partial': ('partial_results', True), 'empty': ('no_results', False),
+                'down': ('unavailable', True), 'unknown': ('indeterminate', True),
+            }[payload['query']]
+            rows = ([{'url': 'https://example.org/first'},
+                     {'url': 'https://example.org/second'}] if outcome == 'partial_results' else [])
+            self.answer({'results': rows, 'status': 'ok' if rows else 'no_results_or_degraded',
+                         'outcome': outcome, 'degraded': degraded,
+                         'attempts': [{'provider': 'web', 'status': 'http_429' if degraded
+                                      else 'no_results', 'retry_after_seconds': 30}]})
         elif self.path == '/research':
             self.answer({'sources': [{'id': f'S{i}', 'content': '7341 tonnes'}
                                      for i in range(payload['max_sources'])]})
@@ -83,6 +94,22 @@ async def verify(url, rest_url, token, registry):
                 rows = await client.call_tool('search', {'query': 'fixture', 'limit': 15})
                 assert not rows.isError and len(rows.content) == 15
                 assert rows.structuredContent is None  # Preserve the legacy list contract.
+                for query, expected, degraded in [
+                        ('partial', 'partial_results', True), ('empty', 'no_results', False),
+                        ('down', 'unavailable', True), ('unknown', 'indeterminate', True)]:
+                    diagnosed = await client.call_tool('search', {
+                        'query': query, 'diagnostics': True})
+                    assert not diagnosed.isError
+                    # search returns Any: the SDK preserves its JSON-text envelope.
+                    envelope = (diagnosed.structuredContent or
+                                json.loads(diagnosed.content[0].text))
+                    assert envelope['outcome'] == expected and envelope['degraded'] == degraded
+                    assert envelope['status'] == ('ok' if query == 'partial'
+                                                   else 'no_results_or_degraded')
+                    assert envelope['attempts'][0]['retry_after_seconds'] == 30
+                    assert [r['url'] for r in envelope['results']] == (
+                        ['https://example.org/first', 'https://example.org/second']
+                        if query == 'partial' else [])
                 values = [json.loads(block.text) for block in rows.content]
                 assert values[-1]['url'] == 'https://example.org/14'
                 assert all('7341 tonnes' in v['snippet'] and '\n' in v['snippet'] for v in values)

@@ -26,6 +26,11 @@ interpretation. `no_results` requires successful empty provider responses; unkno
 or failed discovery is not silently classified as an empty web. Partial useful
 results keep their original order. Attempts retain acquisition-path failures,
 HTTP status, refusal/cooldown diagnostics and provider provenance.
+MCP callers select this envelope with `search(diagnostics=true)`; successful
+tool execution is distinct from discovery health. The legacy MCP search return
+can carry the envelope in a JSON text block rather than `structuredContent`.
+In the unreleased candidate, research `queries` also preserve `outcome` and
+`degraded` per query, including `indeterminate` for a local search exception.
 Search defaults to `profile="web"`: DDG Lite/HTML/TLS/browser acquire up to ten
 primary choices while SearXNG Yahoo and Yandex each contribute up to three.
 The normal menu defaults to and is capped at **15 unique URLs**. Duplicate
