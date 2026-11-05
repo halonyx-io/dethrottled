@@ -4,8 +4,9 @@
   <img src="https://raw.githubusercontent.com/halonyx-io/dethrottled/main/docs/assets/hero.svg?v=1.4.1" alt="Dethrottled: discover, read, drive and retain web evidence">
 </picture>
 
-**One local engine for agents that need the web.** Dethrottled discovers sources,
-reads pages and files, operates a real browser, and retains evidence for follow-up.
+**Dethrottled is an open source, self-hosted web retrieval and evidence engine
+for AI agents, applications and automation.** It discovers sources, reads pages
+and files, operates a real browser, and retains evidence for follow-up.
 It returns source references, warnings and concrete continuation steps. Your agent
 or application decides what the evidence supports.
 
