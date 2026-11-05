@@ -7,8 +7,9 @@ site-packages is wrong even when it happens to be writable.
 
 Two directories, not one, because they have different lifecycles:
 
-    data    caches, the corpus, engine and domain health. Disposable. Delete
-            any of it and the system refills it.
+    data    caches, corpus, retained evidence, jobs and engine/domain health.
+            Mutable state: evidence and job history need backups; deleting them
+            does not guarantee that a lost source can be fetched again.
     models  ONNX weights. Half a gigabyte, downloaded once, and emphatically
             not disposable.
 

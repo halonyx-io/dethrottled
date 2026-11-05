@@ -150,8 +150,8 @@ def add_corpus(rows: list, want: str, *, limit: int = 10) -> list:
     if not want or limit <= 0:
         return rows
     try:
-        from .corpus import Corpus
-        corpus = Corpus()
+        from .corpus import shared_corpus
+        corpus = shared_corpus()
         hits = corpus.search(want, limit=limit)
     except Exception as exc:
         _log("  corpus unavailable (%s); web results only" % str(exc)[:60])
@@ -176,7 +176,11 @@ def add_corpus(rows: list, want: str, *, limit: int = 10) -> list:
     have = {r.get("url") for r in rows}
     added = [{"url": h["url"], "title": h["title"] or "", "text": h["text"],
               "snippet": h["text"][:240], "published": "", "engine": "corpus",
-              "from_corpus": True, "score": h.get("score")}
+              "from_corpus": True, "score": h.get("score"),
+              "corpus_evidence": {key: h[key] for key in (
+                  "document_id", "document_available", "start", "end", "coverage", "provenance",
+                  "support_status", "answer_support", "retrieval_warning")
+                  if key in h}}
              for h in hits if h["url"] not in have]
     if added:
         _log("  +%d from the corpus that search did not return" % len(added))

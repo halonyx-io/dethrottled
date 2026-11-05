@@ -16,7 +16,7 @@ agent / application
        -> operate: stateful headed browser /drive
        -> parse: local readers, OCR, default format and optional speech/layout workers
        -> retain: versioned documents, source bytes where available, read jobs
-       -> retrieve: SQLite cache and separate MiniLM/E5 corpus indexes
+       -> retrieve: SQLite cache and normalized public corpus with separate model vectors
 ```
 
 ## Discovery
@@ -84,8 +84,9 @@ mutation outcomes are not automatically replayed.
 
 MiniLM and multilingual E5 use separate versioned 384-dimensional indexes and
 relevance floors. E5 prefixes queries/passages and fuses retrieval with MiniLM;
-FTS5 supports lexical and opaque-identifier lookup. Compose enables E5 and a
-supervised backfill child. Embedding work is asynchronous; no live-web neural
+FTS5 supports lexical and opaque-identifier lookup. [Corpus v2](CORPUS.md) shares lexical text across models, commits durable
+admission before returning reads, and runs inference in a background worker.
+The retained v1 path uses its supervised E5 backfill child. No live-web neural
 reranker or external model service is required.
 
 The API image contains pinned model weights under `/opt/dethrottled/models`.

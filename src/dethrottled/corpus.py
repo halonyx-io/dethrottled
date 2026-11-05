@@ -36,22 +36,16 @@ MODELS = _paths.model_dir()
 ENGLISH_MODEL = str(MODELS / "emb-minilm")
 
 
-# Below this a result is not an answer, it is the least-bad thing on file.
-#
-# Cosine similarity always returns a best match: asked something the corpus has
-# nothing for, it will still rank something first. Measured on general content,
-# real answers score 0.375 to 0.585 and questions with nothing to answer them
-# score 0.030 to 0.032 -- an enormous empty band, so 0.22 sits comfortably in
-# the middle of it.
-#
-# The inherited value was 0.40, tuned on one domain-specific corpus, and it was
-# cutting straight through the real answers: it rejected half of them here.
+# Preserve the existing candidate floor. Its original small calibration did
+# not establish general answerability: later multilingual/negative tests found
+# above-floor irrelevant matches. V2 additionally checks retrieval support and
+# exposes warned broad candidates; neither a score nor agreement proves an answer.
 FLOOR = float(os.environ.get("DETHROTTLED_CORPUS_FLOOR", "0.22"))
 
 # Much longer than the fetch cache's 21 days, on purpose: outliving that cache
 # is the point of the corpus, because a page worth retrieving next month is
 # precisely the one the cache will have dropped. But "forever" is not a policy.
-RETENTION_DAYS = int(os.environ.get("DETHROTTLED_CORPUS_RETENTION_DAYS", "180"))
+RETENTION_DAYS = int(os.environ.get("DETHROTTLED_CORPUS_RETENTION_DAYS", "90"))
 
 # 50,000, not 200,000.
 #
@@ -528,12 +522,17 @@ _SHARED_CORPUS_LOCK = threading.Lock()
 
 
 def shared_corpus() -> Corpus:
-    """Keep one matrix and SQLite connection per API process."""
+    """Reuse the configured corpus, preserving v1 as an explicit rollback."""
     global _SHARED_CORPUS
     with _SHARED_CORPUS_LOCK:
         if _SHARED_CORPUS is None:
-            _SHARED_CORPUS = (DualCorpus() if os.getenv("DETHROTTLED_MULTILINGUAL_CORPUS") == "1"
-                              else Corpus())
+            if os.getenv("DETHROTTLED_CORPUS_SCHEMA", "2") == "1":
+                multilingual = os.getenv("DETHROTTLED_MULTILINGUAL_CORPUS") == "1"
+                _SHARED_CORPUS = DualCorpus() if multilingual else Corpus()
+            else:
+                from .corpus_v2 import CorpusV2
+
+                _SHARED_CORPUS = CorpusV2()
         return _SHARED_CORPUS
 
 
@@ -570,31 +569,42 @@ def index_fetched(fetched) -> int:
     """
     global _last_prune
     if os.environ.get("DETHROTTLED_CORPUS_AUTOINDEX", "1") != "1":
+        for _, result in fetched:
+            result["corpus_indexing"] = {"accepted": False, "reason": "disabled"}
         return 0
-    due = (time.time() - _last_prune) > PRUNE_EVERY
     added = 0
     try:
         corpus = shared_corpus()
     except Exception:
         return 0
-    if due:
-        try:
-            corpus.prune()
-        except Exception:
-            pass
+    if not hasattr(corpus, "enqueue") and time.time() - _last_prune > PRUNE_EVERY:
+        corpus.prune()
+        _last_prune = time.time()
     for url, result in fetched:
         try:
-            ok = result.get("ok") or result.get("quality") == "ok"
-            if not ok:
+            if not (result.get("ok") or result.get("quality") in {"ok", "suspect"}):
                 continue
-            body = result.get("text") or result.get("content") or ""
-            if body:
+            # Admission requires explicit public provenance, including on the
+            # rollback path. public_only (SSRF protection) alone is not consent.
+            if result.get("corpus_visibility") != "public":
+                result["corpus_indexing"] = {
+                    "accepted": False, "reason": "public_provenance_required"}
+
+                continue
+            body = result.get("_index_text") or result.get("text") or result.get("content") or ""
+            if not body:
+                continue
+            if hasattr(corpus, "enqueue"):
+                report = corpus.enqueue(url, result.get("title", ""), body, result)
+                result["corpus_indexing"] = report
+                added += int(report["accepted"])
+                corpus.start()
+            else:
                 corpus.add(url, result.get("title", ""), body[:INDEX_CHARS])
                 added += 1
-        except Exception:
+        except Exception as exc:
+            result["corpus_indexing"] = {"accepted": False, "reason": type(exc).__name__}
             continue
-    if due:
-        _last_prune = time.time()
     return added
 
 

@@ -1,0 +1,24 @@
+{
+  "variant": "v1",
+  "architecture": "x86_64",
+  "rows_per_model": 50000,
+  "dimensions": 384,
+  "models": 2,
+  "inference": "fixed unit vector; excludes model/tokenizer memory and latency",
+  "construction_seconds": 25.738413596060127,
+  "query_ms": [
+    663.7925840914249,
+    11.318306904286146,
+    8.035675622522831,
+    8.119217120110989,
+    11.850669048726559,
+    12.057073414325714
+  ],
+  "warm_p50_ms": 11.318306904286146,
+  "peak_rss_kib": 442088,
+  "disk_bytes": {
+    "corpus.sqlite-wal": 0,
+    "corpus.sqlite": 431636480,
+    "corpus.sqlite-shm": 851968
+  }
+}

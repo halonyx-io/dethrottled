@@ -1,0 +1,20 @@
+{
+  "kind": "aggregate-only read-only v1 snapshot",
+  "database_bytes": 133132288,
+  "models": [
+    {
+      "model": "e5-614241f622f5",
+      "passages": 12261,
+      "urls": 4142,
+      "text_bytes": 13601886,
+      "vector_bytes": 18832896
+    },
+    {
+      "model": "minilm",
+      "passages": 12261,
+      "urls": 4142,
+      "text_bytes": 13601886,
+      "vector_bytes": 18832896
+    }
+  ]
+}

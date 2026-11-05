@@ -780,11 +780,21 @@ async def crawl_site(urls: list[str],
 @mcp.tool()
 async def corpus_search(query: str,
                         limit: Annotated[int, Field(ge=1, le=10)] = 5, floor: float | None = None,
-                        mode: Literal["auto", "semantic", "lexical"] = "auto") -> Any:
-    """Search passages already stored in the local semantic corpus."""
+                        mode: Literal["auto", "semantic", "lexical", "hybrid"] = "auto",
+                        domains: list[str] | None = None,
+                        support: Literal["standard", "broad"] = "standard") -> Any:
+    """Search public evidence. Broad support includes warned single-model candidates.
+
+    Start with standard; when empty or incomplete, use broad to inspect possible
+    cross-language matches, or rewrite/search the web. Matches do not verify answers.
+    """
     params: dict[str, Any] = {"q": query, "limit": _bounded_int(limit, 1, 10), "mode": mode}
+    if support != "standard":
+        params["support"] = support
     if floor is not None:
         params["floor"] = float(floor)
+    if domains:
+        params["domains"] = ",".join(domains)
     return await _backend_get("/corpus/search", params)
 
 

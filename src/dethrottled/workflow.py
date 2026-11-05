@@ -31,8 +31,10 @@ transport/format/OCR recovery and bounded content recovery. When configured, Out
 MSG and XLSB use the local format fallback; scanned PDF tables escalate to OCR layout.
 Compose includes the format reader and discovers started speech/layout workers automatically.
 An unready model worker with initialization=first_use_download downloads weights on first use.
-Corpus combines English and multilingual indexes; English sources can answer Chinese,
-Malay or French queries, but an empty result is not evidence of absence. Set recovery=manual for
+Corpus combines English and multilingual indexes. Standard corpus support requires model/source
+agreement or literal query anchors. If empty or incomplete, support=broad exposes warned,
+unconfirmed candidates, including cross-language matches. Inspect their evidence; neither
+policy verifies an answer, and empty results do not establish absence. Set recovery=manual for
 explicit control; explicit render=never and OCR choices are respected.
 Read each result's workflow, warnings, source_partial and truncation fields. quality=ok
 means text was extracted, not that the answer is present or the source is complete.

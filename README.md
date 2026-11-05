@@ -15,6 +15,9 @@ It runs on native AMD64 and ARM64 Docker hosts. Public sites can still block
 requests; retries, queues and storage have limits. Optional paid discovery
 integrations remain opt-in and are not required by the default workflow.
 
+For a first installation or ordinary script/HTTP use, start with the
+[quick start](https://github.com/halonyx-io/dethrottled/blob/main/docs/QUICKSTART.md).
+
 ## Install the complete engine
 
 Install [Docker Engine and Compose](https://docs.docker.com/engine/install/), then:
@@ -64,6 +67,7 @@ for remote agents. The raw API has no caller authentication.
 | Recover | Observed publisher alternatives, TLS acquisition, JavaScript rendering and scoped headed-browser interaction |
 | Drive | Native controls, frames, tabs, application responses, downloads, screenshots and checkpointed sessions |
 | Retain | Document IDs with text, page and table ranges; focused follow-up without fetching the source again |
+| Remember | Public Corpus v2 with bounded lexical coverage, sampled semantic retrieval and explicit support/coverage metadata |
 | Research | A bounded evidence bundle with explicit coverage gaps; ten sources by default, twenty on request |
 
 <picture>
@@ -73,7 +77,7 @@ for remote agents. The raw API has no caller authentication.
 A normal fetch runs the recovery policy automatically. When content remains
 incomplete, `read_plan` and `workflow.next_actions` expose useful continuations,
 including reuse of the same browser session. Agents can also operate `/drive`
-directly. Read the [agent integration guide](https://github.com/halonyx-io/dethrottled/blob/main/docs/AGENT-UPGRADES.md)
+directly. Read the [agent client playbook](https://github.com/halonyx-io/dethrottled/blob/main/docs/AGENT-PLAYBOOK.md)
 for tool selection and response contracts.
 
 ```sh
@@ -86,6 +90,21 @@ Preserve `quality`, `warnings`, `source_partial`, `truncated`, `document_id` and
 continuation metadata. A successful HTTP response is not proof of a complete,
 relevant or correct read. OCR and speech may need checking against source pixels
 or audio. Interactive challenges can remain unresolved.
+
+## Reuse evidence across tasks
+
+Corpus v2 retains eligible public passages for 90 days, with bounded SQLite
+lexical indexing and representative MiniLM/E5 embeddings. Indexing runs in the
+background; public document handles can be reopened across agent identities.
+Private/authenticated reads are excluded from automatic sharing.
+
+Standard retrieval checks source/model corroboration or meaningful query terms.
+When evidence is missing, `support="broad"` exposes additional warned candidates,
+including cross-language matches. Neither mode verifies an answer. The
+[controlled evaluation](https://github.com/halonyx-io/dethrottled/blob/main/evaluations/corpus-v2/results/2026-11-05/REPORT.md)
+records recovered facts and the precision/coverage tradeoff. See
+[Corpus operation](https://github.com/halonyx-io/dethrottled/blob/main/docs/CORPUS.md)
+for budgets, retention, migration and rollback.
 
 ## Measured on two machines
 
@@ -143,7 +162,7 @@ The fetch ladder does not consult `robots.txt`. Raw API access to trusted LAN
 targets requires care; public adapters enforce narrower policies, alongside
 operator-provided network isolation. See [operations](https://github.com/halonyx-io/dethrottled/blob/main/docs/OPERATIONS.md).
 
-This checkout is **1.4.3**. Check `/health` and `/v2/capabilities` on the service you
+This checkout is **1.5.0**. Check `/health` and `/v2/capabilities` on the service you
 actually use; deployed services and remote plugins can differ from a checkout.
 
 [MIT license](https://github.com/halonyx-io/dethrottled/blob/main/LICENSE) · Maintained by [Halonyx](https://github.com/halonyx-io)

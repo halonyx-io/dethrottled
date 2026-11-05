@@ -14,6 +14,7 @@ larger-pool measurements remain historical evidence.
 
 | Scope | Report and raw data | Interpretation |
 |---|---|---|
+| Public Corpus v2 and retrieval support | [Controlled comparison](../evaluations/corpus-v2/results/2026-11-05/REPORT.md), [reproduction](../evaluations/corpus-v2/README.md) | Deep facts, multilingual/model ablation, standard versus broad retrieval and native package/lifecycle gates; preserves false positives and misses |
 | Complete installation and two-device performance | [1.4.0 validation](../evaluations/install-showcase/results/2026-11-04/REPORT.md), [reproduction](../evaluations/install-showcase/README.md) | PyPI-managed workers, native software rendering, retained controlled facts and live outcomes; original failures preserved |
 | Expanded ranking and default policy | [400-query experiment](../evaluations/search-policy/results/2026-11-03/REPORT.md) | 299 usable train/100 fresh test, two model judges; modest XGBoost improvement, no demonstrated fresh-read gain; compact supplements retained, learned ranking not deployed |
 | Agent source choices | [120-question study](../evaluations/agent-search/results/2026-11-03/REPORT.md) | Frozen 80/40 split, source/RRF menu replay, blinded model judgements, 283 fetched URLs, live pacing/bursts and preserved refusals; supports source order on this host, not general paid-provider superiority |

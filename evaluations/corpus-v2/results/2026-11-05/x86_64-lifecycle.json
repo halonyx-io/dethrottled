@@ -1,0 +1,88 @@
+{
+  "architecture": "x86_64",
+  "events": [
+    {
+      "test": "cross-agent public retained read + hybrid HTTP",
+      "passed": true
+    },
+    {
+      "test": "SIGKILL during indexing preserves prior active version",
+      "passed": true
+    },
+    {
+      "test": "restart + simulated lease expiry promotes complete replacement",
+      "passed": true
+    },
+    {
+      "test": "SIGTERM during native inference exits cleanly",
+      "passed": true,
+      "seconds": 0.26397488499060273,
+      "exit_code": -15
+    }
+  ],
+  "status": {
+    "schema": 2,
+    "chunker": "structure-2",
+    "jobs": {
+      "completed": 1,
+      "pending": 1
+    },
+    "active_sources": 1,
+    "models": {
+      "e5-614241f622f5": {
+        "passages": 96,
+        "pages": 1
+      },
+      "minilm": {
+        "passages": 96,
+        "pages": 1
+      }
+    },
+    "disk_bytes": {
+      "database": 1265664,
+      "-wal": 1433792,
+      "-shm": 32768
+    },
+    "disk_soft_target_exceeded": false,
+    "retained_documents": {
+      "available": 1,
+      "unavailable": 0,
+      "current_chars": 79622
+    },
+    "coverage_is_indexing_snapshot": true,
+    "coverage_chars": {
+      "harvested_chars": 79622,
+      "retained_chars": 79622,
+      "lexical_chars": 79622,
+      "embedded_chars": 50975
+    },
+    "recent_job_errors": [
+      {
+        "state": "pending",
+        "attempts": 0,
+        "error": "InterruptedError: index lease superseded or worker stopping",
+        "updated": 1793852512.297797
+      }
+    ],
+    "maintenance": {
+      "pending": false,
+      "source_batch": 32,
+      "registry_batch": 256
+    },
+    "resident_vector_bytes": 0,
+    "scan_block_rows": 1024,
+    "limits": {
+      "passages_per_model": 50000,
+      "vector_budget_bytes": 268435456,
+      "retention_days": 90,
+      "database_soft_bytes": 536870912,
+      "harvest_chars_per_source": 8000000,
+      "lexical_chars_per_source": 2000000
+    },
+    "model_revisions": {
+      "minilm": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+      "e5-614241f622f5": "614241f622f53c4eeff9890bdc4f31cfecc418b3"
+    },
+    "retention_note": "full-document expiry is independent; passages retain offsets"
+  }
+}

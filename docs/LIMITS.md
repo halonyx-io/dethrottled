@@ -62,3 +62,12 @@ internal capability, not a way to raise the normal public search ceiling. The
 records its original behavior before compact menus were adopted. For broader
 evidence now, refine queries, use research facets within their shared budget,
 follow an observed site frontier or deliberately operate the browser.
+
+## Corpus budgets and lifetimes
+
+[Corpus v2](CORPUS.md) defaults to 50,000 embeddings per model, 32/96 selected
+passages per ordinary/long source, a 256 MiB combined matrix budget and a 512 MiB
+soft corpus SQLite target. These are separate from full-document retention and
+model-process memory. Corpus passage/vector retention is 90 days; the search
+cache remains six hours and extraction cache 21 days. HTTP/MCP corpus menus
+remain at most ten results, including explicit broad support.

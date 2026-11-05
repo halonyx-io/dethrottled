@@ -18,7 +18,7 @@ services; a supported format does not guarantee a correct or complete extraction
 | Durable read jobs | `start_fetch_job`, `read_fetch_job`, `resume_fetch_job`, `cancel_fetch_job` | Completion-order results, cursors, explicit interruption/resume |
 | Browser interaction | `drive`, `/drive` | Sessions, selectors, iframes, tabs, screenshots, downloads and application responses |
 | Browser restart state | `drive` checkpoint/history | Cookies, storage and action outcomes; not live DOM or every tab |
-| Local corpus | `corpus_search`, `/corpus/search` | MiniLM and optional E5/FTS retrieval of previously indexed evidence |
+| Shared public corpus | `corpus_search`, `/corpus/search` | Bounded lexical/semantic/hybrid retrieval, durable indexing, coverage and standard/broad support; [Corpus v2](CORPUS.md) |
 | Speech | Fetch direct audio/video | Optional media worker; captions do not require the speech worker |
 | Advanced PDF layout | `document_mode="layout"` | Optional Docling worker; native parsing/table detection/OCR also have local paths |
 | MSG and XLSB | Normal fetch/read | Tika format worker included in the default stack for these two measured formats |

@@ -73,7 +73,10 @@ jobs:
         shell: bash
         run: |
           python scripts/docs_reference.py --check
+          python scripts/documentation_inventory.py --check
+          python scripts/check_agent_docs.py
           python scripts/check_docs.py
+          python evaluations/corpus-v2/verify.py
           python evaluations/search-policy/verify.py
           python -m pip install build
           python -m build

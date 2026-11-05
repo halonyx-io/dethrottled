@@ -159,6 +159,13 @@ MCP and REST parameter surfaces differ: for example, MCP HTML reads use
 `format="html"`, while the core retains legacy `raw` support. Follow the selected
 transport's schema rather than copying every core argument into an MCP call.
 
+`corpus_search` exposes `mode`, `domains` and `support`. Start with standard
+support and expand explicitly to broad candidates when evidence is missing;
+preserve support warnings and inspect passages. Source/model agreement is not
+answer verification. Registered public corpus document handles can be reopened
+across caller namespaces without granting access to another caller's private
+documents. See [the client playbook](AGENT-PLAYBOOK.md#reuse-public-evidence-with-corpus-v2).
+
 Legacy list-returning tools such as search and fetch emit a complete JSON value
 per `content[].text` entry. Parse each entry separately; do not concatenate blocks
 and parse them as one document. Prefer `structuredContent` when supplied.
