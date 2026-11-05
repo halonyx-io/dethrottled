@@ -95,7 +95,9 @@ features. Use the [HTTP API](API.md) when that lifecycle is required.
 
 `Corpus().search(...)` accesses the original MiniLM corpus. Use
 `shared_corpus()` with `DETHROTTLED_MULTILINGUAL_CORPUS=1` and matching E5 assets
-for the dual retriever. Corpus queries search already indexed passages; they do
+for the configured retriever. The [unreleased v2 candidate](CORPUS.md) adds
+durable public admission, explicit hybrid retrieval and coverage metadata while
+retaining `Corpus` for v1 compatibility. Corpus queries search already indexed passages; they do
 not fetch the web or rerank live sources with a cross-encoder.
 
 Direct search accepts `prefer_domains`; the HTTP search model also exposes

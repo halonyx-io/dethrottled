@@ -222,14 +222,16 @@ Discover and retain linked/sitemap sources within one site and report coverage.
 | `render` | Literal['auto', 'always', 'never'] | 'auto' |
 ## corpus_search
 
-Search passages already stored in the local semantic corpus.
+Search public evidence. Broad support includes warned single-model candidates.
 
 | Argument | Type/choices | Required/default |
 |---|---|---|
 | `query` | str | required |
 | `limit` | Annotated[int, Field(ge=1, le=10)] | 5 |
 | `floor` | float \| None | None |
-| `mode` | Literal['auto', 'semantic', 'lexical'] | 'auto' |
+| `mode` | Literal['auto', 'semantic', 'lexical', 'hybrid'] | 'auto' |
+| `domains` | list[str] \| None | None |
+| `support` | Literal['standard', 'broad'] | 'standard' |
 ## corpus_stats
 
 Return local corpus page and passage counts.

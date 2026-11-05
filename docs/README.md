@@ -44,3 +44,6 @@ instructions for the latest code. The repository has no separate GitHub Pages
 site configured; GitHub renders these Markdown pages directly.
 
 [Documentation home](README.md) · [Agent guide](AGENT-UPGRADES.md) · [API](API.md) · [Evidence](EVIDENCE.md)
+
+For the next release candidate: [Corpus v2](CORPUS.md), including visibility,
+coverage, resource bounds, migration, and rollback.

@@ -107,6 +107,19 @@ _documents = None
 _documents_lock = threading.Lock()
 
 
+def retained_document(namespace, identifier):
+    own = documents().get(namespace, identifier)
+    if own:
+        return own
+    try:
+        corpus = shared_corpus()
+        return corpus.public_document(identifier) if hasattr(corpus, "public_document") else None
+    except (OSError, ValueError, sqlite3.Error):
+        # A missing/invalid public registry never authorizes reading a private
+        # namespace, and must not turn an unknown document into a server error.
+        return None
+
+
 def documents():
     global _documents
     with _documents_lock:
@@ -235,6 +248,7 @@ def _search_row(row: dict, meta: dict, index: int) -> dict:
         # Which ranking stages actually ran.
         "ranking": meta.get("ranking", []) if index == 0 else [],
         "from_corpus": bool(row.get("from_corpus")),
+        **({"corpus_evidence": row["corpus_evidence"]} if row.get("corpus_evidence") else {}),
     }
 
 
@@ -357,6 +371,12 @@ def _extract_once(url: str, max_chars: int, allow_ocr: bool = True,
         "final_url": result.get("url", url),
         "source_sha256": result.get("extraction", {}).get("source_sha256"),
     }
+    # Only stateless, public-only acquisitions are automatically shareable.
+    # Interactive/cookie-backed reads keep their caller namespace and are not
+    # admitted merely because their URL is publicly routable.
+    row["corpus_visibility"] = (
+        "public" if public_only and result.get("tier") not in {"headed", "drive"}
+        and not result.get("authenticated") and not result.get("private") else "private")
     canonical = row["_index_text"]
     try:
         metadata = {k: v for k, v in row.items() if k not in {"content", "html", "_index_text"}}
@@ -393,6 +413,8 @@ def _extract_row(url, max_chars, *, recovery="auto", asset_recovery=True, **opti
         row = run(url, row, read=lambda target, opts: _extract_once(target, max_chars, **opts),
                   drive=fs.browser_drive, options=options,
                   browser_available=bool(fs.BROWSER_SEARCH_URL), allow_assets=asset_recovery)
+        if row.get("read_session") or row.get("browser_recovery"):
+            row["corpus_visibility"] = "private"
         canonical = row.get("_index_text", row.get("content", ""))
         if canonical:
             metadata = {k: v for k, v in row.items() if k not in {
@@ -411,6 +433,10 @@ def _extract_row(url, max_chars, *, recovery="auto", asset_recovery=True, **opti
                 row["content"] = canonical[:max_chars]
                 row["truncated"] = row.get("truncated", False) or len(canonical) > max_chars
             row["content_chars"] = len(canonical)
+    if row.get("browser_recovery") or row.get("read_session") or any(
+            "drive" in str(attempt.get("action", ""))
+            for attempt in row.get("recovery_attempts", [])):
+        row["corpus_visibility"] = "private"
     row["workflow"] = guidance(
         row, focused=bool(options.get("focus")), rendered_allowed=options.get("allow_render", True)
     )
@@ -424,13 +450,18 @@ _BACKFILL_JOB = BackfillJob()
 
 @app.on_event("startup")
 def start_multilingual_backfill():
-    if os.getenv("DETHROTTLED_MULTILINGUAL_CORPUS") == "1":
+    if os.getenv("DETHROTTLED_CORPUS_SCHEMA", "2") != "1":
+        shared_corpus().start()
+    elif os.getenv("DETHROTTLED_MULTILINGUAL_CORPUS") == "1":
         _BACKFILL_JOB.start()
 
 
 @app.on_event("shutdown")
 def stop_multilingual_backfill():
     _BACKFILL_JOB.stop()
+    from . import corpus
+    if hasattr(corpus._SHARED_CORPUS, "stop"):
+        corpus._SHARED_CORPUS.stop()
 
 
 @app.get("/health")
@@ -579,7 +610,15 @@ def v2_capabilities():
         "extract": [k for k, v in fx.available().items() if v],
         "ranking": ranker.available(),
         "corpus": {"multilingual": os.getenv("DETHROTTLED_MULTILINGUAL_CORPUS") == "1",
-                   "fusion": "reciprocal_rank", "separate_model_thresholds": True},
+                   "fusion": "reciprocal_rank", "separate_model_thresholds": True,
+                   "schema": int(os.getenv("DETHROTTLED_CORPUS_SCHEMA", "2")),
+                   "support_policies": (["standard", "broad"] if os.getenv(
+                       "DETHROTTLED_CORPUS_SCHEMA", "2") != "1" else ["legacy"]),
+                   "answer_support": "unverified",
+                   "modes": ["auto", "semantic", "lexical"] +
+                            (["hybrid"] if os.getenv(
+                                "DETHROTTLED_CORPUS_SCHEMA", "2") != "1" else []),
+                   "visibility": "public-only; interactive reads excluded"},
         "request_limits": {"search_results": SEARCH_MENU_LIMIT, "ddg_results": 10,
                            "supplement_results_per_engine": 3, "supplement_results_total": 6,
                            "fetch_urls": 10, "corpus_results": 10,
@@ -741,35 +780,31 @@ def search_envelope(body: SearchBody):
 
 
 def _harvest(rows) -> list:
-    """(url, row) pairs worth indexing, from API rows."""
+    """Keep complete eligible extraction, including explicit quality uncertainty."""
     harvested = []
     for row in rows:
         canonical = row.pop("_index_text", row.get("content", ""))
-        extraction = row.get("extraction", {})
-        if extraction.get("embedded_images") and "## Embedded image:" in canonical:
-            canonical = canonical.split("## Embedded image:", 1)[0].rstrip()
-        pages = extraction.get("pages", [])
-        has_pdf_ocr = any("ocr" in page.get("method", "") for page in pages)
-        if has_pdf_ocr and row.get("content_type") == "application/pdf":
-            native = []
-            for index, page in enumerate(pages):
-                if page.get("method") not in {"text", "text+ocr"}:
-                    continue
-                marker = "## Page " + str(page["page"]) + "\n"
-                start = canonical.find(marker)
-                if start < 0:
-                    continue
-                end = (canonical.find("## Page " + str(pages[index + 1]["page"]) + "\n", start)
-                       if index + 1 < len(pages) else len(canonical))
-                part = canonical[start:end if end >= 0 else len(canonical)]
-                native.append(part.split("[OCR reading]", 1)[0].rstrip())
-            canonical = "\n\n".join(native)
-            has_pdf_ocr = not bool(canonical)
-        ocr_derived = extraction.get("ocr_word_confidence") is not None or has_pdf_ocr
-        if (row.get("quality") == "ok" and canonical and not ocr_derived
+        if (row.get("quality") in {"ok", "suspect"} and canonical
                 and row.get("content_status") not in {"navigation_only", "image_content"}):
             harvested.append((row.get("url", ""), dict(row, content=canonical)))
     return harvested
+
+
+def _queue_corpus(rows, background=None, *, namespace="local"):
+    harvested = _harvest(rows)
+    for _, result in harvested:
+        result["_document_namespace"] = namespace
+    if background is not None and os.getenv("DETHROTTLED_CORPUS_SCHEMA", "2") == "1":
+        background.add_task(index_fetched, harvested)
+        return
+    # Commit admission before acknowledging the read. Inference remains in the
+    # worker; a process crash immediately after the response cannot lose its job.
+    index_fetched(harvested)
+    reports = {url: result["corpus_indexing"] for url, result in harvested
+               if "corpus_indexing" in result}
+    for row in rows:
+        if row.get("url") in reports:
+            row["corpus_indexing"] = reports[row["url"]]
 
 
 @app.post("/fetch")
@@ -802,12 +837,9 @@ def fetch_urls(body: FetchBody, background: BackgroundTasks):
                                row_end=body.row_end, sheet=body.sheet,
                                max_cell_chars=body.max_cell_chars,
                                recovery=body.recovery))
-    # Indexed AFTER the response, not during it. Embedding costs ~250ms a page
-    # and the caller should not wait for work they did not ask for.
-    # Not indexed when links were kept: the corpus is prose to match
-    # against later, and this output has markdown link syntax woven
-    # through it. Feeding it in makes every future match slightly worse.
-    background.add_task(index_fetched, _harvest(rows))
+    # Durable admission happens now; tokenization and embedding run in the worker.
+    # Harvest the canonical extraction rather than the display format or excerpt.
+    _queue_corpus(rows, background, namespace=body.evidence_namespace)
     return [compact_row(row) for row in rows] if body.response_format == "concise" else rows
 
 
@@ -826,7 +858,7 @@ def _job_read(body, url):
                        page_start=body.page_start, page_end=body.page_end,
                        row_start=body.row_start, row_end=body.row_end, sheet=body.sheet,
                        max_cell_chars=body.max_cell_chars, recovery=body.recovery)
-    index_fetched(_harvest([row]))
+    _queue_corpus([row], namespace=body.evidence_namespace)
     return compact_row(row) if body.response_format == "concise" else row
 
 
@@ -888,7 +920,7 @@ def crawl_site(body: SiteBody):
 @app.post("/documents/structure")
 def document_structure(body: StructureBody):
     from .structure import select
-    record = documents().get(body.evidence_namespace, body.document_id)
+    record = retained_document(body.evidence_namespace, body.document_id)
     if record is None:
         raise HTTPException(404, "document_missing_or_expired")
     return select(record, offset=body.offset, limit=body.limit, focus=body.focus)
@@ -940,7 +972,7 @@ def _source_artifact(record, namespace, public_only):
 
 @app.post("/documents/read")
 def read_document(body: DocumentReadBody):
-    record = documents().get(body.evidence_namespace, body.document_id)
+    record = retained_document(body.evidence_namespace, body.document_id)
     if record is None:
         raise HTTPException(status_code=404, detail="document_missing_or_expired")
     text = record.pop("text")
@@ -984,7 +1016,7 @@ def document_image(body: DocumentImageBody):
     import io
 
     from PIL import Image
-    record = documents().get(body.evidence_namespace, body.document_id)
+    record = retained_document(body.evidence_namespace, body.document_id)
     if record is None:
         raise HTTPException(status_code=404, detail="document_missing_or_expired")
     artifact = _source_artifact(record, body.evidence_namespace, body.public_only)
@@ -1185,7 +1217,7 @@ def search_and_fetch(body: SearchFetchBody, background: BackgroundTasks):
     out = _read_batch(list(enumerate(rows)), read)
     # This is the high-volume route, so it is the one that actually grows the
     # corpus -- and it was growing it by nothing at all.
-    background.add_task(index_fetched, _harvest(out))
+    _queue_corpus(out, background, namespace=body.evidence_namespace)
     return out
 
 
@@ -1330,7 +1362,7 @@ def research(body: ResearchBody, background: BackgroundTasks):
             item["id"] = "S%d" % index
         for index, item in enumerate(partial_sources, 1):
             item["id"] = "P%d" % index
-        background.add_task(index_fetched, _harvest(sources))
+        _queue_corpus(sources, background, namespace=body.evidence_namespace)
         coverage = research_engine.coverage_ledger(queries, searches, sources, skipped)
         coverage["candidate_scope"] = "shared_bounded_pool"
         coverage["candidate_limits"] = {"ddg_per_query": 10, "per_supplement_per_query": 3,
@@ -1353,30 +1385,46 @@ def research(body: ResearchBody, background: BackgroundTasks):
 
 @app.get("/corpus/search")
 def corpus_search(q: str, limit: int = 10, floor: float | None = None,
-                  mode: Literal["auto", "semantic", "lexical"] = "auto"):
+                  mode: Literal["auto", "semantic", "lexical", "hybrid"] = "auto",
+                  domains: str = "", support: Literal["standard", "broad"] = "standard"):
     """Search what has already been fetched, without fetching anything.
 
     The index was being written on every extraction and read by nothing over
     HTTP, which made it a write-only store: pages went in, and the only way to
     get one back was to fetch it off the network again.
 
-    `floor` is what stops this answering a question it has nothing for. Cosine
-    similarity always returns a best match, and the best match against an empty
-    subject is noise with a number next to it. Leave it unset to use the floor
-    calibrated for whichever model is in use -- the two do not share a scale.
+    Schema 2 standard support requires source/model corroboration or query
+    anchors in addition to the unchanged model-specific floors. Broad support
+    retains unconfirmed candidates with warnings. Neither verifies an answer.
     """
     try:
-        hits = shared_corpus().search(q, limit=max(1, min(limit, 10)), floor=floor, mode=mode)
+        if mode == "hybrid" and os.getenv("DETHROTTLED_CORPUS_SCHEMA", "2") == "1":
+            raise ValueError("hybrid requires corpus schema 2")
+        corpus = shared_corpus()
+        options = {"support": support} if hasattr(corpus, "status") else {}
+        if not options and support != "standard":
+            raise ValueError("support selection requires corpus schema 2")
+        hits = corpus.search(q, limit=max(1, min(limit, 10)), floor=floor, mode=mode,
+                             domains=[d.strip() for d in domains.split(",") if d.strip()],
+                             **options)
     except Exception as exc:
         return {"ok": False, "reason": str(exc)[:200], "results": []}
+    retrieval_warnings = getattr(hits, "retrieval_warnings", [])
     hits = hits[:10]
-    return {"ok": True, "count": len(hits), "results": hits}
+    return {"ok": True, "count": len(hits), "results": hits, "support": support,
+            "retrieval_warnings": retrieval_warnings,
+            "answer_support": "unverified",
+            "broader_retrieval": "Use support=broad for warned, unconfirmed candidates; "
+            "an empty result does not prove absence. Use mode=lexical when semantic models "
+            "are unavailable."}
 
 
 @app.get("/corpus/stats")
 def corpus_stats():
     try:
-        return {"ok": True, "models": shared_corpus().stats()}
+        corpus = shared_corpus()
+        return {"ok": True, "models": corpus.stats(),
+                **({"index": corpus.status()} if hasattr(corpus, "status") else {"schema": 1})}
     except Exception as exc:
         return {"ok": False, "reason": str(exc)[:200], "models": {}}
 

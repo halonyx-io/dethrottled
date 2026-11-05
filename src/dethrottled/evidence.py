@@ -83,6 +83,24 @@ class Documents:
             "document_expires_at": expires,
         }
 
+    def reference(self, namespace, identifier, text):
+        """Verify an existing canonical extraction without returning another text copy."""
+        with self.lock:
+            row = self.db.execute(
+                "SELECT url,expires FROM documents WHERE namespace=? AND id=? "
+                "AND expires>? AND text=?", (namespace, identifier, time.time(), text)
+            ).fetchone()
+        return ({"document_id": identifier, "url": row[0], "document_expires_at": row[1]}
+                if row else None)
+
+    def available(self, namespace, identifier):
+        """Check a retained reference without materializing its full document."""
+        with self.lock:
+            return self.db.execute(
+                "SELECT 1 FROM documents WHERE namespace=? AND id=? AND expires>?",
+                (namespace, identifier, time.time()),
+            ).fetchone() is not None
+
     def get(self, namespace, identifier):
         with self.lock:
             row = self.db.execute(

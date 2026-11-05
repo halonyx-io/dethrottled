@@ -1,0 +1,28 @@
+{
+  "wheel": "26fd0dcf8c26cba49980bbfb2719cb4b9f1123c3f092c5a7d6b86b948b0adac3",
+  "architectures": {
+    "x86_64": {
+      "passed": 764,
+      "skipped": 15,
+      "deselected": 2,
+      "python": "3.12.16",
+      "pytest": "9.2.0",
+      "httpx_test_dependency": "0.28.1",
+      "stack_startup_seconds": 34.38
+    },
+    "arm64": {
+      "passed": 764,
+      "skipped": 15,
+      "deselected": 2,
+      "python": "3.12.16",
+      "pytest": "9.2.0",
+      "httpx_test_dependency": "0.28.1",
+      "stack_startup_seconds": 28.64
+    }
+  },
+  "notes": [
+    "Private validation wheel, not a published release.",
+    "Default five-worker profiles; Docker images/model build layers already cached. Startup numbers are not cold internet installation times.",
+    "15 optional/native-tool skips and two explicitly excluded network tests per device; no external search providers exercised."
+  ]
+}

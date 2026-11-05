@@ -161,7 +161,7 @@ excess work returns a typed 429 with a retry hint.
 | Bounded site traversal | `POST /site/crawl` |
 | Durable read batches | `POST /jobs/fetch`, `/jobs/read`, `/jobs/resume`, `/jobs/cancel` |
 | Browser interaction, downloads and app data | `POST /drive` |
-| Stored semantic/lexical retrieval | `GET /corpus/search`, `/corpus/stats` |
+| Stored semantic/lexical/hybrid retrieval | `GET /corpus/search`, `/corpus/stats` |
 
 [Browser operation](DRIVE.md) explains actions, state and replay. Public adapters
 force caller namespaces and public-target policy; callers cannot impersonate
@@ -176,3 +176,10 @@ renderer and headed admission. No single green health route proves web coverage.
 Record request IDs, exact controls, timing and returned warnings for a failed task.
 
 [Documentation home](README.md) · [Agent guide](AGENT-UPGRADES.md) · [API](API.md) · [Evidence](EVIDENCE.md)
+
+The [unreleased Corpus v2 candidate](CORPUS.md) adds public-admission reports,
+coverage/provenance, explicit `mode=hybrid`, domain filtering, and durable-job
+status. `support=standard` checks model/source agreement or query terms;
+`support=broad` includes warned single-model candidates when more coverage is
+needed. Neither verifies that an answer is present. Existing response envelopes
+and the ten-result limit remain.

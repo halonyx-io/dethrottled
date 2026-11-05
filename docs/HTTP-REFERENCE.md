@@ -9,7 +9,7 @@ Framework `/docs` and `/openapi.json` routes are available separately.
 
 | Method and path | Request body | Query parameters |
 |---|---|---|
-| `GET /corpus/search` | — | q, limit, floor, mode |
+| `GET /corpus/search` | — | q, limit, floor, mode, domains, support |
 | `GET /corpus/stats` | — | — |
 | `POST /documents/image` | DocumentImageBody | — |
 | `POST /documents/read` | DocumentReadBody | — |
@@ -41,7 +41,9 @@ Framework `/docs` and `/openapi.json` routes are available separately.
 | `q` | string | required |  |
 | `limit` | integer | 10 |  |
 | `floor` | number or null | null |  |
-| `mode` | "auto", "semantic", "lexical" | "auto" |  |
+| `mode` | "auto", "semantic", "lexical", "hybrid" | "auto" |  |
+| `domains` | string | "" |  |
+| `support` | "standard", "broad" | "standard" |  |
 
 ## DocumentImageBody
 

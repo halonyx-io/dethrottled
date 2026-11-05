@@ -1,0 +1,49 @@
+{
+  "architecture": "x86_64",
+  "gates": [
+    {
+      "dataset": "development-v2",
+      "support": "standard",
+      "trials": 111,
+      "passed": true,
+      "reference_sha256": "98cec3805c330b28623181d03708bf6bf2d23550618eeecb41542266f71dda95"
+    },
+    {
+      "dataset": "heldout-v2",
+      "support": "standard",
+      "trials": 48,
+      "passed": true,
+      "reference_sha256": "3aa6a7ea73ae9b9631b9b8d608ed9bfc6976cf3399e4d04d4961b05ab836aa64"
+    },
+    {
+      "dataset": "cross-language",
+      "support": "standard",
+      "trials": 138,
+      "passed": true,
+      "reference_sha256": "b831db93438fa5dce713477ceb8d2c55f516e7a839cf59cbb423ac5662efbdfa"
+    },
+    {
+      "dataset": "cross-language",
+      "support": "broad",
+      "trials": 138,
+      "passed": true,
+      "reference_sha256": "b831db93438fa5dce713477ceb8d2c55f516e7a839cf59cbb423ac5662efbdfa"
+    },
+    {
+      "dataset": "validation-queries",
+      "support": "standard",
+      "trials": 60,
+      "passed": true,
+      "reference_sha256": "2e4e460ade33a001d4924bc40980c512c8662499ff24e4c714091712d7276415"
+    },
+    {
+      "dataset": "validation-queries",
+      "support": "broad",
+      "trials": 60,
+      "passed": true,
+      "reference_sha256": "2e4e460ade33a001d4924bc40980c512c8662499ff24e4c714091712d7276415"
+    }
+  ],
+  "passed": true,
+  "note": "Quality regression replay; concurrent host work excludes latency claims"
+}

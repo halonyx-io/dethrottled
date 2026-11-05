@@ -84,8 +84,10 @@ mutation outcomes are not automatically replayed.
 
 MiniLM and multilingual E5 use separate versioned 384-dimensional indexes and
 relevance floors. E5 prefixes queries/passages and fuses retrieval with MiniLM;
-FTS5 supports lexical and opaque-identifier lookup. Compose enables E5 and a
-supervised backfill child. Embedding work is asynchronous; no live-web neural
+FTS5 supports lexical and opaque-identifier lookup. The unreleased
+[Corpus v2 candidate](CORPUS.md) shares lexical text across models, commits durable
+admission before returning reads, and runs inference in a background worker.
+The retained v1 path uses its supervised E5 backfill child. No live-web neural
 reranker or external model service is required.
 
 The API image contains pinned model weights under `/opt/dethrottled/models`.

@@ -645,7 +645,7 @@ def test_invalid_unicode_json_can_be_reported_without_breaking_response_serializ
     assert text.encode("utf-8")
 
 
-def test_corpus_keeps_native_text_but_excludes_embedded_image_ocr():
+def test_corpus_retains_embedded_image_ocr_with_provenance():
     row = {
         "url": "https://example.org/report.docx",
         "quality": "ok",
@@ -654,10 +654,11 @@ def test_corpus_keeps_native_text_but_excludes_embedded_image_ocr():
         "extraction": {"embedded_images": ["image.png"]},
     }
     result = server._harvest([row])
-    assert result[0][1]["content"] == "Native accurate prose."
+    assert "OCR number 89" in result[0][1]["content"]
+    assert result[0][1]["extraction"]["embedded_images"] == ["image.png"]
 
 
-def test_corpus_preserves_native_pdf_pages_without_indexing_ocr_numbers():
+def test_corpus_preserves_all_pdf_pages_with_ocr_provenance():
     row = {
         "url": "https://example.org/report.pdf",
         "quality": "ok",
@@ -668,4 +669,5 @@ def test_corpus_preserves_native_pdf_pages_without_indexing_ocr_numbers():
     }
     result = server._harvest([row])
     assert "Native quantity 47" in result[0][1]["content"]
-    assert "OCR quantity" not in result[0][1]["content"]
+    assert "OCR quantity" in result[0][1]["content"]
+    assert result[0][1]["extraction"]["pages"][1]["method"] == "ocr"

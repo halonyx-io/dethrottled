@@ -1,0 +1,154 @@
+{
+  "version": "1.5.0.dev2",
+  "passed": true,
+  "checks": [
+    "local migration",
+    "deep fact",
+    "cross-agent public handle",
+    "no duplicate retained body",
+    "v1 file unchanged by migration",
+    "actual API rollback to v1",
+    "actual API restore to v2"
+  ],
+  "migration": {
+    "migration": {
+      "scanned": 1,
+      "accepted": 1,
+      "expired": 0,
+      "unknown_visibility": 0,
+      "private": 0,
+      "partial": 0,
+      "invalid": 0,
+      "obsolete": 0,
+      "cursor": 1,
+      "requeued": 0
+    },
+    "status": {
+      "schema": 2,
+      "chunker": "structure-2",
+      "jobs": {
+        "completed": 1
+      },
+      "active_sources": 1,
+      "models": {
+        "e5-614241f622f5": {
+          "passages": 2,
+          "pages": 1
+        },
+        "minilm": {
+          "passages": 2,
+          "pages": 1
+        }
+      },
+      "disk_bytes": {
+        "database": 110592,
+        "-wal": 234872,
+        "-shm": 32768
+      },
+      "disk_soft_target_exceeded": false,
+      "retained_documents": {
+        "available": 1,
+        "unavailable": 0,
+        "current_chars": 11237
+      },
+      "coverage_is_indexing_snapshot": true,
+      "coverage_chars": {
+        "harvested_chars": 11237,
+        "retained_chars": 11237,
+        "lexical_chars": 11237,
+        "embedded_chars": 1381
+      },
+      "recent_job_errors": [],
+      "maintenance": {
+        "pending": false,
+        "source_batch": 32,
+        "registry_batch": 256
+      },
+      "resident_vector_bytes": 0,
+      "scan_block_rows": 1024,
+      "limits": {
+        "passages_per_model": 50000,
+        "vector_budget_bytes": 268435456,
+        "retention_days": 90,
+        "database_soft_bytes": 536870912,
+        "harvest_chars_per_source": 8000000,
+        "lexical_chars_per_source": 2000000
+      },
+      "model_revisions": {
+        "minilm": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+        "e5-614241f622f5": "614241f622f53c4eeff9890bdc4f31cfecc418b3"
+      },
+      "retention_note": "full-document expiry is independent; passages retain offsets"
+    }
+  },
+  "final_status": {
+    "ok": true,
+    "models": {
+      "e5-614241f622f5": {
+        "passages": 2,
+        "pages": 1
+      },
+      "minilm": {
+        "passages": 2,
+        "pages": 1
+      }
+    },
+    "index": {
+      "schema": 2,
+      "chunker": "structure-2",
+      "jobs": {
+        "completed": 1
+      },
+      "active_sources": 1,
+      "models": {
+        "e5-614241f622f5": {
+          "passages": 2,
+          "pages": 1
+        },
+        "minilm": {
+          "passages": 2,
+          "pages": 1
+        }
+      },
+      "disk_bytes": {
+        "database": 135168,
+        "-wal": 4152,
+        "-shm": 32768
+      },
+      "disk_soft_target_exceeded": false,
+      "retained_documents": {
+        "available": 1,
+        "unavailable": 0,
+        "current_chars": 11237
+      },
+      "coverage_is_indexing_snapshot": true,
+      "coverage_chars": {
+        "harvested_chars": 11237,
+        "retained_chars": 11237,
+        "lexical_chars": 11237,
+        "embedded_chars": 1381
+      },
+      "recent_job_errors": [],
+      "maintenance": {
+        "pending": false,
+        "source_batch": 32,
+        "registry_batch": 256
+      },
+      "resident_vector_bytes": 0,
+      "scan_block_rows": 1024,
+      "limits": {
+        "passages_per_model": 50000,
+        "vector_budget_bytes": 268435456,
+        "retention_days": 90,
+        "database_soft_bytes": 536870912,
+        "harvest_chars_per_source": 8000000,
+        "lexical_chars_per_source": 2000000
+      },
+      "model_revisions": {
+        "minilm": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+        "e5-614241f622f5": "614241f622f53c4eeff9890bdc4f31cfecc418b3"
+      },
+      "retention_note": "full-document expiry is independent; passages retain offsets"
+    }
+  }
+}
