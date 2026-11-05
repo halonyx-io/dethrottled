@@ -61,3 +61,12 @@ results, and check semantic support separately from term matches. Keep credentia
 login state and full identifying fingerprint data outside publication.
 
 [Documentation home](README.md) · [Agent guide](AGENT-UPGRADES.md) · [API](API.md) · [Evidence](EVIDENCE.md)
+
+
+## Retrieval reliability candidate
+
+The [2026-11-05 investigation](../evaluations/retrieval-reliability/REPORT.md)
+compares discovery readiness/degradation, long-HTML extraction and correlated-DDG
+refusals. It retains before/after fixtures and native x86_64/ARM64 measurements;
+the dated captures precede the authorized 1.5.2 rollout. They are not new ranking
+or universal performance claims.

@@ -56,6 +56,7 @@ HISTORICAL = {
     "docs/RECOVERY-GAPS.md",
     "docs/REVIEWED-BOT-FINDINGS.md",
     "evaluations/module-refactor/README.md",
+    "evaluations/retrieval-reliability/REPORT.md",
 }
 GOVERNANCE = {
     "pyproject.toml",

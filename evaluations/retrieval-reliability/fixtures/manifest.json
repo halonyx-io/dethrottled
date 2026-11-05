@@ -1,0 +1,148 @@
+[
+  {
+    "file": "controlled-article.html",
+    "url": "https://example.org/article",
+    "kind": "controlled",
+    "facts": [
+      "Section 0 specifies an evidence retention interval of 470 days for record class 0.",
+      "Section 19 specifies an evidence retention interval of 489 days for record class 19.",
+      "Section 39 specifies an evidence retention interval of 509 days for record class 39."
+    ],
+    "ambiguous_content_container": false,
+    "sha256": "07f4e6e1f4fb7357f9ed92ffd261494b596adbf2af7d4831c7b8abf63c279a54",
+    "bytes": 28562,
+    "noise_labels": [
+      "Index contents contact",
+      "Copyright example"
+    ]
+  },
+  {
+    "file": "controlled-sections.html",
+    "url": "https://example.org/sections",
+    "kind": "controlled",
+    "facts": [
+      "Section 0 specifies an evidence retention interval of 470 days for record class 0.",
+      "Section 19 specifies an evidence retention interval of 489 days for record class 19.",
+      "Section 39 specifies an evidence retention interval of 509 days for record class 39."
+    ],
+    "ambiguous_content_container": false,
+    "sha256": "77efe0b20f0966ace31d855af0fd8f00db95738ce97cda45ef41a5399908e04b",
+    "bytes": 28556,
+    "noise_labels": [
+      "Index contents contact",
+      "Copyright example"
+    ]
+  },
+  {
+    "file": "controlled-pre.html",
+    "url": "https://example.org/pre",
+    "kind": "controlled",
+    "facts": [
+      "Section 0 specifies an evidence retention interval of 470 days for record class 0.",
+      "Section 19 specifies an evidence retention interval of 489 days for record class 19.",
+      "Section 39 specifies an evidence retention interval of 509 days for record class 39."
+    ],
+    "ambiguous_content_container": false,
+    "sha256": "40ef2fb6dcaf334e52a1bc6b09e5eb2bbbccb1df5fb28a62d1eef92d26c1791a",
+    "bytes": 26656,
+    "noise_labels": [
+      "Index contents contact",
+      "Copyright example"
+    ]
+  },
+  {
+    "file": "controlled-table.html",
+    "url": "https://example.org/table",
+    "kind": "controlled",
+    "facts": [
+      "Section 0 specifies an evidence retention interval of 470 days for record class 0.",
+      "Section 19 specifies an evidence retention interval of 489 days for record class 19.",
+      "Section 39 specifies an evidence retention interval of 509 days for record class 39."
+    ],
+    "ambiguous_content_container": false,
+    "sha256": "5bf066ec3ae46f06ea06c0a8bb5a9eb9637e5acffab6b5565d7ecc7d0ca56013",
+    "bytes": 27381,
+    "noise_labels": [
+      "Index contents contact",
+      "Copyright example"
+    ]
+  },
+  {
+    "file": "controlled-split.html",
+    "url": "https://example.org/split",
+    "kind": "controlled",
+    "facts": [
+      "Section 0 specifies an evidence retention interval of 470 days for record class 0.",
+      "Section 19 specifies an evidence retention interval of 489 days for record class 19.",
+      "Section 39 specifies an evidence retention interval of 509 days for record class 39."
+    ],
+    "ambiguous_content_container": false,
+    "sha256": "32d389f3a0072bbac1f812492d8d1f2fda29d36d2e4787dc136c1872f63a0570",
+    "bytes": 28575,
+    "noise_labels": [
+      "Index contents contact",
+      "Copyright example"
+    ]
+  },
+  {
+    "file": "controlled-aside.html",
+    "url": "https://example.org/aside",
+    "kind": "controlled",
+    "facts": [
+      "Section 0 specifies an evidence retention interval of 470 days for record class 0.",
+      "Section 19 specifies an evidence retention interval of 489 days for record class 19.",
+      "Section 39 specifies an evidence retention interval of 509 days for record class 39."
+    ],
+    "ambiguous_content_container": true,
+    "sha256": "3793e97c685be0ff336522041e58e98a20ece37db14692c269e9f771ac7485d3",
+    "bytes": 28577,
+    "noise_labels": [
+      "Index contents contact",
+      "Copyright example"
+    ]
+  },
+  {
+    "file": "controlled-navigation.html",
+    "url": "https://example.org/navigation",
+    "kind": "controlled",
+    "facts": [
+      "Section 0 specifies an evidence retention interval of 470 days for record class 0.",
+      "Section 19 specifies an evidence retention interval of 489 days for record class 19.",
+      "Section 39 specifies an evidence retention interval of 509 days for record class 39."
+    ],
+    "ambiguous_content_container": false,
+    "sha256": "a1c16496609dbb6f3a74f20926f23fdf1b659dd3e2d733478326e11e94df0407",
+    "bytes": 133573,
+    "noise_labels": [
+      "Index contents contact",
+      "Copyright example",
+      "Linked related topic and menu item"
+    ]
+  },
+  {
+    "file": "rfc9110.html",
+    "url": "https://www.rfc-editor.org/rfc/rfc9110.html",
+    "kind": "live-snapshot",
+    "facts": [
+      "A recipient SHOULD parse a received protocol element defensively, with only marginal expectations that the element will conform to its ABNF grammar and fit with",
+      "A client MUST NOT generate fields in a TRACE request containing sensitive data that might be disclosed by the response. For example, it would be foolish for a u",
+      "HTTP authentication is presumed to be stateless: all of the information necessary to authenticate a request MUST be provided in the request, rather than be depe"
+    ],
+    "sha256": "d431760660ea44e130f6e919dab216df2d0b3a490567a98089267523368fe1e5",
+    "bytes": 1187554,
+    "noise_labels": []
+  },
+  {
+    "file": "rfc8446.html",
+    "url": "https://www.rfc-editor.org/rfc/rfc8446.html",
+    "kind": "live-snapshot",
+    "facts": [
+      "This document is a product of the Internet Engineering Task Force (IETF). It represents the consensus of the IETF community. It has received public review and h",
+      "In order to decrypt and verify, the cipher takes as input the key, nonce, additional data, and the AEADEncrypted value. The output is either the plaintext or an",
+      "In addition, to avoid accidental misuse, TLS implementations MUST NOT enable 0-RTT (either sending or accepting) unless specifically requested by the applicatio"
+    ],
+    "sha256": "370ed8c0e6da22c8b8f4ad0230b6c12e6ec8ae807eca034220070828f25684fb",
+    "bytes": 419115,
+    "noise_labels": []
+  }
+]

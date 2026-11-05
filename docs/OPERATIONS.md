@@ -43,7 +43,8 @@ every later apt download, browser asset or build byte. Refresh base digests
 and dependency locks deliberately, then rerun native release gates.
 
 The offline verifier checks those versions, dependencies and a real corpus embedding without
-host model mounts. `/health` is liveness; `/ready` checks search sources;
+host model mounts. `/health` is liveness; `/ready` reports recent real-search observations (cold/stale
+is unknown, not down, and polling sends no upstream search probes);
 `/v2/status` probes configured workers and backfill. Test actual fresh search,
 a known-source fetch and the specific optional worker formats you use. A 200
 response can still contain failed reads or no useful search results.
@@ -153,6 +154,22 @@ results; distinguish missing source evidence from a transport or limiter failure
 The core rests refused SearXNG/DDGS engines for
 `DETHROTTLED_ENGINE_REST_SECONDS` (default 1800 seconds). A sole selected engine
 and an entirely blocked selection stay rested too; neither bypasses the timer.
+The default DDG family additionally rests only after TLS Lite **and both** browser
+Lite/HTML paths explicitly refuse in the same failed acquisition. A TLS-only refusal
+still gets browser recovery. Repeated confirmed refusals use 30/60/120-second rests,
+bounded by the existing engine-rest setting; a longer parsed TLS `Retry-After` is
+honoured up to one day. Pacing intervals are unchanged. The state is persisted in
+the existing engine-health file. After expiry, one default-family recovery is in
+flight per API process; only a fresh successful DDG acquisition clears the state.
+Cached choices remain readable and do not prove upstream recovery. Independent
+Yahoo/Yandex and explicitly configured non-DDG fallbacks remain eligible.
+
+API-coordinated rest applies to its DDG acquisition chain and active-rest filtering
+of explicitly requested SearXNG `duckduckgo` web. News engines are not automatically
+classified as the same failure. Direct private browser-worker calls and separate API
+processes do not share the process-local recovery guard; this is not a distributed
+rate limiter. Ordinary timeouts/HTTP 500s do not by themselves trigger family rest.
+
 SearXNG also has its own suspensions. The pinned image's measured defaults are
 180 seconds for ordinary access-denied/429 responses and 3600 for CAPTCHA,
 with longer Cloudflare/reCAPTCHA policies. These are separate layers.

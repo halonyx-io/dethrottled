@@ -28,7 +28,7 @@ import feedparser
 import requests
 
 from . import paths as _paths
-from . import providers
+from . import providers, search_diagnostics
 from .content import constrained
 from .discovery import SOURCE_PROFILES, tls_search
 from .fetch import USER_AGENT
@@ -150,6 +150,62 @@ def _record_failure(name: str, reason: str, *, namespace: str = "") -> None:
         _save_health(health)
 
 
+_DDG_RECOVERY = False
+
+
+def _ddg_admit():
+    """Only failed-family recovery is single-flight; healthy searches stay concurrent."""
+    global _DDG_RECOVERY
+    with _health_lock:
+        state = _load_health().get("family:ddg", {})
+        now = time.time()
+        if state.get("until", 0) > now:
+            return False, False, state
+        if state.get("fails"):
+            if _DDG_RECOVERY:
+                return False, False, dict(state, recovering=True)
+            _DDG_RECOVERY = True
+            return True, True, state
+        return True, False, state
+
+
+def _ddg_refusal(report):
+    direct = report.get("direct", {})
+    browser = report.get("attempts", [])
+    # A TLS-only refusal often succeeds in Chromium. Do not suppress that path.
+    # Local browser queue 429s and ordinary timeouts are not upstream refusals.
+    return ((direct.get("refusal") or direct.get("http_status") in {202, 429}) and
+            {r.get("engine") for r in browser if r.get("status") in {202, 429}
+             or r.get("reason") == "challenge_page"} >= {"ddg-lite", "ddg-html"})
+
+
+def _ddg_finish(rows, report, recovering):
+    global _DDG_RECOVERY
+    with _health_lock:
+        if recovering:
+            _DDG_RECOVERY = False
+        health = _load_health()
+        fresh_success = (
+            report.get("direct", {}).get("status") == "ok"
+            or (report.get("status") == "ok" and report.get("count", 0) > 0)
+            or any(a.get("engine") == "duckduckgo" and a.get("status") == "ok"
+                   and a.get("count", 0) > 0 for a in report.get("ddgs_attempts", [])))
+        if fresh_success and any(result_family(row) == "ddg" for row in rows):
+            if health.pop("family:ddg", None):
+                _save_health(health)
+        elif _ddg_refusal(report):
+            old = health.get("family:ddg", {})
+            failures = min(8, old.get("fails", 0) + 1)
+            delay = min(_HEALTH_TTL, 30 * 2 ** (failures - 1))
+            delay = max(delay, min(86400, report.get("direct", {}).get(
+                "retry_after_seconds", 0)))
+            health["family:ddg"] = {"at": time.time(), "until": time.time() + delay,
+                                    "fails": failures, "reason": "correlated_refusals"}
+            report.update(upstream_status="cooldown",
+                          cooldown_until=health["family:ddg"]["until"])
+            _save_health(health)
+
+
 DEFAULT_ENGINES = os.environ.get(
     "DETHROTTLED_SEARXNG_ENGINES",
     "duckduckgo news,bing news")
@@ -224,6 +280,18 @@ def searxng(query: str, *, max_items: int = 8, categories: str = "",
         return []
     max_items = max(1, min(max_items, SEARCH_MENU_LIMIT))
     engines = _rested(engines or DEFAULT_ENGINES, namespace="searxng")
+    family = _load_health().get("family:ddg", {})
+    if family.get("until", 0) > time.time():
+        if cache is not None and "duckduckgo" in engines.split(","):
+            hit = cache.get("search", "sx-single-page-v2", query, engines, categories, max_items,
+                            language)
+            if hit is not None:
+                found = bounded_results(hit, max_items, primary_limit=SUPPLEMENT_SEARCH_LIMIT)
+                if diagnostics is not None:
+                    diagnostics.update(status="cached", upstream_status="cooldown", elapsed_ms=0,
+                                       admitted_count=len(found), cooldown_until=family["until"])
+                return found
+        engines = ",".join(e for e in engines.split(",") if e.strip() != "duckduckgo")
     if not engines:
         if diagnostics is not None:
             diagnostics.update(status="cooldown", elapsed_ms=0)
@@ -300,18 +368,28 @@ def searxng(query: str, *, max_items: int = 8, categories: str = "",
     return rows
 
 
-def bing_news(query: str, *, max_items: int = 8, timeout: int = 25, cache=None) -> list:
+def bing_news(query: str, *, max_items: int = 8, timeout: int = 25, cache=None,
+              diagnostics=None) -> list:
     max_items = max(1, min(max_items, SUPPLEMENT_SEARCH_LIMIT))
     if cache is not None:
         hit = cache.get("search", "bnews", query, max_items)
         if hit is not None:
+            if diagnostics is not None:
+                diagnostics.update(status="cached", count=len(hit[:max_items]))
             return hit[:max_items]
     rows = []
     try:
         response = requests.get(BING_NEWS.format(q=quote_plus(query)),
                                 timeout=timeout, headers={"User-Agent": RSS_UA})
+        if diagnostics is not None:
+            diagnostics.update(status="ok" if response.status_code == 200 else
+                               "http_" + str(response.status_code),
+                               http_status=response.status_code)
         if response.status_code == 200:
-            for entry in feedparser.parse(response.content).entries[:max_items]:
+            parsed_feed = feedparser.parse(response.content)
+            if diagnostics is not None and not parsed_feed.version:
+                diagnostics["status"] = "invalid_feed"
+            for entry in parsed_feed.entries[:max_items]:
                 url = _unwrap_bing(entry.get("link", ""))
                 title = entry.get("title", "")
                 if not url or not title or "bing.com" in _domain(url):
@@ -320,10 +398,14 @@ def bing_news(query: str, *, max_items: int = 8, timeout: int = 25, cache=None) 
                     title=title, url=url,
                     snippet=_TAGS.sub(" ", entry.get("summary", ""))[:600],
                     published=entry.get("published", ""), engine="bing-news"))
-    except Exception:
+    except Exception as exc:
         rows = []
+        if diagnostics is not None:
+            diagnostics.update(status="failed", reason=type(exc).__name__)
     if cache is not None and rows:
         cache.put("search", "bnews", query, max_items, value=rows)
+    if diagnostics is not None:
+        diagnostics["count"] = len(rows)
     return rows
 
 
@@ -523,7 +605,7 @@ def browser_search(query: str, *, max_items: int = 8, cache=None,
         hit = cache.get("search", cache_namespace, query, max_items)
         if hit is not None:
             if diagnostics is not None:
-                diagnostics.update(status="cached", attempts=[])
+                diagnostics.update(status="cached", attempts=[], count=len(hit))
             return bounded_results(hit, max_items)
     try:
         response = requests.post(BROWSER_SEARCH_URL + "/search",
@@ -554,6 +636,8 @@ def browser_search(query: str, *, max_items: int = 8, cache=None,
             rows.append(_norm(title=title, url=url, snippet=snippet,
                               engine="web-browser-" + str(item.get("engine")
                                   or payload.get("engine") or "unknown")))
+        if diagnostics is not None:
+            diagnostics["count"] = len(rows)
         if cache is not None and rows:
             cache.put("search", cache_namespace, query, max_items, value=rows)
         return bounded_results(rows, max_items)
@@ -599,7 +683,7 @@ def browser_drive(payload: dict, *, timeout: int | None = None) -> dict:
     return out
 
 
-def web_search(query: str, *, max_items: int = 8, cache=None,
+def _acquire_web(query: str, *, max_items: int = 8, cache=None,
                engines=None, diagnostics: dict | None = None) -> list:
     """General web results, keyless, via whichever engines still answer.
 
@@ -641,16 +725,25 @@ def web_search(query: str, *, max_items: int = 8, cache=None,
     try:
         from ddgs import DDGS
     except ImportError:
+        if diagnostics is not None:
+            diagnostics.update(status="unavailable", reason="DDGS_not_installed")
         return []
 
     wanted = engines or WEB_ENGINES
     alive = [e for e in wanted if e in _rested(",".join(wanted), namespace="web").split(",")]
     rows = []
+    ddgs_attempts = []
+    if diagnostics is not None:
+        diagnostics["ddgs_attempts"] = ddgs_attempts
+    for engine in wanted:
+        if engine not in alive:
+            ddgs_attempts.append({"engine": engine, "status": "cooldown", "count": 0})
     for engine in alive:
         if cache is not None:
             hit = cache.get("search", "web", engine, query, max_items)
             if hit is not None:
                 rows.extend(hit)
+                ddgs_attempts.append({"engine": engine, "status": "cached", "count": len(hit)})
                 continue
         try:
             found = DDGS().text(query, backend=engine,
@@ -659,6 +752,8 @@ def web_search(query: str, *, max_items: int = 8, cache=None,
                                                 else SUPPLEMENT_SEARCH_LIMIT))
         except Exception as exc:
             _record_failure(engine, type(exc).__name__, namespace="web")
+            ddgs_attempts.append({"engine": engine, "status": "failed", "count": 0,
+                                  "reason": type(exc).__name__})
             continue
         got = []
         for row in found or []:
@@ -672,10 +767,65 @@ def web_search(query: str, *, max_items: int = 8, cache=None,
                 "publishedDate": row.get("date") or "",
                 "engine": "web-%s" % engine,
             })
+        ddgs_attempts.append({"engine": engine, "status": "ok" if got else "no_results",
+                              "count": len(got)})
         if cache is not None and got:
             cache.put("search", "web", engine, query, max_items, value=got)
         rows.extend(got)
     return bounded_results(rows, max_items)
+
+
+def web_search(query: str, *, max_items: int = 8, cache=None,
+               engines=None, diagnostics: dict | None = None) -> list:
+    report = diagnostics if diagnostics is not None else {}
+    family_only = engines is None or engines == ["duckduckgo"]
+    recovering = False
+    if family_only:
+        admitted, recovering, state = _ddg_admit()
+        if not admitted:
+            status = "recovery_in_progress" if state.get("recovering") else "cooldown"
+            report.update(status=status, count=0, family="ddg", cooldown_until=state.get("until"))
+            if cache is not None:
+                maximum = max(1, min(max_items, PRIMARY_SEARCH_LIMIT))
+                keys = [("search", "web", "duckduckgo", query, maximum)]
+                if engines is None:
+                    keys.insert(0, ("search", "browser-compact-v1", query, maximum))
+                    if os.environ.get("DETHROTTLED_CHEAP_DISCOVERY", "0") == "1":
+                        keys.insert(0, ("search", "tls-ddg-lite", query, maximum))
+                for key in keys:
+                    hit = cache.get(*key)
+                    if hit is not None:
+                        found = bounded_results(hit, maximum)
+                        report.update(status="cached", upstream_status=status, count=len(found))
+                        return found
+            other = [e for e in WEB_ENGINES if e != "duckduckgo"] if engines is None else []
+            if other:
+                rows = _acquire_web(query, max_items=max_items, cache=cache,
+                                    engines=other, diagnostics=report)
+                report.update(status="ok" if rows else status, upstream_status=status,
+                              count=len(rows), families=sorted({result_family(r) for r in rows}))
+                return rows
+            return []
+    rows = []
+    try:
+        rows = _acquire_web(query, max_items=max_items, cache=cache,
+                            engines=engines, diagnostics=report)
+    finally:
+        if family_only:
+            _ddg_finish(rows, report, recovering)
+    if report.get("attempts") or str(report.get("status", "")).startswith("http_"):
+        report["browser_status"] = report.get("status")
+    if rows:
+        report["status"] = "cached" if report.get("status") == "cached" else "ok"
+    elif any(r["status"] == "no_results" for r in report.get("ddgs_attempts", [])):
+        report["status"] = "no_results"
+    elif report.get("status") in {"ok", "cached"}:
+        report["status"] = "indeterminate"
+    else:
+        report.setdefault("status", "unavailable")
+    report["count"] = len(rows)
+    report["families"] = sorted({result_family(r) for r in rows})
+    return rows
 
 
 def _blend_news(rows: list) -> list:
@@ -743,7 +893,8 @@ def search(query: str, *, max_items: int = SEARCH_MENU_LIMIT, categories: str = 
 
     browser_diagnostics = {}
     tasks = {}
-    source_reports = {"searxng": {}, "specialist": {}, "supplements": {}}
+    source_reports = {"web": browser_diagnostics, "searxng": {}, "specialist": {},
+                      "supplements": {}}
     if "web" in sources:
         tasks["web"] = _SOURCE_POOL.submit(
             web_search, query, max_items=min(max_items, PRIMARY_SEARCH_LIMIT), cache=cache,
@@ -757,8 +908,10 @@ def search(query: str, *, max_items: int = SEARCH_MENU_LIMIT, categories: str = 
                 searxng, query, max_items=SUPPLEMENT_SEARCH_LIMIT, engines=engine,
                 cache=cache, language=language, timeout=8, diagnostics=report)
     if "news" in sources:
+        source_reports["bing-news"] = {}
         tasks["bing-news"] = _SOURCE_POOL.submit(
-            bing_news, query, max_items=min(max_items, SUPPLEMENT_SEARCH_LIMIT), cache=cache)
+            bing_news, query, max_items=min(max_items, SUPPLEMENT_SEARCH_LIMIT), cache=cache,
+            diagnostics=source_reports["bing-news"])
         tasks["searxng"] = _SOURCE_POOL.submit(
             searxng, query, max_items=SEARCH_MENU_LIMIT, categories="news",
             cache=cache, language=language, timeout=8, diagnostics=source_reports["searxng"])
@@ -777,9 +930,16 @@ def search(query: str, *, max_items: int = SEARCH_MENU_LIMIT, categories: str = 
     for name, task in tasks.items():
         try:
             completed[name] = task.result()
-        except Exception:
+        except Exception as exc:
             completed[name] = []
             per_source[name] = "failed"
+            report = source_reports.get(name)
+            if report is None:
+                report = source_reports["supplements"].get(name)
+            if report is None:
+                report = source_reports["providers"].get(name)
+            if report is not None:
+                report.update(status="failed", reason=type(exc).__name__)
     if "web" in completed:
         add(completed["web"], "web")
     # Primary order stays intact. Alternate small supplements rather than
@@ -872,46 +1032,31 @@ def search(query: str, *, max_items: int = SEARCH_MENU_LIMIT, categories: str = 
         "elapsed_ms": int((time.time() - started) * 1000),
         "cost": "potentially_metered" if sources.intersection(providers.NAMES) else "free",
     }
+    meta["discovery"] = search_diagnostics.summarize(meta["per_source"], source_reports)
+    search_diagnostics.observe(meta["discovery"])
     if log_fn:
         log_fn("    free-search '%s': %d results %s"
                % (query[:44], len(menu), per_source))
     return menu, meta
 
 
-# A probe query, not a real one. It must return results every day of the year
-# in every locale, or a healthy stack reports itself down in a quiet week.
+# The explicit functional-health CLI uses this evergreen probe query.
+# HTTP readiness observes real searches and does not run this query.
 PROBE_QUERY = os.environ.get("DETHROTTLED_PROBE_QUERY", "technology")
 
 
 def health(timeout: int = 20) -> dict:
-    report = {"ok": False, "searxng": False, "bing_news": False,
-              "searxng_configured": bool(SEARXNG_URL), "detail": ""}
-    if not SEARXNG_URL:
-        report["detail"] = "searxng not configured; "
-    try:
-        if not SEARXNG_URL:
-            raise RuntimeError("not configured")
-        response = requests.get(
-            SEARXNG_URL + "/search",
-            params={"q": PROBE_QUERY, "format": "json",
-                    "engines": DEFAULT_ENGINES},
-            timeout=timeout, headers={"User-Agent": USER_AGENT})
-        report["searxng"] = response.status_code == 200 and bool(
-            response.json().get("results"))
-    except Exception as exc:
-        # += rather than =: an unconfigured SearXNG has already said so, and
-        # overwriting that with "unreachable" reports a missing setting as a
-        # broken service, which sends you looking in the wrong place.
-        if SEARXNG_URL:
-            report["detail"] += "searxng unreachable (%s); " % type(exc).__name__
-
-    try:
-        report["bing_news"] = bool(bing_news(PROBE_QUERY, max_items=2,
-                                             timeout=timeout))
-    except Exception:
-        pass
-
-    report["ok"] = report["searxng"] or report["bing_news"]
-    report["detail"] += "searxng=%s bing-news=%s (no API keys, no quotas)" % (
-        report["searxng"], report["bing_news"])
+    # timeout remains accepted for compatibility; status reads never probe upstream.
+    report = search_diagnostics.readiness(configured=bool(SEARXNG_URL))
+    state = _load_health().get("family:ddg", {})
+    until = state.get("until", 0)
+    resting = until > time.time()
+    report["ddg_family"] = {
+        "status": "cooldown" if resting else "recovery_due" if state else "unobserved",
+        "cooldown_until": until or None, "failures": state.get("fails", 0)}
+    if resting:
+        report["ok"] = False
+        report["degraded"] = True
+        report["primary_discovery"].update(ready=False, upstream_status="cooldown",
+                                            availability="unavailable", cooldown_until=until)
     return report

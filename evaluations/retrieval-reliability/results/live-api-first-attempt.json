@@ -1,0 +1,166 @@
+{
+  "scope": "isolated candidate; no production deployment",
+  "checks": {
+    "cold_status_polling_truth": true,
+    "anonymous_mcp_denied": true,
+    "actual_diagnostic_search_forwarding": true,
+    "rfc_live_extraction_3_facts": true,
+    "cross_caller_retained_read": true,
+    "canonical_window_offsets": true,
+    "mcp_instructions_match_api": true
+  },
+  "observations": {
+    "live_search": {
+      "outcome": "results",
+      "degraded": false,
+      "engines": [
+        "web-tls-ddg-lite",
+        "web-tls-ddg-lite",
+        "web-tls-ddg-lite"
+      ],
+      "attempts": [
+        {
+          "engine": "web",
+          "count": 3,
+          "status": "ok",
+          "elapsed_ms": 1184,
+          "unresponsive": [],
+          "direct": {
+            "engine": "tls-ddg-lite",
+            "status": "ok",
+            "count": 3,
+            "http_status": 200,
+            "refusal": false,
+            "elapsed_ms": 774
+          },
+          "attempts": [],
+          "families": [
+            "ddg"
+          ]
+        },
+        {
+          "engine": "yandex",
+          "count": 2,
+          "status": "ok",
+          "elapsed_ms": 1182,
+          "unresponsive": [],
+          "admitted_count": 3
+        },
+        {
+          "engine": "yahoo",
+          "count": 3,
+          "status": "ok",
+          "elapsed_ms": 633,
+          "unresponsive": [],
+          "admitted_count": 3
+        },
+        {
+          "engine": "searxng",
+          "count": 5,
+          "status": "ok",
+          "elapsed_ms": 1184,
+          "unresponsive": []
+        },
+        {
+          "engine": "bing-news",
+          "count": 0,
+          "status": "not_requested",
+          "elapsed_ms": 1184,
+          "unresponsive": []
+        },
+        {
+          "engine": "gnews-resolved",
+          "count": 0,
+          "status": "not_requested",
+          "elapsed_ms": 1184,
+          "unresponsive": []
+        },
+        {
+          "engine": "tls-ddg-lite",
+          "count": 3,
+          "status": "ok",
+          "reason": null,
+          "elapsed_ms": 774,
+          "unresponsive": [],
+          "http_status": 200,
+          "refusal": false
+        }
+      ]
+    },
+    "ready_after_search": {
+      "status": "ok",
+      "ok": true,
+      "searxng": true,
+      "searxng_status": "ok",
+      "bing_news": false,
+      "searxng_configured": true,
+      "primary_discovery": {
+        "count": 3,
+        "status": "ok",
+        "availability": "available",
+        "upstream_status": "ok",
+        "families": [
+          "ddg"
+        ],
+        "observed_at": 1793873675.9870262,
+        "stale": false,
+        "age_seconds": 0.018,
+        "ready": true,
+        "family": "ddg"
+      },
+      "supplementary": {
+        "yandex": {
+          "count": 2,
+          "status": "ok",
+          "availability": "available",
+          "upstream_status": "ok",
+          "families": [],
+          "observed_at": 1793873675.9870262,
+          "stale": false,
+          "age_seconds": 0.018
+        },
+        "yahoo": {
+          "count": 3,
+          "status": "ok",
+          "availability": "available",
+          "upstream_status": "ok",
+          "families": [],
+          "observed_at": 1793873675.9870262,
+          "stale": false,
+          "age_seconds": 0.018
+        }
+      },
+      "news": {
+        "availability": "unknown",
+        "stale": true,
+        "age_seconds": null
+      },
+      "initializing": false,
+      "degraded": false,
+      "observation_ttl_seconds": 60.0,
+      "detail": "Primary discovery is distinct from supplementary/news availability; readiness observations are cached, not an availability guarantee.",
+      "ddg_family": {
+        "status": "unobserved",
+        "cooldown_until": null,
+        "failures": 0
+      }
+    },
+    "rfc": {
+      "canonical_chars": 406026,
+      "selection": {
+        "status": "unverified",
+        "assessment": "structural_samples",
+        "sampled_anchors": 48,
+        "missing_samples": 0,
+        "compared_extractors": [
+          "trafilatura",
+          "resiliparse"
+        ],
+        "selection_changed": true
+      },
+      "assessment": "unknown"
+    }
+  },
+  "passed": false,
+  "failure_type": "AssertionError"
+}

@@ -18,6 +18,9 @@ promising sources or rewrite around the missing fact; do not request fifty choic
 Use academic/news/thorough profiles deliberately when those sources fit the task.
 Yahoo and Yandex supply small default supplements; DDG choices stay first.
 Alternative DDG acquisition paths are one provider family, not independent votes.
+Discovery readiness uses recent searches: unknown/stale does not mean down. Do not poll
+status to trigger upstream probes. Diagnostic search outcome/degraded distinguish partial
+results, trustworthy empty responses, unavailable providers and indeterminate outcomes.
 Research uses the same per-query search budgets, then admits at most 24 unique
 candidates across facets. It reads ten sources by default, up to twenty when requested,
 with at most four replacement candidates and 120000 characters per source. Drive snapshots
@@ -53,6 +56,8 @@ quality=suspect retains possible error-banner pollution after available recovery
 Inspect content_assessment.spans against full retained extraction offsets; text is
 preserved. none_detected is not proof of clean content; completeness and answer support
 remain unverified. Focused/clipped responses may omit the flagged spans.
+extraction.completeness reports sampled structural coverage, never verified completeness.
+Missing samples justify inspection; they do not by themselves justify repeating browser actions.
 acquisition_attempts records the tiers actually tried and their observed outcomes.
 Detected challenges automatically try a bounded headed-browser recovery when rendering
 is allowed. Browser state is scoped to the caller and exact host; render=never wins.
@@ -304,12 +309,15 @@ def guidance(row, *, offset=0, focused=False, rendered_allowed=True):
         action("inspect_document", "Inspect exact quote selectors and structured evidence.",
                document_id=doc)
     incomplete = bool(row.get("source_partial") or extraction.get("partial"))
+    suspected_incomplete = (extraction.get("completeness", {}).get("status")
+                            == "suspected_incomplete")
     return {
         "state": "failed"
         if row.get("quality") == "failed"
         else (
             "needs_inspection"
             if incomplete
+            or suspected_incomplete
             or suspect
             or row.get("read_plan", {}).get("final_gap")
             or row.get("content_status") in {"navigation_only", "image_content"}

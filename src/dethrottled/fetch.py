@@ -1132,6 +1132,7 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
                 candidate = {**source,
                              "ok": True, "text": result["text"], "tier": name,
                              "extractor": result["tier"],
+                             "extraction": {"completeness": result.get("completeness", {})},
                              "title": result.get("title", ""),
                              "published": result.get("published", ""),
                              "chars": result["chars"], "url": final,
@@ -1139,6 +1140,8 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
                                         if payload.get("clipped") else ""),
                              "cached": False, "content_type": "html",
                              **details}
+                candidate["warnings"] = [*candidate.get("warnings", []),
+                                         *result.get("warnings", [])]
             else:
                 # Fetched fine, but no prose -- almost always a JS shell.
                 reasons.append("%s:fetched_but_%s" % (name, result["reason"]))

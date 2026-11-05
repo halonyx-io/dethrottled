@@ -1,0 +1,230 @@
+{
+  "label": "baseline",
+  "architecture": "aarch64",
+  "source_sha256": "d9a937e2b1c263eff72f563f6beb844501e91dcce5b397b6d63f4cf8d29a15cf",
+  "model": "no models; native extractors",
+  "repetitions_per_fixture": 3,
+  "memory": "fresh-process peak RSS including interpreter/extractor libraries; KiB",
+  "rows": [
+    {
+      "fixture": "controlled-article.html",
+      "tier": "trafilatura",
+      "chars": 26699,
+      "fact_hits": [
+        true,
+        true,
+        true
+      ],
+      "latency_ms": [
+        30.157031025737524,
+        24.501980049535632,
+        24.09666613675654
+      ],
+      "median_ms": 24.501980049535632,
+      "peak_rss_kib": 40624,
+      "completeness": null,
+      "warnings": [],
+      "text_file": "texts/arm64-baseline-controlled-article.html.txt.gz",
+      "text_sha256": "7e61bb84164cebd6d4c8d26c45ac1a63af87b062b3d440d1cd2bb45c96decb91",
+      "noise_labels_retained": [
+        false,
+        false
+      ]
+    },
+    {
+      "fixture": "controlled-sections.html",
+      "tier": "trafilatura",
+      "chars": 26699,
+      "fact_hits": [
+        true,
+        true,
+        true
+      ],
+      "latency_ms": [
+        31.191718066111207,
+        25.013124803081155,
+        24.750208016484976
+      ],
+      "median_ms": 25.013124803081155,
+      "peak_rss_kib": 40592,
+      "completeness": null,
+      "warnings": [],
+      "text_file": "texts/arm64-baseline-controlled-sections.html.txt.gz",
+      "text_sha256": "7e61bb84164cebd6d4c8d26c45ac1a63af87b062b3d440d1cd2bb45c96decb91",
+      "noise_labels_retained": [
+        false,
+        false
+      ]
+    },
+    {
+      "fixture": "controlled-pre.html",
+      "tier": "trafilatura",
+      "chars": 26069,
+      "fact_hits": [
+        true,
+        true,
+        true
+      ],
+      "latency_ms": [
+        21.527603967115283,
+        17.976822797209024,
+        17.65510393306613
+      ],
+      "median_ms": 17.976822797209024,
+      "peak_rss_kib": 42412,
+      "completeness": null,
+      "warnings": [],
+      "text_file": "texts/arm64-baseline-controlled-pre.html.txt.gz",
+      "text_sha256": "227b31a5264c3b641e1e5e0e1d1b65d1abb46e737b689fc0da7bbd4c96ef7486",
+      "noise_labels_retained": [
+        false,
+        false
+      ]
+    },
+    {
+      "fixture": "controlled-table.html",
+      "tier": "trafilatura",
+      "chars": 26419,
+      "fact_hits": [
+        true,
+        true,
+        true
+      ],
+      "latency_ms": [
+        25.239584036171436,
+        21.502136019989848,
+        21.21250005438924
+      ],
+      "median_ms": 21.502136019989848,
+      "peak_rss_kib": 40396,
+      "completeness": null,
+      "warnings": [],
+      "text_file": "texts/arm64-baseline-controlled-table.html.txt.gz",
+      "text_sha256": "76979cddc3dbcb9a0696b997c2bdc9ffba4adfe5551993719ce12d78197fcb93",
+      "noise_labels_retained": [
+        false,
+        false
+      ]
+    },
+    {
+      "fixture": "controlled-split.html",
+      "tier": "trafilatura",
+      "chars": 23582,
+      "fact_hits": [
+        false,
+        true,
+        true
+      ],
+      "latency_ms": [
+        27.58979215286672,
+        21.787812002003193,
+        21.795469103381038
+      ],
+      "median_ms": 21.795469103381038,
+      "peak_rss_kib": 42324,
+      "completeness": null,
+      "warnings": [],
+      "text_file": "texts/arm64-baseline-controlled-split.html.txt.gz",
+      "text_sha256": "e520acab0191d88ce5aa4572dfc2eb8e69bf40a5b6eaa8d746c848924e68e1e4",
+      "noise_labels_retained": [
+        false,
+        false
+      ]
+    },
+    {
+      "fixture": "controlled-aside.html",
+      "tier": "trafilatura",
+      "chars": 3116,
+      "fact_hits": [
+        true,
+        false,
+        false
+      ],
+      "latency_ms": [
+        231.7266659811139,
+        28.21479202248156,
+        27.838749811053276
+      ],
+      "median_ms": 28.21479202248156,
+      "peak_rss_kib": 70244,
+      "completeness": null,
+      "warnings": [],
+      "text_file": "texts/arm64-baseline-controlled-aside.html.txt.gz",
+      "text_sha256": "43685bacf6d22e99a9d952b93ea9b3643d891e181e740453433ba9e1e1751a9d",
+      "noise_labels_retained": [
+        false,
+        false
+      ]
+    },
+    {
+      "fixture": "controlled-navigation.html",
+      "tier": "trafilatura",
+      "chars": 26699,
+      "fact_hits": [
+        true,
+        true,
+        true
+      ],
+      "latency_ms": [
+        70.84364606998861,
+        64.94401092641056,
+        64.89817705005407
+      ],
+      "median_ms": 64.94401092641056,
+      "peak_rss_kib": 40544,
+      "completeness": null,
+      "warnings": [],
+      "text_file": "texts/arm64-baseline-controlled-navigation.html.txt.gz",
+      "text_sha256": "7e61bb84164cebd6d4c8d26c45ac1a63af87b062b3d440d1cd2bb45c96decb91",
+      "noise_labels_retained": [
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "fixture": "rfc9110.html",
+      "tier": "trafilatura",
+      "chars": 5220,
+      "fact_hits": [
+        false,
+        false,
+        false
+      ],
+      "latency_ms": [
+        3121.947863139212,
+        843.0540100671351,
+        809.9397919140756
+      ],
+      "median_ms": 843.0540100671351,
+      "peak_rss_kib": 139244,
+      "completeness": null,
+      "warnings": [],
+      "text_file": "texts/arm64-baseline-rfc9110.html.txt.gz",
+      "text_sha256": "7a4c8feef42bfe445a68fc5f72c69824751cfecf9ccc7e9d528a4c5f34eebe0d",
+      "noise_labels_retained": []
+    },
+    {
+      "fixture": "rfc8446.html",
+      "tier": "trafilatura",
+      "chars": 282926,
+      "fact_hits": [
+        true,
+        true,
+        true
+      ],
+      "latency_ms": [
+        206.97250007651746,
+        189.3316658679396,
+        187.35786410979927
+      ],
+      "median_ms": 189.3316658679396,
+      "peak_rss_kib": 55604,
+      "completeness": null,
+      "warnings": [],
+      "text_file": "texts/arm64-baseline-rfc8446.html.txt.gz",
+      "text_sha256": "b20e045d0f16ac2917f94a28dde046aff74afcbfa299dcbe0d9cfe98ed1363ba",
+      "noise_labels_retained": []
+    }
+  ]
+}

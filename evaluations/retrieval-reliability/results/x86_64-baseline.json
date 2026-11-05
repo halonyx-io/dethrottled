@@ -1,0 +1,230 @@
+{
+  "label": "baseline",
+  "architecture": "x86_64",
+  "source_sha256": "d9a937e2b1c263eff72f563f6beb844501e91dcce5b397b6d63f4cf8d29a15cf",
+  "model": "no models; native extractors",
+  "repetitions_per_fixture": 3,
+  "memory": "fresh-process peak RSS including interpreter/extractor libraries; KiB",
+  "rows": [
+    {
+      "fixture": "controlled-article.html",
+      "tier": "trafilatura",
+      "chars": 26699,
+      "fact_hits": [
+        true,
+        true,
+        true
+      ],
+      "latency_ms": [
+        20.933386869728565,
+        17.68332999199629,
+        17.173499800264835
+      ],
+      "median_ms": 17.68332999199629,
+      "peak_rss_kib": 41760,
+      "completeness": null,
+      "warnings": [],
+      "text_file": "texts/x86_64-baseline-controlled-article.html.txt.gz",
+      "text_sha256": "7e61bb84164cebd6d4c8d26c45ac1a63af87b062b3d440d1cd2bb45c96decb91",
+      "noise_labels_retained": [
+        false,
+        false
+      ]
+    },
+    {
+      "fixture": "controlled-sections.html",
+      "tier": "trafilatura",
+      "chars": 26699,
+      "fact_hits": [
+        true,
+        true,
+        true
+      ],
+      "latency_ms": [
+        21.550721023231745,
+        17.51677319407463,
+        17.44479639455676
+      ],
+      "median_ms": 17.51677319407463,
+      "peak_rss_kib": 43828,
+      "completeness": null,
+      "warnings": [],
+      "text_file": "texts/x86_64-baseline-controlled-sections.html.txt.gz",
+      "text_sha256": "7e61bb84164cebd6d4c8d26c45ac1a63af87b062b3d440d1cd2bb45c96decb91",
+      "noise_labels_retained": [
+        false,
+        false
+      ]
+    },
+    {
+      "fixture": "controlled-pre.html",
+      "tier": "trafilatura",
+      "chars": 26069,
+      "fact_hits": [
+        true,
+        true,
+        true
+      ],
+      "latency_ms": [
+        15.325631946325302,
+        12.86496827378869,
+        12.880087364464998
+      ],
+      "median_ms": 12.880087364464998,
+      "peak_rss_kib": 44084,
+      "completeness": null,
+      "warnings": [],
+      "text_file": "texts/x86_64-baseline-controlled-pre.html.txt.gz",
+      "text_sha256": "227b31a5264c3b641e1e5e0e1d1b65d1abb46e737b689fc0da7bbd4c96ef7486",
+      "noise_labels_retained": [
+        false,
+        false
+      ]
+    },
+    {
+      "fixture": "controlled-table.html",
+      "tier": "trafilatura",
+      "chars": 26419,
+      "fact_hits": [
+        true,
+        true,
+        true
+      ],
+      "latency_ms": [
+        17.55648897960782,
+        15.569566283375025,
+        15.332314185798168
+      ],
+      "median_ms": 15.569566283375025,
+      "peak_rss_kib": 41752,
+      "completeness": null,
+      "warnings": [],
+      "text_file": "texts/x86_64-baseline-controlled-table.html.txt.gz",
+      "text_sha256": "76979cddc3dbcb9a0696b997c2bdc9ffba4adfe5551993719ce12d78197fcb93",
+      "noise_labels_retained": [
+        false,
+        false
+      ]
+    },
+    {
+      "fixture": "controlled-split.html",
+      "tier": "trafilatura",
+      "chars": 23582,
+      "fact_hits": [
+        false,
+        true,
+        true
+      ],
+      "latency_ms": [
+        18.673635087907314,
+        15.333437826484442,
+        14.967239927500486
+      ],
+      "median_ms": 15.333437826484442,
+      "peak_rss_kib": 42148,
+      "completeness": null,
+      "warnings": [],
+      "text_file": "texts/x86_64-baseline-controlled-split.html.txt.gz",
+      "text_sha256": "e520acab0191d88ce5aa4572dfc2eb8e69bf40a5b6eaa8d746c848924e68e1e4",
+      "noise_labels_retained": [
+        false,
+        false
+      ]
+    },
+    {
+      "fixture": "controlled-aside.html",
+      "tier": "trafilatura",
+      "chars": 3116,
+      "fact_hits": [
+        true,
+        false,
+        false
+      ],
+      "latency_ms": [
+        133.3644362166524,
+        18.389915116131306,
+        18.072640988975763
+      ],
+      "median_ms": 18.389915116131306,
+      "peak_rss_kib": 71180,
+      "completeness": null,
+      "warnings": [],
+      "text_file": "texts/x86_64-baseline-controlled-aside.html.txt.gz",
+      "text_sha256": "43685bacf6d22e99a9d952b93ea9b3643d891e181e740453433ba9e1e1751a9d",
+      "noise_labels_retained": [
+        false,
+        false
+      ]
+    },
+    {
+      "fixture": "controlled-navigation.html",
+      "tier": "trafilatura",
+      "chars": 26699,
+      "fact_hits": [
+        true,
+        true,
+        true
+      ],
+      "latency_ms": [
+        55.01369712874293,
+        51.555133890360594,
+        52.28158738464117
+      ],
+      "median_ms": 52.28158738464117,
+      "peak_rss_kib": 43600,
+      "completeness": null,
+      "warnings": [],
+      "text_file": "texts/x86_64-baseline-controlled-navigation.html.txt.gz",
+      "text_sha256": "7e61bb84164cebd6d4c8d26c45ac1a63af87b062b3d440d1cd2bb45c96decb91",
+      "noise_labels_retained": [
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "fixture": "rfc9110.html",
+      "tier": "trafilatura",
+      "chars": 5220,
+      "fact_hits": [
+        false,
+        false,
+        false
+      ],
+      "latency_ms": [
+        1911.8158472701907,
+        433.7000180967152,
+        463.76797184348106
+      ],
+      "median_ms": 463.76797184348106,
+      "peak_rss_kib": 139148,
+      "completeness": null,
+      "warnings": [],
+      "text_file": "texts/x86_64-baseline-rfc9110.html.txt.gz",
+      "text_sha256": "7a4c8feef42bfe445a68fc5f72c69824751cfecf9ccc7e9d528a4c5f34eebe0d",
+      "noise_labels_retained": []
+    },
+    {
+      "fixture": "rfc8446.html",
+      "tier": "trafilatura",
+      "chars": 282926,
+      "fact_hits": [
+        true,
+        true,
+        true
+      ],
+      "latency_ms": [
+        128.56211513280869,
+        115.10356701910496,
+        110.00961996614933
+      ],
+      "median_ms": 115.10356701910496,
+      "peak_rss_kib": 56844,
+      "completeness": null,
+      "warnings": [],
+      "text_file": "texts/x86_64-baseline-rfc8446.html.txt.gz",
+      "text_sha256": "b20e045d0f16ac2917f94a28dde046aff74afcbfa299dcbe0d9cfe98ed1363ba",
+      "noise_labels_retained": []
+    }
+  ]
+}

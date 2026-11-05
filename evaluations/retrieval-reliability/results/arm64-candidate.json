@@ -1,0 +1,301 @@
+{
+  "label": "candidate",
+  "architecture": "aarch64",
+  "source_sha256": "656536f0e909692757957ba904ccf87548db9c9ede0c0345e6d0de60efaa8b8f",
+  "model": "no models; native extractors",
+  "repetitions_per_fixture": 3,
+  "memory": "fresh-process peak RSS including interpreter/extractor libraries; KiB",
+  "rows": [
+    {
+      "fixture": "controlled-article.html",
+      "tier": "trafilatura",
+      "chars": 26699,
+      "fact_hits": [
+        true,
+        true,
+        true
+      ],
+      "latency_ms": [
+        36.8945321533829,
+        27.165313018485904,
+        26.592031121253967
+      ],
+      "median_ms": 27.165313018485904,
+      "peak_rss_kib": 42844,
+      "completeness": {
+        "status": "unverified",
+        "assessment": "structural_samples",
+        "sampled_anchors": 48,
+        "missing_samples": 0,
+        "compared_extractors": [
+          "trafilatura"
+        ],
+        "selection_changed": false
+      },
+      "warnings": [],
+      "text_file": "texts/arm64-candidate-controlled-article.html.txt.gz",
+      "text_sha256": "7e61bb84164cebd6d4c8d26c45ac1a63af87b062b3d440d1cd2bb45c96decb91",
+      "noise_labels_retained": [
+        false,
+        false
+      ]
+    },
+    {
+      "fixture": "controlled-sections.html",
+      "tier": "trafilatura",
+      "chars": 26699,
+      "fact_hits": [
+        true,
+        true,
+        true
+      ],
+      "latency_ms": [
+        36.91234393045306,
+        28.481198009103537,
+        27.747238986194134
+      ],
+      "median_ms": 28.481198009103537,
+      "peak_rss_kib": 44612,
+      "completeness": {
+        "status": "unverified",
+        "assessment": "structural_samples",
+        "sampled_anchors": 48,
+        "missing_samples": 0,
+        "compared_extractors": [
+          "trafilatura"
+        ],
+        "selection_changed": false
+      },
+      "warnings": [],
+      "text_file": "texts/arm64-candidate-controlled-sections.html.txt.gz",
+      "text_sha256": "7e61bb84164cebd6d4c8d26c45ac1a63af87b062b3d440d1cd2bb45c96decb91",
+      "noise_labels_retained": [
+        false,
+        false
+      ]
+    },
+    {
+      "fixture": "controlled-pre.html",
+      "tier": "trafilatura",
+      "chars": 26069,
+      "fact_hits": [
+        true,
+        true,
+        true
+      ],
+      "latency_ms": [
+        26.58885484561324,
+        20.508750109001994,
+        20.087082870304585
+      ],
+      "median_ms": 20.508750109001994,
+      "peak_rss_kib": 42832,
+      "completeness": {
+        "status": "unverified",
+        "assessment": "structural_samples",
+        "sampled_anchors": 48,
+        "missing_samples": 0,
+        "compared_extractors": [
+          "trafilatura"
+        ],
+        "selection_changed": false
+      },
+      "warnings": [],
+      "text_file": "texts/arm64-candidate-controlled-pre.html.txt.gz",
+      "text_sha256": "227b31a5264c3b641e1e5e0e1d1b65d1abb46e737b689fc0da7bbd4c96ef7486",
+      "noise_labels_retained": [
+        false,
+        false
+      ]
+    },
+    {
+      "fixture": "controlled-table.html",
+      "tier": "trafilatura",
+      "chars": 26419,
+      "fact_hits": [
+        true,
+        true,
+        true
+      ],
+      "latency_ms": [
+        28.535573044791818,
+        22.276249947026372,
+        21.785156102851033
+      ],
+      "median_ms": 22.276249947026372,
+      "peak_rss_kib": 42732,
+      "completeness": {
+        "status": "unverified",
+        "assessment": "not_checked"
+      },
+      "warnings": [],
+      "text_file": "texts/arm64-candidate-controlled-table.html.txt.gz",
+      "text_sha256": "76979cddc3dbcb9a0696b997c2bdc9ffba4adfe5551993719ce12d78197fcb93",
+      "noise_labels_retained": [
+        false,
+        false
+      ]
+    },
+    {
+      "fixture": "controlled-split.html",
+      "tier": "resiliparse",
+      "chars": 26699,
+      "fact_hits": [
+        true,
+        true,
+        true
+      ],
+      "latency_ms": [
+        45.78156303614378,
+        26.564062107354403,
+        26.29104210063815
+      ],
+      "median_ms": 26.564062107354403,
+      "peak_rss_kib": 47656,
+      "completeness": {
+        "status": "unverified",
+        "assessment": "structural_samples",
+        "sampled_anchors": 48,
+        "missing_samples": 0,
+        "compared_extractors": [
+          "trafilatura",
+          "resiliparse"
+        ],
+        "selection_changed": true
+      },
+      "warnings": [],
+      "text_file": "texts/arm64-candidate-controlled-split.html.txt.gz",
+      "text_sha256": "7e61bb84164cebd6d4c8d26c45ac1a63af87b062b3d440d1cd2bb45c96decb91",
+      "noise_labels_retained": [
+        false,
+        false
+      ]
+    },
+    {
+      "fixture": "controlled-aside.html",
+      "tier": "trafilatura",
+      "chars": 3116,
+      "fact_hits": [
+        true,
+        false,
+        false
+      ],
+      "latency_ms": [
+        235.35583284683526,
+        28.65588595159352,
+        28.212395031005144
+      ],
+      "median_ms": 28.65588595159352,
+      "peak_rss_kib": 73652,
+      "completeness": {
+        "status": "unverified",
+        "assessment": "not_checked"
+      },
+      "warnings": [],
+      "text_file": "texts/arm64-candidate-controlled-aside.html.txt.gz",
+      "text_sha256": "43685bacf6d22e99a9d952b93ea9b3643d891e181e740453433ba9e1e1751a9d",
+      "noise_labels_retained": [
+        false,
+        false
+      ]
+    },
+    {
+      "fixture": "controlled-navigation.html",
+      "tier": "trafilatura",
+      "chars": 26699,
+      "fact_hits": [
+        true,
+        true,
+        true
+      ],
+      "latency_ms": [
+        75.84723993204534,
+        67.9004171397537,
+        67.80687510035932
+      ],
+      "median_ms": 67.9004171397537,
+      "peak_rss_kib": 42996,
+      "completeness": {
+        "status": "unverified",
+        "assessment": "structural_samples",
+        "sampled_anchors": 48,
+        "missing_samples": 0,
+        "compared_extractors": [
+          "trafilatura"
+        ],
+        "selection_changed": false
+      },
+      "warnings": [],
+      "text_file": "texts/arm64-candidate-controlled-navigation.html.txt.gz",
+      "text_sha256": "7e61bb84164cebd6d4c8d26c45ac1a63af87b062b3d440d1cd2bb45c96decb91",
+      "noise_labels_retained": [
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "fixture": "rfc9110.html",
+      "tier": "resiliparse",
+      "chars": 406026,
+      "fact_hits": [
+        true,
+        true,
+        true
+      ],
+      "latency_ms": [
+        3228.940728120506,
+        1026.197083061561,
+        966.5382290259004
+      ],
+      "median_ms": 1026.197083061561,
+      "peak_rss_kib": 148972,
+      "completeness": {
+        "status": "unverified",
+        "assessment": "structural_samples",
+        "sampled_anchors": 48,
+        "missing_samples": 0,
+        "compared_extractors": [
+          "trafilatura",
+          "resiliparse"
+        ],
+        "selection_changed": true
+      },
+      "warnings": [],
+      "text_file": "texts/arm64-candidate-rfc9110.html.txt.gz",
+      "text_sha256": "0c906039cdf6ca27959e6bdd9c74c8bbd17d1fd3d57ea3cf095f1786d1b168ea",
+      "noise_labels_retained": []
+    },
+    {
+      "fixture": "rfc8446.html",
+      "tier": "trafilatura",
+      "chars": 282926,
+      "fact_hits": [
+        true,
+        true,
+        true
+      ],
+      "latency_ms": [
+        248.4161457978189,
+        232.61624993756413,
+        226.40453092753887
+      ],
+      "median_ms": 232.61624993756413,
+      "peak_rss_kib": 60032,
+      "completeness": {
+        "status": "unverified",
+        "assessment": "structural_samples",
+        "sampled_anchors": 48,
+        "missing_samples": 0,
+        "compared_extractors": [
+          "trafilatura"
+        ],
+        "selection_changed": false
+      },
+      "warnings": [],
+      "text_file": "texts/arm64-candidate-rfc8446.html.txt.gz",
+      "text_sha256": "b20e045d0f16ac2917f94a28dde046aff74afcbfa299dcbe0d9cfe98ed1363ba",
+      "noise_labels_retained": []
+    }
+  ]
+}

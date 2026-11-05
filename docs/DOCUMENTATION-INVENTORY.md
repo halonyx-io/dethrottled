@@ -13,8 +13,8 @@ must be classified; unknown paths fail generation/checking.
 | dependency-input | 4 |
 | generated | 4 |
 | harness-guide | 10 |
-| historical-evidence | 34 |
-| source-contract | 115 |
+| historical-evidence | 35 |
+| source-contract | 116 |
 | third-party-notice | 3 |
 | visual | 8 |
 
@@ -124,6 +124,7 @@ Evidence maintainer: preserve observations; append explicit corrections.
 | [evaluations/read-loop/results/2026-11-02/DEPLOYMENT.md](../evaluations/read-loop/results/2026-11-02/DEPLOYMENT.md) |
 | [evaluations/read-loop/results/2026-11-02/REPORT.md](../evaluations/read-loop/results/2026-11-02/REPORT.md) |
 | [evaluations/release/results/2026-11-02/REPORT.md](../evaluations/release/results/2026-11-02/REPORT.md) |
+| [evaluations/retrieval-reliability/REPORT.md](../evaluations/retrieval-reliability/REPORT.md) |
 | [evaluations/search-breadth/results/2026-11-02/REPORT.md](../evaluations/search-breadth/results/2026-11-02/REPORT.md) |
 | [evaluations/search-policy/results/2026-11-03/ATTRIBUTION.md](../evaluations/search-policy/results/2026-11-03/ATTRIBUTION.md) |
 | [evaluations/search-policy/results/2026-11-03/REPORT.md](../evaluations/search-policy/results/2026-11-03/REPORT.md) |
@@ -241,6 +242,7 @@ Change author: audit docs impact, advertised defaults and generated contracts.
 | [src/dethrottled/readplan.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/readplan.py) |
 | [src/dethrottled/research.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/research.py) |
 | [src/dethrottled/search.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/search.py) |
+| [src/dethrottled/search_diagnostics.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/search_diagnostics.py) |
 | [src/dethrottled/server.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/server.py) |
 | [src/dethrottled/site.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/site.py) |
 | [src/dethrottled/stack.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/stack.py) |

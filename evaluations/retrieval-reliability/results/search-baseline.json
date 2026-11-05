@@ -1,0 +1,480 @@
+{
+  "label": "baseline",
+  "architecture": "x86_64",
+  "search_source_sha256": "899fc06192954540d22a0683b081abdc0247c7728e0c7f548cad262a0cf6b8ed",
+  "api_source_sha256": "60826c0c99761a02a3bd093adb126b093f44d552c4ec3e7e68c7e87c5433cc69",
+  "controlled_probe_latency_ms": 5,
+  "scenarios": {
+    "ddg_down_backups_up": {
+      "reported_ready": true,
+      "ready_report": {
+        "ok": true,
+        "searxng": true,
+        "bing_news": true,
+        "searxng_configured": true,
+        "detail": "searxng=True bing-news=True (no API keys, no quotas)"
+      },
+      "calls": {
+        "primary": 1,
+        "supplements": 2,
+        "health_sx": 5,
+        "health_bing": 5
+      },
+      "health_poll_ms": [
+        10.177511721849442,
+        10.151674039661884,
+        10.211125947535038,
+        10.237326845526695,
+        10.14179503545165
+      ],
+      "urls": [
+        "https://example.org/yandex/0",
+        "https://example.org/yahoo/0",
+        "https://example.org/yandex/1",
+        "https://example.org/yahoo/1",
+        "https://example.org/yandex/2",
+        "https://example.org/yahoo/2"
+      ],
+      "legacy_status": "ok",
+      "outcome": null,
+      "degraded": null,
+      "attempts": [
+        {
+          "engine": "web",
+          "count": 0,
+          "status": "ok",
+          "elapsed_ms": 0,
+          "unresponsive": []
+        },
+        {
+          "engine": "yandex",
+          "count": 3,
+          "status": "ok",
+          "elapsed_ms": 0,
+          "unresponsive": []
+        },
+        {
+          "engine": "yahoo",
+          "count": 3,
+          "status": "ok",
+          "elapsed_ms": 0,
+          "unresponsive": []
+        },
+        {
+          "engine": "searxng",
+          "count": 6,
+          "status": "ok",
+          "elapsed_ms": 0,
+          "unresponsive": []
+        },
+        {
+          "engine": "bing-news",
+          "count": 0,
+          "status": "not_requested",
+          "elapsed_ms": 0,
+          "unresponsive": []
+        },
+        {
+          "engine": "gnews-resolved",
+          "count": 0,
+          "status": "not_requested",
+          "elapsed_ms": 0,
+          "unresponsive": []
+        }
+      ]
+    },
+    "ddg_up_backups_down": {
+      "reported_ready": false,
+      "ready_report": {
+        "ok": false,
+        "searxng": false,
+        "bing_news": false,
+        "searxng_configured": true,
+        "detail": "searxng=False bing-news=False (no API keys, no quotas)"
+      },
+      "calls": {
+        "primary": 1,
+        "supplements": 2,
+        "health_sx": 5,
+        "health_bing": 5
+      },
+      "health_poll_ms": [
+        10.161751881241798,
+        10.133408941328526,
+        10.150319896638393,
+        10.125043336302042,
+        10.151141323149204
+      ],
+      "urls": [
+        "https://example.org/web-tls-ddg-lite/0",
+        "https://example.org/web-tls-ddg-lite/1",
+        "https://example.org/web-tls-ddg-lite/2",
+        "https://example.org/web-tls-ddg-lite/3",
+        "https://example.org/web-tls-ddg-lite/4",
+        "https://example.org/web-tls-ddg-lite/5",
+        "https://example.org/web-tls-ddg-lite/6",
+        "https://example.org/web-tls-ddg-lite/7",
+        "https://example.org/web-tls-ddg-lite/8",
+        "https://example.org/web-tls-ddg-lite/9"
+      ],
+      "legacy_status": "ok",
+      "outcome": null,
+      "degraded": null,
+      "attempts": [
+        {
+          "engine": "web",
+          "count": 10,
+          "status": "ok",
+          "elapsed_ms": 1,
+          "unresponsive": []
+        },
+        {
+          "engine": "yandex",
+          "count": 0,
+          "status": "http_429",
+          "elapsed_ms": 1,
+          "unresponsive": []
+        },
+        {
+          "engine": "yahoo",
+          "count": 0,
+          "status": "http_429",
+          "elapsed_ms": 1,
+          "unresponsive": []
+        },
+        {
+          "engine": "searxng",
+          "count": 0,
+          "status": "ok",
+          "elapsed_ms": 1,
+          "unresponsive": []
+        },
+        {
+          "engine": "bing-news",
+          "count": 0,
+          "status": "not_requested",
+          "elapsed_ms": 1,
+          "unresponsive": []
+        },
+        {
+          "engine": "gnews-resolved",
+          "count": 0,
+          "status": "not_requested",
+          "elapsed_ms": 1,
+          "unresponsive": []
+        }
+      ]
+    },
+    "complete_outage": {
+      "reported_ready": false,
+      "ready_report": {
+        "ok": false,
+        "searxng": false,
+        "bing_news": false,
+        "searxng_configured": true,
+        "detail": "searxng=False bing-news=False (no API keys, no quotas)"
+      },
+      "calls": {
+        "primary": 1,
+        "supplements": 2,
+        "health_sx": 5,
+        "health_bing": 5
+      },
+      "health_poll_ms": [
+        10.175188072025776,
+        10.146032087504864,
+        10.175209026783705,
+        10.26351610198617,
+        10.638389270752668
+      ],
+      "urls": [],
+      "legacy_status": "no_results_or_degraded",
+      "outcome": null,
+      "degraded": null,
+      "attempts": [
+        {
+          "engine": "web",
+          "count": 0,
+          "status": "ok",
+          "elapsed_ms": 0,
+          "unresponsive": []
+        },
+        {
+          "engine": "yandex",
+          "count": 0,
+          "status": "http_429",
+          "elapsed_ms": 0,
+          "unresponsive": []
+        },
+        {
+          "engine": "yahoo",
+          "count": 0,
+          "status": "http_429",
+          "elapsed_ms": 0,
+          "unresponsive": []
+        },
+        {
+          "engine": "searxng",
+          "count": 0,
+          "status": "ok",
+          "elapsed_ms": 0,
+          "unresponsive": []
+        },
+        {
+          "engine": "bing-news",
+          "count": 0,
+          "status": "not_requested",
+          "elapsed_ms": 0,
+          "unresponsive": []
+        },
+        {
+          "engine": "gnews-resolved",
+          "count": 0,
+          "status": "not_requested",
+          "elapsed_ms": 0,
+          "unresponsive": []
+        }
+      ]
+    },
+    "all_healthy": {
+      "reported_ready": true,
+      "ready_report": {
+        "ok": true,
+        "searxng": true,
+        "bing_news": true,
+        "searxng_configured": true,
+        "detail": "searxng=True bing-news=True (no API keys, no quotas)"
+      },
+      "calls": {
+        "primary": 1,
+        "supplements": 2,
+        "health_sx": 5,
+        "health_bing": 5
+      },
+      "health_poll_ms": [
+        10.1833650842309,
+        10.141383856534958,
+        10.130984243005514,
+        10.152895003557205,
+        10.167945176362991
+      ],
+      "urls": [
+        "https://example.org/web-tls-ddg-lite/0",
+        "https://example.org/web-tls-ddg-lite/1",
+        "https://example.org/web-tls-ddg-lite/2",
+        "https://example.org/web-tls-ddg-lite/3",
+        "https://example.org/web-tls-ddg-lite/4",
+        "https://example.org/web-tls-ddg-lite/5",
+        "https://example.org/web-tls-ddg-lite/6",
+        "https://example.org/web-tls-ddg-lite/7",
+        "https://example.org/web-tls-ddg-lite/8",
+        "https://example.org/web-tls-ddg-lite/9",
+        "https://example.org/yandex/0",
+        "https://example.org/yahoo/0",
+        "https://example.org/yandex/1",
+        "https://example.org/yahoo/1",
+        "https://example.org/yandex/2"
+      ],
+      "legacy_status": "ok",
+      "outcome": null,
+      "degraded": null,
+      "attempts": [
+        {
+          "engine": "web",
+          "count": 10,
+          "status": "ok",
+          "elapsed_ms": 1,
+          "unresponsive": []
+        },
+        {
+          "engine": "yandex",
+          "count": 3,
+          "status": "ok",
+          "elapsed_ms": 1,
+          "unresponsive": []
+        },
+        {
+          "engine": "yahoo",
+          "count": 3,
+          "status": "ok",
+          "elapsed_ms": 1,
+          "unresponsive": []
+        },
+        {
+          "engine": "searxng",
+          "count": 6,
+          "status": "ok",
+          "elapsed_ms": 1,
+          "unresponsive": []
+        },
+        {
+          "engine": "bing-news",
+          "count": 0,
+          "status": "not_requested",
+          "elapsed_ms": 1,
+          "unresponsive": []
+        },
+        {
+          "engine": "gnews-resolved",
+          "count": 0,
+          "status": "not_requested",
+          "elapsed_ms": 1,
+          "unresponsive": []
+        }
+      ]
+    },
+    "genuine_empty": {
+      "reported_ready": true,
+      "ready_report": {
+        "ok": true,
+        "searxng": true,
+        "bing_news": true,
+        "searxng_configured": true,
+        "detail": "searxng=True bing-news=True (no API keys, no quotas)"
+      },
+      "calls": {
+        "primary": 1,
+        "supplements": 2,
+        "health_sx": 5,
+        "health_bing": 5
+      },
+      "health_poll_ms": [
+        10.144298896193504,
+        10.134289972484112,
+        10.180718265473843,
+        10.189315769821405,
+        10.16198331490159
+      ],
+      "urls": [],
+      "legacy_status": "no_results_or_degraded",
+      "outcome": null,
+      "degraded": null,
+      "attempts": [
+        {
+          "engine": "web",
+          "count": 0,
+          "status": "ok",
+          "elapsed_ms": 0,
+          "unresponsive": []
+        },
+        {
+          "engine": "yandex",
+          "count": 0,
+          "status": "ok",
+          "elapsed_ms": 0,
+          "unresponsive": []
+        },
+        {
+          "engine": "yahoo",
+          "count": 0,
+          "status": "ok",
+          "elapsed_ms": 0,
+          "unresponsive": []
+        },
+        {
+          "engine": "searxng",
+          "count": 0,
+          "status": "ok",
+          "elapsed_ms": 0,
+          "unresponsive": []
+        },
+        {
+          "engine": "bing-news",
+          "count": 0,
+          "status": "not_requested",
+          "elapsed_ms": 0,
+          "unresponsive": []
+        },
+        {
+          "engine": "gnews-resolved",
+          "count": 0,
+          "status": "not_requested",
+          "elapsed_ms": 0,
+          "unresponsive": []
+        }
+      ]
+    }
+  },
+  "correlated_refusals": {
+    "attempts": [
+      "tls-ddg-lite",
+      "browser-ddg-lite",
+      "browser-ddg-html",
+      "ddgs",
+      "tls-ddg-lite",
+      "browser-ddg-lite",
+      "browser-ddg-html",
+      "tls-ddg-lite",
+      "browser-ddg-lite",
+      "browser-ddg-html"
+    ],
+    "outcomes": [
+      {
+        "cumulative_attempts": 4,
+        "diagnostics": {
+          "direct": {
+            "status": "challenge_or_http_error",
+            "http_status": 429
+          },
+          "status": "http_503",
+          "attempts": [
+            {
+              "engine": "ddg-lite",
+              "status": 429,
+              "reason": "http_429"
+            },
+            {
+              "engine": "ddg-html",
+              "status": 429,
+              "reason": "http_429"
+            }
+          ]
+        }
+      },
+      {
+        "cumulative_attempts": 7,
+        "diagnostics": {
+          "direct": {
+            "status": "challenge_or_http_error",
+            "http_status": 429
+          },
+          "status": "http_503",
+          "attempts": [
+            {
+              "engine": "ddg-lite",
+              "status": 429,
+              "reason": "http_429"
+            },
+            {
+              "engine": "ddg-html",
+              "status": 429,
+              "reason": "http_429"
+            }
+          ]
+        }
+      },
+      {
+        "cumulative_attempts": 10,
+        "diagnostics": {
+          "direct": {
+            "status": "challenge_or_http_error",
+            "http_status": 429
+          },
+          "status": "http_503",
+          "attempts": [
+            {
+              "engine": "ddg-lite",
+              "status": 429,
+              "reason": "http_429"
+            },
+            {
+              "engine": "ddg-html",
+              "status": 429,
+              "reason": "http_429"
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

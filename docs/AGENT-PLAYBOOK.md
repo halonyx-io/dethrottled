@@ -91,7 +91,7 @@ No automatic DDG pagination fills that menu. Fewer usable results is normal.
 | `fresh` | Request refresh rather than using cached acquisition |
 | `cache_mode` | `use`, `refresh`, `bypass`; bypass avoids both cache reads and writes |
 | `max_age` | Optional cache-age bound in seconds; inspect returned cache provenance |
-| `diagnostics` (MCP) | Request the richer search envelope rather than a legacy source list |
+| `diagnostics` (MCP) | Request the richer search envelope; inspect `outcome`, `degraded` and per-provider reports rather than inferring success from legacy `status` |
 
 REST also retains `num_results`/`max_items` compatibility fields; MCP does not
 accept every REST alias. A neural `rerank=true` request is unsupported. Do not
@@ -267,3 +267,14 @@ Parse each complete MCP JSON text block separately; do not concatenate blocks
 into invalid JSON. Prefer structured content when supplied and retain native image
 blocks. The engine supports ordinary HTTP/software clients too; a language model
 is not needed to execute these workflows.
+
+
+## Interpreting readiness and extraction coverage
+
+Readiness uses recent real-search observations; cold/stale means unknown, not down.
+Status polling sends no upstream search probes. Perform one relevant search when
+current evidence is needed. Cached results and timer expiry do not prove recovery.
+`extraction.completeness` describes sampled structural coverage, not verified
+completeness. Missing samples request inspection; they do not justify blindly
+repeating browser actions. Preserve warnings and inspect relevant source HTML or
+another representation when the missing evidence matters.

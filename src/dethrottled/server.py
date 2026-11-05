@@ -204,12 +204,17 @@ def _attempts(meta: dict) -> list:
                      **(meta.get("source_reports") or {}).get(name, {}),
                      **(meta.get("source_reports") or {}).get("supplements", {}).get(name, {}),
                      **(meta.get("source_reports") or {}).get("providers", {}).get(name, {})})
+    for attempt in (meta.get("browser_search") or {}).get("ddgs_attempts", []):
+        rows.append({**attempt, "engine": "ddgs-" + attempt["engine"],
+                     "elapsed_ms": attempt.get("elapsed_ms", 0), "unresponsive": []})
     browser = meta.get("browser_search") or {}
     if browser.get("direct"):
         direct = browser["direct"]
         rows.append({"engine": "tls-ddg-lite", "count": direct.get("count", 0),
                      "status": direct.get("status"), "reason": direct.get("reason"),
-                     "elapsed_ms": direct.get("elapsed_ms", 0), "unresponsive": []})
+                     "elapsed_ms": direct.get("elapsed_ms", 0), "unresponsive": [],
+                     **{k: direct[k] for k in ("http_status", "retry_after_seconds", "refusal")
+                        if k in direct}})
     if browser and (browser.get("attempts") or browser.get("breadth")):
         rows.append({"engine": "browser-search",
                      "count": (browser.get("breadth") or {}).get("browser_count", 0),
@@ -472,7 +477,7 @@ def health():
 @app.get("/ready")
 def ready():
     report = fs.health()
-    return {"status": "ok" if report["ok"] else "degraded", **report}
+    return {"status": "ok" if report["ok"] and not report.get("degraded") else "degraded", **report}
 
 
 @app.get("/v2/status")
@@ -480,19 +485,23 @@ def v2_status():
     report = fs.health()
     worker_status = workers.status()
     return {
-        "status": "ok" if report["ok"] and all(
+        "status": "ok" if report["ok"] and not report.get("degraded") and all(
             row["status"] in {"ready", "not_configured"} for row in worker_status.values())
             and _BACKFILL_JOB.state["status"] in {"disabled", "running", "complete"}
             else "degraded",
         "workers": worker_status,
         "multilingual_backfill": dict(_BACKFILL_JOB.state),
+        "discovery": report,
         "components": {
+            "service": {"status": "ok", "scope": "process_liveness"},
+            "primary_discovery": report.get("primary_discovery", {}),
             # An unconfigured source is not a down source: "down" sends you
             # looking for a broken service, "not_configured" sends you to the
             # settings, and only one of those is where the problem is.
-            "searxng": {"status": "ok" if report["searxng"]
-                        else ("down" if fs.SEARXNG_URL else "not_configured")},
-            "bing_news_rss": {"status": "ok" if report["bing_news"] else "down"},
+            "searxng": {"status": report.get("searxng_status", "ok" if report["searxng"]
+                        else ("down" if fs.SEARXNG_URL else "not_configured"))},
+            "bing_news_rss": {"status": "ok" if report["bing_news"] else
+                              report.get("news", {}).get("availability", "unknown")},
         },
         "providers": {k: {"configured": v}
                       for k, v in fx.available().items()},
@@ -775,6 +784,9 @@ def search_envelope(body: SearchBody):
     rows, meta, _ = _ranked(body)
     return {"results": [_search_row(r, meta, i) for i, r in enumerate(rows)],
             "status": "ok" if rows else "no_results_or_degraded",
+            "outcome": meta.get("discovery", {}).get("outcome", "indeterminate"),
+            "degraded": meta.get("discovery", {}).get("degraded", True),
+            "discovery": meta.get("discovery", {}),
             "attempts": _attempts(meta), "elapsed_ms": meta.get("elapsed_ms"),
             "ranking": meta.get("ranking", []), "profile": body.profile}
 

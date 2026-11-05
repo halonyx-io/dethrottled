@@ -221,15 +221,20 @@ def run(url, initial, *, read, drive, options, browser_available, allow_assets=T
                        quality="ok" if len(text) >= 600 else "thin", tier="headed/read-plan",
                        title=parsed.get("title", ""), content_type="text/html", cached=False,
                        source_partial=partial, truncated=partial,
-                       extraction={"partial": partial, "method": method},
+                       extraction={"partial": partial, "method": method,
+                                   "completeness": (parsed.get("completeness", {})
+                                       if method == "browser_read_plan" else
+                                       {"status": "unverified", "assessment": "visible_text"})},
                        acquisition={"rendered": True, "method": "browser_read_plan"},
                        warnings=["Autonomous browser read; source completeness unverified.",
+                                 *(parsed.get("warnings", [])
+                                   if method == "browser_read_plan" else []),
                                  *(["Visible-text fallback failed: " + state["visible_text_error"]]
                                    if state.get("visible_text_error") else []),
                                  *(["Visible text may include navigation, ads and related content."]
                                    if method == "browser_visible_text" else [])],
                        **{k: v for k, v in page_details(html, url).items() if k != "warnings"})
-            annotated = annotate_content({"text": text}, html)
+            annotated = annotate_content({"text": text, "extraction": row["extraction"]}, html)
             row.update({k: v for k, v in annotated.items() if k != "text"})
             if focus:
                 row["focus_status"] = ("term_matches" if passage_excerpt(
