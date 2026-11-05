@@ -30,7 +30,7 @@ PAGES = {
     "books": "https://books.toscrape.com/",
 }
 
-TIERS = ["direct", "tls", "crawl4ai", "jina-reader"]
+TIERS = ["direct", "tls", "crawl4ai"]
 
 
 def run_tier(name, url):
@@ -44,7 +44,7 @@ def run_tier(name, url):
         elif name == "crawl4ai":
             payload, reason, final = f._tier_crawl4ai(url)
         else:
-            payload, reason, final = f._tier_jina_reader(url)
+            raise ValueError("unknown tier: " + name)
     except Exception as exc:
         return 0, int((time.time() - started) * 1000), type(exc).__name__
 

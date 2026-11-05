@@ -4,8 +4,8 @@
 The normal ladder tries direct HTTP, optional browser-like TLS through
 curl_cffi, a configured Crawl4AI renderer, and conditional headed-browser
 recovery. Rendering restrictions and local budgets control which tiers run.
-The optional external Jina reader is disabled by default in both standalone
-and Compose deployments; enabling it sends requested URLs to that service.
+All acquisition tiers run through the configured local transports and workers.
+No hosted-reader fallback is provided.
 
 Content validity, format-aware minimums and challenge detection drive escalation.
 HTTP 200 alone does not make an empty JavaScript shell or a verification page a
@@ -73,11 +73,6 @@ USER_AGENT = os.environ.get(
     "DETHROTTLED_USER_AGENT",
     "dethrottled/%s (+%s; automated fetcher)"
     % (__version__, PROJECT_URL))
-# Browser-like identity for the opt-in external reader. Direct article fetching
-# uses USER_AGENT; browser-worker identity is managed by the worker itself.
-BROWSER_UA = ("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) "
-              "Chrome/128.0 Safari/537.36")
-
 # 10MB, not 3. A truncated HTML download is worse than a failed one: the parser
 # still succeeds, on a document missing its tail, and reports a short article
 # rather than an error. Real pages are already close to the old ceiling --
@@ -167,17 +162,9 @@ CRAWL4AI_TOKEN = os.environ.get("DETHROTTLED_CRAWL4AI_TOKEN", "").strip()
 def _crawl4ai_headers() -> dict:
     return {"Authorization": "Bearer %s" % CRAWL4AI_TOKEN} if CRAWL4AI_TOKEN else {}
 
-# A whole-page budget, checked before each tier. Twice the observed p99 of
-# 12.3s and eight times the 2.9s median, so nothing that works today starts
-# failing -- this exists only to stop one pathological page costing a minute.
-# 60s, up from 25, because the ladder now has three tiers that can each take
-# real time and 25 could not reach the third. direct can spend 20, crawl4ai 25,
-# jina-reader 20: at the old budget a page that fell through to the renderer
-# had nothing left for jina-reader, so reordering alone would have QUIETLY
-# SHORTENED the ladder instead of lengthening it.
-#
-# This is the budget for a url somebody asked for by name. It is a ceiling, not
-# a target: the median page still finishes on direct in about two seconds.
+# Whole-page admission budget, checked before each tier. Configured renderers
+# and headed recovery may need more time than direct HTTP; this bounds their
+# admission without changing individual transport timeouts.
 PAGE_BUDGET = float(os.environ.get("DETHROTTLED_PAGE_BUDGET", "60"))
 
 # Bulk stays lean. search-and-extract runs its results one after another, so a
@@ -219,15 +206,8 @@ _last_hit = {}
 _lock_guard = threading.Lock()
 _tier_stats = defaultdict(int)
 
-# Tier budgets refill on a rolling window rather than counting up forever.
-#
-# They used to be plain counters, reset only by reset_tier_stats(), which
-# NOTHING CALLS. In a batch job that is a per-run cap, which is what it was
-# written for. In a service that stays up for days it is a per-process-LIFETIME
-# cap: after 8 renders crawl4ai stopped working entirely, and after 25 fetches
-# so did jina-reader, until someone restarted the unit. The two most capable
-# tiers in the ladder switched themselves off and then reported "budget_spent"
-# as though that were a considered decision.
+# Tier budgets refill on a rolling window. An explicitly configured renderer
+# ceiling must not become a process-lifetime cap in a long-running service.
 BUDGET_WINDOW = float(os.environ.get("DETHROTTLED_TIER_BUDGET_WINDOW", "3600"))
 _spent = defaultdict(list)
 _spend_guard = threading.Lock()
@@ -353,28 +333,6 @@ def _pdf_text(data: bytes, limit: int) -> str:
             if total >= limit:
                 break
     return "\n".join(parts)
-
-
-# The reader service fetches the URL itself and hands back markdown. When the
-# target 404s it returns 200 with the ERROR PAGE, and says so in a warning line
-# of its own -- which we were accepting as a successful extraction.
-#
-# Measured: a nonexistent Wikipedia article. `direct` and `tls` both correctly
-# refused it (real HTTP 404); the reader returned a page of navigation chrome
-# carrying "Warning: Target URL returned error 404: Not Found", and the ladder
-# reported quality "ok". An agent trusting that gets a page of menus and no
-# indication anything is wrong.
-#
-# The marker is a fixed format, so this is a precise check rather than a guess
-# about what a "not found" page looks like.
-_READER_ERROR = re.compile(
-    r"Target URL returned error (\d{3})", re.IGNORECASE)
-
-
-def _reader_reported_error(text: str) -> str:
-    """The status the reader says the TARGET returned, or "" if it was fine."""
-    match = _READER_ERROR.search((text or "")[:2000])
-    return match.group(1) if match else ""
 
 
 # Classify the interstitial, then attempt browser recovery within the read policy.
@@ -511,63 +469,6 @@ def _tier_direct_once(url: str, timeout: int, allow_ocr: bool = False, *, get=No
     finally:
         if response is not None and hasattr(response, "close"):
             response.close()
-
-
-# Optional third-party reader. Disabled by default in both standalone Python
-# and Compose; enabling it sends requested URLs to that external service.
-#
-#     DETHROTTLED_ENABLE_JINA=1    enable the external reader
-#     dethrottled --jina          enable it for one server run
-#     dethrottled --no-jina       keep reads on local acquisition tiers
-ENABLE_JINA = os.environ.get("DETHROTTLED_ENABLE_JINA", "0").strip() not in (
-    "0", "false", "no", "off", "")
-JINA_READER_URL = os.environ.get("DETHROTTLED_JINA_READER_URL", "https://r.jina.ai/")
-# 20 rather than 35: no page in the profile needed more than 12.3s in total,
-# across every tier it tried.
-JINA_READER_TIMEOUT = int(os.environ.get("DETHROTTLED_JINA_READER_TIMEOUT", "20"))
-# r.jina.ai is free and rate-limited by IP rather than metered, so there is no
-# quota to exhaust -- but there IS an IP to get blocked. Bounded per run.
-JINA_READER_BUDGET = int(os.environ.get("DETHROTTLED_JINA_READER_BUDGET", "25"))
-
-
-def _tier_jina_reader(url: str) -> tuple:
-    """Read through the explicitly enabled external Jina service.
-
-    It receives the requested URL and returns extracted Markdown, which is
-    handled as text rather than passed through the HTML extractors again.
-    Availability and upstream rate limits are outside this deployment's control.
-    """
-    if not ENABLE_JINA:
-        return {}, "jina_reader_disabled", url
-    if not _spend("jina-reader", JINA_READER_BUDGET):
-        return {}, "jina_budget_spent", url
-    try:
-        response = requests.get(
-            JINA_READER_URL + url,
-            timeout=JINA_READER_TIMEOUT,
-            headers={"User-Agent": USER_AGENT,
-                     "Accept": "text/markdown, text/plain;q=0.9",
-                     "X-Respond-With": "markdown"},
-        )
-        if response.status_code != 200:
-            return {}, "jina_http_%d" % response.status_code, url
-        text = response.text or ""
-
-        # The reader fetched the URL itself. When the TARGET returned an error
-        # it still answers 200, with the error page and a warning line saying
-        # so -- and we were accepting that as prose. Measured on a nonexistent
-        # Wikipedia article: direct and tls both correctly refused the real
-        # 404, and this tier laundered it into quality "ok" with a page of
-        # navigation chrome.
-        upstream = _reader_reported_error(text)
-        if upstream:
-            return {}, "jina_target_http_%s" % upstream, url
-
-        if len(text) > MAX_BYTES:
-            text = text[:MAX_BYTES]
-        return {"text": text}, "", url
-    except Exception as exc:
-        return {}, "jina_" + type(exc).__name__, url
 
 
 def _crawl4ai_payload(payload: dict, url: str) -> tuple:
@@ -708,7 +609,7 @@ _RATE_LIMIT_CODES = (401, 403, 407, 418, 429, 503)
 # ONLY these can be rested, and getting this wrong is expensive.
 #
 # A cooldown is correct for a tier that is a single shared resource: one
-# renderer, one relay, one hosted reader. Refuse once and the next request will
+# shared rendering service. Refuse once and the next request will
 # be refused too, so standing back is right.
 #
 # It is flatly WRONG for `direct` and `tls`, which are not services at all --
@@ -722,7 +623,7 @@ _RATE_LIMIT_CODES = (401, 403, 407, 418, 429, 503)
 # per-host pacing is already handled by the per-domain request gap.
 _RESTABLE_TIERS = frozenset(
     e.strip() for e in os.environ.get(
-        "DETHROTTLED_RESTABLE_TIERS", "crawl4ai,jina-reader").split(",")
+        "DETHROTTLED_RESTABLE_TIERS", "crawl4ai").split(",")
     if e.strip())
 
 _tier_rest = {}                      # tier -> {"until": ts, "strikes": n}
@@ -863,10 +764,8 @@ def _tier_crawl4ai(url: str) -> tuple:
     Optional. With DETHROTTLED_CRAWL4AI_URL unset this never runs and the ladder
     is one tier shorter, which is a smaller stack rather than a broken one.
 
-    This is the tier that makes the external reader service optional: a page
-    whose content does not exist until JavaScript has run is unreadable to a
-    plain fetcher, and a renderer you run yourself is the only way to read it
-    without telling somebody else which URL you wanted.
+    Executes JavaScript when a plain HTTP read produces only a page shell.
+    The configured worker performs rendering rather than a hosted reader.
     """
     if not CRAWL4AI_URL:
         return {}, "crawl4ai_not_configured", url
@@ -1017,26 +916,6 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
                 "title": "", "published": "", "chars": 0, "url": url,
                 "reason": "invalid_url", "cached": False}
 
-    # Order set by measurement, not intuition -- see tests/test_tier_matrix.py,
-    # which forces each tier independently over a fixed URL set and prints the
-    # characters of usable prose each one recovers.
-    # Across 8 pages, forcing each tier independently:
-    #   direct       4 solved,  2.1s avg
-    #   jina-reader  6 solved,  4.8s avg, richest text by a wide margin
-    #   crawl4ai     7 solved,  4.4s avg, the ONLY tier to solve 1 page alone
-    # crawl4ai sits AHEAD of jina-reader, reversing the earlier order. Two
-    # reasons, both from the same eight-page matrix:
-    #
-    #   direct       3 solved, 1978ms
-    #   crawl4ai     7 solved, 4723ms, the ONLY tier to solve one page alone
-    #   jina-reader  6 solved, 4043ms
-    #
-    # crawl4ai solves MORE, and it runs on this box while jina-reader is an
-    # external service that learns every url we look at. Trying the local
-    # renderer first costs a few hundred ms on pages jina would also have
-    # solved, and buys both the extra page and a smaller external footprint.
-    # jina-reader is kept rather than dropped: it still rescues pages crawl4ai
-    # cannot render, and its text is rich when it works.
     tiers = [("direct", lambda: _tier_direct(url, timeout, allow_ocr))]
     # Second, because it is the cheapest thing that can succeed where `direct`
     # failed -- faster than direct in measurement, and it needs no service.
@@ -1048,8 +927,6 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
         tiers.append(("headed", lambda: _tier_headed(url)))
     elif allow_render and _READ_OPTIONS.get().get("headed_fallback"):
         tiers.append(("headed", lambda: _tier_headed(url)))
-    if ENABLE_JINA:
-        tiers.append(("jina-reader", lambda: _tier_jina_reader(url)))
 
     # render_first moves the renderer to the FRONT of the ladder.
     #

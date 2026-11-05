@@ -41,7 +41,6 @@ def isolated(monkeypatch):
     """No domain throttle or cooldown leakage."""
     monkeypatch.setattr(f, "_throttle", lambda domain: None)
     monkeypatch.setattr(f, "CRAWL4AI_URL", "http://renderer.invalid")
-    monkeypatch.setattr(f, "ENABLE_JINA", False)
     f._tier_rest.clear()
     f.reset_tier_stats()
     yield
@@ -181,3 +180,23 @@ def test_a_resting_tier_is_skipped_entirely(monkeypatch):
     result = f.fetch_and_extract("https://example.com/a")
     assert asked == [], "a resting tier must not be asked"
     assert "resting" in result["reason"]
+
+
+def test_exhausted_local_transports_do_not_contact_other_hosts(monkeypatch):
+    """A failed read ends when its configured acquisition paths are exhausted."""
+    from types import SimpleNamespace
+
+    target = "https://example.com/missing"
+    requested = []
+
+    def refused(url, **kwargs):
+        requested.append(url)
+        return SimpleNamespace(status_code=404, url=url, headers={}, close=lambda: None)
+
+    monkeypatch.setattr(f, "_tier_direct", lambda url, timeout, allow_ocr:
+                        f._tier_direct_once(url, timeout, allow_ocr, get=refused))
+    monkeypatch.setattr(f, "ENABLE_TLS", False)
+    monkeypatch.setattr(f, "CRAWL4AI_URL", "")
+    result = f.fetch_and_extract(target, allow_render=False)
+    assert not result["ok"]
+    assert requested == [target]

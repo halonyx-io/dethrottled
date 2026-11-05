@@ -28,7 +28,6 @@ SHELL = ("<html><head><title>Loading</title></head><body><div id='root'></div>"
 def configured(monkeypatch):
     """Everything switched on unless a test says otherwise."""
     monkeypatch.setattr(h.fetcher, "CRAWL4AI_URL", "http://renderer.invalid")
-    monkeypatch.setattr(h.fetcher, "ENABLE_JINA", True)
     monkeypatch.setattr(h.fetcher, "ENABLE_TLS", True)
     yield
 
@@ -88,11 +87,6 @@ def test_unconfigured_renderer_is_off_not_dead(monkeypatch):
     assert h.probe_tier("crawl4ai", "https://x/")["status"] == "OFF"
 
 
-def test_disabled_jina_is_off_not_dead(monkeypatch):
-    monkeypatch.setattr(h.fetcher, "ENABLE_JINA", False)
-    assert h.probe_tier("jina-reader", "https://x/")["status"] == "OFF"
-
-
 def test_a_tier_declining_politely_is_off(monkeypatch):
     """A resting or budget-exhausted tier is not a fault, and the detail should
     send the reader to the setting rather than to a debugger."""
@@ -122,7 +116,7 @@ def src(status, name="web"):
 def test_a_minimal_install_is_healthy():
     """One tier working and one search source working, everything else OFF.
     This is a plain `pip install` and it must exit 0."""
-    code, summary = h.verdict([ok_tier(), off_tier(), off_tier("jina-reader")],
+    code, summary = h.verdict([ok_tier(), off_tier(), off_tier("tls")],
                               [src("OK"), src("OFF", "searxng")])
     assert code == 0, summary
 

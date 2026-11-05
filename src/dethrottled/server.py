@@ -535,15 +535,12 @@ def v2_capabilities():
             ("searxng-multi-engine", bool(fs.SEARXNG_URL)),
             ("bing-news-rss", True),
             ("google-news-rss", True)) if on],
-        # In ladder order, and only what is actually switched on. Listing
-        # jina-reader here while DETHROTTLED_ENABLE_JINA=0 was a lie of exactly
-        # the kind /v2/status exists to avoid.
+        # In ladder order, and only what is actually configured.
         "fetch_tiers": [name for name, on in (
             ("direct", True),
             ("tls", fetcher.ENABLE_TLS),
             ("crawl4ai", bool(fetcher.CRAWL4AI_URL)),
             ("headed", bool(fs.BROWSER_SEARCH_URL)),
-            ("jina-reader", fetcher.ENABLE_JINA),
         ) if on],
         # Browser MANIPULATION, as distinct from the fetch ladder above. /fetch
         # reads a page; /drive operates one. Present only when the private
@@ -649,9 +646,9 @@ def v2_capabilities():
         # Every tier here is free and keyless, so a call costs a caller nothing
         # and no budget can be exhausted on their behalf.
         "metered_tiers": False,
-        # The external reader is the only tier that would send a URL to a third
-        # party, and it is off unless explicitly enabled.
-        "leaves_network": bool(fetcher.ENABLE_JINA),
+        # No fetch tier forwards requested URLs to a hosted-reader service.
+        # Target websites are still contacted by the configured transports.
+        "leaves_network": False,
         # What `fresh` bypasses.
         "cache_ttl_seconds": 6 * 3600,
 
@@ -1386,10 +1383,7 @@ def corpus_stats():
 
 @app.get("/stats")
 def stats():
-    # Tier budgets are surfaced because their exhaustion used to be invisible:
-    # they were lifetime counters that nothing reset, so crawl4ai stopped
-    # rendering after 8 pages and jina after 25, silently, for the rest of the
-    # process. They refill hourly now, and you can see how much is spent.
+    # Surface renderer admission, rolling budgets and cooldown state.
     return {"renderer_admission": fetcher._RENDER_QUEUE.stats(),
             "headed_admission": fetcher._HEADED_QUEUE.stats(),
             "cache": cache().stats(), "version": VERSION,
@@ -1399,7 +1393,6 @@ def stats():
             "tiers": fetcher.tier_stats(),
             "tier_budget_used": fetcher.budget_state(),
             "tier_budgets": {"crawl4ai": fetcher.CRAWL4AI_BUDGET,
-                             "jina-reader": fetcher.JINA_READER_BUDGET,
                              "window_seconds": fetcher.BUDGET_WINDOW}}
 
 
@@ -1412,15 +1405,7 @@ def main():
         help="loopback by default; see docs/OPERATIONS.md before changing it")
     parser.add_argument("--port", type=int, default=int(os.environ.get(
         "DETHROTTLED_PORT", "8787")))
-    jina = parser.add_mutually_exclusive_group()
-    jina.add_argument("--jina", dest="jina", action="store_true", default=None,
-                      help="allow the external r.jina.ai reader tier")
-    jina.add_argument("--no-jina", dest="jina", action="store_false",
-                      help="never contact r.jina.ai; local tiers only")
     args = parser.parse_args()
-    if args.jina is not None:
-        # Set before anything imports the value off the module.
-        fetcher.ENABLE_JINA = args.jina
     uvicorn.run(app, host=args.host, port=args.port, log_level="warning")
 
 

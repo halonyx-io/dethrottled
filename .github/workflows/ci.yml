@@ -86,7 +86,6 @@ jobs:
         env:
           DETHROTTLED_SEARXNG_URL: ""
           DETHROTTLED_CRAWL4AI_URL: ""
-          DETHROTTLED_ENABLE_JINA: "0"
         run: |
           python -m dethrottled.server --port 8787 &
           for i in $(seq 1 30); do

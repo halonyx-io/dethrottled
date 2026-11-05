@@ -33,10 +33,9 @@ def test_per_host_tiers_are_never_rested(tier):
     assert tier not in f.tier_rest_state()
 
 
-@pytest.mark.parametrize("tier", ["crawl4ai", "jina-reader"])
+@pytest.mark.parametrize("tier", ["crawl4ai"])
 def test_shared_service_tiers_do_rest(tier):
-    """One renderer, one hosted reader. Refuse once and the next request
-    will be refused too, so standing back is correct."""
+    """A shared renderer's refusal warrants a cooldown before another request."""
     f.tier_refused(tier, "%s_http_429" % tier)
     assert f.tier_resting(tier) is True
     assert tier in f.tier_rest_state()

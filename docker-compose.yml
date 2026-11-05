@@ -17,10 +17,6 @@
 #
 # Add --profile media, --profile layout, or --profile full for local inference.
 #
-# Crawl4AI renders JavaScript locally. The optional external Jina reader is
-# disabled by default in both Python and Compose; enable it explicitly with
-# DETHROTTLED_ENABLE_JINA=1 if sending URLs to that service is appropriate.
-
 # The two upstream images are pinned by tag AND digest rather than :latest, so
 # this file describes one stack rather than whatever upstream shipped today.
 # See the comments at each image for how to move them forward.
@@ -58,7 +54,6 @@ services:
       DETHROTTLED_CRAWL4AI_URL: http://crawl4ai:11235
       DETHROTTLED_CRAWL4AI_API: crawl
       DETHROTTLED_CRAWL4AI_TOKEN: "${CRAWL4AI_TOKEN:-dethrottled-compose-local}"
-      DETHROTTLED_ENABLE_JINA: "${DETHROTTLED_ENABLE_JINA:-0}"
       DETHROTTLED_AUTO_WORKERS: "${DETHROTTLED_AUTO_WORKERS:-1}"
       DETHROTTLED_DATA_DIR: /data
       DETHROTTLED_LAYOUT_WORKER_URL: "${DETHROTTLED_LAYOUT_WORKER_URL:-}"
@@ -70,7 +65,7 @@ services:
       DETHROTTLED_CRAWL4AI_BUDGET: "${DETHROTTLED_CRAWL4AI_BUDGET:--1}"
       DETHROTTLED_RENDER_CONCURRENCY: "${DETHROTTLED_RENDER_CONCURRENCY:-2}"
       DETHROTTLED_MEDIA_WORKER_URL: "${DETHROTTLED_MEDIA_WORKER_URL:-}"
-      DETHROTTLED_USER_AGENT: "${DETHROTTLED_USER_AGENT:-dethrottled/1.4.2 (automated fetcher)}"
+      DETHROTTLED_USER_AGENT: "${DETHROTTLED_USER_AGENT:-dethrottled/1.4.3 (automated fetcher)}"
       DETHROTTLED_EXTRACT_CACHE_CHARS: "${DETHROTTLED_EXTRACT_CACHE_CHARS:-1000000}"
       # MODEL_DIR is deliberately NOT set here. The image bakes the weights
       # into /opt/dethrottled/models, and pointing this at /data/models would

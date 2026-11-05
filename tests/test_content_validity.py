@@ -62,7 +62,6 @@ def test_structured_documents_are_not_classified_as_ui():
 @pytest.fixture
 def tiers(monkeypatch):
     monkeypatch.setattr(f, "ENABLE_TLS", False)
-    monkeypatch.setattr(f, "ENABLE_JINA", False)
     monkeypatch.setattr(f, "CRAWL4AI_URL", "http://renderer")
     monkeypatch.setattr(f, "CRAWL4AI_BUDGET", -1)
     monkeypatch.setenv("DETHROTTLED_BROWSER_SEARCH_URL", "http://browser")

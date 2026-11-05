@@ -64,16 +64,6 @@ def s_curl_cffi(url, impersonate="chrome"):
     return {"html": response.text}, "", str(response.url)
 
 
-def s_jina(url):
-    """The external reader. Free, keyless, and it sees every URL you send."""
-    saved = f.ENABLE_JINA
-    f.ENABLE_JINA = True
-    try:
-        return f._tier_jina_reader(url)
-    finally:
-        f.ENABLE_JINA = saved
-
-
 def s_crawl4ai(url):
     """Headless Chromium, if one is configured."""
     return f._tier_crawl4ai(url)
@@ -82,7 +72,6 @@ def s_crawl4ai(url):
 STRATEGIES = {
     "direct": s_direct,
     "curl_cffi": s_curl_cffi,
-    "jina": s_jina,
     "crawl4ai": s_crawl4ai,
 }
 
@@ -105,7 +94,7 @@ def prose(payload, reason, final, url):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--strategies", default="direct,curl_cffi,jina")
+    parser.add_argument("--strategies", default="direct,curl_cffi")
     parser.add_argument("--impersonate", default="chrome")
     args = parser.parse_args(argv)
     names = [n.strip() for n in args.strategies.split(",") if n.strip()]
