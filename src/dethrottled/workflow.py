@@ -10,6 +10,9 @@ RESEARCH_CANDIDATE_LIMIT = 24
 
 INSTRUCTIONS = """Dethrottled discovers and reads sources.
 Prioritize grounded coverage and accuracy.
+policy_blocked=adblock or adblock_blocked means deliberate content filtering. Do not retry
+through other tiers to override it. Report the refusal or choose another relevant source.
+Filtering status, list availability and update errors are in v2/status and stats.
 For discovery start with profile=web, limit=15, ranking=source. DDG Lite/HTML/TLS/browser
 share a hard ten-result budget, with no automatic search pagination. Supplementary
 engines contribute at most three URLs each; the complete menu is at most fifteen.
@@ -21,6 +24,9 @@ Alternative DDG acquisition paths are one provider family, not independent votes
 Discovery readiness uses recent searches: unknown/stale does not mean down. Do not poll
 status to trigger upstream probes. Diagnostic search outcome/degraded distinguish partial
 results, trustworthy empty responses, unavailable providers and indeterminate outcomes.
+For those diagnostics use REST /v2/search or MCP search(diagnostics=true). Legacy status=ok
+only means results exist; it does not mean discovery was healthy. Research queries also
+carry outcome/degraded. Keep useful partial results and inspect attempts before retrying.
 Research uses the same per-query search budgets, then admits at most 24 unique
 candidates across facets. It reads ten sources by default, up to twenty when requested,
 with at most four replacement candidates and 120000 characters per source. Drive snapshots
@@ -34,6 +40,12 @@ transport/format/OCR recovery and bounded content recovery. When configured, Out
 MSG and XLSB use the local format fallback; scanned PDF tables escalate to OCR layout.
 Compose includes the format reader and discovers started speech/layout workers automatically.
 An unready model worker with initialization=first_use_download downloads weights on first use.
+Corpus stats use REST /corpus/stats or MCP corpus_stats; Corpus v2 is a storage schema,
+not a /v2/corpus URL prefix. Capabilities corpus.endpoints advertises the actual routes.
+Schema-2 stats lifetimes distinguishes search/extraction caches, retained documents and corpus
+retention. Inspect document_available and corpus_expires_at on hits: an unavailable
+full-document handle does not mean its passage was deleted. Lookup-only reads do not renew
+expiry; a fetch that writes documents or re-admits evidence can renew those clocks.
 Corpus combines English and multilingual indexes. Standard corpus support requires model/source
 agreement or literal query anchors. If empty or incomplete, support=broad exposes warned,
 unconfirmed candidates, including cross-language matches. Inspect their evidence; neither
@@ -117,6 +129,13 @@ available for deliberate shortcuts and stronger acquisition when the task justif
 
 def guidance(row, *, offset=0, focused=False, rendered_allowed=True):
     """Derive bounded suggestions from observed metadata, never inferred answers."""
+    if row.get('policy_blocked') == 'adblock':
+        return {'state': 'policy_blocked', 'answer_verified': False, 'source_complete': False,
+                'response_truncated': False, 'source_bytes_retained': False,
+                'source_bytes_reacquirable': False, 'next_actions': [],
+                'instruction': 'HaGeZi Multi PRO blocked this domain. Report the policy refusal '
+                               'or choose another source; transport/browser retries '
+                               'cannot override it.'}
     actions = []
     url, doc = row.get("url", ""), row.get("document_id")
     extraction = row.get("extraction") or {}

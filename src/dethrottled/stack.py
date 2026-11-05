@@ -58,6 +58,9 @@ def prerequisites():
 def clean_environment(port):
     env = {k: v for k, v in os.environ.items() if not k.startswith(
         ('DETHROTTLED_', 'COMPOSE_', 'CRAWL4AI_'))}
+    # One documented operator switch; continue excluding keys and parent Compose state.
+    if 'DETHROTTLED_ADBLOCK' in os.environ:
+        env['DETHROTTLED_ADBLOCK'] = os.environ['DETHROTTLED_ADBLOCK']
     env.update(DETHROTTLED_PORT=str(port), DETHROTTLED_BIND='127.0.0.1')
     return env
 

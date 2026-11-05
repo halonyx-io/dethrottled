@@ -8,6 +8,11 @@ search, rerank the default web menu or acquire missing documents. Ordinary
 search uses it only when the caller explicitly requests corpus candidates.
 Both that path and `/corpus/search` use the same configured retriever.
 
+Corpus v2 names the storage schema. The HTTP routes remain `/corpus/search` and
+`/corpus/stats`; there is no `/v2/corpus/stats` route. MCP uses `corpus_stats`.
+Dethrottled 1.6.0 advertises both canonical URLs in
+`/v2/capabilities` → `corpus.endpoints`.
+
 ## Four separate forms of coverage
 
 1. **Harvest:** admit the complete eligible extraction, rather than its first
@@ -36,6 +41,22 @@ page markers provide page references. Generic headings provide section context,
 but chunks can span adjacent sections. OCR methods and quality warnings are
 preserved in provenance; their presence does not establish factual accuracy.
 
+## Retained extraction completeness
+
+New admissions preserve a bounded `provenance.extraction.completeness` summary:
+status, assessment, sample/missing counts, selection change and up to eight
+extractor names. Strings are capped at 64 characters and counts must be
+nonnegative integers no larger than one million. Sample text, anchors and
+unrecognized payloads are excluded; metadata is stored once per source.
+
+This describes extraction uncertainty, separately from corpus indexing coverage,
+`source_partial` and answer verification. `unverified` never means complete.
+Public cross-caller reuse preserves the summary and current document handle.
+There is no database schema change or automatic re-fetch/backfill: diagnostics
+already discarded by older admissions remain unknown until evidence is admitted
+again. The existing versioning policy includes bounded extraction diagnostics;
+changed diagnostics can therefore require an ordinary reindex.
+
 ## Lifetimes are independent
 
 | Component | Default lifetime |
@@ -45,10 +66,39 @@ preserved in provenance; their presence does not establish factual accuracy.
 | Corpus passages and embeddings | **90 days** since their source was last admitted |
 | Retained document handles | Existing seven-day expiry and 200 MB shared-store policy |
 
+In 1.6.0, the `lifetimes` object from `/corpus/stats` reports default cache
+TTLs, actual retained-document TTL/size policy and configured corpus retention.
+Cache age controls can shorten reuse for an individual request. These are four
+independent clocks; lookup-only reads do not renew them. Cache writes renew cache entries,
+document writes renew retained documents, and eligible corpus admissions renew
+the corpus clock. An unchanged admission can renew without re-embedding. A
+`fetch` request can write a retained document and re-admit eligible corpus
+evidence even when it reused cached extraction. That can renew the document and
+corpus clocks without proving a fresh upstream acquisition; inspect acquisition
+timestamps separately.
+
 An expired or evicted document handle does not silently delete its still-valid
 corpus passages. Retrieval reports the unavailable handle; the stored passage
 and offsets remain usable. Corpus coverage counters are indexing snapshots;
 `retained_documents.current_chars` reports current full-document availability.
+
+## Diagnosing apparently missing evidence
+
+- A search/extraction cache miss means a new acquisition is needed; it does not
+  delete corpus passages. Inspect `retrieved_at`, `cache_age_seconds` and
+  `cache_expires_at` on acquisition responses.
+- A missing document handle can reflect its seven-day expiry or earlier capacity
+  eviction. Inspect `document_expires_at`, hit `document_available`, and
+  `index.retained_documents` in corpus stats. The availability boolean does not
+  claim which of those causes occurred.
+- A passage remains usable until `corpus_expires_at`, subject to corpus capacity
+  and explicit deletion/maintenance policies. Expired sources are excluded from
+  retrieval before background deletion catches up. Corpus queries do not reset its clock.
+- An empty semantic query can also reflect model availability, query/support
+  filters or indexing state. Inspect jobs/errors and try relevant lexical anchors;
+  absence from one query is not proof that stored data was deleted.
+
+No expiry policy was unified or lengthened to mask these different states.
 
 ## Retrieval controls
 

@@ -96,7 +96,12 @@ No automatic DDG pagination fills that menu. Fewer usable results is normal.
 REST also retains `num_results`/`max_items` compatibility fields; MCP does not
 accept every REST alias. A neural `rerank=true` request is unsupported. Do not
 invent an XGBoost, model-ranking or pagination parameter. Upstream result lists
-and provider agreement are not verified page evidence.
+and provider agreement are not verified page evidence. Legacy `status="ok"`
+means a nonempty menu, not healthy providers. MCP `isError=false` means the tool
+ran; decode the diagnostic JSON envelope and inspect `outcome`/`degraded`.
+Research reports these diagnostics separately for each query. Corpus hits retain
+extraction uncertainty at `provenance.extraction.completeness`; distinguish it
+from indexing coverage and answer verification.
 
 Example HTTP request body for a focused specialist menu:
 
@@ -278,3 +283,11 @@ current evidence is needed. Cached results and timer expiry do not prove recover
 completeness. Missing samples request inspection; they do not justify blindly
 repeating browser actions. Preserve warnings and inspect relevant source HTML or
 another representation when the missing evidence matters.
+
+## Domain-filter refusals
+
+With [native adblock filtering](ADBLOCK.md), `policy_blocked=adblock` and
+`adblock_blocked:` identify a filtering decision. Report it or choose another
+source; retrying other tiers cannot override it. `/v2/status`, capabilities and
+`/stats` expose list availability and errors. Enabled without valid rules permits
+acquisition while retaining existing public-target security.

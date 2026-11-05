@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "dethrottled"
-version = "1.5.2"
+version = "1.6.0"
 description = "Zero-API web search, fetch and extraction. No keys, no quota, no metered pool."
 readme = "README.md"
 license = { text = "MIT" }
@@ -100,6 +100,9 @@ dev = ["pytest>=8.0", "httpx>=0.27", "ruff>=0.4"]
 [project.scripts]
 dethrottled = "dethrottled.cli:main"
 dethrottled-health = "dethrottled.health:main"
+
+[tool.setuptools.package-data]
+dethrottled = ["licenses/*.txt"]
 
 [tool.setuptools.packages.find]
 where = ["src"]

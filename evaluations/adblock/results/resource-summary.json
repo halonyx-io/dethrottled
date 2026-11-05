@@ -1,0 +1,54 @@
+{
+  "x86_64": {
+    "off": {
+      "n": 14,
+      "median_cpu_ms": 400.3865000000005,
+      "median_elapsed_ms": 293.6367513611913,
+      "median_working_set_mib": 362.7578125,
+      "rule_anon_mib": 0.0,
+      "parse_cpu_ms": 0.0,
+      "parse_wall_ms": 0.002764863893389702
+    },
+    "on": {
+      "n": 14,
+      "median_cpu_ms": 416.2415000000003,
+      "median_elapsed_ms": 311.1524342093617,
+      "median_working_set_mib": 391.67578125,
+      "rule_anon_mib": 22.66796875,
+      "parse_cpu_ms": 269.951,
+      "parse_wall_ms": 269.7879916522652
+    },
+    "delta": {
+      "median_cpu_ms": 15.85499999999979,
+      "median_elapsed_ms": 17.5156828481704,
+      "median_working_set_mib": 28.91796875
+    },
+    "cpu_delta_percent": 3.9599237237019156
+  },
+  "arm64": {
+    "off": {
+      "n": 14,
+      "median_cpu_ms": 1227.71,
+      "median_elapsed_ms": 485.7116665225476,
+      "median_working_set_mib": 369.154296875,
+      "rule_anon_mib": 0.0,
+      "parse_cpu_ms": 0.9785000000000537,
+      "parse_wall_ms": 0.005208421498537064
+    },
+    "on": {
+      "n": 14,
+      "median_cpu_ms": 1218.3215,
+      "median_elapsed_ms": 485.33460893668234,
+      "median_working_set_mib": 395.169921875,
+      "rule_anon_mib": 22.671875,
+      "parse_cpu_ms": 390.4245000000001,
+      "parse_wall_ms": 391.9849219964817
+    },
+    "delta": {
+      "median_cpu_ms": -9.388500000000022,
+      "median_elapsed_ms": -0.37705758586525917,
+      "median_working_set_mib": 26.015625
+    },
+    "cpu_delta_percent": -0.7647164232595663
+  }
+}

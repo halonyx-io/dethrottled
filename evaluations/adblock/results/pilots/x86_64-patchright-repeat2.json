@@ -1,0 +1,230 @@
+{
+  "backend": "patchright",
+  "architecture": "x86_64",
+  "list_sha256": "19a3db5288c7067d81a641baac44a922303e7db570194f6949fbf04fce618e78",
+  "rules": 239581,
+  "parse_ms": 242.3962512984872,
+  "cases": [
+    {
+      "enabled": false,
+      "repetition": 0,
+      "elapsed_ms": 472.33731020241976,
+      "ok": true,
+      "fact_hits": 4,
+      "facts": 4,
+      "traffic": {
+        "requests": 14,
+        "body_bytes": 157099,
+        "tracking_requests": 11
+      },
+      "access": {
+        "status": "unknown",
+        "reason": "no_clear_content_signal",
+        "answer_verified": false,
+        "source_complete": false
+      }
+    },
+    {
+      "enabled": false,
+      "repetition": 1,
+      "elapsed_ms": 301.9675547257066,
+      "ok": true,
+      "fact_hits": 4,
+      "facts": 4,
+      "traffic": {
+        "requests": 14,
+        "body_bytes": 157099,
+        "tracking_requests": 11
+      },
+      "access": {
+        "status": "unknown",
+        "reason": "no_clear_content_signal",
+        "answer_verified": false,
+        "source_complete": false
+      }
+    },
+    {
+      "enabled": false,
+      "repetition": 2,
+      "elapsed_ms": 304.9225630238652,
+      "ok": true,
+      "fact_hits": 4,
+      "facts": 4,
+      "traffic": {
+        "requests": 14,
+        "body_bytes": 157099,
+        "tracking_requests": 11
+      },
+      "access": {
+        "status": "unknown",
+        "reason": "no_clear_content_signal",
+        "answer_verified": false,
+        "source_complete": false
+      }
+    },
+    {
+      "enabled": false,
+      "kind": "redirect",
+      "traffic": {
+        "requests": 2,
+        "body_bytes": 8192,
+        "tracking_requests": 1
+      },
+      "status": 200
+    },
+    {
+      "enabled": false,
+      "kind": "popup",
+      "traffic": {
+        "requests": 15,
+        "body_bytes": 165291,
+        "tracking_requests": 12
+      },
+      "popup_url": "http://a.google-analytics.com:38125/popup"
+    },
+    {
+      "enabled": false,
+      "kind": "download",
+      "traffic": {
+        "requests": 15,
+        "body_bytes": 157148,
+        "tracking_requests": 11
+      },
+      "fact_retained": true
+    },
+    {
+      "enabled": false,
+      "kind": "public_target",
+      "traffic": {},
+      "error": "Error:Page.goto: net::ERR_BLOCKED_BY_CLIENT at http://127.0.0.1:38125/page\nCall log:\n  - navigating to \"http://127.0.0.1:38125/page\", waiting until \"load\"\n"
+    },
+    {
+      "enabled": true,
+      "repetition": 0,
+      "elapsed_ms": 391.0438222810626,
+      "ok": true,
+      "fact_hits": 4,
+      "facts": 4,
+      "traffic": {
+        "requests": 3,
+        "body_bytes": 1419
+      },
+      "access": {
+        "status": "unknown",
+        "reason": "no_clear_content_signal",
+        "answer_verified": false,
+        "source_complete": false
+      }
+    },
+    {
+      "enabled": true,
+      "repetition": 1,
+      "elapsed_ms": 340.96807427704334,
+      "ok": true,
+      "fact_hits": 4,
+      "facts": 4,
+      "traffic": {
+        "requests": 3,
+        "body_bytes": 1419
+      },
+      "access": {
+        "status": "unknown",
+        "reason": "no_clear_content_signal",
+        "answer_verified": false,
+        "source_complete": false
+      }
+    },
+    {
+      "enabled": true,
+      "repetition": 2,
+      "elapsed_ms": 303.35703724995255,
+      "ok": true,
+      "fact_hits": 4,
+      "facts": 4,
+      "traffic": {
+        "requests": 3,
+        "body_bytes": 1419
+      },
+      "access": {
+        "status": "unknown",
+        "reason": "no_clear_content_signal",
+        "answer_verified": false,
+        "source_complete": false
+      }
+    },
+    {
+      "enabled": true,
+      "kind": "redirect",
+      "traffic": {
+        "requests": 1,
+        "body_bytes": 0
+      },
+      "status": 451
+    },
+    {
+      "enabled": true,
+      "kind": "popup",
+      "traffic": {
+        "requests": 4,
+        "body_bytes": 9611,
+        "tracking_requests": 1
+      },
+      "popup_url": "http://a.google-analytics.com:38125/popup"
+    },
+    {
+      "enabled": true,
+      "kind": "download",
+      "traffic": {
+        "requests": 4,
+        "body_bytes": 1468
+      },
+      "fact_retained": true
+    },
+    {
+      "enabled": true,
+      "kind": "public_target",
+      "traffic": {},
+      "error": "Error:Page.goto: net::ERR_BLOCKED_BY_CLIENT at http://127.0.0.1:38125/page\nCall log:\n  - navigating to \"http://127.0.0.1:38125/page\", waiting until \"load\"\n"
+    }
+  ],
+  "limitations": [
+    "Local simulated challenge script, not proof of passing a real hostile challenge",
+    "Traffic is origin response-body bytes, excluding transport overhead",
+    "RSS is fresh harness plus Python/extractor libraries; browser child RSS reported separately"
+  ],
+  "blocked": {
+    "total": 57,
+    "browser": 57
+  },
+  "maxrss_kib": 110624,
+  "browser_children_maxrss_kib": 207256,
+  "normal_cases_passed": true,
+  "normal_summary": {
+    "False": {
+      "median_ms": 304.9225630238652,
+      "body_bytes": [
+        157099,
+        157099,
+        157099
+      ],
+      "tracking_requests": [
+        11,
+        11,
+        11
+      ]
+    },
+    "True": {
+      "median_ms": 340.96807427704334,
+      "body_bytes": [
+        1419,
+        1419,
+        1419
+      ],
+      "tracking_requests": [
+        0,
+        0,
+        0
+      ]
+    }
+  }
+}

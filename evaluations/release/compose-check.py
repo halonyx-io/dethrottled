@@ -58,7 +58,7 @@ try:
             (
                 "dethrottled-browser-search:one-zero-candidate",
                 "browser-search/Dockerfile",
-                "browser-search",
+                ".",
             ),
             ("dethrottled-formats:one-zero-candidate", "format-worker/Dockerfile", "."),
         ]:

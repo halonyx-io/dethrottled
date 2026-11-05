@@ -1,0 +1,33 @@
+{
+  "date": "2026-11-05",
+  "based_on": "1.5.2 plus unpublished local candidate",
+  "publication_or_deployment": false,
+  "live_route_probe": {
+    "/v2/corpus/stats": {
+      "http_status": 404
+    },
+    "/corpus/stats": {
+      "http_status": 200,
+      "ok": true,
+      "schema": 2,
+      "retention_days": 90
+    }
+  },
+  "expiry_policy_changed": false,
+  "native_suites": {
+    "x86_64": "81 passed, 4 warnings in 23.28s",
+    "arm64": "81 passed, 4 warnings in 13.90s"
+  },
+  "final_diagnostics": {
+    "x86_64": "3 passed, 14 deselected, 4 warnings in 0.97s",
+    "arm64": "3 passed, 14 deselected, 4 warnings in 1.16s"
+  },
+  "baseline_lifecycle_tests": "3 passed, 30 deselected in 0.14s",
+  "before_additive_diagnostics": "2 failed, 14 deselected, 4 warnings in 0.42s",
+  "source_sha256": {
+    "src/dethrottled/server.py": "cda69f471991dec3e910c375a8fb519322b0b9a2c0137480c237390c3d8afa0a",
+    "src/dethrottled/workflow.py": "c965f8fff0afaf7bc0c07fa6335bf09a44bcf9cb741138e0e9eec6937bf86152",
+    "tests/test_contract.py": "61d7b139501a41fd66c7b85168354a8e5729c78bd57b242fb30a050512a9d138",
+    "tests/test_corpus_v2_operations.py": "b33a24c6f5a8921ea5213e198053901ae3c2f6bd0d028983470c5e1b79d03b60"
+  }
+}

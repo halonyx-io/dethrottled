@@ -2,8 +2,7 @@
 
 from pathlib import PurePosixPath
 
-import requests
-
+from . import netfilter as requests
 from .workers import endpoint
 
 MIMES = {

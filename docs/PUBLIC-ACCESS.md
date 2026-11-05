@@ -211,3 +211,10 @@ edge WAF can reject requests before either adapter; investigate that separately
 from backend or plugin behaviour.
 
 [Documentation home](README.md) · [Agent guide](AGENT-UPGRADES.md) · [API](API.md) · [Evidence](EVIDENCE.md)
+
+## Domain filtering
+
+Native adblock filtering applies in the backend for both REST and MCP clients;
+it adds no public per-request override. A refused fetch reports `policy_blocked`
+and stops automatic recovery. Operators should inspect backend `/v2/status` for
+list availability and worker observations. See [native filtering](ADBLOCK.md).

@@ -5,7 +5,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
 
 WORKDIR /app
-COPY requirements.txt ./
+COPY browser-search/requirements.txt ./
 RUN python -m pip install --no-cache-dir --upgrade pip \
     && pip install --no-cache-dir -r requirements.txt \
     && apt-get update \
@@ -18,8 +18,12 @@ RUN python -m pip install --no-cache-dir --upgrade pip \
     && chmod -R a+rX /ms-playwright \
     && mkdir /state && chown browsersearch:browsersearch /state
 
-COPY service.py recovery.py verify_search.py ./
-COPY start.sh ./
+COPY browser-search/service.py browser-search/recovery.py browser-search/verify_search.py ./
+COPY src/dethrottled/licenses/ ./licenses/
+COPY src/dethrottled/adblock.py ./dethrottled_adblock.py
+COPY src/dethrottled/adblock_browser.py ./dethrottled_adblock_browser.py
+COPY src/dethrottled/adblock_proxy.py ./dethrottled_adblock_proxy.py
+COPY browser-search/start.sh ./
 USER browsersearch
 EXPOSE 19888
 HEALTHCHECK --interval=20s --timeout=5s --start-period=30s --retries=3 \

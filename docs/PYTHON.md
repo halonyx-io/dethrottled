@@ -41,7 +41,11 @@ is `dethrottled-managed`; API publication stays on loopback. Managed image tags 
 separate from Git-checkout production images. Project ownership is checked before
 changing existing containers. The extracted context and project settings live under
 `~/.local/share/dethrottled/stacks` (LOCALAPPDATA on Windows); override with
-`DETHROTTLED_STACK_HOME`. Commands ignore unrelated parent Compose/application secrets.
+`DETHROTTLED_STACK_HOME`. Commands ignore unrelated parent Compose/application secrets. The documented
+`DETHROTTLED_ADBLOCK` switch is passed to all four network-owning workers.
+Keep your chosen value exported in the environment used for subsequent `stack up`
+commands; an invocation without it uses the default ON. Running containers retain
+their selected setting across ordinary restarts.
 `stack down` keeps data volumes and downloaded models. Profile changes add/update
 services; use down then up with a smaller profile to remove previously enabled
 optional services while retaining their caches. A package upgrade supplies a
@@ -108,3 +112,10 @@ transcription. Direct media-file extraction can use the configured speech worker
 kinds; broader format dispatch includes other readers beyond that helper.
 
 [Documentation home](README.md) · [Agent guide](AGENT-UPGRADES.md) · [API](API.md) · [Evidence](EVIDENCE.md)
+
+## Native filtering
+
+Dethrottled 1.6.0 supports `DETHROTTLED_ADBLOCK=1` (default) or `0` in standalone
+Python and managed workers. Installing/importing the package does not download
+the list; acquisition or server startup starts background maintenance. The
+managed stack shares a persistent list cache. See [native filtering](ADBLOCK.md).

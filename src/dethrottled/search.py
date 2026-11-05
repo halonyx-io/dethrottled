@@ -25,10 +25,10 @@ from pathlib import Path
 from urllib.parse import parse_qs, quote_plus, urlparse
 
 import feedparser
-import requests
 
+from . import adblock, providers, search_diagnostics
+from . import netfilter as requests
 from . import paths as _paths
-from . import providers, search_diagnostics
 from .content import constrained
 from .discovery import SOURCE_PROFILES, tls_search
 from .fetch import USER_AGENT
@@ -356,7 +356,7 @@ def searxng(query: str, *, max_items: int = 8, categories: str = "",
     except Exception as exc:
         rows = []
         if diagnostics is not None:
-            diagnostics.update(status="failed", reason=type(exc).__name__)
+            diagnostics.update(status="failed", reason=adblock.error_reason(exc))
 
     rows = bounded_results(rows, max_items, primary_limit=SUPPLEMENT_SEARCH_LIMIT)
     if diagnostics is not None:
@@ -401,7 +401,7 @@ def bing_news(query: str, *, max_items: int = 8, timeout: int = 25, cache=None,
     except Exception as exc:
         rows = []
         if diagnostics is not None:
-            diagnostics.update(status="failed", reason=type(exc).__name__)
+            diagnostics.update(status="failed", reason=adblock.error_reason(exc))
     if cache is not None and rows:
         cache.put("search", "bnews", query, max_items, value=rows)
     if diagnostics is not None:
@@ -724,6 +724,7 @@ def _acquire_web(query: str, *, max_items: int = 8, cache=None,
             return bounded_results(merged, max_items)
     try:
         from ddgs import DDGS
+        requests.install_ddgs()
     except ImportError:
         if diagnostics is not None:
             diagnostics.update(status="unavailable", reason="DDGS_not_installed")
@@ -753,7 +754,7 @@ def _acquire_web(query: str, *, max_items: int = 8, cache=None,
         except Exception as exc:
             _record_failure(engine, type(exc).__name__, namespace="web")
             ddgs_attempts.append({"engine": engine, "status": "failed", "count": 0,
-                                  "reason": type(exc).__name__})
+                                  "reason": adblock.error_reason(exc)})
             continue
         got = []
         for row in found or []:
@@ -939,7 +940,7 @@ def search(query: str, *, max_items: int = SEARCH_MENU_LIMIT, categories: str = 
             if report is None:
                 report = source_reports["providers"].get(name)
             if report is not None:
-                report.update(status="failed", reason=type(exc).__name__)
+                report.update(status="failed", reason=adblock.error_reason(exc))
     if "web" in completed:
         add(completed["web"], "web")
     # Primary order stays intact. Alternate small supplements rather than

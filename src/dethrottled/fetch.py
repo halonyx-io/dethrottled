@@ -28,9 +28,8 @@ from itertools import chain
 from types import MappingProxyType
 from urllib.parse import urljoin, urlparse
 
-import requests
-
-from . import __version__, workers
+from . import __version__, adblock, workers
+from . import netfilter as requests
 from .challenges import classify as challenge_kind
 from .content import decode_html, page_details, short_text
 from .urls import (
@@ -42,10 +41,12 @@ _READ_OPTIONS = ContextVar("read_options", default=MappingProxyType({}))
 
 def _get_with_policy(get, url, **kwargs):
     """Validate every redirect target for reads made through a public adapter."""
+    from . import adblock
     if not _READ_OPTIONS.get().get("public_only"):
-        return get(url, **kwargs)
+        return requests.get_using(get, url, **kwargs)
     from .research import public_url
     for _ in range(6):
+        adblock.check(url)
         if not public_url(url):
             raise ValueError("public_target_required")
         response = get(url, **dict(kwargs, allow_redirects=False))
@@ -465,7 +466,7 @@ def _tier_direct_once(url: str, timeout: int, allow_ocr: bool = False, *, get=No
         return ({"html": html, "clipped": clipped},
                 "html_truncated" if clipped else "", str(response.url))
     except Exception as exc:
-        return {}, type(exc).__name__, url
+        return {}, str(exc) if isinstance(exc, adblock.AdblockBlocked) else type(exc).__name__, url
     finally:
         if response is not None and hasattr(response, "close"):
             response.close()
@@ -510,6 +511,9 @@ def _crawl4ai_target_error(payload: dict) -> str:
     contain enough prose to pass our extraction threshold. On redirects, the
     final response status takes precedence over the original response status.
     """
+    headers = payload.get("response_headers") or {}
+    if any(k.lower() == "x-dethrottled-blocked" and v == "adblock" for k, v in headers.items()):
+        return "adblock_blocked:browser_navigation"
     status = payload.get("redirected_status_code")
     if status is None:
         status = payload.get("status_code")
@@ -553,8 +557,15 @@ def _crawl4ai_via_crawl(url: str) -> tuple:
     payload = (results[0] if isinstance(results, list) and results else body)
     if not isinstance(payload, dict):
         return {}, "crawl4ai_shape", url
+    policy_error = _crawl4ai_target_error(payload)
+    if policy_error.startswith("adblock_blocked:"):
+        return {}, policy_error, payload.get("redirected_url") or url
     if payload.get("success") is False:
-        reason = str(payload.get("error_message") or "render_failed")[:240]
+        reason = str(payload.get("error_message") or "render_failed")
+        blocked = re.search(r'adblock_blocked:([a-zA-Z0-9.-]+)', reason)
+        if blocked and adblock.FILTER.match('https://' + blocked[1]):
+            return {}, 'adblock_blocked:' + blocked[1], url
+        reason = reason[:240]
         if "Structural:" in reason:
             reason = "incomplete_render: " + reason
         return {}, "crawl4ai_" + reason, url
@@ -730,7 +741,9 @@ def _tier_tls_once(url: str, *, get=None) -> tuple:
                 url, impersonate=TLS_IMPERSONATE, timeout=TLS_TIMEOUT,
                 allow_redirects=True, stream=True)
     except Exception as exc:
-        return {}, "tls_" + type(exc).__name__, url
+        reason = (str(exc) if isinstance(exc, adblock.AdblockBlocked)
+                  else "tls_" + type(exc).__name__)
+        return {}, reason, url
     try:
         chunks, size = [], 0
         for chunk in response.iter_content(65536):
@@ -852,7 +865,14 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
 
     Returns {ok, text, tier, extractor, title, published, chars, url, reason}.
     """
+    from . import adblock
     from . import extract as _fx
+    try:
+        adblock.check(url)
+    except adblock.AdblockBlocked as exc:
+        return {"ok": False, "text": "", "url": url, "tier": None, "extractor": None,
+                "title": "", "published": "", "chars": 0, "cached": False,
+                "reason": str(exc), "policy_blocked": "adblock"}
 
     # keep_html deliberately bypasses the cache. The cache stores the
     # extracted text and NOT the source -- storing megabytes of HTML per page
@@ -1056,6 +1076,11 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
         attempt = {"tier": name, "reason": reason, "outcome": "response" if payload else "failed",
                    "elapsed_ms": round((time.monotonic() - attempt_started) * 1000, 2)}
         attempts.append(attempt)
+        if reason.startswith('adblock_blocked:'):
+            attempt['outcome'] = 'policy_blocked'
+            return {"ok": False, "text": "", "url": final, "tier": name, "extractor": None,
+                    "title": "", "published": "", "chars": 0, "cached": False,
+                    "reason": reason, "policy_blocked": "adblock", "acquisition_attempts": attempts}
         payload = payload if isinstance(payload, dict) else {}
         html = payload.get("html") or ""
         details = page_details(html, final) if html else {}
@@ -1259,6 +1284,8 @@ def _headed_read(url: str, backend: str) -> tuple:
         value = response.json()
         if not value.get("ok"):
             failed = next((step for step in value.get("steps", []) if not step.get("ok")), {})
+            if "adblock_blocked:" in str(failed.get("reason", "")):
+                raise adblock.AdblockBlocked("browser_navigation")
             raise _HeadedReadFailure("headed_step_failed:" + str(failed.get("action", "unknown"))
                                      + ":" + str(failed.get("reason") or "drive_failed")[:200])
         return value
@@ -1332,7 +1359,7 @@ def _headed_read(url: str, backend: str) -> tuple:
             "initial_navigation": navigation, "checkpointed": checkpointed,
             "elapsed_ms": int((time.monotonic() - started) * 1000)}}, "", (
                 data.get("final", {}).get("url") or url)
-    except _HeadedReadFailure as exc:
+    except (adblock.AdblockBlocked, _HeadedReadFailure) as exc:
         return {}, str(exc), url
     except (requests.RequestException, ValueError, KeyError, TypeError) as exc:
         return {}, "headed_" + type(exc).__name__, url

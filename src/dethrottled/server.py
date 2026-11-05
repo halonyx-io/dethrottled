@@ -87,7 +87,7 @@ from .api_models import (
     StructureBody,
 )
 from .api_models import DriveStep as DriveStep
-from .cache import Cache, CacheView
+from .cache import DEFAULT_TTL, Cache, CacheView
 from .content import compact_row, constrained, passage_excerpt
 from .corpus import index_fetched, shared_corpus
 from .evidence import Documents
@@ -340,7 +340,9 @@ def _extract_once(url: str, max_chars: int, allow_ocr: bool = True,
                 # throw that away and leave a tier-only consumer with nothing.
                 "tier": result.get("tier"), "cached": result.get("cached", False),
                 "acquisition_attempts": result.get("acquisition_attempts", []),
-                "source_alternatives": result.get("source_alternatives", [])}
+                "source_alternatives": result.get("source_alternatives", []),
+                **({"policy_blocked": result["policy_blocked"]}
+                   if result.get("policy_blocked") else {})}
     row = {
         "url": url,
         "content": result["text"],
@@ -413,7 +415,8 @@ def _extract_once(url: str, max_chars: int, allow_ocr: bool = True,
 def _extract_row(url, max_chars, *, recovery="auto", asset_recovery=True, **options):
     """Recover known evidence gaps without guessing UI actions or hiding attempts."""
     row = _extract_once(url, max_chars, **options)
-    if recovery == "auto" and not options.get("raw") and not options.get("links"):
+    if (recovery == "auto" and not row.get("policy_blocked")
+            and not options.get("raw") and not options.get("links")):
         from .readplan import run
         row = run(url, row, read=lambda target, opts: _extract_once(target, max_chars, **opts),
                   drive=fs.browser_drive, options=options,
@@ -455,6 +458,8 @@ _BACKFILL_JOB = BackfillJob()
 
 @app.on_event("startup")
 def start_multilingual_backfill():
+    from .adblock import FILTER
+    FILTER.start()
     if os.getenv("DETHROTTLED_CORPUS_SCHEMA", "2") != "1":
         shared_corpus().start()
     elif os.getenv("DETHROTTLED_MULTILINGUAL_CORPUS") == "1":
@@ -463,6 +468,8 @@ def start_multilingual_backfill():
 
 @app.on_event("shutdown")
 def stop_multilingual_backfill():
+    from .adblock import FILTER
+    FILTER.stop()
     _BACKFILL_JOB.stop()
     from . import corpus
     if hasattr(corpus._SHARED_CORPUS, "stop"):
@@ -490,6 +497,7 @@ def v2_status():
             and _BACKFILL_JOB.state["status"] in {"disabled", "running", "complete"}
             else "degraded",
         "workers": worker_status,
+        "adblock": fetcher.adblock.status(),
         "multilingual_backfill": dict(_BACKFILL_JOB.state),
         "discovery": report,
         "components": {
@@ -547,9 +555,11 @@ def v2_capabilities():
         if installed(module):
             readable.extend(formats)
 
+    from .adblock import status as adblock_status
     return {
         "service": "dethrottled",
         "optional_search_providers": providers.configured(),
+        "adblock": adblock_status(),
         "version": VERSION,
         "client_contract": {
             "workflow_sha256": hashlib.sha256(INSTRUCTIONS.encode()).hexdigest(),
@@ -623,6 +633,7 @@ def v2_capabilities():
                    "schema": int(os.getenv("DETHROTTLED_CORPUS_SCHEMA", "2")),
                    "support_policies": (["standard", "broad"] if os.getenv(
                        "DETHROTTLED_CORPUS_SCHEMA", "2") != "1" else ["legacy"]),
+                   "endpoints": {"search": "/corpus/search", "stats": "/corpus/stats"},
                    "answer_support": "unverified",
                    "modes": ["auto", "semantic", "lexical"] +
                             (["hybrid"] if os.getenv(
@@ -783,6 +794,7 @@ def search(body: SearchBody):
 def search_envelope(body: SearchBody):
     rows, meta, _ = _ranked(body)
     return {"results": [_search_row(r, meta, i) for i, r in enumerate(rows)],
+            # Compatibility only: outcome/degraded describe discovery health.
             "status": "ok" if rows else "no_results_or_degraded",
             "outcome": meta.get("discovery", {}).get("outcome", "indeterminate"),
             "degraded": meta.get("discovery", {}).get("degraded", True),
@@ -1258,9 +1270,12 @@ def research(body: ResearchBody, background: BackgroundTasks):
                     profile=body.profile, engines=body.engines))
                 return rows, {"query": query, "found": len(rows),
                               "elapsed_ms": meta.get("elapsed_ms", 0),
+                              "outcome": meta.get("discovery", {}).get("outcome", "indeterminate"),
+                              "degraded": meta.get("discovery", {}).get("degraded", True),
                               "attempts": _attempts(meta)}
             except Exception as exc:
                 return [], {"query": query, "found": 0,
+                            "outcome": "indeterminate", "degraded": True,
                             "error": type(exc).__name__}
 
         # Two research requests may run concurrently; at most two discovery
@@ -1433,8 +1448,22 @@ def corpus_search(q: str, limit: int = 10, floor: float | None = None,
 def corpus_stats():
     try:
         corpus = shared_corpus()
-        return {"ok": True, "models": corpus.stats(),
-                **({"index": corpus.status()} if hasattr(corpus, "status") else {"schema": 1})}
+        result = {"ok": True, "models": corpus.stats()}
+        if hasattr(corpus, "status"):
+            index = corpus.status()
+            result.update(index=index, lifetimes={
+                "search_cache_default_ttl_seconds": DEFAULT_TTL["search"],
+                "extraction_cache_default_ttl_seconds": DEFAULT_TTL["extract"],
+                "retained_document_ttl_seconds": corpus.documents.ttl,
+                "retained_document_max_bytes": corpus.documents.max_bytes,
+                "corpus_retention_days": index["limits"]["retention_days"],
+                "independent": True,
+                "lookup_only_extends_lifetimes": False,
+                "retained_document_capacity_eviction_possible": True,
+            })
+        else:
+            result["schema"] = 1
+        return result
     except Exception as exc:
         return {"ok": False, "reason": str(exc)[:200], "models": {}}
 
@@ -1442,7 +1471,8 @@ def corpus_stats():
 @app.get("/stats")
 def stats():
     # Surface renderer admission, rolling budgets and cooldown state.
-    return {"renderer_admission": fetcher._RENDER_QUEUE.stats(),
+    from .adblock import status as adblock_status
+    return {"adblock": adblock_status(), "renderer_admission": fetcher._RENDER_QUEUE.stats(),
             "headed_admission": fetcher._HEADED_QUEUE.stats(),
             "cache": cache().stats(), "version": VERSION,
             "tiers_resting": fetcher.tier_rest_state(),

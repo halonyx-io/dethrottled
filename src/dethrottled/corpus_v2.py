@@ -25,6 +25,27 @@ from .evidence import Documents
 SCHEMA = 2
 
 
+def _bounded_completeness(value):
+    """Keep diagnostic scalars, never structural samples or source text."""
+    if not isinstance(value, dict):
+        return {}
+    result = {}
+    for key in ("status", "assessment"):
+        if isinstance(value.get(key), str):
+            result[key] = value[key][:64]
+    for key in ("sampled_anchors", "missing_samples"):
+        item = value.get(key)
+        if type(item) is int and 0 <= item <= 1_000_000:
+            result[key] = item
+    if isinstance(value.get("selection_changed"), bool):
+        result["selection_changed"] = value["selection_changed"]
+    compared = value.get("compared_extractors")
+    if isinstance(compared, (list, tuple)):
+        result["compared_extractors"] = [item[:64] for item in compared[:8]
+                                         if isinstance(item, str)]
+    return result
+
+
 def canonical(url):
     parts = urlsplit(url)
     if parts.scheme not in {"http", "https"} or not parts.hostname or parts.username is not None:
@@ -205,6 +226,9 @@ class CorpusV2(IndexWorker):
                 for key in ("partial", "method", "ocr_word_confidence", "warnings")
                 if key in extraction
             }
+            completeness = _bounded_completeness(extraction.get("completeness"))
+            if completeness:
+                metadata["extraction"]["completeness"] = completeness
             if extraction.get("pages"):
                 metadata["extraction"]["pages"] = [
                     {key: page[key] for key in ("page", "method", "confidence") if key in page}

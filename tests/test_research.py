@@ -182,3 +182,24 @@ def test_research_searches_are_bounded_and_ordered(monkeypatch):
     assert [row["query"] for row in response.json()["queries"]] == [
         "First", "Second", "Third", "Fourth"]
     assert peak == 2
+
+
+def test_research_preserves_authoritative_discovery_outcome(monkeypatch):
+    monkeypatch.setattr(server, "index_fetched", lambda rows: 0)
+
+    def ranked(body):
+        if body.query == "raises":
+            raise RuntimeError("controlled local failure")
+        return [], {"discovery": {"outcome": "unavailable", "degraded": True},
+                    "per_source": {"web": 0},
+                    "source_reports": {"web": {"status": "http_429"}}}, 15
+
+    monkeypatch.setattr(server, "_ranked", ranked)
+    response = TestClient(server.app).post(
+        "/research", json={"question": "unavailable", "queries": ["raises"]})
+    assert response.status_code == 200
+    first, second = response.json()["queries"]
+    assert first["outcome"] == "unavailable" and first["degraded"]
+    assert first["attempts"][0]["status"] == "http_429"
+    assert second["outcome"] == "indeterminate" and second["degraded"]
+    assert second["error"] == "RuntimeError"

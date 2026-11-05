@@ -111,3 +111,9 @@ multiple substantive samples are missing. Comparison occurs before response limi
 and retains sampled original evidence. It is a coverage heuristic, not verified
 completeness, and does not itself repeat rendering. See [API diagnostics](API.md)
 and the [controlled investigation](../evaluations/retrieval-reliability/REPORT.md).
+
+## Outbound domain policy
+
+The [HaGeZi filter](ADBLOCK.md) applies at HTTP/TLS client and managed
+browser connection boundaries, including redirects. It does not change ranking,
+extraction or corpus retention. A policy-blocked read stops recovery.

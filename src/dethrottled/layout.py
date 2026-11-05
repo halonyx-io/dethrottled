@@ -1,8 +1,7 @@
 """Local PDF layout recovery; native text remains available if inference fails."""
 import re
 
-import requests
-
+from . import netfilter as requests
 from .workers import endpoint
 
 

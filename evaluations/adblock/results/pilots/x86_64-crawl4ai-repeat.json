@@ -1,0 +1,565 @@
+{
+  "backend": "crawl4ai",
+  "architecture": "x86_64",
+  "list_sha256": "19a3db5288c7067d81a641baac44a922303e7db570194f6949fbf04fce618e78",
+  "rules": 239581,
+  "parse_ms": 250.3738971427083,
+  "cases": [
+    {
+      "enabled": false,
+      "repetition": 0,
+      "elapsed_ms": 318.6348481103778,
+      "ok": true,
+      "fact_hits": 3,
+      "facts": 4,
+      "traffic": {
+        "requests": 2,
+        "body_bytes": 1299
+      },
+      "failures": [
+        {
+          "url": "https://challenges.cloudflare.com:33083/challenge.js",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "https://a.google-analytics.com:33083/frame",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "https://a.google-analytics.com:33083/track.js?i=0",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "https://a.google-analytics.com:33083/track.js?i=1",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "https://a.google-analytics.com:33083/track.js?i=2",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "https://a.google-analytics.com:33083/track.js?i=3",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "https://a.google-analytics.com:33083/track.js?i=4",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "https://a.google-analytics.com:33083/collect",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "https://a.google-analytics.com:33083/track.js?i=5",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "https://a.google-analytics.com:33083/pixel",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "https://a.google-analytics.com:33083/track.js?i=6",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "https://a.google-analytics.com:33083/track.js?i=7",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        }
+      ],
+      "html_sample": "<html><head></head><body><main><h1>Evidence fixture</h1>\n                    <p>Allocation is 7341 tonnes</p><p id=\"js\">JS result is 9127 units</p><p id=\"challenge\"></p><p id=\"clicked\">Clicked record 4482</p>\n                    <button id=\"open\" onclick=\"document.querySelector('#clicked').textContent='Clicked record 4482'\">Read record</button>\n                    <a id=\"popup\" target=\"_blank\" hre"
+    },
+    {
+      "enabled": false,
+      "repetition": 1,
+      "elapsed_ms": 302.1900043822825,
+      "ok": true,
+      "fact_hits": 3,
+      "facts": 4,
+      "traffic": {
+        "requests": 2,
+        "body_bytes": 1299
+      },
+      "failures": [
+        {
+          "url": "https://a.google-analytics.com:33083/track.js?i=1",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "https://a.google-analytics.com:33083/track.js?i=2",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "https://a.google-analytics.com:33083/track.js?i=3",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "https://a.google-analytics.com:33083/track.js?i=4",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "https://a.google-analytics.com:33083/collect",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "https://a.google-analytics.com:33083/track.js?i=5",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "https://a.google-analytics.com:33083/pixel",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "https://a.google-analytics.com:33083/track.js?i=6",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "https://a.google-analytics.com:33083/track.js?i=7",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "https://challenges.cloudflare.com:33083/challenge.js",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "https://a.google-analytics.com:33083/frame",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "https://a.google-analytics.com:33083/track.js?i=0",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "https://a.google-analytics.com:33083/track.js?i=1",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "https://a.google-analytics.com:33083/track.js?i=2",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "https://a.google-analytics.com:33083/track.js?i=3",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "https://a.google-analytics.com:33083/collect",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "https://a.google-analytics.com:33083/track.js?i=4",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "https://a.google-analytics.com:33083/track.js?i=5",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "https://a.google-analytics.com:33083/pixel",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "https://a.google-analytics.com:33083/track.js?i=6",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        }
+      ],
+      "html_sample": "<html><head></head><body><main><h1>Evidence fixture</h1>\n                    <p>Allocation is 7341 tonnes</p><p id=\"js\">JS result is 9127 units</p><p id=\"challenge\"></p><p id=\"clicked\">Clicked record 4482</p>\n                    <button id=\"open\" onclick=\"document.querySelector('#clicked').textContent='Clicked record 4482'\">Read record</button>\n                    <a id=\"popup\" target=\"_blank\" hre"
+    },
+    {
+      "enabled": false,
+      "repetition": 2,
+      "elapsed_ms": 287.53279987722635,
+      "ok": true,
+      "fact_hits": 3,
+      "facts": 4,
+      "traffic": {
+        "requests": 2,
+        "body_bytes": 1299
+      },
+      "failures": [
+        {
+          "url": "https://a.google-analytics.com:33083/track.js?i=0",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "https://a.google-analytics.com:33083/track.js?i=1",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "https://a.google-analytics.com:33083/track.js?i=2",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "https://a.google-analytics.com:33083/track.js?i=3",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "https://a.google-analytics.com:33083/collect",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "https://a.google-analytics.com:33083/track.js?i=4",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "https://a.google-analytics.com:33083/track.js?i=5",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "https://a.google-analytics.com:33083/pixel",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "https://a.google-analytics.com:33083/track.js?i=6",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "https://challenges.cloudflare.com:33083/challenge.js",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "https://a.google-analytics.com:33083/track.js?i=0",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "https://a.google-analytics.com:33083/frame",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "https://a.google-analytics.com:33083/track.js?i=1",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "https://a.google-analytics.com:33083/track.js?i=2",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "https://a.google-analytics.com:33083/track.js?i=3",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "https://a.google-analytics.com:33083/collect",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "https://a.google-analytics.com:33083/track.js?i=4",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "https://a.google-analytics.com:33083/track.js?i=5",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "https://a.google-analytics.com:33083/track.js?i=6",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "https://a.google-analytics.com:33083/track.js?i=7",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        }
+      ],
+      "html_sample": "<html><head></head><body><main><h1>Evidence fixture</h1>\n                    <p>Allocation is 7341 tonnes</p><p id=\"js\">JS result is 9127 units</p><p id=\"challenge\"></p><p id=\"clicked\">Clicked record 4482</p>\n                    <button id=\"open\" onclick=\"document.querySelector('#clicked').textContent='Clicked record 4482'\">Read record</button>\n                    <a id=\"popup\" target=\"_blank\" hre"
+    },
+    {
+      "enabled": false,
+      "kind": "redirect",
+      "tracking_requests": 0,
+      "status": null,
+      "error": "Unexpected error in _crawl_web at line 779 in _crawl_web (../usr/local/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):\nError: Failed on navigating ACS-GOTO:\nPage.goto: net::ERR_SSL_PROTOCOL_ERROR at http://content.example:33083/redirect\nCall log:\n  - navigating to \"http://content.e"
+    },
+    {
+      "enabled": true,
+      "repetition": 0,
+      "elapsed_ms": 332.4789460748434,
+      "ok": true,
+      "fact_hits": 3,
+      "facts": 4,
+      "traffic": {
+        "requests": 2,
+        "body_bytes": 1299
+      },
+      "failures": [
+        {
+          "url": "https://challenges.cloudflare.com:33083/challenge.js",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "http://a.google-analytics.com:33083/track.js?i=0",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "http://a.google-analytics.com:33083/track.js?i=1",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "http://a.google-analytics.com:33083/track.js?i=2",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "http://a.google-analytics.com:33083/track.js?i=3",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "http://a.google-analytics.com:33083/track.js?i=4",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "http://a.google-analytics.com:33083/track.js?i=5",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "http://a.google-analytics.com:33083/track.js?i=6",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "http://a.google-analytics.com:33083/collect",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "http://a.google-analytics.com:33083/track.js?i=7",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "http://a.google-analytics.com:33083/pixel",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        }
+      ],
+      "html_sample": "<html><head></head><body><main><h1>Evidence fixture</h1>\n                    <p>Allocation is 7341 tonnes</p><p id=\"js\">JS result is 9127 units</p><p id=\"challenge\"></p><p id=\"clicked\">Clicked record 4482</p>\n                    <button id=\"open\" onclick=\"document.querySelector('#clicked').textContent='Clicked record 4482'\">Read record</button>\n                    <a id=\"popup\" target=\"_blank\" hre"
+    },
+    {
+      "enabled": true,
+      "repetition": 1,
+      "elapsed_ms": 313.4150090627372,
+      "ok": true,
+      "fact_hits": 3,
+      "facts": 4,
+      "traffic": {
+        "requests": 2,
+        "body_bytes": 1299
+      },
+      "failures": [
+        {
+          "url": "http://a.google-analytics.com:33083/track.js?i=1",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "http://a.google-analytics.com:33083/track.js?i=2",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "http://a.google-analytics.com:33083/track.js?i=3",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "http://a.google-analytics.com:33083/track.js?i=4",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "http://a.google-analytics.com:33083/track.js?i=5",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "http://a.google-analytics.com:33083/track.js?i=6",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "http://a.google-analytics.com:33083/collect",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "http://a.google-analytics.com:33083/track.js?i=7",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "http://a.google-analytics.com:33083/pixel",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "https://challenges.cloudflare.com:33083/challenge.js",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "http://a.google-analytics.com:33083/track.js?i=0",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "http://a.google-analytics.com:33083/track.js?i=1",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "http://a.google-analytics.com:33083/track.js?i=2",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "http://a.google-analytics.com:33083/track.js?i=3",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "http://a.google-analytics.com:33083/track.js?i=4",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "http://a.google-analytics.com:33083/track.js?i=5",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "http://a.google-analytics.com:33083/track.js?i=6",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "http://a.google-analytics.com:33083/collect",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "http://a.google-analytics.com:33083/track.js?i=7",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "http://a.google-analytics.com:33083/pixel",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        }
+      ],
+      "html_sample": "<html><head></head><body><main><h1>Evidence fixture</h1>\n                    <p>Allocation is 7341 tonnes</p><p id=\"js\">JS result is 9127 units</p><p id=\"challenge\"></p><p id=\"clicked\">Clicked record 4482</p>\n                    <button id=\"open\" onclick=\"document.querySelector('#clicked').textContent='Clicked record 4482'\">Read record</button>\n                    <a id=\"popup\" target=\"_blank\" hre"
+    },
+    {
+      "enabled": true,
+      "repetition": 2,
+      "elapsed_ms": 309.1699820943177,
+      "ok": true,
+      "fact_hits": 3,
+      "facts": 4,
+      "traffic": {
+        "requests": 2,
+        "body_bytes": 1299
+      },
+      "failures": [
+        {
+          "url": "http://a.google-analytics.com:33083/track.js?i=1",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "http://a.google-analytics.com:33083/track.js?i=2",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "http://a.google-analytics.com:33083/track.js?i=3",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "http://a.google-analytics.com:33083/track.js?i=4",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "http://a.google-analytics.com:33083/track.js?i=5",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "http://a.google-analytics.com:33083/track.js?i=6",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "http://a.google-analytics.com:33083/collect",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "http://a.google-analytics.com:33083/track.js?i=7",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "http://a.google-analytics.com:33083/pixel",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "https://challenges.cloudflare.com:33083/challenge.js",
+          "reason": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "http://a.google-analytics.com:33083/track.js?i=0",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "http://a.google-analytics.com:33083/track.js?i=1",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "http://a.google-analytics.com:33083/track.js?i=2",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "http://a.google-analytics.com:33083/track.js?i=3",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "http://a.google-analytics.com:33083/track.js?i=4",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "http://a.google-analytics.com:33083/track.js?i=5",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "http://a.google-analytics.com:33083/track.js?i=6",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "http://a.google-analytics.com:33083/collect",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "http://a.google-analytics.com:33083/track.js?i=7",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "http://a.google-analytics.com:33083/pixel",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        }
+      ],
+      "html_sample": "<html><head></head><body><main><h1>Evidence fixture</h1>\n                    <p>Allocation is 7341 tonnes</p><p id=\"js\">JS result is 9127 units</p><p id=\"challenge\"></p><p id=\"clicked\">Clicked record 4482</p>\n                    <button id=\"open\" onclick=\"document.querySelector('#clicked').textContent='Clicked record 4482'\">Read record</button>\n                    <a id=\"popup\" target=\"_blank\" hre"
+    },
+    {
+      "enabled": true,
+      "kind": "redirect",
+      "tracking_requests": 0,
+      "status": 451,
+      "error": "Blocked by anti-bot protection: Structural: minimal_text on small page (187 bytes, 36 chars visible)"
+    }
+  ],
+  "limitations": [
+    "Local simulated challenge script, not proof of passing a real hostile challenge",
+    "Traffic is origin response-body bytes, excluding transport overhead",
+    "RSS is fresh harness plus Python/extractor libraries; browser child RSS reported separately"
+  ],
+  "blocked": {
+    "total": 34,
+    "browser": 34
+  },
+  "maxrss_kib": 161268,
+  "browser_children_maxrss_kib": 161268,
+  "normal_cases_passed": false,
+  "normal_summary": {
+    "False": {
+      "median_ms": 302.1900043822825,
+      "body_bytes": [
+        1299,
+        1299,
+        1299
+      ],
+      "tracking_requests": [
+        0,
+        0,
+        0
+      ]
+    },
+    "True": {
+      "median_ms": 313.4150090627372,
+      "body_bytes": [
+        1299,
+        1299,
+        1299
+      ],
+      "tracking_requests": [
+        0,
+        0,
+        0
+      ]
+    }
+  }
+}

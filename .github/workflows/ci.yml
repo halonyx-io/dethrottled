@@ -142,7 +142,7 @@ jobs:
       - name: Build API and browser images natively
         run: |
           docker build -t dethrottled:ci .
-          docker build -t dethrottled-browser-search:ci browser-search
+          docker build -f browser-search/Dockerfile -t dethrottled-browser-search:ci .
           case "$(uname -m)" in
             x86_64) expected=amd64 ;;
             aarch64) expected=arm64 ;;
@@ -160,8 +160,9 @@ jobs:
           docker run --rm --network none \
             --entrypoint /usr/local/searxng/.venv/bin/python \
             -w /usr/local/searxng -e PYTHONPATH=/usr/local/searxng \
-            -e SEARXNG_SETTINGS_PATH=/etc/searxng/settings.yml \
+            -e SEARXNG_SETTINGS_PATH=/etc/searxng/settings.yml -e DETHROTTLED_ADBLOCK=0 \
             -v "$PWD/docker/searxng:/etc/searxng:ro" \
+            -v "$PWD/src/dethrottled/adblock.py:/usr/local/searxng/searx/plugins/dethrottled_adblock.py:ro" \
             -v "$PWD/docker/searxng/dethrottled_guard.py:/usr/local/searxng/searx/plugins/dethrottled_guard.py:ro" \
             -v "$PWD/docker/searxng/retry_after.py:/usr/local/searxng/searx/plugins/dethrottled_retry_after.py:ro" \
             -v "$PWD/scripts/verify_searxng.py:/tmp/verify_searxng.py:ro" \

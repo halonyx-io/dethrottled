@@ -158,3 +158,10 @@ type. The [recorded restart failure and follow-up checks](../evaluations/install
 explain the observed limitation and safeguard.
 
 [Documentation home](README.md) · [Agent guide](AGENT-UPGRADES.md) · [API](API.md) · [Evidence](EVIDENCE.md)
+
+## Ad/tracker filtering
+
+The [native filter](ADBLOCK.md) checks managed browser connections, including
+redirects and worker/WebSocket traffic. `/drive` reports bounded blocked-domain
+events and filter state. A completed UI action remains separate from a successful
+read. This filter does not inject page scripts or disable service workers.

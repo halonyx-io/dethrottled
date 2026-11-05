@@ -82,12 +82,19 @@ GitHub release alone does not prove PyPI publication. Attach the tested wheel,
 source archive and SHA256 manifest to the GitHub release. Updating source, a
 GitHub release or PyPI never upgrades an already running Docker deployment.
 
+For 1.6.0, rebuild/recreate API and browser images plus SearXNG/Crawl4AI so
+all four receive the filtering setting, shared cache volume and integration hooks.
+Refresh host-managed MCP adapter code, workflow and version modules together;
+its SDK remains pinned to 1.30.0. Verify actual worker filter observations and
+public adapter/backend identity after rollout. See [filter operations](ADBLOCK.md).
+
 ## State and backups
 
 | Storage | Contents |
 |---|---|
 | dethrottled-data | Cache, corpus, retained documents/source files and jobs |
 | browser-state | Sensitive checkpoints and browser operation journal |
+| adblock-state | Last-good HaGeZi list, attribution, validators and worker observations |
 | media-models, layout-models | Optional downloaded model assets |
 | adapter-state / host admission path | Public shared request admission |
 | Registry bind / protected host path | Public bearer hashes and scopes |
@@ -206,3 +213,10 @@ copy; changing host Markdown alone does not update an existing container. Verify
 file hashes and readability as its service user after promotion.
 
 [Documentation home](README.md) · [Agent guide](AGENT-UPGRADES.md) · [API](API.md) · [Evidence](EVIDENCE.md)
+
+## Adblock operations
+
+The [native domain filter](ADBLOCK.md), introduced in 1.6.0, needs the updated API and browser
+images plus recreated SearXNG/Crawl4AI workers. Its `adblock-state` volume holds the
+last working list and attribution; preserve it for offline restarts. Check each
+worker observation in `/stats` rather than inferring coverage from API readiness.

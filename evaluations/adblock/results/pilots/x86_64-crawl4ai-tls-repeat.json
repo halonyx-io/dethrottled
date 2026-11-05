@@ -1,0 +1,353 @@
+{
+  "backend": "crawl4ai",
+  "architecture": "x86_64",
+  "list_sha256": "19a3db5288c7067d81a641baac44a922303e7db570194f6949fbf04fce618e78",
+  "rules": 239581,
+  "parse_ms": 245.0298103503883,
+  "cases": [
+    {
+      "enabled": false,
+      "repetition": 0,
+      "elapsed_ms": 387.850355822593,
+      "ok": true,
+      "fact_hits": 4,
+      "facts": 4,
+      "traffic": {
+        "requests": 14,
+        "body_bytes": 157106,
+        "tracking_requests": 11
+      },
+      "failures": [],
+      "html_sample": "<html><head></head><body><main><h1>Evidence fixture</h1>\n                    <p>Allocation is 7341 tonnes</p><p id=\"js\">JS result is 9127 units</p><p id=\"challenge\">Challenge script preserved 6193</p><p id=\"clicked\">Clicked record 4482</p>\n                    <button id=\"open\" onclick=\"document.querySelector('#clicked').textContent='Clicked record 4482'\">Read record</button>\n                    <a"
+    },
+    {
+      "enabled": false,
+      "repetition": 1,
+      "elapsed_ms": 296.2943776510656,
+      "ok": true,
+      "fact_hits": 4,
+      "facts": 4,
+      "traffic": {
+        "requests": 14,
+        "body_bytes": 157106,
+        "tracking_requests": 11
+      },
+      "failures": [],
+      "html_sample": "<html><head></head><body><main><h1>Evidence fixture</h1>\n                    <p>Allocation is 7341 tonnes</p><p id=\"js\">JS result is 9127 units</p><p id=\"challenge\">Challenge script preserved 6193</p><p id=\"clicked\">Clicked record 4482</p>\n                    <button id=\"open\" onclick=\"document.querySelector('#clicked').textContent='Clicked record 4482'\">Read record</button>\n                    <a"
+    },
+    {
+      "enabled": false,
+      "repetition": 2,
+      "elapsed_ms": 288.27338805422187,
+      "ok": true,
+      "fact_hits": 4,
+      "facts": 4,
+      "traffic": {
+        "requests": 14,
+        "body_bytes": 157106,
+        "tracking_requests": 11
+      },
+      "failures": [],
+      "html_sample": "<html><head></head><body><main><h1>Evidence fixture</h1>\n                    <p>Allocation is 7341 tonnes</p><p id=\"js\">JS result is 9127 units</p><p id=\"challenge\">Challenge script preserved 6193</p><p id=\"clicked\">Clicked record 4482</p>\n                    <button id=\"open\" onclick=\"document.querySelector('#clicked').textContent='Clicked record 4482'\">Read record</button>\n                    <a"
+    },
+    {
+      "enabled": false,
+      "kind": "redirect",
+      "tracking_requests": 1,
+      "status": 302,
+      "error": ""
+    },
+    {
+      "enabled": true,
+      "repetition": 0,
+      "elapsed_ms": 337.9588611423969,
+      "ok": true,
+      "fact_hits": 4,
+      "facts": 4,
+      "traffic": {
+        "requests": 3,
+        "body_bytes": 1426
+      },
+      "failures": [
+        {
+          "url": "https://a.google-analytics.com:45359/track.js?i=0",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "https://a.google-analytics.com:45359/track.js?i=1",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "https://a.google-analytics.com:45359/track.js?i=2",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "https://a.google-analytics.com:45359/track.js?i=3",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "https://a.google-analytics.com:45359/track.js?i=4",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "https://a.google-analytics.com:45359/track.js?i=5",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "https://a.google-analytics.com:45359/track.js?i=6",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "https://a.google-analytics.com:45359/collect",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "https://a.google-analytics.com:45359/track.js?i=7",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "https://a.google-analytics.com:45359/pixel",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        }
+      ],
+      "html_sample": "<html><head></head><body><main><h1>Evidence fixture</h1>\n                    <p>Allocation is 7341 tonnes</p><p id=\"js\">JS result is 9127 units</p><p id=\"challenge\">Challenge script preserved 6193</p><p id=\"clicked\">Clicked record 4482</p>\n                    <button id=\"open\" onclick=\"document.querySelector('#clicked').textContent='Clicked record 4482'\">Read record</button>\n                    <a"
+    },
+    {
+      "enabled": true,
+      "repetition": 1,
+      "elapsed_ms": 304.9637000076473,
+      "ok": true,
+      "fact_hits": 4,
+      "facts": 4,
+      "traffic": {
+        "requests": 3,
+        "body_bytes": 1426
+      },
+      "failures": [
+        {
+          "url": "https://a.google-analytics.com:45359/track.js?i=0",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "https://a.google-analytics.com:45359/track.js?i=1",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "https://a.google-analytics.com:45359/track.js?i=2",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "https://a.google-analytics.com:45359/track.js?i=3",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "https://a.google-analytics.com:45359/track.js?i=4",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "https://a.google-analytics.com:45359/track.js?i=5",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "https://a.google-analytics.com:45359/track.js?i=6",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "https://a.google-analytics.com:45359/collect",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "https://a.google-analytics.com:45359/track.js?i=7",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "https://a.google-analytics.com:45359/pixel",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "https://a.google-analytics.com:45359/track.js?i=0",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "https://a.google-analytics.com:45359/track.js?i=1",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "https://a.google-analytics.com:45359/track.js?i=2",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "https://a.google-analytics.com:45359/track.js?i=3",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "https://a.google-analytics.com:45359/track.js?i=4",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "https://a.google-analytics.com:45359/collect",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "https://a.google-analytics.com:45359/track.js?i=5",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "https://a.google-analytics.com:45359/track.js?i=6",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "https://a.google-analytics.com:45359/track.js?i=7",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "https://a.google-analytics.com:45359/pixel",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        }
+      ],
+      "html_sample": "<html><head></head><body><main><h1>Evidence fixture</h1>\n                    <p>Allocation is 7341 tonnes</p><p id=\"js\">JS result is 9127 units</p><p id=\"challenge\">Challenge script preserved 6193</p><p id=\"clicked\">Clicked record 4482</p>\n                    <button id=\"open\" onclick=\"document.querySelector('#clicked').textContent='Clicked record 4482'\">Read record</button>\n                    <a"
+    },
+    {
+      "enabled": true,
+      "repetition": 2,
+      "elapsed_ms": 304.4808520935476,
+      "ok": true,
+      "fact_hits": 4,
+      "facts": 4,
+      "traffic": {
+        "requests": 3,
+        "body_bytes": 1426
+      },
+      "failures": [
+        {
+          "url": "https://a.google-analytics.com:45359/track.js?i=0",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "https://a.google-analytics.com:45359/track.js?i=1",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "https://a.google-analytics.com:45359/track.js?i=2",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "https://a.google-analytics.com:45359/track.js?i=3",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "https://a.google-analytics.com:45359/track.js?i=4",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "https://a.google-analytics.com:45359/collect",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "https://a.google-analytics.com:45359/track.js?i=5",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "https://a.google-analytics.com:45359/track.js?i=6",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "https://a.google-analytics.com:45359/track.js?i=7",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "https://a.google-analytics.com:45359/pixel",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "https://a.google-analytics.com:45359/track.js?i=0",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "https://a.google-analytics.com:45359/track.js?i=1",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "https://a.google-analytics.com:45359/track.js?i=2",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "https://a.google-analytics.com:45359/track.js?i=3",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "https://a.google-analytics.com:45359/track.js?i=4",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "https://a.google-analytics.com:45359/track.js?i=5",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "https://a.google-analytics.com:45359/collect",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "https://a.google-analytics.com:45359/track.js?i=6",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "https://a.google-analytics.com:45359/track.js?i=7",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        },
+        {
+          "url": "https://a.google-analytics.com:45359/pixel",
+          "reason": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        }
+      ],
+      "html_sample": "<html><head></head><body><main><h1>Evidence fixture</h1>\n                    <p>Allocation is 7341 tonnes</p><p id=\"js\">JS result is 9127 units</p><p id=\"challenge\">Challenge script preserved 6193</p><p id=\"clicked\">Clicked record 4482</p>\n                    <button id=\"open\" onclick=\"document.querySelector('#clicked').textContent='Clicked record 4482'\">Read record</button>\n                    <a"
+    },
+    {
+      "enabled": true,
+      "kind": "redirect",
+      "tracking_requests": 0,
+      "status": 451,
+      "error": "Blocked by anti-bot protection: Structural: minimal_text on small page (187 bytes, 36 chars visible)"
+    }
+  ],
+  "limitations": [
+    "Local simulated challenge script, not proof of passing a real hostile challenge",
+    "Traffic is origin response-body bytes, excluding transport overhead",
+    "RSS is fresh harness plus Python/extractor libraries; browser child RSS reported separately"
+  ],
+  "blocked": {
+    "total": 34,
+    "browser": 34
+  },
+  "maxrss_kib": 161580,
+  "browser_children_maxrss_kib": 161580,
+  "normal_cases_passed": true,
+  "normal_summary": {
+    "False": {
+      "median_ms": 296.2943776510656,
+      "body_bytes": [
+        157106,
+        157106,
+        157106
+      ],
+      "tracking_requests": [
+        11,
+        11,
+        11
+      ]
+    },
+    "True": {
+      "median_ms": 304.9637000076473,
+      "body_bytes": [
+        1426,
+        1426,
+        1426
+      ],
+      "tracking_requests": [
+        0,
+        0,
+        0
+      ]
+    }
+  }
+}

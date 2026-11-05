@@ -43,3 +43,11 @@ support, exhaustive site coverage and verified answers are not promised. The
 [evidence index](EVIDENCE.md) separates measured successes from remaining failures.
 
 [Documentation home](README.md) · [Agent guide](AGENT-UPGRADES.md) · [API](API.md) · [Evidence](EVIDENCE.md)
+
+## Native ad/tracker domain filtering
+
+Dethrottled 1.6.0 adds default-on HaGeZi Multi PRO filtering across
+shipped acquisition clients and managed workers, with persistent background
+updates and explicit policy refusals. See
+[coverage, diagnostics and limitations](ADBLOCK.md) and the
+[controlled resource evaluation](../evaluations/adblock/README.md).

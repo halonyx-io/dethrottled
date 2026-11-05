@@ -1,0 +1,51 @@
+{
+  "first": {
+    "enabled": true,
+    "available": true,
+    "state": "active",
+    "list": "HaGeZi Multi PRO",
+    "rule_count": 222452,
+    "last_update": 1793888557.327496,
+    "last_check": 1793888557.327496,
+    "error": null,
+    "sha256": "60d08482e3de2686856a32e7ef5c05e6723d8f1fa659caed80e7effeac08dbfa",
+    "source": "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/adblock/pro.txt",
+    "update_interval_seconds": 86400,
+    "blocked_requests": {},
+    "counter_units": "policy refusals; browser connection attempts include retries",
+    "component": "api",
+    "missing_list_policy": "allow; existing network security still applies"
+  },
+  "second": {
+    "enabled": true,
+    "available": true,
+    "state": "active",
+    "list": "HaGeZi Multi PRO",
+    "rule_count": 222452,
+    "last_update": 1793888557.327496,
+    "last_check": 1793888557.8362672,
+    "error": null,
+    "sha256": "60d08482e3de2686856a32e7ef5c05e6723d8f1fa659caed80e7effeac08dbfa",
+    "source": "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/adblock/pro.txt",
+    "update_interval_seconds": 86400,
+    "blocked_requests": {},
+    "counter_units": "policy refusals; browser connection attempts include retries",
+    "component": "api",
+    "missing_list_policy": "allow; existing network security still applies"
+  },
+  "attempts": [
+    {
+      "source": "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/adblock/pro.txt",
+      "http": 200,
+      "conditional": false,
+      "header_ms": 58.33958415314555
+    },
+    {
+      "source": "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/adblock/pro.txt",
+      "http": 304,
+      "conditional": true,
+      "header_ms": 110.52970075979829
+    }
+  ],
+  "restart_restores_identical_rules": true
+}

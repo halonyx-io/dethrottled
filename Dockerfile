@@ -89,6 +89,7 @@ COPY adapters/ ./adapters/
 COPY scripts/ ./scripts/
 COPY README.md AGENTS.md LICENSE ./
 RUN chmod -R a+rX /app/docs /app/evaluations
+RUN mkdir -p /filters && chown 10001:10001 /filters && chmod 2770 /filters
 USER dethrottled
 
 ENV DETHROTTLED_DATA_DIR=/data \

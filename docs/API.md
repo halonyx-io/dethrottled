@@ -26,6 +26,11 @@ interpretation. `no_results` requires successful empty provider responses; unkno
 or failed discovery is not silently classified as an empty web. Partial useful
 results keep their original order. Attempts retain acquisition-path failures,
 HTTP status, refusal/cooldown diagnostics and provider provenance.
+MCP callers select this envelope with `search(diagnostics=true)`; successful
+tool execution is distinct from discovery health. The legacy MCP search return
+can carry the envelope in a JSON text block rather than `structuredContent`.
+In 1.6.0, research `queries` also preserve `outcome` and
+`degraded` per query, including `indeterminate` for a local search exception.
 Search defaults to `profile="web"`: DDG Lite/HTML/TLS/browser acquire up to ten
 primary choices while SearXNG Yahoo and Yandex each contribute up to three.
 The normal menu defaults to and is capped at **15 unique URLs**. Duplicate
@@ -207,3 +212,20 @@ status. `support=standard` checks model/source agreement or query terms;
 `support=broad` includes warned single-model candidates when more coverage is
 needed. Neither verifies that an answer is present. Existing response envelopes
 and the ten-result limit remain.
+
+## Outbound domain-filter diagnostics
+
+The [native adblock layer](ADBLOCK.md) adds `adblock` state to capabilities,
+status and stats. Refused fetches retain `quality=failed`, add
+`policy_blocked=adblock` and an `adblock_blocked:` failure reason. Their workflow
+has `state=policy_blocked` with no retry actions. This is distinct from an upstream
+network failure. No new request arguments or endpoints are required.
+
+## Corpus diagnostics
+
+`GET /corpus/stats` is the canonical stats route; `v2` describes the corpus schema,
+not a `/v2/corpus` HTTP namespace. Capabilities advertise `corpus.endpoints`.
+For schema 2 the stats envelope adds `lifetimes`: search/extraction cache default
+TTLs, actual document TTL/size policy, configured corpus days and independent-clock
+semantics. Existing `models`/`index` fields and schema-1 responses are preserved.
+See [lifetime diagnostics](CORPUS.md#lifetimes-are-independent).

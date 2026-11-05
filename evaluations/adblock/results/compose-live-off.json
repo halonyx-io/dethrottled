@@ -1,0 +1,196 @@
+{
+  "label": "off",
+  "cases": [
+    {
+      "url": "https://docs.python.org/3/library/sqlite3.html",
+      "elapsed_ms": 711.4039673469961,
+      "quality": "ok",
+      "tier": "direct/trafilatura",
+      "fact_anchor_retained": true,
+      "content_chars": 2908,
+      "failure_reason": null,
+      "content_sha256": "e7d57ce106de054e6987cc987b0758681630733ad0499affe8eee26965c8333a"
+    },
+    {
+      "url": "https://www.rfc-editor.org/rfc/rfc8446.html",
+      "elapsed_ms": 636.9877671822906,
+      "quality": "ok",
+      "tier": "direct/trafilatura",
+      "fact_anchor_retained": true,
+      "content_chars": 2930,
+      "failure_reason": null,
+      "content_sha256": "1c1955b8c39ad13d600652cea3e759ac4949b0c0b8975821b0c18a0e7cdf6caa"
+    }
+  ],
+  "adblock": {
+    "enabled": false,
+    "available": false,
+    "state": "disabled",
+    "list": "HaGeZi Multi PRO",
+    "rule_count": 0,
+    "last_update": null,
+    "last_check": null,
+    "error": null,
+    "sha256": null,
+    "source": null,
+    "update_interval_seconds": 86400,
+    "blocked_requests": {},
+    "component": "api",
+    "missing_list_policy": "allow; existing network security still applies",
+    "workers": []
+  },
+  "search": {
+    "elapsed_ms": 785.0738009437919,
+    "outcome": "partial_results",
+    "degraded": true,
+    "urls": [
+      "https://docs.python.org/3/library/sqlite3.html",
+      "https://www.w3schools.com/python/ref_module_sqlite3.asp",
+      "https://zetcode.com/python/sqlite3-connect/"
+    ],
+    "attempts": [
+      {
+        "engine": "web",
+        "count": 3,
+        "status": "ok",
+        "elapsed_ms": 782,
+        "unresponsive": [],
+        "direct": {
+          "engine": "tls-ddg-lite",
+          "status": "ok",
+          "count": 3,
+          "http_status": 200,
+          "refusal": false,
+          "elapsed_ms": 780
+        },
+        "attempts": [],
+        "families": [
+          "ddg"
+        ]
+      },
+      {
+        "engine": "yandex",
+        "count": 0,
+        "status": "failed",
+        "elapsed_ms": 4,
+        "unresponsive": [],
+        "reason": "ConnectionError",
+        "admitted_count": 0
+      },
+      {
+        "engine": "yahoo",
+        "count": 0,
+        "status": "failed",
+        "elapsed_ms": 2,
+        "unresponsive": [],
+        "reason": "ConnectionError",
+        "admitted_count": 0
+      },
+      {
+        "engine": "searxng",
+        "count": 0,
+        "status": "ok",
+        "elapsed_ms": 782,
+        "unresponsive": []
+      },
+      {
+        "engine": "bing-news",
+        "count": 0,
+        "status": "not_requested",
+        "elapsed_ms": 782,
+        "unresponsive": []
+      },
+      {
+        "engine": "gnews-resolved",
+        "count": 0,
+        "status": "not_requested",
+        "elapsed_ms": 782,
+        "unresponsive": []
+      },
+      {
+        "engine": "tls-ddg-lite",
+        "count": 3,
+        "status": "ok",
+        "reason": null,
+        "elapsed_ms": 780,
+        "unresponsive": [],
+        "http_status": 200,
+        "refusal": false
+      }
+    ]
+  },
+  "reddit_drive": {
+    "elapsed_ms": 1609.4501479528844,
+    "ok": true,
+    "access": {
+      "status": "content_observed",
+      "reason": "visible_text_present",
+      "answer_verified": false,
+      "source_complete": false
+    },
+    "adblock": {
+      "enabled": false,
+      "available": false,
+      "state": "disabled",
+      "list": "HaGeZi Multi PRO",
+      "rule_count": 0,
+      "last_update": null,
+      "last_check": null,
+      "error": null,
+      "sha256": null,
+      "source": null,
+      "update_interval_seconds": 86400,
+      "blocked_requests": {},
+      "component": "browser",
+      "missing_list_policy": "allow; existing network security still applies",
+      "blocked": []
+    },
+    "steps": [
+      {
+        "ok": true,
+        "reason": null,
+        "action": "goto",
+        "text_chars": 0
+      },
+      {
+        "ok": true,
+        "reason": null,
+        "action": "text",
+        "text_chars": 2000
+      }
+    ]
+  },
+  "blocked_top_level": {
+    "url": "https://a.google-analytics.com/collect",
+    "content_type": null,
+    "quality": "failed",
+    "failure_reason": "direct:ConnectionError | tls:tls_DNSError",
+    "tier": "tls",
+    "cached": false,
+    "acquisition_attempts": [
+      {
+        "tier": "direct",
+        "reason": "ConnectionError",
+        "outcome": "failed",
+        "elapsed_ms": 187.08
+      },
+      {
+        "tier": "tls",
+        "reason": "tls_DNSError",
+        "outcome": "failed",
+        "elapsed_ms": 1.7
+      }
+    ],
+    "source_alternatives": [],
+    "workflow": {
+      "state": "failed",
+      "answer_verified": false,
+      "source_complete": false,
+      "response_truncated": false,
+      "source_bytes_retained": false,
+      "source_bytes_reacquirable": false,
+      "next_actions": [],
+      "instruction": "Use relevant follow-ups until the question is supported; extraction success is not answer verification."
+    }
+  }
+}
