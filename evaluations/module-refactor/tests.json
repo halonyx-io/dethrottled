@@ -1,0 +1,8 @@
+{
+  "passed": 647,
+  "skipped": 67,
+  "failures": 0,
+  "errors": 0,
+  "deselected": 2,
+  "scope": "non-network suite, local Python 3.13; optional/model-dependent tests can skip"
+}

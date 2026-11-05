@@ -11,7 +11,7 @@ import re
 import socket
 from urllib.parse import urlsplit
 
-from .fetch import canonical_url
+from .urls import canonical_url
 
 _WORDS = re.compile(r"[\w-]+", re.UNICODE)
 _STOP = frozenset(

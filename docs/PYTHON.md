@@ -1,5 +1,11 @@
 # Python API
 
+Request schemas live in `dethrottled.api_models`; existing imports such as
+`from dethrottled.server import FetchBody` remain supported. Shared URL identity
+normalization lives in `dethrottled.urls` and remains available as
+`dethrottled.fetch.canonical_url`. Importing the URL helper directly does not load
+the fetch ladder or HTTP server.
+
 Install the published package into a virtual environment:
 
 ```sh

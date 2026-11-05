@@ -1,0 +1,8 @@
+{
+  "openapi_identical": true,
+  "model_schemas_identical": true,
+  "validation_identical": true,
+  "models": 12,
+  "validation_cases": 31,
+  "paths": 24
+}
