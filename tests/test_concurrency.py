@@ -159,9 +159,9 @@ def test_cache_mixed_readers_and_writers(tmp_path):
 def test_tier_cooldown_state_is_consistent_under_readers():
     def mixed(i):
         if i % 3 == 0:
-            f.tier_refused("jina-reader", "jina_http_429")
+            f.tier_refused("crawl4ai", "crawl4ai_http_429")
         elif i % 3 == 1:
-            f.tier_resting("jina-reader")
+            f.tier_resting("crawl4ai")
         else:
             f.tier_rest_state()
 

@@ -26,7 +26,7 @@ Saved older 0.8, 0.9.2 and pre-October-31 worker images also challenged in fresh
 
 ## Automatic reading and the failed pilots
 
-The automatic test disables Crawl4AI, TLS and Jina in isolated cores so a successful renderer cannot hide a broken headed fallback. Control failed after 15,234.39 ms. Candidate returned 10,532 characters in 2,516.72 ms, with both the ParticleDB post and the predefined comment fact `WHERE 4 = 5`. The headed attempt took 2,294.13 ms. See [automatic.json](automatic.json). This proves that the normal ladder can acquire real thread/comment evidence through the repaired native driver, not just manual navigation.
+The automatic test disables alternative acquisition tiers in isolated cores so a successful renderer cannot hide a broken headed fallback. Control failed after 15,234.39 ms. Candidate returned 10,532 characters in 2,516.72 ms, with both the ParticleDB post and the predefined comment fact `WHERE 4 = 5`. The headed attempt took 2,294.13 ms. See [automatic.json](automatic.json). This proves that the normal ladder can acquire real thread/comment evidence through the repaired native driver, not just manual navigation.
 
 Two pilots are retained:
 
@@ -46,3 +46,5 @@ No new Crunchbase/G2 reads were observed. GPU was held constant; this experiment
 The installed Crawl4AI implementation and upstream source suggested the cookie ablation; the local controlled result justified adopting that behavior without replacing the driver. [Patchright](https://github.com/Kaliiiiiiiiii-Vinyzu/patchright) already patches browser automation leaks. Its claims are not evidence of success against a particular source. A [Python issue](https://github.com/Kaliiiiiiiiii-Vinyzu/patchright-python/issues/104) reports init-script routing problems in a particular wheel/network environment; it does not prove this deployment is affected, so no speculative monkey-patch was applied.
 
 An upstream [Crawl4AI latency discussion](https://github.com/unclecode/crawl4ai/discussions/2119) reports overlay-removal timers stalling under CSP and a subsequent fix. This argues for bounded, observed work rather than adding scripts indiscriminately. No overlay-removal upgrade is claimed here. Broader fingerprint changes, warm-up gestures and backend replacement remain unverified ideas; the inexpensive cookie/readiness/text fixes have direct evidence and preserve existing browser operation.
+
+Editorial note (2026-11-05): retired-provider naming was removed from the acquisition-isolation description; original evidence is archived separately. Numerical results are unchanged.

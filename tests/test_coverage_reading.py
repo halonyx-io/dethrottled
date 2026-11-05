@@ -24,7 +24,6 @@ ARTICLE = "<html><article>" + "<p>Useful source background and accurate document
 def test_render_escalation_rejects_an_incompatible_warm_cache(monkeypatch, tmp_path):
     store = CacheView(Cache(tmp_path / "cache.sqlite"))
     monkeypatch.setattr(fetch, "ENABLE_TLS", False)
-    monkeypatch.setattr(fetch, "ENABLE_JINA", False)
     monkeypatch.setattr(fetch, "CRAWL4AI_URL", "http://renderer")
     monkeypatch.setattr(fetch, "_tier_direct", lambda url, *a: ({"html": ARTICLE}, "", url))
     calls = []

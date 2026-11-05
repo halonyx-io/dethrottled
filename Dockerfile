@@ -93,9 +93,6 @@ USER dethrottled
 
 ENV DETHROTTLED_DATA_DIR=/data \
     DETHROTTLED_PORT=8787 \
-    # Inside compose the renderer is a sibling container, so the external
-    # reader is not needed and is off. Override it if you want it anyway.
-    DETHROTTLED_ENABLE_JINA=0 \
     PYTHONUNBUFFERED=1
 
 EXPOSE 8787

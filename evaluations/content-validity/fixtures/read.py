@@ -7,7 +7,6 @@ import sys
 from dethrottled import __version__, fetch
 
 fetch.ENABLE_TLS = False
-fetch.ENABLE_JINA = False
 fetch.CRAWL4AI_URL = ""
 os.environ.pop("DETHROTTLED_BROWSER_SEARCH_URL", None)
 results = []

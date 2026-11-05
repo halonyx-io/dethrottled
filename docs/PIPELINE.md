@@ -49,8 +49,8 @@ across facets, reads ten sources by default, and allows twenty when requested.
 ## Acquisition and parsing
 
 The normal ladder is direct HTTP, Chrome-like TLS through curl_cffi, Crawl4AI,
-then conditional reuse of the headed browser. Jina is an optional external tier,
-disabled by default in Python and Compose. Rendering restrictions override automatic escalation.
+then conditional reuse of the headed browser. Rendering restrictions override
+automatic escalation. Requested URLs are not forwarded to a hosted-reader service.
 Challenges and nearly empty script/iframe shells can reach the headed tier
 without a caller knowing its expert flag. A one-slot fair queue preserves
 competing reads; caller/exact-host/policy-scoped sessions retain clearance.

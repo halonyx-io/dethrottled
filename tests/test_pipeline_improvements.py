@@ -99,7 +99,6 @@ def test_short_and_raw_reads_do_not_require_a_long_article(monkeypatch):
     html = "<html><body><h1>Meeting</h1><p>Begins at 09:30.</p></body></html>"
     monkeypatch.setattr(fetch, "_tier_direct", lambda *a: ({"html": html}, "", a[0]))
     monkeypatch.setattr(fetch, "ENABLE_TLS", False)
-    monkeypatch.setattr(fetch, "ENABLE_JINA", False)
     result = fetch.fetch_and_extract("https://example.org/meeting", allow_render=False,
                                      keep_html=True, format="html")
     assert result["ok"] and result["html"] == html
@@ -140,7 +139,6 @@ def test_render_wait_is_request_local(monkeypatch):
     monkeypatch.setattr(fetch.requests, "post", lambda *a, **kw: (
         calls.append(kw["json"]) or Response()))
     monkeypatch.setattr(fetch, "CRAWL4AI_URL", "https://renderer.invalid")
-    monkeypatch.setattr(fetch, "ENABLE_JINA", False)
     monkeypatch.setattr(fetch, "_tier_direct", lambda *a: ({}, "missing", a[0]))
     monkeypatch.setattr(fetch, "ENABLE_TLS", False)
     monkeypatch.setattr(fetch, "tier_resting", lambda tier: False)

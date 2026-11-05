@@ -50,9 +50,5 @@
     "Baseline initial not-ready run is retained as web-startup-invalid.json and excluded.",
     "Browser benchmarking and private cold-agent fixtures are controlled; fixture exceptions never deployed."
   ],
-  "anonymous_jina_reader": {
-    "passed": 8,
-    "total": 8,
-    "limits": "Anonymous reader phrase checks; no paid account, cache/freshness parity or search comparison."
-  }
+  "editorial_note": "2026-11-05: retired external-provider comparison removed; original evidence archived separately; remaining measurements unchanged."
 }

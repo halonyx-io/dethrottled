@@ -1,35 +1,12 @@
 #!/usr/bin/env python3
-"""Functional health: capability, not reachability.
+"""Functional checks for configured fetch tiers and search sources.
 
-Written after two failures that a conventional health check could not see, and
-which cost days each:
+Each probe performs a read or search and checks the resulting content. A
+reachable service can still be DEGRADED when it returns no usable evidence.
+An unconfigured optional tier is OFF rather than DEAD, so a minimal standalone
+installation does not fail merely because it has no rendering worker.
 
-  * a headless-render service returned `{"status":"ok"}` for three and a half
-    days while every single render silently stalled behind an exhausted
-    semaphore
-  * a hosted reader API reported a routine `daily_cap` for three days while
-    actually running on a revoked key -- the same message for "come back
-    tomorrow" and for "you will never work again"
-
-Both were invisible because the checks asked "are you up?" instead of "can you
-do the job?". A process answering /health proves a socket is open. It proves
-nothing whatsoever about whether the thing behind it still works.
-
-So every probe here does real work and inspects the result:
-
-  * each fetch tier is asked to retrieve a page it is specifically good at
-  * each search source is asked for results, and the rows are counted
-  * a tier that answers but returns nothing usable is reported DEGRADED
-
-DEGRADED is the important state. It is the one that hid both faults above:
-HTTP 200, a response body, and not one word of article text in it.
-
-OFF is the second important state, and the reason this exits 0 on a minimal
-install. A tier nobody configured has not failed -- reporting it as DEAD would
-mean a perfectly healthy `pip install` fails its own health check, and a check
-that cries wolf on a working system is a check people learn to ignore.
-
-Run:  python -m dethrottled.health [--json]
+Run: python -m dethrottled.health [--json]
 """
 
 from __future__ import annotations
@@ -58,9 +35,6 @@ PROBES = {
         "DETHROTTLED_PROBE_TLS", "https://www.indeed.com/"),
     "crawl4ai": os.environ.get(
         "DETHROTTLED_PROBE_CRAWL4AI", "https://quotes.toscrape.com/js/"),
-    "jina-reader": os.environ.get(
-        "DETHROTTLED_PROBE_JINA_READER",
-        "https://en.wikipedia.org/wiki/Web_scraping"),
 }
 
 
@@ -72,8 +46,6 @@ def _configured(name: str) -> bool:
     """
     if name == "crawl4ai":
         return bool(fetcher.CRAWL4AI_URL)
-    if name == "jina-reader":
-        return bool(fetcher.ENABLE_JINA)
     if name == "tls":
         return bool(fetcher.ENABLE_TLS)
     return True
@@ -89,7 +61,6 @@ def probe_tier(name: str, url: str) -> dict:
         "direct": lambda: fetcher._tier_direct(url, 20),
         "tls": lambda: fetcher._tier_tls(url),
         "crawl4ai": lambda: fetcher._tier_crawl4ai(url),
-        "jina-reader": lambda: fetcher._tier_jina_reader(url),
     }
     if name not in runners:
         return {"tier": name, "status": "OFF", "chars": 0,

@@ -121,11 +121,9 @@ Production target policy was not relaxed. Hidden model reasoning is not recorded
 The text-only agent harness also does not demonstrate visual verification merely
 because a tool returned an image.
 
-A small anonymous **Jina Reader comparison passed 8/8 identical source-phrase
-checks**, as did Dethrottled on those sources. This is parity on a small reading
-sample. It does not compare search, paid tiers, freshness guarantees, semantic
-faithfulness or authenticated browser workflows. No paid-product superiority
-claim is supported by this run.
+Editorial note (2026-11-05): the retired external-provider comparison was
+removed from this distributed report. Original evidence is archived separately;
+the remaining Dethrottled measurements below are unchanged.
 
 Final validation: **524 tests passed, 15 skipped, two network tests deselected**;
 Ruff passed. Live checks separately exercised the public MCP endpoint, real MCP
