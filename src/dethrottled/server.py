@@ -1,55 +1,42 @@
 #!/usr/bin/env python3
-"""An HTTP API over the free stack: search, fetch, extract.
+"""HTTP API for discovery, reading, browser interaction and retained evidence.
 
-Six routes, no keys, no quota, no shared pool. Point anything that speaks HTTP
-at it and it works:
+Common entry points (see docs/HTTP-REFERENCE.md for the complete contract):
 
-    POST /search              free search across every configured source
-    POST /fetch               URLs -> their prose (raw=true for the source)
-    POST /drive               drive the private browser: click, fill, read
-    POST /search-and-fetch    both at once, fetching only the winners
-    GET  /corpus/search       what has already been fetched, no network
-    GET  /health              is the process alive
-    GET  /v2/status           which sources and extractors actually work
-    GET  /v2/capabilities     what this build can do
+    POST /search              bounded source choices
+    POST /v2/search           source choices with attempts and workflow guidance
+    POST /fetch               extracted content, quality and provenance
+    POST /drive               browser navigation, interaction and session reads
+    POST /search-and-fetch    discovery followed by selected reads
+    POST /research            bounded multi-source evidence bundles
+    POST /site/crawl          bounded same-origin site traversal
+    POST /documents/read      retained text and continuation ranges
+    POST /jobs/fetch          durable background reads
+    GET  /corpus/search       search previously indexed evidence
+    GET  /health              process identity and version
+    GET  /v2/status           source and worker readiness
+    GET  /v2/capabilities     supported tools, formats and limits
 
-Two response fields are worth knowing about because most search APIs do not
-give you them. `search_attempts` reports which engine returned how many rows
-and which ones did not answer at all, so a caller can tell a genuinely empty
-result from a silently degraded one. `tier` says HOW a page was obtained --
-`direct/trafilatura`, `crawl4ai/readability` -- which is the difference between
-trusting a result and knowing why you got it.
+The default stack needs no API keys. Optional metered discovery integrations
+require explicit configuration. Provider availability, queues and resource
+budgets still apply; a successful HTTP response alone does not establish that
+content is complete or usable. Search attempts and acquisition metadata expose
+which sources and tiers answered, while warnings and continuation steps retain
+gaps for callers to assess.
 
-Deliberately NOT included: any editorial opinion about which sources are good.
-The reputable-domain sweep and the preferred-domain ranking are available and
-are driven entirely by lists the CALLER supplies. A search service that decides
-for you what counts as a real publisher is a search service you cannot use for
-a subject it was not built for.
+`/fetch` escalates through configured acquisition tiers when content needs
+recovery. The `render` option controls browser rendering for a read.
+`/site/crawl` follows links within caller-supplied origin/path/page bounds.
+`/drive` operates the private browser worker directly, retaining scoped sessions
+for navigation, clicks, typing and reads. The automatic read planner uses a
+bounded subset of those operations when it observes a reading gap.
 
-Two verbs and one combination, not one endpoint per tier. There is
-deliberately no `/crawl`: rendering is a STRATEGY for obtaining a page, not
-something a caller wants for its own sake. The ladder escalates to the renderer
-by itself when the cheap tiers fail, and a caller choosing it by hand would
-spend four seconds of Chromium on pages `direct` serves in two hundred
-milliseconds. Where forcing the question is genuinely useful, that is the
-`render` parameter, not a route.
-
-`/drive` is the one place that rule bends, and on purpose. `/fetch` READS a
-page; `/drive` OPERATES one -- click, type, hold a session, read what rendered.
-The automatic read planner uses a bounded subset for observed reading gaps;
-explicit drive remains available for deliberate application-specific operations.
-It is proxied straight to the private browser worker, which owns the single
-warm, headed, stealth browser this stack already runs; the caller never
-launches a browser, sets a DISPLAY, or picks a Chromium build.
-
-`/extract` and `/search-and-extract` remain as aliases: they are what earlier
-callers were written against, and renaming for tidiness is a poor trade. So is
-`/extract-with-links`, which is `/fetch` with `links: true` -- the anchors kept
-and rendered as markdown, for callers doing link discovery rather than reading.
+`/extract`, `/search-and-extract` and `/extract-with-links` remain compatibility
+routes. Request models live in api_models.py and remain importable here.
 
 Run:
-    dethrottled --port 8182
-    python -m dethrottled.server --port 8182
+    dethrottled --port 8787
+    python -m dethrottled.server --port 8787
 """
 
 from __future__ import annotations
