@@ -26,7 +26,8 @@ from . import paths as _paths
 from . import providers
 from .content import constrained
 from .discovery import SOURCE_PROFILES, tls_search
-from .fetch import USER_AGENT, canonical_url
+from .fetch import USER_AGENT
+from .urls import canonical_url
 from .workflow import PRIMARY_SEARCH_LIMIT, SEARCH_MENU_LIMIT, SUPPLEMENT_SEARCH_LIMIT
 
 # Empty by default: a SearXNG instance is something you host, and pointing at

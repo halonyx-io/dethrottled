@@ -36,12 +36,12 @@ def test_root_path_survives():
     assert canonical_url("https://example.com/") == "https://example.com/"
 
 
-@pytest.mark.parametrize("value", ["", "   ", "not a url", "mailto:a@b.c"])
+@pytest.mark.parametrize("value", ["", "   ", "not a url", "mailto:a@b.c", "https://[bad"])
 def test_rubbish_is_returned_unchanged(value):
     """Never raise on input. A URL that cannot be parsed is handed back as it
     arrived: dropping it would silently lose a search result, and raising would
     let one malformed row kill an entire response."""
-    assert canonical_url(value) == value.strip() or True
+    assert canonical_url(value) == value
 
 
 def test_none_is_not_fatal():
@@ -53,3 +53,10 @@ def test_two_forms_of_one_article_collapse():
     a = canonical_url("https://www.example.com/story?utm_campaign=twitter#top")
     b = canonical_url("https://m.example.com/story/")
     assert a == b
+
+
+def test_tracking_prefixes_preserve_meaningful_query_pairs():
+    url = ("https://example.com/a?UTM_source=x&FBCLID=z&ref_src=feed"
+           "&id=7&id=8&empty=&q=caf%C3%A9&my_utm_source=keep")
+    assert canonical_url(url) == (
+        "https://example.com/a?id=7&id=8&empty=&q=caf%C3%A9&my_utm_source=keep")
