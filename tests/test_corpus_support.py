@@ -118,3 +118,18 @@ def test_model_failures_remain_visible_when_no_hits_are_returned(store, monkeypa
     result = server.corpus_search("a question with no usable model", mode="semantic")
     assert not result["results"]
     assert result["retrieval_warnings"] == hits.retrieval_warnings
+
+
+def test_schema_one_rollback_reports_legacy_policy_and_no_broad_hint(monkeypatch):
+    from dethrottled import server
+
+    class Legacy:
+        def search(self, *args, **kwargs):
+            return []
+
+    monkeypatch.setenv("DETHROTTLED_CORPUS_SCHEMA", "1")
+    monkeypatch.setattr(server, "shared_corpus", lambda: Legacy())
+    result = server.corpus_search("a query")
+    assert result["support"] == "legacy"
+    assert "Use support=broad" not in result["broader_retrieval"]
+    assert not server.corpus_search("a query", support="broad")["ok"]

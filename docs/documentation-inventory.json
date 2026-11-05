@@ -1,0 +1,1016 @@
+{
+  "schema_version": 1,
+  "scope": "Tracked documentation, visuals and contract surfaces",
+  "entries": [
+    {
+      "path": ".dockerignore",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": ".env.example",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": ".github/pull_request_template.md",
+      "lifecycle": "current-guide",
+      "review": "Change author: reconcile current behaviour, examples and navigation."
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": ".github/workflows/release.yml",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "AGENTS.md",
+      "lifecycle": "current-guide",
+      "review": "Change author: reconcile current behaviour, examples and navigation."
+    },
+    {
+      "path": "Dockerfile",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "LICENSE",
+      "lifecycle": "third-party-notice",
+      "review": "Artifact maintainer: preserve required attribution."
+    },
+    {
+      "path": "MANIFEST.in",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "README.md",
+      "lifecycle": "current-guide",
+      "review": "Change author: reconcile current behaviour, examples and navigation."
+    },
+    {
+      "path": "adapters/Dockerfile",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "adapters/mcp_server.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "adapters/rest_gateway.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "browser-search/Dockerfile",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "browser-search/recovery.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "browser-search/requirements.txt",
+      "lifecycle": "dependency-input",
+      "review": "Dependency maintainer: reconcile install/platform and lock documentation."
+    },
+    {
+      "path": "browser-search/service.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "browser-search/start.sh",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "browser-search/verify_search.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "docker-compose.agents.yml",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "docker-compose.gpu.yml",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "docker-compose.pdf-worker.yml",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "docker-compose.yml",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "docker/crawl4ai/config.yml",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "docker/pdf-worker/worker.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "docker/searxng/dethrottled_guard.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "docker/searxng/retry_after.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "docker/searxng/settings.yml",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "docling-worker/Dockerfile",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "docling-worker/convert.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "docling-worker/service.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "docs/AGENT-PLAYBOOK.md",
+      "lifecycle": "current-guide",
+      "review": "Change author: reconcile current behaviour, examples and navigation."
+    },
+    {
+      "path": "docs/AGENT-UPGRADES.md",
+      "lifecycle": "current-guide",
+      "review": "Change author: reconcile current behaviour, examples and navigation."
+    },
+    {
+      "path": "docs/API.md",
+      "lifecycle": "current-guide",
+      "review": "Change author: reconcile current behaviour, examples and navigation."
+    },
+    {
+      "path": "docs/BENCHMARKS-2026-10-04.md",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "docs/BENCHMARKS.md",
+      "lifecycle": "current-guide",
+      "review": "Change author: reconcile current behaviour, examples and navigation."
+    },
+    {
+      "path": "docs/CONFIGURATION.md",
+      "lifecycle": "current-guide",
+      "review": "Change author: reconcile current behaviour, examples and navigation."
+    },
+    {
+      "path": "docs/CORPUS.md",
+      "lifecycle": "current-guide",
+      "review": "Change author: reconcile current behaviour, examples and navigation."
+    },
+    {
+      "path": "docs/DEPENDABLE-WORKFLOWS.md",
+      "lifecycle": "current-guide",
+      "review": "Change author: reconcile current behaviour, examples and navigation."
+    },
+    {
+      "path": "docs/DOCUMENTATION-INVENTORY.md",
+      "lifecycle": "generated",
+      "review": "Change author: regenerate from source; do not hand-edit generated tables."
+    },
+    {
+      "path": "docs/DOCUMENTATION-MAINTENANCE.md",
+      "lifecycle": "current-guide",
+      "review": "Change author: reconcile current behaviour, examples and navigation."
+    },
+    {
+      "path": "docs/DRIVE.md",
+      "lifecycle": "current-guide",
+      "review": "Change author: reconcile current behaviour, examples and navigation."
+    },
+    {
+      "path": "docs/EVIDENCE.md",
+      "lifecycle": "current-guide",
+      "review": "Change author: reconcile current behaviour, examples and navigation."
+    },
+    {
+      "path": "docs/FEATURES.md",
+      "lifecycle": "current-guide",
+      "review": "Change author: reconcile current behaviour, examples and navigation."
+    },
+    {
+      "path": "docs/HTTP-REFERENCE.md",
+      "lifecycle": "generated",
+      "review": "Change author: regenerate from source; do not hand-edit generated tables."
+    },
+    {
+      "path": "docs/LIMITS.md",
+      "lifecycle": "current-guide",
+      "review": "Change author: reconcile current behaviour, examples and navigation."
+    },
+    {
+      "path": "docs/MCP-REFERENCE.md",
+      "lifecycle": "generated",
+      "review": "Change author: regenerate from source; do not hand-edit generated tables."
+    },
+    {
+      "path": "docs/MEASURED-IMPROVEMENTS.md",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "docs/ONE-ZERO.md",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "docs/OPERATIONS.md",
+      "lifecycle": "current-guide",
+      "review": "Change author: reconcile current behaviour, examples and navigation."
+    },
+    {
+      "path": "docs/PDF_WORKER.md",
+      "lifecycle": "current-guide",
+      "review": "Change author: reconcile current behaviour, examples and navigation."
+    },
+    {
+      "path": "docs/PIPELINE.md",
+      "lifecycle": "current-guide",
+      "review": "Change author: reconcile current behaviour, examples and navigation."
+    },
+    {
+      "path": "docs/PUBLIC-ACCESS.md",
+      "lifecycle": "current-guide",
+      "review": "Change author: reconcile current behaviour, examples and navigation."
+    },
+    {
+      "path": "docs/PYTHON.md",
+      "lifecycle": "current-guide",
+      "review": "Change author: reconcile current behaviour, examples and navigation."
+    },
+    {
+      "path": "docs/QUICKSTART.md",
+      "lifecycle": "current-guide",
+      "review": "Change author: reconcile current behaviour, examples and navigation."
+    },
+    {
+      "path": "docs/READ-PLANNER.md",
+      "lifecycle": "current-guide",
+      "review": "Change author: reconcile current behaviour, examples and navigation."
+    },
+    {
+      "path": "docs/README.md",
+      "lifecycle": "current-guide",
+      "review": "Change author: reconcile current behaviour, examples and navigation."
+    },
+    {
+      "path": "docs/RECOVERY-GAPS.md",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "docs/REQUIREMENTS.md",
+      "lifecycle": "current-guide",
+      "review": "Change author: reconcile current behaviour, examples and navigation."
+    },
+    {
+      "path": "docs/REVIEWED-BOT-FINDINGS.md",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "docs/assets/architecture.svg",
+      "lifecycle": "visual",
+      "review": "Documentation maintainer: check source data, labels, units and embedding."
+    },
+    {
+      "path": "docs/assets/escalation.svg",
+      "lifecycle": "visual",
+      "review": "Documentation maintainer: check source data, labels, units and embedding."
+    },
+    {
+      "path": "docs/assets/hardware.svg",
+      "lifecycle": "visual",
+      "review": "Documentation maintainer: check source data, labels, units and embedding."
+    },
+    {
+      "path": "docs/assets/hero.svg",
+      "lifecycle": "visual",
+      "review": "Documentation maintainer: check source data, labels, units and embedding."
+    },
+    {
+      "path": "docs/assets/latency.svg",
+      "lifecycle": "visual",
+      "review": "Documentation maintainer: check source data, labels, units and embedding."
+    },
+    {
+      "path": "docs/assets/live-outcomes.svg",
+      "lifecycle": "visual",
+      "review": "Documentation maintainer: check source data, labels, units and embedding."
+    },
+    {
+      "path": "docs/assets/profiles.svg",
+      "lifecycle": "visual",
+      "review": "Documentation maintainer: check source data, labels, units and embedding."
+    },
+    {
+      "path": "docs/assets/resources.svg",
+      "lifecycle": "visual",
+      "review": "Documentation maintainer: check source data, labels, units and embedding."
+    },
+    {
+      "path": "docs/benchmarks/2026-11-01-findings/README.md",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "docs/benchmarks/2026-11-01-measured/README.md",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "docs/benchmarks/2026-11-01-recovery-next/README.md",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "docs/documentation-inventory.json",
+      "lifecycle": "generated",
+      "review": "Change author: regenerate from source; do not hand-edit generated tables."
+    },
+    {
+      "path": "evaluations/agent-search/README.md",
+      "lifecycle": "harness-guide",
+      "review": "Harness maintainer: check runnable commands and label dated assumptions."
+    },
+    {
+      "path": "evaluations/agent-search/results/2026-11-03/REPORT.md",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "evaluations/agent-workflow/README.md",
+      "lifecycle": "harness-guide",
+      "review": "Harness maintainer: check runnable commands and label dated assumptions."
+    },
+    {
+      "path": "evaluations/agent-workflow/results/2026-11-01-six-upgrades/RESULTS.md",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "evaluations/agent-workflow/results/2026-11-01/RESULTS.md",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "evaluations/agent-workflow/results/2026-11-01/case-results.md",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "evaluations/audit/results/2026-11-02/REPORT.md",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "evaluations/broad-search/results/2026-11-02/REPORT.md",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "evaluations/compact-search/results/2026-11-03/REPORT.md",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "evaluations/content-validity/README.md",
+      "lifecycle": "harness-guide",
+      "review": "Harness maintainer: check runnable commands and label dated assumptions."
+    },
+    {
+      "path": "evaluations/content-validity/results/2026-11-01/REPORT.md",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "evaluations/corpus-v2/README.md",
+      "lifecycle": "harness-guide",
+      "review": "Harness maintainer: check runnable commands and label dated assumptions."
+    },
+    {
+      "path": "evaluations/corpus-v2/results/2026-11-05/REPORT.md",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "evaluations/corpus-v2/results/2026-11-05/RESOLUTIONS.md",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "evaluations/dependable/README.md",
+      "lifecycle": "harness-guide",
+      "review": "Harness maintainer: check runnable commands and label dated assumptions."
+    },
+    {
+      "path": "evaluations/dependable/results/2026-11-01/REPORT.md",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "evaluations/drive-recovery/README.md",
+      "lifecycle": "harness-guide",
+      "review": "Harness maintainer: check runnable commands and label dated assumptions."
+    },
+    {
+      "path": "evaluations/drive-recovery/results/2026-11-02/REPORT.md",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "evaluations/install-showcase/README.md",
+      "lifecycle": "harness-guide",
+      "review": "Harness maintainer: check runnable commands and label dated assumptions."
+    },
+    {
+      "path": "evaluations/install-showcase/results/2026-11-04/ISSUES.md",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "evaluations/install-showcase/results/2026-11-04/PUBLICATION.md",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "evaluations/install-showcase/results/2026-11-04/REPORT.md",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "evaluations/install-showcase/results/2026-11-04/failures/optional-path-failure.txt",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "evaluations/install-showcase/results/2026-11-04/failures/pypi-index-propagation.txt",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "evaluations/mcp-maintenance/2026-11-02/REPORT.md",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "evaluations/module-refactor/README.md",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "evaluations/read-loop/README.md",
+      "lifecycle": "harness-guide",
+      "review": "Harness maintainer: check runnable commands and label dated assumptions."
+    },
+    {
+      "path": "evaluations/read-loop/results/2026-11-02/DEPLOYMENT.md",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "evaluations/read-loop/results/2026-11-02/REPORT.md",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "evaluations/release/README.md",
+      "lifecycle": "harness-guide",
+      "review": "Harness maintainer: check runnable commands and label dated assumptions."
+    },
+    {
+      "path": "evaluations/release/fixtures/APACHE-LICENSE.txt",
+      "lifecycle": "third-party-notice",
+      "review": "Artifact maintainer: preserve required attribution."
+    },
+    {
+      "path": "evaluations/release/fixtures/NOTICE.txt",
+      "lifecycle": "third-party-notice",
+      "review": "Artifact maintainer: preserve required attribution."
+    },
+    {
+      "path": "evaluations/release/results/2026-11-02/REPORT.md",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "evaluations/search-breadth/results/2026-11-02/REPORT.md",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "evaluations/search-policy/README.md",
+      "lifecycle": "harness-guide",
+      "review": "Harness maintainer: check runnable commands and label dated assumptions."
+    },
+    {
+      "path": "evaluations/search-policy/results/2026-11-03/ATTRIBUTION.md",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "evaluations/search-policy/results/2026-11-03/REPORT.md",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "evaluations/worker-audit/2026-11-01/REPORT.md",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "format-worker/Dockerfile",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "format-worker/service.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "format-worker/tika_convert.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "media-worker/Dockerfile",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "media-worker/service.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "media-worker/transcribe.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "pyproject.toml",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "requirements/adapters.lock",
+      "lifecycle": "dependency-input",
+      "review": "Dependency maintainer: reconcile install/platform and lock documentation."
+    },
+    {
+      "path": "requirements/adapters.txt",
+      "lifecycle": "dependency-input",
+      "review": "Dependency maintainer: reconcile install/platform and lock documentation."
+    },
+    {
+      "path": "requirements/docker-py312.txt",
+      "lifecycle": "dependency-input",
+      "review": "Dependency maintainer: reconcile install/platform and lock documentation."
+    },
+    {
+      "path": "scripts/ab_extract.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "scripts/access-tokens.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "scripts/benchmark.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "scripts/benchmark_endpoints.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "scripts/benchmark_fixtures.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "scripts/benchmark_local.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "scripts/benchmark_parallel.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "scripts/benchmark_pdf.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "scripts/build_showcase.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "scripts/check_agent_docs.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "scripts/check_docs.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "scripts/compose-auto.sh",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "scripts/docs_reference.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "scripts/documentation_inventory.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "scripts/evaluate_content.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "scripts/fetch-models.sh",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "scripts/probe_blocked.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "scripts/probe_embed.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "scripts/probe_extract.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "scripts/probe_fetchers.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "scripts/probe_impersonate.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "scripts/probe_routing.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "scripts/probe_search.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "scripts/probe_session.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "scripts/probe_wayback.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "scripts/stress_server.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "scripts/stress_state.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "scripts/verify_adapter.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "scripts/verify_image.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "scripts/verify_searxng.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "scripts/verify_stack_package.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "setup.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/__init__.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/__main__.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/_quiet.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/access.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/admission.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/api_models.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/backfill.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/cache.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/challenges.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/cli.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/content.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/corpus.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/corpus_chunks.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/corpus_config.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/corpus_index.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/corpus_jobs.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/corpus_migrate.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/corpus_query.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/corpus_support.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/corpus_v2.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/corpus_vectors.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/discovery.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/documents.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/domains.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/evidence.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/extract.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/fallback.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/fetch.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/formats.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/health.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/identity.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/jobs.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/layout.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/media.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/ocr.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/paths.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/providers.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/rank.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/readplan.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/research.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/search.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/server.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/site.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/stack.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/structure.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/timed.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/urls.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/workers.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/workflow.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "workers/runtime.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    }
+  ]
+}

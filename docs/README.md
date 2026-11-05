@@ -9,7 +9,8 @@ assets and public adapters may differ.
 
 | Your task | Start here | Continue with |
 |---|---|---|
-| Connect an agent | [Agent integration](AGENT-UPGRADES.md) | [MCP reference](MCP-REFERENCE.md), [public adapters](PUBLIC-ACCESS.md) |
+| First install or non-model application | [Quick start](QUICKSTART.md) | [Python](PYTHON.md), [HTTP API](API.md) |
+| Connect an agent | [Client playbook](AGENT-PLAYBOOK.md) | [MCP reference](MCP-REFERENCE.md), [public adapters](PUBLIC-ACCESS.md) |
 | Request broader coverage | [Limits and continuation](LIMITS.md) | [Agent integration](AGENT-UPGRADES.md) |
 | Read a source or file | [Reading and evidence](DEPENDABLE-WORKFLOWS.md) | [HTTP API](API.md), [browser operation](DRIVE.md) |
 | Understand automatic escalation | [Read planner](READ-PLANNER.md) | [Agent integration](AGENT-UPGRADES.md), [evidence](EVIDENCE.md) |
@@ -17,6 +18,13 @@ assets and public adapters may differ.
 | Call from application code | [HTTP API](API.md) | [Request reference](HTTP-REFERENCE.md), [Python API](PYTHON.md) |
 | Assess capabilities and quality | [Feature inventory](FEATURES.md) | [Evidence and limits](EVIDENCE.md) |
 | Print supplied HTML as PDF | [HTML-to-PDF worker](PDF_WORKER.md) | [Configuration](CONFIGURATION.md) |
+| Reuse shared public evidence | [Corpus v2](CORPUS.md) | [Measured comparison](../evaluations/corpus-v2/results/2026-11-05/REPORT.md), [client playbook](AGENT-PLAYBOOK.md) |
+
+## Contribute and maintain
+
+Read [repository instructions](../AGENTS.md), [documentation maintenance](DOCUMENTATION-MAINTENANCE.md)
+and the [tracked inventory](DOCUMENTATION-INVENTORY.md) before changing behaviour or published claims.
+The [integration details](AGENT-UPGRADES.md) complement the client playbook.
 
 ## Understand the result
 
@@ -45,5 +53,5 @@ site configured; GitHub renders these Markdown pages directly.
 
 [Documentation home](README.md) · [Agent guide](AGENT-UPGRADES.md) · [API](API.md) · [Evidence](EVIDENCE.md)
 
-For the next release candidate: [Corpus v2](CORPUS.md), including visibility,
+Read [Corpus v2](CORPUS.md) for visibility,
 coverage, resource bounds, migration, and rollback.

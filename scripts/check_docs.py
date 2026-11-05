@@ -16,6 +16,10 @@ from urllib.parse import unquote, urlsplit
 ROOT = Path(__file__).resolve().parents[1]
 GUIDES = {
     "README.md",
+    "AGENTS.md",
+    "docs/AGENT-PLAYBOOK.md",
+    "docs/QUICKSTART.md",
+    "docs/DOCUMENTATION-MAINTENANCE.md",
     "docs/README.md",
     "docs/API.md",
     "docs/CONFIGURATION.md",
@@ -49,11 +53,10 @@ def anchors(text):
 
 
 def main():
-    files = [
-        ROOT / "README.md",
-        *sorted((ROOT / "docs").rglob("*.md")),
-        *sorted((ROOT / "evaluations").rglob("*.md")),
-    ]
+    inventory = json.loads((ROOT / "docs/documentation-inventory.json").read_text())
+    files = [ROOT / entry["path"] for entry in inventory["entries"]
+             if Path(entry["path"]).suffix.lower() == ".md"
+             and (ROOT / entry["path"]).is_file()]
     errors, counts = [], {"pages": len(files), "links": 0, "examples": 0, "requests": 0}
     with tempfile.TemporaryDirectory(prefix="dethrottled-doc-check-") as directory:
         os.environ["DETHROTTLED_DATA_DIR"] = directory

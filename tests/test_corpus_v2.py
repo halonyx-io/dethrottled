@@ -9,6 +9,7 @@ from dethrottled.evidence import Documents
 
 @pytest.fixture
 def store(tmp_path, monkeypatch):
+    pytest.importorskip("numpy", reason="mock embedding/vector gates require the semantic extra")
     from dethrottled import corpus
 
     docs = Documents(tmp_path / "evidence.sqlite")

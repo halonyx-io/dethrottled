@@ -177,7 +177,7 @@ Record request IDs, exact controls, timing and returned warnings for a failed ta
 
 [Documentation home](README.md) · [Agent guide](AGENT-UPGRADES.md) · [API](API.md) · [Evidence](EVIDENCE.md)
 
-The [unreleased Corpus v2 candidate](CORPUS.md) adds public-admission reports,
+[Corpus v2](CORPUS.md) adds public-admission reports,
 coverage/provenance, explicit `mode=hybrid`, domain filtering, and durable-job
 status. `support=standard` checks model/source agreement or query terms;
 `support=broad` includes warned single-model candidates when more coverage is

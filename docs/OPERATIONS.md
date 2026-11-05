@@ -116,8 +116,15 @@ Verify `initialize.instructions` against the backend workflow hash and refresh
 `tools/list`. Restarting unchanged adapters is not needed for a docs-only update.
 Stale request leases can temporarily consume slots after a crash/restart.
 
-E5 backfill is supervised and resumes committed progress. Setting
-`DETHROTTLED_MULTILINGUAL_CORPUS=0` preserves the original MiniLM index. Roll
+Corpus v2 uses a durable background queue for the configured MiniLM/E5 models.
+Check `/corpus/stats.index` for jobs, coverage, disk use and pending maintenance.
+Its 90-day retention does not extend extraction or full-document cache lifetimes.
+Run bounded local migration with `python -m dethrottled.corpus_migrate --limit 32`;
+repeat batches, allowing the API worker to drain accepted jobs. Unknown legacy
+visibility is skipped; inspect the counts rather than assuming old prefix
+embeddings became full public documents. See [Corpus migration](CORPUS.md#migration-repair-and-rollback).
+Schema 1 remains an explicit rollback and retains its supervised E5 backfill.
+Setting `DETHROTTLED_MULTILINGUAL_CORPUS=0` disables E5 retrieval/indexing. Roll
 back images and worker URLs together when required; do not delete data to roll
 back code. Unknown external browser-operation outcomes remain inspect-before-retry.
 

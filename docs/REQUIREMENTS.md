@@ -72,3 +72,14 @@ run `stack down`, then `stack up --profile default` (or `media`/`layout`). Data
 and model volumes remain available across that cycle.
 
 [Benchmark results](BENCHMARKS.md) · [Python installation](PYTHON.md) · [Operations](OPERATIONS.md)
+
+## Corpus v2 resource budgets
+
+The [Corpus v2 evaluation](../evaluations/corpus-v2/results/2026-11-05/REPORT.md)
+measures normalized storage and real-model process memory separately. The default
+256 MiB combined vector-matrix budget excludes model weights, tokenizer/ONNX
+workspaces, Python and SQLite overhead; it is not an overall RAM cap. The paired
+real-model development captures were approximately 1 GiB peak RSS. Full-source
+indexing can increase storage and work for a fixed document collection, even
+though normalized storage is smaller at matched vector counts. See
+[Corpus operation](CORPUS.md) for the soft disk target, bounded cleanup and knobs.

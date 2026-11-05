@@ -1389,10 +1389,6 @@ def corpus_search(q: str, limit: int = 10, floor: float | None = None,
                   domains: str = "", support: Literal["standard", "broad"] = "standard"):
     """Search what has already been fetched, without fetching anything.
 
-    The index was being written on every extraction and read by nothing over
-    HTTP, which made it a write-only store: pages went in, and the only way to
-    get one back was to fetch it off the network again.
-
     Schema 2 standard support requires source/model corroboration or query
     anchors in addition to the unchanged model-specific floors. Broad support
     retains unconfirmed candidates with warnings. Neither verifies an answer.
@@ -1411,12 +1407,14 @@ def corpus_search(q: str, limit: int = 10, floor: float | None = None,
         return {"ok": False, "reason": str(exc)[:200], "results": []}
     retrieval_warnings = getattr(hits, "retrieval_warnings", [])
     hits = hits[:10]
-    return {"ok": True, "count": len(hits), "results": hits, "support": support,
+    return {"ok": True, "count": len(hits), "results": hits,
+            "support": support if options else "legacy",
             "retrieval_warnings": retrieval_warnings,
             "answer_support": "unverified",
-            "broader_retrieval": "Use support=broad for warned, unconfirmed candidates; "
+            "broader_retrieval": ("Use support=broad for warned, unconfirmed candidates; "
             "an empty result does not prove absence. Use mode=lexical when semantic models "
-            "are unavailable."}
+            "are unavailable." if options else "Schema 1 retains legacy retrieval; "
+            "support selection requires schema 2. An empty result does not prove absence.")}
 
 
 @app.get("/corpus/stats")

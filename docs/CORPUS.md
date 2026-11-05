@@ -1,7 +1,6 @@
 # Shared corpus: coverage, retrieval and operation
 
-This page describes the **unreleased Corpus v2 candidate**. Published 1.4.3 uses
-the original corpus. The candidate defaults to schema 2; it leaves
+Dethrottled **1.5.0** defaults to Corpus v2 (schema 2). It leaves
 `corpus.sqlite` intact and writes `corpus-v2.sqlite` beside it.
 
 The corpus searches evidence already acquired. It does not replace live web
@@ -142,7 +141,7 @@ Full-document storage has its separate existing budget.
 
 | Variable | Default | Purpose |
 | --- | --- | --- |
-| `DETHROTTLED_CORPUS_SCHEMA` | `2` | Candidate v2; `1` selects the retained v1 implementation |
+| `DETHROTTLED_CORPUS_SCHEMA` | `2` | Default v2; `1` selects the retained v1 implementation |
 | `DETHROTTLED_CORPUS_AUTOINDEX` | `1` | Enable automatic admission |
 | `DETHROTTLED_CORPUS_RETENTION_DAYS` | `90` | Corpus-only retention |
 | `DETHROTTLED_CORPUS_MAX_PASSAGES` | `50000` | Embeddings per model |
@@ -212,7 +211,7 @@ since the switch are not automatically copied back to v1. Keep both files and
 an ordinary SQLite backup until validation is complete. Unreviewed v1 history
 predates the new visibility policy; restrict it to trusted callers.
 
-[Measured candidate report](../evaluations/corpus-v2/results/2026-11-05/REPORT.md) ·
+[Dated validation report](../evaluations/corpus-v2/results/2026-11-05/REPORT.md) ·
 [Reproducible harnesses](../evaluations/corpus-v2/README.md)
 
 [Documentation home](README.md) · [API](API.md) · [Configuration](CONFIGURATION.md)

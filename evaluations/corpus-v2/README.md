@@ -1,6 +1,6 @@
 # Corpus v2 validation
 
-This is the evaluation package for the unreleased Corpus v2 candidate. It uses
+This is the evaluation package for Corpus v2, introduced in 1.5.0. It uses
 fictional, labelled documents, existing pinned MiniLM/E5 weights, local HTTP
 fixtures and disposable Compose projects. No search provider, cloud API or
 production corpus is needed.
@@ -23,7 +23,9 @@ text against the expected URL and full fact strings. It does not trust the
 stored `fact_retained` flags. It also checks native regression replay, lifecycle,
 public migration/rollback and concurrent-read outcomes. Runtime-source hashes
 identify the code tested by the private validation wheel; later intentional
-changes require a new capture rather than rewriting these historical hashes.
+changes require new validation rather than rewriting historical hashes. The
+default verifier checks the frozen observations independently of the current
+checkout; `--check-source` additionally requires the original candidate's source.
 Repeated per-query JSON is losslessly gzip-compressed to keep repository size
 reasonable; the verifier reads it directly. Summaries, manifests and CSV remain
 readable without decompression.

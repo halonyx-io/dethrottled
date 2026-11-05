@@ -1,5 +1,6 @@
 """Regrade retained synthetic evidence and verify hashes offline; standard library only."""
 
+import argparse
 import ast
 import gzip
 import hashlib
@@ -69,6 +70,13 @@ def grade(rows, data):
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--check-source",
+        action="store_true",
+        help="Also require the original candidate's runtime source",
+    )
+    args = parser.parse_args()
     for line in (RESULTS / "SHA256SUMS").read_text().splitlines():
         digest, name = line.split("  ", 1)
         assert hashlib.sha256((RESULTS / name).read_bytes()).hexdigest() == digest, name
@@ -115,7 +123,7 @@ def main():
         assert concurrency["idle"]["fact_successes"] == 48
         assert concurrency["indexing"]["fact_successes"] == 48
     build = load("build.json")
-    for name, digest in build["runtime_source_sha256"].items():
+    for name, digest in (build["runtime_source_sha256"] if args.check_source else {}).items():
         raw = (ROOT / name).read_bytes()
         actual = hashlib.sha256(raw).hexdigest()
         if actual != digest:

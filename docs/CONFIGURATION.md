@@ -35,14 +35,14 @@ application settings need an `environment` entry in a local override. Inspect
 | `CRAWL4AI_TOKEN` | `dethrottled-compose-local` | Private renderer credential, not caller authentication |
 | `CRAWL4AI_ALLOW_INTERNAL_URLS` | `false` | Renderer access to private addresses |
 | `DETHROTTLED_CHEAP_DISCOVERY` | `1` in Compose | Static DDG Lite probe before browser fallback; standalone default 0 |
-| `DETHROTTLED_MULTILINGUAL_CORPUS` | `1` in Compose | Separate E5 corpus retrieval/backfill; standalone opt-in |
+| `DETHROTTLED_MULTILINGUAL_CORPUS` | `1` in Compose | Enable E5 alongside MiniLM; standalone opt-in |
 | `DETHROTTLED_EXTRACT_CACHE_CHARS` | `1000000` | Retained extraction budget |
 | `DETHROTTLED_CRAWL4AI_BUDGET` | `-1` | No hourly renderer quota; 0 disables; positive values cap/window |
 | `DETHROTTLED_RENDER_CONCURRENCY` | `2` | API-side active renderer work |
 | `DETHROTTLED_DRIVE_SESSION_TTL`, `DETHROTTLED_DRIVE_MAX_SESSIONS` | `1800`, `8` | Browser session expiry and capacity |
 | `DETHROTTLED_BROWSER_GRAPHICS` | `auto` in Compose | Verify exposed hardware through GL EGL, fall back to software; `mesa` retains GL, `default` retains original args |
 | `DETHROTTLED_READ_PLAN_SECONDS` | `30` | Additional recovery admission budget, clamped to 0–120; in-flight operations retain their transport timeout |
-| `DETHROTTLED_USER_AGENT` | `dethrottled/1.4.3 (automated fetcher)` | Article-fetch identity |
+| `DETHROTTLED_USER_AGENT` | `dethrottled/1.5.0 (automated fetcher)` | Article-fetch identity |
 
 The base file maps internal worker URLs and optional worker/key variables.
 The complete interpolation map is in `docker-compose.yml` and the agents overlay;
@@ -92,8 +92,7 @@ MiniLM and E5 are corpus retrievers, not live-web neural rerankers. E5 uses a
 separate model-versioned index and reciprocal-rank fusion. MiniLM's floor is
 0.22; E5's is 0.77. These are calibrated retrieval cutoffs, not truth scores.
 `DETHROTTLED_EMBED_THREADS` defaults to 4. A supervised backfill resumes committed
-progress on schema 1; check `/v2/status.multilingual_backfill`. The unreleased
-[Corpus v2 candidate](CORPUS.md) uses its durable queue instead and exposes it
+progress on schema 1; check `/v2/status.multilingual_backfill`. [Corpus v2](CORPUS.md) uses its durable queue instead and exposes it
 under `/corpus/stats.index`. Disabling E5 preserves MiniLM. Schema 2 supports
 conservative `support=standard` retrieval and warned `support=broad` candidates;
 the latter retains useful single-model multilingual matches at a precision cost.
@@ -121,7 +120,7 @@ mapped. Change them against recorded coverage and failure cases, not just latenc
 | `DETHROTTLED_MAX_HTML_BYTES`, `DETHROTTLED_PDF_MAX_BYTES`, `DETHROTTLED_DOC_MAX_BYTES` | 10,000,000; 25 MiB; 50 MiB | Input limits |
 | `DETHROTTLED_OCR_PAGE_CAP`, `DETHROTTLED_OCR_PAGE_TIMEOUT` | `8`, `30` seconds | OCR work bounds |
 | `DETHROTTLED_DOC_MAX_ROWS`, `DETHROTTLED_DOC_MAX_CELL` | `2000`, `32767` | Table window/cell defaults; request overrides remain bounded |
-| `DETHROTTLED_CORPUS_MAX_PASSAGES`, `DETHROTTLED_CORPUS_RETENTION_DAYS` | `50000`, `90` | Corpus retention (candidate v2; cache lifetimes unchanged) |
+| `DETHROTTLED_CORPUS_MAX_PASSAGES`, `DETHROTTLED_CORPUS_RETENTION_DAYS` | `50000`, `90` | Corpus retention; cache lifetimes unchanged |
 
 Mesa exposes its actual llvmpipe software renderer. It needs no GPU passthrough,
 fingerprint injection or unsafe SwiftShader opt-in. Graphics-heavy sites can use
@@ -142,5 +141,5 @@ pacing, deadlines and storage limits.
 
 [Documentation home](README.md) · [Agent guide](AGENT-UPGRADES.md) · [API](API.md) · [Evidence](EVIDENCE.md)
 
-The unreleased [Corpus v2 candidate](CORPUS.md) documents separate harvest, lexical,
+[Corpus v2](CORPUS.md) documents separate harvest, lexical,
 semantic, database and matrix budgets, public eligibility, migration and rollback.
