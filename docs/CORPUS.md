@@ -10,7 +10,7 @@ Both that path and `/corpus/search` use the same configured retriever.
 
 Corpus v2 names the storage schema. The HTTP routes remain `/corpus/search` and
 `/corpus/stats`; there is no `/v2/corpus/stats` route. MCP uses `corpus_stats`.
-The unreleased candidate advertises both canonical URLs in
+Dethrottled 1.6.0 advertises both canonical URLs in
 `/v2/capabilities` → `corpus.endpoints`.
 
 ## Four separate forms of coverage
@@ -41,7 +41,7 @@ page markers provide page references. Generic headings provide section context,
 but chunks can span adjacent sections. OCR methods and quality warnings are
 preserved in provenance; their presence does not establish factual accuracy.
 
-## Unreleased: retained extraction completeness
+## Retained extraction completeness
 
 New admissions preserve a bounded `provenance.extraction.completeness` summary:
 status, assessment, sample/missing counts, selection change and up to eight
@@ -66,7 +66,7 @@ changed diagnostics can therefore require an ordinary reindex.
 | Corpus passages and embeddings | **90 days** since their source was last admitted |
 | Retained document handles | Existing seven-day expiry and 200 MB shared-store policy |
 
-In the unreleased candidate, the `lifetimes` object from `/corpus/stats` reports default cache
+In 1.6.0, the `lifetimes` object from `/corpus/stats` reports default cache
 TTLs, actual retained-document TTL/size policy and configured corpus retention.
 Cache age controls can shorten reuse for an individual request. These are four
 independent clocks; lookup-only reads do not renew them. Cache writes renew cache entries,

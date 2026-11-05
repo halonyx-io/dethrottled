@@ -330,3 +330,14 @@ def test_crawl_policy_reply_is_not_reported_as_antibot_failure():
         "response_headers": {"X-Dethrottled-Blocked": "adblock"},
     }
     assert _crawl4ai_target_error(payload).startswith("adblock_blocked:")
+
+
+def test_cache_permissions_without_descriptor_chmod(tmp_path, monkeypatch):
+    monkeypatch.setenv('DETHROTTLED_ADBLOCK', '1')
+    monkeypatch.delattr(adblock.os, 'fchmod', raising=False)
+    manager = adblock.Filter(tmp_path)
+    manager.update(lambda *a, **k: Reply(body()), now=100)
+    assert manager.rules and manager.error is None
+    restored = adblock.Filter(tmp_path)
+    restored.load()
+    assert restored.rules == manager.rules

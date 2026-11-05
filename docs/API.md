@@ -29,7 +29,7 @@ HTTP status, refusal/cooldown diagnostics and provider provenance.
 MCP callers select this envelope with `search(diagnostics=true)`; successful
 tool execution is distinct from discovery health. The legacy MCP search return
 can carry the envelope in a JSON text block rather than `structuredContent`.
-In the unreleased candidate, research `queries` also preserve `outcome` and
+In 1.6.0, research `queries` also preserve `outcome` and
 `degraded` per query, including `indeterminate` for a local search exception.
 Search defaults to `profile="web"`: DDG Lite/HTML/TLS/browser acquire up to ten
 primary choices while SearXNG Yahoo and Yandex each contribute up to three.
@@ -215,13 +215,13 @@ and the ten-result limit remain.
 
 ## Outbound domain-filter diagnostics
 
-The unreleased [adblock candidate](ADBLOCK.md) adds `adblock` state to capabilities,
+The [native adblock layer](ADBLOCK.md) adds `adblock` state to capabilities,
 status and stats. Refused fetches retain `quality=failed`, add
 `policy_blocked=adblock` and an `adblock_blocked:` failure reason. Their workflow
 has `state=policy_blocked` with no retry actions. This is distinct from an upstream
 network failure. No new request arguments or endpoints are required.
 
-## Unreleased corpus diagnostics
+## Corpus diagnostics
 
 `GET /corpus/stats` is the canonical stats route; `v2` describes the corpus schema,
 not a `/v2/corpus` HTTP namespace. Capabilities advertise `corpus.endpoints`.

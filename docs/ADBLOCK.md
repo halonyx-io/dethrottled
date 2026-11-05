@@ -1,6 +1,6 @@
 # Native ad/tracker filtering
 
-Unreleased candidate: this feature is not in the published 1.5.2 release.
+Available in Dethrottled 1.6.0.
 
 Dethrottled uses **HaGeZi Multi PRO** with one operator switch:
 

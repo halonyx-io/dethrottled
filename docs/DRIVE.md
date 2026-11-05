@@ -159,7 +159,7 @@ explain the observed limitation and safeguard.
 
 [Documentation home](README.md) · [Agent guide](AGENT-UPGRADES.md) · [API](API.md) · [Evidence](EVIDENCE.md)
 
-## Unreleased ad/tracker filtering
+## Ad/tracker filtering
 
 The [native filter](ADBLOCK.md) checks managed browser connections, including
 redirects and worker/WebSocket traffic. `/drive` reports bounded blocked-domain

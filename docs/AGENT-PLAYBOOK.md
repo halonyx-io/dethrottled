@@ -286,7 +286,7 @@ another representation when the missing evidence matters.
 
 ## Domain-filter refusals
 
-In the unreleased [adblock candidate](ADBLOCK.md), `policy_blocked=adblock` and
+With [native adblock filtering](ADBLOCK.md), `policy_blocked=adblock` and
 `adblock_blocked:` identify a filtering decision. Report it or choose another
 source; retrying other tiers cannot override it. `/v2/status`, capabilities and
 `/stats` expose list availability and errors. Enabled without valid rules permits

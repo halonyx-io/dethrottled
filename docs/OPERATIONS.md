@@ -209,7 +209,7 @@ file hashes and readability as its service user after promotion.
 
 ## Adblock operations
 
-The unreleased [native domain filter](ADBLOCK.md) needs the updated API and browser
+The [native domain filter](ADBLOCK.md), introduced in 1.6.0, needs the updated API and browser
 images plus recreated SearXNG/Crawl4AI workers. Its `adblock-state` volume holds the
 last working list and attribution; preserve it for offline restarts. Check each
 worker observation in `/stats` rather than inferring coverage from API readiness.

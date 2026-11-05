@@ -90,7 +90,7 @@ measures the additional extraction-only time and peak RSS for selective coverage
 comparison on both architectures. These figures exclude embedding-model memory
 and do not establish new universal minimum requirements. Final publication and deployment verification is recorded with the 1.5.2 release.
 
-## Unreleased filtering overhead
+## Filtering overhead
 
 The [adblock evaluation](../evaluations/adblock/README.md) separates per-process
 list memory, startup parsing CPU and complete browser workloads. These are measured

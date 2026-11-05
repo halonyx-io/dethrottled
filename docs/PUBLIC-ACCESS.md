@@ -212,9 +212,9 @@ from backend or plugin behaviour.
 
 [Documentation home](README.md) · [Agent guide](AGENT-UPGRADES.md) · [API](API.md) · [Evidence](EVIDENCE.md)
 
-## Unreleased domain filtering
+## Domain filtering
 
-The candidate adblock feature applies in the backend for both REST and MCP clients;
+Native adblock filtering applies in the backend for both REST and MCP clients;
 it adds no public per-request override. A refused fetch reports `policy_blocked`
 and stops automatic recovery. Operators should inspect backend `/v2/status` for
 list availability and worker observations. See [native filtering](ADBLOCK.md).

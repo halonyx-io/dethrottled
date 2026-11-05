@@ -73,7 +73,10 @@ def _atomic(path, payload):
     fd, name = tempfile.mkstemp(prefix=".adblock-", dir=path.parent)
     try:
         with os.fdopen(fd, "w") as output:
-            os.fchmod(output.fileno(), 0o640)
+            if hasattr(os, "fchmod"):
+                os.fchmod(output.fileno(), 0o640)
+            else:  # Windows does not provide descriptor chmod.
+                os.chmod(name, 0o640)
             json.dump(payload, output, separators=(",", ":"))
             output.flush()
             os.fsync(output.fileno())

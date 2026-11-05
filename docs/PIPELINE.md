@@ -114,6 +114,6 @@ and the [controlled investigation](../evaluations/retrieval-reliability/REPORT.m
 
 ## Outbound domain policy
 
-The unreleased [HaGeZi filter](ADBLOCK.md) applies at HTTP/TLS client and managed
+The [HaGeZi filter](ADBLOCK.md) applies at HTTP/TLS client and managed
 browser connection boundaries, including redirects. It does not change ranking,
 extraction or corpus retention. A policy-blocked read stops recovery.

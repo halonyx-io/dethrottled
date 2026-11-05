@@ -19,8 +19,8 @@ For a first installation or ordinary script/HTTP use, start with the
 [quick start](https://github.com/halonyx-io/dethrottled/blob/main/docs/QUICKSTART.md).
 
 Native [HaGeZi ad/tracker filtering](docs/ADBLOCK.md) is enabled by default on this
-branch, with one switch to disable it. The unreleased implementation and measured
-tradeoffs are described in that guide.
+release, with one switch to disable it. Coverage and measured resource costs
+are described in that guide.
 
 ## Install the complete engine
 
@@ -166,7 +166,7 @@ The fetch ladder does not consult `robots.txt`. Raw API access to trusted LAN
 targets requires care; public adapters enforce narrower policies, alongside
 operator-provided network isolation. See [operations](https://github.com/halonyx-io/dethrottled/blob/main/docs/OPERATIONS.md).
 
-This checkout is **1.5.2**. Check `/health` and `/v2/capabilities` on the service you
+This checkout is **1.6.0**. Check `/health` and `/v2/capabilities` on the service you
 actually use; deployed services and remote plugins can differ from a checkout.
 
 [MIT license](https://github.com/halonyx-io/dethrottled/blob/main/LICENSE) · Maintained by [Halonyx](https://github.com/halonyx-io)

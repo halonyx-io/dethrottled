@@ -20,10 +20,12 @@ def test_project_cannot_escape_state_directory(monkeypatch, tmp_path):
 def test_parent_compose_environment_and_secrets_are_not_inherited(monkeypatch):
     monkeypatch.setenv('COMPOSE_FILE', '/private/production.yml')
     monkeypatch.setenv('DETHROTTLED_EXA_API_KEY', 'private-secret')
+    monkeypatch.setenv('DETHROTTLED_ADBLOCK', '0')
     env = stack.clean_environment(19087)
     assert 'COMPOSE_FILE' not in env and 'DETHROTTLED_EXA_API_KEY' not in env
     assert env['DETHROTTLED_BIND'] == '127.0.0.1'
     assert env['DETHROTTLED_PORT'] == '19087'
+    assert env['DETHROTTLED_ADBLOCK'] == '0'
 
 
 def test_unmanaged_project_is_never_adopted(monkeypatch):

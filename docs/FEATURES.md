@@ -44,10 +44,10 @@ support, exhaustive site coverage and verified answers are not promised. The
 
 [Documentation home](README.md) · [Agent guide](AGENT-UPGRADES.md) · [API](API.md) · [Evidence](EVIDENCE.md)
 
-## Unreleased: native ad/tracker domain filtering
+## Native ad/tracker domain filtering
 
-The next-release candidate adds default-on HaGeZi Multi PRO filtering across
+Dethrottled 1.6.0 adds default-on HaGeZi Multi PRO filtering across
 shipped acquisition clients and managed workers, with persistent background
-updates and explicit policy refusals. It is not yet in published 1.5.2. See
+updates and explicit policy refusals. See
 [coverage, diagnostics and limitations](ADBLOCK.md) and the
 [controlled resource evaluation](../evaluations/adblock/README.md).
