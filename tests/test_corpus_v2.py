@@ -231,3 +231,31 @@ def test_reindex_keeps_prior_index_until_replacement_is_complete(store):
     assert store.search("retained", mode="lexical")
     finish(store)
     assert store.search("retained", mode="lexical")
+
+
+def test_unchanged_public_source_rebinds_document_namespace_and_repairs_150(store):
+    text = "PUBLIC-FACT-7349213: the quantity is 47. " * 30
+    url = "https://example.org/report"
+    for namespace in ("caller-a", "caller-b"):
+        document = store.documents.put(namespace, url, text, {"corpus_visibility": "public"})
+        result = admit(store, text, document_id=document["document_id"],
+                       _document_namespace=namespace)
+        if namespace == "caller-a":
+            finish(store)
+        else:
+            assert result["unchanged"]
+            assert not store.run_one()
+        assert store.status()["retained_documents"]["available"] == 1
+        hit = store.search("PUBLIC-FACT-7349213", mode="lexical")[0]
+        assert hit["document_available"]
+        assert hit["document_id"] == document["document_id"]
+    # Reproduce an existing 1.5.0 row, then exercise the startup repair.
+    with store.db:
+        store.db.execute("UPDATE sources SET namespace='caller-a'")
+        store.db.execute("DELETE FROM metadata WHERE key='document_namespace_repair'")
+    reopened = CorpusV2(store.path, documents=store.documents, models=store.models)
+    try:
+        assert reopened.status()["retained_documents"]["available"] == 1
+        assert reopened.search("PUBLIC-FACT-7349213", mode="lexical")[0]["document_available"]
+    finally:
+        reopened.db.close()

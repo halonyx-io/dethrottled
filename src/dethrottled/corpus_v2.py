@@ -121,6 +121,19 @@ class CorpusV2(IndexWorker):
             if old and old[0] != value:
                 raise ValueError("unsupported corpus " + key + ": " + old[0])
             self.db.execute("INSERT OR IGNORE INTO metadata VALUES(?,?)", (key, value))
+        # Repair references written by 1.5.0 when an unchanged public source
+        # was acquired in another caller namespace. The public registry already
+        # records the verified namespace for each retained document ID.
+        if not self.db.execute(
+            "SELECT 1 FROM metadata WHERE key='document_namespace_repair'"
+        ).fetchone():
+            self.db.execute(
+                "UPDATE sources SET namespace=(SELECT namespace FROM public_documents "
+                "WHERE document_id=sources.document_id) WHERE EXISTS "
+                "(SELECT 1 FROM public_documents WHERE document_id=sources.document_id "
+                "AND namespace!=sources.namespace)"
+            )
+            self.db.execute("INSERT INTO metadata VALUES('document_namespace_repair','1')")
         self.db.commit()
         self.revisions = {
             model: (
@@ -256,7 +269,7 @@ class CorpusV2(IndexWorker):
             self.db.execute(
                 "INSERT INTO sources VALUES(?,?,?,?,?,?,?,?,?,0,'pending',?) "
                 "ON CONFLICT(id) DO UPDATE SET touched=excluded.touched,"
-                "document_id=excluded.document_id,provenance=excluded.provenance",
+                "document_id=excluded.document_id,namespace=excluded.namespace,provenance=excluded.provenance",
                 (
                     identifier,
                     url,
