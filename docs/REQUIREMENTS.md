@@ -83,3 +83,9 @@ real-model development captures were approximately 1 GiB peak RSS. Full-source
 indexing can increase storage and work for a fixed document collection, even
 though normalized storage is smaller at matched vector counts. See
 [Corpus operation](CORPUS.md) for the soft disk target, bounded cleanup and knobs.
+
+
+The local [retrieval reliability candidate](../evaluations/retrieval-reliability/REPORT.md)
+measures the additional extraction-only time and peak RSS for selective coverage
+comparison on both architectures. These figures exclude embedding-model memory
+and do not establish new universal minimum requirements. Final publication and deployment verification is recorded with the 1.5.2 release.

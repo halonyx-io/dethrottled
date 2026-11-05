@@ -84,6 +84,8 @@ def assess_content(text: str, html: str = "", *, structured: bool = False) -> di
 def annotate_content(row: dict, html: str = "", *, structured: bool = False) -> dict:
     """Attach diagnostics to canonical text; retain all existing evidence and warnings."""
     assessment = assess_content(row.get("text", ""), html, structured=structured)
+    if row.get("extraction", {}).get("completeness", {}).get("status") == "suspected_incomplete":
+        assessment["completeness"] = "suspected_incomplete"
     row["content_assessment"] = assessment
     if assessment["pollution"] == "suspected":
         row["quality"] = "suspect"

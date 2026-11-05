@@ -71,3 +71,10 @@ soft corpus SQLite target. These are separate from full-document retention and
 model-process memory. Corpus passage/vector retention is 90 days; the search
 cache remains six hours and extraction cache 21 days. HTTP/MCP corpus menus
 remain at most ten results, including explicit broad support.
+
+
+Selective HTML coverage checks sample up to 24 substantive blocks (start/end
+anchors) on long structured pages; they do not establish exhaustive completeness.
+Existing extracted-content cache entries are not retroactively reconstructed.
+Use `cache_mode="refresh"` or `"bypass"` when reassessing older cached extraction;
+`bypass` neither reads nor writes that cache. Cache lifetimes remain unchanged.

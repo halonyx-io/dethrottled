@@ -1,0 +1,701 @@
+{
+  "label": "candidate",
+  "architecture": "x86_64",
+  "search_source_sha256": "4cd3980342aceafcca1ced43ea737a62ff449de49dd1d06bd755ad71e920a4c6",
+  "api_source_sha256": "aa7eac35f958329dc877e3edbf5b487ae62177a976e52b2d41f24d82dfa3efbd",
+  "controlled_probe_latency_ms": 5,
+  "scenarios": {
+    "ddg_down_backups_up": {
+      "reported_ready": false,
+      "ready_report": {
+        "ok": false,
+        "searxng": true,
+        "searxng_status": "ok",
+        "bing_news": false,
+        "searxng_configured": true,
+        "primary_discovery": {
+          "count": 0,
+          "status": "failed",
+          "availability": "unavailable",
+          "upstream_status": "failed",
+          "families": [],
+          "observed_at": 1793873290.2098813,
+          "stale": false,
+          "age_seconds": 0.001,
+          "ready": false,
+          "family": "web"
+        },
+        "supplementary": {
+          "yandex": {
+            "count": 3,
+            "status": "ok",
+            "availability": "available",
+            "upstream_status": "ok",
+            "families": [],
+            "observed_at": 1793873290.2098813,
+            "stale": false,
+            "age_seconds": 0.001
+          },
+          "yahoo": {
+            "count": 3,
+            "status": "ok",
+            "availability": "available",
+            "upstream_status": "ok",
+            "families": [],
+            "observed_at": 1793873290.2098813,
+            "stale": false,
+            "age_seconds": 0.001
+          }
+        },
+        "news": {
+          "availability": "unknown",
+          "stale": true,
+          "age_seconds": null
+        },
+        "initializing": false,
+        "degraded": true,
+        "observation_ttl_seconds": 60.0,
+        "detail": "Primary discovery is distinct from supplementary/news availability; readiness observations are cached, not an availability guarantee.",
+        "ddg_family": {
+          "status": "unobserved",
+          "cooldown_until": null,
+          "failures": 0
+        }
+      },
+      "calls": {
+        "primary": 1,
+        "supplements": 2,
+        "health_sx": 0,
+        "health_bing": 0
+      },
+      "health_poll_ms": [
+        0.13196095824241638,
+        0.08711591362953186,
+        0.07741665467619896,
+        0.07140589877963066,
+        0.07170718163251877
+      ],
+      "urls": [
+        "https://example.org/yandex/0",
+        "https://example.org/yahoo/0",
+        "https://example.org/yandex/1",
+        "https://example.org/yahoo/1",
+        "https://example.org/yandex/2",
+        "https://example.org/yahoo/2"
+      ],
+      "legacy_status": "ok",
+      "outcome": "partial_results",
+      "degraded": true,
+      "attempts": [
+        {
+          "engine": "web",
+          "count": 0,
+          "status": "failed",
+          "elapsed_ms": 1,
+          "unresponsive": []
+        },
+        {
+          "engine": "yandex",
+          "count": 3,
+          "status": "ok",
+          "elapsed_ms": 1,
+          "unresponsive": []
+        },
+        {
+          "engine": "yahoo",
+          "count": 3,
+          "status": "ok",
+          "elapsed_ms": 1,
+          "unresponsive": []
+        },
+        {
+          "engine": "searxng",
+          "count": 6,
+          "status": "ok",
+          "elapsed_ms": 1,
+          "unresponsive": []
+        },
+        {
+          "engine": "bing-news",
+          "count": 0,
+          "status": "not_requested",
+          "elapsed_ms": 1,
+          "unresponsive": []
+        },
+        {
+          "engine": "gnews-resolved",
+          "count": 0,
+          "status": "not_requested",
+          "elapsed_ms": 1,
+          "unresponsive": []
+        }
+      ]
+    },
+    "ddg_up_backups_down": {
+      "reported_ready": true,
+      "ready_report": {
+        "ok": true,
+        "searxng": false,
+        "searxng_status": "down",
+        "bing_news": false,
+        "searxng_configured": true,
+        "primary_discovery": {
+          "count": 10,
+          "status": "ok",
+          "availability": "available",
+          "upstream_status": "ok",
+          "families": [],
+          "observed_at": 1793873290.2119434,
+          "stale": false,
+          "age_seconds": 0.001,
+          "ready": true,
+          "family": "web"
+        },
+        "supplementary": {
+          "yandex": {
+            "count": 0,
+            "status": "http_429",
+            "availability": "unavailable",
+            "upstream_status": "http_429",
+            "families": [],
+            "observed_at": 1793873290.2119434,
+            "stale": false,
+            "age_seconds": 0.001
+          },
+          "yahoo": {
+            "count": 0,
+            "status": "http_429",
+            "availability": "unavailable",
+            "upstream_status": "http_429",
+            "families": [],
+            "observed_at": 1793873290.2119434,
+            "stale": false,
+            "age_seconds": 0.001
+          }
+        },
+        "news": {
+          "availability": "unknown",
+          "stale": true,
+          "age_seconds": null
+        },
+        "initializing": false,
+        "degraded": true,
+        "observation_ttl_seconds": 60.0,
+        "detail": "Primary discovery is distinct from supplementary/news availability; readiness observations are cached, not an availability guarantee.",
+        "ddg_family": {
+          "status": "unobserved",
+          "cooldown_until": null,
+          "failures": 0
+        }
+      },
+      "calls": {
+        "primary": 1,
+        "supplements": 2,
+        "health_sx": 0,
+        "health_bing": 0
+      },
+      "health_poll_ms": [
+        0.1064022071659565,
+        0.07636519148945808,
+        0.07310975342988968,
+        0.07427111268043518,
+        0.07360987365245819
+      ],
+      "urls": [
+        "https://example.org/web-tls-ddg-lite/0",
+        "https://example.org/web-tls-ddg-lite/1",
+        "https://example.org/web-tls-ddg-lite/2",
+        "https://example.org/web-tls-ddg-lite/3",
+        "https://example.org/web-tls-ddg-lite/4",
+        "https://example.org/web-tls-ddg-lite/5",
+        "https://example.org/web-tls-ddg-lite/6",
+        "https://example.org/web-tls-ddg-lite/7",
+        "https://example.org/web-tls-ddg-lite/8",
+        "https://example.org/web-tls-ddg-lite/9"
+      ],
+      "legacy_status": "ok",
+      "outcome": "partial_results",
+      "degraded": true,
+      "attempts": [
+        {
+          "engine": "web",
+          "count": 10,
+          "status": "ok",
+          "elapsed_ms": 1,
+          "unresponsive": []
+        },
+        {
+          "engine": "yandex",
+          "count": 0,
+          "status": "http_429",
+          "elapsed_ms": 1,
+          "unresponsive": []
+        },
+        {
+          "engine": "yahoo",
+          "count": 0,
+          "status": "http_429",
+          "elapsed_ms": 1,
+          "unresponsive": []
+        },
+        {
+          "engine": "searxng",
+          "count": 0,
+          "status": "ok",
+          "elapsed_ms": 1,
+          "unresponsive": []
+        },
+        {
+          "engine": "bing-news",
+          "count": 0,
+          "status": "not_requested",
+          "elapsed_ms": 1,
+          "unresponsive": []
+        },
+        {
+          "engine": "gnews-resolved",
+          "count": 0,
+          "status": "not_requested",
+          "elapsed_ms": 1,
+          "unresponsive": []
+        }
+      ]
+    },
+    "complete_outage": {
+      "reported_ready": false,
+      "ready_report": {
+        "ok": false,
+        "searxng": false,
+        "searxng_status": "down",
+        "bing_news": false,
+        "searxng_configured": true,
+        "primary_discovery": {
+          "count": 0,
+          "status": "failed",
+          "availability": "unavailable",
+          "upstream_status": "failed",
+          "families": [],
+          "observed_at": 1793873290.2130375,
+          "stale": false,
+          "age_seconds": 0.0,
+          "ready": false,
+          "family": "web"
+        },
+        "supplementary": {
+          "yandex": {
+            "count": 0,
+            "status": "http_429",
+            "availability": "unavailable",
+            "upstream_status": "http_429",
+            "families": [],
+            "observed_at": 1793873290.2130375,
+            "stale": false,
+            "age_seconds": 0.0
+          },
+          "yahoo": {
+            "count": 0,
+            "status": "http_429",
+            "availability": "unavailable",
+            "upstream_status": "http_429",
+            "families": [],
+            "observed_at": 1793873290.2130375,
+            "stale": false,
+            "age_seconds": 0.0
+          }
+        },
+        "news": {
+          "availability": "unknown",
+          "stale": true,
+          "age_seconds": null
+        },
+        "initializing": false,
+        "degraded": true,
+        "observation_ttl_seconds": 60.0,
+        "detail": "Primary discovery is distinct from supplementary/news availability; readiness observations are cached, not an availability guarantee.",
+        "ddg_family": {
+          "status": "unobserved",
+          "cooldown_until": null,
+          "failures": 0
+        }
+      },
+      "calls": {
+        "primary": 1,
+        "supplements": 2,
+        "health_sx": 0,
+        "health_bing": 0
+      },
+      "health_poll_ms": [
+        0.07773702964186668,
+        0.06833020597696304,
+        0.06266916170716286,
+        0.07184688001871109,
+        0.0718357041478157
+      ],
+      "urls": [],
+      "legacy_status": "no_results_or_degraded",
+      "outcome": "unavailable",
+      "degraded": true,
+      "attempts": [
+        {
+          "engine": "web",
+          "count": 0,
+          "status": "failed",
+          "elapsed_ms": 0,
+          "unresponsive": []
+        },
+        {
+          "engine": "yandex",
+          "count": 0,
+          "status": "http_429",
+          "elapsed_ms": 0,
+          "unresponsive": []
+        },
+        {
+          "engine": "yahoo",
+          "count": 0,
+          "status": "http_429",
+          "elapsed_ms": 0,
+          "unresponsive": []
+        },
+        {
+          "engine": "searxng",
+          "count": 0,
+          "status": "ok",
+          "elapsed_ms": 0,
+          "unresponsive": []
+        },
+        {
+          "engine": "bing-news",
+          "count": 0,
+          "status": "not_requested",
+          "elapsed_ms": 0,
+          "unresponsive": []
+        },
+        {
+          "engine": "gnews-resolved",
+          "count": 0,
+          "status": "not_requested",
+          "elapsed_ms": 0,
+          "unresponsive": []
+        }
+      ]
+    },
+    "all_healthy": {
+      "reported_ready": true,
+      "ready_report": {
+        "ok": true,
+        "searxng": true,
+        "searxng_status": "ok",
+        "bing_news": false,
+        "searxng_configured": true,
+        "primary_discovery": {
+          "count": 10,
+          "status": "ok",
+          "availability": "available",
+          "upstream_status": "ok",
+          "families": [],
+          "observed_at": 1793873290.2143025,
+          "stale": false,
+          "age_seconds": 0.0,
+          "ready": true,
+          "family": "web"
+        },
+        "supplementary": {
+          "yandex": {
+            "count": 3,
+            "status": "ok",
+            "availability": "available",
+            "upstream_status": "ok",
+            "families": [],
+            "observed_at": 1793873290.2143025,
+            "stale": false,
+            "age_seconds": 0.0
+          },
+          "yahoo": {
+            "count": 3,
+            "status": "ok",
+            "availability": "available",
+            "upstream_status": "ok",
+            "families": [],
+            "observed_at": 1793873290.2143025,
+            "stale": false,
+            "age_seconds": 0.0
+          }
+        },
+        "news": {
+          "availability": "unknown",
+          "stale": true,
+          "age_seconds": null
+        },
+        "initializing": false,
+        "degraded": false,
+        "observation_ttl_seconds": 60.0,
+        "detail": "Primary discovery is distinct from supplementary/news availability; readiness observations are cached, not an availability guarantee.",
+        "ddg_family": {
+          "status": "unobserved",
+          "cooldown_until": null,
+          "failures": 0
+        }
+      },
+      "calls": {
+        "primary": 1,
+        "supplements": 2,
+        "health_sx": 0,
+        "health_bing": 0
+      },
+      "health_poll_ms": [
+        0.08349912241101265,
+        0.04689907655119896,
+        0.05309097468852997,
+        0.04018610343337059,
+        0.038322992622852325
+      ],
+      "urls": [
+        "https://example.org/web-tls-ddg-lite/0",
+        "https://example.org/web-tls-ddg-lite/1",
+        "https://example.org/web-tls-ddg-lite/2",
+        "https://example.org/web-tls-ddg-lite/3",
+        "https://example.org/web-tls-ddg-lite/4",
+        "https://example.org/web-tls-ddg-lite/5",
+        "https://example.org/web-tls-ddg-lite/6",
+        "https://example.org/web-tls-ddg-lite/7",
+        "https://example.org/web-tls-ddg-lite/8",
+        "https://example.org/web-tls-ddg-lite/9",
+        "https://example.org/yandex/0",
+        "https://example.org/yahoo/0",
+        "https://example.org/yandex/1",
+        "https://example.org/yahoo/1",
+        "https://example.org/yandex/2"
+      ],
+      "legacy_status": "ok",
+      "outcome": "results",
+      "degraded": false,
+      "attempts": [
+        {
+          "engine": "web",
+          "count": 10,
+          "status": "ok",
+          "elapsed_ms": 0,
+          "unresponsive": []
+        },
+        {
+          "engine": "yandex",
+          "count": 3,
+          "status": "ok",
+          "elapsed_ms": 0,
+          "unresponsive": []
+        },
+        {
+          "engine": "yahoo",
+          "count": 3,
+          "status": "ok",
+          "elapsed_ms": 0,
+          "unresponsive": []
+        },
+        {
+          "engine": "searxng",
+          "count": 6,
+          "status": "ok",
+          "elapsed_ms": 0,
+          "unresponsive": []
+        },
+        {
+          "engine": "bing-news",
+          "count": 0,
+          "status": "not_requested",
+          "elapsed_ms": 0,
+          "unresponsive": []
+        },
+        {
+          "engine": "gnews-resolved",
+          "count": 0,
+          "status": "not_requested",
+          "elapsed_ms": 0,
+          "unresponsive": []
+        }
+      ]
+    },
+    "genuine_empty": {
+      "reported_ready": true,
+      "ready_report": {
+        "ok": true,
+        "searxng": true,
+        "searxng_status": "ok",
+        "bing_news": false,
+        "searxng_configured": true,
+        "primary_discovery": {
+          "count": 0,
+          "status": "no_results",
+          "availability": "empty",
+          "upstream_status": "no_results",
+          "families": [],
+          "observed_at": 1793873290.215044,
+          "stale": false,
+          "age_seconds": 0.0,
+          "ready": true,
+          "family": "web"
+        },
+        "supplementary": {
+          "yandex": {
+            "count": 0,
+            "status": "ok",
+            "availability": "empty",
+            "upstream_status": "ok",
+            "families": [],
+            "observed_at": 1793873290.215044,
+            "stale": false,
+            "age_seconds": 0.0
+          },
+          "yahoo": {
+            "count": 0,
+            "status": "ok",
+            "availability": "empty",
+            "upstream_status": "ok",
+            "families": [],
+            "observed_at": 1793873290.215044,
+            "stale": false,
+            "age_seconds": 0.0
+          }
+        },
+        "news": {
+          "availability": "unknown",
+          "stale": true,
+          "age_seconds": null
+        },
+        "initializing": false,
+        "degraded": false,
+        "observation_ttl_seconds": 60.0,
+        "detail": "Primary discovery is distinct from supplementary/news availability; readiness observations are cached, not an availability guarantee.",
+        "ddg_family": {
+          "status": "unobserved",
+          "cooldown_until": null,
+          "failures": 0
+        }
+      },
+      "calls": {
+        "primary": 1,
+        "supplements": 2,
+        "health_sx": 0,
+        "health_bing": 0
+      },
+      "health_poll_ms": [
+        0.07042381912469864,
+        0.04725996404886246,
+        0.041167717427015305,
+        0.03863312304019928,
+        0.04275096580386162
+      ],
+      "urls": [],
+      "legacy_status": "no_results_or_degraded",
+      "outcome": "no_results",
+      "degraded": false,
+      "attempts": [
+        {
+          "engine": "web",
+          "count": 0,
+          "status": "no_results",
+          "elapsed_ms": 0,
+          "unresponsive": []
+        },
+        {
+          "engine": "yandex",
+          "count": 0,
+          "status": "ok",
+          "elapsed_ms": 0,
+          "unresponsive": []
+        },
+        {
+          "engine": "yahoo",
+          "count": 0,
+          "status": "ok",
+          "elapsed_ms": 0,
+          "unresponsive": []
+        },
+        {
+          "engine": "searxng",
+          "count": 0,
+          "status": "ok",
+          "elapsed_ms": 0,
+          "unresponsive": []
+        },
+        {
+          "engine": "bing-news",
+          "count": 0,
+          "status": "not_requested",
+          "elapsed_ms": 0,
+          "unresponsive": []
+        },
+        {
+          "engine": "gnews-resolved",
+          "count": 0,
+          "status": "not_requested",
+          "elapsed_ms": 0,
+          "unresponsive": []
+        }
+      ]
+    }
+  },
+  "correlated_refusals": {
+    "attempts": [
+      "tls-ddg-lite",
+      "browser-ddg-lite",
+      "browser-ddg-html",
+      "ddgs"
+    ],
+    "outcomes": [
+      {
+        "cumulative_attempts": 4,
+        "diagnostics": {
+          "direct": {
+            "status": "challenge_or_http_error",
+            "http_status": 429
+          },
+          "status": "http_503",
+          "attempts": [
+            {
+              "engine": "ddg-lite",
+              "status": 429,
+              "reason": "http_429"
+            },
+            {
+              "engine": "ddg-html",
+              "status": 429,
+              "reason": "http_429"
+            }
+          ],
+          "ddgs_attempts": [
+            {
+              "engine": "duckduckgo",
+              "status": "failed",
+              "count": 0,
+              "reason": "RuntimeError"
+            }
+          ],
+          "upstream_status": "cooldown",
+          "cooldown_until": 1793873320.2159295,
+          "browser_status": "http_503",
+          "count": 0,
+          "families": []
+        }
+      },
+      {
+        "cumulative_attempts": 4,
+        "diagnostics": {
+          "status": "cooldown",
+          "count": 0,
+          "family": "ddg",
+          "cooldown_until": 1793873320.2159295
+        }
+      },
+      {
+        "cumulative_attempts": 4,
+        "diagnostics": {
+          "status": "cooldown",
+          "count": 0,
+          "family": "ddg",
+          "cooldown_until": 1793873320.2159295
+        }
+      }
+    ]
+  }
+}

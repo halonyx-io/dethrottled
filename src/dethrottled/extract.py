@@ -210,6 +210,80 @@ def _title_of(html: str) -> str:
         return ""
 
 
+def _coverage_key(text):
+    return " ".join(re.findall(r"\w+", text.casefold()))
+
+
+def _structural_samples(html):
+    """Sample substantive blocks outside known furniture, not an HTML/text ratio."""
+    if len(html) < 20000:
+        return []
+    try:
+        from selectolax.lexbor import LexborHTMLParser
+        tree = LexborHTMLParser(html)
+        for node in tree.css("script,style,nav,header,footer,aside,form,noscript,template"):
+            node.decompose()
+        blocks = []
+        explicit = tree.css("main,article")
+        if not explicit and len(tree.css("section")) < 12 and len(tree.css("pre")) < 12:
+            return []  # Unstructured page furniture is not evidence of missing article prose.
+        nodes = tree.css("main p,article p,main pre,article pre") if explicit else tree.css("p,pre")
+        for node in nodes:
+            text = node.text(separator=" ", strip=True)
+            if len(text) >= 180:
+                key = _coverage_key(text)
+                if len(key.split()) >= 25:
+                    words = key.split()
+                    blocks.append((" ".join(words[:20]), " ".join(words[-20:])))
+        if len(blocks) < 12:
+            return []
+        count = min(24, len(blocks))
+        return list(dict.fromkeys(anchor for i in range(count)
+            for anchor in blocks[round(i * (len(blocks) - 1) / (count - 1))]))
+    except (ImportError, ValueError, TypeError):
+        return []
+
+
+def _compare_coverage(html, url, result):
+    samples = _structural_samples(html)
+    if not samples:
+        return result, {"status": "unverified", "assessment": "not_checked"}
+
+    def covered(candidate):
+        key = _coverage_key(candidate.get("text", ""))
+        return {i for i, sample in enumerate(samples) if sample in key}
+
+    original_tier = result["tier"]
+    kept = covered(result)
+    compared = [original_tier]
+    # Multiple missing prose samples justify comparison. A small response limit
+    # does not: this assessment always precedes caller-visible truncation.
+    if len(samples) - len(kept) >= 2:
+        alternatives = {"resiliparse": _via_resiliparse, "selectolax": _via_selectolax}
+        for name, extractor in alternatives.items():
+            if name == original_tier:
+                continue
+            compared.append(name)
+            try:
+                candidate = extractor(html, url)
+            except Exception:
+                candidate = {}
+            if not candidate:
+                continue
+            found = covered(candidate)
+            # Preserve all sampled original evidence; do not pick merely longer text.
+            if kept < found:
+                result = dict(result, **candidate)
+                kept = found
+            if len(kept) == len(samples):
+                break
+    missing = len(samples) - len(kept)
+    return result, {"status": "suspected_incomplete" if missing >= 2 else "unverified",
+                    "assessment": "structural_samples", "sampled_anchors": len(samples),
+                    "missing_samples": missing, "compared_extractors": compared,
+                    "selection_changed": result["tier"] != original_tier}
+
+
 def extract(html: str, url: str = "", *, max_chars: int = 3500) -> dict:
     """Return {ok, text, tier, title, published, chars, reason}."""
     if not html or len(html) < 200:
@@ -226,6 +300,7 @@ def extract(html: str, url: str = "", *, max_chars: int = 3500) -> dict:
             result = {}
         if not result:
             continue
+        result, completeness = _compare_coverage(html, url, result)
         text = _tidy(result["text"], limit=max_chars)
         if len(text) < MIN_USEFUL_CHARS:
             continue
@@ -238,6 +313,9 @@ def extract(html: str, url: str = "", *, max_chars: int = 3500) -> dict:
             "author": result.get("author", ""),
             "chars": len(text),
             "reason": "",
+            "completeness": completeness,
+            "warnings": (["extraction_missing_structural_samples"]
+                         if completeness["status"] == "suspected_incomplete" else []),
         }
 
     return {"ok": False, "text": "", "tier": None, "reason": "no_extractor_succeeded",

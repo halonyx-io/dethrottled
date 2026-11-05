@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import threading
 import time
+from email.utils import parsedate_to_datetime
 from urllib.parse import parse_qs, quote_plus, unquote, urljoin, urlsplit
 
 import requests
@@ -57,8 +58,20 @@ def tls_search(query, *, max_items=8, cache=None, diagnostics=None, worker=""):
         response = tls_requests.get(url, impersonate=TLS_IMPERSONATE, timeout=1.5)
         html = response.text or ""
         attempt["http_status"] = response.status_code
-        if response.status_code != 200 or any(x in html[:20000].lower() for x in (
-                "anomaly.js", "bots use duckduckgo", "challenge-platform")):
+        retry = (getattr(response, "headers", None) or {}).get("Retry-After", "")
+        if retry:
+            try:
+                seconds = float(retry)
+            except ValueError:
+                try:
+                    seconds = parsedate_to_datetime(retry).timestamp() - time.time()
+                except (ValueError, TypeError, OverflowError):
+                    seconds = 0
+            attempt["retry_after_seconds"] = max(0, min(86400, seconds))
+        challenged = any(x in html[:20000].lower() for x in (
+            "anomaly.js", "bots use duckduckgo", "challenge-platform"))
+        attempt["refusal"] = challenged or response.status_code in {202, 429}
+        if response.status_code != 200 or challenged:
             attempt["status"] = "challenge_or_http_error"
             return []
         tree = LexborHTMLParser(html)

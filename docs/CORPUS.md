@@ -219,7 +219,7 @@ predates the new visibility policy; restrict it to trusted callers.
 
 ### Updating from 1.5.0
 
-Version 1.5.1 keeps document IDs and namespaces together when identical public
+Version 1.5.2 keeps document IDs and namespaces together when identical public
 content is fetched by another caller. It also repairs existing source references
 from the verified public-document registry on first startup. This corrects retained
 document availability and prevents later reindex jobs from using a stale namespace;

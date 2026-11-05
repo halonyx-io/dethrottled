@@ -96,3 +96,18 @@ Optional speech/layout weights have their own persistent volumes. Public
 adapters share token hashes and admission state outside the raw API.
 
 [Documentation home](README.md) · [Agent guide](AGENT-UPGRADES.md) · [API](API.md) · [Evidence](EVIDENCE.md)
+
+
+### Discovery observations and local extraction coverage
+
+Search ordering and budgets remain unchanged. The diagnostic search envelope adds
+precise outcomes for partial results, genuine empty responses and unavailable or
+indeterminate discovery. Readiness observes recent searches without querying
+providers. Confirmed correlated DDG refusals share a persisted adaptive rest;
+TLS-only failure still permits browser recovery and cached choices remain usable.
+
+Long structured HTML can trigger a selective alternate-extractor comparison when
+multiple substantive samples are missing. Comparison occurs before response limits
+and retains sampled original evidence. It is a coverage heuristic, not verified
+completeness, and does not itself repeat rendering. See [API diagnostics](API.md)
+and the [controlled investigation](../evaluations/retrieval-reliability/REPORT.md).

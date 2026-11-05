@@ -19,6 +19,13 @@ curl -sS http://127.0.0.1:8787/v2/search \
 
 `/search` returns an array; `/v2/search` returns a diagnostic envelope including
 empty results. First-row telemetry on the array includes attempts/ranking.
+The envelope retains legacy `status` (`ok` or `no_results_or_degraded`) for existing
+clients. Use additive `outcome` (`results`, `partial_results`, `no_results`,
+`unavailable`, `indeterminate`), `degraded` and `discovery.providers` for precise
+interpretation. `no_results` requires successful empty provider responses; unknown
+or failed discovery is not silently classified as an empty web. Partial useful
+results keep their original order. Attempts retain acquisition-path failures,
+HTTP status, refusal/cooldown diagnostics and provider provenance.
 Search defaults to `profile="web"`: DDG Lite/HTML/TLS/browser acquire up to ten
 primary choices while SearXNG Yahoo and Yandex each contribute up to three.
 The normal menu defaults to and is capped at **15 unique URLs**. Duplicate
@@ -109,8 +116,19 @@ duplicate representations; detailed is default and warnings/provenance remain.
 Structured documents are not classified as website UI. A narrow set of leading
 error instructions and small source HTML alert containers can flag mixed content;
 quoted/code examples are excluded where identifiable. Unknown phrases and languages
-can be missed. `none_detected` does not certify clean text. `completeness` remains
-`unknown` and `usable_content` remains `unverified`.
+can be missed. `none_detected` does not certify clean text. `usable_content` stays
+`unverified`. Completeness is `unknown`, or `suspected_incomplete` when multiple
+substantive structural samples remain absent. Neither is a completeness proof.
+
+For long structured HTML, `extraction.completeness` records whether structural
+sampling ran, how many anchors were sampled/missed, which extractors were compared,
+and whether selection changed. Missing samples selectively trigger alternate
+extraction before response clipping; normal successful pages do not run every
+extractor. An alternate must retain every previously matched sample and add coverage.
+Known furniture is excluded; ambiguous or unstructured material can remain missed.
+Warnings and canonical-text offsets remain available. This does not automatically
+repeat browser actions: a local extraction gap is not evidence that rendering again
+will help. `workflow.state=needs_inspection` surfaces unresolved suspected gaps.
 
 Each span supplies `start`, `end`, `quote`, `kind`, `signal` and
 `offset_in="full_extraction"`. Positions are Unicode character offsets in the full
@@ -169,7 +187,13 @@ another identity with raw internal `evidence_namespace`/`public_only` fields.
 
 ## Diagnose the installation
 
-`/health` proves liveness. `/ready` reports search-source readiness;
+`/health` proves liveness. `/ready` reports recent real-search observations,
+separating primary discovery from supplements/news. Status reads issue **no upstream
+search probes**. Cold or stale observations are `unknown`; successful cached results
+do not establish fresh upstream availability. The observation window is 60 seconds.
+Use one normal search to obtain current evidence, rather than polling readiness.
+`ddg_family` distinguishes active cooldown from recovery due; timer expiry does not
+establish recovery. Worker liveness is reported separately;
 `/v2/status` probes configured workers and backfill; `/v2/capabilities` publishes
 formats, providers and the agent contract. `/stats` includes cache/tier health,
 renderer and headed admission. No single green health route proves web coverage.

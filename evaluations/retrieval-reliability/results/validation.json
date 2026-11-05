@@ -1,0 +1,91 @@
+{
+  "recorded_at": "2026-11-05T10:29:21.875557+00:00",
+  "release_target": "1.5.2",
+  "capture_version": "1.5.1",
+  "native_suites": {
+    "x86_64": {
+      "passed": 797,
+      "skipped": 15,
+      "network_excluded": 2,
+      "seconds": 40.5
+    },
+    "arm64": {
+      "passed": 797,
+      "skipped": 15,
+      "network_excluded": 2,
+      "seconds": 39.0
+    }
+  },
+  "candidate_runtime_sha256": {
+    "search.py": "4cd3980342aceafcca1ced43ea737a62ff449de49dd1d06bd755ad71e920a4c6",
+    "search_diagnostics.py": "53470071e40ed462ff1ee259100697de4de85e968dc9b52d702e4bcc4a21a8cf",
+    "server.py": "aa7eac35f958329dc877e3edbf5b487ae62177a976e52b2d41f24d82dfa3efbd",
+    "discovery.py": "135e7a048ae6acdfd5c081f15be02297fdcaf5d99172ce82eb24560887c79f3b",
+    "extract.py": "656536f0e909692757957ba904ccf87548db9c9ede0c0345e6d0de60efaa8b8f",
+    "fetch.py": "b62a6f72bd988e023d2890b904951a873cb8f7ac56c078beb0c9a9491e828701",
+    "content.py": "b2734929def4bb0a4491362b5bdd8a3f7ffef0600df635ce5b3bc474abf5d2bd",
+    "readplan.py": "547ffc44927036ea9161dcd37c529ab480836b8b9e0ca70cf9e6cb7968574533",
+    "workflow.py": "f9b12eb21b689c98c3d975c886b62cba03802887d67f6013577fab62949a6893",
+    "corpus_v2.py": "afb85c311fee41b8ed366b854d1d9a51d0362f7b89c9abad4c249fd7d75129f3"
+  },
+  "image_verification": {
+    "passed": true,
+    "unprivileged_uid": 10001,
+    "all_required_dependencies_present": true
+  },
+  "live_api_mcp": {
+    "passed": true,
+    "scope": "isolated candidate; authenticated loopback MCP with actual shared Compose workers; production routing untouched",
+    "sdk_version": "1.30.0"
+  },
+  "discovery_contracts": {
+    "routes": 24,
+    "mcp_tools": 20,
+    "browser_actions": 27,
+    "unchanged_order_scenarios": 5
+  },
+  "documentation_checks": {
+    "pages": 70,
+    "links": 507,
+    "examples": 44,
+    "http_requests": 7
+  },
+  "original_failures_and_corrections": [
+    {
+      "stage": "Initial extraction harness",
+      "finding": "RFC legacy HTML had no eligible paragraph nodes, causing a label-selection IndexError",
+      "resolution": "Freeze source-derived passage labels, including legacy-pre fallback; retain original trace privately."
+    },
+    {
+      "stage": "Initial label grading",
+      "finding": "Exact text substrings could treat inline-markup whitespace as a missing passage",
+      "resolution": "Use frozen normalized word-sequence labels and independently regrade retained extraction text."
+    },
+    {
+      "stage": "Structural-sampling regression",
+      "finding": "Repeated paragraph prefixes collapsed distinct samples and could hide missing sections",
+      "resolution": "Sample starts and ends; regression verifies missing coverage and alternate failure handling."
+    },
+    {
+      "stage": "Native alternate regression fixture",
+      "finding": "One sound fixture already retained all facts in the first extractor; demanding a switch was wrong",
+      "resolution": "Assert retained facts and no unnecessary comparison; separately inject confirmed incomplete output and test real native alternate recovery."
+    },
+    {
+      "stage": "Pollution measurement",
+      "finding": "Original marker was not present in the fixture",
+      "resolution": "Replace with 15 source-verified navigation/footer labels and independently replay retained text; zero labels retained in both variants on both architectures."
+    },
+    {
+      "stage": "Initial authenticated MCP smoke",
+      "finding": "The harness incorrectly expected cache_mode=bypass to populate the extraction cache",
+      "resolution": "Retain failed record; repeat with explicit refresh then assert a cached second fetch. Product cache policy unchanged."
+    }
+  ],
+  "publication_boundary": {
+    "earlier_151_workflow": "cancelled before PyPI upload",
+    "existing_151_tag": "preserved",
+    "final_publication_authorized": true,
+    "production_at_capture": "1.5.0"
+  }
+}
