@@ -17,10 +17,9 @@
 #
 # Add --profile media, --profile layout, or --profile full for local inference.
 #
-# That last one is the point of this file. Without a renderer, the only way to
-# read a JS-rendered page is the external r.jina.ai tier -- so `pip install`
-# leaves it on. Here it is off (DETHROTTLED_ENABLE_JINA=0) because Crawl4AI
-# does that job in-network. Turn it back on if you want the extra coverage.
+# Crawl4AI renders JavaScript locally. The optional external Jina reader is
+# disabled by default in both Python and Compose; enable it explicitly with
+# DETHROTTLED_ENABLE_JINA=1 if sending URLs to that service is appropriate.
 
 # The two upstream images are pinned by tag AND digest rather than :latest, so
 # this file describes one stack rather than whatever upstream shipped today.

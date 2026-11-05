@@ -1,7 +1,7 @@
 # Dethrottled
 
 <picture>
-  <img src="https://raw.githubusercontent.com/halonyx-io/dethrottled/main/docs/assets/hero.svg?v=1.4.1" alt="Dethrottled: discover, read, drive and retain web evidence">
+  <img src="https://raw.githubusercontent.com/halonyx-io/dethrottled/main/docs/assets/hero.svg" alt="Dethrottled: discover, read, drive and retain web evidence">
 </picture>
 
 **Dethrottled is an open source, self-hosted web retrieval and evidence engine
@@ -67,7 +67,7 @@ for remote agents. The raw API has no caller authentication.
 | Research | A bounded evidence bundle with explicit coverage gaps; ten sources by default, twenty on request |
 
 <picture>
-  <img src="https://raw.githubusercontent.com/halonyx-io/dethrottled/main/docs/assets/escalation.svg?v=1.4.1" alt="Automatic acquisition, assessment, recovery and agent continuation">
+  <img src="https://raw.githubusercontent.com/halonyx-io/dethrottled/main/docs/assets/escalation.svg" alt="Automatic acquisition, assessment, recovery and agent continuation">
 </picture>
 
 A normal fetch runs the recovery policy automatically. When content remains
@@ -97,7 +97,7 @@ Fresh acquisition, cache-enabled repeats and optional workers are reported
 separately. Every plotted value is generated from retained case data.
 
 <picture>
-  <img src="https://raw.githubusercontent.com/halonyx-io/dethrottled/main/docs/assets/hardware.svg?v=1.4.1" alt="ARM64 edge device: eight Cortex-A55/A78 cores and 11.29 GiB OS-visible RAM. x86_64 mini PC: Ryzen 7 5800U, eight cores and sixteen threads, 30.76 GiB OS-visible RAM.">
+  <img src="https://raw.githubusercontent.com/halonyx-io/dethrottled/main/docs/assets/hardware.svg" alt="ARM64 edge device: eight Cortex-A55/A78 cores and 11.29 GiB OS-visible RAM. x86_64 mini PC: Ryzen 7 5800U, eight cores and sixteen threads, 30.76 GiB OS-visible RAM.">
 </picture>
 
 | Recorded check | ARM64 edge device | x86_64 mini PC |
@@ -112,7 +112,7 @@ The live `ok` label is the engine's assessment, not verified answer correctness.
 The report separately records topic-marker retention, thin results and failures.
 
 <picture>
-  <img src="https://raw.githubusercontent.com/halonyx-io/dethrottled/main/docs/assets/latency.svg?v=1.4.1" alt="Measured latency on ARM64 edge device and x86_64 mini PC, including failed requests">
+  <img src="https://raw.githubusercontent.com/halonyx-io/dethrottled/main/docs/assets/latency.svg" alt="Measured latency on ARM64 edge device and x86_64 mini PC, including failed requests">
 </picture>
 
 These are observed workloads, not universal minimum requirements or a paid-service

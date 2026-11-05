@@ -35,7 +35,7 @@ application settings need an `environment` entry in a local override. Inspect
 | `CRAWL4AI_TOKEN` | `dethrottled-compose-local` | Private renderer credential, not caller authentication |
 | `CRAWL4AI_ALLOW_INTERNAL_URLS` | `false` | Renderer access to private addresses |
 | `DETHROTTLED_CHEAP_DISCOVERY` | `1` in Compose | Static DDG Lite probe before browser fallback; standalone default 0 |
-| `DETHROTTLED_ENABLE_JINA` | `0` in Compose | Optional external reader |
+| `DETHROTTLED_ENABLE_JINA` | `0` in Python and Compose | Opt-in external reader |
 | `DETHROTTLED_MULTILINGUAL_CORPUS` | `1` in Compose | Separate E5 corpus retrieval/backfill; standalone opt-in |
 | `DETHROTTLED_EXTRACT_CACHE_CHARS` | `1000000` | Retained extraction budget |
 | `DETHROTTLED_CRAWL4AI_BUDGET` | `-1` | No hourly renderer quota; 0 disables; positive values cap/window |

@@ -1,31 +1,16 @@
 #!/usr/bin/env python3
-"""Polite HTTP fetching, with a ladder of free tiers.
+"""Content-driven fetching through configured acquisition and recovery tiers.
 
-No API keys are bought and no metered quota is consumed, but "free" does not
-mean "one naive GET". Sites block datacentre IPs and render their content with
-JavaScript, and a single tier loses to both:
+The normal ladder tries direct HTTP, optional browser-like TLS through
+curl_cffi, a configured Crawl4AI renderer, and conditional headed-browser
+recovery. Rendering restrictions and local budgets control which tiers run.
+The optional external Jina reader is disabled by default in both standalone
+and Compose deployments; enabling it sends requested URLs to that service.
 
-    1. direct       requests                     ~2.1s   most pages
-    2. tls          a real browser TLS handshake  ~0.3s   beats fingerprinting
-    3. crawl4ai     headless Chromium you host    ~4.4s   renders JavaScript
-
-Only tier 1 is required. Tier 2 is a library, so it costs nothing to have.
-Tier 3 needs a service you run and is skipped entirely when unconfigured. A
-shorter ladder solves fewer pages and that is all -- nothing breaks.
-
-There is deliberately NO relay tier. Every option needs either an account (a
-Cloudflare Worker), or a third party who then learns every URL you fetch (a
-hosted reader, a CORS proxy), or an address range that anti-bot vendors
-blocklist on sight (Tor publishes its exit list in real time). None of those
-belong in a tool whose whole claim is that it needs no account and no key.
-
-**The important design point: a tier succeeds only if it yields readable
-prose.** Escalating on failed fetches alone leaves the common case unsolved.
-Measured: one publisher returns HTTP 200 with 52KB through a relay, another
-returns 200 to a direct request, and neither response contains a word of
-article text until the right tier runs. A ladder that stops at "HTTP 200"
-declares victory on an empty shell. Thin results escalate too -- anything under
-THIN_CHARS is treated as a miss.
+Content validity, format-aware minimums and challenge detection drive escalation.
+HTTP 200 alone does not make an empty JavaScript shell or a verification page a
+successful read. Results retain acquisition provenance, warnings and partial
+content signals. The caller must still assess whether the evidence is useful.
 
 The fetch ladder does not request or consult robots.txt.
 """
@@ -88,11 +73,8 @@ USER_AGENT = os.environ.get(
     "DETHROTTLED_USER_AGENT",
     "dethrottled/%s (+%s; automated fetcher)"
     % (__version__, PROJECT_URL))
-# Used ONLY for the two news RSS endpoints and the optional relay, both of
-# which serve degraded or empty feeds to an obviously-automated agent. Article
-# fetching uses USER_AGENT above. Deliberately not
-# arch-specific: the old string said aarch64 and told every server what it was
-# talking to.
+# Browser-like identity for the opt-in external reader. Direct article fetching
+# uses USER_AGENT; browser-worker identity is managed by the worker itself.
 BROWSER_UA = ("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) "
               "Chrome/128.0 Safari/537.36")
 
@@ -531,17 +513,12 @@ def _tier_direct_once(url: str, timeout: int, allow_ocr: bool = False, *, get=No
             response.close()
 
 
-# The one tier that leaves your network. It is free, keyless and
-# unauthenticated -- but every URL you send it is a URL you have told somebody
-# else you were interested in, and that is a real cost even when the money is
-# zero.
+# Optional third-party reader. Disabled by default in both standalone Python
+# and Compose; enabling it sends requested URLs to that external service.
 #
-# On by default in a plain pip install, because without a renderer it is the
-# only tier that can read a JavaScript page. Off by default under `docker
-# compose up`, where Crawl4AI does that job locally. Either way you decide:
-#
-#     DETHROTTLED_ENABLE_JINA=0    never contact it
-#     dethrottled --no-jina        same, for one run
+#     DETHROTTLED_ENABLE_JINA=1    enable the external reader
+#     dethrottled --jina          enable it for one server run
+#     dethrottled --no-jina       keep reads on local acquisition tiers
 ENABLE_JINA = os.environ.get("DETHROTTLED_ENABLE_JINA", "0").strip() not in (
     "0", "false", "no", "off", "")
 JINA_READER_URL = os.environ.get("DETHROTTLED_JINA_READER_URL", "https://r.jina.ai/")
@@ -554,18 +531,11 @@ JINA_READER_BUDGET = int(os.environ.get("DETHROTTLED_JINA_READER_BUDGET", "25"))
 
 
 def _tier_jina_reader(url: str) -> tuple:
-    """Unauthenticated r.jina.ai. Free, and it walks through bot walls.
+    """Read through the explicitly enabled external Jina service.
 
-    Unauthenticated by design: r.jina.ai is free and rate-limited rather than
-    metered, so sending it a key buys nothing. Measured returning 69,107
-    characters from a page direct fetching could not touch at all.
-
-    It is an external service, which is the one real cost: every URL passed
-    through it is a URL you have told somebody else about. That is why it sits
-    behind the local renderer rather than in front of it.
-
-    It returns markdown, already extracted -- so it is handed back as TEXT, not
-    HTML, and skips the local extractor entirely.
+    It receives the requested URL and returns extracted Markdown, which is
+    handled as text rather than passed through the HTML extractors again.
+    Availability and upstream rate limits are outside this deployment's control.
     """
     if not ENABLE_JINA:
         return {}, "jina_reader_disabled", url

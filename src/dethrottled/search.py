@@ -1,10 +1,15 @@
 #!/usr/bin/env python3
-"""Keyless discovery through a private browser worker, news RSS, and SearXNG.
+"""Bounded discovery through DDG acquisition paths and supplementary sources.
 
-SearXNG's scraped general-web engines can silently return unrelated results.
-The browser worker handles general web discovery with direct DDGS as fallback.
-Google News RSS supplies headlines only; a bounded Bing News lookup must
-resolve each headline to a publisher URL before it can enter the result pool.
+Default web/balanced profiles combine DDG-family choices with small SearXNG
+Yahoo/Yandex supplements, preserving source order. Fast uses DDG only.
+Compose enables a static DDG Lite probe before the private browser worker;
+DDGS provides a direct fallback. DDG acquisition alternatives share one budget.
+News and academic profiles select their own sources. Google News headlines
+need resolution to publisher URLs before they enter a source menu.
+
+Upstream engines can refuse requests or return unrelated results. Attempts,
+provider provenance and cooldown state remain visible for callers to assess.
 """
 
 from __future__ import annotations
@@ -30,18 +35,14 @@ from .fetch import USER_AGENT
 from .urls import canonical_url
 from .workflow import PRIMARY_SEARCH_LIMIT, SEARCH_MENU_LIMIT, SUPPLEMENT_SEARCH_LIMIT
 
-# Empty by default: a SearXNG instance is something you host, and pointing at
-# somebody else's public one is both rude and unreliable. Unset, the two RSS
-# sources carry the search on their own.
+# Standalone Python has no SearXNG URL unless configured. Compose supplies its
+# private SearXNG service for supplementary, news and academic discovery.
 SEARXNG_URL = os.environ.get("DETHROTTLED_SEARXNG_URL", "").rstrip("/")
 
-# In October 2026, local SearXNG Bing returned unrelated Outlook, Vietnam-food
-# and Malaysian employer-login results for unrelated queries. Yahoo returned
-# protocol errors. Keep the news engines; direct DDGS handles general web.
-# Free engines still rot, so failures are logged and rested.
-# Engines that have just refused us, and when. Persisted, because the process
-# that learns an engine is blocked is usually not the one that pays for asking
-# it next.
+# Default general-web discovery uses DDG with bounded Yahoo/Yandex supplements.
+# DEFAULT_ENGINES below applies to SearXNG calls without an explicit selection;
+# the web-profile orchestration supplies its own engine names.
+# Refused engines rest in persisted health state before another attempt.
 _HEALTH_TTL = int(os.environ.get("DETHROTTLED_ENGINE_REST_SECONDS", "1800"))
 _DEAD_ENGINES = {}
 
@@ -607,8 +608,10 @@ def web_search(query: str, *, max_items: int = 8, cache=None,
     block costs one request per engine per half hour rather than one per
     search.
 
-    Never fatal. `ddgs` is an optional dependency; without it this returns
-    nothing and the RSS sources carry the search exactly as they did before.
+    Try the configured DDG acquisition paths before direct DDGS fallback.
+    DDGS is a core package dependency; its import guard lets this source fail
+    softly in incomplete/custom environments. Profile orchestration can still
+    retain results from other sources.
     """
     max_items = max(1, min(max_items, PRIMARY_SEARCH_LIMIT))
     # Explicit engine selections keep their old meaning for callers that
