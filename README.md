@@ -18,7 +18,7 @@ integrations remain opt-in and are not required by the default workflow.
 For a first installation or ordinary script/HTTP use, start with the
 [quick start](https://github.com/halonyx-io/dethrottled/blob/main/docs/QUICKSTART.md).
 
-Native [HaGeZi ad/tracker filtering](docs/ADBLOCK.md) is enabled by default on this
+Native [HaGeZi ad/tracker filtering](docs/ADBLOCK.md) is enabled by default in this
 release, with one switch to disable it. Coverage and measured resource costs
 are described in that guide.
 
