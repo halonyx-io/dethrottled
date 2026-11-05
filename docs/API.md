@@ -220,3 +220,12 @@ status and stats. Refused fetches retain `quality=failed`, add
 `policy_blocked=adblock` and an `adblock_blocked:` failure reason. Their workflow
 has `state=policy_blocked` with no retry actions. This is distinct from an upstream
 network failure. No new request arguments or endpoints are required.
+
+## Unreleased corpus diagnostics
+
+`GET /corpus/stats` is the canonical stats route; `v2` describes the corpus schema,
+not a `/v2/corpus` HTTP namespace. Capabilities advertise `corpus.endpoints`.
+For schema 2 the stats envelope adds `lifetimes`: search/extraction cache default
+TTLs, actual document TTL/size policy, configured corpus days and independent-clock
+semantics. Existing `models`/`index` fields and schema-1 responses are preserved.
+See [lifetime diagnostics](CORPUS.md#lifetimes-are-independent).

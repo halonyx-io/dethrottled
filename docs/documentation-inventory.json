@@ -433,6 +433,11 @@
       "review": "Evidence maintainer: preserve observations; append explicit corrections."
     },
     {
+      "path": "evaluations/corpus-lifetimes/README.md",
+      "lifecycle": "harness-guide",
+      "review": "Harness maintainer: check runnable commands and label dated assumptions."
+    },
+    {
       "path": "evaluations/corpus-v2/README.md",
       "lifecycle": "harness-guide",
       "review": "Harness maintainer: check runnable commands and label dated assumptions."

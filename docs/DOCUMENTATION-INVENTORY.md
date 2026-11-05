@@ -12,7 +12,7 @@ must be classified; unknown paths fail generation/checking.
 | current-guide | 25 |
 | dependency-input | 4 |
 | generated | 4 |
-| harness-guide | 12 |
+| harness-guide | 13 |
 | historical-evidence | 35 |
 | source-contract | 121 |
 | third-party-notice | 4 |
@@ -82,6 +82,7 @@ Harness maintainer: check runnable commands and label dated assumptions.
 | [evaluations/agent-search/README.md](../evaluations/agent-search/README.md) |
 | [evaluations/agent-workflow/README.md](../evaluations/agent-workflow/README.md) |
 | [evaluations/content-validity/README.md](../evaluations/content-validity/README.md) |
+| [evaluations/corpus-lifetimes/README.md](../evaluations/corpus-lifetimes/README.md) |
 | [evaluations/corpus-v2/README.md](../evaluations/corpus-v2/README.md) |
 | [evaluations/dependable/README.md](../evaluations/dependable/README.md) |
 | [evaluations/drive-recovery/README.md](../evaluations/drive-recovery/README.md) |

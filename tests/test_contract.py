@@ -166,3 +166,45 @@ def test_stats_reports_tier_budgets(client):
     body = client.get("/stats").json()
     assert "tiers" in body and "tier_budgets" in body
     assert "tier_budget_used" in body
+
+
+def test_capabilities_advertise_canonical_corpus_routes(client):
+    endpoints = client.get('/v2/capabilities').json()['corpus']['endpoints']
+    assert endpoints == {'search': '/corpus/search', 'stats': '/corpus/stats'}
+    assert client.get(endpoints['stats']).status_code == 200
+
+
+def test_corpus_stats_report_independent_live_lifetime_settings(client, tmp_path, monkeypatch):
+    from dethrottled.corpus_v2 import CorpusV2
+    from dethrottled.evidence import Documents
+
+    monkeypatch.setenv('DETHROTTLED_CORPUS_RETENTION_DAYS', '45')
+    docs = Documents(tmp_path / 'documents.sqlite', ttl=3600, max_bytes=12345)
+    corpus = CorpusV2(tmp_path / 'corpus.sqlite', documents=docs, models=['minilm'])
+    monkeypatch.setattr(srv, 'shared_corpus', lambda: corpus)
+    try:
+        result = client.get('/corpus/stats').json()
+        assert result['ok']
+        assert result['lifetimes'] == {
+            'search_cache_default_ttl_seconds': 21600,
+            'extraction_cache_default_ttl_seconds': 1814400,
+            'retained_document_ttl_seconds': 3600,
+            'retained_document_max_bytes': 12345,
+            'corpus_retention_days': 45,
+            'independent': True,
+            'lookup_only_extends_lifetimes': False,
+            'retained_document_capacity_eviction_possible': True,
+        }
+    finally:
+        corpus.db.close()
+        docs.db.close()
+
+
+def test_legacy_corpus_stats_shape_is_preserved(client, monkeypatch):
+    class LegacyCorpus:
+        def stats(self):
+            return {'legacy': {'passages': 2}}
+
+    monkeypatch.setattr(srv, 'shared_corpus', lambda: LegacyCorpus())
+    assert client.get('/corpus/stats').json() == {
+        'ok': True, 'models': {'legacy': {'passages': 2}}, 'schema': 1}

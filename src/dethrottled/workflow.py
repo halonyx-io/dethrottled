@@ -40,6 +40,12 @@ transport/format/OCR recovery and bounded content recovery. When configured, Out
 MSG and XLSB use the local format fallback; scanned PDF tables escalate to OCR layout.
 Compose includes the format reader and discovers started speech/layout workers automatically.
 An unready model worker with initialization=first_use_download downloads weights on first use.
+Corpus stats use REST /corpus/stats or MCP corpus_stats; Corpus v2 is a storage schema,
+not a /v2/corpus URL prefix. Capabilities corpus.endpoints advertises the actual routes.
+Schema-2 stats lifetimes distinguishes search/extraction caches, retained documents and corpus
+retention. Inspect document_available and corpus_expires_at on hits: an unavailable
+full-document handle does not mean its passage was deleted. Lookup-only reads do not renew
+expiry; a fetch that writes documents or re-admits evidence can renew those clocks.
 Corpus combines English and multilingual indexes. Standard corpus support requires model/source
 agreement or literal query anchors. If empty or incomplete, support=broad exposes warned,
 unconfirmed candidates, including cross-language matches. Inspect their evidence; neither

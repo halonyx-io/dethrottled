@@ -87,7 +87,7 @@ from .api_models import (
     StructureBody,
 )
 from .api_models import DriveStep as DriveStep
-from .cache import Cache, CacheView
+from .cache import DEFAULT_TTL, Cache, CacheView
 from .content import compact_row, constrained, passage_excerpt
 from .corpus import index_fetched, shared_corpus
 from .evidence import Documents
@@ -633,6 +633,7 @@ def v2_capabilities():
                    "schema": int(os.getenv("DETHROTTLED_CORPUS_SCHEMA", "2")),
                    "support_policies": (["standard", "broad"] if os.getenv(
                        "DETHROTTLED_CORPUS_SCHEMA", "2") != "1" else ["legacy"]),
+                   "endpoints": {"search": "/corpus/search", "stats": "/corpus/stats"},
                    "answer_support": "unverified",
                    "modes": ["auto", "semantic", "lexical"] +
                             (["hybrid"] if os.getenv(
@@ -1447,8 +1448,22 @@ def corpus_search(q: str, limit: int = 10, floor: float | None = None,
 def corpus_stats():
     try:
         corpus = shared_corpus()
-        return {"ok": True, "models": corpus.stats(),
-                **({"index": corpus.status()} if hasattr(corpus, "status") else {"schema": 1})}
+        result = {"ok": True, "models": corpus.stats()}
+        if hasattr(corpus, "status"):
+            index = corpus.status()
+            result.update(index=index, lifetimes={
+                "search_cache_default_ttl_seconds": DEFAULT_TTL["search"],
+                "extraction_cache_default_ttl_seconds": DEFAULT_TTL["extract"],
+                "retained_document_ttl_seconds": corpus.documents.ttl,
+                "retained_document_max_bytes": corpus.documents.max_bytes,
+                "corpus_retention_days": index["limits"]["retention_days"],
+                "independent": True,
+                "lookup_only_extends_lifetimes": False,
+                "retained_document_capacity_eviction_possible": True,
+            })
+        else:
+            result["schema"] = 1
+        return result
     except Exception as exc:
         return {"ok": False, "reason": str(exc)[:200], "models": {}}
 

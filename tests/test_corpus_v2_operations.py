@@ -513,3 +513,70 @@ def test_large_expiry_backlog_is_pruned_in_bounded_resumable_batches(store):
     assert store.db.execute("select count(*) from embeddings").fetchone()[0] == 0
     assert store.db.execute("select count(*) from passage_fts").fetchone()[0] == 0
     assert store.db.execute("pragma foreign_key_check").fetchall() == []
+
+
+def test_four_lifetimes_expire_independently_without_extending_on_reads(store, tmp_path,
+                                                                      monkeypatch):
+    from dethrottled.cache import Cache
+
+    clock = [1_800_000_000.0]
+    monkeypatch.setattr(time, "time", lambda: clock[0])
+    cache = Cache(tmp_path / "cache.sqlite")
+    try:
+        cache.put("search", "query", value=["source"])
+        cache.put("extract", "https://example.org/report", value={"text": "cached extraction"})
+        text = "CLOCK-FACT-7349213: independent retained evidence. " * 30
+        admit(store, text)
+        finish(store)
+        expiry = clock[0] + 90 * 86400
+        for age, search_alive, extraction_alive, document_alive, corpus_alive in [
+            (0, True, True, True, True),
+            (6 * 3600 + 1, False, True, True, True),
+            (7 * 86400 + 1, False, True, False, True),
+            (21 * 86400 + 1, False, False, False, True),
+            (90 * 86400 + 1, False, False, False, False),
+        ]:
+            clock[0] = 1_800_000_000.0 + age
+            assert (cache.get("search", "query") is not None) == search_alive
+            assert (cache.get("extract", "https://example.org/report") is not None
+                    ) == extraction_alive
+            hits = store.search("CLOCK-FACT-7349213", mode="lexical")
+            assert bool(hits) == corpus_alive
+            if hits:
+                assert hits[0]["document_available"] == document_alive
+                assert hits[0]["corpus_expires_at"] == expiry
+                assert text[hits[0]["start"]:hits[0]["end"]] == hits[0]["text"]
+            if age == 7 * 86400 + 1:
+                store.prune()  # Expired handle registry does not remove corpus evidence.
+        assert store.prune() > 0
+        assert store.status()["active_sources"] == 0
+    finally:
+        cache.close()
+
+
+def test_new_admission_renews_corpus_and_document_clocks_without_reembedding(store, monkeypatch):
+    clock = [1_800_000_000.0]
+    monkeypatch.setattr(time, "time", lambda: clock[0])
+    text = "RENEWAL-FACT-7349213: acquired public evidence. " * 30
+    admit(store, text)
+    finish(store)
+    clock[0] += 89 * 86400
+    assert not store.search("RENEWAL-FACT-7349213", mode="lexical")[0]["document_available"]
+    assert admit(store, text)["unchanged"]
+    assert not store.run_one()
+    clock[0] += 2 * 86400  # Original 90-day clock has expired; the renewed one has not.
+    hit = store.search("RENEWAL-FACT-7349213", mode="lexical")[0]
+    assert hit["document_available"]
+    assert hit["corpus_expires_at"] == 1_800_000_000.0 + 179 * 86400
+
+
+def test_document_capacity_eviction_preserves_passages_and_reports_unavailability(store):
+    store.documents.max_bytes = 2000
+    text = "EVICTION-FACT-7349213: retained evidence. " * 30
+    admit(store, text)
+    finish(store)
+    assert store.search("EVICTION-FACT-7349213", mode="lexical")[0]["document_available"]
+    store.documents.put("other-caller", "https://example.org/other", "x" * 1300, {})
+    hit = store.search("EVICTION-FACT-7349213", mode="lexical")[0]
+    assert not hit["document_available"] and "retained evidence" in hit["text"]
+    assert store.status()["retained_documents"]["unavailable"] == 1
