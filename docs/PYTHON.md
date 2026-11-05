@@ -41,7 +41,11 @@ is `dethrottled-managed`; API publication stays on loopback. Managed image tags 
 separate from Git-checkout production images. Project ownership is checked before
 changing existing containers. The extracted context and project settings live under
 `~/.local/share/dethrottled/stacks` (LOCALAPPDATA on Windows); override with
-`DETHROTTLED_STACK_HOME`. Commands ignore unrelated parent Compose/application secrets.
+`DETHROTTLED_STACK_HOME`. Commands ignore unrelated parent Compose/application secrets. The documented
+`DETHROTTLED_ADBLOCK` switch is passed to all four network-owning workers.
+Keep your chosen value exported in the environment used for subsequent `stack up`
+commands; an invocation without it uses the default ON. Running containers retain
+their selected setting across ordinary restarts.
 `stack down` keeps data volumes and downloaded models. Profile changes add/update
 services; use down then up with a smaller profile to remove previously enabled
 optional services while retaining their caches. A package upgrade supplies a

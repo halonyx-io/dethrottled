@@ -16,6 +16,18 @@ feature. The number of services and public ports is unchanged. Existing data and
 model volumes are retained. `stack down` also preserves the list-cache volume.
 Standalone Python uses the same switch and its normal data directory.
 
+For example, disable it for a managed-stack startup with:
+
+```sh
+DETHROTTLED_ADBLOCK=0 dethrottled stack up
+```
+
+Export the switch in the shell/service environment used for later updates to keep
+that choice. A later `stack up` without it returns to default ON; ordinary
+container restarts preserve the configured setting. The package manager passes
+this switch deliberately while excluding unrelated parent credentials and Compose
+overrides. Disabling retains the cached list without loading or updating it.
+
 ## Acquisition coverage
 
 | Path | Enforcement |
