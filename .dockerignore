@@ -45,6 +45,7 @@ tests/
 examples/
 *.md
 !README.md
+!AGENTS.md
 !docs/*.md
 !docs/**/*.md
 !evaluations/**/*.md
