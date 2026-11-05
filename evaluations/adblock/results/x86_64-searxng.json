@@ -1,0 +1,27 @@
+{
+  "passed": true,
+  "hits": [
+    "/content",
+    "/redirect"
+  ],
+  "status": {
+    "enabled": true,
+    "available": true,
+    "state": "active",
+    "list": "HaGeZi Multi PRO",
+    "rule_count": 239581,
+    "last_update": 1793876469.1830983,
+    "last_check": 1793876469.1830983,
+    "error": null,
+    "sha256": "19a3db5288c7067d81a641baac44a922303e7db570194f6949fbf04fce618e78",
+    "source": "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/adblock/pro.txt",
+    "update_interval_seconds": 86400,
+    "blocked_requests": {
+      "total": 1,
+      "searxng": 1
+    },
+    "component": "api",
+    "missing_list_policy": "allow; existing network security still applies"
+  },
+  "architecture": "x86_64"
+}

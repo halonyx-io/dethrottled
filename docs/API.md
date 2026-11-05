@@ -207,3 +207,11 @@ status. `support=standard` checks model/source agreement or query terms;
 `support=broad` includes warned single-model candidates when more coverage is
 needed. Neither verifies that an answer is present. Existing response envelopes
 and the ten-result limit remain.
+
+## Outbound domain-filter diagnostics
+
+The unreleased [adblock candidate](ADBLOCK.md) adds `adblock` state to capabilities,
+status and stats. Refused fetches retain `quality=failed`, add
+`policy_blocked=adblock` and an `adblock_blocked:` failure reason. Their workflow
+has `state=policy_blocked` with no retry actions. This is distinct from an upstream
+network failure. No new request arguments or endpoints are required.

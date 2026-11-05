@@ -1,5 +1,6 @@
 """Explicit requests sessions and bounded GET redirects for acquisition clients."""
 
+import os
 from urllib.parse import urljoin, urlsplit
 
 import requests as _requests
@@ -11,12 +12,31 @@ RequestException = _requests.RequestException
 
 class Session(_requests.Session):
     def send(self, request, **kwargs):
-        adblock.check(request.url, "http")
+        target = urlsplit(request.url)
+        if (target.scheme, target.netloc) != getattr(self, "_rpc_origin", None):
+            adblock.check(request.url, "http")
         return super().send(request, **kwargs)
 
 
 def request(method, url, **kwargs):
     with Session() as session:
+        target = urlsplit(url)
+        for variable in (
+            "BROWSER_SEARCH",
+            "SEARXNG",
+            "CRAWL4AI",
+            "FORMAT_WORKER",
+            "LAYOUT_WORKER",
+            "MEDIA_WORKER",
+        ):
+            configured = os.getenv("DETHROTTLED_" + variable + "_URL", "")
+            endpoint = urlsplit(configured)
+            if endpoint.netloc and (target.scheme, target.netloc) == (
+                endpoint.scheme,
+                endpoint.netloc,
+            ):
+                session._rpc_origin = target.scheme, target.netloc
+                break
         return session.request(method, url, **kwargs)
 
 

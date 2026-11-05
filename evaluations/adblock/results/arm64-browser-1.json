@@ -1,0 +1,221 @@
+{
+  "backend": "patchright",
+  "workload": "ads",
+  "architecture": "aarch64",
+  "list_sha256": "19a3db5288c7067d81a641baac44a922303e7db570194f6949fbf04fce618e78",
+  "rules": 239581,
+  "parse_ms": 383.56369780376554,
+  "policy_load_before": {
+    "cpu_ms": 1261.241,
+    "working_set_bytes": 62636032,
+    "anon_bytes": 59830272
+  },
+  "policy_load_after": {
+    "cpu_ms": 1643.684,
+    "working_set_bytes": 86478848,
+    "anon_bytes": 83603456
+  },
+  "cases": [
+    {
+      "enabled": true,
+      "repetition": 0,
+      "elapsed_ms": 703.2330729998648,
+      "ok": true,
+      "fact_hits": 4,
+      "facts": 4,
+      "traffic": {
+        "requests": 3,
+        "body_bytes": 1447
+      },
+      "resources_after": {
+        "cpu_ms": 6078.68,
+        "working_set_bytes": 420323328,
+        "anon_bytes": 378093568
+      },
+      "cpu_ms": 1676.1309999999994,
+      "access": {
+        "status": "unknown",
+        "reason": "no_clear_content_signal",
+        "answer_verified": false,
+        "source_complete": false
+      }
+    },
+    {
+      "enabled": true,
+      "repetition": 1,
+      "elapsed_ms": 526.3341660611331,
+      "ok": true,
+      "fact_hits": 4,
+      "facts": 4,
+      "traffic": {
+        "requests": 3,
+        "body_bytes": 1447
+      },
+      "resources_after": {
+        "cpu_ms": 8982.872,
+        "working_set_bytes": 432951296,
+        "anon_bytes": 387231744
+      },
+      "cpu_ms": 1852.1889999999994,
+      "access": {
+        "status": "unknown",
+        "reason": "no_clear_content_signal",
+        "answer_verified": false,
+        "source_complete": false
+      }
+    },
+    {
+      "enabled": true,
+      "repetition": 2,
+      "elapsed_ms": 549.3439580313861,
+      "ok": true,
+      "fact_hits": 4,
+      "facts": 4,
+      "traffic": {
+        "requests": 3,
+        "body_bytes": 1447
+      },
+      "resources_after": {
+        "cpu_ms": 11867.991,
+        "working_set_bytes": 424001536,
+        "anon_bytes": 378163200
+      },
+      "cpu_ms": 1500.723,
+      "access": {
+        "status": "unknown",
+        "reason": "no_clear_content_signal",
+        "answer_verified": false,
+        "source_complete": false
+      }
+    },
+    {
+      "enabled": true,
+      "kind": "redirect",
+      "traffic": {
+        "requests": 1,
+        "body_bytes": 0
+      },
+      "error": "AdblockBlocked:adblock_blocked:google-analytics.com"
+    },
+    {
+      "enabled": true,
+      "kind": "drive_redirect",
+      "traffic": {
+        "requests": 1,
+        "body_bytes": 0
+      },
+      "access": {
+        "status": "blocked",
+        "reason": "adblock_blocked",
+        "answer_verified": false,
+        "source_complete": false
+      },
+      "step_reasons": [
+        "AdblockBlocked: adblock_blocked:google-analytics.com"
+      ]
+    },
+    {
+      "enabled": true,
+      "kind": "popup",
+      "traffic": {
+        "requests": 3,
+        "body_bytes": 1447
+      },
+      "popup_url": "chrome-error://chromewebdata/"
+    },
+    {
+      "enabled": true,
+      "kind": "download",
+      "traffic": {
+        "requests": 4,
+        "body_bytes": 1496
+      },
+      "fact_retained": true
+    },
+    {
+      "enabled": true,
+      "kind": "public_target",
+      "traffic": {},
+      "error": "Error:Page.goto: net::ERR_BLOCKED_BY_CLIENT at http://127.0.0.1:38573/page\nCall log:\n  - navigating to \"http://127.0.0.1:38573/page\", waiting until \"load\"\n"
+    },
+    {
+      "enabled": true,
+      "kind": "websocket",
+      "traffic": {
+        "requests": 1,
+        "body_bytes": 39
+      },
+      "socket": {
+        "error": true
+      }
+    },
+    {
+      "enabled": true,
+      "kind": "worker",
+      "traffic": {
+        "requests": 4,
+        "body_bytes": 210
+      },
+      "legitimate_worker_fact": true
+    },
+    {
+      "enabled": true,
+      "kind": "service_worker",
+      "traffic": {
+        "requests": 2,
+        "body_bytes": 209
+      },
+      "registered": 1
+    }
+  ],
+  "limitations": [
+    "Local simulated challenge script, not proof of passing a real hostile challenge",
+    "Traffic is origin response-body bytes, excluding transport overhead",
+    "RSS includes Python/extractor libraries; browser children reported separately"
+  ],
+  "phase_resources": [
+    {
+      "enabled": true,
+      "elapsed_ms": 8109.527132008225,
+      "cpu_ms": 26674.896999999997
+    }
+  ],
+  "initial_resources": {
+    "cpu_ms": 767.76,
+    "working_set_bytes": 37474304,
+    "anon_bytes": 35098624
+  },
+  "final_resources": {
+    "cpu_ms": 28410.138,
+    "working_set_bytes": 108040192,
+    "anon_bytes": 101036032
+  },
+  "resource_measurement_comparable": true,
+  "host_load_average": [
+    2.068359375,
+    0.6572265625,
+    0.38037109375
+  ],
+  "blocked": {
+    "total": 67,
+    "browser": 67
+  },
+  "maxrss_kib": 92168,
+  "browser_children_maxrss_kib": 214028,
+  "normal_cases_passed": true,
+  "normal_summary": {
+    "True": {
+      "median_ms": 549.3439580313861,
+      "body_bytes": [
+        1447,
+        1447,
+        1447
+      ],
+      "tracking_requests": [
+        0,
+        0,
+        0
+      ]
+    }
+  }
+}

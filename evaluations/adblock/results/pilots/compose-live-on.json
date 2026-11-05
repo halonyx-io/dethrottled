@@ -1,0 +1,277 @@
+{
+  "label": "on",
+  "cases": [
+    {
+      "url": "https://docs.python.org/3/library/sqlite3.html",
+      "elapsed_ms": 660.1576618850231,
+      "quality": "ok",
+      "tier": "direct/trafilatura",
+      "fact_anchor_retained": true,
+      "content_chars": 2908,
+      "failure_reason": null,
+      "content_sha256": "e7d57ce106de054e6987cc987b0758681630733ad0499affe8eee26965c8333a"
+    },
+    {
+      "url": "https://www.rfc-editor.org/rfc/rfc8446.html",
+      "elapsed_ms": 662.6901989802718,
+      "quality": "ok",
+      "tier": "direct/trafilatura",
+      "fact_anchor_retained": true,
+      "content_chars": 2930,
+      "failure_reason": null,
+      "content_sha256": "1c1955b8c39ad13d600652cea3e759ac4949b0c0b8975821b0c18a0e7cdf6caa"
+    }
+  ],
+  "adblock": {
+    "enabled": true,
+    "available": true,
+    "state": "active",
+    "list": "HaGeZi Multi PRO",
+    "rule_count": 239581,
+    "last_update": 1793877740.484669,
+    "last_check": 1793877740.484669,
+    "error": null,
+    "sha256": "19a3db5288c7067d81a641baac44a922303e7db570194f6949fbf04fce618e78",
+    "source": "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/adblock/pro.txt",
+    "update_interval_seconds": 86400,
+    "blocked_requests": {
+      "total": 1,
+      "http": 1
+    },
+    "component": "api",
+    "missing_list_policy": "allow; existing network security still applies",
+    "workers": [
+      {
+        "enabled": true,
+        "available": true,
+        "state": "active",
+        "list": "HaGeZi Multi PRO",
+        "rule_count": 239581,
+        "last_update": 1793877740.484669,
+        "last_check": 1793877740.484669,
+        "error": null,
+        "sha256": "19a3db5288c7067d81a641baac44a922303e7db570194f6949fbf04fce618e78",
+        "source": "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/adblock/pro.txt",
+        "update_interval_seconds": 86400,
+        "blocked_requests": {},
+        "component": "searxng",
+        "missing_list_policy": "allow; existing network security still applies",
+        "observed_at": 1793878011.2271187
+      },
+      {
+        "enabled": true,
+        "available": true,
+        "state": "active",
+        "list": "HaGeZi Multi PRO",
+        "rule_count": 239581,
+        "last_update": 1793877740.484669,
+        "last_check": 1793877740.484669,
+        "error": null,
+        "sha256": "19a3db5288c7067d81a641baac44a922303e7db570194f6949fbf04fce618e78",
+        "source": "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/adblock/pro.txt",
+        "update_interval_seconds": 86400,
+        "blocked_requests": {},
+        "component": "crawl4ai",
+        "missing_list_policy": "allow; existing network security still applies",
+        "observed_at": 1793878011.72838
+      },
+      {
+        "enabled": true,
+        "available": true,
+        "state": "active",
+        "list": "HaGeZi Multi PRO",
+        "rule_count": 239581,
+        "last_update": 1793877740.484669,
+        "last_check": 1793877740.484669,
+        "error": null,
+        "sha256": "19a3db5288c7067d81a641baac44a922303e7db570194f6949fbf04fce618e78",
+        "source": "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/adblock/pro.txt",
+        "update_interval_seconds": 86400,
+        "blocked_requests": {},
+        "component": "browser",
+        "missing_list_policy": "allow; existing network security still applies",
+        "observed_at": 1793878011.7135196
+      },
+      {
+        "enabled": true,
+        "available": true,
+        "state": "active",
+        "list": "HaGeZi Multi PRO",
+        "rule_count": 239581,
+        "last_update": 1793877740.484669,
+        "last_check": 1793877740.484669,
+        "error": null,
+        "sha256": "19a3db5288c7067d81a641baac44a922303e7db570194f6949fbf04fce618e78",
+        "source": "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/adblock/pro.txt",
+        "update_interval_seconds": 86400,
+        "blocked_requests": {
+          "total": 1,
+          "http": 1
+        },
+        "component": "api",
+        "missing_list_policy": "allow; existing network security still applies",
+        "observed_at": 1793878011.1292126
+      }
+    ]
+  },
+  "search": {
+    "elapsed_ms": 1179.0098841302097,
+    "outcome": "results",
+    "degraded": false,
+    "urls": [
+      "https://docs.python.org/3/library/sqlite3.html",
+      "https://www.w3schools.com/python/ref_module_sqlite3.asp",
+      "https://zetcode.com/python/sqlite3-connect/"
+    ],
+    "attempts": [
+      {
+        "engine": "web",
+        "count": 3,
+        "status": "ok",
+        "elapsed_ms": 1176,
+        "unresponsive": [],
+        "direct": {
+          "engine": "tls-ddg-lite",
+          "status": "ok",
+          "count": 3,
+          "http_status": 200,
+          "refusal": false,
+          "elapsed_ms": 898
+        },
+        "attempts": [],
+        "families": [
+          "ddg"
+        ]
+      },
+      {
+        "engine": "yandex",
+        "count": 2,
+        "status": "ok",
+        "elapsed_ms": 1175,
+        "unresponsive": [],
+        "admitted_count": 3
+      },
+      {
+        "engine": "yahoo",
+        "count": 3,
+        "status": "ok",
+        "elapsed_ms": 740,
+        "unresponsive": [],
+        "admitted_count": 3
+      },
+      {
+        "engine": "searxng",
+        "count": 5,
+        "status": "ok",
+        "elapsed_ms": 1176,
+        "unresponsive": []
+      },
+      {
+        "engine": "bing-news",
+        "count": 0,
+        "status": "not_requested",
+        "elapsed_ms": 1176,
+        "unresponsive": []
+      },
+      {
+        "engine": "gnews-resolved",
+        "count": 0,
+        "status": "not_requested",
+        "elapsed_ms": 1176,
+        "unresponsive": []
+      },
+      {
+        "engine": "tls-ddg-lite",
+        "count": 3,
+        "status": "ok",
+        "reason": null,
+        "elapsed_ms": 898,
+        "unresponsive": [],
+        "http_status": 200,
+        "refusal": false
+      }
+    ]
+  },
+  "reddit_drive": {
+    "elapsed_ms": 1981.964192353189,
+    "ok": true,
+    "access": {
+      "status": "content_observed",
+      "reason": "visible_text_present",
+      "answer_verified": false,
+      "source_complete": false
+    },
+    "adblock": {
+      "enabled": true,
+      "available": true,
+      "state": "active",
+      "list": "HaGeZi Multi PRO",
+      "rule_count": 239581,
+      "last_update": 1793877740.484669,
+      "last_check": 1793877740.484669,
+      "error": null,
+      "sha256": "19a3db5288c7067d81a641baac44a922303e7db570194f6949fbf04fce618e78",
+      "source": "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/adblock/pro.txt",
+      "update_interval_seconds": 86400,
+      "blocked_requests": {
+        "total": 4,
+        "browser": 4
+      },
+      "component": "browser",
+      "missing_list_policy": "allow; existing network security still applies",
+      "blocked": [
+        {
+          "domain": "rlcdn.com",
+          "kind": "browser"
+        },
+        {
+          "domain": "w3-reporting.reddit.com",
+          "kind": "browser"
+        },
+        {
+          "domain": "w3-reporting.reddit.com",
+          "kind": "browser"
+        },
+        {
+          "domain": "error-tracking.reddit.com",
+          "kind": "browser"
+        }
+      ]
+    },
+    "steps": [
+      {
+        "ok": true,
+        "reason": null,
+        "action": "goto",
+        "text_chars": 0
+      },
+      {
+        "ok": true,
+        "reason": null,
+        "action": "text",
+        "text_chars": 2000
+      }
+    ]
+  },
+  "blocked_top_level": {
+    "url": "https://a.google-analytics.com/collect",
+    "content_type": null,
+    "quality": "failed",
+    "failure_reason": "adblock_blocked:google-analytics.com",
+    "tier": null,
+    "cached": false,
+    "acquisition_attempts": [],
+    "source_alternatives": [],
+    "policy_blocked": "adblock",
+    "workflow": {
+      "state": "failed",
+      "answer_verified": false,
+      "source_complete": false,
+      "response_truncated": false,
+      "source_bytes_retained": false,
+      "source_bytes_reacquirable": false,
+      "next_actions": [],
+      "instruction": "Use relevant follow-ups until the question is supported; extraction success is not answer verification."
+    }
+  }
+}

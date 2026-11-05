@@ -1,0 +1,112 @@
+{
+  "enabled": false,
+  "architecture": "x86_64",
+  "list_sha256": "19a3db5288c7067d81a641baac44a922303e7db570194f6949fbf04fce618e78",
+  "rule_count": 0,
+  "parse_ms": 0.0008121132850646973,
+  "rss_before_kib": 38512,
+  "rss_after_parse_kib": 38512,
+  "match_ns": 482.61277843266726,
+  "match_iterations": 100000,
+  "matched": 0,
+  "cases": [
+    {
+      "transport": "http",
+      "repetition": 0,
+      "elapsed_ms": 2.263524103909731,
+      "facts": 2,
+      "traffic": {
+        "requests": 1,
+        "body_bytes": 49
+      }
+    },
+    {
+      "transport": "http",
+      "repetition": 1,
+      "elapsed_ms": 1.1114240624010563,
+      "facts": 2,
+      "traffic": {
+        "requests": 1,
+        "body_bytes": 49
+      }
+    },
+    {
+      "transport": "http",
+      "repetition": 2,
+      "elapsed_ms": 1.019428949803114,
+      "facts": 2,
+      "traffic": {
+        "requests": 1,
+        "body_bytes": 49
+      }
+    },
+    {
+      "transport": "tls",
+      "repetition": 0,
+      "elapsed_ms": 0.9253602474927902,
+      "facts": 2,
+      "traffic": {
+        "requests": 1,
+        "body_bytes": 49
+      }
+    },
+    {
+      "transport": "tls",
+      "repetition": 1,
+      "elapsed_ms": 0.6242566742002964,
+      "facts": 2,
+      "traffic": {
+        "requests": 1,
+        "body_bytes": 49
+      }
+    },
+    {
+      "transport": "tls",
+      "repetition": 2,
+      "elapsed_ms": 0.5879877135157585,
+      "facts": 2,
+      "traffic": {
+        "requests": 1,
+        "body_bytes": 49
+      }
+    },
+    {
+      "transport": "ddgs",
+      "repetition": 0,
+      "elapsed_ms": 0.5614282563328743,
+      "facts": 2,
+      "traffic": {
+        "requests": 1,
+        "body_bytes": 49
+      }
+    },
+    {
+      "transport": "ddgs",
+      "repetition": 1,
+      "elapsed_ms": 0.3380831331014633,
+      "facts": 2,
+      "traffic": {
+        "requests": 1,
+        "body_bytes": 49
+      }
+    },
+    {
+      "transport": "ddgs",
+      "repetition": 2,
+      "elapsed_ms": 0.3318111412227154,
+      "facts": 2,
+      "traffic": {
+        "requests": 1,
+        "body_bytes": 49
+      }
+    }
+  ],
+  "cpu_seconds": 0.32181899999999997,
+  "maxrss_kib": 53500,
+  "all_evidence_retained": true,
+  "median_ms": {
+    "http": 1.1114240624010563,
+    "tls": 0.6242566742002964,
+    "ddgs": 0.3380831331014633
+  }
+}

@@ -107,7 +107,8 @@ def transcript(url: str, limit: int = 20000, metadata: dict | None = None) -> tu
     try:
         from . import adblock
         from .netfilter import Session
-        api = YouTubeTranscriptApi(http_client=Session()) if adblock.enabled() else YouTubeTranscriptApi()
+        api = (YouTubeTranscriptApi(http_client=Session()) if adblock.enabled()
+               else YouTubeTranscriptApi())
         available = api.list(ident)
         try:
             chosen = available.find_transcript(LANGUAGES)
@@ -121,6 +122,8 @@ def transcript(url: str, limit: int = 20000, metadata: dict | None = None) -> tu
             return "", "", "no_transcript_available"
         fetched = chosen.fetch()
     except Exception as exc:
+        if isinstance(exc, adblock.AdblockBlocked):
+            return "", "", str(exc)
         name = type(exc).__name__
         # These three are the ones worth telling apart. The rest are reported
         # under their own class name, which is more use than "failed".

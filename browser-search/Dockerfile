@@ -19,8 +19,10 @@ RUN python -m pip install --no-cache-dir --upgrade pip \
     && mkdir /state && chown browsersearch:browsersearch /state
 
 COPY browser-search/service.py browser-search/recovery.py browser-search/verify_search.py ./
+COPY src/dethrottled/licenses/ ./licenses/
 COPY src/dethrottled/adblock.py ./dethrottled_adblock.py
 COPY src/dethrottled/adblock_browser.py ./dethrottled_adblock_browser.py
+COPY src/dethrottled/adblock_proxy.py ./dethrottled_adblock_proxy.py
 COPY browser-search/start.sh ./
 USER browsersearch
 EXPOSE 19888

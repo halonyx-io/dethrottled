@@ -7,6 +7,7 @@ is a content filter, never a substitute for public-target/DNS/security checks.
 from __future__ import annotations
 
 import hashlib
+import io
 import ipaddress
 import json
 import math
@@ -45,11 +46,14 @@ def enabled():
 def parse(body):
     if len(body) > MAX_BYTES:
         raise ValueError("list_too_large")
-    text = body.decode("utf-8")
+    text = body[:4000].decode("utf-8")
     if not text.startswith("[Adblock Plus]") or "HaGeZi's Multi PRO" not in text[:2000]:
         raise ValueError("wrong_list_header")
     rules = set()
-    for line in text.splitlines()[1:]:
+    lines = io.BytesIO(body)
+    next(lines)
+    for raw in lines:
+        line = raw.decode("utf-8").rstrip("\r\n")
         if not line or line.startswith("!"):
             continue
         if not line.startswith("||") or not line.endswith("^"):
@@ -121,16 +125,24 @@ class Filter:
             if stat.st_size > MAX_BYTES * 2:
                 raise ValueError("cache_too_large")
             data = json.loads(self.path.read_text())
-            if (not isinstance(data.get("body"), str)
-                    or data.get("source") not in SOURCES
-                    or any(not isinstance(data.get(k), (int, float)) or not math.isfinite(data[k])
-                           for k in ("checked_at", "updated_at"))):
+            if (
+                not isinstance(data.get("body"), str)
+                or data.get("source") not in SOURCES
+                or any(
+                    not isinstance(data.get(k), (int, float)) or not math.isfinite(data[k])
+                    for k in ("checked_at", "updated_at")
+                )
+            ):
                 raise ValueError("invalid_cache_metadata")
             body = data["body"].encode("utf-8")
             if hashlib.sha256(body).hexdigest() != data["sha256"]:
                 raise ValueError("cache_checksum_mismatch")
             rules = parse(body)
-            self.rules, self.metadata, self._signature = rules, data, signature
+            self.rules, self.metadata, self._signature = (
+                rules,
+                {k: v for k, v in data.items() if k != "body"},
+                signature,
+            )
             self.last_check, self.error = data.get("checked_at"), None
         except FileNotFoundError:
             if not self.rules:
@@ -171,11 +183,28 @@ class Filter:
                         if response.code == 304:
                             if not self.rules or self.metadata.get("source") != source:
                                 raise ValueError("unexpected_304")
-                            data = dict(self.metadata, checked_at=now)
+                            data = json.loads(self.path.read_text())
+                            if (
+                                hashlib.sha256(data["body"].encode()).hexdigest()
+                                != self.metadata["sha256"]
+                            ):
+                                raise ValueError("cache_checksum_mismatch")
+                            data["checked_at"] = now
+                            rules = self.rules
                         else:
                             if response.code != 200:
                                 raise ValueError("update_http_" + str(response.code))
-                            body = response.read(MAX_BYTES + 1)
+                            chunks, size, began = [], 0, time.monotonic()
+                            read = getattr(response, "read1", response.read)
+                            while True:
+                                chunk = read(min(65536, MAX_BYTES + 1 - size))
+                                if not chunk:
+                                    break
+                                chunks.append(chunk)
+                                size += len(chunk)
+                                if size > MAX_BYTES or time.monotonic() - began > 45:
+                                    raise ValueError("update_size_or_time_limit")
+                            body = b"".join(chunks)
                             rules = parse(body)
                             # Reject catastrophic truncation even if its header changes.
                             if self.rules and len(rules) < len(self.rules) // 2:
@@ -189,12 +218,25 @@ class Filter:
                                 etag=response.headers.get("ETag"),
                                 last_modified=response.headers.get("Last-Modified"),
                             )
+                    license_file = Path(__file__).with_name("licenses") / "HAGEZI-GPL-3.0.txt"
+                    if license_file.is_file():
+                        _atomic(
+                            self.path.with_name("license.json"),
+                            {
+                                "list": "HaGeZi Multi PRO",
+                                "license": "GPL-3.0",
+                                "source": "https://github.com/hagezi/dns-blocklists",
+                                "license_text": license_file.read_text(),
+                            },
+                        )
                     _atomic(self.path, data)
-                    self._signature = None
-                    self.load()
+                    stat = self.path.stat()
+                    self.rules = rules
+                    self.metadata = {k: v for k, v in data.items() if k != "body"}
+                    self._signature = stat.st_mtime_ns, stat.st_size
                     self.error = None
                     return
-                except (OSError, ValueError, UnicodeError) as exc:
+                except (OSError, ValueError, KeyError, TypeError) as exc:
                     errors.append(type(exc).__name__ + ":" + str(exc)[:120])
             self.error = "update_failed:" + ";".join(errors)
         finally:
@@ -257,6 +299,7 @@ class Filter:
             "source": self.metadata.get("source"),
             "update_interval_seconds": INTERVAL,
             "blocked_requests": counts,
+            "counter_units": "policy refusals; browser connection attempts include retries",
             "component": self.component,
             "missing_list_policy": "allow; existing network security still applies",
         }
@@ -290,6 +333,14 @@ class Filter:
                     )
                 except OSError:
                     pass
+            if not self.reader and self.directory is not None:
+                # Process counters are observations, not an unbounded restart log.
+                for path in list(self.directory.glob("worker-*.json"))[:256]:
+                    try:
+                        if time.time() - path.stat().st_mtime > INTERVAL:
+                            path.unlink()
+                    except OSError:
+                        pass
             self.stop_event.wait(30)
 
     def stop(self):
@@ -320,3 +371,7 @@ def status():
             pass
     result["workers"] = workers
     return result
+
+
+def error_reason(exc):
+    return str(exc) if isinstance(exc, AdblockBlocked) else type(exc).__name__

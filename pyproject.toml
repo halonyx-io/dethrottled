@@ -101,6 +101,9 @@ dev = ["pytest>=8.0", "httpx>=0.27", "ruff>=0.4"]
 dethrottled = "dethrottled.cli:main"
 dethrottled-health = "dethrottled.health:main"
 
+[tool.setuptools.package-data]
+dethrottled = ["licenses/*.txt"]
+
 [tool.setuptools.packages.find]
 where = ["src"]
 

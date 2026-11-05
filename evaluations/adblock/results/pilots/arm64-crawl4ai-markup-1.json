@@ -1,0 +1,344 @@
+{
+  "backend": "crawl4ai",
+  "workload": "ads",
+  "architecture": "aarch64",
+  "list_sha256": "19a3db5288c7067d81a641baac44a922303e7db570194f6949fbf04fce618e78",
+  "rules": 239581,
+  "parse_ms": 395.94536484219134,
+  "policy_load_before": {
+    "cpu_ms": 699.894,
+    "working_set_bytes": 30617600,
+    "anon_bytes": 28856320
+  },
+  "policy_load_after": {
+    "cpu_ms": 1094.379,
+    "working_set_bytes": 55246848,
+    "anon_bytes": 53448704
+  },
+  "cases": [
+    {
+      "enabled": true,
+      "repetition": 0,
+      "elapsed_ms": 746.4118739590049,
+      "ok": true,
+      "fact_hits": 4,
+      "facts": 4,
+      "traffic": {
+        "requests": 3,
+        "body_bytes": 1447
+      },
+      "resources_after": {
+        "cpu_ms": 5302.857,
+        "working_set_bytes": 284950528,
+        "anon_bytes": 269238272
+      },
+      "cpu_ms": 1003.2149999999992,
+      "failures": [
+        {
+          "url": "https://a.google-analytics.com:40427/track.js?i=0",
+          "reason": "net::ERR_TUNNEL_CONNECTION_FAILED"
+        },
+        {
+          "url": "https://a.google-analytics.com:40427/track.js?i=1",
+          "reason": "net::ERR_TUNNEL_CONNECTION_FAILED"
+        },
+        {
+          "url": "https://a.google-analytics.com:40427/track.js?i=2",
+          "reason": "net::ERR_TUNNEL_CONNECTION_FAILED"
+        },
+        {
+          "url": "https://a.google-analytics.com:40427/track.js?i=3",
+          "reason": "net::ERR_TUNNEL_CONNECTION_FAILED"
+        },
+        {
+          "url": "https://a.google-analytics.com:40427/track.js?i=4",
+          "reason": "net::ERR_TUNNEL_CONNECTION_FAILED"
+        },
+        {
+          "url": "https://a.google-analytics.com:40427/track.js?i=5",
+          "reason": "net::ERR_TUNNEL_CONNECTION_FAILED"
+        },
+        {
+          "url": "https://a.google-analytics.com:40427/collect",
+          "reason": "net::ERR_TUNNEL_CONNECTION_FAILED"
+        },
+        {
+          "url": "https://a.google-analytics.com:40427/frame",
+          "reason": "net::ERR_TUNNEL_CONNECTION_FAILED"
+        },
+        {
+          "url": "https://a.google-analytics.com:40427/pixel",
+          "reason": "net::ERR_TUNNEL_CONNECTION_FAILED"
+        },
+        {
+          "url": "https://a.google-analytics.com:40427/track.js?i=6",
+          "reason": "net::ERR_TUNNEL_CONNECTION_FAILED"
+        },
+        {
+          "url": "https://a.google-analytics.com:40427/track.js?i=7",
+          "reason": "net::ERR_TUNNEL_CONNECTION_FAILED"
+        }
+      ],
+      "html_sample": "<html><head></head><body><main><h1>Evidence fixture</h1>\n                    <p>Allocation is 7341 tonnes</p><p id=\"js\">JS result is 9127 units</p><p id=\"challenge\">Challenge script preserved 6193</p><p id=\"clicked\">Clicked record 4482</p>\n                    <button id=\"open\" onclick=\"document.querySelector('#clicked').textContent='Clicked record 4482'\">Read record</button>\n                    <a"
+    },
+    {
+      "enabled": true,
+      "repetition": 1,
+      "elapsed_ms": 636.8930209428072,
+      "ok": true,
+      "fact_hits": 4,
+      "facts": 4,
+      "traffic": {
+        "requests": 3,
+        "body_bytes": 1447
+      },
+      "resources_after": {
+        "cpu_ms": 6297.232,
+        "working_set_bytes": 294473728,
+        "anon_bytes": 277102592
+      },
+      "cpu_ms": 993.6710000000003,
+      "failures": [
+        {
+          "url": "https://a.google-analytics.com:40427/track.js?i=2",
+          "reason": "net::ERR_TUNNEL_CONNECTION_FAILED"
+        },
+        {
+          "url": "https://a.google-analytics.com:40427/track.js?i=3",
+          "reason": "net::ERR_TUNNEL_CONNECTION_FAILED"
+        },
+        {
+          "url": "https://a.google-analytics.com:40427/track.js?i=4",
+          "reason": "net::ERR_TUNNEL_CONNECTION_FAILED"
+        },
+        {
+          "url": "https://a.google-analytics.com:40427/track.js?i=5",
+          "reason": "net::ERR_TUNNEL_CONNECTION_FAILED"
+        },
+        {
+          "url": "https://a.google-analytics.com:40427/collect",
+          "reason": "net::ERR_TUNNEL_CONNECTION_FAILED"
+        },
+        {
+          "url": "https://a.google-analytics.com:40427/frame",
+          "reason": "net::ERR_TUNNEL_CONNECTION_FAILED"
+        },
+        {
+          "url": "https://a.google-analytics.com:40427/pixel",
+          "reason": "net::ERR_TUNNEL_CONNECTION_FAILED"
+        },
+        {
+          "url": "https://a.google-analytics.com:40427/track.js?i=6",
+          "reason": "net::ERR_TUNNEL_CONNECTION_FAILED"
+        },
+        {
+          "url": "https://a.google-analytics.com:40427/track.js?i=7",
+          "reason": "net::ERR_TUNNEL_CONNECTION_FAILED"
+        },
+        {
+          "url": "https://a.google-analytics.com:40427/frame",
+          "reason": "net::ERR_TUNNEL_CONNECTION_FAILED"
+        },
+        {
+          "url": "https://a.google-analytics.com:40427/track.js?i=0",
+          "reason": "net::ERR_TUNNEL_CONNECTION_FAILED"
+        },
+        {
+          "url": "https://a.google-analytics.com:40427/track.js?i=1",
+          "reason": "net::ERR_TUNNEL_CONNECTION_FAILED"
+        },
+        {
+          "url": "https://a.google-analytics.com:40427/track.js?i=2",
+          "reason": "net::ERR_TUNNEL_CONNECTION_FAILED"
+        },
+        {
+          "url": "https://a.google-analytics.com:40427/track.js?i=3",
+          "reason": "net::ERR_TUNNEL_CONNECTION_FAILED"
+        },
+        {
+          "url": "https://a.google-analytics.com:40427/track.js?i=4",
+          "reason": "net::ERR_TUNNEL_CONNECTION_FAILED"
+        },
+        {
+          "url": "https://a.google-analytics.com:40427/collect",
+          "reason": "net::ERR_TUNNEL_CONNECTION_FAILED"
+        },
+        {
+          "url": "https://a.google-analytics.com:40427/track.js?i=5",
+          "reason": "net::ERR_TUNNEL_CONNECTION_FAILED"
+        },
+        {
+          "url": "https://a.google-analytics.com:40427/track.js?i=6",
+          "reason": "net::ERR_TUNNEL_CONNECTION_FAILED"
+        },
+        {
+          "url": "https://a.google-analytics.com:40427/track.js?i=7",
+          "reason": "net::ERR_TUNNEL_CONNECTION_FAILED"
+        },
+        {
+          "url": "https://a.google-analytics.com:40427/pixel",
+          "reason": "net::ERR_TUNNEL_CONNECTION_FAILED"
+        }
+      ],
+      "html_sample": "<html><head></head><body><main><h1>Evidence fixture</h1>\n                    <p>Allocation is 7341 tonnes</p><p id=\"js\">JS result is 9127 units</p><p id=\"challenge\">Challenge script preserved 6193</p><p id=\"clicked\">Clicked record 4482</p>\n                    <button id=\"open\" onclick=\"document.querySelector('#clicked').textContent='Clicked record 4482'\">Read record</button>\n                    <a"
+    },
+    {
+      "enabled": true,
+      "repetition": 2,
+      "elapsed_ms": 637.743802042678,
+      "ok": true,
+      "fact_hits": 4,
+      "facts": 4,
+      "traffic": {
+        "requests": 3,
+        "body_bytes": 1447
+      },
+      "resources_after": {
+        "cpu_ms": 7170.265,
+        "working_set_bytes": 296378368,
+        "anon_bytes": 279506944
+      },
+      "cpu_ms": 871.1540000000005,
+      "failures": [
+        {
+          "url": "https://a.google-analytics.com:40427/track.js?i=1",
+          "reason": "net::ERR_TUNNEL_CONNECTION_FAILED"
+        },
+        {
+          "url": "https://a.google-analytics.com:40427/track.js?i=2",
+          "reason": "net::ERR_TUNNEL_CONNECTION_FAILED"
+        },
+        {
+          "url": "https://a.google-analytics.com:40427/track.js?i=3",
+          "reason": "net::ERR_TUNNEL_CONNECTION_FAILED"
+        },
+        {
+          "url": "https://a.google-analytics.com:40427/track.js?i=4",
+          "reason": "net::ERR_TUNNEL_CONNECTION_FAILED"
+        },
+        {
+          "url": "https://a.google-analytics.com:40427/collect",
+          "reason": "net::ERR_TUNNEL_CONNECTION_FAILED"
+        },
+        {
+          "url": "https://a.google-analytics.com:40427/track.js?i=5",
+          "reason": "net::ERR_TUNNEL_CONNECTION_FAILED"
+        },
+        {
+          "url": "https://a.google-analytics.com:40427/track.js?i=6",
+          "reason": "net::ERR_TUNNEL_CONNECTION_FAILED"
+        },
+        {
+          "url": "https://a.google-analytics.com:40427/track.js?i=7",
+          "reason": "net::ERR_TUNNEL_CONNECTION_FAILED"
+        },
+        {
+          "url": "https://a.google-analytics.com:40427/pixel",
+          "reason": "net::ERR_TUNNEL_CONNECTION_FAILED"
+        },
+        {
+          "url": "https://a.google-analytics.com:40427/track.js?i=0",
+          "reason": "net::ERR_TUNNEL_CONNECTION_FAILED"
+        },
+        {
+          "url": "https://a.google-analytics.com:40427/frame",
+          "reason": "net::ERR_TUNNEL_CONNECTION_FAILED"
+        },
+        {
+          "url": "https://a.google-analytics.com:40427/track.js?i=1",
+          "reason": "net::ERR_TUNNEL_CONNECTION_FAILED"
+        },
+        {
+          "url": "https://a.google-analytics.com:40427/track.js?i=2",
+          "reason": "net::ERR_TUNNEL_CONNECTION_FAILED"
+        },
+        {
+          "url": "https://a.google-analytics.com:40427/track.js?i=3",
+          "reason": "net::ERR_TUNNEL_CONNECTION_FAILED"
+        },
+        {
+          "url": "https://a.google-analytics.com:40427/track.js?i=4",
+          "reason": "net::ERR_TUNNEL_CONNECTION_FAILED"
+        },
+        {
+          "url": "https://a.google-analytics.com:40427/collect",
+          "reason": "net::ERR_TUNNEL_CONNECTION_FAILED"
+        },
+        {
+          "url": "https://a.google-analytics.com:40427/track.js?i=5",
+          "reason": "net::ERR_TUNNEL_CONNECTION_FAILED"
+        },
+        {
+          "url": "https://a.google-analytics.com:40427/track.js?i=6",
+          "reason": "net::ERR_TUNNEL_CONNECTION_FAILED"
+        },
+        {
+          "url": "https://a.google-analytics.com:40427/track.js?i=7",
+          "reason": "net::ERR_TUNNEL_CONNECTION_FAILED"
+        },
+        {
+          "url": "https://a.google-analytics.com:40427/pixel",
+          "reason": "net::ERR_TUNNEL_CONNECTION_FAILED"
+        }
+      ],
+      "html_sample": "<html><head></head><body><main><h1>Evidence fixture</h1>\n                    <p>Allocation is 7341 tonnes</p><p id=\"js\">JS result is 9127 units</p><p id=\"challenge\">Challenge script preserved 6193</p><p id=\"clicked\">Clicked record 4482</p>\n                    <button id=\"open\" onclick=\"document.querySelector('#clicked').textContent='Clicked record 4482'\">Read record</button>\n                    <a"
+    },
+    {
+      "enabled": true,
+      "kind": "redirect",
+      "tracking_requests": 0,
+      "status": null,
+      "error": "Unexpected error in _crawl_web at line 61 in goto (../policy/dethrottled_adblock_browser.py):\nError: adblock_blocked:google-analytics.com\n\nCode context:\n  56           self.on(\"requestfailed\", failed)\n  57           try:\n  58               return await original_goto(self, url, *args, **kwargs)\n  59 "
+    }
+  ],
+  "limitations": [
+    "Local simulated challenge script, not proof of passing a real hostile challenge",
+    "Traffic is origin response-body bytes, excluding transport overhead",
+    "RSS includes Python/extractor libraries; browser children reported separately"
+  ],
+  "phase_resources": [
+    {
+      "enabled": true,
+      "elapsed_ms": 3964.3897898495197,
+      "cpu_ms": 6097.317000000001
+    }
+  ],
+  "initial_resources": {
+    "cpu_ms": 606.694,
+    "working_set_bytes": 21209088,
+    "anon_bytes": 19562496
+  },
+  "final_resources": {
+    "cpu_ms": 7700.475,
+    "working_set_bytes": 119025664,
+    "anon_bytes": 114241536
+  },
+  "resource_measurement_comparable": true,
+  "host_load_average": [
+    0.9951171875,
+    0.89404296875,
+    0.580078125
+  ],
+  "blocked": {
+    "total": 34,
+    "browser": 34
+  },
+  "maxrss_kib": 150356,
+  "browser_children_maxrss_kib": 150356,
+  "normal_cases_passed": true,
+  "normal_summary": {
+    "True": {
+      "median_ms": 637.743802042678,
+      "body_bytes": [
+        1447,
+        1447,
+        1447
+      ],
+      "tracking_requests": [
+        0,
+        0,
+        0
+      ]
+    }
+  }
+}

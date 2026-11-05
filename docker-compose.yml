@@ -177,6 +177,7 @@ services:
       - ./docker/crawl4ai/sitecustomize.py:/opt/dethrottled-network/sitecustomize.py:ro
       - ./src/dethrottled/adblock.py:/opt/dethrottled-network/dethrottled_adblock.py:ro
       - ./src/dethrottled/adblock_browser.py:/opt/dethrottled-network/dethrottled_adblock_browser.py:ro
+      - ./src/dethrottled/adblock_proxy.py:/opt/dethrottled-network/dethrottled_adblock_proxy.py:ro
       - ./docker/crawl4ai/config.yml:/app/config.yml:ro
     expose:
       - "11235"

@@ -18,6 +18,10 @@ integrations remain opt-in and are not required by the default workflow.
 For a first installation or ordinary script/HTTP use, start with the
 [quick start](https://github.com/halonyx-io/dethrottled/blob/main/docs/QUICKSTART.md).
 
+Native [HaGeZi ad/tracker filtering](docs/ADBLOCK.md) is enabled by default on this
+branch, with one switch to disable it. The unreleased implementation and measured
+tradeoffs are described in that guide.
+
 ## Install the complete engine
 
 Install [Docker Engine and Compose](https://docs.docker.com/engine/install/), then:

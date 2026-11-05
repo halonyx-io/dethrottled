@@ -7,6 +7,7 @@ import time
 from email.utils import parsedate_to_datetime
 from urllib.parse import parse_qs, quote_plus, unquote, urljoin, urlsplit
 
+from . import adblock
 from . import netfilter as requests
 from .content import constrained
 
@@ -54,7 +55,8 @@ def tls_search(query, *, max_items=8, cache=None, diagnostics=None, worker=""):
                     time.sleep(delay)
                 _NEXT = time.monotonic() + 0.5
         url = "https://lite.duckduckgo.com/lite/?q=" + quote_plus(query)
-        response = requests.get_using(tls_requests.get, url, impersonate=TLS_IMPERSONATE, timeout=1.5)
+        response = requests.get_using(
+            tls_requests.get, url, impersonate=TLS_IMPERSONATE, timeout=1.5)
         html = response.text or ""
         attempt["http_status"] = response.status_code
         retry = (getattr(response, "headers", None) or {}).get("Retry-After", "")
@@ -100,11 +102,11 @@ def tls_search(query, *, max_items=8, cache=None, diagnostics=None, worker=""):
             cache.put("search", "tls-ddg-lite", query, max_items, value=rows)
         return rows
     except (ImportError, ValueError, TypeError, OSError, requests.RequestException) as exc:
-        attempt.update(status="unavailable", reason=type(exc).__name__)
+        attempt.update(status="unavailable", reason=adblock.error_reason(exc))
         return []
     except Exception as exc:
         # curl_cffi transport errors are not requests.RequestException.
-        attempt.update(status="transport_error", reason=type(exc).__name__)
+        attempt.update(status="transport_error", reason=adblock.error_reason(exc))
         return []
     finally:
         attempt["elapsed_ms"] = int((time.monotonic() - started) * 1000)

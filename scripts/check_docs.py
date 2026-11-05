@@ -22,6 +22,7 @@ GUIDES = {
     "docs/DOCUMENTATION-MAINTENANCE.md",
     "docs/README.md",
     "docs/API.md",
+    "docs/ADBLOCK.md",
     "docs/CONFIGURATION.md",
     "docs/DRIVE.md",
     "docs/FEATURES.md",

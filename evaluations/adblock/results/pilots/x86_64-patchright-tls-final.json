@@ -1,0 +1,156 @@
+{
+  "backend": "patchright",
+  "architecture": "x86_64",
+  "list_sha256": "19a3db5288c7067d81a641baac44a922303e7db570194f6949fbf04fce618e78",
+  "rules": 239581,
+  "parse_ms": 259.31923603639007,
+  "cases": [
+    {
+      "enabled": false,
+      "repetition": 0,
+      "elapsed_ms": 315.22382888942957,
+      "ok": false,
+      "fact_hits": 0,
+      "facts": 4,
+      "traffic": {},
+      "access": {
+        "status": "unknown",
+        "reason": "no_clear_content_signal",
+        "answer_verified": false,
+        "source_complete": false
+      }
+    },
+    {
+      "enabled": false,
+      "repetition": 1,
+      "elapsed_ms": 259.82805201783776,
+      "ok": false,
+      "fact_hits": 0,
+      "facts": 4,
+      "traffic": {},
+      "access": {
+        "status": "unknown",
+        "reason": "no_clear_content_signal",
+        "answer_verified": false,
+        "source_complete": false
+      }
+    },
+    {
+      "enabled": false,
+      "repetition": 2,
+      "elapsed_ms": 248.85182222351432,
+      "ok": false,
+      "fact_hits": 0,
+      "facts": 4,
+      "traffic": {},
+      "access": {
+        "status": "unknown",
+        "reason": "no_clear_content_signal",
+        "answer_verified": false,
+        "source_complete": false
+      }
+    },
+    {
+      "enabled": false,
+      "kind": "redirect",
+      "traffic": {},
+      "error": "Error:Page.goto: net::ERR_CONNECTION_RESET at http://content.example:34261/redirect\nCall log:\n  - navigating to \"http://content.example:34261/redirect\", waiting until"
+    },
+    {
+      "enabled": false,
+      "kind": "popup",
+      "traffic": {},
+      "error": "Error:Page.goto: net::ERR_CONNECTION_RESET at http://content.example:34261/page\nCall log:\n  - navigating to \"http://content.example:34261/page\", waiting until \"load\"\n"
+    },
+    {
+      "enabled": false,
+      "kind": "download",
+      "traffic": {},
+      "error": "Error:Page.goto: net::ERR_CONNECTION_RESET at http://content.example:34261/page\nCall log:\n  - navigating to \"http://content.example:34261/page\", waiting until \"load\"\n"
+    },
+    {
+      "enabled": false,
+      "kind": "public_target",
+      "traffic": {},
+      "error": "Error:Page.goto: net::ERR_BLOCKED_BY_CLIENT at http://127.0.0.1:34261/page\nCall log:\n  - navigating to \"http://127.0.0.1:34261/page\", waiting until \"load\"\n"
+    },
+    {
+      "enabled": true,
+      "repetition": 0,
+      "elapsed_ms": 300.78522115945816,
+      "ok": false,
+      "fact_hits": 0,
+      "facts": 4,
+      "traffic": {},
+      "access": {
+        "status": "unknown",
+        "reason": "no_clear_content_signal",
+        "answer_verified": false,
+        "source_complete": false
+      }
+    },
+    {
+      "enabled": true,
+      "repetition": 1,
+      "elapsed_ms": 252.79066618531942,
+      "ok": false,
+      "fact_hits": 0,
+      "facts": 4,
+      "traffic": {},
+      "access": {
+        "status": "unknown",
+        "reason": "no_clear_content_signal",
+        "answer_verified": false,
+        "source_complete": false
+      }
+    },
+    {
+      "enabled": true,
+      "repetition": 2,
+      "elapsed_ms": 272.1976046450436,
+      "ok": false,
+      "fact_hits": 0,
+      "facts": 4,
+      "traffic": {},
+      "access": {
+        "status": "unknown",
+        "reason": "no_clear_content_signal",
+        "answer_verified": false,
+        "source_complete": false
+      }
+    },
+    {
+      "enabled": true,
+      "kind": "redirect",
+      "traffic": {},
+      "error": "Error:Page.goto: net::ERR_CONNECTION_RESET at http://content.example:34261/redirect\nCall log:\n  - navigating to \"http://content.example:34261/redirect\", waiting until"
+    },
+    {
+      "enabled": true,
+      "kind": "popup",
+      "traffic": {},
+      "error": "Error:Page.goto: net::ERR_CONNECTION_RESET at http://content.example:34261/page\nCall log:\n  - navigating to \"http://content.example:34261/page\", waiting until \"load\"\n"
+    },
+    {
+      "enabled": true,
+      "kind": "download",
+      "traffic": {},
+      "error": "Error:Page.goto: net::ERR_CONNECTION_RESET at http://content.example:34261/page\nCall log:\n  - navigating to \"http://content.example:34261/page\", waiting until \"load\"\n"
+    },
+    {
+      "enabled": true,
+      "kind": "public_target",
+      "traffic": {},
+      "error": "Error:Page.goto: net::ERR_BLOCKED_BY_CLIENT at http://127.0.0.1:34261/page\nCall log:\n  - navigating to \"http://127.0.0.1:34261/page\", waiting until \"load\"\n"
+    }
+  ],
+  "limitations": [
+    "Local simulated challenge script, not proof of passing a real hostile challenge",
+    "Traffic is origin response-body bytes, excluding transport overhead",
+    "RSS is fresh harness plus Python/extractor libraries; browser child RSS reported separately"
+  ],
+  "blocked": {},
+  "maxrss_kib": 110136,
+  "browser_children_maxrss_kib": 194104,
+  "normal_cases_passed": false
+}

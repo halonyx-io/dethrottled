@@ -1,0 +1,173 @@
+{
+  "date": "2026-11-05",
+  "status": "unreleased; no production rollout or publication",
+  "base_commit": "eea6fff0bb8d932e622d7b159ce9c193552276c8",
+  "runtime_label": "1.5.2 (unreleased adblock modifications; hashes identify candidate)",
+  "hardware": {
+    "x86_64": {
+      "class": "mini PC",
+      "cpu": "AMD Ryzen 7 5800U",
+      "cores": 8,
+      "threads": 16,
+      "ram_bytes": 33029304320
+    },
+    "arm64": {
+      "class": "edge device",
+      "cpu": "4 Cortex-A78 + 4 Cortex-A55",
+      "cores": 8,
+      "ram_bytes": 12119908352
+    }
+  },
+  "images": {
+    "x86_64": {
+      "dethrottled:adblock-candidate": {
+        "Id": "sha256:94db764777664cfe6201f351289df18e4d8ba299dce45b3a00c2639e5d34705c",
+        "Architecture": "amd64",
+        "RepoDigests": [
+          "dethrottled@sha256:94db764777664cfe6201f351289df18e4d8ba299dce45b3a00c2639e5d34705c"
+        ]
+      },
+      "dethrottled-browser-search:adblock-candidate": {
+        "Id": "sha256:32a7e1f7374c7e20ea4090114b64c4f9cf76d806c78183bb7cfa79917b0c93bc",
+        "Architecture": "amd64",
+        "RepoDigests": [
+          "dethrottled-browser-search@sha256:32a7e1f7374c7e20ea4090114b64c4f9cf76d806c78183bb7cfa79917b0c93bc"
+        ]
+      },
+      "unclecode/crawl4ai:0.9.5": {
+        "Id": "sha256:0b05666882bfb67f45d559a5b827839c54127b74aedd723f8ab338a3571b5fc9",
+        "Architecture": "amd64",
+        "RepoDigests": [
+          "dethrottled-rollback@sha256:0b05666882bfb67f45d559a5b827839c54127b74aedd723f8ab338a3571b5fc9",
+          "unclecode/crawl4ai@sha256:0b05666882bfb67f45d559a5b827839c54127b74aedd723f8ab338a3571b5fc9"
+        ]
+      },
+      "searxng/searxng:2026.10.2-19ffbcd30": {
+        "Id": "sha256:c642712fcedcdaa78fac44f71eada86aff510745826ba1bd1a368211fea2ce7f",
+        "Architecture": "amd64",
+        "RepoDigests": [
+          "dethrottled-rollback@sha256:c642712fcedcdaa78fac44f71eada86aff510745826ba1bd1a368211fea2ce7f",
+          "searxng/searxng@sha256:c642712fcedcdaa78fac44f71eada86aff510745826ba1bd1a368211fea2ce7f"
+        ]
+      }
+    },
+    "arm64": {
+      "dethrottled:adblock-candidate": {
+        "Id": "sha256:cd7f9817319ff934787f54311e399496bf67b94e6205e77e1506482f0c929d5f",
+        "Architecture": "arm64",
+        "RepoDigests": [
+          "dethrottled@sha256:cd7f9817319ff934787f54311e399496bf67b94e6205e77e1506482f0c929d5f"
+        ]
+      },
+      "dethrottled-browser-search:adblock-candidate": {
+        "Id": "sha256:2aa7f00e2e25e8fcbbc96f0eefb05d9f1a4fecebd6f13fedf2d8cef319ccf18d",
+        "Architecture": "arm64",
+        "RepoDigests": [
+          "dethrottled-browser-search@sha256:2aa7f00e2e25e8fcbbc96f0eefb05d9f1a4fecebd6f13fedf2d8cef319ccf18d"
+        ]
+      },
+      "unclecode/crawl4ai:0.9.5": {
+        "Id": "sha256:0b05666882bfb67f45d559a5b827839c54127b74aedd723f8ab338a3571b5fc9",
+        "Architecture": "arm64",
+        "RepoDigests": [
+          "unclecode/crawl4ai@sha256:0b05666882bfb67f45d559a5b827839c54127b74aedd723f8ab338a3571b5fc9"
+        ]
+      },
+      "searxng/searxng:2026.10.2-19ffbcd30": {
+        "not_available": true
+      }
+    }
+  },
+  "tests": {
+    "x86_64": {
+      "full_suite_summary": "836 passed, 15 skipped, 2 deselected, 5 warnings in 50.72s"
+    },
+    "arm64": {
+      "full_suite_summary": "836 passed, 15 skipped, 2 deselected, 5 warnings in 42.70s"
+    },
+    "focused_x86_native": "40 passed; native API image dependencies",
+    "focused_x86_host": "39 passed, 1 skipped in 2.11s; optional curl_cffi absent in host venv",
+    "focused_arm64": "40 passed in 3.16s; native API image dependencies"
+  },
+  "source_sha256": {
+    "Dockerfile": "9f851c343755a5f53c0f9f04c6c38b9bf70bbfa38fe3cd5be4822acec84fd37e",
+    "browser-search/Dockerfile": "f0f3da4a84f9f401897773560eafbdcaaf62ea405a8c6cc7fbcbf1288c13633f",
+    "browser-search/service.py": "66a221ec87a7e0e8aefd6508f3b64b5534ca1ce794c8aaeb054425a918eb0030",
+    "docker/crawl4ai/sitecustomize.py": "74d0fea616b53430fa8ef14c810276db3f54e5e57c5d504ac3f75896197745e1",
+    "docker/searxng/dethrottled_guard.py": "20e7e22770ac83a9229caf71b441267ee17a98dd7e5400507b98972dd8613b1e",
+    "docker-compose.yml": "a9211f1ddaec041561096e196f8703ec62ab196f206298b342e5032a4f9c1ce4",
+    "evaluations/adblock/browser.py": "921175d3e808c5f534fa4c908fd2c85d7ce85649b14d0b57d02a9cf68c5c87c7",
+    "evaluations/adblock/compose.py": "77615d34a578c3b7660ff4cf5bc38e780e7492a36e6203cb0b1dcc90245dedd0",
+    "evaluations/adblock/fixtures.py": "0e96e1807c7614dfeeaf6951a4c91a1c032505fa75bf6b29d49feefa7e815b5c",
+    "evaluations/adblock/native.py": "d59a71204b6fdf0fe28937d78d973c69275d07cb536b6a49682ede3237fc0e78",
+    "evaluations/adblock/run-local.sh": "839664f3f4e2616f16b78718b77d718b9121b746b40970db61a89428bec068b2",
+    "evaluations/adblock/searxng.py": "74a43479e8821d760be638d65d49d0f394663138e9a0430f845a8da2bdd1e4f5",
+    "evaluations/adblock/updater.py": "01c4fbb3fbcc4eb1ff666a427091e7b6a104a38bbdba548dc1260af5b761b42e",
+    "evaluations/adblock/verify.py": "8ab44768544fa2ac87936b999decf77db7bb7685e9f24138faa714c598af6bbf",
+    "src/dethrottled/__init__.py": "16290a0facf2c0a3ca16f4181af9bc4878bbcfed18a7bde0b7c7f1f54bf14c6c",
+    "src/dethrottled/__main__.py": "307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7",
+    "src/dethrottled/_quiet.py": "dcfe17511c911c626fb32076898cdbb9aab5608fd453ec2cf3cf6f529405af5f",
+    "src/dethrottled/access.py": "176ee3f150c00377cea8f275713f03a8bfd8b1a284bafc3b54dc809a5d890ce5",
+    "src/dethrottled/adblock.py": "df89681eb32ec7744d39b838fb7ed19969a68097df82d17b2d1e527d96f9efde",
+    "src/dethrottled/adblock_browser.py": "874de77badf02e50ade59932bc9ff33db94cba6a88f04a1f749128114af00744",
+    "src/dethrottled/adblock_proxy.py": "9b32f69b374522f2b33b94c5297e3bdba6db9d478a3bcb1957acce56f628eb08",
+    "src/dethrottled/admission.py": "c41b43d846864f9bc0eef0b97dcff1ffa0112e0076bc5bfb66226508987ee169",
+    "src/dethrottled/api_models.py": "64c281fd7414d8a2985ada0ff4badadebe3280f27091b403af3e8249408d96c3",
+    "src/dethrottled/backfill.py": "fcb5f65411864f232dcc9fba06d508c1f237ae66e599ce5180fdbb7288b42277",
+    "src/dethrottled/cache.py": "74d536c9d1ad17563bc78010517d73a30f97a3cf77e0d28f00fb98add8ce4db9",
+    "src/dethrottled/challenges.py": "70c07cbde53e7ec9b859496084272b98d9b03940c1801f960203a8b0ad2ad606",
+    "src/dethrottled/cli.py": "deb1ff27328fdfd93344e91cb2a7e9bba3c8f9498d5ce21b199102208dc7bc8d",
+    "src/dethrottled/content.py": "b2734929def4bb0a4491362b5bdd8a3f7ffef0600df635ce5b3bc474abf5d2bd",
+    "src/dethrottled/corpus.py": "77417d82baa954e999be98c510b5bbadc0e449b814336db6433e6e3a3e02fbff",
+    "src/dethrottled/corpus_chunks.py": "9fcf6bea26633553cc61f87f26a4092ee994530210554a54b89ec2fbdca265bd",
+    "src/dethrottled/corpus_config.py": "d4304457688f15e98dec3905b38eaa6fd54b071e3162a912e69de191ed52f9d0",
+    "src/dethrottled/corpus_index.py": "f2e1f6de58bc8befc204d7d2a4bc6aab295a9510b1e117cdceef59ed0c12ab6b",
+    "src/dethrottled/corpus_jobs.py": "0739446ad1787979aa6f92cbfddedd3e791b978091768c31725feb10adaf329f",
+    "src/dethrottled/corpus_migrate.py": "5fb83fc9aac65541eaf6ea80409a558bf6ae3331e3e56f42746ec8ca4773e1a2",
+    "src/dethrottled/corpus_query.py": "608d15ad4229bcd905a58e7bc8c107559d8d2e95595e317d2758429921e10af6",
+    "src/dethrottled/corpus_support.py": "086b9a65337d42ce806059de3669230b5ed5f7639c5b464d2fa1f867943241c9",
+    "src/dethrottled/corpus_v2.py": "afb85c311fee41b8ed366b854d1d9a51d0362f7b89c9abad4c249fd7d75129f3",
+    "src/dethrottled/corpus_vectors.py": "80050bfb815368f04a2442962eb7a2feeeb5539c1d5b121069ba5da264b9cb65",
+    "src/dethrottled/discovery.py": "faaf8df22432f42c771084e3be39e983eb5a9e38cf9937629703310cfc799c5a",
+    "src/dethrottled/documents.py": "10dfeef436aa5835725121f0a1007f04404ce3e8aaac9fe03c9aaa92683db606",
+    "src/dethrottled/domains.py": "c8b3231f1a3ee168e603f7b0c0c8012de097c7ce14fd1469fad58f12b314859c",
+    "src/dethrottled/evidence.py": "5fd69cc0cea8854b7cff2b9375c0429c195658fccaf25e9c3fabe42e9daf3427",
+    "src/dethrottled/extract.py": "656536f0e909692757957ba904ccf87548db9c9ede0c0345e6d0de60efaa8b8f",
+    "src/dethrottled/fallback.py": "1fa440f708a8467445b3bb6969e54c15aaf6f192341fd4995c3316d7aa1f3de2",
+    "src/dethrottled/fetch.py": "11a50ebc25f2dd5cdb78b82a58bd1ced54ce9eaa998aed26d58ff8a0d86f35cb",
+    "src/dethrottled/formats.py": "feee50145ce6f3876af28762d63443978ebd18f7b1d77ccfb28d6b8abcc53426",
+    "src/dethrottled/health.py": "cac320d54f9ef99cc9ffe54a0d38178e5a6b4d475354f71141cd40b3eaf97b6b",
+    "src/dethrottled/identity.py": "cb2377d285f6fd15127535a3b3224ecd7b4cf83413bc85bd774376bacebcff8c",
+    "src/dethrottled/jobs.py": "42edb1d4321940ed866b82b034968e4327d1dace44a508dbd27864aac735a989",
+    "src/dethrottled/layout.py": "c1b17e57ad944aa79198366865e30f4e6b4b3530173cbd8e166a6b29018c429b",
+    "src/dethrottled/licenses/HAGEZI-GPL-3.0.txt": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+    "src/dethrottled/media.py": "6e5fc649bef1b607544ac0b2d53027f11c452975202d5073eb00811d420d4a92",
+    "src/dethrottled/netfilter.py": "782f84a76e63a8f3a5d38ca2d1b9b54b3ae14dbc165eb36aaaa6fbb5651875b0",
+    "src/dethrottled/ocr.py": "dbf092ac626056955b5f35fa6ee8218c55ec0866d81fe43390f9a3aec503a5b1",
+    "src/dethrottled/paths.py": "59207139245073cd3765af116dbcacecd4ec2f80fb186c614fc2bd65247f2907",
+    "src/dethrottled/providers.py": "d98ded5e37e5a59d24234f9c4bb40b65861b1cbc96f076c6fceef377cf9b6da2",
+    "src/dethrottled/rank.py": "710053090d79a8e0f4caf1a093c833d40234cb9c9b9292f8fd2e680ead4b53ae",
+    "src/dethrottled/readplan.py": "547ffc44927036ea9161dcd37c529ab480836b8b9e0ca70cf9e6cb7968574533",
+    "src/dethrottled/research.py": "bced66f6bce80980bd62cd554037f192d44538e265fe7772ec0c64cf955198ab",
+    "src/dethrottled/search.py": "02f089d4c354f98b2073d07086f99232d8a8e614f49376bca5e409ec9d13f923",
+    "src/dethrottled/search_diagnostics.py": "53470071e40ed462ff1ee259100697de4de85e968dc9b52d702e4bcc4a21a8cf",
+    "src/dethrottled/server.py": "c1fd58e5723e8b62be58fb63c299f0ca55cb708ff7554a1f3ebb866a27595afa",
+    "src/dethrottled/site.py": "da54246deb507f44f9a76835ae186b69cc8a1c0fce2952e65518e767ceb94192",
+    "src/dethrottled/stack.py": "f99204229111e6c5a3ed0826b7c8c30ea64bbaa4d38aaeca6a506086ee8aa9c6",
+    "src/dethrottled/structure.py": "c1393d026e86d038adfe35ebb6c1f5f29635944f43c5356e0c4161f87a736f58",
+    "src/dethrottled/timed.py": "1f60327e9182e690383009139d11d83c6ef9a36f75321875747e0215fae609ea",
+    "src/dethrottled/urls.py": "0d7ab8edb066dd965a7dac90bfa7bfc9f2f959a9a761d85841771491bb26de5a",
+    "src/dethrottled/workers.py": "81a0f76542e3fe119622f868dd08644492b1102dabdb94a97876342a01eca4fa",
+    "src/dethrottled/workflow.py": "c778cf9b1392ec5eaaa78ad8e2954d4bd4fc613fcdcaaeffa53103b25f7b4fa5",
+    "tests/test_adblock.py": "16976d7328d1bbce1f1fca807e9a43f7c8cce5e0b403824c75b135159ece8eae",
+    "tests/test_adblock_gate.py": "86909cb30eb748733486392999bf51d8fb562de3cbd8f70784994975c5f2c189"
+  },
+  "scope": [
+    "full suites used native API images with current source mounted",
+    "15 existing optional/model-dependent skips and 2 network-marked exclusions per architecture; no blanket live-site compatibility claim",
+    "final extra POST/invalid-target regression tested separately after full suites",
+    "first clean pair overlapped other validation; reversed pair reduced overlap; host load retained in raw runs",
+    "browser measurements use cgroup CPU and working set including children; native rule peak uses ru_maxrss",
+    "no GPU acceleration; local fixtures and list bytes identical across architectures"
+  ]
+}

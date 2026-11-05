@@ -1,7 +1,6 @@
 """Domain policy, durable updates and real local redirect regressions."""
 
 import io
-import json
 import threading
 import urllib.error
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -208,7 +207,7 @@ def origin():
 def test_requests_redirect_blocked_and_internal_preserved(policy, origin):
     base, hits = origin
     assert netfilter.get(base + "/content").text == "legitimate fact 7341"
-    with pytest.raises(adblock.AdblockBlocked, match="adblock_blocked:ads.example"):
+    with pytest.raises(adblock.AdblockBlocked, match=r"adblock_blocked:ads\.example"):
         netfilter.get(base + "/redirect")
     assert hits == ["/content", "/redirect"]
     assert policy.counts["http"] == 1
@@ -271,4 +270,63 @@ def test_transcript_gets_guarded_session(policy, monkeypatch):
             YouTubeTranscriptApi=api, NoTranscriptFound=type("NoTranscriptFound", (Exception,), {})
         ),
     )
-    assert media.transcript("https://youtu.be/abcdefghijk")[2] == "transcript_AdblockBlocked"
+    assert media.transcript("https://youtu.be/abcdefghijk")[2] == "adblock_blocked:ads.example"
+
+
+def test_new_valid_list_activates_and_reader_reloads(policy):
+    reader = adblock.Filter(policy.directory, reader=True)
+    reader.load()
+    policy.update(lambda *a, **k: Reply(body("other.example")), now=400)
+    reader.load()
+    assert reader.match("https://other.example") and not reader.match("https://ads.example")
+    assert reader.metadata["updated_at"] == 400
+
+
+def test_corrupt_metadata_is_reported_without_crashing(policy):
+    data = __import__("json").loads(policy.path.read_text())
+    data["checked_at"] = {"wrong": "type"}
+    policy.path.write_text(__import__("json").dumps(data))
+    policy.load()
+    assert policy.rules and policy.error.startswith("cache_invalid:")
+
+
+def test_configured_rpc_origin_preserved_but_content_fetch_filtered(policy, monkeypatch):
+    monkeypatch.setenv("DETHROTTLED_CRAWL4AI_URL", "https://ads.example")
+    import requests
+
+    calls = []
+
+    def send(self, request, **kwargs):
+        calls.append(request.url)
+        response = requests.Response()
+        response.status_code = 200
+        response._content = b"ok"
+        return response
+
+    monkeypatch.setattr(requests.Session, "send", send)
+    assert netfilter.get("https://ads.example/health").status_code == 200
+    with pytest.raises(adblock.AdblockBlocked):
+        # A content fetch's identity session never inherits the RPC exemption.
+        netfilter.Session().get("https://ads.example/article")
+    assert calls == ["https://ads.example/health"]
+
+
+def test_agent_workflow_stops_on_policy_refusal(policy):
+    from dethrottled.workflow import guidance
+
+    result = guidance(
+        {"url": "https://ads.example", "quality": "failed", "policy_blocked": "adblock"}
+    )
+    assert result["state"] == "policy_blocked" and not result["next_actions"]
+
+
+def test_crawl_policy_reply_is_not_reported_as_antibot_failure():
+    from dethrottled.fetch import _crawl4ai_target_error
+
+    payload = {
+        "success": False,
+        "error_message": "Blocked by anti-bot protection: Structural: minimal_text",
+        "status_code": 451,
+        "response_headers": {"X-Dethrottled-Blocked": "adblock"},
+    }
+    assert _crawl4ai_target_error(payload).startswith("adblock_blocked:")

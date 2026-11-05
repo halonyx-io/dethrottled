@@ -9,13 +9,13 @@ must be classified; unknown paths fail generation/checking.
 
 | Lifecycle | Files |
 |---|---:|
-| current-guide | 24 |
+| current-guide | 25 |
 | dependency-input | 4 |
 | generated | 4 |
-| harness-guide | 10 |
+| harness-guide | 11 |
 | historical-evidence | 35 |
-| source-contract | 116 |
-| third-party-notice | 3 |
+| source-contract | 121 |
+| third-party-notice | 4 |
 | visual | 8 |
 
 ## current-guide
@@ -27,6 +27,7 @@ Change author: reconcile current behaviour, examples and navigation.
 | [.github/pull_request_template.md](https://github.com/halonyx-io/dethrottled/blob/main/.github/pull_request_template.md) |
 | [AGENTS.md](../AGENTS.md) |
 | [README.md](../README.md) |
+| [docs/ADBLOCK.md](ADBLOCK.md) |
 | [docs/AGENT-PLAYBOOK.md](AGENT-PLAYBOOK.md) |
 | [docs/AGENT-UPGRADES.md](AGENT-UPGRADES.md) |
 | [docs/API.md](API.md) |
@@ -77,6 +78,7 @@ Harness maintainer: check runnable commands and label dated assumptions.
 
 | File |
 |---|
+| [evaluations/adblock/README.md](../evaluations/adblock/README.md) |
 | [evaluations/agent-search/README.md](../evaluations/agent-search/README.md) |
 | [evaluations/agent-workflow/README.md](../evaluations/agent-workflow/README.md) |
 | [evaluations/content-validity/README.md](../evaluations/content-validity/README.md) |
@@ -155,6 +157,7 @@ Change author: audit docs impact, advertised defaults and generated contracts.
 | [docker-compose.pdf-worker.yml](https://github.com/halonyx-io/dethrottled/blob/main/docker-compose.pdf-worker.yml) |
 | [docker-compose.yml](https://github.com/halonyx-io/dethrottled/blob/main/docker-compose.yml) |
 | [docker/crawl4ai/config.yml](https://github.com/halonyx-io/dethrottled/blob/main/docker/crawl4ai/config.yml) |
+| [docker/crawl4ai/sitecustomize.py](https://github.com/halonyx-io/dethrottled/blob/main/docker/crawl4ai/sitecustomize.py) |
 | [docker/pdf-worker/worker.py](https://github.com/halonyx-io/dethrottled/blob/main/docker/pdf-worker/worker.py) |
 | [docker/searxng/dethrottled_guard.py](https://github.com/halonyx-io/dethrottled/blob/main/docker/searxng/dethrottled_guard.py) |
 | [docker/searxng/retry_after.py](https://github.com/halonyx-io/dethrottled/blob/main/docker/searxng/retry_after.py) |
@@ -205,6 +208,9 @@ Change author: audit docs impact, advertised defaults and generated contracts.
 | [src/dethrottled/__main__.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/__main__.py) |
 | [src/dethrottled/_quiet.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/_quiet.py) |
 | [src/dethrottled/access.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/access.py) |
+| [src/dethrottled/adblock.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/adblock.py) |
+| [src/dethrottled/adblock_browser.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/adblock_browser.py) |
+| [src/dethrottled/adblock_proxy.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/adblock_proxy.py) |
 | [src/dethrottled/admission.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/admission.py) |
 | [src/dethrottled/api_models.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/api_models.py) |
 | [src/dethrottled/backfill.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/backfill.py) |
@@ -235,6 +241,7 @@ Change author: audit docs impact, advertised defaults and generated contracts.
 | [src/dethrottled/jobs.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/jobs.py) |
 | [src/dethrottled/layout.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/layout.py) |
 | [src/dethrottled/media.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/media.py) |
+| [src/dethrottled/netfilter.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/netfilter.py) |
 | [src/dethrottled/ocr.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/ocr.py) |
 | [src/dethrottled/paths.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/paths.py) |
 | [src/dethrottled/providers.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/providers.py) |
@@ -262,6 +269,7 @@ Artifact maintainer: preserve required attribution.
 | [LICENSE](https://github.com/halonyx-io/dethrottled/blob/main/LICENSE) |
 | [evaluations/release/fixtures/APACHE-LICENSE.txt](../evaluations/release/fixtures/APACHE-LICENSE.txt) |
 | [evaluations/release/fixtures/NOTICE.txt](../evaluations/release/fixtures/NOTICE.txt) |
+| [src/dethrottled/licenses/HAGEZI-GPL-3.0.txt](../src/dethrottled/licenses/HAGEZI-GPL-3.0.txt) |
 
 ## visual
 

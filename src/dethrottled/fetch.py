@@ -557,8 +557,15 @@ def _crawl4ai_via_crawl(url: str) -> tuple:
     payload = (results[0] if isinstance(results, list) and results else body)
     if not isinstance(payload, dict):
         return {}, "crawl4ai_shape", url
+    policy_error = _crawl4ai_target_error(payload)
+    if policy_error.startswith("adblock_blocked:"):
+        return {}, policy_error, payload.get("redirected_url") or url
     if payload.get("success") is False:
-        reason = str(payload.get("error_message") or "render_failed")[:240]
+        reason = str(payload.get("error_message") or "render_failed")
+        blocked = re.search(r'adblock_blocked:([a-zA-Z0-9.-]+)', reason)
+        if blocked and adblock.FILTER.match('https://' + blocked[1]):
+            return {}, 'adblock_blocked:' + blocked[1], url
+        reason = reason[:240]
         if "Structural:" in reason:
             reason = "incomplete_render: " + reason
         return {}, "crawl4ai_" + reason, url
@@ -734,7 +741,9 @@ def _tier_tls_once(url: str, *, get=None) -> tuple:
                 url, impersonate=TLS_IMPERSONATE, timeout=TLS_TIMEOUT,
                 allow_redirects=True, stream=True)
     except Exception as exc:
-        return {}, str(exc) if isinstance(exc, adblock.AdblockBlocked) else "tls_" + type(exc).__name__, url
+        reason = (str(exc) if isinstance(exc, adblock.AdblockBlocked)
+                  else "tls_" + type(exc).__name__)
+        return {}, reason, url
     try:
         chunks, size = [], 0
         for chunk in response.iter_content(65536):
@@ -1275,6 +1284,8 @@ def _headed_read(url: str, backend: str) -> tuple:
         value = response.json()
         if not value.get("ok"):
             failed = next((step for step in value.get("steps", []) if not step.get("ok")), {})
+            if "adblock_blocked:" in str(failed.get("reason", "")):
+                raise adblock.AdblockBlocked("browser_navigation")
             raise _HeadedReadFailure("headed_step_failed:" + str(failed.get("action", "unknown"))
                                      + ":" + str(failed.get("reason") or "drive_failed")[:200])
         return value
@@ -1348,7 +1359,7 @@ def _headed_read(url: str, backend: str) -> tuple:
             "initial_navigation": navigation, "checkpointed": checkpointed,
             "elapsed_ms": int((time.monotonic() - started) * 1000)}}, "", (
                 data.get("final", {}).get("url") or url)
-    except _HeadedReadFailure as exc:
+    except (adblock.AdblockBlocked, _HeadedReadFailure) as exc:
         return {}, str(exc), url
     except (requests.RequestException, ValueError, KeyError, TypeError) as exc:
         return {}, "headed_" + type(exc).__name__, url

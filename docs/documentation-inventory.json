@@ -123,6 +123,11 @@
       "review": "Change author: audit docs impact, advertised defaults and generated contracts."
     },
     {
+      "path": "docker/crawl4ai/sitecustomize.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
       "path": "docker/pdf-worker/worker.py",
       "lifecycle": "source-contract",
       "review": "Change author: audit docs impact, advertised defaults and generated contracts."
@@ -156,6 +161,11 @@
       "path": "docling-worker/service.py",
       "lifecycle": "source-contract",
       "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "docs/ADBLOCK.md",
+      "lifecycle": "current-guide",
+      "review": "Change author: reconcile current behaviour, examples and navigation."
     },
     {
       "path": "docs/AGENT-PLAYBOOK.md",
@@ -361,6 +371,11 @@
       "path": "docs/documentation-inventory.json",
       "lifecycle": "generated",
       "review": "Change author: regenerate from source; do not hand-edit generated tables."
+    },
+    {
+      "path": "evaluations/adblock/README.md",
+      "lifecycle": "harness-guide",
+      "review": "Harness maintainer: check runnable commands and label dated assumptions."
     },
     {
       "path": "evaluations/agent-search/README.md",
@@ -788,6 +803,21 @@
       "review": "Change author: audit docs impact, advertised defaults and generated contracts."
     },
     {
+      "path": "src/dethrottled/adblock.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/adblock_browser.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/adblock_proxy.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
       "path": "src/dethrottled/admission.py",
       "lifecycle": "source-contract",
       "review": "Change author: audit docs impact, advertised defaults and generated contracts."
@@ -933,7 +963,17 @@
       "review": "Change author: audit docs impact, advertised defaults and generated contracts."
     },
     {
+      "path": "src/dethrottled/licenses/HAGEZI-GPL-3.0.txt",
+      "lifecycle": "third-party-notice",
+      "review": "Artifact maintainer: preserve required attribution."
+    },
+    {
       "path": "src/dethrottled/media.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/netfilter.py",
       "lifecycle": "source-contract",
       "review": "Change author: audit docs impact, advertised defaults and generated contracts."
     },

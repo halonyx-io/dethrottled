@@ -70,3 +70,10 @@ compares discovery readiness/degradation, long-HTML extraction and correlated-DD
 refusals. It retains before/after fixtures and native x86_64/ARM64 measurements;
 the dated captures precede the authorized 1.5.2 rollout. They are not new ranking
 or universal performance claims.
+
+## Unreleased domain-filter evaluation
+
+[HaGeZi filtering controls and resource measurements](../evaluations/adblock/README.md)
+retain original failed approaches, local network/evidence controls, native
+architecture checks and a small live comparison. They do not claim universal
+challenge recovery or zero false positives.

@@ -143,3 +143,8 @@ pacing, deadlines and storage limits.
 
 [Corpus v2](CORPUS.md) documents separate harvest, lexical,
 semantic, database and matrix budgets, public eligibility, migration and rollback.
+
+## Ad/tracker filtering
+
+`DETHROTTLED_ADBLOCK=1` is the unreleased branch default; `0` disables filtering
+and updates across managed workers. See [coverage, diagnostics and limitations](ADBLOCK.md).

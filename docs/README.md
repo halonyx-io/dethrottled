@@ -16,6 +16,7 @@ assets and public adapters may differ.
 | Understand automatic escalation | [Read planner](READ-PLANNER.md) | [Agent integration](AGENT-UPGRADES.md), [evidence](EVIDENCE.md) |
 | Install or extend the stack | [Python and managed installation](PYTHON.md) | [Requirements](REQUIREMENTS.md), [configuration](CONFIGURATION.md) |
 | Call from application code | [HTTP API](API.md) | [Request reference](HTTP-REFERENCE.md), [Python API](PYTHON.md) |
+| Manage ad/tracker filtering | [Native adblock](ADBLOCK.md) | [Measurements](../evaluations/adblock/README.md) |
 | Assess capabilities and quality | [Feature inventory](FEATURES.md) | [Evidence and limits](EVIDENCE.md) |
 | Print supplied HTML as PDF | [HTML-to-PDF worker](PDF_WORKER.md) | [Configuration](CONFIGURATION.md) |
 | Reuse shared public evidence | [Corpus v2](CORPUS.md) | [Measured comparison](../evaluations/corpus-v2/results/2026-11-05/REPORT.md), [client playbook](AGENT-PLAYBOOK.md) |

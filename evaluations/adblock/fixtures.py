@@ -4,10 +4,10 @@ import json
 import ssl
 import subprocess
 import tempfile
-from pathlib import Path
 import threading
 from collections import Counter
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from pathlib import Path
 
 FACTS = [
     "Allocation is 7341 tonnes",
@@ -16,6 +16,31 @@ FACTS = [
     "Clicked record 4482",
 ]
 TRACKER = "a.google-analytics.com"
+
+
+def pdf():
+    stream = (
+        "BT /F1 12 Tf 40 720 Td (" + FACTS[0] + ") Tj 0 -20 Td (" + FACTS[1] + ") Tj ET"
+    ).encode()
+    objects = [
+        b"<</Type/Catalog/Pages 2 0 R>>",
+        b"<</Type/Pages/Kids[3 0 R]/Count 1>>",
+        (
+            b"<</Type/Page/Parent 2 0 R/MediaBox[0 0 612 792]"
+            b"/Resources<</Font<</F1 4 0 R>>>>/Contents 5 0 R>>"
+        ),
+        b"<</Type/Font/Subtype/Type1/BaseFont/Helvetica>>",
+        b"<</Length " + str(len(stream)).encode() + b">>stream\n" + stream + b"\nendstream",
+    ]
+    result = b"%PDF-1.4\n"
+    offsets = [0]
+    for i, obj in enumerate(objects, 1):
+        offsets.append(len(result))
+        result += str(i).encode() + b" 0 obj\n" + obj + b"\nendobj\n"
+    start = len(result)
+    result += b"xref\n0 6\n0000000000 65535 f \n"
+    result += b"".join(("%010d 00000 n \n" % offset).encode() for offset in offsets[1:])
+    return result + b"trailer<</Size 6/Root 1 0 R>>\nstartxref\n" + str(start).encode() + b"\n%%EOF"
 
 
 class Fixture:
@@ -36,10 +61,11 @@ class Fixture:
                 port = outer.tls_port
                 code, ctype = 200, "text/html"
                 extra = {}
-                if path == "/page":
+                if path in {"/page", "/clean-page"}:
                     html = f"""<html><body><main><h1>Evidence fixture</h1>
                     <p>{FACTS[0]}</p><p id="js"></p><p id="challenge"></p><p id="clicked"></p>
-                    <button id="open" onclick="document.querySelector('#clicked').textContent='{FACTS[3]}'">Read record</button>
+                    <button id="open"
+onclick="document.querySelector('#clicked').textContent='{FACTS[3]}'">Read record</button>
                     <a id="popup" target="_blank" href="https://{TRACKER}:{port}/popup">Popup</a>
                     <a id="download" download href="/document.txt">Download</a>
                     <script src="https://cdn.example:{port}/content.js"></script>
@@ -48,21 +74,44 @@ class Fixture:
                     s.src='https://{TRACKER}:{port}/track.js?i='+i;document.body.append(s);}}
                     fetch('https://{TRACKER}:{port}/collect').catch(()=>{{}});
                     let image=new Image();image.src='https://{TRACKER}:{port}/pixel';
-                    let frame=document.createElement('iframe');frame.src='https://{TRACKER}:{port}/frame';document.body.append(frame);
+                    let frame=document.createElement('iframe');
+                    frame.src='https://{TRACKER}:{port}/frame';document.body.append(frame);
                     </script></main></body></html>"""
+                    if path == "/clean-page":
+                        start = html.index("<script>for(let")
+                        end = html.index("</script>", start) + len("</script>")
+                        html = html[:start] + html[end:]
                     payload = html.encode()
                 elif path == "/content.js":
                     ctype = "application/javascript"
                     payload = f"document.querySelector('#js').textContent='{FACTS[1]}';".encode()
                 elif path == "/challenge.js":
                     ctype = "application/javascript"
-                    payload = f"document.cookie='fixture_verified=1';document.querySelector('#challenge').textContent='{FACTS[2]}';".encode()
+                    payload = (
+                        "document.cookie='fixture_verified=1';"
+                        f"document.querySelector('#challenge').textContent='{FACTS[2]}';"
+                    ).encode()
+                elif path == "/sw.js":
+                    ctype = "application/javascript"
+                    payload = (
+                        "self.addEventListener('install',e=>e.waitUntil(fetch("
+                        f"'https://{TRACKER}:{port}/service-worker-collect'"
+                        ").catch(()=>{})));self.addEventListener('fetch',()=>{});"
+                    ).encode()
+                elif path == "/worker.js":
+                    ctype = "application/javascript"
+                    payload = (
+                        "Promise.all(['/document.txt','/redirect'].map(u=>fetch(u)"
+                        ".then(r=>r.text()).catch(e=>'blocked'))).then(r=>postMessage(r));"
+                    ).encode()
                 elif path == "/redirect":
                     code, payload = 302, b""
                     extra["Location"] = f"https://{TRACKER}:{port}/landing"
                 elif path == "/clean-redirect":
                     code, payload = 302, b""
                     extra["Location"] = "/document.txt"
+                elif path == "/document.pdf":
+                    ctype, payload = "application/pdf", pdf()
                 elif path == "/document.txt":
                     ctype, payload = "text/plain", (FACTS[0] + "\n" + FACTS[1]).encode()
                     extra["Content-Disposition"] = 'attachment; filename="evidence.txt"'
@@ -135,3 +184,47 @@ if __name__ == "__main__":
     fixture = Fixture()
     print(json.dumps({"port": fixture.port}), flush=True)
     fixture.thread.join()
+
+
+def metrics():
+    """Linux cgroup v2 totals; working set excludes inactive file cache."""
+    from pathlib import Path
+
+    root = Path("/sys/fs/cgroup")
+    try:
+        cpu = dict(line.split() for line in (root / "cpu.stat").read_text().splitlines())
+        memory = dict(line.split() for line in (root / "memory.stat").read_text().splitlines())
+        current = int((root / "memory.current").read_text())
+        return {
+            "cpu_ms": int(cpu["usage_usec"]) / 1000,
+            "working_set_bytes": max(0, current - int(memory.get("inactive_file", 0))),
+            "anon_bytes": int(memory.get("anon", 0)),
+        }
+    except OSError:
+        return {"cpu_ms": 0, "working_set_bytes": 0, "anon_bytes": 0}
+
+
+def text_only(html):
+    """Grade text nodes, never facts hidden in attributes/scripts/styles."""
+    from html.parser import HTMLParser
+
+    class Text(HTMLParser):
+        def __init__(self):
+            super().__init__()
+            self.parts, self.hidden = [], 0
+
+        def handle_starttag(self, tag, attrs):
+            if tag in {"script", "style", "noscript"}:
+                self.hidden += 1
+
+        def handle_endtag(self, tag):
+            if tag in {"script", "style", "noscript"}:
+                self.hidden = max(0, self.hidden - 1)
+
+        def handle_data(self, data):
+            if not self.hidden:
+                self.parts.append(data)
+
+    parser = Text()
+    parser.feed(html)
+    return " ".join(parser.parts)

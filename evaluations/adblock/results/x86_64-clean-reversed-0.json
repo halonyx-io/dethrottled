@@ -1,0 +1,243 @@
+{
+  "backend": "patchright",
+  "workload": "clean",
+  "architecture": "x86_64",
+  "list_sha256": "19a3db5288c7067d81a641baac44a922303e7db570194f6949fbf04fce618e78",
+  "rules": 0,
+  "parse_ms": 0.001993030309677124,
+  "policy_load_before": {
+    "cpu_ms": 701.947,
+    "working_set_bytes": 62210048,
+    "anon_bytes": 59781120
+  },
+  "policy_load_after": {
+    "cpu_ms": 701.947,
+    "working_set_bytes": 62210048,
+    "anon_bytes": 59781120
+  },
+  "cases": [
+    {
+      "enabled": false,
+      "repetition": 0,
+      "elapsed_ms": 496.25751795247197,
+      "ok": true,
+      "fact_hits": 4,
+      "facts": 4,
+      "traffic": {
+        "requests": 3,
+        "body_bytes": 889
+      },
+      "resources_after": {
+        "cpu_ms": 2220.36,
+        "working_set_bytes": 376635392,
+        "anon_bytes": 337588224
+      },
+      "cpu_ms": 437.5640000000003,
+      "access": {
+        "status": "unknown",
+        "reason": "no_clear_content_signal",
+        "answer_verified": false,
+        "source_complete": false
+      }
+    },
+    {
+      "enabled": false,
+      "repetition": 1,
+      "elapsed_ms": 291.93032206967473,
+      "ok": true,
+      "fact_hits": 4,
+      "facts": 4,
+      "traffic": {
+        "requests": 3,
+        "body_bytes": 889
+      },
+      "resources_after": {
+        "cpu_ms": 2878.984,
+        "working_set_bytes": 389890048,
+        "anon_bytes": 344453120
+      },
+      "cpu_ms": 425.337,
+      "access": {
+        "status": "unknown",
+        "reason": "no_clear_content_signal",
+        "answer_verified": false,
+        "source_complete": false
+      }
+    },
+    {
+      "enabled": false,
+      "repetition": 2,
+      "elapsed_ms": 291.62021121010184,
+      "ok": true,
+      "fact_hits": 4,
+      "facts": 4,
+      "traffic": {
+        "requests": 3,
+        "body_bytes": 889
+      },
+      "resources_after": {
+        "cpu_ms": 3494.191,
+        "working_set_bytes": 391249920,
+        "anon_bytes": 345915392
+      },
+      "cpu_ms": 351.5039999999999,
+      "access": {
+        "status": "unknown",
+        "reason": "no_clear_content_signal",
+        "answer_verified": false,
+        "source_complete": false
+      }
+    },
+    {
+      "enabled": false,
+      "repetition": 3,
+      "elapsed_ms": 282.34522975981236,
+      "ok": true,
+      "fact_hits": 4,
+      "facts": 4,
+      "traffic": {
+        "requests": 3,
+        "body_bytes": 889
+      },
+      "resources_after": {
+        "cpu_ms": 4082.378,
+        "working_set_bytes": 393351168,
+        "anon_bytes": 348684288
+      },
+      "cpu_ms": 355.0680000000002,
+      "access": {
+        "status": "unknown",
+        "reason": "no_clear_content_signal",
+        "answer_verified": false,
+        "source_complete": false
+      }
+    },
+    {
+      "enabled": false,
+      "repetition": 4,
+      "elapsed_ms": 293.3342820033431,
+      "ok": true,
+      "fact_hits": 4,
+      "facts": 4,
+      "traffic": {
+        "requests": 3,
+        "body_bytes": 889
+      },
+      "resources_after": {
+        "cpu_ms": 4736.552,
+        "working_set_bytes": 396771328,
+        "anon_bytes": 349896704
+      },
+      "cpu_ms": 363.22800000000007,
+      "access": {
+        "status": "unknown",
+        "reason": "no_clear_content_signal",
+        "answer_verified": false,
+        "source_complete": false
+      }
+    },
+    {
+      "enabled": false,
+      "repetition": 5,
+      "elapsed_ms": 291.53888626024127,
+      "ok": true,
+      "fact_hits": 4,
+      "facts": 4,
+      "traffic": {
+        "requests": 3,
+        "body_bytes": 889
+      },
+      "resources_after": {
+        "cpu_ms": 5353.391,
+        "working_set_bytes": 398675968,
+        "anon_bytes": 351842304
+      },
+      "cpu_ms": 369.4200000000001,
+      "access": {
+        "status": "unknown",
+        "reason": "no_clear_content_signal",
+        "answer_verified": false,
+        "source_complete": false
+      }
+    },
+    {
+      "enabled": false,
+      "repetition": 6,
+      "elapsed_ms": 293.93922071903944,
+      "ok": true,
+      "fact_hits": 4,
+      "facts": 4,
+      "traffic": {
+        "requests": 3,
+        "body_bytes": 889
+      },
+      "resources_after": {
+        "cpu_ms": 6104.645,
+        "working_set_bytes": 411348992,
+        "anon_bytes": 363696128
+      },
+      "cpu_ms": 487.6700000000001,
+      "access": {
+        "status": "unknown",
+        "reason": "no_clear_content_signal",
+        "answer_verified": false,
+        "source_complete": false
+      }
+    }
+  ],
+  "limitations": [
+    "Local simulated challenge script, not proof of passing a real hostile challenge",
+    "Traffic is origin response-body bytes, excluding transport overhead",
+    "RSS includes Python/extractor libraries; browser children reported separately"
+  ],
+  "phase_resources": [
+    {
+      "enabled": false,
+      "elapsed_ms": 3597.1949929371476,
+      "cpu_ms": 5691.1630000000005
+    }
+  ],
+  "initial_resources": {
+    "cpu_ms": 404.065,
+    "working_set_bytes": 36007936,
+    "anon_bytes": 34365440
+  },
+  "final_resources": {
+    "cpu_ms": 6442.514,
+    "working_set_bytes": 68644864,
+    "anon_bytes": 64045056
+  },
+  "resource_measurement_comparable": true,
+  "host_load_average": [
+    0.6806640625,
+    1.23828125,
+    1.263671875
+  ],
+  "blocked": {},
+  "maxrss_kib": 66684,
+  "browser_children_maxrss_kib": 203932,
+  "normal_cases_passed": true,
+  "normal_summary": {
+    "False": {
+      "median_ms": 291.93032206967473,
+      "body_bytes": [
+        889,
+        889,
+        889,
+        889,
+        889,
+        889,
+        889
+      ],
+      "tracking_requests": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  }
+}

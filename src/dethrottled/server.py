@@ -340,7 +340,9 @@ def _extract_once(url: str, max_chars: int, allow_ocr: bool = True,
                 # throw that away and leave a tier-only consumer with nothing.
                 "tier": result.get("tier"), "cached": result.get("cached", False),
                 "acquisition_attempts": result.get("acquisition_attempts", []),
-                "source_alternatives": result.get("source_alternatives", [])}
+                "source_alternatives": result.get("source_alternatives", []),
+                **({"policy_blocked": result["policy_blocked"]}
+                   if result.get("policy_blocked") else {})}
     row = {
         "url": url,
         "content": result["text"],
@@ -495,6 +497,7 @@ def v2_status():
             and _BACKFILL_JOB.state["status"] in {"disabled", "running", "complete"}
             else "degraded",
         "workers": worker_status,
+        "adblock": fetcher.adblock.status(),
         "multilingual_backfill": dict(_BACKFILL_JOB.state),
         "discovery": report,
         "components": {

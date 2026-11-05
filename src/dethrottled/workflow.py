@@ -10,6 +10,9 @@ RESEARCH_CANDIDATE_LIMIT = 24
 
 INSTRUCTIONS = """Dethrottled discovers and reads sources.
 Prioritize grounded coverage and accuracy.
+policy_blocked=adblock or adblock_blocked means deliberate content filtering. Do not retry
+through other tiers to override it. Report the refusal or choose another relevant source.
+Filtering status, list availability and update errors are in v2/status and stats.
 For discovery start with profile=web, limit=15, ranking=source. DDG Lite/HTML/TLS/browser
 share a hard ten-result budget, with no automatic search pagination. Supplementary
 engines contribute at most three URLs each; the complete menu is at most fifteen.
@@ -117,6 +120,13 @@ available for deliberate shortcuts and stronger acquisition when the task justif
 
 def guidance(row, *, offset=0, focused=False, rendered_allowed=True):
     """Derive bounded suggestions from observed metadata, never inferred answers."""
+    if row.get('policy_blocked') == 'adblock':
+        return {'state': 'policy_blocked', 'answer_verified': False, 'source_complete': False,
+                'response_truncated': False, 'source_bytes_retained': False,
+                'source_bytes_reacquirable': False, 'next_actions': [],
+                'instruction': 'HaGeZi Multi PRO blocked this domain. Report the policy refusal '
+                               'or choose another source; transport/browser retries '
+                               'cannot override it.'}
     actions = []
     url, doc = row.get("url", ""), row.get("document_id")
     extraction = row.get("extraction") or {}

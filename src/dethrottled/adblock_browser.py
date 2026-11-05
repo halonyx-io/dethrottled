@@ -1,137 +1,89 @@
-"""Chromium Fetch interception checks redirect hops as well as initial URLs.
+"""Install an in-process domain gate for managed Chromium contexts.
 
-Shared by Patchright and the pinned managed Crawl4AI Playwright worker. No page
-JavaScript overrides. Existing scope/public-network interception stays in place.
+No request-routing/JavaScript overrides, service-worker restrictions or TLS MITM.
+A per-context gate covers redirects, popups, subresources, workers and WebSockets.
 """
 
 from __future__ import annotations
 
-import asyncio
-import base64
-
 try:
     from . import adblock
-except ImportError:  # Shared source copied into the private browser images.
+    from .adblock_proxy import Gate
+except ImportError:
     import dethrottled_adblock as adblock
-
-
-async def attach(page):
-    if not adblock.enabled():
-        return
-    task = getattr(page, "_dethrottled_adblock_task", None)
-    if task is None:
-        task = asyncio.create_task(_attach(page))
-        page._dethrottled_adblock_task = task
-    await task
-
-
-async def _attach(page):
-    session = await page.context.new_cdp_session(page)
-
-    async def paused(event):
-        domain = adblock.FILTER.match(event["request"]["url"])
-        try:
-            if domain:
-                adblock.FILTER.blocked(domain, "browser")
-                if event.get("resourceType") == "Document":
-                    await session.send(
-                        "Fetch.fulfillRequest",
-                        {
-                            "requestId": event["requestId"],
-                            "responseCode": 451,
-                            "responseHeaders": [
-                                {"name": "X-Dethrottled-Blocked", "value": "adblock"},
-                                {"name": "Content-Type", "value": "text/plain"},
-                            ],
-                            "body": base64.b64encode(
-                                ("adblock_blocked:" + domain).encode()
-                            ).decode(),
-                        },
-                    )
-                else:
-                    await session.send(
-                        "Fetch.failRequest",
-                        {"requestId": event["requestId"], "errorReason": "BlockedByClient"},
-                    )
-            else:
-                await session.send("Fetch.continueRequest", {"requestId": event["requestId"]})
-        except Exception:
-            # Closing a tab detaches its protocol session; never log target URLs.
-            if not page.is_closed():
-                raise
-
-    session.on("Fetch.requestPaused", paused)
-    await session.send(
-        "Fetch.enable", {"patterns": [{"urlPattern": "*", "requestStage": "Request"}]}
-    )
-
-
-async def context_ready(context):
-    if not adblock.enabled():
-        return context
-    async def frontdoor(route, request):
-        domain = adblock.FILTER.match(request.url)
-        if domain:
-            adblock.FILTER.blocked(domain, 'browser')
-            if request.is_navigation_request():
-                await route.fulfill(status=451, headers={'X-Dethrottled-Blocked': 'adblock'},
-                                    body='adblock_blocked:' + domain)
-            else:
-                await route.abort('blockedbyclient')
-            return
-        # Context interception covers the first popup request before the page
-        # event. Attach CDP before continuing it, so its redirects are covered too.
-        try:
-            await attach(request.frame.page)
-        except Exception as exc:
-            adblock.FILTER.error = 'browser_interception_failed:' + type(exc).__name__
-            await route.abort('blockedbyclient')
-            return
-        await route.fallback()
-    await context.route('**/*', frontdoor)
-    # Popups also belong to this context. new_page below awaits interception;
-    # the page event covers pages opened by page JavaScript.
-    async def created(page):
-        try:
-            await attach(page)
-        except Exception as exc:
-            if not page.is_closed():
-                adblock.FILTER.error = 'browser_interception_failed:' + type(exc).__name__
-                await page.close()
-    context.on("page", created)
-    if hasattr(context, "route_web_socket"):
-
-        async def socket(route):
-            domain = adblock.FILTER.match(route.url)
-            if domain:
-                adblock.FILTER.blocked(domain, "websocket")
-                await route.close(code=1008, reason="adblock_blocked:" + domain)
-            else:
-                await route.connect_to_server()
-
-        await context.route_web_socket("**/*", socket)
-    for page in context.pages:
-        await attach(page)
-    return context
+    from dethrottled_adblock_proxy import Gate
 
 
 def install(api):
-    """Install once per private browser application, before creating contexts."""
     if getattr(api.Browser.new_context, "_dethrottled_filter", False):
         return
     original_context = api.Browser.new_context
-    original_page = api.BrowserContext.new_page
+    original_close = api.BrowserContext.close
+    original_launch = api.BrowserType.launch
+    original_goto = api.Page.goto
+    original_browser_close = api.Browser.close
+
+    async def launch(self, *args, **kwargs):
+        browser = await original_launch(self, *args, **kwargs)
+        browser._dethrottled_upstream_proxy = kwargs.get("proxy")
+        return browser
 
     async def new_context(self, *args, **kwargs):
-        if adblock.enabled():
-            kwargs["service_workers"] = "block"
-        return await context_ready(await original_context(self, *args, **kwargs))
+        if not adblock.enabled():
+            return await original_context(self, *args, **kwargs)
+        upstream = kwargs.get("proxy") or getattr(self, "_dethrottled_upstream_proxy", None)
+        gate = Gate(upstream)
+        kwargs["proxy"] = await gate.start()
+        try:
+            context = await original_context(self, *args, **kwargs)
+        except BaseException:
+            await gate.close()
+            raise
+        context._dethrottled_adblock_gate = gate
+        context._dethrottled_adblock_events = gate.events
+        return context
 
-    async def new_page(self, *args, **kwargs):
-        page = await original_page(self, *args, **kwargs)
-        await attach(page)
-        return page
+    async def goto(self, url, *args, **kwargs):
+        adblock.check(url, "browser")
+        refused = []
+
+        def failed(request):
+            if request.is_navigation_request():
+                domain = adblock.FILTER.match(request.url)
+                if domain:
+                    refused.append(domain)
+
+        self.on("requestfailed", failed)
+        try:
+            return await original_goto(self, url, *args, **kwargs)
+        except Exception:
+            if refused:
+                raise adblock.AdblockBlocked(refused[-1]) from None
+            raise
+        finally:
+            self.remove_listener("requestfailed", failed)
+
+    async def close(self, *args, **kwargs):
+        try:
+            await original_close(self, *args, **kwargs)
+        finally:
+            gate = getattr(self, "_dethrottled_adblock_gate", None)
+            if gate:
+                await gate.close()
+
+    async def browser_close(self, *args, **kwargs):
+        contexts = list(self.contexts)
+        try:
+            await original_browser_close(self, *args, **kwargs)
+        finally:
+            for context in contexts:
+                gate = getattr(context, "_dethrottled_adblock_gate", None)
+                if gate:
+                    await gate.close()
 
     new_context._dethrottled_filter = True
+    api.Browser.close = browser_close
+    api.Page.goto = goto
+    api.BrowserType.launch = launch
     api.Browser.new_context = new_context
-    api.BrowserContext.new_page = new_page
+    api.BrowserContext.close = close

@@ -206,3 +206,10 @@ copy; changing host Markdown alone does not update an existing container. Verify
 file hashes and readability as its service user after promotion.
 
 [Documentation home](README.md) · [Agent guide](AGENT-UPGRADES.md) · [API](API.md) · [Evidence](EVIDENCE.md)
+
+## Adblock operations
+
+The unreleased [native domain filter](ADBLOCK.md) needs the updated API and browser
+images plus recreated SearXNG/Crawl4AI workers. Its `adblock-state` volume holds the
+last working list and attribution; preserve it for offline restarts. Check each
+worker observation in `/stats` rather than inferring coverage from API readiness.

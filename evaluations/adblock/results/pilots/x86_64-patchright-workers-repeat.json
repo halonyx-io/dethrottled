@@ -1,0 +1,290 @@
+{
+  "backend": "patchright",
+  "architecture": "x86_64",
+  "list_sha256": "19a3db5288c7067d81a641baac44a922303e7db570194f6949fbf04fce618e78",
+  "rules": 239581,
+  "parse_ms": 263.0340587347746,
+  "cases": [
+    {
+      "enabled": false,
+      "repetition": 0,
+      "elapsed_ms": 502.0675640553236,
+      "ok": true,
+      "fact_hits": 4,
+      "facts": 4,
+      "traffic": {
+        "requests": 14,
+        "body_bytes": 157127,
+        "tracking_requests": 11
+      },
+      "access": {
+        "status": "unknown",
+        "reason": "no_clear_content_signal",
+        "answer_verified": false,
+        "source_complete": false
+      }
+    },
+    {
+      "enabled": false,
+      "repetition": 1,
+      "elapsed_ms": 369.40176878124475,
+      "ok": true,
+      "fact_hits": 4,
+      "facts": 4,
+      "traffic": {
+        "requests": 14,
+        "body_bytes": 157127,
+        "tracking_requests": 11
+      },
+      "access": {
+        "status": "unknown",
+        "reason": "no_clear_content_signal",
+        "answer_verified": false,
+        "source_complete": false
+      }
+    },
+    {
+      "enabled": false,
+      "repetition": 2,
+      "elapsed_ms": 317.29951687157154,
+      "ok": true,
+      "fact_hits": 4,
+      "facts": 4,
+      "traffic": {
+        "requests": 14,
+        "body_bytes": 157127,
+        "tracking_requests": 11
+      },
+      "access": {
+        "status": "unknown",
+        "reason": "no_clear_content_signal",
+        "answer_verified": false,
+        "source_complete": false
+      }
+    },
+    {
+      "enabled": false,
+      "kind": "redirect",
+      "traffic": {
+        "requests": 2,
+        "body_bytes": 8192,
+        "tracking_requests": 1
+      },
+      "status": 200
+    },
+    {
+      "enabled": false,
+      "kind": "popup",
+      "traffic": {
+        "requests": 15,
+        "body_bytes": 165319,
+        "tracking_requests": 12
+      },
+      "popup_url": "https://a.google-analytics.com:33573/popup"
+    },
+    {
+      "enabled": false,
+      "kind": "download",
+      "traffic": {
+        "requests": 15,
+        "body_bytes": 157176,
+        "tracking_requests": 11
+      },
+      "fact_retained": true
+    },
+    {
+      "enabled": false,
+      "kind": "public_target",
+      "traffic": {},
+      "error": "Error:Page.goto: net::ERR_BLOCKED_BY_CLIENT at http://127.0.0.1:40265/page\nCall log:\n  - navigating to \"http://127.0.0.1:40265/page\", waiting until \"load\"\n"
+    },
+    {
+      "enabled": false,
+      "kind": "websocket",
+      "traffic": {
+        "requests": 2,
+        "body_bytes": 8231,
+        "tracking_requests": 1
+      },
+      "socket": {
+        "error": true
+      }
+    },
+    {
+      "enabled": false,
+      "kind": "worker",
+      "traffic": {
+        "requests": 5,
+        "body_bytes": 8402,
+        "tracking_requests": 1
+      },
+      "legitimate_worker_fact": true
+    },
+    {
+      "enabled": false,
+      "kind": "service_worker",
+      "traffic": {
+        "requests": 2,
+        "body_bytes": 77
+      },
+      "registered": 1
+    },
+    {
+      "enabled": true,
+      "repetition": 0,
+      "elapsed_ms": 394.59901209920645,
+      "ok": true,
+      "fact_hits": 4,
+      "facts": 4,
+      "traffic": {
+        "requests": 3,
+        "body_bytes": 1447
+      },
+      "access": {
+        "status": "unknown",
+        "reason": "no_clear_content_signal",
+        "answer_verified": false,
+        "source_complete": false
+      }
+    },
+    {
+      "enabled": true,
+      "repetition": 1,
+      "elapsed_ms": 332.8391220420599,
+      "ok": true,
+      "fact_hits": 4,
+      "facts": 4,
+      "traffic": {
+        "requests": 3,
+        "body_bytes": 1447
+      },
+      "access": {
+        "status": "unknown",
+        "reason": "no_clear_content_signal",
+        "answer_verified": false,
+        "source_complete": false
+      }
+    },
+    {
+      "enabled": true,
+      "repetition": 2,
+      "elapsed_ms": 320.799564011395,
+      "ok": true,
+      "fact_hits": 4,
+      "facts": 4,
+      "traffic": {
+        "requests": 3,
+        "body_bytes": 1447
+      },
+      "access": {
+        "status": "unknown",
+        "reason": "no_clear_content_signal",
+        "answer_verified": false,
+        "source_complete": false
+      }
+    },
+    {
+      "enabled": true,
+      "kind": "redirect",
+      "traffic": {
+        "requests": 1,
+        "body_bytes": 0
+      },
+      "status": 451
+    },
+    {
+      "enabled": true,
+      "kind": "popup",
+      "traffic": {
+        "requests": 3,
+        "body_bytes": 1447
+      },
+      "popup_url": "https://a.google-analytics.com:33573/popup"
+    },
+    {
+      "enabled": true,
+      "kind": "download",
+      "traffic": {
+        "requests": 4,
+        "body_bytes": 1496
+      },
+      "fact_retained": true
+    },
+    {
+      "enabled": true,
+      "kind": "public_target",
+      "traffic": {},
+      "error": "Error:Page.goto: net::ERR_BLOCKED_BY_CLIENT at http://127.0.0.1:40265/page\nCall log:\n  - navigating to \"http://127.0.0.1:40265/page\", waiting until \"load\"\n"
+    },
+    {
+      "enabled": true,
+      "kind": "websocket",
+      "traffic": {
+        "requests": 2,
+        "body_bytes": 8231,
+        "tracking_requests": 1
+      },
+      "socket": {
+        "error": true
+      }
+    },
+    {
+      "enabled": true,
+      "kind": "worker",
+      "traffic": {
+        "requests": 4,
+        "body_bytes": 210
+      },
+      "legitimate_worker_fact": true
+    },
+    {
+      "enabled": true,
+      "kind": "service_worker",
+      "traffic": {
+        "requests": 2,
+        "body_bytes": 77
+      },
+      "registered": 1
+    }
+  ],
+  "limitations": [
+    "Local simulated challenge script, not proof of passing a real hostile challenge",
+    "Traffic is origin response-body bytes, excluding transport overhead",
+    "RSS includes Python/extractor libraries; browser children reported separately"
+  ],
+  "blocked": {
+    "total": 60,
+    "browser": 60
+  },
+  "maxrss_kib": 93132,
+  "browser_children_maxrss_kib": 214140,
+  "normal_cases_passed": true,
+  "normal_summary": {
+    "False": {
+      "median_ms": 369.40176878124475,
+      "body_bytes": [
+        157127,
+        157127,
+        157127
+      ],
+      "tracking_requests": [
+        11,
+        11,
+        11
+      ]
+    },
+    "True": {
+      "median_ms": 332.8391220420599,
+      "body_bytes": [
+        1447,
+        1447,
+        1447
+      ],
+      "tracking_requests": [
+        0,
+        0,
+        0
+      ]
+    }
+  }
+}

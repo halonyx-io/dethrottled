@@ -16,3 +16,5 @@ global-exclude __pycache__
 prune src/dethrottled/_stack
 
 include AGENTS.md
+
+recursive-include src/dethrottled/licenses *.txt

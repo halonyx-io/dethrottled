@@ -21,6 +21,7 @@ CURRENT = {
         for name in (
             "README",
             "API",
+            "ADBLOCK",
             "AGENT-UPGRADES",
             "AGENT-PLAYBOOK",
             "BENCHMARKS",
@@ -103,7 +104,7 @@ def lifecycle(path):
         return "historical-evidence"
     if path.startswith("evaluations/") and path.endswith("/README.md"):
         return "harness-guide"
-    if Path(path).name in {"APACHE-LICENSE.txt", "NOTICE.txt", "LICENSE"}:
+    if Path(path).name in {"APACHE-LICENSE.txt", "HAGEZI-GPL-3.0.txt", "NOTICE.txt", "LICENSE"}:
         return "third-party-notice"
     if "requirements" in Path(path).name or path.startswith("requirements/"):
         return "dependency-input"

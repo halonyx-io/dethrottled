@@ -1,0 +1,137 @@
+{
+  "backend": "crawl4ai",
+  "workload": "ads",
+  "architecture": "aarch64",
+  "list_sha256": "19a3db5288c7067d81a641baac44a922303e7db570194f6949fbf04fce618e78",
+  "rules": 0,
+  "parse_ms": 0.003801891580224037,
+  "policy_load_before": {
+    "cpu_ms": 754.554,
+    "working_set_bytes": 33914880,
+    "anon_bytes": 28852224
+  },
+  "policy_load_after": {
+    "cpu_ms": 754.554,
+    "working_set_bytes": 33914880,
+    "anon_bytes": 28852224
+  },
+  "cases": [
+    {
+      "enabled": false,
+      "repetition": 0,
+      "elapsed_ms": 921.832030871883,
+      "ok": true,
+      "fact_hits": 4,
+      "facts": 4,
+      "traffic": {
+        "requests": 14,
+        "body_bytes": 157127,
+        "tracking_requests": 11
+      },
+      "resources_after": {
+        "cpu_ms": 5305.136,
+        "working_set_bytes": 416636928,
+        "anon_bytes": 244092928
+      },
+      "cpu_ms": 1306.0720000000006,
+      "failures": [],
+      "html_sample": "<html><head></head><body><main><h1>Evidence fixture</h1>\n                    <p>Allocation is 7341 tonnes</p><p id=\"js\">JS result is 9127 units</p><p id=\"challenge\">Challenge script preserved 6193</p><p id=\"clicked\">Clicked record 4482</p>\n                    <button id=\"open\" onclick=\"document.querySelector('#clicked').textContent='Clicked record 4482'\">Read record</button>\n                    <a"
+    },
+    {
+      "enabled": false,
+      "repetition": 1,
+      "elapsed_ms": 575.42390585877,
+      "ok": true,
+      "fact_hits": 4,
+      "facts": 4,
+      "traffic": {
+        "requests": 14,
+        "body_bytes": 157127,
+        "tracking_requests": 11
+      },
+      "resources_after": {
+        "cpu_ms": 6336.606,
+        "working_set_bytes": 426631168,
+        "anon_bytes": 251826176
+      },
+      "cpu_ms": 1030.7689999999993,
+      "failures": [],
+      "html_sample": "<html><head></head><body><main><h1>Evidence fixture</h1>\n                    <p>Allocation is 7341 tonnes</p><p id=\"js\">JS result is 9127 units</p><p id=\"challenge\">Challenge script preserved 6193</p><p id=\"clicked\">Clicked record 4482</p>\n                    <button id=\"open\" onclick=\"document.querySelector('#clicked').textContent='Clicked record 4482'\">Read record</button>\n                    <a"
+    },
+    {
+      "enabled": false,
+      "repetition": 2,
+      "elapsed_ms": 467.5430210772902,
+      "ok": true,
+      "fact_hits": 4,
+      "facts": 4,
+      "traffic": {
+        "requests": 14,
+        "body_bytes": 157127,
+        "tracking_requests": 11
+      },
+      "resources_after": {
+        "cpu_ms": 7119.076,
+        "working_set_bytes": 449744896,
+        "anon_bytes": 261263360
+      },
+      "cpu_ms": 785.9660000000003,
+      "failures": [],
+      "html_sample": "<html><head></head><body><main><h1>Evidence fixture</h1>\n                    <p>Allocation is 7341 tonnes</p><p id=\"js\">JS result is 9127 units</p><p id=\"challenge\">Challenge script preserved 6193</p><p id=\"clicked\">Clicked record 4482</p>\n                    <button id=\"open\" onclick=\"document.querySelector('#clicked').textContent='Clicked record 4482'\">Read record</button>\n                    <a"
+    },
+    {
+      "enabled": false,
+      "kind": "redirect",
+      "tracking_requests": 1,
+      "status": 302,
+      "error": ""
+    }
+  ],
+  "limitations": [
+    "Local simulated challenge script, not proof of passing a real hostile challenge",
+    "Traffic is origin response-body bytes, excluding transport overhead",
+    "RSS includes Python/extractor libraries; browser children reported separately"
+  ],
+  "phase_resources": [
+    {
+      "enabled": false,
+      "elapsed_ms": 4676.161976996809,
+      "cpu_ms": 6866.631
+    }
+  ],
+  "initial_resources": {
+    "cpu_ms": 659.627,
+    "working_set_bytes": 24088576,
+    "anon_bytes": 19558400
+  },
+  "final_resources": {
+    "cpu_ms": 8010.207,
+    "working_set_bytes": 249671680,
+    "anon_bytes": 85270528
+  },
+  "resource_measurement_comparable": true,
+  "host_load_average": [
+    1.08935546875,
+    0.9072265625,
+    0.5810546875
+  ],
+  "blocked": {},
+  "maxrss_kib": 120044,
+  "browser_children_maxrss_kib": 140620,
+  "normal_cases_passed": true,
+  "normal_summary": {
+    "False": {
+      "median_ms": 575.42390585877,
+      "body_bytes": [
+        157127,
+        157127,
+        157127
+      ],
+      "tracking_requests": [
+        11,
+        11,
+        11
+      ]
+    }
+  }
+}
