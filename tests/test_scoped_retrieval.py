@@ -374,6 +374,7 @@ def test_existing_grouped_site_operators_rewrite_cleanly():
 
 
 def test_filtered_valid_serp_does_not_trigger_more_ddg_acquisition(monkeypatch, tmp_path):
+    pytest.importorskip("curl_cffi")
     from dethrottled import discovery
 
     monkeypatch.setenv("DETHROTTLED_CHEAP_DISCOVERY", "1")
@@ -402,6 +403,7 @@ def test_filtered_valid_serp_does_not_trigger_more_ddg_acquisition(monkeypatch, 
 
 
 def test_static_provider_filters_before_primary_cap(monkeypatch):
+    pytest.importorskip("curl_cffi")
     from dethrottled import discovery
 
     html = "".join(
@@ -456,7 +458,10 @@ def test_partial_html_is_distinct_from_filled_fields():
     assert row["structured_status"]["source_html_partial"]
 
 
-def test_private_redirect_preserves_terminal_policy_reason(monkeypatch):
+@pytest.mark.parametrize("tier", ["direct", "tls"])
+def test_private_redirect_preserves_terminal_policy_reason(monkeypatch, tier):
+    if tier == "tls":
+        pytest.importorskip("curl_cffi")
     from dethrottled import fetch, research
 
     monkeypatch.setattr(research, "public_url", lambda url: "public.example.org" in url)
@@ -471,13 +476,14 @@ def test_private_redirect_preserves_terminal_policy_reason(monkeypatch):
 
     token = fetch._READ_OPTIONS.set({"public_only": True})
     try:
-        _, reason, _ = fetch._tier_direct_once("https://public.example.org/", 1, get=get)
-        assert reason == "public_target_required"
-        _, reason, _ = fetch._tier_tls_once("https://public.example.org/", get=get)
+        if tier == "direct":
+            _, reason, _ = fetch._tier_direct_once("https://public.example.org/", 1, get=get)
+        else:
+            _, reason, _ = fetch._tier_tls_once("https://public.example.org/", get=get)
         assert reason == "public_target_required"
     finally:
         fetch._READ_OPTIONS.reset(token)
-    assert seen == ["https://public.example.org/"] * 2
+    assert seen == ["https://public.example.org/"]
 
 
 def test_explicit_network_policy_refusal_does_not_escalate_tiers(monkeypatch):

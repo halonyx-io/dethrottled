@@ -130,3 +130,12 @@ The controlled JavaScript fixture tests h1 without relying on publisher markup.
 Native ARM64 checks are provided by the release candidate's GitHub CI. Final CI,
 publication hashes and deployment verification are recorded with release artifacts;
 this earlier local snapshot does not claim those later gates passed.
+
+The first candidate CI passed native ARM64 Python 3.10–3.13 but exposed a test
+prerequisite mistake on the core-only Windows/macOS installations: three TLS
+regressions assumed optional curl_cffi was present. Those checks now explicitly
+require that extra. The HTTP redirect-policy test is independent and still runs
+without TLS; the split adds one test to full installations. This correction does
+not add a runtime dependency or change missing-TLS fallback behaviour. Original
+CI failures are retained in the workflow history; all release gates are rerun on
+the corrected candidate before merge.
