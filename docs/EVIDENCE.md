@@ -14,7 +14,7 @@ larger-pool measurements remain historical evidence.
 
 | Scope | Report and raw data | Interpretation |
 |---|---|---|
-| Fetch edge cases (candidate) | [6 November investigation](../evaluations/fetch-edge-cases/results/2026-11-06/REPORT.md), [reproduction](../evaluations/fetch-edge-cases/README.md) | Connection waits, selector DOMs, response warnings, redirect links, malformed caches and measured batch scheduling; no deployed change |
+| Fetch edge cases and scheduling (1.7.1) | [6 November investigation](../evaluations/fetch-edge-cases/results/2026-11-06/REPORT.md), [reproduction](../evaluations/fetch-edge-cases/README.md) | Connection waits, selector DOMs, response warnings, redirect links, malformed caches and controlled batch timings; no additional hostile-source read demonstrated |
 | Public Corpus v2 and retrieval support | [Controlled comparison](../evaluations/corpus-v2/results/2026-11-05/REPORT.md), [reproduction](../evaluations/corpus-v2/README.md) | Deep facts, multilingual/model ablation, standard versus broad retrieval and native package/lifecycle gates; preserves false positives and misses |
 | Complete installation and two-device performance | [1.4.0 validation](../evaluations/install-showcase/results/2026-11-04/REPORT.md), [reproduction](../evaluations/install-showcase/README.md) | PyPI-managed workers, native software rendering, retained controlled facts and live outcomes; original failures preserved |
 | Expanded ranking and default policy | [400-query experiment](../evaluations/search-policy/results/2026-11-03/REPORT.md) | 299 usable train/100 fresh test, two model judges; modest XGBoost improvement, no demonstrated fresh-read gain; compact supplements retained, learned ranking not deployed |

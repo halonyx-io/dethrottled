@@ -2,7 +2,10 @@
 
 Baseline: published 1.7.0 runtime. Candidate: source changes based on Git
 `a774f15`, tested inside the existing x86_64 runtime image with the source mounted.
-No image build, version bump, publication or production deployment was performed.
+No image build, version bump, publication or production deployment was performed
+during that initial measurement phase. The fixes are included in the 1.7.1
+release candidate; subsequent exact-version build, CI and deployment verification
+are recorded with the GitHub release artifacts.
 
 ## Reachability: confirmed delay, incorrect IPv6-only diagnosis
 
