@@ -53,6 +53,11 @@
       "review": "Change author: reconcile current behaviour, examples and navigation."
     },
     {
+      "path": "SKILL.md",
+      "lifecycle": "current-guide",
+      "review": "Change author: reconcile current behaviour, examples and navigation."
+    },
+    {
       "path": "adapters/Dockerfile",
       "lifecycle": "source-contract",
       "review": "Change author: audit docs impact, advertised defaults and generated contracts."
@@ -623,6 +628,21 @@
       "review": "Evidence maintainer: preserve observations; append explicit corrections."
     },
     {
+      "path": "evaluations/scoped-retrieval/README.md",
+      "lifecycle": "harness-guide",
+      "review": "Harness maintainer: check runnable commands and label dated assumptions."
+    },
+    {
+      "path": "evaluations/scoped-retrieval/results/2026-11-06/REPORT.md",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "evaluations/scoped-retrieval/results/2026-11-06/initial-focused.txt",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
       "path": "evaluations/search-breadth/results/2026-11-02/REPORT.md",
       "lifecycle": "historical-evidence",
       "review": "Evidence maintainer: preserve observations; append explicit corrections."
@@ -1093,7 +1113,17 @@
       "review": "Change author: audit docs impact, advertised defaults and generated contracts."
     },
     {
+      "path": "src/dethrottled/search_constraints.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
       "path": "src/dethrottled/search_diagnostics.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/selectors.py",
       "lifecycle": "source-contract",
       "review": "Change author: audit docs impact, advertised defaults and generated contracts."
     },

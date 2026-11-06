@@ -1,0 +1,244 @@
+{
+  "mode": "candidate",
+  "scope": "Loopback HTTP, identical HTML/SERP, no live-provider accuracy claim; tracemalloc is Python allocation peak, not process/container RSS.",
+  "fixture_html_bytes": 25595,
+  "rows_on_index": 12,
+  "crawl": {
+    "samples": 7,
+    "elapsed_ms": [
+      2336.235,
+      745.963,
+      742.216,
+      768.447,
+      749.238,
+      742.511,
+      744.826
+    ],
+    "median_ms": 745.963,
+    "p95_ms": 2336.235,
+    "cpu_ms": [
+      2336.896,
+      746.617,
+      742.853,
+      770.179,
+      750.909,
+      742.886,
+      746.136
+    ],
+    "python_peak_bytes": [
+      15199718,
+      1502098,
+      1501502,
+      1501776,
+      1501088,
+      1500450,
+      1500294
+    ],
+    "http_requests": [
+      13,
+      13,
+      13,
+      13,
+      13,
+      13,
+      13
+    ],
+    "evidence_reads": [
+      13,
+      13,
+      13,
+      13,
+      13,
+      13,
+      13
+    ]
+  },
+  "map": {
+    "samples": 7,
+    "elapsed_ms": [
+      58.376,
+      56.972,
+      58.673,
+      59.388,
+      60.443,
+      61.39,
+      61.486
+    ],
+    "median_ms": 59.388,
+    "p95_ms": 61.486,
+    "cpu_ms": [
+      58.507,
+      57.084,
+      58.791,
+      59.52,
+      60.589,
+      61.545,
+      61.636
+    ],
+    "python_peak_bytes": [
+      1436810,
+      1437002,
+      1437200,
+      1437524,
+      1437588,
+      1437244,
+      1437197
+    ],
+    "http_requests": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "returned_urls": [
+      13,
+      13,
+      13,
+      13,
+      13,
+      13,
+      13
+    ],
+    "discovery_requests": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ]
+  },
+  "with_selectors": {
+    "samples": 7,
+    "elapsed_ms": [
+      55.658,
+      55.007,
+      55.562,
+      55.419,
+      55.938,
+      55.642,
+      56.733
+    ],
+    "median_ms": 55.642,
+    "p95_ms": 56.733,
+    "cpu_ms": [
+      55.789,
+      55.126,
+      55.686,
+      55.577,
+      56.045,
+      55.707,
+      56.509
+    ],
+    "python_peak_bytes": [
+      1435607,
+      1434967,
+      1434747,
+      1434786,
+      1434098,
+      1434263,
+      1434330
+    ],
+    "http_requests": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "field_facts_retained": [
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2
+    ]
+  },
+  "plain_fetch": {
+    "samples": 7,
+    "elapsed_ms": [
+      55.761,
+      55.39,
+      54.414,
+      54.68,
+      54.597,
+      54.241,
+      55.543
+    ],
+    "median_ms": 54.68,
+    "p95_ms": 55.761,
+    "cpu_ms": [
+      55.896,
+      55.512,
+      54.52,
+      54.871,
+      54.357,
+      54.332,
+      55.674
+    ],
+    "python_peak_bytes": [
+      1434621,
+      1434143,
+      1434238,
+      1434223,
+      1434211,
+      1434179,
+      1434138
+    ],
+    "http_requests": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "facts_in_display_excerpt": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "constrained_serp": {
+    "matching_sources": [
+      "https://nasa.gov/0",
+      "https://nasa.gov/1",
+      "https://nasa.gov/2"
+    ],
+    "requests": 1,
+    "pages": [
+      1
+    ]
+  },
+  "terminal_policy": {
+    "invalid_url": {
+      "browser_calls": 0,
+      "stop_reason": "terminal_target_refusal"
+    },
+    "public_target_required": {
+      "browser_calls": 0,
+      "stop_reason": "terminal_target_refusal"
+    },
+    "redirect_target_not_public": {
+      "browser_calls": 0,
+      "stop_reason": "terminal_target_refusal"
+    },
+    "ConnectionError": {
+      "browser_calls": 1,
+      "stop_reason": "unresolved_gap"
+    }
+  }
+}

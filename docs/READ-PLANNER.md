@@ -136,3 +136,10 @@ instead of HTML browser inspection. A remaining gap is reported as
 `document_continuation_required`; consult `workflow.next_actions`. This does not
 alter browser recovery for HTML challenge pages served at document-looking URLs.
 See [long PDF limits](LIMITS.md#long-pdf-reads).
+
+Malformed URLs and explicit public-network-policy refusals are terminal for the
+current request. They do not enter browser recovery, and guidance does not suggest
+retrying them through another transport. Redirect policy refusals retain their
+specific reason and stop the acquisition ladder as `policy_blocked=network`.
+Ordinary DNS/connect/TLS failures keep bounded recovery: a worker or another
+transport can have a working route. There is no blanket two-second dead-host cutoff.

@@ -64,6 +64,18 @@ def run(url, initial, *, read, drive, options, browser_available, allow_assets=T
     decisions, best, seen = [], initial, set()
     focus = options.get("focus", "")
 
+    # Another transport must not retry malformed targets or override a public
+    # network-policy refusal. DNS/connect timeouts are deliberately excluded:
+    # a worker may have a different resolver or a working acquisition path.
+    if initial.get("failure_reason") in {
+            "invalid_url", "public_target_required", "redirect_target_not_public"}:
+        initial["read_plan"] = dict(
+            revision=1, decisions=[], initial_gap=gap(initial), final_gap=gap(initial),
+            answer_verified=False, stop_reason="terminal_target_refusal",
+            render_allowed=options.get("allow_render", True), browser_configured=browser_available,
+            elapsed_ms=round((time.monotonic() - started) * 1000, 2), budget_seconds=budget)
+        return initial
+
     # A successfully acquired document is not an HTML loading gap. Its bounded
     # parser/range/OCR continuation is exposed by workflow.guidance; navigating
     # Chromium's PDF viewer cannot recover the missing source pages or rows.
@@ -207,6 +219,8 @@ def run(url, initial, *, read, drive, options, browser_available, allow_assets=T
                     state.update(step["data"])
             html = next((s.get("data") for s in reversed(result.get("steps", []))
                          if s.get("action") == "html" and isinstance(s.get("data"), str)), "")
+            html_partial = any(s.get("truncated") for s in result.get("steps", [])
+                               if s.get("action") == "html")
             if classify(html):
                 state["challenge"] = True
                 return None
@@ -251,6 +265,9 @@ def run(url, initial, *, read, drive, options, browser_available, allow_assets=T
                        **{k: v for k, v in page_details(html, url).items() if k != "warnings"})
             annotated = annotate_content({"text": text, "extraction": row["extraction"]}, html)
             row.update({k: v for k, v in annotated.items() if k != "text"})
+            if options.get("retain_html"):
+                row["_selector_html"] = html
+                row["_selector_html_partial"] = html_partial
             if focus:
                 row["focus_status"] = ("term_matches" if passage_excerpt(
                     text, focus, min(len(text), 120000))[1] else "no_term_matches")

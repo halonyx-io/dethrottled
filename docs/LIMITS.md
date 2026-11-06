@@ -103,3 +103,20 @@ larger than the extraction budget remains clipped: `truncated_page` and a
 non-HTML document extraction uses document/range continuation rather than the
 HTML browser recovery loop. Reparsed document versions refresh `content_status`
 and `source_partial`; earlier retained versions remain accessible.
+
+## Targeted discovery and deterministic fields
+
+Search include/exclude lists support 20 hostnames each. Rewritten discovery queries
+have a 4,096-character ceiling; the user's original search query remains capped at
+500. Filtering scans one observed provider page without raising the ten-primary,
+three-per-supplement or fifteen-menu caps.
+
+Selector extraction supports 32 named fields, 100 matches per repeated field,
+10,000 characters per value and 64,000 returned value characters in total. Explicit
+truncation is separate from missing required fields. The HTML input retains the
+existing acquisition byte ceiling; this feature does not allocate a model or start
+another service.
+
+Site mapping defaults to ten URLs and five seed/sitemap acquisitions, with ceilings
+of fifty URLs and twenty acquisitions. These are separate budgets. A map is a source
+menu; fetch selected candidates to obtain retained evidence.

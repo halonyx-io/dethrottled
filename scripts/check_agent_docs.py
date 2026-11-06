@@ -47,9 +47,12 @@ def audit(root):
             for d in node.decorator_list
         )
     }
+    skill = (root / "SKILL.md").read_text()
     for name in sorted(tools):
         if "`" + name + "`" not in text:
             errors.append("Playbook omits MCP tool: " + name)
+        if "`" + name + "`" not in skill:
+            errors.append("Client skill omits MCP tool: " + name)
     browser = ast.parse((root / "browser-search/service.py").read_text())
     actions = next(
         ast.literal_eval(node.value)

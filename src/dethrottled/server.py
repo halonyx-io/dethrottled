@@ -255,6 +255,7 @@ def _search_row(row: dict, meta: dict, index: int) -> dict:
         # Which ranking stages actually ran.
         "ranking": meta.get("ranking", []) if index == 0 else [],
         "from_corpus": bool(row.get("from_corpus")),
+        **({"constraints": meta["constraints"]} if index == 0 and "constraints" in meta else {}),
         **({"corpus_evidence": row["corpus_evidence"]} if row.get("corpus_evidence") else {}),
     }
 
@@ -302,7 +303,8 @@ def _extract_once(url: str, max_chars: int, allow_ocr: bool = True,
                  ocr_language: str = "", ocr_mode: str = "auto", page_start: int = 1,
                  page_end: int | None = None, row_start: int = 1,
                  row_end: int | None = None, sheet: str = "",
-                 max_cell_chars: int | None = None, document_mode: str = "auto") -> dict:
+                 max_cell_chars: int | None = None, document_mode: str = "auto",
+                 retain_html: bool = False) -> dict:
     # allow_ocr is the one-URL-versus-many split. OCR costs about 1.4s a page,
     # which is worth it for a page somebody asked for by name and is not worth
     # it multiplied across a page of search results.
@@ -318,7 +320,7 @@ def _extract_once(url: str, max_chars: int, allow_ocr: bool = True,
                                        page_budget=page_budget,
                                        allow_render=allow_render,
                                        render_first=render_first,
-                                       keep_html=raw or links,
+                                       keep_html=raw or links or retain_html,
                                        format="html" if raw else "links" if links else "text",
                                        wait_for=wait_for, render_delay=render_delay,
                                        headed_fallback=headed_fallback, public_only=public_only,
@@ -411,6 +413,9 @@ def _extract_once(url: str, max_chars: int, allow_ocr: bool = True,
         row["content"] = result["html"][:max_chars]
         row["content_chars"] = len(result["html"])
         row["truncated"] = len(result["html"]) > max_chars
+    if retain_html:
+        row["_selector_html"] = result.get("html", "")
+        row["_selector_html_partial"] = result.get("reason") == "html_truncated"
     return row
 
 
@@ -428,7 +433,8 @@ def _extract_row(url, max_chars, *, recovery="auto", asset_recovery=True, **opti
         canonical = row.get("_index_text", row.get("content", ""))
         if canonical:
             metadata = {k: v for k, v in row.items() if k not in {
-                "content", "html", "_index_text", "document_id", "document_sha256"}}
+                "content", "html", "_index_text", "_selector_html", "_selector_html_partial",
+                "document_id", "document_sha256"}}
             try:
                 row.update(documents().put(options.get("evidence_namespace", "local"),
                                            row.get("url", url), canonical, metadata))
@@ -571,8 +577,10 @@ def v2_capabilities():
                                 "source_partial", "truncated", "extraction", "next_offset",
                                 "acquisition_attempts", "content_assessment", "read_plan",
                                 "evidence_variants", "source_alternatives", "acquisition_url",
-                                "access", "navigation_recovery"],
+                                "access", "navigation_recovery", "structured", "structured_status",
+                                "structured_provenance"],
             "mcp_images": "forward native image content blocks to vision-capable models",
+            "skill_repository_path": "SKILL.md",
             "startup_check": "Compare initialize.instructions hash with workflow_sha256; "
                              "refresh tools/list after service upgrades.",
             "client_activation": "Server version does not prove a remote plugin revision loaded.",
@@ -701,7 +709,9 @@ def v2_capabilities():
                       "structure_endpoint": "/documents/structure",
                       "citation_selectors": "exact text offsets and version hash"},
         "site": {"endpoint": "/site/crawl", "max_pages": 50,
-                 "scope": "same origin and caller path prefix", "coverage_ledger": True},
+                 "scope": "same origin and caller path prefix", "coverage_ledger": True,
+                 "modes": ["crawl", "map"], "map_discovery_requests_default": 5,
+                 "map_evidence_reads": 0, "map_candidates_verified": False},
         "jobs": {"submit_endpoint": "/jobs/fetch", "read_endpoint": "/jobs/read",
                  "cancel_endpoint": "/jobs/cancel", "retention_seconds": 86400,
                  "progressive": True, "restart_policy": "unfinished jobs become interrupted",
@@ -763,7 +773,13 @@ def _ranked(body) -> tuple:
     """
     limit = body.limit or body.max_items or body.num_results
     pool = min(15, limit * 3) if body.rank or body.ranking != "source" else limit
-    rows, meta = fs.search(body.query, max_items=pool,
+    from .search_constraints import discovery_query
+    provider_query, impossible = discovery_query(body.query, body.domains, body.exclude_domains)
+    if impossible:
+        return [], {"ranking": [], "discovery": {
+            "outcome": "constraints_unsatisfiable", "degraded": False,
+            "reason": "include/exclude and site constraints have no intersection"}}, limit
+    rows, meta = fs.search(provider_query, max_items=pool,
                            categories=body.categories,
                            language=body.language or None,
                            # Same again: fresh bypasses the six-hour search
@@ -781,7 +797,15 @@ def _ranked(body) -> tuple:
     if body.prefer_domains:
         rows = fs.rank(rows, body.prefer_domains)
         stages.append("preferred_domains")
-    rows = fs.bounded_results([r for r in rows if constrained(body.query, r)], limit)
+    rows = fs.bounded_results([r for r in rows if constrained(provider_query, r)], limit)
+    if body.domains or body.exclude_domains:
+        meta = dict(meta, constraints={"domains": body.domains,
+                    "exclude_domains": body.exclude_domains,
+                    "provider_query": provider_query, "matching_results": len(rows)})
+        if not rows:
+            meta["discovery"] = dict(meta.get("discovery", {}),
+                constraint_outcome="no_matching_candidates",
+                constraint_limitation="One provider page; not proof no matching source exists.")
     # AFTER ranking, and only here. Relevance order is decided above and is
     # not touched; this moves domains that measurably never yield text to the
     # back of the queue, so the fetches about to be spent land on results that
@@ -811,6 +835,7 @@ def search_envelope(body: SearchBody):
             "outcome": meta.get("discovery", {}).get("outcome", "indeterminate"),
             "degraded": meta.get("discovery", {}).get("degraded", True),
             "discovery": meta.get("discovery", {}),
+            **({"constraints": meta["constraints"]} if "constraints" in meta else {}),
             "attempts": _attempts(meta), "elapsed_ms": meta.get("elapsed_ms"),
             "ranking": meta.get("ranking", []), "profile": body.profile}
 
@@ -872,11 +897,21 @@ def fetch_urls(body: FetchBody, background: BackgroundTasks):
                                page_end=body.page_end, row_start=body.row_start,
                                row_end=body.row_end, sheet=body.sheet,
                                max_cell_chars=body.max_cell_chars,
-                               recovery=body.recovery))
+                               recovery=body.recovery, retain_html=bool(body.selectors)))
     # Durable admission happens now; tokenization and embedding run in the worker.
     # Harvest the canonical extraction rather than the display format or excerpt.
+    _finish_selectors(rows, body)
     _queue_corpus(rows, background, namespace=body.evidence_namespace)
     return [compact_row(row) for row in rows] if body.response_format == "concise" else rows
+
+
+def _finish_selectors(rows, body):
+    from .selectors import fields
+    for row in rows:
+        html = row.pop("_selector_html", "")
+        html_partial = row.pop("_selector_html_partial", False)
+        if body.selectors:
+            fields(row, body.selectors, html, html_partial=html_partial)
 
 
 def _job_read(body, url):
@@ -893,16 +928,22 @@ def _job_read(body, url):
                        ocr_mode=body.ocr_mode, document_mode=body.document_mode,
                        page_start=body.page_start, page_end=body.page_end,
                        row_start=body.row_start, row_end=body.row_end, sheet=body.sheet,
-                       max_cell_chars=body.max_cell_chars, recovery=body.recovery)
+                       max_cell_chars=body.max_cell_chars, recovery=body.recovery,
+                       retain_html=bool(body.selectors))
+    _finish_selectors([row], body)
     _queue_corpus([row], namespace=body.evidence_namespace)
     return compact_row(row) if body.response_format == "concise" else row
 
 
 @app.post("/jobs/fetch")
 def start_fetch_job(body: FetchJobBody):
+    payload = body.model_dump(exclude={"operation_id"})
+    if not body.selectors:
+        # Preserve fingerprints for retries of pre-selector persisted jobs.
+        payload.pop("selectors", None)
     try:
         identifier = jobs().submit(body.evidence_namespace,
-                                   body.model_dump(exclude={"operation_id"}), body.operation_id,
+                                   payload, body.operation_id,
                                    lambda url: _job_read(body, url), _FETCH_POOL)
         return jobs().get(body.evidence_namespace, identifier)
     except JobError as exc:
@@ -939,7 +980,29 @@ def resume_fetch_job(body: JobReadBody):
 
 @app.post("/site/crawl")
 def crawl_site(body: SiteBody):
-    from .site import crawl
+    from .site import crawl, map_site
+    if body.mode == "map":
+        def discover(url):
+            result = fetcher.fetch_and_extract(url, max_chars=120000, keep_html=True,
+                format="html", allow_ocr=False, public_only=body.public_only,
+                allow_render=body.render != "never", render_first=body.render == "always",
+                page_budget=15, admission_key=body.evidence_namespace)
+            return {"url": url, "final_url": result.get("url", url),
+                    "quality": result.get("quality", "ok") if result.get("ok") else "failed",
+                    "content": result.get("html") or result.get("text", ""),
+                    "truncated": (result.get("truncated", False)
+                                  or result.get("reason") == "html_truncated"),
+                    "warnings": result.get("warnings", []),
+                    "failure_reason": result.get("reason"),
+                    "acquisition_attempts": result.get("acquisition_attempts", [])}
+        result = map_site(body.urls, discover, max_pages=body.max_pages,
+            max_depth=body.max_depth, path_prefix=body.path_prefix,
+            max_discovery_requests=body.max_discovery_requests)
+        result["workflow"] = {"next_actions": [{"tool": "fetch", "endpoint": "/fetch",
+            "arguments": {"urls": [r["url"] for r in result["sources"][:10]]},
+            "reason": "Choose candidate URLs before reading; mapping is not evidence."}]
+            if result["sources"] else []}
+        return result
     result = crawl(body.urls, lambda url: _extract_row(
         url, 120000, raw=True, public_only=body.public_only, page_budget=30,
         evidence_namespace=body.evidence_namespace, recovery="manual",
@@ -1283,6 +1346,7 @@ def research(body: ResearchBody, background: BackgroundTasks):
             try:
                 rows, meta, _ = _ranked(SearchBody(
                     query=query, limit=15, language=body.language,
+                    domains=body.domains, exclude_domains=body.exclude_domains,
                     fresh=body.fresh, categories=body.categories,
                     profile=body.profile, engines=body.engines))
                 return rows, {"query": query, "found": len(rows),

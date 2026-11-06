@@ -238,3 +238,12 @@ corpus search is GET with `q`; fetch/crawl/job submission require `urls`;
 document reads require `document_id`; job polling requires `job_id`. MCP tool
 schemas remain authoritative for MCP argument names. No new REST aliases were
 added to conceal these differences.
+
+## Source selection and field extraction
+
+The existing authenticated routes also carry search `domains`/`exclude_domains`,
+fetch `selectors` and site `mode="map"`/`max_discovery_requests`. They add no public
+route or scope. MCP exposes the same controls through search, search_and_fetch,
+research, fetch and crawl_site. Refresh cached tool schemas after upgrading.
+Host discovery filters are not network authorization: remote public-target checks,
+browser allowed_hosts and caller namespaces still apply. See [the API guide](API.md#constrain-source-choices).

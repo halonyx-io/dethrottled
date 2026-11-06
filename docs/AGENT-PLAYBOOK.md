@@ -308,3 +308,31 @@ remain visible. Job completion is progress, not proof every URL succeeded. An
 HTTP admission refusal is not an empty search/fetch. MCP retry metadata lives in
 `error.data` and its request ID is correlated when available; respect transport
 status and `Retry-After` too.
+
+## Host constraints, field extraction and URL mapping
+
+Use search `domains`/`exclude_domains` when the task requires sources from particular
+hosts; `prefer_domains` merely biases order. Includes intersect `site:` constraints,
+exclusions win, and hostname validation applies before caps. No extra pagination is
+used to fill a filtered menu. Use `diagnostics=true` (HTTP `/v2/search`) when a constrained
+search is empty: unavailable providers, no matching candidates on an observed page
+and `constraints_unsatisfiable` are different outcomes. The same filters are available
+for `search_and_fetch` and research facets; they constrain discovery, not subsequent
+publisher assets or browser navigation. Use explicit browser/network scope separately.
+
+Use fetch `selectors` for named CSS text/attribute fields, not semantic schema inference.
+For example `{"price":{"selector":".price"},"links":{"selector":"a[href]","attribute":"href","all":true,"required":false}}`.
+Each field supports `max_matches` and `max_chars`; result values have a shared 64,000
+character ceiling. Inspect `structured_status.missing` and `truncated_fields` even
+when prose quality is `ok`. Missing HTML is explicit, not a fabricated value. Relative
+attribute URLs remain relative. Selector acquisition needs HTML and bypasses the
+prose-only cache; ordinary fetches retain their existing cache behaviour.
+
+Use `crawl_site(mode="map")` to obtain candidates before evidence reads. Supply HTML
+seed URLs or known sitemaps, a compact `max_pages` menu and `max_discovery_requests`.
+Mapping reads seeds/nested sitemap indexes; it does not fetch every returned candidate,
+retain documents or populate the corpus. `coverage.attempted=0` means no evidence
+reads: check `discovery_requests` for actual discovery URL acquisitions and inspect
+per-tier attempts for network work. Read selected URLs with fetch afterwards. Normal
+`mode="crawl"` retains its previous behaviour. Consult the [API guide](API.md) for
+examples, scoping and the distinction between URLs observed and whole-site coverage.

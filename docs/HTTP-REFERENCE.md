@@ -118,6 +118,7 @@ Framework `/docs` and `/openapi.json` routes are available separately.
 | Field | Type/choices | Required/default | Bounds |
 |---|---|---|---|
 | `urls` | array of string | required | minItems=1; maxItems=10 |
+| `selectors` | object | factory/default; see runtime schema |  |
 | `render` | "auto", "always", "never" or boolean | "auto" |  |
 | `format` | "text", "links", "html" | "text" |  |
 | `raw` | boolean | false |  |
@@ -150,6 +151,7 @@ Framework `/docs` and `/openapi.json` routes are available separately.
 | Field | Type/choices | Required/default | Bounds |
 |---|---|---|---|
 | `urls` | array of string | required | minItems=1; maxItems=10 |
+| `selectors` | object | factory/default; see runtime schema |  |
 | `render` | "auto", "always", "never" or boolean | "auto" |  |
 | `format` | "text", "links", "html" | "text" |  |
 | `raw` | boolean | false |  |
@@ -192,6 +194,8 @@ Framework `/docs` and `/openapi.json` routes are available separately.
 | Field | Type/choices | Required/default | Bounds |
 |---|---|---|---|
 | `question` | string | required | minLength=3; maxLength=500 |
+| `domains` | array of string | factory/default; see runtime schema | maxItems=20 |
+| `exclude_domains` | array of string | factory/default; see runtime schema | maxItems=20 |
 | `queries` | array of string | factory/default; see runtime schema | maxItems=10 |
 | `max_sources` | integer | 10 | minimum=1.0; maximum=20.0 |
 | `max_chars` | integer | 12000 | minimum=500.0; maximum=120000.0 |
@@ -222,6 +226,8 @@ Framework `/docs` and `/openapi.json` routes are available separately.
 | `rank` | boolean | false |  |
 | `ranking` | "source", "bm25", "fusion" | "source" |  |
 | `prefer_domains` | array of string | factory/default; see runtime schema | maxItems=10 |
+| `domains` | array of string | factory/default; see runtime schema | maxItems=20 |
+| `exclude_domains` | array of string | factory/default; see runtime schema | maxItems=20 |
 | `rerank` | boolean | false |  |
 | `corpus` | integer | 0 | minimum=0.0; maximum=20.0 |
 | `recency` | number | 0.0 | minimum=0.0; maximum=1.0 |
@@ -244,6 +250,8 @@ Framework `/docs` and `/openapi.json` routes are available separately.
 | `rank` | boolean | false |  |
 | `ranking` | "source", "bm25", "fusion" | "source" |  |
 | `prefer_domains` | array of string | factory/default; see runtime schema | maxItems=10 |
+| `domains` | array of string | factory/default; see runtime schema | maxItems=20 |
+| `exclude_domains` | array of string | factory/default; see runtime schema | maxItems=20 |
 | `rerank` | boolean | false |  |
 | `corpus` | integer | 0 | minimum=0.0; maximum=20.0 |
 | `recency` | number | 0.0 | minimum=0.0; maximum=1.0 |
@@ -255,12 +263,25 @@ Framework `/docs` and `/openapi.json` routes are available separately.
 | `raw` | boolean | false |  |
 | `max_chars` | integer | 3000 | minimum=1.0; maximum=1000000.0 |
 
+## SelectorField
+
+| Field | Type/choices | Required/default | Bounds |
+|---|---|---|---|
+| `selector` | string | required | minLength=1; maxLength=500 |
+| `attribute` | string | "" | maxLength=100 |
+| `all` | boolean | false |  |
+| `required` | boolean | true |  |
+| `max_matches` | integer | 20 | minimum=1.0; maximum=100.0 |
+| `max_chars` | integer | 2000 | minimum=1.0; maximum=10000.0 |
+
 ## SiteBody
 
 | Field | Type/choices | Required/default | Bounds |
 |---|---|---|---|
 | `urls` | array of string | required | minItems=1; maxItems=10 |
 | `max_pages` | integer | 10 | minimum=1.0; maximum=50.0 |
+| `mode` | "crawl", "map" | "crawl" |  |
+| `max_discovery_requests` | integer | 5 | minimum=1.0; maximum=20.0 |
 | `max_depth` | integer | 2 | minimum=0.0; maximum=5.0 |
 | `path_prefix` | string | "/" | maxLength=1000; pattern=^/ |
 | `render` | "auto", "always", "never" | "auto" |  |

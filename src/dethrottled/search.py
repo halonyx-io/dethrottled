@@ -194,12 +194,16 @@ def _ddg_finish(rows, report, recovering):
         health = _load_health()
         fresh_success = (
             report.get("direct", {}).get("status") == "ok"
+            or report.get("direct", {}).get("status") == "no_matching_candidates"
+            or report.get("status") == "no_matching_candidates"
             or (report.get("status") == "ok" and report.get("count", 0) > 0)
             or any(a.get("engine") == "duckduckgo" and a.get("status") == "ok"
                    and a.get("count", 0) > 0 for a in report.get("ddgs_attempts", [])))
         retry_after = max([_ddg_retry_after(report.get("direct", {})),
                            *(_ddg_retry_after(a) for a in report.get("attempts", []))])
-        if fresh_success and not retry_after and any(result_family(row) == "ddg" for row in rows):
+        if fresh_success and not retry_after and (
+                any(result_family(row) == "ddg" for row in rows)
+                or report.get("status") == "no_matching_candidates"):
             if health.pop("family:ddg", None):
                 _save_health(health)
         elif _ddg_refusal(report) or retry_after:
@@ -294,7 +298,8 @@ def searxng(query: str, *, max_items: int = 8, categories: str = "",
             hit = cache.get("search", "sx-single-page-v2", query, engines, categories, max_items,
                             language)
             if hit is not None:
-                found = bounded_results(hit, max_items, primary_limit=SUPPLEMENT_SEARCH_LIMIT)
+                found = bounded_results([r for r in hit if constrained(query, r)], max_items,
+                    primary_limit=SUPPLEMENT_SEARCH_LIMIT)
                 if diagnostics is not None:
                     diagnostics.update(status="cached", upstream_status="cooldown", elapsed_ms=0,
                                        admitted_count=len(found), cooldown_until=family["until"])
@@ -311,8 +316,10 @@ def searxng(query: str, *, max_items: int = 8, categories: str = "",
             if diagnostics is not None:
                 diagnostics.update(status="cached", elapsed_ms=0,
                                    admitted_count=len(bounded_results(
-                                       hit, max_items, primary_limit=SUPPLEMENT_SEARCH_LIMIT)))
-            return bounded_results(hit, max_items, primary_limit=SUPPLEMENT_SEARCH_LIMIT)
+                                       [r for r in hit if constrained(query, r)], max_items,
+                    primary_limit=SUPPLEMENT_SEARCH_LIMIT)))
+            return bounded_results([r for r in hit if constrained(query, r)], max_items,
+                    primary_limit=SUPPLEMENT_SEARCH_LIMIT)
 
     params = {"q": query, "format": "json", "engines": engines,
               "pageno": 1, "language": language or "all", "safesearch": 0}
@@ -366,7 +373,8 @@ def searxng(query: str, *, max_items: int = 8, categories: str = "",
         if diagnostics is not None:
             diagnostics.update(status="failed", reason=adblock.error_reason(exc))
 
-    rows = bounded_results(rows, max_items, primary_limit=SUPPLEMENT_SEARCH_LIMIT)
+    rows = bounded_results([r for r in rows if constrained(query, r)], max_items,
+                           primary_limit=SUPPLEMENT_SEARCH_LIMIT)
     if diagnostics is not None:
         diagnostics["elapsed_ms"] = int((time.monotonic() - started) * 1000)
         diagnostics["admitted_count"] = len(rows)
@@ -397,15 +405,18 @@ def bing_news(query: str, *, max_items: int = 8, timeout: int = 25, cache=None,
             parsed_feed = feedparser.parse(response.content)
             if diagnostics is not None and not parsed_feed.version:
                 diagnostics["status"] = "invalid_feed"
-            for entry in parsed_feed.entries[:max_items]:
+            for entry in parsed_feed.entries:
                 url = _unwrap_bing(entry.get("link", ""))
                 title = entry.get("title", "")
-                if not url or not title or "bing.com" in _domain(url):
+                if (not url or not title or "bing.com" in _domain(url)
+                        or not constrained(query, {"url": url})):
                     continue
                 rows.append(_norm(
                     title=title, url=url,
                     snippet=_TAGS.sub(" ", entry.get("summary", ""))[:600],
                     published=entry.get("published", ""), engine="bing-news"))
+                if len(rows) >= max_items:
+                    break
     except Exception as exc:
         rows = []
         if diagnostics is not None:
@@ -614,7 +625,7 @@ def browser_search(query: str, *, max_items: int = 8, cache=None,
     if cache is not None:
         hit = cache.get("search", cache_namespace, query, max_items)
         if hit is not None:
-            found = bounded_results(hit, max_items)
+            found = bounded_results([r for r in hit if constrained(query, r)], max_items)
             if diagnostics is not None:
                 diagnostics.update(status="cached", attempts=[], count=len(found),
                                    browser_count=len(found))
@@ -640,8 +651,12 @@ def browser_search(query: str, *, max_items: int = 8, cache=None,
         response.raise_for_status()
         if not payload.get("ok"):
             return []
+        if payload.get("constraint_outcome") == "no_matching_candidates":
+            if diagnostics is not None:
+                diagnostics.update(status="no_matching_candidates", count=0, browser_count=0)
+            return []
         rows = []
-        for item in payload.get("results", [])[:max_items]:
+        for item in payload.get("results", []):
             url = str(item.get("url") or "")
             parsed = urlparse(url)
             title = str(item.get("title") or "").strip()
@@ -653,7 +668,7 @@ def browser_search(query: str, *, max_items: int = 8, cache=None,
             rows.append(_norm(title=title, url=url, snippet=snippet,
                               engine="web-browser-" + str(item.get("engine")
                                   or payload.get("engine") or "unknown")))
-        found = bounded_results(rows, max_items)
+        found = bounded_results([r for r in rows if constrained(query, r)], max_items)
         if diagnostics is not None:
             diagnostics.update(count=len(found), browser_count=len(found))
         if cache is not None and rows:
@@ -730,6 +745,10 @@ def _acquire_web(query: str, *, max_items: int = 8, cache=None,
                 if diagnostics is not None:
                     diagnostics.update(status=direct.get("status"), attempts=[])
                 return cheap[:max_items]
+            if direct.get("status") == "no_matching_candidates":
+                if diagnostics is not None:
+                    diagnostics.update(status="no_matching_candidates", attempts=[])
+                return []
             if _ddg_retry_after(direct):
                 if diagnostics is not None:
                     diagnostics.update(status="retry_after", attempts=[])
@@ -737,6 +756,8 @@ def _acquire_web(query: str, *, max_items: int = 8, cache=None,
         browser_report = diagnostics if diagnostics is not None else {}
         found = browser_search(query, max_items=max_items, cache=cache,
                                diagnostics=browser_report)
+        if browser_report.get("status") == "no_matching_candidates":
+            return []
         if not found and any(_ddg_retry_after(a) for a in browser_report.get("attempts", [])):
             return []
         merged, seen = [], set()
@@ -798,7 +819,7 @@ def _acquire_web(query: str, *, max_items: int = 8, cache=None,
         if cache is not None and got:
             cache.put("search", "web", engine, query, max_items, value=got)
         rows.extend(got)
-    return bounded_results(rows, max_items)
+    return bounded_results([r for r in rows if constrained(query, r)], max_items)
 
 
 def web_search(query: str, *, max_items: int = 8, cache=None,
@@ -821,7 +842,7 @@ def web_search(query: str, *, max_items: int = 8, cache=None,
                 for key in keys:
                     hit = cache.get(*key)
                     if hit is not None:
-                        found = bounded_results(hit, maximum)
+                        found = bounded_results([r for r in hit if constrained(query, r)], maximum)
                         report.update(status="cached", upstream_status=status, count=len(found))
                         return found
             other = [e for e in WEB_ENGINES if e != "duckduckgo"] if engines is None else []

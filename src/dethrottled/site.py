@@ -105,3 +105,108 @@ def crawl(seeds, read, *, max_pages=20, max_depth=2, path_prefix="/", budget_sec
                          "sources may be absent."},
             "continuation_urls": [u for u, _, _ in list(queue)[:10]],
             "answer_verified": False}
+
+
+def map_site(seeds, read, *, max_pages=20, max_depth=2, path_prefix="/",
+             max_discovery_requests=5, budget_seconds=60):
+    """Read seeds and nested sitemap indexes, never every discovered HTML page.
+
+    No retained evidence is created. Discovery acquisitions are counted separately
+    from evidence reads; an exhausted sitemap is not proof of whole-site coverage.
+    """
+    seeds = list(dict.fromkeys(canonical(u) for u in seeds))
+    origin = urlsplit(seeds[0])
+    scope = origin.scheme, origin.netloc
+    queue = deque((u, 0, None) for u in seeds)
+    visited, seen, sources, attempts = set(), set(), [], []
+    dropped = outside = 0
+    deadline = time.monotonic() + budget_seconds
+
+    def admit(url, depth, parent):
+        nonlocal dropped, outside
+        try:
+            url = canonical(url)
+        except ValueError:
+            return
+        parts = urlsplit(url)
+        if (parts.scheme, parts.netloc) != scope or not parts.path.startswith(path_prefix):
+            outside += 1
+            return
+        if url in seen:
+            return
+        seen.add(url)
+        if len(sources) >= max_pages:
+            dropped += 1
+        else:
+            sources.append({"url": url, "depth": depth, "parent": parent})
+
+    while (queue and len(attempts) < max_discovery_requests and len(sources) < max_pages
+           and time.monotonic() < deadline):
+        url, depth, parent = queue.popleft()
+        if url in visited:
+            continue
+        visited.add(url)
+        try:
+            row = read(url)
+        except Exception as exc:
+            row = {"quality": "failed", "failure_reason": type(exc).__name__}
+        final = row.get("final_url", row.get("url", url))
+        parts = urlsplit(final)
+        in_scope = ((parts.scheme, parts.netloc) == scope and parts.path.startswith(path_prefix))
+        attempt = {"url": url, "final_url": final, "quality": row.get("quality", "failed"),
+                   "failure_reason": row.get("failure_reason"),
+                   "acquisition_attempts": row.get("acquisition_attempts", []),
+                   "truncated": bool(row.get("truncated")),
+                   "warnings": row.get("warnings", [])[:10]}
+        attempts.append(attempt)
+        if not in_scope:
+            attempt.update(quality="failed", failure_reason="redirect_outside_site_scope")
+            continue
+        if row.get("quality") not in {"ok", "thin", "suspect"}:
+            continue
+        text = row.get("html") or row.get("content", "")
+        root = ""
+        try:
+            root = ElementTree.fromstring(text).tag.rsplit("}", 1)[-1]
+        except (ElementTree.ParseError, DefusedXmlException):
+            pass
+        found = links(text, final)
+        if root not in {"urlset", "sitemapindex"}:
+            admit(final, depth, parent)
+        for target in found:
+            if root == "sitemapindex":
+                try:
+                    target = canonical(target)
+                except ValueError:
+                    continue
+                p = urlsplit(target)
+                if (p.scheme, p.netloc) != scope or not p.path.startswith(path_prefix):
+                    outside += 1
+                elif depth < max_depth:
+                    if len(queue) < 5000:
+                        queue.append((target, depth + 1, final))
+                    else:
+                        dropped += 1
+                else:
+                    dropped += 1
+            else:
+                admit(target, depth + 1, final)
+    failed = sum(a["quality"] == "failed" for a in attempts)
+    partial = bool(queue or dropped or failed or any(a["truncated"] for a in attempts))
+    return {"operation": "site_map", "mode": "map",
+            "outcome": "partial" if sources and partial else "urls_discovered" if sources
+                       else "no_urls_discovered", "sources": sources,
+            "discovery_attempts": attempts,
+            "coverage": {"attempted": 0, "discovery_requests": len(attempts),
+                         "discovery_failed": failed, "returned_urls": len(sources),
+                         "discovered_in_scope": len(seen), "pending": len(queue),
+                         "depth_or_discovery_limited": dropped, "outside_scope": outside,
+                         "whole_site_complete": None,
+                         "stop_reason": "url_limit" if len(sources) >= max_pages else
+                         "discovery_request_limit" if (queue and
+                             len(attempts) >= max_discovery_requests)
+                         else "time_budget" if queue else "observed_frontier_exhausted",
+                         "limitation": "Seed/sitemap reads only; candidates are not fetched or "
+                         "verified evidence. Unlinked and JS-only URLs may be absent."},
+            "continuation_urls": [u for u, _, _ in list(queue)[:10]],
+            "answer_verified": False}

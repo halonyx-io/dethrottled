@@ -51,3 +51,12 @@ shipped acquisition clients and managed workers, with persistent background
 updates and explicit policy refusals. See
 [coverage, diagnostics and limitations](ADBLOCK.md) and the
 [controlled resource evaluation](../evaluations/adblock/README.md).
+
+## Targeted sources and deterministic extraction
+
+Optional host include/exclude constraints apply during discovery, without changing
+source-order ranking or increasing search menus. Named CSS selectors extract text,
+attributes and repeated fields from acquired HTML, with missing/truncated values
+reported independently of prose quality. Site mapping reads seeds and sitemaps to
+list scoped candidates before full evidence reads. These operations need no model,
+new service or API key. See the [API workflows](API.md#constrain-source-choices).

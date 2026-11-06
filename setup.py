@@ -13,8 +13,8 @@ ROOT = Path(__file__).parent
 DIRECTORIES = ('src', 'requirements', 'browser-search', 'workers', 'format-worker',
                'media-worker', 'docling-worker', 'docker', 'adapters',
                'scripts', 'docs', 'evaluations')
-FILES = ('Dockerfile', 'README.md', 'AGENTS.md', 'LICENSE', 'pyproject.toml', 'setup.py',
-         'MANIFEST.in', '.dockerignore')
+FILES = ('Dockerfile', 'README.md', 'AGENTS.md', 'SKILL.md', 'LICENSE', 'pyproject.toml',
+         'setup.py', 'MANIFEST.in', '.dockerignore')
 
 
 class BuildWithStack(build_py):

@@ -268,3 +268,89 @@ The same distinction applies to batch fetches and jobs. Inspect each URL's
 quality/failure diagnostics. Job `completed` counts finished positions, including
 failed reads; a running 1/2 job may legitimately await its second URL. Poll using
 `next_cursor`/`poll_after_ms` and preserve each returned source's outcome.
+
+## Constrain source choices
+
+`/search`, `/v2/search`, `/search-and-fetch` and `/research` accept `domains` and
+`exclude_domains` (up to 20 hostnames each). Includes match the exact hostname and
+its subdomains; exclusions win. Use hostnames, not URLs, ports or wildcards.
+Internationalized hostnames are normalized to IDNA. Includes intersect existing
+`site:` operators; they do not broaden them. `prefer_domains` remains a ranking
+preference and is not a filter.
+
+```sh
+curl -sS http://127.0.0.1:8787/v2/search \
+  -H 'Content-Type: application/json' \
+  -d '{"query":"climate observations","domains":["nasa.gov","noaa.gov"],"exclude_domains":["blogs.nasa.gov"],"limit":10}'
+```
+
+Constraints rewrite the provider query and validate candidate hostnames before
+provider/menu caps, including corpus additions. Filtering scans the already acquired
+first page; it adds no automatic searches or pagination. Providers may ignore query
+operators, so fewer matching sources is normal. Diagnostics preserve provider
+failures and add `constraint_outcome=no_matching_candidates` if no eligible sources
+survive. This does not prove that the wider web has no matching sources. Mutually
+exclusive constraints return `outcome=constraints_unsatisfiable` without an upstream
+request. Use the diagnostic envelope to inspect empty responses.
+
+## Extract named HTML fields
+
+`/fetch` and its `/extract` alias accept `selectors`, a dictionary of named CSS
+field specifications. This is deterministic text/attribute extraction, not JSON
+Schema inference or an LLM. It works for non-agent applications too.
+
+```sh
+curl -sS http://127.0.0.1:8787/extract \
+  -H 'Content-Type: application/json' \
+  -d '{"urls":["https://example.org"],"response_format":"concise","selectors":{"title":{"selector":"h1"},"destinations":{"selector":"a[href]","attribute":"href","all":true,"required":false,"max_matches":10}}}'
+```
+
+Each specification has `selector`, optional `attribute` (otherwise text), `all`
+(default false), `required` (default true), `max_matches` (20, at most 100), and
+`max_chars` (2,000, at most 10,000 per value). Up to 32 fields and 64,000 total value
+characters are returned. Attribute values are literal source values: relative links
+remain relative. Selectors run on acquired HTML, independently of the prose excerpt;
+requesting them bypasses the prose-only extraction cache because it contains no HTML.
+The usual acquisition and recovery policy still applies. Recovered non-HTML evidence
+may have no eligible HTML; no second request is invented to satisfy the fields.
+
+Results add `structured`, `structured_status` and `structured_provenance` (selectors,
+match counts, acquired HTML hash, source URL and retained document handle when present).
+Missing required fields do not change `quality`; their values are null or empty lists.
+Check `satisfied`, `missing`, `reason` and `truncated_fields` independently of transport
+and prose quality. HTML selectors are not canonical prose offsets. Invalid selector
+syntax or malformed specifications receive 422 before acquisition; unsupported
+`schema` inference is rejected. Fetch jobs accept the same specifications.
+
+## Map candidates before reading a site
+
+`POST /site/crawl` and MCP `crawl_site` accept `mode="map"`; omitted mode preserves
+existing crawling. `max_pages` limits the returned URL menu (default 10, maximum 50).
+`max_discovery_requests` separately limits seed/nested-sitemap acquisitions (default
+5, maximum 20); `max_depth` bounds nested sitemap traversal. Mapping reads supplied
+HTML seeds and sitemap indexes/urlsets, but does not recursively fetch each linked
+HTML candidate or automatically guess sitemap locations. Supply a known sitemap as
+a seed when useful. Same-origin/path-prefix scope and public-target policy remain.
+
+```sh
+curl -sS http://127.0.0.1:8787/site/crawl \
+  -H 'Content-Type: application/json' \
+  -d '{"urls":["https://example.org/sitemap.xml"],"mode":"map","max_pages":10,"max_discovery_requests":3,"render":"never"}'
+```
+
+Map sources are URL candidates, without evidence quality or document IDs. No corpus
+indexing or retained evidence is created. `coverage.attempted=0` counts evidence
+reads, **not network requests**: inspect `discovery_requests`, `discovery_attempts`,
+failures, truncation, frontier and limits. Acquisition may still use more than one
+tier per discovery URL. The existing ladder/parser is reused; this is not a new
+zero-cost HTML transport. Follow selected candidates with fetch. Sitemap exhaustion
+never establishes whole-site completeness.
+
+Field status also reports `source_html_partial` when the acquired DOM/HTML was
+clipped; filled fields do not establish completeness. When browser recovery adopts
+a new DOM, selectors use that adopted capture rather than stale initial HTML.
+
+Malformed URL and explicit network-policy refusals stop further automatic attempts;
+`policy_blocked=network` distinguishes the latter from an upstream outage. Their
+workflow gives no transport retry. Ordinary connection/DNS failures retain bounded
+recovery rather than being declared permanent after an arbitrary short timeout.

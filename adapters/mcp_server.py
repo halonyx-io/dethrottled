@@ -350,6 +350,8 @@ async def search(
     engines: str = "",
     ranking: Literal["source", "bm25", "fusion"] = "source",
     prefer_domains: list[str] | None = None,
+    domains: list[str] | None = None,
+    exclude_domains: list[str] | None = None,
     diagnostics: bool = False,
     cache_mode: Literal["use", "refresh", "bypass"] = "use",
     max_age: float | None = None,
@@ -362,6 +364,8 @@ async def search(
     Set diagnostics=true to distinguish partial results, genuine zero results and
     unavailable discovery. Inspect outcome/degraded and attempts; legacy status=ok
     only means nonempty results, not healthy providers.
+    domains/exclude_domains restrict hosts and subdomains; exclusions win.
+    prefer_domains only biases order. Empty filtered menus do not prove web absence.
     """
     return await _backend_post("/v2/search" if diagnostics else "/search", {
         "query": query,
@@ -374,6 +378,7 @@ async def search(
         "language": language,
         "profile": profile, "engines": engines, "cache_mode": cache_mode, "max_age": max_age,
         "ranking": ranking, "prefer_domains": prefer_domains or [],
+        "domains": domains or [], "exclude_domains": exclude_domains or [],
     })
 
 
@@ -401,6 +406,7 @@ async def fetch(
     row_end: Annotated[int | None, Field(ge=1)] = None,
     sheet: str = "",
     max_cell_chars: Annotated[int | None, Field(ge=1, le=1000000)] = None,
+    selectors: dict[str, dict[str, Any]] | None = None,
 ) -> Any:
     """Read pages you already have URLs for.
 
@@ -415,6 +421,9 @@ async def fetch(
     quality=ok is extraction success, not proof the answer exists. If truncated,
     use read_document with next_offset; for uncertain OCR inspect source pixels
     when retained, or drive/capture the source. Preserve partial-read warnings.
+    selectors maps field names to CSS specifications: selector, optional attribute,
+    all, required, max_matches and max_chars. It reads acquired HTML, not the prose
+    excerpt. Inspect structured_status separately from quality; no schema inference.
 
     format  text  article prose (default)
             links prose with anchors kept as markdown, for link discovery
@@ -437,6 +446,7 @@ async def fetch(
         "document_mode": document_mode,
         "row_start": row_start, "row_end": row_end, "sheet": sheet,
         "max_cell_chars": max_cell_chars,
+        "selectors": selectors or {},
     })
 
 
@@ -471,6 +481,8 @@ async def search_and_fetch(
     engines: str = "",
     ranking: Literal["source", "bm25", "fusion"] = "source",
     prefer_domains: list[str] | None = None,
+    domains: list[str] | None = None,
+    exclude_domains: list[str] | None = None,
     cache_mode: Literal["use", "refresh", "bypass"] = "use",
     max_age: float | None = None,
 ) -> Any:
@@ -489,6 +501,7 @@ async def search_and_fetch(
         "document_mode": document_mode, "ocr_language": ocr_language,
         "profile": profile, "engines": engines, "ranking": ranking,
         "prefer_domains": prefer_domains or [], "cache_mode": cache_mode, "max_age": max_age,
+        "domains": domains or [], "exclude_domains": exclude_domains or [],
     })
 
 
@@ -504,6 +517,8 @@ async def research(
     follow_assets: bool = True,
     categories: Literal["", "news", "academic"] = "",
     response_format: Literal["detailed", "concise"] = "concise",
+    domains: list[str] | None = None,
+    exclude_domains: list[str] | None = None,
 ) -> dict[str, Any]:
     """Gather cited sources and relevant excerpts across multiple searches.
 
@@ -521,6 +536,7 @@ async def research(
         "max_chars": _bounded_int(max_chars, 500, 120000),
         "fresh": fresh, "follow_assets": follow_assets, "engines": engines, "profile": profile,
         "categories": categories, "response_format": response_format,
+        "domains": domains or [], "exclude_domains": exclude_domains or [],
     }, timeout=600)
 
 
@@ -707,7 +723,10 @@ async def start_fetch_job(urls: list[str], operation_id: str = "", focus: str = 
                            page_end: int | None = None,
                            headed_fallback: bool = False,
                            row_start: int = 1, row_end: int | None = None, sheet: str = "",
-                           max_cell_chars: int | None = None) -> dict[str, Any]:
+                           max_cell_chars: int | None = None,
+                           selectors: dict[str, dict[str, Any]] | None = None,
+                           response_format: Literal["detailed", "concise"] = "detailed",
+                           ) -> dict[str, Any]:
     """Start durable page reads and receive sources as they finish via read_fetch_job.
 
     Reuse an operation_id only for retrying the identical request. Continue
@@ -720,7 +739,8 @@ async def start_fetch_job(urls: list[str], operation_id: str = "", focus: str = 
         "ocr_mode": ocr_mode,
         "document_mode": document_mode,
         "headed_fallback": headed_fallback, "row_start": row_start,
-        "row_end": row_end, "sheet": sheet, "max_cell_chars": max_cell_chars})
+        "row_end": row_end, "sheet": sheet, "max_cell_chars": max_cell_chars,
+        "selectors": selectors or {}, "response_format": response_format})
 
 
 @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, openWorldHint=False))
@@ -768,17 +788,24 @@ async def crawl_site(urls: list[str],
                      max_pages: Annotated[int, Field(ge=1, le=50)] = 10,
                      max_depth: Annotated[int, Field(ge=0, le=5)] = 2,
                      path_prefix: str = "/",
-                     render: Literal["auto", "always", "never"] = "auto") -> dict[str, Any]:
+                     render: Literal["auto", "always", "never"] = "auto",
+                     mode: Literal["crawl", "map"] = "crawl",
+                     max_discovery_requests: Annotated[int, Field(ge=1, le=20)] = 5,
+                     ) -> dict[str, Any]:
     """Discover and retain linked/sitemap sources within one site and report coverage.
 
     Supply seed URLs from one origin, optionally a sitemap.xml. Returns document
     handles, failed sources, frontier and explicit limits; follow read_document
     to inspect evidence. Whole-site completeness is unknown even if the observed
     frontier is exhausted. Use bounded repeated runs for continuation_urls.
+    mode=map reads seeds/nested sitemaps to list URLs without retaining evidence or
+    fetching every candidate. max_pages bounds URLs; max_discovery_requests bounds
+    discovery acquisitions. Inspect discovery_attempts, not just attempted=0.
     """
     return await _backend_post("/site/crawl", {"urls": _bounded_urls(urls),
         "max_pages": max_pages, "max_depth": max_depth, "path_prefix": path_prefix,
-        "render": render}, timeout=600)
+        "render": render, "mode": mode,
+        "max_discovery_requests": max_discovery_requests}, timeout=600)
 
 
 @mcp.tool()

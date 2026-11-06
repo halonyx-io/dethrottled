@@ -59,6 +59,24 @@ class SearchBody(BaseModel):
     rank: bool = False
     ranking: Literal["source", "bm25", "fusion"] = "source"
     prefer_domains: list[str] = Field(default_factory=list, max_length=10)
+    domains: list[str] = Field(default_factory=list, max_length=20,
+                              description="Included hosts/subdomains; intersects site:.")
+    exclude_domains: list[str] = Field(default_factory=list, max_length=20,
+                                      description="Excluded hosts/subdomains; overrides includes.")
+
+    @field_validator("domains", "exclude_domains")
+    @classmethod
+    def valid_domains(cls, values):
+        from .search_constraints import hostname
+        return list(dict.fromkeys(hostname(value) for value in values))
+
+    @model_validator(mode="after")
+    def domain_query_budget(self):
+        from .search_constraints import discovery_query
+        rewritten, _ = discovery_query(self.query, self.domains, self.exclude_domains)
+        if len(rewritten) > 4096:
+            raise ValueError("query plus domain constraints exceeds 4096 characters")
+        return self
     # Accept explicit false for existing callers. Reject true instead of
     # claiming success when the removed model cannot run.
     rerank: bool = False
@@ -79,10 +97,33 @@ class SearchBody(BaseModel):
     recency: float = Field(default=0.0, ge=0, le=1)
 
 
+class SelectorField(BaseModel):
+    """Deterministic HTML field extraction, not semantic JSON Schema inference."""
+    model_config = ConfigDict(extra="forbid")
+    selector: str = Field(min_length=1, max_length=500)
+    attribute: str = Field(default="", max_length=100)
+    all: bool = False
+    required: bool = True
+    max_matches: int = Field(default=20, ge=1, le=100)
+    max_chars: int = Field(default=2000, ge=1, le=10000)
+
+    @field_validator("selector")
+    @classmethod
+    def valid_selector(cls, value):
+        from selectolax.lexbor import LexborHTMLParser
+        try:
+            LexborHTMLParser("<html></html>").css(value)
+        except Exception as exc:
+            raise ValueError("invalid CSS selector") from exc
+        return value
+
+
 class FetchBody(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     urls: list[str] = Field(min_length=1, max_length=10)
+    selectors: dict[str, SelectorField] = Field(default_factory=dict, max_length=32,
+        description="Named CSS text/attribute fields from the acquired HTML; no model inference.")
     # What the ladder is ALLOWED to do, not what it must do. "never" keeps it
     # on the cheap local tiers for callers to whom latency matters more than
     # coverage.
@@ -139,6 +180,8 @@ class FetchBody(BaseModel):
 
     @model_validator(mode="after")
     def read_constraints(self):
+        if any(not key.strip() or len(key) > 100 for key in self.selectors):
+            raise ValueError("selector field names must contain 1 to 100 characters")
         if self.page_end is not None and (self.page_end < self.page_start
                                           or self.page_end - self.page_start >= 100):
             raise ValueError("page range must contain 1 to 100 pages")
@@ -175,6 +218,13 @@ class ResearchBody(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     question: str = Field(min_length=3, max_length=500)
+    domains: list[str] = Field(default_factory=list, max_length=20)
+    exclude_domains: list[str] = Field(default_factory=list, max_length=20)
+
+    @field_validator("domains", "exclude_domains")
+    @classmethod
+    def valid_domains(cls, values):
+        return SearchBody.valid_domains(values)
     queries: list[str] = Field(default_factory=list, max_length=10)
     max_sources: int = Field(default=10, ge=1, le=RESEARCH_SOURCE_LIMIT)
     max_chars: int = Field(default=12000, ge=500, le=120000)
@@ -261,6 +311,9 @@ class SiteBody(BaseModel):
     model_config = ConfigDict(extra="forbid")
     urls: list[str] = Field(min_length=1, max_length=10)
     max_pages: int = Field(default=10, ge=1, le=50)
+    mode: Literal["crawl", "map"] = "crawl"
+    max_discovery_requests: int = Field(default=5, ge=1, le=20,
+        description="Map-only seed/sitemap acquisition limit; separate from returned URL count.")
     max_depth: int = Field(default=2, ge=0, le=5)
     path_prefix: str = Field(default="/", max_length=1000, pattern=r"^/")
     render: Literal["auto", "always", "never"] = "auto"

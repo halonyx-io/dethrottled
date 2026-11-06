@@ -79,8 +79,8 @@ def tls_search(query, *, max_items=8, cache=None, diagnostics=None, worker=""):
             return []
         tree = LexborHTMLParser(html)
         links, snippets = tree.css("a.result-link"), tree.css(".result-snippet")
-        rows, seen = [], set()
-        for index, link in enumerate(links[:max_items]):
+        rows, seen, unfiltered_usable = [], set(), 0
+        for index, link in enumerate(links):
             target = urljoin(url, link.attributes.get("href", ""))
             parsed = urlsplit(target)
             if parsed.hostname in {"duckduckgo.com", "www.duckduckgo.com"}:
@@ -92,10 +92,18 @@ def tls_search(query, *, max_items=8, cache=None, diagnostics=None, worker=""):
             snippet = snippets[index].text(strip=True) if index < len(snippets) else ""
             row = {"title": title[:300], "url": target, "snippet": snippet[:600],
                    "engine": "web-tls-ddg-lite", "publishedDate": "", "cached": False}
-            if target in seen or not constrained(query, row) or len(title) < 10:
+            if target in seen or len(title) < 10:
+                continue
+            unfiltered_usable += len(snippet.strip()) >= 25
+            if not constrained(query, row):
                 continue
             seen.add(target)
             rows.append(row)
+            if len(rows) >= max_items:
+                break
+        if not rows and unfiltered_usable:
+            attempt.update(status="no_matching_candidates", filtered=True)
+            return []
         if not any(len(r["snippet"].strip()) >= 25 for r in rows):
             attempt["status"] = "thin_or_empty"
             return []

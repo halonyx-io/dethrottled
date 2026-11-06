@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "dethrottled"
-version = "1.6.2"
+version = "1.7.0"
 description = "Zero-API web search, fetch and extraction. No keys, no quota, no metered pool."
 readme = "README.md"
 license = { text = "MIT" }

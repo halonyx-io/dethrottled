@@ -1,0 +1,131 @@
+{
+  "mode": "baseline-1.6.2",
+  "scope": "Loopback HTTP, identical HTML/SERP, no live-provider accuracy claim; tracemalloc is Python allocation peak, not process/container RSS.",
+  "fixture_html_bytes": 25595,
+  "rows_on_index": 12,
+  "crawl": {
+    "samples": 7,
+    "elapsed_ms": [
+      2422.342,
+      737.111,
+      733.928,
+      741.323,
+      734.443,
+      736.244,
+      740.141
+    ],
+    "median_ms": 737.111,
+    "p95_ms": 2422.342,
+    "cpu_ms": [
+      2334.725,
+      738.156,
+      735.421,
+      742.238,
+      735.383,
+      737.499,
+      740.727
+    ],
+    "python_peak_bytes": [
+      15139160,
+      1502205,
+      1501152,
+      1501003,
+      1501360,
+      1500490,
+      1501212
+    ],
+    "http_requests": [
+      13,
+      13,
+      13,
+      13,
+      13,
+      13,
+      13
+    ],
+    "evidence_reads": [
+      13,
+      13,
+      13,
+      13,
+      13,
+      13,
+      13
+    ]
+  },
+  "plain_fetch": {
+    "samples": 7,
+    "elapsed_ms": [
+      54.817,
+      55.179,
+      54.448,
+      54.886,
+      54.422,
+      56.851,
+      54.425
+    ],
+    "median_ms": 54.817,
+    "p95_ms": 56.851,
+    "cpu_ms": [
+      54.943,
+      55.173,
+      54.351,
+      54.996,
+      54.561,
+      56.997,
+      54.583
+    ],
+    "python_peak_bytes": [
+      1434550,
+      1433862,
+      1433906,
+      1434303,
+      1434419,
+      1434148,
+      1434171
+    ],
+    "http_requests": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "facts_in_display_excerpt": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "constrained_serp": {
+    "matching_sources": [],
+    "requests": 1,
+    "pages": [
+      1
+    ]
+  },
+  "terminal_policy": {
+    "invalid_url": {
+      "browser_calls": 1,
+      "stop_reason": "unresolved_gap"
+    },
+    "public_target_required": {
+      "browser_calls": 1,
+      "stop_reason": "unresolved_gap"
+    },
+    "redirect_target_not_public": {
+      "browser_calls": 1,
+      "stop_reason": "unresolved_gap"
+    },
+    "ConnectionError": {
+      "browser_calls": 1,
+      "stop_reason": "unresolved_gap"
+    }
+  }
+}
