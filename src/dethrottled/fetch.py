@@ -88,6 +88,8 @@ MAX_BYTES = int(os.environ.get("DETHROTTLED_MAX_HTML_BYTES", str(10_000_000)))
 
 
 DEFAULT_TIMEOUT = 20
+# Bound connection establishment separately; slow downloads keep their read budget.
+CONNECT_TIMEOUT = max(0.1, float(os.getenv("DETHROTTLED_CONNECT_TIMEOUT", "2")))
 MIN_DOMAIN_GAP = 1.5
 
 
@@ -411,7 +413,8 @@ def _tier_direct_once(url: str, timeout: int, allow_ocr: bool = False, *, get=No
     try:
         _throttle(domain)
         response = _get_with_policy(get or requests.get,
-            url, timeout=timeout, stream=True, allow_redirects=True,
+            url, timeout=(min(CONNECT_TIMEOUT, timeout), timeout),
+            stream=True, allow_redirects=True,
             headers={
                 "User-Agent": USER_AGENT,
                 "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
@@ -743,7 +746,9 @@ def _tier_tls_once(url: str, *, get=None) -> tuple:
         # arrived intact. Nothing actionable, and noisy on every such fetch.
         with quiet_fd2():
             response = _get_with_policy(get or tls_requests.get,
-                url, impersonate=TLS_IMPERSONATE, timeout=TLS_TIMEOUT,
+                url, impersonate=TLS_IMPERSONATE,
+                timeout=(min(CONNECT_TIMEOUT, TLS_TIMEOUT),
+                         max(0, TLS_TIMEOUT - min(CONNECT_TIMEOUT, TLS_TIMEOUT))),
                 allow_redirects=True, stream=True)
     except Exception as exc:
         reason = (str(exc) if isinstance(exc, (adblock.AdblockBlocked, TargetPolicyError))
@@ -1155,11 +1160,12 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
             result = _fx.extract(html, url=final, max_chars=CACHE_CHARS)
             if not result["ok"]:
                 small = short_text(html).strip()
-                if len(small) >= 40 or (_READ_OPTIONS.get().get("format") in {"html", "links"}):
+                if (len(small) >= 40 or keep_html
+                        or _READ_OPTIONS.get().get("format") in {"html", "links"}):
                     result = {"ok": True, "text": small, "tier": "short",
                               "title": "", "published": "", "chars": len(small)}
-            if result["ok"] and (result.get("text", "").strip() or
-                                 _READ_OPTIONS.get().get("format") in {"html", "links"}):
+            if result["ok"] and (result.get("text", "").strip() or keep_html
+                                 or _READ_OPTIONS.get().get("format") in {"html", "links"}):
                 # The source, only when asked for. finish() strips it before
                 # the cache write, so this never bloats the page cache.
                 source = {"html": html} if keep_html else {}

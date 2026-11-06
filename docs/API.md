@@ -113,6 +113,14 @@ not verify an answer. Retain `acquisition_url` and publisher-alternative provena
 | `browser_recovery` | Queue/poll timing, ready state, checkpoint restoration and initial navigation |
 | `content_assessment` | Non-destructive error-banner signals, exact full-extraction spans and text hash; not an answer verifier |
 
+Batch reads keep input URL order and at most four active reads per request;
+completed slots are refilled while slower reads continue. Link-format output
+resolves relative anchors against the final acquired URL after redirects.
+
+Malformed or incompatible cached search/extraction records fall through to
+normal acquisition instead of becoming evidence. Valid cached empty search lists
+remain hits; the cache lifetimes and request freshness controls still apply.
+
 HTTP 200 does not mean every URL succeeded. Extraction success does not verify
 the answer or complete source coverage. `response_format="concise"` reduces
 duplicate representations, including full-document PDF text-layer blocks that
@@ -122,7 +130,12 @@ warnings, retained-document handles and continuation remain. REST defaults to
 `detailed` explicitly when you need block text and coordinates. Concise mode does
 not shorten the canonical retained document or certify completeness. For detailed
 layout from a long PDF, reparse a small explicit page range rather than requesting
-all page blocks at once.
+all page blocks at once. Detailed fetch, retained-read, job and research source
+responses add `large_detailed_response` to `warnings` when known text
+representations total at least 131,072 characters. This is a conservative
+lower bound, not an exact JSON-size measurement; other metadata can also be
+large. The warning recommends `response_format=concise` and `max_chars`; it
+does not discard detailed fields or alter retained evidence.
 
 `content_assessment.pollution` is `suspected`, `none_detected` or `not_assessed`.
 Structured documents are not classified as website UI. A narrow set of leading
@@ -302,7 +315,7 @@ Schema inference or an LLM. It works for non-agent applications too.
 ```sh
 curl -sS http://127.0.0.1:8787/extract \
   -H 'Content-Type: application/json' \
-  -d '{"urls":["https://example.org"],"response_format":"concise","selectors":{"title":{"selector":"h1"},"destinations":{"selector":"a[href]","attribute":"href","all":true,"required":false,"max_matches":10}}}'
+  -d '{"urls":["https://example.org"],"response_format":"concise","selectors":{"title":{"selector":"title"},"destinations":{"selector":"a[href]","attribute":"href","all":true,"required":false,"max_matches":10}}}'
 ```
 
 Each specification has `selector`, optional `attribute` (otherwise text), `all`
@@ -313,6 +326,9 @@ remain relative. Selectors run on acquired HTML, independently of the prose exce
 requesting them bypasses the prose-only extraction cache because it contains no HTML.
 The usual acquisition and recovery policy still applies. Recovered non-HTML evidence
 may have no eligible HTML; no second request is invented to satisfy the fields.
+Small acquired HTML documents remain eligible for selectors even when there is
+too little prose for the article extractors. Selector success does not upgrade
+short prose to `quality=ok`; clipped HTML retains its partial-source flag.
 
 Results add `structured`, `structured_status` and `structured_provenance` (selectors,
 match counts, acquired HTML hash, source URL and retained document handle when present).

@@ -77,12 +77,13 @@ class Cache:
         if ttl >= 0 and (time.time() - ts) > ttl:
             self.misses += 1
             return None
-        self.hits += 1
         try:
             decoded = json.loads(value)
-            return (decoded, ts) if with_meta else decoded
         except json.JSONDecodeError:
+            self.misses += 1
             return None
+        self.hits += 1
+        return (decoded, ts) if with_meta else decoded
 
     def put(self, kind: str, *parts, value) -> None:
         key = self.key(kind, *parts)
@@ -139,8 +140,21 @@ class CacheView:
         if hit is None:
             return None
         value, retrieved = hit
-        if kind == "extract" and value.get("schema_version") != 3:
-            return None  # Refresh old representations lacking current coverage/provenance.
+        if kind == "extract":
+            if (not isinstance(value, dict) or value.get("schema_version") != 3
+                    or not isinstance(value.get("text"), str)):
+                return None  # Refresh old/unusable representations instead of failing the read.
+            if any(not isinstance(value.get(field, {}), dict)
+                   for field in ("acquisition", "extraction", "content_assessment")):
+                return None
+            pages = value.get("extraction", {}).get("pages", [])
+            if not isinstance(pages, list) or any(not isinstance(page, dict) for page in pages):
+                return None
+        if kind == "search" and (
+                not isinstance(value, list) or any(
+                    not isinstance(row, dict) or not isinstance(row.get("url", ""), str)
+                    for row in value)):
+            return None
         from datetime import datetime, timezone
         metadata = {"cached": True, "cache_age_seconds": round(time.time() - retrieved, 3),
                     "retrieved_at": datetime.fromtimestamp(retrieved, timezone.utc).isoformat(),

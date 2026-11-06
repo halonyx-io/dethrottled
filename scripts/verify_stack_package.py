@@ -34,7 +34,8 @@ with tarfile.open(fileobj=io.BytesIO(content), mode='r:gz') as archive:
     root_sources = [s for line in api_recipe.splitlines() if line.startswith('COPY ')
                     for s in shlex.split(line)[1:-1]]
     assert 'SKILL-dethrottled.md' in names and 'SKILL-dethrottled.md' in root_sources
-    assert '!SKILL-dethrottled.md' in archive.extractfile('.dockerignore').read().decode().splitlines()
+    assert ('!SKILL-dethrottled.md'
+            in archive.extractfile('.dockerignore').read().decode().splitlines())
     assert 'Dockerfile' in root_sources, 'API nested wheel build needs its own Dockerfile'
 print(json.dumps({'passed': True, 'version': metadata['version'],
                   'context_files': len(names), 'copy_sources_checked': checked,

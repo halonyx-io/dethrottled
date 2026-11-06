@@ -20,6 +20,7 @@ version actually running. Read [the MCP reference](docs/MCP-REFERENCE.md) or
 2. Keep excerpts compact with `response_format=concise`, `max_chars` and, when
    useful, `focus`. `max_chars` limits text, not the entire response. MCP fetch
    defaults to concise; HTTP fetch and fetch jobs require selecting it explicitly.
+   Large detailed reads warn about concise mode without changing the legacy default.
 3. Inspect `quality`, warnings and partial/truncated state. Retain `document_id`
    and provenance. Readable text does not establish completeness or factual support.
    Use `read_document` for continuation, `inspect_document` for structure and

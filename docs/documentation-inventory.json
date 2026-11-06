@@ -498,6 +498,16 @@
       "review": "Evidence maintainer: preserve observations; append explicit corrections."
     },
     {
+      "path": "evaluations/fetch-edge-cases/README.md",
+      "lifecycle": "harness-guide",
+      "review": "Harness maintainer: check runnable commands and label dated assumptions."
+    },
+    {
+      "path": "evaluations/fetch-edge-cases/results/2026-11-06/REPORT.md",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
       "path": "evaluations/install-showcase/README.md",
       "lifecycle": "harness-guide",
       "review": "Harness maintainer: check runnable commands and label dated assumptions."

@@ -12,8 +12,8 @@ must be classified; unknown paths fail generation/checking.
 | current-guide | 26 |
 | dependency-input | 4 |
 | generated | 4 |
-| harness-guide | 18 |
-| historical-evidence | 46 |
+| harness-guide | 19 |
+| historical-evidence | 47 |
 | source-contract | 124 |
 | third-party-notice | 4 |
 | visual | 8 |
@@ -89,6 +89,7 @@ Harness maintainer: check runnable commands and label dated assumptions.
 | [evaluations/ddg-recovery/README.md](../evaluations/ddg-recovery/README.md) |
 | [evaluations/dependable/README.md](../evaluations/dependable/README.md) |
 | [evaluations/drive-recovery/README.md](../evaluations/drive-recovery/README.md) |
+| [evaluations/fetch-edge-cases/README.md](../evaluations/fetch-edge-cases/README.md) |
 | [evaluations/install-showcase/README.md](../evaluations/install-showcase/README.md) |
 | [evaluations/post160-review/README.md](../evaluations/post160-review/README.md) |
 | [evaluations/read-loop/README.md](../evaluations/read-loop/README.md) |
@@ -126,6 +127,7 @@ Evidence maintainer: preserve observations; append explicit corrections.
 | [evaluations/ddg-recovery/results/2026-11-06/REPORT.md](../evaluations/ddg-recovery/results/2026-11-06/REPORT.md) |
 | [evaluations/dependable/results/2026-11-01/REPORT.md](../evaluations/dependable/results/2026-11-01/REPORT.md) |
 | [evaluations/drive-recovery/results/2026-11-02/REPORT.md](../evaluations/drive-recovery/results/2026-11-02/REPORT.md) |
+| [evaluations/fetch-edge-cases/results/2026-11-06/REPORT.md](../evaluations/fetch-edge-cases/results/2026-11-06/REPORT.md) |
 | [evaluations/install-showcase/results/2026-11-04/ISSUES.md](../evaluations/install-showcase/results/2026-11-04/ISSUES.md) |
 | [evaluations/install-showcase/results/2026-11-04/PUBLICATION.md](../evaluations/install-showcase/results/2026-11-04/PUBLICATION.md) |
 | [evaluations/install-showcase/results/2026-11-04/REPORT.md](../evaluations/install-showcase/results/2026-11-04/REPORT.md) |
