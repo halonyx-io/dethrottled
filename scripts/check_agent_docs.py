@@ -47,7 +47,7 @@ def audit(root):
             for d in node.decorator_list
         )
     }
-    skill = (root / "SKILL.md").read_text()
+    skill = (root / "SKILL-dethrottled.md").read_text()
     for name in sorted(tools):
         if "`" + name + "`" not in text:
             errors.append("Playbook omits MCP tool: " + name)

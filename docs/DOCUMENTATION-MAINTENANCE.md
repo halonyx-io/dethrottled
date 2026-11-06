@@ -43,7 +43,7 @@ report explicitly before adding it to Git or a packaged deployment context.
 | Architecture, hardware or performance claim | Retained protocol/results and chart generator/source | README, evidence/benchmarks, requirements and SVG labels/units/sample sizes |
 | Feature removal | Every caller, flag/env mapping, probe, test, script, package context | All current guides, diagrams, references and historical editorial policy; scan actual built artifacts |
 
-The root `SKILL.md` is the agent client entrypoint. Reconcile its workflow when
+The root `SKILL-dethrottled.md` is the agent client entrypoint. Reconcile its workflow when
 controls change and keep its linked references packaged; `check_agent_docs.py`
 checks that all MCP tools remain discoverable there.
 

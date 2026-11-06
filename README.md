@@ -82,7 +82,7 @@ A normal fetch runs the recovery policy automatically. When content remains
 incomplete, `read_plan` and `workflow.next_actions` expose useful continuations,
 including reuse of the same browser session. Agents can also operate `/drive`
 directly. Read the [agent client playbook](https://github.com/halonyx-io/dethrottled/blob/main/docs/AGENT-PLAYBOOK.md)
-for tool selection and response contracts. The repository [agent skill](SKILL.md)
+for tool selection and response contracts. The repository [agent skill](SKILL-dethrottled.md)
 provides an installable client workflow covering discovery, extraction, documents,
 site mapping, browser control and diagnostics.
 

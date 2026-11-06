@@ -15,7 +15,7 @@ TEXT_SUFFIXES = {".md", ".mdx", ".rst", ".adoc", ".txt"}
 CURRENT = {
     "README.md",
     "AGENTS.md",
-    "SKILL.md",
+    "SKILL-dethrottled.md",
     ".github/pull_request_template.md",
     *(
         "docs/" + name + ".md"

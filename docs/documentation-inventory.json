@@ -53,7 +53,7 @@
       "review": "Change author: reconcile current behaviour, examples and navigation."
     },
     {
-      "path": "SKILL.md",
+      "path": "SKILL-dethrottled.md",
       "lifecycle": "current-guide",
       "review": "Change author: reconcile current behaviour, examples and navigation."
     },

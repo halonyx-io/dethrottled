@@ -580,7 +580,7 @@ def v2_capabilities():
                                 "access", "navigation_recovery", "structured", "structured_status",
                                 "structured_provenance"],
             "mcp_images": "forward native image content blocks to vision-capable models",
-            "skill_repository_path": "SKILL.md",
+            "skill_repository_path": "SKILL-dethrottled.md",
             "startup_check": "Compare initialize.instructions hash with workflow_sha256; "
                              "refresh tools/list after service upgrades.",
             "client_activation": "Server version does not prove a remote plugin revision loaded.",

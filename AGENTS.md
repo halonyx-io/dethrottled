@@ -1,7 +1,7 @@
 # Working on Dethrottled
 
 These instructions are for agents changing this repository. For using the engine
-as a client, start with [SKILL.md](SKILL.md) and
+as a client, start with [SKILL-dethrottled.md](SKILL-dethrottled.md) and
 [the client playbook](docs/AGENT-PLAYBOOK.md). The user's
 current instructions determine task scope; this file supplies repository defaults.
 

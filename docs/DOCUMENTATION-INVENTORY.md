@@ -27,7 +27,7 @@ Change author: reconcile current behaviour, examples and navigation.
 | [.github/pull_request_template.md](https://github.com/halonyx-io/dethrottled/blob/main/.github/pull_request_template.md) |
 | [AGENTS.md](../AGENTS.md) |
 | [README.md](../README.md) |
-| [SKILL.md](../SKILL.md) |
+| [SKILL-dethrottled.md](../SKILL-dethrottled.md) |
 | [docs/ADBLOCK.md](ADBLOCK.md) |
 | [docs/AGENT-PLAYBOOK.md](AGENT-PLAYBOOK.md) |
 | [docs/AGENT-UPGRADES.md](AGENT-UPGRADES.md) |
