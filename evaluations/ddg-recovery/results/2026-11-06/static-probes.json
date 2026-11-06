@@ -1,0 +1,135 @@
+[
+  {
+    "variant": "plain-lite-get",
+    "query": "Were Scott Derrickson and Ed Wood of the same nationality?",
+    "observed_at": 1793941477.2795591,
+    "status": 202,
+    "seconds": 0.12650534929707646,
+    "body_sha256": "40775b93f95fcb96282311ef4a6606c8e7e5c41386757f5604a532a090fa1cc0",
+    "body_chars": 14338,
+    "result_count": 0,
+    "sample_results": [],
+    "challenge_markers": [
+      "anomaly.js",
+      "bots use duckduckgo",
+      "select all squares"
+    ],
+    "retry_after": null
+  },
+  {
+    "variant": "tls-lite-get",
+    "query": "Were Scott Derrickson and Ed Wood of the same nationality?",
+    "observed_at": 1793941482.1773717,
+    "status": 200,
+    "seconds": 0.8874409003183246,
+    "body_sha256": "68935782457e88951c2525881c81b2100e81876389b8860235412c70a5f11304",
+    "body_chars": 24649,
+    "result_count": 10,
+    "sample_results": [
+      {
+        "title": "Scott Derrickson - Wikipedia",
+        "url": "//duckduckgo.com/l/?uddg=https%3A%2F%2Fen.wikipedia.org%2Fwiki%2FScott_Derrickson&rut=6ff8ac975c6be8e6f3fda4f16c4d94a689015df3d10082d327642bc9b35d40d4",
+        "snippet": "ScottDerrickson(born July 16, 1966) is an American filmmaker. He is known for his work in the horror genre, directing films such as The Exorcism of Emily Rose (2005), Sinister (2012), The Black Phone (2022), and its sequel, Black Phone 2 (2025)."
+      },
+      {
+        "title": "Hallucination threshold seems suboptimal \u00b7 Issue #5 - GitHub",
+        "url": "//duckduckgo.com/l/?uddg=https%3A%2F%2Fgithub.com%2Foneal2000%2FDRAGIN%2Fissues%2F5&rut=73233f7067d9440878c96afc6fecf1a5337078c25f0f9b2a270e8cf033c4bfe5",
+        "snippet": "\"WereScottDerricksonandEdWoodofthesamenationality?\" First intermediate result (I added debug outputs) with DRAGIN+BM25: \"ScottDerricksonis an American film director and screenwriter.EdWoodis also an American film director and screenwriter. Therefore, they both are of thesamenationality, which is American. So the answer is yes.\""
+      },
+      {
+        "title": "How Credible Is an Answer From Retrieval-Augmented LLMs ... - OpenReview",
+        "url": "//duckduckgo.com/l/?uddg=https%3A%2F%2Fopenreview.net%2Fpdf%3Fid%3DYsmnPHBbx1f&rut=7a98355d98254223d69a4b1e03c1511b96d4d77aeafa39b50d3e1d1aed063377",
+        "snippet": "Model output No,ScottDerricksonandEdWoodwerenotofthesamenationality.EdWoodQuestion ---> Golden answer Intermediate steps Step 1:ScottDerricksonis an American director, Golden answer was an American filmmaker, actor, writer, producer, and director, born in Woodson, Arkansas in Pulaski County, Arkansas [2]."
+      }
+    ],
+    "challenge_markers": [],
+    "retry_after": null
+  },
+  {
+    "variant": "tls-lite-form",
+    "query": "Were Scott Derrickson and Ed Wood of the same nationality?",
+    "observed_at": 1793941486.8571637,
+    "status": 200,
+    "seconds": 0.6787270489148796,
+    "body_sha256": "d7f85d0f349df217785f45462c1650268cec1565f5ca2d4e4017093a84aebbdc",
+    "body_chars": 23679,
+    "result_count": 10,
+    "sample_results": [
+      {
+        "title": "Scott Derrickson - Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Scott_Derrickson",
+        "snippet": "ScottDerrickson(born July 16, 1966) is an American filmmaker. He is known for his work in the horror genre, directing films such as The Exorcism of Emily Rose (2005), Sinister (2012), The Black Phone (2022), and its sequel, Black Phone 2 (2025)."
+      },
+      {
+        "title": "Hallucination threshold seems suboptimal \u00b7 Issue #5 - GitHub",
+        "url": "https://github.com/oneal2000/DRAGIN/issues/5",
+        "snippet": "\"WereScottDerricksonandEdWoodofthesamenationality?\" First intermediate result (I added debug outputs) with DRAGIN+BM25: \"ScottDerricksonis an American film director and screenwriter.EdWoodis also an American film director and screenwriter. Therefore, they both are of thesamenationality, which is American. So the answer is yes.\""
+      },
+      {
+        "title": "Ed Wood - Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Ed_Wood",
+        "snippet": "Edward DavisWoodJr. (October 10, 1924 - December 10, 1978) was an American filmmaker, actor and novelist. In the 1950s,Wooddirected several low-budget science fiction, crime and horror films that later became cult classics, notably Glen or Glenda (1953), Jail Bait (1954), Bride of the Monster (1955), Plan 9 from Outer Space (1957) and Night of the Ghouls (1959). [a][1] In the 1960s and ..."
+      }
+    ],
+    "challenge_markers": [],
+    "retry_after": null
+  },
+  {
+    "variant": "tls-html-form",
+    "query": "Were Scott Derrickson and Ed Wood of the same nationality?",
+    "observed_at": 1793941491.7344594,
+    "status": 200,
+    "seconds": 0.8765697330236435,
+    "body_sha256": "88ab0ec8090403ca0b36bf9938fe9e104a08aa3c1471815154137cf2e3d3b638",
+    "body_chars": 29672,
+    "result_count": 10,
+    "sample_results": [
+      {
+        "title": "Scott Derrickson - Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Scott_Derrickson",
+        "snippet": "ScottDerrickson(born July 16, 1966) is an American filmmaker. He is known for his work in the horror genre, directing films such as The Exorcism of Emily Rose (2005), Sinister (2012), The Black Phone (2022), and its sequel, Black Phone 2 (2025)."
+      },
+      {
+        "title": "Hallucination threshold seems suboptimal \u00b7 Issue #5 - GitHub",
+        "url": "https://github.com/oneal2000/DRAGIN/issues/5",
+        "snippet": "\"WereScottDerricksonandEdWoodofthesamenationality?\" First intermediate result (I added debug outputs) with DRAGIN+BM25: \"ScottDerricksonis an American film director and screenwriter.EdWoodis also an American film director and screenwriter. Therefore, they both are of thesamenationality, which is American. So the answer is yes.\""
+      },
+      {
+        "title": "How Credible Is an Answer From Retrieval-Augmented LLMs ... - OpenReview",
+        "url": "https://openreview.net/pdf?id=YsmnPHBbx1f",
+        "snippet": "Model output No,ScottDerricksonandEdWoodwerenotofthesamenationality.EdWoodQuestion ---> Golden answer Intermediate steps Step 1:ScottDerricksonis an American director, Golden answer was an American filmmaker, actor, writer, producer, and director, born in Woodson, Arkansas in Pulaski County, Arkansas [2]."
+      }
+    ],
+    "challenge_markers": [],
+    "retry_after": null
+  },
+  {
+    "variant": "tls-html-get",
+    "query": "Were Scott Derrickson and Ed Wood of the same nationality?",
+    "observed_at": 1793941496.5855005,
+    "status": 200,
+    "seconds": 0.8496161550283432,
+    "body_sha256": "de1bf836eea3ad53a99d33c87204a2a8ba875f65934790549eb061cdb4b8292e",
+    "body_chars": 33716,
+    "result_count": 10,
+    "sample_results": [
+      {
+        "title": "Scott Derrickson - Wikipedia",
+        "url": "//duckduckgo.com/l/?uddg=https%3A%2F%2Fen.wikipedia.org%2Fwiki%2FScott_Derrickson&rut=6ff8ac975c6be8e6f3fda4f16c4d94a689015df3d10082d327642bc9b35d40d4",
+        "snippet": "ScottDerrickson(born July 16, 1966) is an American filmmaker. He is known for his work in the horror genre, directing films such as The Exorcism of Emily Rose (2005), Sinister (2012), The Black Phone (2022), and its sequel, Black Phone 2 (2025)."
+      },
+      {
+        "title": "Hallucination threshold seems suboptimal \u00b7 Issue #5 - GitHub",
+        "url": "//duckduckgo.com/l/?uddg=https%3A%2F%2Fgithub.com%2Foneal2000%2FDRAGIN%2Fissues%2F5&rut=73233f7067d9440878c96afc6fecf1a5337078c25f0f9b2a270e8cf033c4bfe5",
+        "snippet": "\"WereScottDerricksonandEdWoodofthesamenationality?\" First intermediate result (I added debug outputs) with DRAGIN+BM25: \"ScottDerricksonis an American film director and screenwriter.EdWoodis also an American film director and screenwriter. Therefore, they both are of thesamenationality, which is American. So the answer is yes.\""
+      },
+      {
+        "title": "How Credible Is an Answer From Retrieval-Augmented LLMs ... - OpenReview",
+        "url": "//duckduckgo.com/l/?uddg=https%3A%2F%2Fopenreview.net%2Fpdf%3Fid%3DYsmnPHBbx1f&rut=7a98355d98254223d69a4b1e03c1511b96d4d77aeafa39b50d3e1d1aed063377",
+        "snippet": "Model output No,ScottDerricksonandEdWoodwerenotofthesamenationality.EdWoodQuestion ---> Golden answer Intermediate steps Step 1:ScottDerricksonis an American director, Golden answer was an American filmmaker, actor, writer, producer, and director, born in Woodson, Arkansas in Pulaski County, Arkansas [2]."
+      }
+    ],
+    "challenge_markers": [],
+    "retry_after": null
+  }
+]

@@ -1,0 +1,20 @@
+{
+  "fixture_sha256": "d367a305828171e7b7da241d27bc2c06e9a466eaa47b1092acd849b7a8b078cd",
+  "fixture_kind": "synthetic_pdf_metadata",
+  "scope": "projection and JSON serialization; not acquisition latency or RSS",
+  "baseline_source_sha256": "b2734929def4bb0a4491362b5bdd8a3f7ffef0600df635ce5b3bc474abf5d2bd",
+  "baseline": {
+    "json_bytes": 1101853,
+    "median_serialize_ms": 26.02256927639246,
+    "peak_python_traced_bytes": 2203844,
+    "repetitions": 7
+  },
+  "candidate": {
+    "json_bytes": 14817,
+    "median_serialize_ms": 2.2600791417062283,
+    "peak_python_traced_bytes": 56064,
+    "repetitions": 7
+  },
+  "canonical_metadata_unchanged": true,
+  "excerpt_handles_warnings_and_page_summaries_retained": true
+}

@@ -1,0 +1,44 @@
+{
+  "core_full_suite": {
+    "passed": 905,
+    "skipped": 15,
+    "deselected": 2,
+    "seconds": 65.1,
+    "platform": "native x86_64"
+  },
+  "focused": {
+    "passed": 41,
+    "seconds": 3.54
+  },
+  "chromium_worker": {
+    "passed": true,
+    "server_retry_after_preserved": true,
+    "rate_limited_upstream_requests": 1,
+    "small_result_counts": [
+      1,
+      2
+    ],
+    "primary_cap": 10,
+    "supplement_cap": 3
+  },
+  "live_autonomous_recoveries": {
+    "total": 6,
+    "final_worker_run": {
+      "actual_202_then_200": 2,
+      "seconds": [
+        1.473,
+        1.33
+      ]
+    },
+    "condition": "experimental plain-primary transport ablation; real public DDG refusals and browser reads"
+  },
+  "source_followups": {
+    "successful": 3,
+    "known_facts_present": 3
+  },
+  "arm64": "not run for this follow-up",
+  "new_dependencies": 0,
+  "new_production_services": 0,
+  "publication": "none",
+  "deployment": "none"
+}

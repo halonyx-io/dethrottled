@@ -217,9 +217,11 @@ def _attempts(meta: dict) -> list:
                         if k in direct}})
     if browser and (browser.get("attempts") or browser.get("breadth")):
         rows.append({"engine": "browser-search",
-                     "count": (browser.get("breadth") or {}).get("browser_count", 0),
+                     "count": browser.get("browser_count",
+                                          (browser.get("breadth") or {}).get("browser_count", 0)),
                      **({"breadth": browser["breadth"]} if browser.get("breadth") else {}),
-                     "status": browser.get("status", "unknown"),
+                     "status": browser.get("browser_status", browser.get("status", "unknown")),
+                     "reason": browser.get("reason"),
                      "elapsed_ms": browser.get("elapsed_ms", 0),
                      "queue_ms": browser.get("queue_ms", 0),
                      "unresponsive": []})

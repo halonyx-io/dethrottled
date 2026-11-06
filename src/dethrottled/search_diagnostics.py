@@ -19,6 +19,8 @@ def outcome(count, report):
     if count:
         return "degraded" if status not in _SUCCESS or report.get("upstream_status") in {
             "cooldown", "recovery_in_progress", "unavailable"} else "available"
+    if report.get("upstream_status") in {"cooldown", "recovery_in_progress", "unavailable"}:
+        return "unavailable"
     if status in _SUCCESS:
         return "empty"
     if status in {"unknown", "thin_or_empty", "indeterminate"}:
@@ -87,8 +89,11 @@ def readiness(*, configured):
             age = max(0, time.time() - row.get("observed_at", 0)) if row else None
             stale = age is None or age >= OBSERVATION_TTL
             availability = row.get("availability", "unknown") if not stale else "unknown"
-            components[name] = dict(row, availability=availability, stale=stale,
-                                    age_seconds=round(age, 3) if age is not None else None)
+            components[name] = dict(
+                row, availability=availability, stale=stale,
+                observation_state="unobserved" if age is None else "stale" if stale else "current",
+                last_observed_availability=row.get("availability", "unknown"),
+                age_seconds=round(age, 3) if age is not None else None)
         initializing = not bool(_OBSERVATIONS)
     primary = components["web"]
     primary_ready = (primary["availability"] in {"available", "empty", "degraded"}

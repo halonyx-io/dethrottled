@@ -1,0 +1,47 @@
+{
+  "full_suite": {
+    "passed": 903,
+    "skipped": 15,
+    "deselected": 2,
+    "seconds": 66.45,
+    "platform": "native x86_64"
+  },
+  "focused": {
+    "passed": 39,
+    "seconds": 3.51
+  },
+  "before_runtime_fixes": {
+    "failed": 4,
+    "passed": 31,
+    "reason": "two sparse cases and two refusal-truth cases"
+  },
+  "live_autonomous_recovery": {
+    "initial": {
+      "queries": 2,
+      "actual_202_then_200": 2,
+      "seconds": [
+        1.453,
+        1.561
+      ]
+    },
+    "final_tree_repeat": {
+      "queries": 2,
+      "actual_202_then_200": 2,
+      "seconds": [
+        1.501,
+        1.538
+      ]
+    },
+    "condition": "plain-primary transport ablation; all responses real; not shipped default"
+  },
+  "source_followups": {
+    "attempted": 3,
+    "successful": 3,
+    "known_fact_terms_present": 3
+  },
+  "arm64": "not run for this follow-up",
+  "new_dependencies": 0,
+  "new_production_services": 0,
+  "publication": "none",
+  "deployment": "none"
+}

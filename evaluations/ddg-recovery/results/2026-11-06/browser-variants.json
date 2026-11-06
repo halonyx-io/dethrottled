@@ -1,0 +1,124 @@
+[
+  {
+    "variant": "lite-get",
+    "attempt": {
+      "engine": "ddg-lite",
+      "status": 200,
+      "reason": null,
+      "results": [
+        {
+          "title": "Scott Derrickson - Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/Scott_Derrickson",
+          "snippet": "Scott Derrickson (born July 16, 1966) is an American filmmaker. He is known for his work in the horror genre, directing films such as The Exorcism of Emily Rose (2005), Sinister (2012), The Black Phone (2022), and its sequel, Black Phone 2 (2025).",
+          "engine": "ddg-lite"
+        },
+        {
+          "title": "Hallucination threshold seems suboptimal \u00b7 Issue #5 - GitHub",
+          "url": "https://github.com/oneal2000/DRAGIN/issues/5",
+          "snippet": "\"Were Scott Derrickson and Ed Wood of the same nationality?\" First intermediate result (I added debug outputs) with DRAGIN+BM25: \"Scott Derrickson is an American film director and screenwriter. Ed Wood is also an American film director and screenwriter. Therefore, they both are of the same nationality, which is American. So the answer is yes.\"",
+          "engine": "ddg-lite"
+        },
+        {
+          "title": "How Credible Is an Answer From Retrieval-Augmented LLMs ... - OpenReview",
+          "url": "https://openreview.net/pdf?id=YsmnPHBbx1f",
+          "snippet": "Model output No, Scott Derrickson and Ed Wood were not of the same nationality. Ed Wood Question ---> Golden answer Intermediate steps Step 1: Scott Derrickson is an American director, Golden answer was an American filmmaker, actor, writer, producer, and director, born in Woodson, Arkansas in Pulaski County, Arkansas [2].",
+          "engine": "ddg-lite"
+        },
+        {
+          "title": "Ed Wood - Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/Ed_Wood",
+          "snippet": "Edward Davis Wood Jr. (October 10, 1924 - December 10, 1978) was an American filmmaker, actor and novelist. In the 1950s, Wood directed several low-budget science fiction, crime and horror films that later became cult classics, notably Glen or Glenda (1953), Jail Bait (1954), Bride of the Monster (1955), Plan 9 from Outer Space (1957) and Night of the Ghouls (1959). [a][1] In the 1960s and ...",
+          "engine": "ddg-lite"
+        },
+        {
+          "title": "M3GQA/newMMDataset/HotpotQA/dev.json at main - GitHub",
+          "url": "https://github.com/GuChongAn/M3GQA/blob/main/newMMDataset/HotpotQA/dev.json",
+          "snippet": "\"question\": \"Were Scott Derrickson and Ed Wood of the same nationality?\",",
+          "engine": "ddg-lite"
+        },
+        {
+          "title": "Scott Derrickson Biography: Age, Height, Parents, Siblings, Ethnicity ...",
+          "url": "https://www.biographyhive.com/biography/actor/scott-derrickson-biography-age-height-parents-siblings-ethnicity-wife-movies-net-worth-religion-instagram/",
+          "snippet": "Relationship: Married Net Worth: $10 million USD Early Life and Education Scott Derrickson was born on July 16, 1966, in Denver, Colorado, to Mr. Derrickson and Mrs. Derrickson. He grew up in a working-class neighbourhood in the Denver area. His ethnicity is Caucasian. He has siblings whose names are not publicly disclosed.",
+          "engine": "ddg-lite"
+        },
+        {
+          "title": "HotpotQA Dataset Format | nju-websoft/KG2RAG | DeepWiki",
+          "url": "https://deepwiki.com/nju-websoft/KG2RAG/6.1-hotpotqa-dataset-format",
+          "snippet": "Example: Question: \"Were Scott Derrickson and Ed Wood of the same nationality?\" Answer: \"yes\" Bridge Questions Type identifier: \"bridge\" Bridge questions require finding an intermediate entity to connect the question to the answer through multi-hop reasoning. Example:",
+          "engine": "ddg-lite"
+        },
+        {
+          "title": "nlpproject2023/Sentences_old \u00b7 Datasets at Hugging Face",
+          "url": "https://huggingface.co/datasets/nlpproject2023/Sentences_old",
+          "snippet": "We're on a journey to advance and democratize artificial intelligence through open source and open science.",
+          "engine": "ddg-lite"
+        },
+        {
+          "title": "Biography of Scott Derrickson",
+          "url": "https://www.biographies.net/people/en/scott_derrickson",
+          "snippet": "Read the full biography of Scott Derrickson, including facts, birthday, life story, profession, family and more.",
+          "engine": "ddg-lite"
+        },
+        {
+          "title": "NVIDIA Text Embedding Model Tops MTEB Leaderboard",
+          "url": "https://developer.nvidia.com/blog/nvidia-text-embedding-model-tops-mteb-leaderboard/",
+          "snippet": "Input-Question: Were Scott Derrickson and Ed Wood of the same nationality? Target-Chunk: Scott Derrickson (born July 16, 1966) is an American director, screenwriter and producer.",
+          "engine": "ddg-lite"
+        }
+      ],
+      "pages": 1,
+      "elapsed_s": 0.883
+    }
+  },
+  {
+    "variant": "html-form",
+    "status": 200,
+    "seconds": 0.9912119670771062,
+    "result_count": 10,
+    "sample_results": [
+      {
+        "title": "Scott Derrickson - Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Scott_Derrickson",
+        "snippet": "Scott Derrickson (born July 16, 1966) is an American filmmaker. He is known for his work in the horror genre, directing films such as The Exorcism of Emily Rose (2005), Sinister (2012), The Black Phone (2022), and its sequel, Black Phone 2 (2025).",
+        "engine": "ddg-html"
+      },
+      {
+        "title": "Hallucination threshold seems suboptimal \u00b7 Issue #5 - GitHub",
+        "url": "https://github.com/oneal2000/DRAGIN/issues/5",
+        "snippet": "\"Were Scott Derrickson and Ed Wood of the same nationality?\" First intermediate result (I added debug outputs) with DRAGIN+BM25: \"Scott Derrickson is an American film director and screenwriter. Ed Wood is also an American film director and screenwriter. Therefore, they both are of the same nationality, which is American. So the answer is yes.\"",
+        "engine": "ddg-html"
+      },
+      {
+        "title": "How Credible Is an Answer From Retrieval-Augmented LLMs ... - OpenReview",
+        "url": "https://openreview.net/pdf?id=YsmnPHBbx1f",
+        "snippet": "Model output No, Scott Derrickson and Ed Wood were not of the same nationality. Ed Wood Question ---> Golden answer Intermediate steps Step 1: Scott Derrickson is an American director, Golden answer was an American filmmaker, actor, writer, producer, and director, born in Woodson, Arkansas in Pulaski County, Arkansas [2].",
+        "engine": "ddg-html"
+      }
+    ],
+    "body_sha256": "a4b5a16174adcba72455b7f587ae43e0a5262402540102afc05f41c36c8116ee",
+    "challenge_markers": []
+  },
+  {
+    "variant": "js-main",
+    "status": 200,
+    "seconds": 1.353681227657944,
+    "result_count": 10,
+    "sample_results": [
+      {
+        "title": "Scott Derrickson - Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Scott_Derrickson"
+      },
+      {
+        "title": "Hallucination threshold seems suboptimal \u00b7 Issue #5 - GitHub",
+        "url": "https://github.com/oneal2000/DRAGIN/issues/5"
+      },
+      {
+        "title": "How Credible Is an Answer From Retrieval-Augmented LLMs ... - OpenReview",
+        "url": "https://openreview.net/pdf?id=YsmnPHBbx1f"
+      }
+    ],
+    "body_sha256": "199ede586a16802a4ca54e707bdd771447b6ccaa374e3b4e83add3f4e7568b74",
+    "challenge_markers": []
+  }
+]

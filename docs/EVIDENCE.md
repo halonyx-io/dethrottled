@@ -90,3 +90,18 @@ The [post-1.6.0 follow-up](../evaluations/post160-review/results/2026-11-06/REPO
 adds unchanged-refresh CPU measurements, real socket transfers during rule
 changes, MCP admission framing and crawl/job contract checks. It includes the
 cumulative change summary and the gates outstanding at the time of that experiment.
+
+## 1.6.2 concise-response and discovery fixes
+
+The [post-1.6.1 investigation](../evaluations/compact-discovery/results/2026-11-06/REPORT.md)
+records paired PDF response serialization, real Chromium sparse-query recovery,
+readiness diagnostics and the limits of the live observations. The
+[offline harness](../evaluations/compact-discovery/README.md) reproduces the
+controlled cases without production state or live-provider traffic. The initial observations alone do not prove hostile-source recovery; the
+subsequent DDG experiment below states its live refusal conditions explicitly.
+
+The subsequent [DDG refusal investigation](../evaluations/ddg-recovery/results/2026-11-06/REPORT.md)
+records six real 202-to-200 automatic recoveries under an explicitly plain-primary
+transport ablation, plus normally configured TLS and browser controls. This proves
+the observed request-profile recovery, not universal recovery from an IP-wide ban.
+Its [harness](../evaluations/ddg-recovery/README.md) and raw attempts are retained.

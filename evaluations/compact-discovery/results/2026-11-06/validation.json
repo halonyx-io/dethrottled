@@ -1,0 +1,35 @@
+{
+  "platform": "native x86_64",
+  "network_tests_excluded": true,
+  "final_full_suite": {
+    "passed": 890,
+    "skipped": 15,
+    "deselected": 2,
+    "seconds": 65.25
+  },
+  "focused_suite_before_final_fixture_expansion": {
+    "passed": 117,
+    "seconds": 3.85
+  },
+  "chromium_local_fixtures": true,
+  "mcp_transport": true,
+  "docs": {
+    "pages": 80,
+    "links": 571,
+    "examples": 48,
+    "requests": 7,
+    "inventory_surfaces": 226,
+    "agent_route_tool_action_coverage": true,
+    "generated_references_match": true
+  },
+  "ruff": "passed",
+  "git_diff_check": "passed",
+  "original_failure": {
+    "failed": 2,
+    "reason": "Old HTTP response test double lacked ok/status_code when diagnostics assertions were added",
+    "fixed_by": "Complete the HTTP response fixture; runtime behavior unchanged"
+  },
+  "arm64": "not run for this candidate",
+  "publication": "none",
+  "deployment": "none"
+}

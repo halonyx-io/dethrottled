@@ -671,3 +671,44 @@ def test_corpus_preserves_all_pdf_pages_with_ocr_provenance():
     assert "Native quantity 47" in result[0][1]["content"]
     assert "OCR quantity" in result[0][1]["content"]
     assert result[0][1]["extraction"]["pages"][1]["method"] == "ocr"
+
+
+def test_concise_pdf_omits_full_document_blocks_without_mutating_evidence():
+    from copy import deepcopy
+
+    from dethrottled.content import compact_row
+
+    row = {
+        "content": "Requested evidence excerpt.", "document_id": "doc_retained",
+        "document_chars": 466034, "next_offset": 8000, "truncated": True,
+        "source_partial": False, "warnings": ["verify inferred tables"],
+        "extraction": {"total_pages": 194, "partial": False, "next_page": None,
+                       "native_table_scan": {"partial": True},
+                       "pages": [{"page": n, "method": "text", "text_chars": 5000,
+                                  "layout_may_be_incomplete": True,
+                                  "text_layer_blocks": [{"bbox": [1, 2, 3, 4],
+                                                         "text": "Evidence " * 500}]}
+                                 for n in range(1, 195)]},
+    }
+    before = deepcopy(row)
+    compact = compact_row(row)
+    assert row == before
+    assert len(json.dumps(compact)) < len(json.dumps(row)) / 10
+    assert compact["content"] == row["content"]
+    for field in ("document_id", "document_chars", "next_offset", "truncated",
+                  "source_partial", "warnings"):
+        assert compact[field] == row[field]
+    assert len(compact["extraction"]["pages"]) == 194
+    assert all(p["text_layer_block_count"] == 1 for p in compact["extraction"]["pages"])
+    assert compact["extraction"]["native_table_scan"] == row["extraction"]["native_table_scan"]
+    assert compact["extraction"]["presentation"]["omitted_text_layer_blocks"] == 194
+    assert compact_row(compact) == compact
+
+
+def test_concise_keeps_other_document_page_metadata():
+    from dethrottled.content import compact_row
+
+    row = {"content": "OCR evidence", "extraction": {"pages": [
+        {"page": 1, "method": "ocr", "language": "eng", "warnings": ["verify pixels"]},
+        {"page": 2, "method": "ocr", "text_layer_blocks": None}]}}
+    assert compact_row(row) == row
