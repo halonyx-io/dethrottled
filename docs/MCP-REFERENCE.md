@@ -47,7 +47,7 @@ Read pages you already have URLs for.
 | `render_delay` | Annotated[float, Field(ge=0, le=5)] | 0.5 |
 | `headed_fallback` | bool | False |
 | `focus` | str | '' |
-| `response_format` | Literal['detailed', 'concise'] | 'detailed' |
+| `response_format` | Literal['detailed', 'concise'] | 'concise' |
 | `recovery` | Literal['auto', 'manual'] | 'auto' |
 | `ocr_language` | str | '' |
 | `document_mode` | Literal['auto', 'native', 'layout'] | 'auto' |
@@ -104,7 +104,7 @@ Gather cited sources and relevant excerpts across multiple searches.
 | `profile` | Literal['web', 'balanced', 'thorough', 'academic', 'news'] | 'web' |
 | `follow_assets` | bool | True |
 | `categories` | Literal['', 'news', 'academic'] | '' |
-| `response_format` | Literal['detailed', 'concise'] | 'detailed' |
+| `response_format` | Literal['detailed', 'concise'] | 'concise' |
 ## drive
 
 Operate a stateful browser using bounded steps and structured evidence.
@@ -133,7 +133,7 @@ Reopen retained source evidence without another origin request.
 | `focus` | str | '' |
 | `offset` | int | 0 |
 | `max_chars` | Annotated[int, Field(ge=1, le=1000000)] | 12000 |
-| `response_format` | Literal['detailed', 'concise'] | 'detailed' |
+| `response_format` | Literal['detailed', 'concise'] | 'concise' |
 | `reparse` | bool | False |
 | `row_start` | int | 1 |
 | `row_end` | int \| None | None |

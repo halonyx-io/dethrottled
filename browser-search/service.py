@@ -10,12 +10,14 @@ import base64
 import hashlib
 import ipaddress
 import json
+import math
 import os
 import re
 import secrets
 import time
 from collections import Counter, deque
 from contextlib import asynccontextmanager, suppress
+from email.utils import parsedate_to_datetime
 from pathlib import Path
 from typing import Literal
 from urllib.parse import parse_qs, quote_plus, unquote, urljoin, urlparse
@@ -54,6 +56,7 @@ ACTIVE = 0
 WAITING = 0
 STATS = Counter()
 LATENCIES = deque(maxlen=200)
+RECENT_FAILURES = deque(maxlen=20)
 FAILURE_MARKERS = (
     "unusual traffic", "verifying you're not a bot", "verify you are human",
     "captcha", "just a moment", "access denied", "automated queries",
@@ -135,7 +138,20 @@ async def _extract(page, engine: str, query: str, limit: int = 10) -> list[dict]
 
 
 def _usable(rows: list[dict]) -> bool:
-    return len(rows) >= 3 and sum(len(r["snippet"]) >= 25 for r in rows) >= 2
+    # Narrow queries legitimately return fewer than three choices. Only rows
+    # with substantive snippets count; empty/challenge pages remain failures.
+    return any(len(r.get("snippet", "").strip()) >= 25 for r in rows)
+
+
+def _retry_after(value):
+    try:
+        seconds = float(value)
+    except (TypeError, ValueError):
+        try:
+            seconds = parsedate_to_datetime(value).timestamp() - time.time()
+        except (TypeError, ValueError, OverflowError):
+            return 0
+    return max(0, min(86400, seconds)) if math.isfinite(seconds) else 0
 
 
 async def _engine(context, engine: str, query: str, delay: float, limit: int = 10) -> dict:
@@ -149,19 +165,31 @@ async def _engine(context, engine: str, query: str, delay: float, limit: int = 1
     prefix, selector, _ = ENGINES[engine]
     attempt = {"engine": engine, "status": None, "reason": None, "results": [], "pages": 0}
     seen = set()
+
+    def navigation_response(response):
+        # Chromium may reject navigation after receiving an HTTP refusal.
+        # Preserve that response instead of reducing it to a transport error.
+        if response.request.is_navigation_request() and response.frame == page.main_frame:
+            attempt["status"] = response.status
+            if response.status in {202, 429, 503}:
+                attempt["retry_after_seconds"] = _retry_after(response.headers.get("retry-after"))
+
+    page.on("response", navigation_response)
     try:
         response = await page.goto(prefix + quote_plus(query), wait_until="domcontentloaded",
                                    timeout=int(ENGINE_TIMEOUT * 1000))
         deadline = started + ENGINE_TIMEOUT
         while time.monotonic() < deadline:
             attempt["status"] = response.status if response else None
+            if response and attempt["status"] in {202, 429, 503}:
+                attempt["retry_after_seconds"] = _retry_after(response.headers.get("retry-after"))
             if attempt["status"] != 200:
                 attempt["reason"] = "http_" + str(attempt["status"])
                 break
             if "/sorry/" in page.url or "/captcha" in page.url:
                 attempt["reason"] = "challenge_page"
                 break
-            if await page.locator(selector).count() >= 3:
+            if await page.locator(selector).count() >= 1:
                 rows = await asyncio.wait_for(_extract(page, engine, query, limit), timeout=2.0)
                 added = [row for row in rows if row["url"] not in seen]
                 seen.update(row["url"] for row in added)
@@ -184,7 +212,9 @@ async def _engine(context, engine: str, query: str, delay: float, limit: int = 1
         attempt["reason"] = "cancelled"
         raise
     except Exception as exc:
-        attempt["reason"] = type(exc).__name__ + ": " + str(exc)[:100]
+        attempt["reason"] = ("http_" + str(attempt["status"])
+                             if attempt["status"] in {202, 429, 503}
+                             else type(exc).__name__ + ": " + str(exc)[:100])
     finally:
         attempt["elapsed_s"] = round(time.monotonic() - started, 3)
         try:
@@ -200,7 +230,7 @@ async def _race(browser, query: str, limit: int = 10) -> dict:
     context = await browser.new_context()
     pending = {asyncio.create_task(_engine(context, engine, query, i * STAGGER, limit)): engine
                for i, engine in enumerate(ORDER)}
-    attempts, winner = [], None
+    attempts, winner, backoff = [], None, False
     try:
         while pending and time.monotonic() - started < ENGINE_TIMEOUT + 2:
             remaining = max(0.1, ENGINE_TIMEOUT + 2 - (time.monotonic() - started))
@@ -220,7 +250,8 @@ async def _race(browser, query: str, limit: int = 10) -> dict:
                 if _usable(attempt["results"]):
                     if winner is None:
                         winner = attempt
-            if winner:
+            backoff = any(a.get("retry_after_seconds", 0) > 0 for a in attempts)
+            if winner or backoff:
                 break
     finally:
         cancelled = list(pending.values())
@@ -229,7 +260,8 @@ async def _race(browser, query: str, limit: int = 10) -> dict:
         if pending:
             await asyncio.gather(*pending, return_exceptions=True)
         attempts.extend({"engine": engine, "status": None,
-                         "reason": "cancelled_by_winner" if winner else "race_timeout",
+                         "reason": "cancelled_by_winner" if winner else "retry_after" if backoff
+                         else "race_timeout",
                          "count": 0} for engine in cancelled)
         await context.close()
     return {"ok":winner is not None,
@@ -976,7 +1008,7 @@ async def health():
 async def metrics():
     return {"active":ACTIVE,"waiting":WAITING,"max_active":3,
             "max_waiting":MAX_WAITING,"counts":dict(STATS),
-            "recent_latency_s":list(LATENCIES)}
+            "recent_latency_s":list(LATENCIES), "recent_failures":list(RECENT_FAILURES)}
 
 
 @app.post("/pace")
@@ -1022,8 +1054,17 @@ async def search(body: SearchRequest):
                 STATS["failure_"+str(attempt["reason"]).split(":",1)[0]] += 1
         LATENCIES.append(result["service_s"])
         if not result["ok"]:
+            # Bounded diagnostics, deliberately excluding queries and page text.
+            failures = [{"engine": a.get("engine"), "status": a.get("status"),
+                         "reason": (a.get("reason") or "").split(":", 1)[0][:80],
+                         "count": a.get("count", 0)} for a in result["attempts"]]
+            RECENT_FAILURES.append({"observed_at": time.time(),
+                                    "service_s": result["service_s"],
+                                    "queue_s": result["queue_s"], "attempts": failures})
             raise HTTPException(503, detail={"reason":"no_usable_engine",
-                                             "attempts":result["attempts"]})
+                                             "attempts":result["attempts"],
+                                             "service_s":result["service_s"],
+                                             "queue_s":result["queue_s"]})
         return result
     finally:
         async with STATE_LOCK:

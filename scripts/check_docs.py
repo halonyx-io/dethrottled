@@ -34,6 +34,8 @@ GUIDES = {
     "docs/DEPENDABLE-WORKFLOWS.md",
     "docs/AGENT-UPGRADES.md",
     "docs/EVIDENCE.md",
+    "evaluations/compact-discovery/README.md",
+    "evaluations/ddg-recovery/README.md",
     "docs/READ-PLANNER.md",
 }
 FENCE = re.compile(r"^```([^\n]*)\n(.*?)^```\s*$", re.M | re.S)

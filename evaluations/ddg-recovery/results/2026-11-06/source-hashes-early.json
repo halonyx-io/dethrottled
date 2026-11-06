@@ -1,0 +1,14 @@
+{
+  "base_commit": "f5abf7b9c034fc55ee98a542c707bd8a6fe25647",
+  "state": "uncommitted candidate; prior concise/discovery changes included",
+  "sha256": {
+    "src/dethrottled/discovery.py": "6b1cd3ea119f8755b22f89cecb23dc6545a902603f693d2890c8ba64540c6817",
+    "src/dethrottled/search.py": "78ab71c6af3917a16aba12d738440aa89afcd4d0629fab857cd863d07c91b9e9",
+    "src/dethrottled/search_diagnostics.py": "1fd429d04187ac86bc9d3e027aac30f25d309308b7d41f889d79dc83e3327d80",
+    "tests/test_discovery_recovery.py": "32af7741881cbbbdbc6de2a92d94862628d8922a7cb3857a64f48970c919f731",
+    "tests/test_search_observability.py": "9f45efc9e83c2c1bfe2dd75f8dfd65084462a37eb9c52f1565d64f3645af14e5",
+    "evaluations/ddg-recovery/prove.py": "772b41dfdc09b50a9a01e8bce8f1eea912e51f6277d843ab48d19a404bdc952a",
+    "evaluations/ddg-recovery/probe_static.py": "30857c1b719f57e7260c4601846fb5d692bc2a220561519881f71be3e0b38429",
+    "evaluations/ddg-recovery/probe_browser.py": "772d7786e3ca1c5b1cfc724938da126bc2c96d53dce945e2def0c8eaa29765ca"
+  }
+}

@@ -83,6 +83,9 @@ async def verify(url, rest_url, token, registry):
                 assert init.instructions == INSTRUCTIONS
                 listing = await client.list_tools()
                 assert len(listing.tools) == 20
+                for name in ('fetch', 'research', 'read_document'):
+                    tool = next(t for t in listing.tools if t.name == name)
+                    assert tool.inputSchema['properties']['response_format']['default'] == 'concise'
                 drive = next(t for t in listing.tools if t.name == 'drive')
                 assert all(s in json.dumps(drive.inputSchema) for s in
                            ['scroll', 'read_state', 'expand_details'])

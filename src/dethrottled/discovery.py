@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 import threading
 import time
 from email.utils import parsedate_to_datetime
@@ -68,7 +69,8 @@ def tls_search(query, *, max_items=8, cache=None, diagnostics=None, worker=""):
                     seconds = parsedate_to_datetime(retry).timestamp() - time.time()
                 except (ValueError, TypeError, OverflowError):
                     seconds = 0
-            attempt["retry_after_seconds"] = max(0, min(86400, seconds))
+            attempt["retry_after_seconds"] = (max(0, min(86400, seconds))
+                                              if math.isfinite(seconds) else 0)
         challenged = any(x in html[:20000].lower() for x in (
             "anomaly.js", "bots use duckduckgo", "challenge-platform"))
         attempt["refusal"] = challenged or response.status_code in {202, 429}
@@ -94,7 +96,7 @@ def tls_search(query, *, max_items=8, cache=None, diagnostics=None, worker=""):
                 continue
             seen.add(target)
             rows.append(row)
-        if len(rows) < 3 or sum(len(r["snippet"]) >= 25 for r in rows) < 2:
+        if not any(len(r["snippet"].strip()) >= 25 for r in rows):
             attempt["status"] = "thin_or_empty"
             return []
         attempt.update(status="ok", count=len(rows))

@@ -1,0 +1,554 @@
+{
+  "scope": "two historical refusal queries; one live acquisition each",
+  "adblock": {
+    "enabled": true,
+    "available": true,
+    "sha256": "60d08482e3de2686856a32e7ef5c05e6723d8f1fa659caed80e7effeac08dbfa"
+  },
+  "results": [
+    {
+      "query": "Were Scott Derrickson and Ed Wood of the same nationality?",
+      "query_sha256": "5dda555f7bbde715cefa2f2ba0d287c9215cca56b33fe5b0c4c1bb7fc8362c48",
+      "seconds": 1.037664778996259,
+      "diagnostics": {
+        "direct": {
+          "engine": "tls-ddg-lite",
+          "status": "ok",
+          "count": 10,
+          "http_status": 200,
+          "refusal": false,
+          "elapsed_ms": 1037
+        },
+        "status": "ok",
+        "attempts": [],
+        "count": 10,
+        "families": [
+          "ddg"
+        ]
+      },
+      "tls_observations": [
+        {
+          "host": "lite.duckduckgo.com",
+          "status": 200,
+          "body_sha256": "704741327e1c6a51eb3ce8857dbff0ce5e24f72f5a32b9dd2198059bbe7d9eac",
+          "challenge_markers": []
+        }
+      ],
+      "ddg_results": [
+        {
+          "title": "Scott Derrickson - Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/Scott_Derrickson",
+          "snippet": "ScottDerrickson(born July 16, 1966) is an American filmmaker. He is known for his work in the horror genre, directing films such as The Exorcism of Emily Rose (2005), Sinister (2012), The Black Phone (2022), and its sequel, Black Phone 2 (2025).",
+          "engine": "web-tls-ddg-lite",
+          "publishedDate": "",
+          "cached": false
+        },
+        {
+          "title": "Hallucination threshold seems suboptimal \u00b7 Issue #5 - GitHub",
+          "url": "https://github.com/oneal2000/DRAGIN/issues/5",
+          "snippet": "\"WereScottDerricksonandEdWoodofthesamenationality?\" First intermediate result (I added debug outputs) with DRAGIN+BM25: \"ScottDerricksonis an American film director and screenwriter.EdWoodis also an American film director and screenwriter. Therefore, they both are of thesamenationality, which is American. So the answer is yes.\"",
+          "engine": "web-tls-ddg-lite",
+          "publishedDate": "",
+          "cached": false
+        },
+        {
+          "title": "How Credible Is an Answer From Retrieval-Augmented LLMs ... - OpenReview",
+          "url": "https://openreview.net/pdf?id=YsmnPHBbx1f",
+          "snippet": "Model output No,ScottDerricksonandEdWoodwerenotofthesamenationality.EdWoodQuestion ---> Golden answer Intermediate steps Step 1:ScottDerricksonis an American director, Golden answer was an American filmmaker, actor, writer, producer, and director, born in Woodson, Arkansas in Pulaski County, Arkansas [2].",
+          "engine": "web-tls-ddg-lite",
+          "publishedDate": "",
+          "cached": false
+        },
+        {
+          "title": "Ed Wood - Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/Ed_Wood",
+          "snippet": "Edward DavisWoodJr. (October 10, 1924 - December 10, 1978) was an American filmmaker, actor and novelist. In the 1950s,Wooddirected several low-budget science fiction, crime and horror films that later became cult classics, notably Glen or Glenda (1953), Jail Bait (1954), Bride of the Monster (1955), Plan 9 from Outer Space (1957) and Night of the Ghouls (1959). [a][1] In the 1960s and ...",
+          "engine": "web-tls-ddg-lite",
+          "publishedDate": "",
+          "cached": false
+        },
+        {
+          "title": "M3GQA/newMMDataset/HotpotQA/dev.json at main - GitHub",
+          "url": "https://github.com/GuChongAn/M3GQA/blob/main/newMMDataset/HotpotQA/dev.json",
+          "snippet": "\"question\": \"WereScottDerricksonandEdWoodofthesamenationality?\",",
+          "engine": "web-tls-ddg-lite",
+          "publishedDate": "",
+          "cached": false
+        },
+        {
+          "title": "Scott Derrickson Biography: Age, Height, Parents, Siblings, Ethnicity ...",
+          "url": "https://www.biographyhive.com/biography/actor/scott-derrickson-biography-age-height-parents-siblings-ethnicity-wife-movies-net-worth-religion-instagram/",
+          "snippet": "Relationship: Married Net Worth: $10 million USD Early Life and EducationScottDerricksonwas born on July 16, 1966, in Denver, Colorado, to Mr.DerricksonandMrs.Derrickson. He grew up in a working-class neighbourhood in the Denver area. His ethnicity is Caucasian. He has siblings whose names are not publicly disclosed.",
+          "engine": "web-tls-ddg-lite",
+          "publishedDate": "",
+          "cached": false
+        },
+        {
+          "title": "HotpotQA Dataset Format | nju-websoft/KG2RAG | DeepWiki",
+          "url": "https://deepwiki.com/nju-websoft/KG2RAG/6.1-hotpotqa-dataset-format",
+          "snippet": "Example: Question: \"WereScottDerricksonandEdWoodofthesamenationality?\" Answer: \"yes\" Bridge Questions Type identifier: \"bridge\" Bridge questions require finding an intermediate entity to connect the question to the answer through multi-hop reasoning. Example:",
+          "engine": "web-tls-ddg-lite",
+          "publishedDate": "",
+          "cached": false
+        },
+        {
+          "title": "nlpproject2023/Sentences_old \u00b7 Datasets at Hugging Face",
+          "url": "https://huggingface.co/datasets/nlpproject2023/Sentences_old",
+          "snippet": "We'reon a journey to advance and democratize artificial intelligence through open source and open science.",
+          "engine": "web-tls-ddg-lite",
+          "publishedDate": "",
+          "cached": false
+        },
+        {
+          "title": "Biography of Scott Derrickson",
+          "url": "https://www.biographies.net/people/en/scott_derrickson",
+          "snippet": "Read the full biography ofScottDerrickson, including facts, birthday, life story, profession, family and more.",
+          "engine": "web-tls-ddg-lite",
+          "publishedDate": "",
+          "cached": false
+        },
+        {
+          "title": "NVIDIA Text Embedding Model Tops MTEB Leaderboard",
+          "url": "https://developer.nvidia.com/blog/nvidia-text-embedding-model-tops-mteb-leaderboard/",
+          "snippet": "Input-Question: WereScottDerricksonandEdWoodofthesamenationality?Target-Chunk:ScottDerrickson(born July 16, 1966) is an American director, screenwriter and producer.",
+          "engine": "web-tls-ddg-lite",
+          "publishedDate": "",
+          "cached": false
+        }
+      ],
+      "same_request_tls_refusal_then_ddg_read": false,
+      "claim": "DDG available now; no same-request refusal recovery proven"
+    },
+    {
+      "query": "Why are RGB and CMYK used for different display and printing workflows?",
+      "query_sha256": "6364b8890143dfd95b56b69bd85bffe5af45024fb365265023cc6b86f59f4b22",
+      "seconds": 0.6444476251490414,
+      "diagnostics": {
+        "direct": {
+          "engine": "tls-ddg-lite",
+          "status": "ok",
+          "count": 10,
+          "http_status": 200,
+          "refusal": false,
+          "elapsed_ms": 643
+        },
+        "status": "ok",
+        "attempts": [],
+        "count": 10,
+        "families": [
+          "ddg"
+        ]
+      },
+      "tls_observations": [
+        {
+          "host": "lite.duckduckgo.com",
+          "status": 200,
+          "body_sha256": "1694ea3375d2adeb5fcea66481f128094be23b68da99d1da3a054fd83ddf3bcb",
+          "challenge_markers": []
+        }
+      ],
+      "ddg_results": [
+        {
+          "title": "RGB vs. CMYK: Why Colors Look Different in Print",
+          "url": "https://davisdirect.com/2026/09/07/rgb-vs-cmyk-colors-printing/",
+          "snippet": "Learn the difference betweenRGBandCMYK,whycolors can change when printed, and how to prepare files for accurate commercialprinting.",
+          "engine": "web-tls-ddg-lite",
+          "publishedDate": "",
+          "cached": false
+        },
+        {
+          "title": "CMYK vs RGB: What's the Difference and When to Use Each",
+          "url": "https://pantoneconverter.com/learn/cmyk-vs-rgb/",
+          "snippet": "Understand the key differences betweenCMYKandRGBcolor models, when to use each one, and how to convert between them for print and digital design projects.",
+          "engine": "web-tls-ddg-lite",
+          "publishedDate": "",
+          "cached": false
+        },
+        {
+          "title": "RGB VS CMYK VS PMS: Difference, Pros, Cons and Uses",
+          "url": "https://www.dnpackaging.com/packaging/printing/color/rgb-cmyk-pms/",
+          "snippet": "RGB,CMYK,andPMS are three color systems that servedifferentstages of design and print production.RGBis an additive, screen-based modelusedfordigital previews and onlinedisplays, offering high brightness, wide gamut, and precision, but it translates poorly to print due to device and profile dependence.",
+          "engine": "web-tls-ddg-lite",
+          "publishedDate": "",
+          "cached": false
+        },
+        {
+          "title": "RGB vs CMYK Visual Comparison: Why Your Colors Don't Match",
+          "url": "https://www.stationeryhq.com/pages/rgb-vs-cmyk-visual-comparison-why-your-colors-don-t-match",
+          "snippet": "Final Takeaway Understanding theRGBvsCMYKvisual comparison is essential for anyone working between digital design and print production. The differences in how color is created\u2014light versus ink\u2014explainwhyprinted materials often lookdifferentfrom screens. By designing withCMYKin mind and using professional productionworkflowslike those at StationeryHQ and StationeryHQ, designers ...",
+          "engine": "web-tls-ddg-lite",
+          "publishedDate": "",
+          "cached": false
+        },
+        {
+          "title": "CMYK vs RGB for Print: The Complete Guide for 2026",
+          "url": "https://www.linemark.com/cmyk-vs-rgb-for-print-the-complete-guide-for-2026/",
+          "snippet": "Table of Contents Understanding the Core Science:CMYKvsRGBExplained The Color Gamut Divide:WhyScreen Colors Shift in PrintRGBvsCMYKin CommercialPrintingWorkflowsPreparing Print Files Across Diverse Collateral Types Pre-Flight Best Practices: Convert and Proof for Print",
+          "engine": "web-tls-ddg-lite",
+          "publishedDate": "",
+          "cached": false
+        },
+        {
+          "title": "CMYK vs RGB: What's the Difference and When to Use Each",
+          "url": "https://printnow.com/blog/cmyk-vs-rgb",
+          "snippet": "The difference betweenCMYKandRGBcolor modes \u2014 when to use each, how to convert between them, and how to avoid common color mistakes in print.",
+          "engine": "web-tls-ddg-lite",
+          "publishedDate": "",
+          "cached": false
+        },
+        {
+          "title": "Understanding Colour Models: RGB and CMYK | Mapsoft",
+          "url": "https://mapsoft.com/posts/understanding-colour-models.html",
+          "snippet": "A practical guide toRGBandCMYKcolour models: how they work, their differences, andwhycolour management matters for screen-to-print conversion.",
+          "engine": "web-tls-ddg-lite",
+          "publishedDate": "",
+          "cached": false
+        },
+        {
+          "title": "CMYK vs. RGB: Which Color Mode Is Best for Printing?",
+          "url": "https://blog.overnightprints.com/cmyk-vs-rgb-for-printing/",
+          "snippet": "Learn the difference betweenCMYKandRGBcolor modes,whyCMYKis commonlyusedforprinting,andhow to prepare colors for professional print results.",
+          "engine": "web-tls-ddg-lite",
+          "publishedDate": "",
+          "cached": false
+        },
+        {
+          "title": "RGB vs CMYK for Designers: What Every Designer Needs to Know",
+          "url": "https://www.stationeryhq.com/pages/rgb-vs-cmyk-for-designers-what-every-print-designer-needs-to-know",
+          "snippet": "This guide explainsRGBvsCMYKfordesigners, how each color system works, and how to prepare professional files for commercialprintingworkflowslike thoseusedat StationeryHQ.com.",
+          "engine": "web-tls-ddg-lite",
+          "publishedDate": "",
+          "cached": false
+        },
+        {
+          "title": "RGB vs CMYK \u2014 Print Color Modes Explained - ABC Printing",
+          "url": "https://www.goabcprint.com/guides/print-color-modes-rgb-vs-cmyk-guide",
+          "snippet": "What is the difference betweenRGBandCMYK? This guide explains how color modes work,whycolors shift from screen to print, and how to set up your file in the right color mode forprinting.",
+          "engine": "web-tls-ddg-lite",
+          "publishedDate": "",
+          "cached": false
+        }
+      ],
+      "same_request_tls_refusal_then_ddg_read": false,
+      "claim": "DDG available now; no same-request refusal recovery proven"
+    }
+  ],
+  "browser_controls": [
+    {
+      "query": "Were Scott Derrickson and Ed Wood of the same nationality?",
+      "seconds": 1.0386090259999037,
+      "diagnostics": {
+        "status": "ok",
+        "attempts": [
+          {
+            "engine": "ddg-lite",
+            "status": 200,
+            "reason": null,
+            "pages": 1,
+            "elapsed_s": 0.958,
+            "count": 10
+          },
+          {
+            "engine": "ddg-html",
+            "status": null,
+            "reason": "cancelled_by_winner",
+            "count": 0
+          }
+        ],
+        "elapsed_ms": 1034,
+        "queue_ms": 0,
+        "count": 10
+      },
+      "ddg_results": [
+        {
+          "title": "Scott Derrickson - Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/Scott_Derrickson",
+          "snippet": "Scott Derrickson (born July 16, 1966) is an American filmmaker. He is known for his work in the horror genre, directing films such as The Exorcism of Emily Rose (2005), Sinister (2012), The Black Phone (2022), and its sequel, Black Phone 2 (2025).",
+          "content": "",
+          "publishedDate": "",
+          "engine": "web-browser-ddg-lite",
+          "source": "en.wikipedia.org"
+        },
+        {
+          "title": "Hallucination threshold seems suboptimal \u00b7 Issue #5 - GitHub",
+          "url": "https://github.com/oneal2000/DRAGIN/issues/5",
+          "snippet": "\"Were Scott Derrickson and Ed Wood of the same nationality?\" First intermediate result (I added debug outputs) with DRAGIN+BM25: \"Scott Derrickson is an American film director and screenwriter. Ed Wood is also an American film director and screenwriter. Therefore, they both are of the same nationality, which is American. So the answer is yes.\"",
+          "content": "",
+          "publishedDate": "",
+          "engine": "web-browser-ddg-lite",
+          "source": "github.com"
+        },
+        {
+          "title": "How Credible Is an Answer From Retrieval-Augmented LLMs ... - OpenReview",
+          "url": "https://openreview.net/pdf?id=YsmnPHBbx1f",
+          "snippet": "Model output No, Scott Derrickson and Ed Wood were not of the same nationality. Ed Wood Question ---> Golden answer Intermediate steps Step 1: Scott Derrickson is an American director, Golden answer was an American filmmaker, actor, writer, producer, and director, born in Woodson, Arkansas in Pulaski County, Arkansas [2].",
+          "content": "",
+          "publishedDate": "",
+          "engine": "web-browser-ddg-lite",
+          "source": "openreview.net"
+        },
+        {
+          "title": "Ed Wood - Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/Ed_Wood",
+          "snippet": "Edward Davis Wood Jr. (October 10, 1924 - December 10, 1978) was an American filmmaker, actor and novelist. In the 1950s, Wood directed several low-budget science fiction, crime and horror films that later became cult classics, notably Glen or Glenda (1953), Jail Bait (1954), Bride of the Monster (1955), Plan 9 from Outer Space (1957) and Night of the Ghouls (1959). [a][1] In the 1960s and ...",
+          "content": "",
+          "publishedDate": "",
+          "engine": "web-browser-ddg-lite",
+          "source": "en.wikipedia.org"
+        },
+        {
+          "title": "M3GQA/newMMDataset/HotpotQA/dev.json at main - GitHub",
+          "url": "https://github.com/GuChongAn/M3GQA/blob/main/newMMDataset/HotpotQA/dev.json",
+          "snippet": "\"question\": \"Were Scott Derrickson and Ed Wood of the same nationality?\",",
+          "content": "",
+          "publishedDate": "",
+          "engine": "web-browser-ddg-lite",
+          "source": "github.com"
+        },
+        {
+          "title": "Scott Derrickson Biography: Age, Height, Parents, Siblings, Ethnicity ...",
+          "url": "https://www.biographyhive.com/biography/actor/scott-derrickson-biography-age-height-parents-siblings-ethnicity-wife-movies-net-worth-religion-instagram/",
+          "snippet": "Relationship: Married Net Worth: $10 million USD Early Life and Education Scott Derrickson was born on July 16, 1966, in Denver, Colorado, to Mr. Derrickson and Mrs. Derrickson. He grew up in a working-class neighbourhood in the Denver area. His ethnicity is Caucasian. He has siblings whose names are not publicly disclosed.",
+          "content": "",
+          "publishedDate": "",
+          "engine": "web-browser-ddg-lite",
+          "source": "biographyhive.com"
+        },
+        {
+          "title": "HotpotQA Dataset Format | nju-websoft/KG2RAG | DeepWiki",
+          "url": "https://deepwiki.com/nju-websoft/KG2RAG/6.1-hotpotqa-dataset-format",
+          "snippet": "Example: Question: \"Were Scott Derrickson and Ed Wood of the same nationality?\" Answer: \"yes\" Bridge Questions Type identifier: \"bridge\" Bridge questions require finding an intermediate entity to connect the question to the answer through multi-hop reasoning. Example:",
+          "content": "",
+          "publishedDate": "",
+          "engine": "web-browser-ddg-lite",
+          "source": "deepwiki.com"
+        },
+        {
+          "title": "nlpproject2023/Sentences_old \u00b7 Datasets at Hugging Face",
+          "url": "https://huggingface.co/datasets/nlpproject2023/Sentences_old",
+          "snippet": "We're on a journey to advance and democratize artificial intelligence through open source and open science.",
+          "content": "",
+          "publishedDate": "",
+          "engine": "web-browser-ddg-lite",
+          "source": "huggingface.co"
+        },
+        {
+          "title": "Biography of Scott Derrickson",
+          "url": "https://www.biographies.net/people/en/scott_derrickson",
+          "snippet": "Read the full biography of Scott Derrickson, including facts, birthday, life story, profession, family and more.",
+          "content": "",
+          "publishedDate": "",
+          "engine": "web-browser-ddg-lite",
+          "source": "biographies.net"
+        },
+        {
+          "title": "NVIDIA Text Embedding Model Tops MTEB Leaderboard",
+          "url": "https://developer.nvidia.com/blog/nvidia-text-embedding-model-tops-mteb-leaderboard/",
+          "snippet": "Input-Question: Were Scott Derrickson and Ed Wood of the same nationality? Target-Chunk: Scott Derrickson (born July 16, 1966) is an American director, screenwriter and producer.",
+          "content": "",
+          "publishedDate": "",
+          "engine": "web-browser-ddg-lite",
+          "source": "developer.nvidia.com"
+        }
+      ],
+      "one_variant_refused_another_returned_results": false,
+      "scope": "explicit browser-control call; not automatically reached when TLS succeeds"
+    },
+    {
+      "query": "Why are RGB and CMYK used for different display and printing workflows?",
+      "seconds": 1.0460915281437337,
+      "diagnostics": {
+        "status": "ok",
+        "attempts": [
+          {
+            "engine": "ddg-lite",
+            "status": 200,
+            "reason": null,
+            "pages": 1,
+            "elapsed_s": 0.966,
+            "count": 10
+          },
+          {
+            "engine": "ddg-html",
+            "status": null,
+            "reason": "cancelled_by_winner",
+            "count": 0
+          }
+        ],
+        "elapsed_ms": 1042,
+        "queue_ms": 0,
+        "count": 10
+      },
+      "ddg_results": [
+        {
+          "title": "RGB vs. CMYK: Why Colors Look Different in Print",
+          "url": "https://davisdirect.com/2026/09/07/rgb-vs-cmyk-colors-printing/",
+          "snippet": "Learn the difference between RGB and CMYK, why colors can change when printed, and how to prepare files for accurate commercial printing.",
+          "content": "",
+          "publishedDate": "",
+          "engine": "web-browser-ddg-lite",
+          "source": "davisdirect.com"
+        },
+        {
+          "title": "CMYK vs RGB: What's the Difference and When to Use Each",
+          "url": "https://pantoneconverter.com/learn/cmyk-vs-rgb/",
+          "snippet": "Understand the key differences between CMYK and RGB color models, when to use each one, and how to convert between them for print and digital design projects.",
+          "content": "",
+          "publishedDate": "",
+          "engine": "web-browser-ddg-lite",
+          "source": "pantoneconverter.com"
+        },
+        {
+          "title": "RGB VS CMYK VS PMS: Difference, Pros, Cons and Uses",
+          "url": "https://www.dnpackaging.com/packaging/printing/color/rgb-cmyk-pms/",
+          "snippet": "RGB, CMYK, and PMS are three color systems that serve different stages of design and print production. RGB is an additive, screen-based model used for digital previews and online displays, offering high brightness, wide gamut, and precision, but it translates poorly to print due to device and profile dependence.",
+          "content": "",
+          "publishedDate": "",
+          "engine": "web-browser-ddg-lite",
+          "source": "dnpackaging.com"
+        },
+        {
+          "title": "CMYK vs RGB: What's the Difference and When to Use Each",
+          "url": "https://printnow.com/blog/cmyk-vs-rgb",
+          "snippet": "The difference between CMYK and RGB color modes \u2014 when to use each, how to convert between them, and how to avoid common color mistakes in print.",
+          "content": "",
+          "publishedDate": "",
+          "engine": "web-browser-ddg-lite",
+          "source": "printnow.com"
+        },
+        {
+          "title": "CMYK vs RGB for Print: The Complete Guide for 2026",
+          "url": "https://www.linemark.com/cmyk-vs-rgb-for-print-the-complete-guide-for-2026/",
+          "snippet": "Table of Contents Understanding the Core Science: CMYK vs RGB Explained The Color Gamut Divide: Why Screen Colors Shift in Print RGB vs CMYK in Commercial Printing Workflows Preparing Print Files Across Diverse Collateral Types Pre-Flight Best Practices: Convert and Proof for Print",
+          "content": "",
+          "publishedDate": "",
+          "engine": "web-browser-ddg-lite",
+          "source": "linemark.com"
+        },
+        {
+          "title": "RGB vs CMYK: Key Differences for Designers",
+          "url": "https://blog.filestack.com/difference-between-rgb-and-cmyk/",
+          "snippet": "Learn the difference between RGB and CMYK, when to use each color model, and how to avoid costly mistakes in web-to-print and online printing workflows.",
+          "content": "",
+          "publishedDate": "",
+          "engine": "web-browser-ddg-lite",
+          "source": "blog.filestack.com"
+        },
+        {
+          "title": "RGB vs CMYK \u2014 Print Color Modes Explained - ABC Printing",
+          "url": "https://www.goabcprint.com/guides/print-color-modes-rgb-vs-cmyk-guide",
+          "snippet": "What is the difference between RGB and CMYK? This guide explains how color modes work, why colors shift from screen to print, and how to set up your file in the right color mode for printing.",
+          "content": "",
+          "publishedDate": "",
+          "engine": "web-browser-ddg-lite",
+          "source": "goabcprint.com"
+        },
+        {
+          "title": "CMYK vs. RGB: Which Color Mode Is Best for Printing?",
+          "url": "https://blog.overnightprints.com/cmyk-vs-rgb-for-printing/",
+          "snippet": "Learn the difference between CMYK and RGB color modes, why CMYK is commonly used for printing, and how to prepare colors for professional print results.",
+          "content": "",
+          "publishedDate": "",
+          "engine": "web-browser-ddg-lite",
+          "source": "blog.overnightprints.com"
+        },
+        {
+          "title": "Understanding Colour Models: RGB and CMYK | Mapsoft",
+          "url": "https://mapsoft.com/posts/understanding-colour-models.html",
+          "snippet": "A practical guide to RGB and CMYK colour models: how they work, their differences, and why colour management matters for screen-to-print conversion.",
+          "content": "",
+          "publishedDate": "",
+          "engine": "web-browser-ddg-lite",
+          "source": "mapsoft.com"
+        },
+        {
+          "title": "RGB vs CMYK Visual Comparison: Why Your Colors Don't Match",
+          "url": "https://www.stationeryhq.com/pages/rgb-vs-cmyk-visual-comparison-why-your-colors-don-t-match",
+          "snippet": "Final Takeaway Understanding the RGB vs CMYK visual comparison is essential for anyone working between digital design and print production. The differences in how color is created\u2014light versus ink\u2014explain why printed materials often look different from screens. By designing with CMYK in mind and using professional production workflows like those at StationeryHQ and StationeryHQ, designers ...",
+          "content": "",
+          "publishedDate": "",
+          "engine": "web-browser-ddg-lite",
+          "source": "stationeryhq.com"
+        }
+      ],
+      "one_variant_refused_another_returned_results": false,
+      "scope": "explicit browser-control call; not automatically reached when TLS succeeds"
+    }
+  ],
+  "html_only_control": {
+    "scope": "explicit HTML-only browser control, not the normal race",
+    "query": "Were Scott Derrickson and Ed Wood of the same nationality?",
+    "attempt": {
+      "engine": "ddg-html",
+      "status": 200,
+      "reason": null,
+      "results": [
+        {
+          "title": "Scott Derrickson - Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/Scott_Derrickson",
+          "snippet": "Scott Derrickson (born July 16, 1966) is an American filmmaker. He is known for his work in the horror genre, directing films such as The Exorcism of Emily Rose (2005), Sinister (2012), The Black Phone (2022), and its sequel, Black Phone 2 (2025).",
+          "engine": "ddg-html"
+        },
+        {
+          "title": "Hallucination threshold seems suboptimal \u00b7 Issue #5 - GitHub",
+          "url": "https://github.com/oneal2000/DRAGIN/issues/5",
+          "snippet": "\"Were Scott Derrickson and Ed Wood of the same nationality?\" First intermediate result (I added debug outputs) with DRAGIN+BM25: \"Scott Derrickson is an American film director and screenwriter. Ed Wood is also an American film director and screenwriter. Therefore, they both are of the same nationality, which is American. So the answer is yes.\"",
+          "engine": "ddg-html"
+        },
+        {
+          "title": "How Credible Is an Answer From Retrieval-Augmented LLMs ... - OpenReview",
+          "url": "https://openreview.net/pdf?id=YsmnPHBbx1f",
+          "snippet": "Model output No, Scott Derrickson and Ed Wood were not of the same nationality. Ed Wood Question ---> Golden answer Intermediate steps Step 1: Scott Derrickson is an American director, Golden answer was an American filmmaker, actor, writer, producer, and director, born in Woodson, Arkansas in Pulaski County, Arkansas [2].",
+          "engine": "ddg-html"
+        },
+        {
+          "title": "Ed Wood - Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/Ed_Wood",
+          "snippet": "Edward Davis Wood Jr. (October 10, 1924 - December 10, 1978) was an American filmmaker, actor and novelist. In the 1950s, Wood directed several low-budget science fiction, crime and horror films that later became cult classics, notably Glen or Glenda (1953), Jail Bait (1954), Bride of the Monster (1955), Plan 9 from Outer Space (1957) and Night of the Ghouls (1959). [a][1] In the 1960s and ...",
+          "engine": "ddg-html"
+        },
+        {
+          "title": "M3GQA/newMMDataset/HotpotQA/dev.json at main - GitHub",
+          "url": "https://github.com/GuChongAn/M3GQA/blob/main/newMMDataset/HotpotQA/dev.json",
+          "snippet": "\"question\": \"Were Scott Derrickson and Ed Wood of the same nationality?\",",
+          "engine": "ddg-html"
+        },
+        {
+          "title": "Scott Derrickson Biography: Age, Height, Parents, Siblings, Ethnicity ...",
+          "url": "https://www.biographyhive.com/biography/actor/scott-derrickson-biography-age-height-parents-siblings-ethnicity-wife-movies-net-worth-religion-instagram/",
+          "snippet": "Relationship: Married Net Worth: $10 million USD Early Life and Education Scott Derrickson was born on July 16, 1966, in Denver, Colorado, to Mr. Derrickson and Mrs. Derrickson. He grew up in a working-class neighbourhood in the Denver area. His ethnicity is Caucasian. He has siblings whose names are not publicly disclosed.",
+          "engine": "ddg-html"
+        },
+        {
+          "title": "HotpotQA Dataset Format | nju-websoft/KG2RAG | DeepWiki",
+          "url": "https://deepwiki.com/nju-websoft/KG2RAG/6.1-hotpotqa-dataset-format",
+          "snippet": "Example: Question: \"Were Scott Derrickson and Ed Wood of the same nationality?\" Answer: \"yes\" Bridge Questions Type identifier: \"bridge\" Bridge questions require finding an intermediate entity to connect the question to the answer through multi-hop reasoning. Example:",
+          "engine": "ddg-html"
+        },
+        {
+          "title": "Biography of Scott Derrickson",
+          "url": "https://www.biographies.net/people/en/scott_derrickson",
+          "snippet": "Read the full biography of Scott Derrickson, including facts, birthday, life story, profession, family and more.",
+          "engine": "ddg-html"
+        },
+        {
+          "title": "NVIDIA Text Embedding Model Tops MTEB Leaderboard",
+          "url": "https://developer.nvidia.com/blog/nvidia-text-embedding-model-tops-mteb-leaderboard/",
+          "snippet": "Input-Question: Were Scott Derrickson and Ed Wood of the same nationality? Target-Chunk: Scott Derrickson (born July 16, 1966) is an American director, screenwriter and producer.",
+          "engine": "ddg-html"
+        },
+        {
+          "title": "Scott Derrickson - Biography - IMDb",
+          "url": "https://www.imdb.com/name/nm0220600/bio/",
+          "snippet": "Scott Derrickson. Director: The Black Phone. Scott Derrickson is an American filmmaker who is known for directing horror films such as Deliver Us from Evil, Hellraiser: Inferno, Sinister and The Exorcism of Emily Rose. He also directed the superhero film Doctor Strange starring Benedict Cumberbatch.",
+          "engine": "ddg-html"
+        }
+      ],
+      "pages": 1,
+      "elapsed_s": 1.048
+    }
+  },
+  "artifact_completed_at_utc": "2026-11-06T03:53:11.684308+00:00",
+  "historical_refusals_source": "evaluations/agent-search/results/2026-11-03/live-summary.json:browser_non200_observations",
+  "conclusion": "All five live acquisitions succeeded without a current 202/429 or challenge; fresh refusal recovery not proven."
+}

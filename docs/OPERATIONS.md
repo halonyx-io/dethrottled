@@ -95,6 +95,14 @@ pinned to 1.30.0. Preserve all data/browser/filter/model volumes. Existing cache
 partial PDF extractions are not rewritten: use refresh/bypass to reassess them.
 Reconnect MCP clients that cache instructions or tool schemas.
 
+For 1.6.2, rebuild/recreate the API and browser services and refresh the host-managed
+MCP source, workflow and application-version modules together. The MCP SDK stays
+pinned to 1.30.0; unchanged supplementary/format/model workers need no restart.
+MCP fetch/research/document reads now default to concise presentation; request
+`response_format="detailed"` explicitly for full PDF text-layer blocks. REST keeps
+its detailed default. Retained full text and source completeness are unchanged.
+No cache/model/data volume reset is required. Refresh MCP tool descriptions.
+
 ## State and backups
 
 | Storage | Contents |
@@ -227,3 +235,28 @@ The [native domain filter](ADBLOCK.md), introduced in 1.6.0, needs the updated A
 images plus recreated SearXNG/Crawl4AI workers. Its `adblock-state` volume holds the
 last working list and attribution; preserve it for offline restarts. Check each
 worker observation in `/stats` rather than inferring coverage from API readiness.
+
+### Interpreting discovery observations
+
+Readiness observes real searches; it does not probe providers on status requests.
+An observation older than 60 seconds becomes `availability="unknown"`, not a
+confirmed outage. Inspect `observation_state` (`current`, `stale`, `unobserved`),
+`last_observed_availability`, `age_seconds` and `upstream_status` together. Existing
+boolean readiness fields remain conservative. Bing News is not requested by a
+normal web search, so its false readiness flag alone is not a web-search failure.
+
+Browser discovery accepts one or two validated source choices for narrow queries;
+it does not require three results to declare success. Empty/challenge responses
+still fail explicitly. Worker `/metrics` retains the last 20 failed searches'
+provider/status/reason summaries and timings, without queries or page text.
+API attempts preserve worker refusal reasons and service/queue timings. This
+helps distinguish sparse results, upstream refusals and local admission failures;
+it cannot guarantee that an intermittently refusing provider has recovered.
+
+A headerless TLS-only DDG refusal can recover through Patchright automatically.
+A server-supplied `Retry-After` on a refused/unavailable direct or browser
+acquisition pauses further DDG-family acquisition; other providers and eligible cached results
+remain usable. Expiry permits one recovery probe, not a claim of upstream recovery.
+An empty DDGS fallback cannot turn earlier refusals into a genuine zero-result query.
+The [live refusal test](../evaluations/ddg-recovery/results/2026-11-06/REPORT.md)
+records the transport-ablation scope and remaining IP-wide blocking limit.

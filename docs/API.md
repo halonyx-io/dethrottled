@@ -115,7 +115,14 @@ not verify an answer. Retain `acquisition_url` and publisher-alternative provena
 
 HTTP 200 does not mean every URL succeeded. Extraction success does not verify
 the answer or complete source coverage. `response_format="concise"` reduces
-duplicate representations; detailed is default and warnings/provenance remain.
+duplicate representations, including full-document PDF text-layer blocks that
+would otherwise bypass the excerpt limit. Page numbers, methods, text counts,
+warnings, retained-document handles and continuation remain. REST defaults to
+`detailed`; MCP fetch, research and document reads default to `concise`. Request
+`detailed` explicitly when you need block text and coordinates. Concise mode does
+not shorten the canonical retained document or certify completeness. For detailed
+layout from a long PDF, reparse a small explicit page range rather than requesting
+all page blocks at once.
 
 `content_assessment.pollution` is `suspected`, `none_detected` or `not_assessed`.
 Structured documents are not classified as website UI. A narrow set of leading

@@ -1,0 +1,32 @@
+[
+  {
+    "url": "https://docs.python.org/3/library/pathlib.html",
+    "seconds": 0.774754611775279,
+    "ok": true,
+    "tier": "direct",
+    "chars": 55101,
+    "fact_term": "rglob",
+    "fact_present": true,
+    "evidence_excerpt": "xceptions are suppressed in many cases, but not all. - Path.rglob(pattern, *, case_sensitive=None, recurse_symlinks=False)\u00b6 - Glob the given relative pattern recursively. This is like calling Path.glob() with \u201c**/\u201d added"
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Scott_Derrickson",
+    "seconds": 0.1934166238643229,
+    "ok": true,
+    "tier": "direct",
+    "chars": 14826,
+    "fact_term": "American",
+    "fact_present": true,
+    "evidence_excerpt": " Children | 2 | Scott Derrickson (born July 16, 1966) is an American filmmaker. He is known for his work in the horror genre, directing films such as The Exorcism of Emily Rose (2005), Sinister (2012), The Black Phone (2"
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Ed_Wood",
+    "seconds": 1.6378668048419058,
+    "ok": true,
+    "tier": "direct",
+    "chars": 58041,
+    "fact_term": "American",
+    "fact_present": true,
+    "evidence_excerpt": "avis Wood Jr. (October 10, 1924 \u2013 December 10, 1978) was an American filmmaker, actor and novelist. In the 1950s, Wood directed several low-budget science fiction, crime and horror films that later became cult classics, "
+  }
+]

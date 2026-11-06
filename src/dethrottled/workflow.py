@@ -33,6 +33,10 @@ with at most four replacement candidates and 120000 characters per source. Drive
 and network lists show at most ten items; inspect narrower selectors as needed.
 Fetch and read_document allow up to 1000000 characters; use retained-document offsets
 for longer sources. Defaults are smaller than ceilings; request more when justified.
+Use response_format=concise for agent reads (MCP default; REST detailed by default).
+Concise omits duplicate PDF text-layer blocks, retaining page summaries and continuation;
+request detailed explicitly for text-layer block coordinates/text. This presentation
+choice does not change the canonical retained document or source completeness.
 Known URL: call fetch directly, normally with focus set to the question. Unknown sources:
 search then fetch selected URLs, or research for a multi-source evidence bundle. Corpus
 is optional reusable evidence, never a compulsory first step. fetch automatically tries

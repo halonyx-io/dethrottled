@@ -1,0 +1,20 @@
+{
+  "fixture_sha256": "1777c0b61e8ab04c57727fb2b051012f96e53f87d3ddc179ca6017ef5b3d326c",
+  "fixture_kind": "saved_fetch",
+  "scope": "projection and JSON serialization; not acquisition latency or RSS",
+  "baseline_source_sha256": "b2734929def4bb0a4491362b5bdd8a3f7ffef0600df635ce5b3bc474abf5d2bd",
+  "baseline": {
+    "json_bytes": 939730,
+    "median_serialize_ms": 53.7284598685801,
+    "peak_python_traced_bytes": 4694694,
+    "repetitions": 7
+  },
+  "candidate": {
+    "json_bytes": 45905,
+    "median_serialize_ms": 3.182494081556797,
+    "peak_python_traced_bytes": 108282,
+    "repetitions": 7
+  },
+  "canonical_metadata_unchanged": true,
+  "excerpt_handles_warnings_and_page_summaries_retained": true
+}

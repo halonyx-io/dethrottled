@@ -15,6 +15,9 @@ def test_browser_worker_overdelivery_is_capped(monkeypatch, engine, expected):
     observed = []
 
     class Response:
+        ok = True
+        status_code = 200
+
         def raise_for_status(self):
             pass
 
@@ -27,7 +30,9 @@ def test_browser_worker_overdelivery_is_capped(monkeypatch, engine, expected):
 
     monkeypatch.setattr(search, 'BROWSER_SEARCH_URL', 'http://worker')
     monkeypatch.setattr(search.requests, 'post', post)
-    found = search.browser_search('allocation', max_items=50)
+    diagnostics = {}
+    found = search.browser_search('allocation', max_items=50, diagnostics=diagnostics)
+    assert diagnostics['browser_count'] == expected
     assert observed == [{'query': 'allocation', 'limit': 10}]
     assert len(found) == expected
     assert all(r['engine'] == 'web-browser-' + engine for r in found)

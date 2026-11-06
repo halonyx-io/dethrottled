@@ -1,0 +1,16 @@
+{
+  "base_commit": "f5abf7b9c034fc55ee98a542c707bd8a6fe25647",
+  "state": "uncommitted final candidate; no publication/deployment",
+  "sha256": {
+    "src/dethrottled/discovery.py": "6b1cd3ea119f8755b22f89cecb23dc6545a902603f693d2890c8ba64540c6817",
+    "src/dethrottled/search.py": "ee39825e8b13b2e2881a9d6330d40a88ff328c94b68188187bab5ad7674c2d9f",
+    "src/dethrottled/search_diagnostics.py": "1fd429d04187ac86bc9d3e027aac30f25d309308b7d41f889d79dc83e3327d80",
+    "browser-search/service.py": "554f61d0afd3cf4a09ec1e213f16c69896d8d9021bbd8b2a9e727e4bbf5a1a8a",
+    "browser-search/verify_search.py": "c8a7a7f2ced8c902a58e36a162b37ce8c0445c3f3036fa16b4b48cd67fe3b76a",
+    "tests/test_discovery_recovery.py": "32af7741881cbbbdbc6de2a92d94862628d8922a7cb3857a64f48970c919f731",
+    "tests/test_search_observability.py": "af738ec34c315844f6920239a9aec41050b0f4770abfdf417ba8c0d835a34d6b",
+    "evaluations/ddg-recovery/prove.py": "772b41dfdc09b50a9a01e8bce8f1eea912e51f6277d843ab48d19a404bdc952a",
+    "evaluations/ddg-recovery/probe_static.py": "30857c1b719f57e7260c4601846fb5d692bc2a220561519881f71be3e0b38429",
+    "evaluations/ddg-recovery/probe_browser.py": "772d7786e3ca1c5b1cfc724938da126bc2c96d53dce945e2def0c8eaa29765ca"
+  }
+}

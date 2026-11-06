@@ -154,7 +154,7 @@ path. Explicit rendering/OCR restrictions still apply during automatic recovery.
 | `headed_fallback` | Deliberately request headed recovery for additional failures; challenges/shells can already trigger automatic recovery |
 | `recovery="auto"` or `"manual"` | Higher-level navigation/asset recovery on/off; manual does not turn off the underlying acquisition ladder |
 | `fresh`, `cache_mode`, `max_age` | Refresh, bypass or bound cached evidence; use the same cache semantics as search |
-| `response_format="detailed"` or `"concise"` | Presentation control; preserve warnings, provenance and continuation either way |
+| `response_format="detailed"` or `"concise"` | Prefer concise for agent reads (MCP default): omit duplicate PDF text blocks while retaining page summaries, warnings and continuation. REST defaults to detailed; request it explicitly for block text/coordinates. |
 | `document_mode="auto"`, `"native"`, `"layout"` | Native document extraction or optional layout inference when available |
 | `ocr_mode="auto"`, `"always"`, `"never"`, `ocr_language` | Explicit OCR policy and installed language choice; verify uncertain numbers against source pixels |
 | `page_start`, `page_end` | Bounded page windows; request another window for later pages |

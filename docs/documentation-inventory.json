@@ -418,6 +418,16 @@
       "review": "Evidence maintainer: preserve observations; append explicit corrections."
     },
     {
+      "path": "evaluations/compact-discovery/README.md",
+      "lifecycle": "harness-guide",
+      "review": "Harness maintainer: check runnable commands and label dated assumptions."
+    },
+    {
+      "path": "evaluations/compact-discovery/results/2026-11-06/REPORT.md",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
       "path": "evaluations/compact-search/results/2026-11-03/REPORT.md",
       "lifecycle": "historical-evidence",
       "review": "Evidence maintainer: preserve observations; append explicit corrections."
@@ -449,6 +459,16 @@
     },
     {
       "path": "evaluations/corpus-v2/results/2026-11-05/RESOLUTIONS.md",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "evaluations/ddg-recovery/README.md",
+      "lifecycle": "harness-guide",
+      "review": "Harness maintainer: check runnable commands and label dated assumptions."
+    },
+    {
+      "path": "evaluations/ddg-recovery/results/2026-11-06/REPORT.md",
       "lifecycle": "historical-evidence",
       "review": "Evidence maintainer: preserve observations; append explicit corrections."
     },

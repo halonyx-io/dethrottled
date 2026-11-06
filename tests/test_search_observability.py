@@ -114,6 +114,9 @@ def refusal_paths(monkeypatch, *, http_status=429, browser_ok=False, retry_after
     monkeypatch.setattr(fs, "tls_search", tls)
     monkeypatch.setattr(fs, "browser_search", browser)
     monkeypatch.setitem(sys.modules, "ddgs", types.SimpleNamespace(DDGS=DDGS))
+    # This provider double has no ddgs.http_client; transport wrapping is tested
+    # independently and must not depend on another test having imported DDGS.
+    monkeypatch.setattr(fs.requests, "install_ddgs", lambda: None)
     return calls
 
 
@@ -155,7 +158,7 @@ def test_retry_after_and_cached_results_during_cooldown(monkeypatch):
     report = {}
     assert fs.web_search("cached evidence", cache=Cache(), diagnostics=report) == [row()]
     assert report["status"] == "cached" and report["upstream_status"] == "cooldown"
-    assert len(calls) == 4
+    assert calls == ["tls"]  # Retry-After stops further live attempts immediately.
     assert fs._load_health()["family:ddg"] == state
 
 
@@ -266,3 +269,140 @@ def test_searx_cached_ddg_remains_readable_during_family_rest(monkeypatch):
     report = {}
     assert fs.searxng("cached", engines="duckduckgo", cache=Cache(), diagnostics=report)
     assert report["status"] == "cached" and report["upstream_status"] == "cooldown"
+
+
+def test_browser_refusal_preserves_reason_and_elapsed_time(monkeypatch):
+    import requests
+
+    class Response:
+        ok = False
+        status_code = 503
+
+        def json(self):
+            return {"detail": {"reason": "no_usable_engine", "service_s": 1.25,
+                               "queue_s": 0.5, "attempts": [
+                                   {"engine": "ddg-lite", "status": 202,
+                                    "reason": "challenge_page", "count": 0}]}}
+
+        def raise_for_status(self):
+            raise requests.HTTPError("503")
+
+    monkeypatch.setattr(fs, "BROWSER_SEARCH_URL", "http://worker")
+    monkeypatch.setattr(fs.requests, "post", lambda *a, **kw: Response())
+    diagnostics = {}
+    assert fs.browser_search("controlled refusal", diagnostics=diagnostics) == []
+    assert diagnostics["status"] == "http_503"
+    assert diagnostics["browser_count"] == 0
+    assert diagnostics["reason"] == "no_usable_engine"
+    assert diagnostics["elapsed_ms"] == 1250
+    assert diagnostics["queue_ms"] == 500
+    assert diagnostics["attempts"][0]["status"] == 202
+
+
+def test_readiness_distinguishes_stale_success_from_confirmed_failure():
+    assert fs.health()["primary_discovery"]["observation_state"] == "unobserved"
+    diag.observe({"providers": {"web": {"status": "ok", "count": 1,
+                                       "availability": "available"}}})
+    assert fs.health()["primary_discovery"]["observation_state"] == "current"
+    diag._OBSERVATIONS["web"]["observed_at"] -= diag.OBSERVATION_TTL + 1
+    report = fs.health()["primary_discovery"]
+    assert report["availability"] == "unknown" and report["observation_state"] == "stale"
+    assert report["last_observed_availability"] == "available"
+    assert not report["ready"]
+    diag.observe({"providers": {"web": {"status": "http_503", "count": 0,
+                                       "availability": "unavailable"}}})
+    report = fs.health()["primary_discovery"]
+    assert report["observation_state"] == "current"
+    assert report["last_observed_availability"] == report["availability"] == "unavailable"
+
+
+@pytest.mark.parametrize("count,status", [(2, "ok"), (0, "http_503")])
+def test_browser_attempt_keeps_its_count_and_failure_after_ddgs_fallback(count, status):
+    # DDGS may subsequently overwrite the web-family total/status. That must not
+    # turn a failed browser request into a successful one or give it DDGS rows.
+    meta = {"browser_search": {"status": "ok", "count": 10, "browser_count": count,
+                               "browser_status": status, "elapsed_ms": 1250,
+                               "reason": "no_usable_engine" if not count else None,
+                               "attempts": [{"engine": "ddg-lite", "count": count,
+                                             "status": 200 if count else 202}]}}
+    attempt = next(a for a in server._attempts(meta) if a["engine"] == "browser-search")
+    assert attempt["count"] == count and attempt["status"] == status
+    assert attempt["reason"] == ("no_usable_engine" if not count else None)
+
+
+def test_empty_ddgs_fallback_cannot_erase_correlated_refusals(monkeypatch):
+    refusal_paths(monkeypatch, http_status=202)
+
+    class DDGS:
+        def text(self, *args, **kwargs):
+            return []
+
+    monkeypatch.setitem(sys.modules, "ddgs", types.SimpleNamespace(DDGS=DDGS))
+    report = {}
+    assert fs.web_search("controlled refusal", diagnostics=report) == []
+    assert report["upstream_status"] == "cooldown"
+    assert report["status"] != "no_results"
+    assert diag.outcome(0, report) == "unavailable"
+
+
+@pytest.mark.parametrize("status", [202, 429, 503])
+def test_explicit_retry_after_prevents_more_ddg_attempts(monkeypatch, status):
+    calls = refusal_paths(monkeypatch, http_status=status, retry_after=120)
+    report = {}
+    assert fs.web_search("server requested wait", diagnostics=report) == []
+    assert calls == ["tls"]
+    assert report["status"] == "retry_after" and report["upstream_status"] == "cooldown"
+    assert fs._load_health()["family:ddg"]["reason"] == "retry_after"
+    assert fs._load_health()["family:ddg"]["until"] - time.time() > 119
+    assert fs.web_search("concurrent later caller", diagnostics={}) == []
+    assert calls == ["tls"]
+
+
+def test_empty_ddgs_without_refusal_stays_genuinely_empty(monkeypatch):
+    monkeypatch.setenv("DETHROTTLED_CHEAP_DISCOVERY", "0")
+
+    def browser(*args, diagnostics, **kwargs):
+        diagnostics.update(status="not_configured", attempts=[])
+        return []
+
+    class DDGS:
+        def text(self, *args, **kwargs):
+            return []
+
+    monkeypatch.setattr(fs, "browser_search", browser)
+    monkeypatch.setitem(sys.modules, "ddgs", types.SimpleNamespace(DDGS=DDGS))
+    monkeypatch.setattr(fs.requests, "install_ddgs", lambda: None)
+    report = {}
+    assert fs.web_search("genuinely empty", diagnostics=report) == []
+    assert report["status"] == "no_results"
+    assert diag.outcome(0, report) == "empty"
+    assert "family:ddg" not in fs._load_health()
+
+
+def test_browser_retry_after_stops_library_fallback_and_rests_family(monkeypatch):
+    calls = refusal_paths(monkeypatch)
+
+    def browser(*args, diagnostics, **kwargs):
+        calls.append("browser")
+        diagnostics.update(status="http_503", attempts=[
+            {"engine": "ddg-lite", "status": 429, "retry_after_seconds": 120}])
+        return []
+
+    monkeypatch.setattr(fs, "browser_search", browser)
+    report = {}
+    assert fs.web_search("browser wait", diagnostics=report) == []
+    assert calls == ["tls", "browser"]
+    assert report["upstream_status"] == "cooldown"
+    assert fs._load_health()["family:ddg"]["until"] - time.time() > 119
+    assert fs.web_search("later caller", diagnostics={}) == []
+    assert calls == ["tls", "browser"]
+
+
+def test_already_received_results_survive_a_parallel_retry_after():
+    report = {"status": "ok", "count": 1, "attempts": [
+        {"engine": "ddg-lite", "status": 429, "retry_after_seconds": 120},
+        {"engine": "ddg-html", "status": 200, "count": 1}]}
+    rows = [row("web-browser-ddg-html")]
+    fs._ddg_finish(rows, report, False)
+    assert rows and report["upstream_status"] == "cooldown"
+    assert diag.outcome(1, report) == "degraded"

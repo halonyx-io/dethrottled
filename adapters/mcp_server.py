@@ -390,7 +390,7 @@ async def fetch(
     render_delay: Annotated[float, Field(ge=0, le=5)] = 0.5,
     headed_fallback: bool = False,
     focus: str = "",
-    response_format: Literal["detailed", "concise"] = "detailed",
+    response_format: Literal["detailed", "concise"] = "concise",
     recovery: Literal["auto", "manual"] = "auto",
     ocr_language: str = "",
     document_mode: Literal["auto", "native", "layout"] = "auto",
@@ -404,6 +404,7 @@ async def fetch(
 ) -> Any:
     """Read pages you already have URLs for.
 
+    Concise is the default: no duplicate PDF text-layer blocks; detailed retains them.
     Known URLs can skip search. focus selects passages relevant to a question
     while retaining a versioned document_id for follow-up reads. page_start/end
     select PDF pages; ocr_language selects installed Tesseract language data.
@@ -502,7 +503,7 @@ async def research(
     profile: Literal["web", "balanced", "thorough", "academic", "news"] = "web",
     follow_assets: bool = True,
     categories: Literal["", "news", "academic"] = "",
-    response_format: Literal["detailed", "concise"] = "detailed",
+    response_format: Literal["detailed", "concise"] = "concise",
 ) -> dict[str, Any]:
     """Gather cited sources and relevant excerpts across multiple searches.
 
@@ -651,7 +652,7 @@ async def drive(
 @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, openWorldHint=False))
 async def read_document(document_id: str, focus: str = "", offset: int = 0,
                         max_chars: Annotated[int, Field(ge=1, le=1000000)] = 12000,
-                        response_format: Literal["detailed", "concise"] = "detailed",
+                        response_format: Literal["detailed", "concise"] = "concise",
                         reparse: bool = False, row_start: int = 1, row_end: int | None = None,
                         sheet: str = "", max_cell_chars: int | None = None,
                         page_start: int = 1, page_end: int | None = None,

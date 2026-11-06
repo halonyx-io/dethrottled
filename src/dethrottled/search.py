@@ -179,6 +179,13 @@ def _ddg_refusal(report):
              or r.get("reason") == "challenge_page"} >= {"ddg-lite", "ddg-html"})
 
 
+def _ddg_retry_after(observation):
+    # Both the TLS adapter and browser attempts carry bounded server waits.
+    if observation.get("http_status", observation.get("status")) in {202, 429, 503}:
+        return max(0, min(86400, observation.get("retry_after_seconds", 0)))
+    return 0
+
+
 def _ddg_finish(rows, report, recovering):
     global _DDG_RECOVERY
     with _health_lock:
@@ -190,17 +197,18 @@ def _ddg_finish(rows, report, recovering):
             or (report.get("status") == "ok" and report.get("count", 0) > 0)
             or any(a.get("engine") == "duckduckgo" and a.get("status") == "ok"
                    and a.get("count", 0) > 0 for a in report.get("ddgs_attempts", [])))
-        if fresh_success and any(result_family(row) == "ddg" for row in rows):
+        retry_after = max([_ddg_retry_after(report.get("direct", {})),
+                           *(_ddg_retry_after(a) for a in report.get("attempts", []))])
+        if fresh_success and not retry_after and any(result_family(row) == "ddg" for row in rows):
             if health.pop("family:ddg", None):
                 _save_health(health)
-        elif _ddg_refusal(report):
+        elif _ddg_refusal(report) or retry_after:
             old = health.get("family:ddg", {})
             failures = min(8, old.get("fails", 0) + 1)
-            delay = min(_HEALTH_TTL, 30 * 2 ** (failures - 1))
-            delay = max(delay, min(86400, report.get("direct", {}).get(
-                "retry_after_seconds", 0)))
+            delay = retry_after or min(_HEALTH_TTL, 30 * 2 ** (failures - 1))
+            reason = "retry_after" if retry_after else "correlated_refusals"
             health["family:ddg"] = {"at": time.time(), "until": time.time() + delay,
-                                    "fails": failures, "reason": "correlated_refusals"}
+                                    "fails": failures, "reason": reason}
             report.update(upstream_status="cooldown",
                           cooldown_until=health["family:ddg"]["until"])
             _save_health(health)
@@ -600,13 +608,18 @@ def browser_search(query: str, *, max_items: int = 8, cache=None,
         if diagnostics is not None:
             diagnostics.update(status="not_configured", attempts=[])
         return []
+    if diagnostics is not None:
+        diagnostics["browser_count"] = 0
     cache_namespace = "browser-compact-v1"
     if cache is not None:
         hit = cache.get("search", cache_namespace, query, max_items)
         if hit is not None:
+            found = bounded_results(hit, max_items)
             if diagnostics is not None:
-                diagnostics.update(status="cached", attempts=[], count=len(hit))
-            return bounded_results(hit, max_items)
+                diagnostics.update(status="cached", attempts=[], count=len(found),
+                                   browser_count=len(found))
+            return found
+    started = time.monotonic()
     try:
         response = requests.post(BROWSER_SEARCH_URL + "/search",
                                  json={"query": query, "limit": max_items},
@@ -618,8 +631,12 @@ def browser_search(query: str, *, max_items: int = 8, cache=None,
         if diagnostics is not None:
             diagnostics.update(status="ok" if response.ok else "http_" + str(response.status_code),
                                attempts=payload.get("attempts") or detail.get("attempts") or [],
-                               elapsed_ms=int(1000 * float(payload.get("service_s") or 0)),
-                               queue_ms=int(1000 * float(payload.get("queue_s") or 0)))
+                               elapsed_ms=int(1000 * float(payload.get("service_s")
+                                   or detail.get("service_s") or time.monotonic() - started)),
+                               queue_ms=int(1000 * float(payload.get("queue_s")
+                                   or detail.get("queue_s") or 0)))
+            if detail.get("reason"):
+                diagnostics["reason"] = str(detail["reason"])[:200]
         response.raise_for_status()
         if not payload.get("ok"):
             return []
@@ -636,11 +653,12 @@ def browser_search(query: str, *, max_items: int = 8, cache=None,
             rows.append(_norm(title=title, url=url, snippet=snippet,
                               engine="web-browser-" + str(item.get("engine")
                                   or payload.get("engine") or "unknown")))
+        found = bounded_results(rows, max_items)
         if diagnostics is not None:
-            diagnostics["count"] = len(rows)
+            diagnostics.update(count=len(found), browser_count=len(found))
         if cache is not None and rows:
             cache.put("search", cache_namespace, query, max_items, value=rows)
-        return bounded_results(rows, max_items)
+        return found
     except (requests.RequestException, ValueError, KeyError, TypeError) as exc:
         if diagnostics is not None and "status" not in diagnostics:
             diagnostics.update(status=type(exc).__name__, attempts=[])
@@ -712,8 +730,15 @@ def _acquire_web(query: str, *, max_items: int = 8, cache=None,
                 if diagnostics is not None:
                     diagnostics.update(status=direct.get("status"), attempts=[])
                 return cheap[:max_items]
+            if _ddg_retry_after(direct):
+                if diagnostics is not None:
+                    diagnostics.update(status="retry_after", attempts=[])
+                return []
+        browser_report = diagnostics if diagnostics is not None else {}
         found = browser_search(query, max_items=max_items, cache=cache,
-                               diagnostics=diagnostics)
+                               diagnostics=browser_report)
+        if not found and any(_ddg_retry_after(a) for a in browser_report.get("attempts", [])):
+            return []
         merged, seen = [], set()
         for row in [*cheap, *found]:
             key = canonical_url(row.get("url", ""))
@@ -816,8 +841,18 @@ def web_search(query: str, *, max_items: int = 8, cache=None,
             _ddg_finish(rows, report, recovering)
     if report.get("attempts") or str(report.get("status", "")).startswith("http_"):
         report["browser_status"] = report.get("status")
+    direct = report.get("direct", {})
+    refused = (direct.get("refusal") or direct.get("http_status") in {202, 429}
+               or any(a.get("status") in {202, 429} or a.get("reason") == "challenge_page"
+                      for a in report.get("attempts", [])))
     if rows:
         report["status"] = "cached" if report.get("status") == "cached" else "ok"
+    elif refused:
+        # An empty library fallback does not prove a genuinely empty query when
+        # another DDG route returned a challenge. Preserve its failed attempts.
+        if report.get("status") in {None, "ok", "cached", "no_results", "not_configured"}:
+            report["status"] = "unavailable"
+        report.setdefault("upstream_status", "unavailable")
     elif any(r["status"] == "no_results" for r in report.get("ddgs_attempts", [])):
         report["status"] = "no_results"
     elif report.get("status") in {"ok", "cached"}:

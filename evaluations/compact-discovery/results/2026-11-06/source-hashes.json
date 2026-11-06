@@ -1,0 +1,17 @@
+{
+  "base_commit": "f5abf7b9c034fc55ee98a542c707bd8a6fe25647",
+  "state": "uncommitted candidate; no release or rollout",
+  "sha256": {
+    "src/dethrottled/content.py": "a65f021f526cb49f944715bd2a5cd446a8677bd928438ee522016d652e095d21",
+    "src/dethrottled/search.py": "db0d06aba3f5dd2deb0eabd2323334176c5bc24588758ae89f1da3da6d74b1ea",
+    "src/dethrottled/search_diagnostics.py": "ea6ebc9a1f608efc60d6607dc169405871194a30327c0cd4f7f394ed41880643",
+    "src/dethrottled/server.py": "c6b07108e9b0438029affc88f39acc136c1a24145a43e5965dbd5ad9d016fcfb",
+    "src/dethrottled/workflow.py": "a9a3d56653e184b4c9b24a5f0fc1bc76e24d1e9dd6d93d249d29fa8a63b36c16",
+    "adapters/mcp_server.py": "bc7c5e8b675ffbaf6646f012fe633899b50a24ebbcf545e3343115c3df27c1b4",
+    "browser-search/service.py": "96e25c6085803f523aa568855905c6eb29759e0077a7f96a3ef744f166d430a4",
+    "browser-search/verify_search.py": "d8b9a52f6a528b8092caf991aa43c4ce1dd67ed18eee4e2b38b5c5713bcb537d",
+    "scripts/verify_adapter.py": "f589be7cb6671ea58e2ad7c0df4410a310c3289f4e7241ded4e409f9bb578f9c",
+    "evaluations/compact-discovery/verify.py": "98b4c4217b88539fbabb4d7f07d48ae3cc46e3e5554bef710dcd94636c6cab1e",
+    "evaluations/compact-discovery/live_ddg.py": "20cbdb2fad8152443fe90275c06d57fab8b3595b19ff4d0537abf66d6c607b1e"
+  }
+}

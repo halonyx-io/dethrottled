@@ -1,0 +1,309 @@
+{
+  "experiment": "plain-primary transport ablation",
+  "results": [
+    {
+      "query": "Were Scott Derrickson and Ed Wood of the same nationality?",
+      "query_sha256": "5dda555f7bbde715cefa2f2ba0d287c9215cca56b33fe5b0c4c1bb7fc8362c48",
+      "seconds": 1.4529304951429367,
+      "primary_transport": "plain requests in place of curl impersonation; experimental ablation only",
+      "upstream_observations": [
+        {
+          "observed_at": 1793941755.3905005,
+          "status": 202,
+          "body_sha256": "b93cf4a4c2cfff3a5fffa4ac6ec26d391b49c3136411e417a25254a2db560627",
+          "challenge_markers": [
+            "anomaly.js",
+            "bots use duckduckgo",
+            "select all squares"
+          ],
+          "retry_after": null
+        }
+      ],
+      "diagnostics": {
+        "direct": {
+          "engine": "tls-ddg-lite",
+          "status": "challenge_or_http_error",
+          "count": 0,
+          "http_status": 202,
+          "refusal": true,
+          "elapsed_ms": 209
+        },
+        "browser_count": 10,
+        "status": "ok",
+        "attempts": [
+          {
+            "engine": "ddg-lite",
+            "status": 200,
+            "reason": null,
+            "pages": 1,
+            "elapsed_s": 0.802,
+            "count": 10
+          },
+          {
+            "engine": "ddg-html",
+            "status": null,
+            "reason": "cancelled_by_winner",
+            "count": 0
+          }
+        ],
+        "elapsed_ms": 1214,
+        "queue_ms": 0,
+        "count": 10,
+        "browser_status": "ok",
+        "families": [
+          "ddg"
+        ]
+      },
+      "results": [
+        {
+          "title": "Scott Derrickson - Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/Scott_Derrickson",
+          "snippet": "Scott Derrickson (born July 16, 1966) is an American filmmaker. He is known for his work in the horror genre, directing films such as The Exorcism of Emily Rose (2005), Sinister (2012), The Black Phone (2022), and its sequel, Black Phone 2 (2025).",
+          "content": "",
+          "publishedDate": "",
+          "engine": "web-browser-ddg-lite",
+          "source": "en.wikipedia.org"
+        },
+        {
+          "title": "Hallucination threshold seems suboptimal \u00b7 Issue #5 - GitHub",
+          "url": "https://github.com/oneal2000/DRAGIN/issues/5",
+          "snippet": "\"Were Scott Derrickson and Ed Wood of the same nationality?\" First intermediate result (I added debug outputs) with DRAGIN+BM25: \"Scott Derrickson is an American film director and screenwriter. Ed Wood is also an American film director and screenwriter. Therefore, they both are of the same nationality, which is American. So the answer is yes.\"",
+          "content": "",
+          "publishedDate": "",
+          "engine": "web-browser-ddg-lite",
+          "source": "github.com"
+        },
+        {
+          "title": "Ed Wood - Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/Ed_Wood",
+          "snippet": "Edward Davis Wood Jr. (October 10, 1924 - December 10, 1978) was an American filmmaker, actor and novelist. In the 1950s, Wood directed several low-budget science fiction, crime and horror films that later became cult classics, notably Glen or Glenda (1953), Jail Bait (1954), Bride of the Monster (1955), Plan 9 from Outer Space (1957) and Night of the Ghouls (1959). [a][1] In the 1960s and ...",
+          "content": "",
+          "publishedDate": "",
+          "engine": "web-browser-ddg-lite",
+          "source": "en.wikipedia.org"
+        },
+        {
+          "title": "nlpproject2023/Sentences_old \u00b7 Datasets at Hugging Face",
+          "url": "https://huggingface.co/datasets/nlpproject2023/Sentences_old",
+          "snippet": "We're on a journey to advance and democratize artificial intelligence through open source and open science.",
+          "content": "",
+          "publishedDate": "",
+          "engine": "web-browser-ddg-lite",
+          "source": "huggingface.co"
+        },
+        {
+          "title": "How Credible Is an Answer From Retrieval-Augmented LLMs ... - OpenReview",
+          "url": "https://openreview.net/pdf?id=YsmnPHBbx1f",
+          "snippet": "Model output No, Scott Derrickson and Ed Wood were not of the same nationality. Ed Wood Question ---> Golden answer Intermediate steps Step 1: Scott Derrickson is an American director, Golden answer was an American filmmaker, actor, writer, producer, and director, born in Woodson, Arkansas in Pulaski County, Arkansas [2].",
+          "content": "",
+          "publishedDate": "",
+          "engine": "web-browser-ddg-lite",
+          "source": "openreview.net"
+        },
+        {
+          "title": "carnival13/retrived_data \u00b7 Datasets at Hugging Face",
+          "url": "https://huggingface.co/datasets/carnival13/retrived_data",
+          "snippet": "We're on a journey to advance and democratize artificial intelligence through open source and open science.",
+          "content": "",
+          "publishedDate": "",
+          "engine": "web-browser-ddg-lite",
+          "source": "huggingface.co"
+        },
+        {
+          "title": "titles in \"supporting_facts \" don't exist in \"context\"",
+          "url": "https://github.com/hotpotqa/hotpot/issues/50",
+          "snippet": "\" The film was directed by Scott Derrickson, who wrote it with Jon Spaihts and C. Robert Cargill, and stars Benedict Cumberbatch as Stephen Strange, along with Chiwetel Ejiofor, Rachel McAdams, Benedict Wong, Michael Stuhlbarg, Benjamin Bratt, Scott Adkins, Mads Mikkelsen, and Tilda Swinton.\",",
+          "content": "",
+          "publishedDate": "",
+          "engine": "web-browser-ddg-lite",
+          "source": "github.com"
+        },
+        {
+          "title": "NVIDIA Text Embedding Model Tops MTEB Leaderboard",
+          "url": "https://developer.nvidia.com/blog/nvidia-text-embedding-model-tops-mteb-leaderboard/",
+          "snippet": "Input-Question: Were Scott Derrickson and Ed Wood of the same nationality? Target-Chunk: Scott Derrickson (born July 16, 1966) is an American director, screenwriter and producer.",
+          "content": "",
+          "publishedDate": "",
+          "engine": "web-browser-ddg-lite",
+          "source": "developer.nvidia.com"
+        },
+        {
+          "title": "Scott Derrickson - Biography - IMDb",
+          "url": "https://www.imdb.com/name/nm0220600/bio/",
+          "snippet": "Scott Derrickson. Director: The Black Phone. Scott Derrickson is an American filmmaker who is known for directing horror films such as Deliver Us from Evil, Hellraiser: Inferno, Sinister and The Exorcism of Emily Rose. He also directed the superhero film Doctor Strange starring Benedict Cumberbatch.",
+          "content": "",
+          "publishedDate": "",
+          "engine": "web-browser-ddg-lite",
+          "source": "imdb.com"
+        },
+        {
+          "title": "Evaluating Retriever for Enterprise-Grade RAG - NVIDIA Developer",
+          "url": "https://developer.nvidia.com/blog/evaluating-retriever-for-enterprise-grade-rag/",
+          "snippet": "Input: Were Scott Derrickson and Ed Wood of the same nationality? Target: Scott Derrickson (born July 16, 1966) is an American director, screenwriter and producer. He lives in Los Angeles, California. He is best known for directing horror films such as \"Sinister\", \"The Exorcism of Emily Rose\", and \"Deliver Us From Evil\", as well as the 2016 Marvel Cinematic Universe installment ...",
+          "content": "",
+          "publishedDate": "",
+          "engine": "web-browser-ddg-lite",
+          "source": "developer.nvidia.com"
+        }
+      ],
+      "real_refusal_then_autonomous_ddg_recovery": true,
+      "family_health_after": {
+        "status": "unobserved",
+        "cooldown_until": null,
+        "failures": 0
+      }
+    },
+    {
+      "query": "Python pathlib recursive glob documentation",
+      "query_sha256": "adb5a9e6f1aae0b59f467a87c80d1b602230dbf463e816434f4c2a92637e4611",
+      "seconds": 1.5609399219974875,
+      "primary_transport": "plain requests in place of curl impersonation; experimental ablation only",
+      "upstream_observations": [
+        {
+          "observed_at": 1793941761.7203453,
+          "status": 202,
+          "body_sha256": "3a216d94688855e720bc9aeb608952f099a888c14bf0f07ff882122a5c7aa373",
+          "challenge_markers": [
+            "anomaly.js",
+            "bots use duckduckgo",
+            "select all squares"
+          ],
+          "retry_after": null
+        }
+      ],
+      "diagnostics": {
+        "direct": {
+          "engine": "tls-ddg-lite",
+          "status": "challenge_or_http_error",
+          "count": 0,
+          "http_status": 202,
+          "refusal": true,
+          "elapsed_ms": 75
+        },
+        "browser_count": 10,
+        "status": "ok",
+        "attempts": [
+          {
+            "engine": "ddg-lite",
+            "status": 200,
+            "reason": null,
+            "pages": 1,
+            "elapsed_s": 0.962,
+            "count": 10
+          },
+          {
+            "engine": "ddg-html",
+            "status": null,
+            "reason": "cancelled_by_winner",
+            "count": 0
+          }
+        ],
+        "elapsed_ms": 1481,
+        "queue_ms": 0,
+        "count": 10,
+        "browser_status": "ok",
+        "families": [
+          "ddg"
+        ]
+      },
+      "results": [
+        {
+          "title": "glob \u2014 Unix style pathname pattern expansion \u2014 Python 3.15.2 documentation",
+          "url": "https://docs.python.org/3/library/glob.html",
+          "snippet": "By default, files beginning with a dot (.) can only be matched by patterns that also start with a dot, unlike fnmatch.fnmatch () or pathlib.Path.glob (). For tilde and shell variable expansion, use os.path.expanduser () and os.path.expandvars (). For a literal match, wrap the meta-characters in brackets. For example, ' [?]' matches the character '?'. The glob module defines the following ...",
+          "content": "",
+          "publishedDate": "",
+          "engine": "web-browser-ddg-lite",
+          "source": "docs.python.org"
+        },
+        {
+          "title": "pathlib \u2014 Object-oriented filesystem paths \u2014 Python 3.15.2 documentation",
+          "url": "https://docs.python.org/3/library/pathlib.html",
+          "snippet": "Source code: Lib/pathlib/ This module offers classes representing filesystem paths with semantics appropriate for different operating systems. Path classes are divided between pure paths, which pro...",
+          "content": "",
+          "publishedDate": "",
+          "engine": "web-browser-ddg-lite",
+          "source": "docs.python.org"
+        },
+        {
+          "title": "Recursively iterate through all subdirectories using pathlib",
+          "url": "https://stackoverflow.com/questions/50714469/recursively-iterate-through-all-subdirectories-using-pathlib",
+          "snippet": "How can I use pathlib to recursively iterate over all subdirectories of a given directory? ... only seems to iterate over the immediate children of a given directory. I know this is possible with os.walk () or glob, but I want to use pathlib because I like working with the path objects.",
+          "content": "",
+          "publishedDate": "",
+          "engine": "web-browser-ddg-lite",
+          "source": "stackoverflow.com"
+        },
+        {
+          "title": "How to use Glob () Function to Find Files Recursively in Python",
+          "url": "https://www.geeksforgeeks.org/python/how-to-use-glob-function-to-find-files-recursively-in-python/",
+          "snippet": "Glob is a powerful pattern-matching technique widely used in Unix and Linux environments for matching file and directory names based on wildcard patterns. Python's built-in glob module provides similar functionality, enabling you to easily find files and directories matching specific patterns.",
+          "content": "",
+          "publishedDate": "",
+          "engine": "web-browser-ddg-lite",
+          "source": "geeksforgeeks.org"
+        },
+        {
+          "title": "Python Pathlib glob () Explained - PyTutorial",
+          "url": "https://pytutorial.com/python-pathlib-glob-explained/",
+          "snippet": "Learn how to use Python's pathlib.glob() for file pattern matching. This guide covers syntax, examples, and practical use cases for beginners.",
+          "content": "",
+          "publishedDate": "",
+          "engine": "web-browser-ddg-lite",
+          "source": "pytutorial.com"
+        },
+        {
+          "title": "How to use glob() to find files recursively? - Stack Overflow",
+          "url": "https://stackoverflow.com/questions/2186525/how-to-use-glob-to-find-files-recursively",
+          "snippet": "Use pathlib.Path ().rglob () from the pathlib module, which was introduced in Python 3.5. ... glob.glob () If you don't want to use pathlib, use glob.glob (): ... For cases where matching files beginning with a dot (.); like files in the current directory or hidden files on Unix based system, use the os.walk () solution below. os.walk ()",
+          "content": "",
+          "publishedDate": "",
+          "engine": "web-browser-ddg-lite",
+          "source": "stackoverflow.com"
+        },
+        {
+          "title": "Python Pathlib rglob () Explained - PyTutorial",
+          "url": "https://pytutorial.com/python-pathlib-rglob-explained/",
+          "snippet": "Learn how to use Python's pathlib.rglob() to recursively search for files and directories. Perfect for beginners with examples and code outputs.",
+          "content": "",
+          "publishedDate": "",
+          "engine": "web-browser-ddg-lite",
+          "source": "pytutorial.com"
+        },
+        {
+          "title": "glob \u2014 Unix style pathname pattern expansion \u2014 Python documentation",
+          "url": "https://getdocs.org/Python/docs/3.8/library/glob",
+          "snippet": "glob.glob(pathname, *, recursive=False) Return a possibly-empty list of path names that match pathname, which must be a string containing a path specification. pathname can be either absolute (like /usr/src/Python-1.5/Makefile) or relative (like ../../Tools/*/*.gif), and can contain shell-style wildcards. Broken symlinks are included in the results (as in the shell). Whether or not the results ...",
+          "content": "",
+          "publishedDate": "",
+          "engine": "web-browser-ddg-lite",
+          "source": "getdocs.org"
+        },
+        {
+          "title": "Pathlib Module in Python - GeeksforGeeks",
+          "url": "https://www.geeksforgeeks.org/python/pathlib-module-in-python/",
+          "snippet": "Listing Python Files in a Directory Tree To find all Python files (.py) within a folder and its subfolders, use rglob () method from pathlib. It performs a recursive search, making it easy to scan entire directory trees for specific file types. Example: This code recursively searches for all .py files in the root directory.",
+          "content": "",
+          "publishedDate": "",
+          "engine": "web-browser-ddg-lite",
+          "source": "geeksforgeeks.org"
+        },
+        {
+          "title": "glob | Python Standard Library - Real Python",
+          "url": "https://realpython.com/ref/stdlib/glob/",
+          "snippet": "The Python glob module provides tools to find path names matching specified patterns that follow Unix shell rules. You can use this module for file and directory pattern matching.",
+          "content": "",
+          "publishedDate": "",
+          "engine": "web-browser-ddg-lite",
+          "source": "realpython.com"
+        }
+      ],
+      "real_refusal_then_autonomous_ddg_recovery": true,
+      "family_health_after": {
+        "status": "unobserved",
+        "cooldown_until": null,
+        "failures": 0
+      }
+    }
+  ]
+}
