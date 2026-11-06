@@ -46,6 +46,7 @@ examples/
 *.md
 !README.md
 !AGENTS.md
+!SKILL.md
 !docs/*.md
 !docs/**/*.md
 !evaluations/**/*.md

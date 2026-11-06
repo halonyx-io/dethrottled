@@ -1,0 +1,1 @@
+{"passed": true, "ddg_cap": 10, "domain_constraints_before_cap": true, "filtered_empty_without_retry": true, "supplement_cap": 3, "race_request50_returned": 10, "automatic_pagination": false, "small_request_rows": 1, "sparse_counts": [1, 2], "retry_after_requests": 1, "retry_after_preserved": true, "sparse_seconds": [0.5059252590872347, 0.4860627599991858], "baseline": []}

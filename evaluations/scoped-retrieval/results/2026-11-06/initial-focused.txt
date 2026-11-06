@@ -1,0 +1,90 @@
+............................FF.....                                      [100%]
+=================================== FAILURES ===================================
+_________ test_selectors_use_acquired_html_not_truncated_prose[/fetch] _________
+
+client = <starlette.testclient.TestClient object at 0x7f38d9462480>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f38d9472c30>
+path = '/fetch'
+
+    @pytest.mark.parametrize('path', ['/fetch', '/extract'])
+    def test_selectors_use_acquired_html_not_truncated_prose(client, monkeypatch, path):
+        calls = []
+        def acquire(url, **kwargs):
+            calls.append(kwargs)
+            return {'ok': True, 'url': url, 'tier': 'direct', 'extractor': 'trafilatura',
+                    'text': 'A' * 1000, 'chars': 1000, 'html': HTML, 'cached': False}
+        monkeypatch.setattr(server.fetcher, 'fetch_and_extract', acquire)
+        result = client.post(path, json={'urls': ['https://example.org'], 'max_chars': 10,
+                             'selectors': RULES, 'recovery': 'manual'}).json()[0]
+>       assert result['content'] == 'A' * 10
+E       AssertionError: assert 'AAAAAAAAAAAA...AAAAAAAAAAAAA' == 'AAAAAAAAAA'
+E
+E         - AAAAAAAAAA
+E         + AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA...
+E
+E         ...Full output truncated, use '-vv' to show
+
+tests/test_scoped_retrieval.py:171: AssertionError
+________ test_selectors_use_acquired_html_not_truncated_prose[/extract] ________
+
+client = <starlette.testclient.TestClient object at 0x7f38d9461dc0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f38d9472480>
+path = '/extract'
+
+    @pytest.mark.parametrize('path', ['/fetch', '/extract'])
+    def test_selectors_use_acquired_html_not_truncated_prose(client, monkeypatch, path):
+        calls = []
+        def acquire(url, **kwargs):
+            calls.append(kwargs)
+            return {'ok': True, 'url': url, 'tier': 'direct', 'extractor': 'trafilatura',
+                    'text': 'A' * 1000, 'chars': 1000, 'html': HTML, 'cached': False}
+        monkeypatch.setattr(server.fetcher, 'fetch_and_extract', acquire)
+        result = client.post(path, json={'urls': ['https://example.org'], 'max_chars': 10,
+                             'selectors': RULES, 'recovery': 'manual'}).json()[0]
+>       assert result['content'] == 'A' * 10
+E       AssertionError: assert 'AAAAAAAAAAAA...AAAAAAAAAAAAA' == 'AAAAAAAAAA'
+E
+E         - AAAAAAAAAA
+E         + AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA...
+E
+E         ...Full output truncated, use '-vv' to show
+
+tests/test_scoped_retrieval.py:171: AssertionError
+=============================== warnings summary ===============================
+../usr/local/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /usr/local/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+src/dethrottled/server.py:464
+  /work/src/dethrottled/server.py:464: DeprecationWarning:
+          on_event is deprecated, use lifespan event handlers instead.
+
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+
+    @app.on_event("startup")
+
+../usr/local/lib/python3.12/site-packages/fastapi/applications.py:4723
+../usr/local/lib/python3.12/site-packages/fastapi/applications.py:4723
+  /usr/local/lib/python3.12/site-packages/fastapi/applications.py:4723: DeprecationWarning:
+          on_event is deprecated, use lifespan event handlers instead.
+
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+
+    return self.router.on_event(event_type)  # ty: ignore[deprecated]
+
+src/dethrottled/server.py:474
+  /work/src/dethrottled/server.py:474: DeprecationWarning:
+          on_event is deprecated, use lifespan event handlers instead.
+
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+
+    @app.on_event("shutdown")
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_scoped_retrieval.py::test_selectors_use_acquired_html_not_truncated_prose[/fetch]
+FAILED tests/test_scoped_retrieval.py::test_selectors_use_acquired_html_not_truncated_prose[/extract]
+2 failed, 33 passed, 5 warnings in 0.77s

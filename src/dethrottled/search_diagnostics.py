@@ -5,7 +5,7 @@ from __future__ import annotations
 import threading
 import time
 
-_SUCCESS = {"ok", "cached", "no_results"}
+_SUCCESS = {"ok", "cached", "no_results", "no_matching_candidates"}
 _SKIPPED = {"not_requested", "not_configured"}
 _LOCK = threading.Lock()
 _OBSERVATIONS = {}

@@ -9,12 +9,12 @@ must be classified; unknown paths fail generation/checking.
 
 | Lifecycle | Files |
 |---|---:|
-| current-guide | 25 |
+| current-guide | 26 |
 | dependency-input | 4 |
 | generated | 4 |
-| harness-guide | 17 |
-| historical-evidence | 44 |
-| source-contract | 122 |
+| harness-guide | 18 |
+| historical-evidence | 46 |
+| source-contract | 124 |
 | third-party-notice | 4 |
 | visual | 8 |
 
@@ -27,6 +27,7 @@ Change author: reconcile current behaviour, examples and navigation.
 | [.github/pull_request_template.md](https://github.com/halonyx-io/dethrottled/blob/main/.github/pull_request_template.md) |
 | [AGENTS.md](../AGENTS.md) |
 | [README.md](../README.md) |
+| [SKILL.md](../SKILL.md) |
 | [docs/ADBLOCK.md](ADBLOCK.md) |
 | [docs/AGENT-PLAYBOOK.md](AGENT-PLAYBOOK.md) |
 | [docs/AGENT-UPGRADES.md](AGENT-UPGRADES.md) |
@@ -94,6 +95,7 @@ Harness maintainer: check runnable commands and label dated assumptions.
 | [evaluations/release/README.md](../evaluations/release/README.md) |
 | [evaluations/retrieval-metadata/README.md](../evaluations/retrieval-metadata/README.md) |
 | [evaluations/retrieval-review/README.md](../evaluations/retrieval-review/README.md) |
+| [evaluations/scoped-retrieval/README.md](../evaluations/scoped-retrieval/README.md) |
 | [evaluations/search-policy/README.md](../evaluations/search-policy/README.md) |
 
 ## historical-evidence
@@ -142,6 +144,8 @@ Evidence maintainer: preserve observations; append explicit corrections.
 | [evaluations/retrieval-review/results/2026-11-06/REPORT.md](../evaluations/retrieval-review/results/2026-11-06/REPORT.md) |
 | [evaluations/retrieval-review/results/2026-11-06/final-tests.txt](../evaluations/retrieval-review/results/2026-11-06/final-tests.txt) |
 | [evaluations/retrieval-review/results/2026-11-06/pdf-before-regressions.txt](../evaluations/retrieval-review/results/2026-11-06/pdf-before-regressions.txt) |
+| [evaluations/scoped-retrieval/results/2026-11-06/REPORT.md](../evaluations/scoped-retrieval/results/2026-11-06/REPORT.md) |
+| [evaluations/scoped-retrieval/results/2026-11-06/initial-focused.txt](../evaluations/scoped-retrieval/results/2026-11-06/initial-focused.txt) |
 | [evaluations/search-breadth/results/2026-11-02/REPORT.md](../evaluations/search-breadth/results/2026-11-02/REPORT.md) |
 | [evaluations/search-policy/results/2026-11-03/ATTRIBUTION.md](../evaluations/search-policy/results/2026-11-03/ATTRIBUTION.md) |
 | [evaluations/search-policy/results/2026-11-03/REPORT.md](../evaluations/search-policy/results/2026-11-03/REPORT.md) |
@@ -265,7 +269,9 @@ Change author: audit docs impact, advertised defaults and generated contracts.
 | [src/dethrottled/readplan.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/readplan.py) |
 | [src/dethrottled/research.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/research.py) |
 | [src/dethrottled/search.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/search.py) |
+| [src/dethrottled/search_constraints.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/search_constraints.py) |
 | [src/dethrottled/search_diagnostics.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/search_diagnostics.py) |
+| [src/dethrottled/selectors.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/selectors.py) |
 | [src/dethrottled/server.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/server.py) |
 | [src/dethrottled/site.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/site.py) |
 | [src/dethrottled/stack.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/stack.py) |

@@ -17,6 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 GUIDES = {
     "README.md",
     "AGENTS.md",
+    "SKILL.md",
     "docs/AGENT-PLAYBOOK.md",
     "docs/QUICKSTART.md",
     "docs/DOCUMENTATION-MAINTENANCE.md",

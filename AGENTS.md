@@ -1,7 +1,8 @@
 # Working on Dethrottled
 
 These instructions are for agents changing this repository. For using the engine
-as a client, start with [the client playbook](docs/AGENT-PLAYBOOK.md). The user's
+as a client, start with [SKILL.md](SKILL.md) and
+[the client playbook](docs/AGENT-PLAYBOOK.md). The user's
 current instructions determine task scope; this file supplies repository defaults.
 
 ## Establish the actual state

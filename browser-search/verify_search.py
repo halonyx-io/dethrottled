@@ -35,8 +35,11 @@ class Handler(BaseHTTPRequestHandler):
         count = (int(query['q'][0][-1]) if query.get('q', [''])[0] in {'sparse1', 'sparse2'}
                  else 0 if query.get('q') == ['empty'] else
                  55 if parsed.path == '/large' else 8 if query.get('q') == ['cap'] else 10)
+        scoped_query = query.get("q", [""])[0].startswith("scope")
         rows = ''.join(
-            f'<a class="result-link" href="https://example.org{parsed.path}/{page}/{i}">'
+            f'<a class="result-link" href="https://'
+            f'{"other.org" if scoped_query and i < 4 else "example.org"}'
+            f'{parsed.path}/{page}/{i}">'
             f'Source evidence number {i}</a><div class="result-snippet">'
             f'Known allocation fact 7341 tonnes, evidence record {i}.</div>' for i in range(count))
         next_page = (f'<form action="{parsed.path}" method="get">'
@@ -71,7 +74,20 @@ async def verify(base):
             capped = await service._engine(context, 'bing', 'cap', 0, 50)
             assert capped['pages'] == 1 and len(capped['results']) == 3
             assert all(number == 1 for _, number in REQUESTS)
+            scoped = await service._engine(
+                context, 'ddg-lite', 'scope (site:example.org OR site:nasa.gov)', 0, 3)
+            assert len(scoped['results']) == 3
+            assert [r['url'].rsplit('/', 1)[-1] for r in scoped['results']] == ['4', '5', '6']
+            excluded = await service._engine(
+                context, 'ddg-lite', 'scope -site:example.org', 0, 3)
+            assert len(excluded['results']) == 3
+            assert all('other.org' in r['url'] for r in excluded['results'])
             await context.close()
+            REQUESTS.clear()
+            empty_scope = await service._race(browser, 'scope site:nasa.gov', 3)
+            assert empty_scope['ok'] and empty_scope['results'] == []
+            assert empty_scope['constraint_outcome'] == 'no_matching_candidates'
+            assert len(REQUESTS) <= 2 and all(number == 1 for _, number in REQUESTS)
             REQUESTS.clear()
             limited = await service._race(browser, 'rate-limited', 10)
             assert not limited['ok'] and not limited['results']
@@ -145,6 +161,8 @@ async def verify(base):
             assert all(number == 1 for _, number in REQUESTS)
             assert all(r['engine'].startswith('ddg') for r in capped_race['results'])
             print(json.dumps({'passed': True, 'ddg_cap': len(primary),
+                              'domain_constraints_before_cap': True,
+                              'filtered_empty_without_retry': True,
                               'supplement_cap': len(secondary),
                               'race_request50_returned': len(capped_race['results']),
                               'automatic_pagination': False,

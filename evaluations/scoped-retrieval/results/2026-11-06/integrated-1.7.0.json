@@ -1,0 +1,121 @@
+{
+  "version": "1.7.0",
+  "scope": "Isolated software-rendered default Compose stack + real MCP/REST adapters; local UI/sitemap fixtures and bounded public-source reads.",
+  "identity": {
+    "status": "ok",
+    "service": "dethrottled-mcp",
+    "version": "1.7.0",
+    "sdk_version": "1.30.0",
+    "backend": {
+      "version": "1.7.0",
+      "status": "match"
+    }
+  },
+  "unauthorized_rest": 401,
+  "new_contracts": true,
+  "nested_sitemap": {
+    "urls": 3,
+    "discovery_requests": 2,
+    "evidence_reads": 0
+  },
+  "actual_js_browser": {
+    "dynamic_dom": true,
+    "click_effect": true,
+    "screenshot": true
+  },
+  "public_constraints_unsatisfiable": true,
+  "public_internal_target_rejected": 400,
+  "actual_mcp_selectors": {
+    "title": "Example Domain",
+    "quality": "thin",
+    "source_html_partial": false,
+    "provenance_hash": true
+  },
+  "actual_mcp_map": {
+    "outcome": "urls_discovered",
+    "urls": 1,
+    "attempted": 0
+  },
+  "bounded_live_search": {
+    "outcome": "results",
+    "degraded": false,
+    "urls": [
+      "https://docs.python.org/3/library/pathlib.html",
+      "https://docs.python.org/3/library/glob.html",
+      "https://docs.python.org/3.14/library/filesys.html"
+    ],
+    "attempts": [
+      {
+        "engine": "web",
+        "count": 3,
+        "status": "ok",
+        "elapsed_ms": 1115,
+        "unresponsive": [],
+        "direct": {
+          "engine": "tls-ddg-lite",
+          "status": "ok",
+          "count": 3,
+          "http_status": 200,
+          "refusal": false,
+          "elapsed_ms": 594
+        },
+        "attempts": [],
+        "families": [
+          "ddg"
+        ]
+      },
+      {
+        "engine": "yandex",
+        "count": 0,
+        "status": "ok",
+        "elapsed_ms": 1105,
+        "unresponsive": [],
+        "admitted_count": 2
+      },
+      {
+        "engine": "yahoo",
+        "count": 0,
+        "status": "ok",
+        "elapsed_ms": 1084,
+        "unresponsive": [],
+        "admitted_count": 0
+      },
+      {
+        "engine": "searxng",
+        "count": 0,
+        "status": "ok",
+        "elapsed_ms": 1115,
+        "unresponsive": []
+      },
+      {
+        "engine": "bing-news",
+        "count": 0,
+        "status": "not_requested",
+        "elapsed_ms": 1115,
+        "unresponsive": []
+      },
+      {
+        "engine": "gnews-resolved",
+        "count": 0,
+        "status": "not_requested",
+        "elapsed_ms": 1115,
+        "unresponsive": []
+      },
+      {
+        "engine": "tls-ddg-lite",
+        "count": 3,
+        "status": "ok",
+        "reason": null,
+        "elapsed_ms": 594,
+        "unresponsive": [],
+        "http_status": 200,
+        "refusal": false
+      }
+    ]
+  },
+  "actual_mcp_job": {
+    "status": "completed",
+    "selector_fact_retained": true
+  },
+  "passed": true
+}

@@ -15,6 +15,6 @@ global-exclude *.py[cod]
 global-exclude __pycache__
 prune src/dethrottled/_stack
 
-include AGENTS.md
+include AGENTS.md SKILL.md
 
 recursive-include src/dethrottled/licenses *.txt

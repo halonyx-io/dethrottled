@@ -1,0 +1,93 @@
+{
+  "candidate_base": "84ad0736e2ea11887cbf8addbcb88415f0d1e4c1",
+  "state": "unreleased local changes; no version bump, publication or deployment",
+  "native_architecture": "x86_64",
+  "arm64": "SSH authentication unavailable; not run",
+  "tests": {
+    "passed": 957,
+    "skipped": 15,
+    "network_deselected": 2,
+    "seconds": 68.46
+  },
+  "test_log_summary": "957 passed, 15 skipped, 2 deselected, 5 warnings in 68.46s (0:01:08)",
+  "chromium": {
+    "passed": true,
+    "ddg_cap": 10,
+    "domain_constraints_before_cap": true,
+    "filtered_empty_without_retry": true,
+    "supplement_cap": 3,
+    "race_request50_returned": 10,
+    "automatic_pagination": false,
+    "small_request_rows": 1,
+    "sparse_counts": [
+      1,
+      2
+    ],
+    "retry_after_requests": 1,
+    "retry_after_preserved": true,
+    "sparse_seconds": [
+      0.5059252590872347,
+      0.4860627599991858
+    ],
+    "baseline": []
+  },
+  "mcp": {
+    "passed": true,
+    "application_version": "1.6.2",
+    "sdk_version": "1.30.0",
+    "tools": 20,
+    "strict_arguments": true,
+    "private_targets_rejected": true,
+    "authentication_and_revocation": true,
+    "search_results": 15,
+    "research_sources": 20,
+    "research_facets": 10,
+    "large_read_fact": true,
+    "backend_mismatch_then_match": true,
+    "rest_coverage_and_policy": true,
+    "native_images_preserved": true,
+    "compact_bytes_8_rows": 1248,
+    "equivalent_pretty_bytes_8_rows": 1416
+  },
+  "documentation": {
+    "routes": 24,
+    "mcp_tools": 20,
+    "browser_actions": 27,
+    "pages": 85,
+    "links": 611,
+    "examples": 56,
+    "requests": 10,
+    "errors": []
+  },
+  "skill": "quick_validate passed; all MCP tool names covered; included in wheel deployment context",
+  "wheel": {
+    "filename": "dethrottled-1.6.2-py3-none-any.whl",
+    "purpose": "unpublished candidate QA only; version still base 1.6.2",
+    "sha256": "d0b40ce77d659751c661766a8d713ef5547f30e287bc6a7ef27571712e846cb8",
+    "context_files": 958,
+    "fresh_outside_checkout_smoke": "passed using existing runtime dependencies"
+  },
+  "source_sha256": {
+    "src/dethrottled/api_models.py": "2e57d40ce28667816bdf3e94a265fa0d602aa9bff2209dd482759bd783de3a14",
+    "src/dethrottled/server.py": "e873d7cffb3adf235611653f88e96994b05f982a14ee90ebbcf768a222748754",
+    "src/dethrottled/search.py": "49be63f525c304c3dde0134d9474d5028dbc4243669637e7adca55532c2f5103",
+    "src/dethrottled/discovery.py": "baa66413aa471a29e5a7a55333d24229bb98c2c80a8966d29ab66212a67b77cc",
+    "src/dethrottled/search_diagnostics.py": "24b830d8491d6dc3845a0663771215caad4c91ff286d10053f2b5ea32711c4bb",
+    "src/dethrottled/search_constraints.py": "a1b39f4f8f041cc9fe2c58e9fb50e4c223993cd60217dc8ebcbc9656ebff871e",
+    "src/dethrottled/selectors.py": "6adf279b15100e2b232513a1388833d39f7796399213ae356d26916f2f835c37",
+    "src/dethrottled/fetch.py": "a11056e8877a2ca7f09cc90f2aae0654bb4881985eb5dcac47485c9937023278",
+    "src/dethrottled/readplan.py": "5c09ace269018b4b9d7593f3da33ef270912f8f8cd09100cf710d0c40038611d",
+    "src/dethrottled/site.py": "787fb37104f42ee55b48067cfdb8c28cb07b7ed71b3fc57ee17dda0f934c8ca6",
+    "src/dethrottled/workflow.py": "88183e284d805787c7eca7b97a185d84f33d5017db831439fdc0cbf6afed5bf3",
+    "adapters/mcp_server.py": "701ca7eada9a9a02c731d71223e8a0c46803877ced0a7e7b0439fe97825c3964",
+    "browser-search/service.py": "ca646f3d3fbe218908bd611174e54ad71571695407b7086ddfff90d84661f394",
+    "browser-search/verify_search.py": "f2d681b029b9995c898bb1629ae17e74e33321ec434d9c3bab385fd70f9bb19f",
+    "tests/test_scoped_retrieval.py": "0d35b0b0a02875eb11e4f7ee97a8a59e465d3ac9e52b0d06e7eee395ca2f4756",
+    "scripts/verify_adapter.py": "221cc807f667d897688f88cded63eb69815a65a036f31a057ac544fc3c018afc",
+    "scripts/check_agent_docs.py": "6f769d5292b768575dde723264977085e91a824dce3919db4ef3c0a28bba5adb",
+    "SKILL.md": "b19fb8c16d6019b0e6931f094e1d27606ced61a318f3fe9d268f1b3790b056dc",
+    "MANIFEST.in": "830424e08d6d7236d0369717b834dc9783bd80504f5eabcbb64a97f93213c72b",
+    "setup.py": "f16c71d39f7cfb1c89f05fb6bd77c094b2ba288a87012635da5eec8c6399bfe9",
+    "evaluations/scoped-retrieval/verify.py": "d819e246c56f12b3788c03e0a37b93c41f642f909af93a4a74415596687a2dc6"
+  }
+}

@@ -100,9 +100,14 @@ def _site(query: str) -> str:
 
 
 def _valid_for_query(url: str, query: str) -> bool:
-    site = _site(query)
-    host = (urlparse(url).hostname or "").lower()
-    return not site or host == site or host.endswith("." + site)
+    operators = re.findall(r"(?<![\w-])(-?)site:([\w.-]+)", query, re.I)
+    host = (urlparse(url).hostname or "").lower().rstrip(".")
+    positive = [name.lower().rstrip(".") for minus, name in operators if not minus]
+    negative = [name.lower().rstrip(".") for minus, name in operators if minus]
+    def matches(name):
+        return host == name or host.endswith("." + name)
+    return bool(host) and (not positive or any(map(matches, positive))) and not any(
+        map(matches, negative))
 
 
 async def _pace_ddg():
@@ -114,18 +119,19 @@ async def _pace_ddg():
         NEXT_DDG_START = time.monotonic() + DDG_INTERVAL
 
 
-async def _extract(page, engine: str, query: str, limit: int = 10) -> list[dict]:
+async def _extract(page, engine: str, query: str, limit: int = 10,
+                   diagnostics=None) -> list[dict]:
     limit = min(limit, 10 if engine.startswith("ddg") else 3)
     _, selector, snippet_selector = ENGINES[engine]
     links = page.locator(selector)
     snippets = page.locator(snippet_selector)
     snippet_count = await snippets.count()
     rows, seen = [], set()
-    for index in range(min(await links.count(), limit)):
+    for index in range(min(await links.count(), 100)):
         link = links.nth(index)
         title = (await link.inner_text(timeout=500)).strip()
         url = _destination(urljoin(page.url, (await link.get_attribute("href")) or ""))
-        if not url or not _valid_for_query(url, query) or len(title) < 10 or url in seen:
+        if not url or len(title) < 10 or url in seen:
             continue
         seen.add(url)
         try:
@@ -133,7 +139,13 @@ async def _extract(page, engine: str, query: str, limit: int = 10) -> list[dict]
                        if index < snippet_count else "")
         except Exception:
             snippet = ""
+        if diagnostics is not None and len(snippet) >= 25:
+            diagnostics["unfiltered_usable"] = diagnostics.get("unfiltered_usable", 0) + 1
+        if not _valid_for_query(url, query):
+            continue
         rows.append({"title": title[:300], "url": url, "snippet": snippet[:600], "engine": engine})
+        if len(rows) >= limit:
+            break
     return rows
 
 
@@ -190,13 +202,17 @@ async def _engine(context, engine: str, query: str, delay: float, limit: int = 1
                 attempt["reason"] = "challenge_page"
                 break
             if await page.locator(selector).count() >= 1:
-                rows = await asyncio.wait_for(_extract(page, engine, query, limit), timeout=2.0)
+                rows = await asyncio.wait_for(
+                    _extract(page, engine, query, limit, diagnostics=attempt), timeout=2.0)
                 added = [row for row in rows if row["url"] not in seen]
                 seen.update(row["url"] for row in added)
                 attempt["results"].extend(added)
                 attempt["results"] = attempt["results"][:limit]
                 attempt["pages"] += 1
                 if _usable(attempt["results"]):
+                    return attempt
+                if not rows and attempt.get("unfiltered_usable"):
+                    attempt["reason"] = "no_matching_candidates"
                     return attempt
             if time.monotonic() - started > 0.7:
                 try:
@@ -248,8 +264,10 @@ async def _race(browser, query: str, limit: int = 10) -> dict:
                 attempts.append({k:v for k,v in attempt.items() if k != "results"} |
                                 {"count":len(attempt["results"])})
                 if _usable(attempt["results"]):
-                    if winner is None:
+                    if winner is None or not winner["results"]:
                         winner = attempt
+                elif attempt.get("reason") == "no_matching_candidates" and winner is None:
+                    winner = attempt
             backoff = any(a.get("retry_after_seconds", 0) > 0 for a in attempts)
             if winner or backoff:
                 break
@@ -265,6 +283,7 @@ async def _race(browser, query: str, limit: int = 10) -> dict:
                          "count": 0} for engine in cancelled)
         await context.close()
     return {"ok":winner is not None,
+            "constraint_outcome": winner.get("reason") if winner else None,
             "engine":winner["engine"] if winner else None,
             "results": winner["results"][:limit] if winner else [],
             "requested_limit": limit, "broad_search": False,
@@ -358,7 +377,7 @@ app = FastAPI(title="Dethrottled browser search worker", lifespan=lifespan)
 
 
 class SearchRequest(BaseModel):
-    query: str = Field(min_length=2, max_length=500)
+    query: str = Field(min_length=2, max_length=4096)
     limit: int = Field(default=10, ge=1, le=10)
 
 

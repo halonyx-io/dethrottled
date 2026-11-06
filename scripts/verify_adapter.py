@@ -42,6 +42,8 @@ class Backend(BaseHTTPRequestHandler):
         payload = json.loads(self.rfile.read(int(self.headers['Content-Length'])))
         if self.path == '/search':
             self.answer([{'url': f'https://example.org/{i}', 'title': f'Source {i}',
+                          'echo_domains': payload.get('domains', []),
+                          'echo_excluded': payload.get('exclude_domains', []),
                           'snippet': 'Known fact: 7341 tonnes.\nQuoted "evidence" — café.'}
                          for i in range(payload['limit'])])
         elif self.path == '/v2/search':
@@ -56,13 +58,23 @@ class Backend(BaseHTTPRequestHandler):
                          'attempts': [{'provider': 'web', 'status': 'http_429' if degraded
                                       else 'no_results', 'retry_after_seconds': 30}]})
         elif self.path == '/research':
-            self.answer({'sources': [{'id': f'S{i}', 'content': '7341 tonnes'}
+            self.answer({'echo_domains': payload.get('domains', []),
+                         'sources': [{'id': f'S{i}', 'content': '7341 tonnes'}
                                      for i in range(payload['max_sources'])]})
+        elif self.path == '/search-and-fetch':
+            self.answer({'echo_domains': payload.get('domains', [])})
         elif self.path == '/drive':
             self.answer({'ok': True, 'steps': [], 'screenshot_b64':
                          'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jHHsAAAAASUVORK5CYII='})
         elif self.path == '/fetch':
-            self.answer([{'content': 'X' * (payload['max_chars'] - 13) + '7341 tonnes!!'}])
+            self.answer([{'content': 'X' * (payload['max_chars'] - 13) + '7341 tonnes!!',
+                          'echo_selectors': payload.get('selectors', {})}])
+        elif self.path == '/site/crawl':
+            self.answer({'mode': payload.get('mode'),
+                         'max_discovery_requests': payload.get('max_discovery_requests')})
+        elif self.path == '/jobs/fetch':
+            self.answer({'selectors': payload.get('selectors'),
+                         'response_format': payload.get('response_format')})
         else:
             self.answer({'ok': True})
 
@@ -122,6 +134,18 @@ async def verify(url, rest_url, token, registry):
                 pretty_bytes = sum(len(json.dumps(v, ensure_ascii=False, indent=2).encode())
                                    for v in values[:8])
                 assert compact_bytes < pretty_bytes
+                filtered = await client.call_tool('search', {
+                    'query': 'fixture', 'domains': ['example.org'],
+                    'exclude_domains': ['ads.example.org'], 'limit': 1})
+                assert not filtered.isError
+                forwarded = json.loads(filtered.content[0].text)
+                assert forwarded['echo_domains'] == ['example.org']
+                assert forwarded['echo_excluded'] == ['ads.example.org']
+                selected_search = await client.call_tool('search_and_fetch', {
+                    'query': 'fixture', 'domains': ['example.org']})
+                assert not selected_search.isError
+                assert json.loads(selected_search.content[0].text)['echo_domains'] == [
+                    'example.org']
                 structured = await client.call_tool('capabilities', {})
                 assert structured.structuredContent['version'] == 'older-backend-fixture'
                 assert json.loads(structured.content[0].text) == structured.structuredContent
@@ -129,10 +153,27 @@ async def verify(url, rest_url, token, registry):
                                                        'max_chars': 200000})
                 assert not large.isError
                 assert '7341 tonnes' in json.loads(large.content[0].text)['content']
+                selected = await client.call_tool('fetch', {
+                    'urls': ['https://93.184.216.34/'],
+                    'selectors': {'title': {'selector': 'h1'}}})
+                assert not selected.isError
+                assert json.loads(selected.content[0].text)['echo_selectors'] == {
+                    'title': {'selector': 'h1'}}
+                mapped = await client.call_tool('crawl_site', {
+                    'urls': ['https://93.184.216.34/'], 'mode': 'map',
+                    'max_discovery_requests': 2})
+                assert not mapped.isError and mapped.structuredContent == {
+                    'mode': 'map', 'max_discovery_requests': 2}
+                queued = await client.call_tool('start_fetch_job', {
+                    'urls': ['https://93.184.216.34/'],
+                    'selectors': {'title': {'selector': 'h1'}}, 'response_format': 'concise'})
+                assert not queued.isError and queued.structuredContent == {
+                    'selectors': {'title': {'selector': 'h1'}}, 'response_format': 'concise'}
                 research = await client.call_tool('research', {
                     'question': 'fixture evidence', 'max_sources': 20, 'max_chars': 120000,
-                    'queries': [f'facet {i}' for i in range(10)]})
+                    'queries': [f'facet {i}' for i in range(10)], 'domains': ['example.org']})
                 assert not research.isError and len(research.structuredContent['sources']) == 20
+                assert research.structuredContent['echo_domains'] == ['example.org']
                 pixels = await client.call_tool('drive', {
                     'session': 'fixture-pixels', 'allowed_hosts': ['93.184.216.34'],
                     'steps': [], 'screenshot': 'always'})

@@ -33,6 +33,8 @@ with tarfile.open(fileobj=io.BytesIO(content), mode='r:gz') as archive:
     api_recipe = archive.extractfile('Dockerfile').read().decode()
     root_sources = [s for line in api_recipe.splitlines() if line.startswith('COPY ')
                     for s in shlex.split(line)[1:-1]]
+    assert 'SKILL.md' in names and 'SKILL.md' in root_sources
+    assert '!SKILL.md' in archive.extractfile('.dockerignore').read().decode().splitlines()
     assert 'Dockerfile' in root_sources, 'API nested wheel build needs its own Dockerfile'
 print(json.dumps({'passed': True, 'version': metadata['version'],
                   'context_files': len(names), 'copy_sources_checked': checked,

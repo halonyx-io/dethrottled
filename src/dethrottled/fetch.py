@@ -39,6 +39,10 @@ from .urls import (
 _READ_OPTIONS = ContextVar("read_options", default=MappingProxyType({}))
 
 
+class TargetPolicyError(ValueError):
+    """A public-target policy refusal, not a recoverable transport failure."""
+
+
 def _get_with_policy(get, url, **kwargs):
     """Validate every redirect target for reads made through a public adapter."""
     from . import adblock
@@ -48,7 +52,7 @@ def _get_with_policy(get, url, **kwargs):
     for _ in range(6):
         adblock.check(url)
         if not public_url(url):
-            raise ValueError("public_target_required")
+            raise TargetPolicyError("public_target_required")
         response = get(url, **dict(kwargs, allow_redirects=False))
         if response.status_code not in {301, 302, 303, 307, 308}:
             return response
@@ -466,7 +470,8 @@ def _tier_direct_once(url: str, timeout: int, allow_ocr: bool = False, *, get=No
         return ({"html": html, "clipped": clipped},
                 "html_truncated" if clipped else "", str(response.url))
     except Exception as exc:
-        return {}, str(exc) if isinstance(exc, adblock.AdblockBlocked) else type(exc).__name__, url
+        return ({}, str(exc) if isinstance(exc, (adblock.AdblockBlocked, TargetPolicyError))
+                else type(exc).__name__, url)
     finally:
         if response is not None and hasattr(response, "close"):
             response.close()
@@ -741,7 +746,7 @@ def _tier_tls_once(url: str, *, get=None) -> tuple:
                 url, impersonate=TLS_IMPERSONATE, timeout=TLS_TIMEOUT,
                 allow_redirects=True, stream=True)
     except Exception as exc:
-        reason = (str(exc) if isinstance(exc, adblock.AdblockBlocked)
+        reason = (str(exc) if isinstance(exc, (adblock.AdblockBlocked, TargetPolicyError))
                   else "tls_" + type(exc).__name__)
         return {}, reason, url
     try:
@@ -1076,11 +1081,15 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
         attempt = {"tier": name, "reason": reason, "outcome": "response" if payload else "failed",
                    "elapsed_ms": round((time.monotonic() - attempt_started) * 1000, 2)}
         attempts.append(attempt)
-        if reason.startswith('adblock_blocked:'):
+        if (reason.startswith('adblock_blocked:')
+                or reason in {"public_target_required", "redirect_target_not_public"}):
             attempt['outcome'] = 'policy_blocked'
             return {"ok": False, "text": "", "url": final, "tier": name, "extractor": None,
                     "title": "", "published": "", "chars": 0, "cached": False,
-                    "reason": reason, "policy_blocked": "adblock", "acquisition_attempts": attempts}
+                    "reason": reason,
+                    "policy_blocked": ("adblock" if reason.startswith('adblock_blocked:')
+                                       else "network"),
+                    "acquisition_attempts": attempts}
         payload = payload if isinstance(payload, dict) else {}
         html = payload.get("html") or ""
         details = page_details(html, final) if html else {}

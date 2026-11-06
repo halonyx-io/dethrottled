@@ -10,6 +10,13 @@ RESEARCH_CANDIDATE_LIMIT = 24
 
 INSTRUCTIONS = """Dethrottled discovers and reads sources.
 Prioritize grounded coverage and accuracy.
+Search domains/exclude_domains constrain hosts and subdomains, including corpus additions.
+prefer_domains only biases ranking. Check constrained empty queries with v2/search diagnostics;
+no matching candidates on an observed page does not prove absence across the web.
+For deterministic HTML fields use fetch selectors (CSS text/attribute specifications),
+then inspect structured_status missing/truncated_fields separately from prose quality.
+For site URL choices use crawl_site mode=map, a small max_pages menu and bounded
+max_discovery_requests. Mapping reads seeds/sitemaps; discovered candidates are not evidence.
 policy_blocked=adblock or adblock_blocked means deliberate content filtering. Do not retry
 through other tiers to override it. Report the refusal or choose another relevant source.
 Filtering status, list availability and update errors are in v2/status and stats.
@@ -151,6 +158,14 @@ def guidance(row, *, offset=0, focused=False, rendered_allowed=True):
                 'instruction': 'HaGeZi Multi PRO blocked this domain. Report the policy refusal '
                                'or choose another source; transport/browser retries '
                                'cannot override it.'}
+    if (row.get('policy_blocked') == 'network'
+            or row.get('failure_reason') in {
+                'invalid_url', 'public_target_required', 'redirect_target_not_public'}):
+        return {'state': 'target_refused', 'answer_verified': False, 'source_complete': False,
+                'response_truncated': False, 'source_bytes_retained': False,
+                'source_bytes_reacquirable': False, 'next_actions': [],
+                'instruction': 'Malformed or disallowed network target. Correct the URL or '
+                               'choose an allowed source; browser retries do not override policy.'}
     actions = []
     url, doc = row.get("url", ""), row.get("document_id")
     extraction = row.get("extraction") or {}

@@ -103,6 +103,12 @@ MCP fetch/research/document reads now default to concise presentation; request
 its detailed default. Retained full text and source completeness are unchanged.
 No cache/model/data volume reset is required. Refresh MCP tool descriptions.
 
+For 1.7.0, rebuild/recreate the API and browser services and update the MCP source,
+workflow and application version together. This loads host constraints, CSS field
+extraction, site mapping and terminal-target handling on every affected transport.
+The packaged root SKILL.md and generated references describe the new controls.
+Unchanged workers and the pinned MCP SDK need no upgrade. Preserve all volumes.
+
 ## State and backups
 
 | Storage | Contents |

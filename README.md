@@ -82,7 +82,9 @@ A normal fetch runs the recovery policy automatically. When content remains
 incomplete, `read_plan` and `workflow.next_actions` expose useful continuations,
 including reuse of the same browser session. Agents can also operate `/drive`
 directly. Read the [agent client playbook](https://github.com/halonyx-io/dethrottled/blob/main/docs/AGENT-PLAYBOOK.md)
-for tool selection and response contracts.
+for tool selection and response contracts. The repository [agent skill](SKILL.md)
+provides an installable client workflow covering discovery, extraction, documents,
+site mapping, browser control and diagnostics.
 
 ```sh
 curl -sS http://127.0.0.1:8787/fetch \
@@ -166,7 +168,7 @@ The fetch ladder does not consult `robots.txt`. Raw API access to trusted LAN
 targets requires care; public adapters enforce narrower policies, alongside
 operator-provided network isolation. See [operations](https://github.com/halonyx-io/dethrottled/blob/main/docs/OPERATIONS.md).
 
-This checkout is **1.6.2**. Check `/health` and `/v2/capabilities` on the service you
+This checkout is **1.7.0**. Check `/health` and `/v2/capabilities` on the service you
 actually use; deployed services and remote plugins can differ from a checkout.
 
 [MIT license](https://github.com/halonyx-io/dethrottled/blob/main/LICENSE) · Maintained by [Halonyx](https://github.com/halonyx-io)

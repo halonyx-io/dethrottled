@@ -27,6 +27,8 @@ Find pages. Returns ranked results with url, title and snippet.
 | `engines` | str | '' |
 | `ranking` | Literal['source', 'bm25', 'fusion'] | 'source' |
 | `prefer_domains` | list[str] \| None | None |
+| `domains` | list[str] \| None | None |
+| `exclude_domains` | list[str] \| None | None |
 | `diagnostics` | bool | False |
 | `cache_mode` | Literal['use', 'refresh', 'bypass'] | 'use' |
 | `max_age` | float \| None | None |
@@ -58,6 +60,7 @@ Read pages you already have URLs for.
 | `row_end` | Annotated[int \| None, Field(ge=1)] | None |
 | `sheet` | str | '' |
 | `max_cell_chars` | Annotated[int \| None, Field(ge=1, le=1000000)] | None |
+| `selectors` | dict[str, dict[str, Any]] \| None | None |
 ## extract_with_links
 
 Read public URLs while retaining resolved outbound links.
@@ -87,6 +90,8 @@ Find pages and read them in one call.
 | `engines` | str | '' |
 | `ranking` | Literal['source', 'bm25', 'fusion'] | 'source' |
 | `prefer_domains` | list[str] \| None | None |
+| `domains` | list[str] \| None | None |
+| `exclude_domains` | list[str] \| None | None |
 | `cache_mode` | Literal['use', 'refresh', 'bypass'] | 'use' |
 | `max_age` | float \| None | None |
 ## research
@@ -105,6 +110,8 @@ Gather cited sources and relevant excerpts across multiple searches.
 | `follow_assets` | bool | True |
 | `categories` | Literal['', 'news', 'academic'] | '' |
 | `response_format` | Literal['detailed', 'concise'] | 'concise' |
+| `domains` | list[str] \| None | None |
+| `exclude_domains` | list[str] \| None | None |
 ## drive
 
 Operate a stateful browser using bounded steps and structured evidence.
@@ -177,6 +184,8 @@ Start durable page reads and receive sources as they finish via read_fetch_job.
 | `row_end` | int \| None | None |
 | `sheet` | str | '' |
 | `max_cell_chars` | int \| None | None |
+| `selectors` | dict[str, dict[str, Any]] \| None | None |
+| `response_format` | Literal['detailed', 'concise'] | 'detailed' |
 ## read_fetch_job
 
 Read new completed sources; reuse next_cursor and respect poll_after_ms.
@@ -220,6 +229,8 @@ Discover and retain linked/sitemap sources within one site and report coverage.
 | `max_depth` | Annotated[int, Field(ge=0, le=5)] | 2 |
 | `path_prefix` | str | '/' |
 | `render` | Literal['auto', 'always', 'never'] | 'auto' |
+| `mode` | Literal['crawl', 'map'] | 'crawl' |
+| `max_discovery_requests` | Annotated[int, Field(ge=1, le=20)] | 5 |
 ## corpus_search
 
 Search public evidence. Broad support includes warned single-model candidates.
