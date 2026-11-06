@@ -47,7 +47,7 @@ def test_blocked_connect_never_resolves_or_dials(monkeypatch):
     asyncio.run(run())
 
 
-def test_tunnel_preserves_bytes_and_closes_on_updated_policy(policy, monkeypatch):
+def test_tunnel_preserves_bytes_across_update_and_blocks_new_connect(policy, monkeypatch):
     async def run():
         received = []
 
@@ -78,10 +78,13 @@ def test_tunnel_preserves_bytes_and_closes_on_updated_policy(policy, monkeypatch
             await writer.drain()
             assert await reader.readexactly(len(payload)) == payload
             policy.rules = frozenset({"content.example"})
-            writer.write(b"blocked after list update")
+            writer.write(b"admitted stream survives update")
             await writer.drain()
-            assert await asyncio.wait_for(reader.read(), 2) == b""
-            assert b"blocked after list update" not in b"".join(received)
+            assert await reader.readexactly(31) == b"admitted stream survives update"
+            denied_reader, denied_writer, denial = await connect(
+                gate, "content.example:" + str(port))
+            assert b" 451 " in denial
+            denied_writer.close()
             writer.close()
         finally:
             await gate.close()
@@ -187,4 +190,55 @@ def test_plain_http_post_preserves_body_and_rejects_invalid_target():
             server.close()
             await server.wait_closed()
 
+    asyncio.run(run())
+
+
+def test_large_download_and_websocket_survive_refresh_but_new_connections_refuse(monkeypatch):
+    import importlib.util
+    from pathlib import Path
+    path = Path(__file__).resolve().parents[1] / 'evaluations/post160-review/streams.py'
+    spec = importlib.util.spec_from_file_location('stream_regressions', path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    monkeypatch.setattr(adblock, 'FILTER', adblock.Filter())
+    monkeypatch.setattr(adblock_proxy, '_connect', adblock_proxy._connect)
+    result = asyncio.run(module.run())
+    assert result['download']['hash_matches']
+    assert result['download']['bytes_received'] == 4194304
+    assert result['download']['new_connection_blocked']
+    assert result['websocket']['frames_received'] == 9
+
+
+def test_redirect_target_new_connection_observes_updated_rules(policy, monkeypatch):
+    async def run():
+        dials = []
+        async def origin(reader, writer):
+            await reader.readuntil(b'\r\n\r\n')
+            writer.write(b'HTTP/1.1 302 Found\r\nLocation: https://newblocked.example/\r\n'
+                         b'Content-Length: 0\r\n\r\n')
+            await writer.drain()
+            writer.close()
+        server = await asyncio.start_server(origin, '127.0.0.1', 0)
+        port = server.sockets[0].getsockname()[1]
+        original = asyncio.open_connection
+        async def local(host, _):
+            dials.append(host)
+            return await original('127.0.0.1', port)
+        monkeypatch.setattr(adblock_proxy, '_connect', local)
+        gate = Gate()
+        await gate.start()
+        try:
+            reader, writer = await original('127.0.0.1', gate.server.sockets[0].getsockname()[1])
+            writer.write(b'GET http://content.example/ HTTP/1.1\r\nHost: content.example\r\n\r\n')
+            await writer.drain()
+            assert b'Location: https://newblocked.example/' in await reader.readuntil(b'\r\n\r\n')
+            writer.close()
+            policy.rules = frozenset({'newblocked.example'})
+            _, rejected, response = await connect(gate, 'newblocked.example:443')
+            assert b' 451 ' in response and dials == ['content.example']
+            rejected.close()
+        finally:
+            await gate.close()
+            server.close()
+            await server.wait_closed()
     asyncio.run(run())

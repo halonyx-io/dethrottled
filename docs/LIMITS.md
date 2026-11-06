@@ -78,3 +78,28 @@ anchors) on long structured pages; they do not establish exhaustive completeness
 Existing extracted-content cache entries are not retroactively reconstructed.
 Use `cache_mode="refresh"` or `"bypass"` when reassessing older cached extraction;
 `bypass` neither reads nor writes that cache. Cache lifetimes remain unchanged.
+
+## Long PDF reads
+
+Without an explicit `page_end`, native PDF text extraction considers up to 1,000
+pages from `page_start`, stopping earlier at the extraction character budget
+(default one million). Explicit HTTP/MCP page ranges remain limited to 100 pages.
+Response character limits are separate: use focused reads or retained-document
+`next_offset` to inspect text already extracted. Old cached extractions retain
+their original coverage; use `cache_mode=refresh` or `bypass` to reassess them.
+
+Native table analysis considers at most 100 pages per read, independently of the
+larger text window. `extraction.native_table_scan` reports its range and whether
+later extracted pages remain unanalysed for tables. Select later ranges when
+those tables matter. OCR retains its existing eight-page default budget; the
+larger native window does not authorize unlimited OCR or model inference.
+When OCR runs out, `next_page` identifies the first unread scan rather than
+skipping its missing text.
+
+A character window stops before consuming a later page whose text would not fit,
+so `extraction.next_page` can resume without skipping its tail. A single page
+larger than the extraction budget remains clipped: `truncated_page` and a
+`page_text_truncated` warning identify it; inspect source pixels. Successful
+non-HTML document extraction uses document/range continuation rather than the
+HTML browser recovery loop. Reparsed document versions refresh `content_status`
+and `source_partial`; earlier retained versions remain accessible.

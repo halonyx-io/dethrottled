@@ -1,0 +1,29 @@
+{
+  "http_status": 200,
+  "quality": "ok",
+  "content_status": "complete",
+  "content_chars": 466034,
+  "document_chars": 466034,
+  "partial": false,
+  "truncated": false,
+  "pages": 194,
+  "facts": [
+    {
+      "text": "a user agent may send a date header field in a request",
+      "found": true
+    },
+    {
+      "text": "transparent content negotiation in http",
+      "found": true
+    },
+    {
+      "text": "ought to respond with a 415",
+      "found": true
+    }
+  ],
+  "workflow_state": "evidence_available",
+  "read_plan_stop": "evidence_available",
+  "browser_calls": 0,
+  "seconds": 33.23811440402642,
+  "fixture_sha256": "60b30efa1048900833d1758440247fe8ac85a3134f2327388dcb24e07d814c89"
+}

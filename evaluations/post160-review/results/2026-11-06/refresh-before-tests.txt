@@ -1,0 +1,58 @@
+FF.                                                                      [100%]
+=================================== FAILURES ===================================
+______________ test_readers_do_not_parse_unchanged_304_snapshots _______________
+
+tmp_path = PosixPath('/tmp/pytest-of-dethrottled/pytest-0/test_readers_do_not_parse_unch0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fe477905310>
+
+    def test_readers_do_not_parse_unchanged_304_snapshots(tmp_path, monkeypatch):
+        monkeypatch.setenv('DETHROTTLED_ADBLOCK', '1')
+        writer = adblock.Filter(tmp_path)
+        writer.update(lambda *a, **k: Reply(body(), headers={'ETag': 'v1'}), now=100)
+        reader = adblock.Filter(tmp_path, reader=True)
+        reader.load()
+        original = reader.rules
+        calls = []
+        parse = adblock.parse
+        monkeypatch.setattr(adblock, 'parse', lambda data: (calls.append(1), parse(data))[1])
+        writer.update(lambda *a, **k: Reply(code=304), now=200)
+        reader.load()
+>       assert reader.rules is original
+E       AssertionError: assert frozenset({'ads.example', 'track0.invalid', 'track1.invalid', 'track10.invalid', 'track100.invalid', 'track1000.invalid', ...}) is frozenset({'ads.example', 'track0.invalid', 'track1.invalid', 'track10.invalid', 'track100.invalid', 'track1000.invalid', ...})
+E        +  where frozenset({'ads.example', 'track0.invalid', 'track1.invalid', 'track10.invalid', 'track100.invalid', 'track1000.invalid', ...}) = <dethrottled.adblock.Filter object at 0x7fe477906960>.rules
+
+tests/test_adblock_refresh.py:21: AssertionError
+______ test_identical_200_reuses_rules_and_preserves_content_update_time _______
+
+tmp_path = PosixPath('/tmp/pytest-of-dethrottled/pytest-0/test_identical_200_reuses_rule0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fe476d7ac30>
+
+    def test_identical_200_reuses_rules_and_preserves_content_update_time(tmp_path, monkeypatch):
+        monkeypatch.setenv('DETHROTTLED_ADBLOCK', '1')
+        writer = adblock.Filter(tmp_path)
+        writer.update(lambda *a, **k: Reply(body()), now=100)
+        original = writer.rules
+        monkeypatch.setattr(adblock, 'parse', lambda _: (_ for _ in ()).throw(
+            AssertionError('unchanged contents parsed again')))
+>       writer.update(lambda *a, **k: Reply(body(), headers={'ETag': 'new'}), now=200)
+
+tests/test_adblock_refresh.py:37: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/dethrottled/adblock.py:211: in update
+    rules = parse(body)
+            ^^^^^^^^^^^
+tests/test_adblock_refresh.py:35: in <lambda>
+    monkeypatch.setattr(adblock, 'parse', lambda _: (_ for _ in ()).throw(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+.0 = <tuple_iterator object at 0x7fe476d7aaa0>
+
+>   monkeypatch.setattr(adblock, 'parse', lambda _: (_ for _ in ()).throw(
+        AssertionError('unchanged contents parsed again')))
+E   AssertionError: unchanged contents parsed again
+
+tests/test_adblock_refresh.py:35: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_adblock_refresh.py::test_readers_do_not_parse_unchanged_304_snapshots
+FAILED tests/test_adblock_refresh.py::test_identical_200_reuses_rules_and_preserves_content_update_time
+2 failed, 1 passed in 0.34s

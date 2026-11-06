@@ -1,0 +1,1629 @@
+{
+  "label": "candidate",
+  "architecture": "x86_64",
+  "sources": {
+    "exit": "The emergency exit marker is green. Follow the illuminated sign to leave the building.",
+    "survey": "The land survey marks a river boundary. Surveyors measure the field corners and record distances.",
+    "temperature": "Keep the refrigerator between two and eight degrees Celsius. Close its door after use.",
+    "retention": "Search results expire after six hours. Corpus passages expire after ninety days."
+  },
+  "cases": [
+    {
+      "id": "known-exit",
+      "query": "What colour is the emergency exit marker?",
+      "mode": "lexical",
+      "support": "standard",
+      "seconds": 0.00439702020958066,
+      "relevant_sources": [
+        "exit"
+      ],
+      "hits": []
+    },
+    {
+      "id": "known-exit",
+      "query": "What colour is the emergency exit marker?",
+      "mode": "lexical",
+      "support": "broad",
+      "seconds": 0.00018448103219270706,
+      "relevant_sources": [
+        "exit"
+      ],
+      "hits": []
+    },
+    {
+      "id": "known-exit",
+      "query": "What colour is the emergency exit marker?",
+      "mode": "semantic",
+      "support": "standard",
+      "seconds": 0.011102447751909494,
+      "relevant_sources": [
+        "exit"
+      ],
+      "hits": [
+        {
+          "source": "exit",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": {
+            "scope": "returned_passage_and_title",
+            "matched_count": 3,
+            "unmatched_count": 1,
+            "matched_terms": [
+              "emergency",
+              "exit",
+              "marker"
+            ],
+            "unmatched_terms": [
+              "colour"
+            ],
+            "interpretation": "literal_overlap_only; paraphrases_may_not_share_terms"
+          },
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "known-exit",
+      "query": "What colour is the emergency exit marker?",
+      "mode": "semantic",
+      "support": "broad",
+      "seconds": 0.010450506117194891,
+      "relevant_sources": [
+        "exit"
+      ],
+      "hits": [
+        {
+          "source": "exit",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": {
+            "scope": "returned_passage_and_title",
+            "matched_count": 3,
+            "unmatched_count": 1,
+            "matched_terms": [
+              "emergency",
+              "exit",
+              "marker"
+            ],
+            "unmatched_terms": [
+              "colour"
+            ],
+            "interpretation": "literal_overlap_only; paraphrases_may_not_share_terms"
+          },
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "known-exit",
+      "query": "What colour is the emergency exit marker?",
+      "mode": "hybrid",
+      "support": "standard",
+      "seconds": 0.014814745169132948,
+      "relevant_sources": [
+        "exit"
+      ],
+      "hits": [
+        {
+          "source": "exit",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": {
+            "scope": "returned_passage_and_title",
+            "matched_count": 3,
+            "unmatched_count": 1,
+            "matched_terms": [
+              "emergency",
+              "exit",
+              "marker"
+            ],
+            "unmatched_terms": [
+              "colour"
+            ],
+            "interpretation": "literal_overlap_only; paraphrases_may_not_share_terms"
+          },
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "known-exit",
+      "query": "What colour is the emergency exit marker?",
+      "mode": "hybrid",
+      "support": "broad",
+      "seconds": 0.010775042232125998,
+      "relevant_sources": [
+        "exit"
+      ],
+      "hits": [
+        {
+          "source": "exit",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": {
+            "scope": "returned_passage_and_title",
+            "matched_count": 3,
+            "unmatched_count": 1,
+            "matched_terms": [
+              "emergency",
+              "exit",
+              "marker"
+            ],
+            "unmatched_terms": [
+              "colour"
+            ],
+            "interpretation": "literal_overlap_only; paraphrases_may_not_share_terms"
+          },
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "paraphrase-exit",
+      "query": "What hue indicates the escape route?",
+      "mode": "lexical",
+      "support": "standard",
+      "seconds": 0.00017488328740000725,
+      "relevant_sources": [
+        "exit"
+      ],
+      "hits": []
+    },
+    {
+      "id": "paraphrase-exit",
+      "query": "What hue indicates the escape route?",
+      "mode": "lexical",
+      "support": "broad",
+      "seconds": 0.00013218214735388756,
+      "relevant_sources": [
+        "exit"
+      ],
+      "hits": []
+    },
+    {
+      "id": "paraphrase-exit",
+      "query": "What hue indicates the escape route?",
+      "mode": "semantic",
+      "support": "standard",
+      "seconds": 0.011079974938184023,
+      "relevant_sources": [
+        "exit"
+      ],
+      "hits": [
+        {
+          "source": "exit",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": {
+            "scope": "returned_passage_and_title",
+            "matched_count": 0,
+            "unmatched_count": 4,
+            "matched_terms": [],
+            "unmatched_terms": [
+              "escape",
+              "hue",
+              "indicates",
+              "route"
+            ],
+            "interpretation": "literal_overlap_only; paraphrases_may_not_share_terms"
+          },
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "paraphrase-exit",
+      "query": "What hue indicates the escape route?",
+      "mode": "semantic",
+      "support": "broad",
+      "seconds": 0.010505570098757744,
+      "relevant_sources": [
+        "exit"
+      ],
+      "hits": [
+        {
+          "source": "exit",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": {
+            "scope": "returned_passage_and_title",
+            "matched_count": 0,
+            "unmatched_count": 4,
+            "matched_terms": [],
+            "unmatched_terms": [
+              "escape",
+              "hue",
+              "indicates",
+              "route"
+            ],
+            "interpretation": "literal_overlap_only; paraphrases_may_not_share_terms"
+          },
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "paraphrase-exit",
+      "query": "What hue indicates the escape route?",
+      "mode": "hybrid",
+      "support": "standard",
+      "seconds": 0.013450728729367256,
+      "relevant_sources": [
+        "exit"
+      ],
+      "hits": [
+        {
+          "source": "exit",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": {
+            "scope": "returned_passage_and_title",
+            "matched_count": 0,
+            "unmatched_count": 4,
+            "matched_terms": [],
+            "unmatched_terms": [
+              "escape",
+              "hue",
+              "indicates",
+              "route"
+            ],
+            "interpretation": "literal_overlap_only; paraphrases_may_not_share_terms"
+          },
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "paraphrase-exit",
+      "query": "What hue indicates the escape route?",
+      "mode": "hybrid",
+      "support": "broad",
+      "seconds": 0.011304751969873905,
+      "relevant_sources": [
+        "exit"
+      ],
+      "hits": [
+        {
+          "source": "exit",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": {
+            "scope": "returned_passage_and_title",
+            "matched_count": 0,
+            "unmatched_count": 4,
+            "matched_terms": [],
+            "unmatched_terms": [
+              "escape",
+              "hue",
+              "indicates",
+              "route"
+            ],
+            "interpretation": "literal_overlap_only; paraphrases_may_not_share_terms"
+          },
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "known-temperature",
+      "query": "What temperature range should the refrigerator maintain?",
+      "mode": "lexical",
+      "support": "standard",
+      "seconds": 0.00032472796738147736,
+      "relevant_sources": [
+        "temperature"
+      ],
+      "hits": []
+    },
+    {
+      "id": "known-temperature",
+      "query": "What temperature range should the refrigerator maintain?",
+      "mode": "lexical",
+      "support": "broad",
+      "seconds": 0.0002773283049464226,
+      "relevant_sources": [
+        "temperature"
+      ],
+      "hits": []
+    },
+    {
+      "id": "known-temperature",
+      "query": "What temperature range should the refrigerator maintain?",
+      "mode": "semantic",
+      "support": "standard",
+      "seconds": 0.013236107770353556,
+      "relevant_sources": [
+        "temperature"
+      ],
+      "hits": [
+        {
+          "source": "temperature",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": {
+            "scope": "returned_passage_and_title",
+            "matched_count": 2,
+            "unmatched_count": 2,
+            "matched_terms": [
+              "refrigerator",
+              "temperature"
+            ],
+            "unmatched_terms": [
+              "maintain",
+              "range"
+            ],
+            "interpretation": "literal_overlap_only; paraphrases_may_not_share_terms"
+          },
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "known-temperature",
+      "query": "What temperature range should the refrigerator maintain?",
+      "mode": "semantic",
+      "support": "broad",
+      "seconds": 0.009821188636124134,
+      "relevant_sources": [
+        "temperature"
+      ],
+      "hits": [
+        {
+          "source": "temperature",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": {
+            "scope": "returned_passage_and_title",
+            "matched_count": 2,
+            "unmatched_count": 2,
+            "matched_terms": [
+              "refrigerator",
+              "temperature"
+            ],
+            "unmatched_terms": [
+              "maintain",
+              "range"
+            ],
+            "interpretation": "literal_overlap_only; paraphrases_may_not_share_terms"
+          },
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "known-temperature",
+      "query": "What temperature range should the refrigerator maintain?",
+      "mode": "hybrid",
+      "support": "standard",
+      "seconds": 0.013863852713257074,
+      "relevant_sources": [
+        "temperature"
+      ],
+      "hits": [
+        {
+          "source": "temperature",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": {
+            "scope": "returned_passage_and_title",
+            "matched_count": 2,
+            "unmatched_count": 2,
+            "matched_terms": [
+              "refrigerator",
+              "temperature"
+            ],
+            "unmatched_terms": [
+              "maintain",
+              "range"
+            ],
+            "interpretation": "literal_overlap_only; paraphrases_may_not_share_terms"
+          },
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "known-temperature",
+      "query": "What temperature range should the refrigerator maintain?",
+      "mode": "hybrid",
+      "support": "broad",
+      "seconds": 0.011957735288888216,
+      "relevant_sources": [
+        "temperature"
+      ],
+      "hits": [
+        {
+          "source": "temperature",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": {
+            "scope": "returned_passage_and_title",
+            "matched_count": 2,
+            "unmatched_count": 2,
+            "matched_terms": [
+              "refrigerator",
+              "temperature"
+            ],
+            "unmatched_terms": [
+              "maintain",
+              "range"
+            ],
+            "interpretation": "literal_overlap_only; paraphrases_may_not_share_terms"
+          },
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "paraphrase-temperature",
+      "query": "How cold should medicines in refrigerated storage be kept?",
+      "mode": "lexical",
+      "support": "standard",
+      "seconds": 0.00020988890901207924,
+      "relevant_sources": [
+        "temperature"
+      ],
+      "hits": []
+    },
+    {
+      "id": "paraphrase-temperature",
+      "query": "How cold should medicines in refrigerated storage be kept?",
+      "mode": "lexical",
+      "support": "broad",
+      "seconds": 0.00017990218475461006,
+      "relevant_sources": [
+        "temperature"
+      ],
+      "hits": []
+    },
+    {
+      "id": "paraphrase-temperature",
+      "query": "How cold should medicines in refrigerated storage be kept?",
+      "mode": "semantic",
+      "support": "standard",
+      "seconds": 0.014292249921709299,
+      "relevant_sources": [
+        "temperature"
+      ],
+      "hits": [
+        {
+          "source": "temperature",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": {
+            "scope": "returned_passage_and_title",
+            "matched_count": 0,
+            "unmatched_count": 5,
+            "matched_terms": [],
+            "unmatched_terms": [
+              "cold",
+              "kept",
+              "medicines",
+              "refrigerated",
+              "storage"
+            ],
+            "interpretation": "literal_overlap_only; paraphrases_may_not_share_terms"
+          },
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "paraphrase-temperature",
+      "query": "How cold should medicines in refrigerated storage be kept?",
+      "mode": "semantic",
+      "support": "broad",
+      "seconds": 0.01316893007606268,
+      "relevant_sources": [
+        "temperature"
+      ],
+      "hits": [
+        {
+          "source": "temperature",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": {
+            "scope": "returned_passage_and_title",
+            "matched_count": 0,
+            "unmatched_count": 5,
+            "matched_terms": [],
+            "unmatched_terms": [
+              "cold",
+              "kept",
+              "medicines",
+              "refrigerated",
+              "storage"
+            ],
+            "interpretation": "literal_overlap_only; paraphrases_may_not_share_terms"
+          },
+          "supports_predefined_task": true
+        },
+        {
+          "source": "retention",
+          "support_status": "unconfirmed",
+          "answer_support": "unverified",
+          "query_anchors": {
+            "scope": "returned_passage_and_title",
+            "matched_count": 0,
+            "unmatched_count": 5,
+            "matched_terms": [],
+            "unmatched_terms": [
+              "cold",
+              "kept",
+              "medicines",
+              "refrigerated",
+              "storage"
+            ],
+            "interpretation": "literal_overlap_only; paraphrases_may_not_share_terms"
+          },
+          "supports_predefined_task": false
+        }
+      ]
+    },
+    {
+      "id": "paraphrase-temperature",
+      "query": "How cold should medicines in refrigerated storage be kept?",
+      "mode": "hybrid",
+      "support": "standard",
+      "seconds": 0.030771092977374792,
+      "relevant_sources": [
+        "temperature"
+      ],
+      "hits": [
+        {
+          "source": "temperature",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": {
+            "scope": "returned_passage_and_title",
+            "matched_count": 0,
+            "unmatched_count": 5,
+            "matched_terms": [],
+            "unmatched_terms": [
+              "cold",
+              "kept",
+              "medicines",
+              "refrigerated",
+              "storage"
+            ],
+            "interpretation": "literal_overlap_only; paraphrases_may_not_share_terms"
+          },
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "paraphrase-temperature",
+      "query": "How cold should medicines in refrigerated storage be kept?",
+      "mode": "hybrid",
+      "support": "broad",
+      "seconds": 0.055794532876461744,
+      "relevant_sources": [
+        "temperature"
+      ],
+      "hits": [
+        {
+          "source": "temperature",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": {
+            "scope": "returned_passage_and_title",
+            "matched_count": 0,
+            "unmatched_count": 5,
+            "matched_terms": [],
+            "unmatched_terms": [
+              "cold",
+              "kept",
+              "medicines",
+              "refrigerated",
+              "storage"
+            ],
+            "interpretation": "literal_overlap_only; paraphrases_may_not_share_terms"
+          },
+          "supports_predefined_task": true
+        },
+        {
+          "source": "retention",
+          "support_status": "unconfirmed",
+          "answer_support": "unverified",
+          "query_anchors": {
+            "scope": "returned_passage_and_title",
+            "matched_count": 0,
+            "unmatched_count": 5,
+            "matched_terms": [],
+            "unmatched_terms": [
+              "cold",
+              "kept",
+              "medicines",
+              "refrigerated",
+              "storage"
+            ],
+            "interpretation": "literal_overlap_only; paraphrases_may_not_share_terms"
+          },
+          "supports_predefined_task": false
+        }
+      ]
+    },
+    {
+      "id": "known-cache",
+      "query": "How long are search results cached?",
+      "mode": "lexical",
+      "support": "standard",
+      "seconds": 0.00025349296629428864,
+      "relevant_sources": [
+        "retention"
+      ],
+      "hits": []
+    },
+    {
+      "id": "known-cache",
+      "query": "How long are search results cached?",
+      "mode": "lexical",
+      "support": "broad",
+      "seconds": 0.0001995800994336605,
+      "relevant_sources": [
+        "retention"
+      ],
+      "hits": []
+    },
+    {
+      "id": "known-cache",
+      "query": "How long are search results cached?",
+      "mode": "semantic",
+      "support": "standard",
+      "seconds": 0.055399881675839424,
+      "relevant_sources": [
+        "retention"
+      ],
+      "hits": [
+        {
+          "source": "retention",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": {
+            "scope": "returned_passage_and_title",
+            "matched_count": 2,
+            "unmatched_count": 2,
+            "matched_terms": [
+              "results",
+              "search"
+            ],
+            "unmatched_terms": [
+              "cached",
+              "long"
+            ],
+            "interpretation": "literal_overlap_only; paraphrases_may_not_share_terms"
+          },
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "known-cache",
+      "query": "How long are search results cached?",
+      "mode": "semantic",
+      "support": "broad",
+      "seconds": 0.047338342759758234,
+      "relevant_sources": [
+        "retention"
+      ],
+      "hits": [
+        {
+          "source": "retention",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": {
+            "scope": "returned_passage_and_title",
+            "matched_count": 2,
+            "unmatched_count": 2,
+            "matched_terms": [
+              "results",
+              "search"
+            ],
+            "unmatched_terms": [
+              "cached",
+              "long"
+            ],
+            "interpretation": "literal_overlap_only; paraphrases_may_not_share_terms"
+          },
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "known-cache",
+      "query": "How long are search results cached?",
+      "mode": "hybrid",
+      "support": "standard",
+      "seconds": 0.0326039120554924,
+      "relevant_sources": [
+        "retention"
+      ],
+      "hits": [
+        {
+          "source": "retention",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": {
+            "scope": "returned_passage_and_title",
+            "matched_count": 2,
+            "unmatched_count": 2,
+            "matched_terms": [
+              "results",
+              "search"
+            ],
+            "unmatched_terms": [
+              "cached",
+              "long"
+            ],
+            "interpretation": "literal_overlap_only; paraphrases_may_not_share_terms"
+          },
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "known-cache",
+      "query": "How long are search results cached?",
+      "mode": "hybrid",
+      "support": "broad",
+      "seconds": 0.03089578030630946,
+      "relevant_sources": [
+        "retention"
+      ],
+      "hits": [
+        {
+          "source": "retention",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": {
+            "scope": "returned_passage_and_title",
+            "matched_count": 2,
+            "unmatched_count": 2,
+            "matched_terms": [
+              "results",
+              "search"
+            ],
+            "unmatched_terms": [
+              "cached",
+              "long"
+            ],
+            "interpretation": "literal_overlap_only; paraphrases_may_not_share_terms"
+          },
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "paraphrase-cache",
+      "query": "When does a stored discovery response expire?",
+      "mode": "lexical",
+      "support": "standard",
+      "seconds": 0.0002836599014699459,
+      "relevant_sources": [
+        "retention"
+      ],
+      "hits": []
+    },
+    {
+      "id": "paraphrase-cache",
+      "query": "When does a stored discovery response expire?",
+      "mode": "lexical",
+      "support": "broad",
+      "seconds": 0.0001839897595345974,
+      "relevant_sources": [
+        "retention"
+      ],
+      "hits": []
+    },
+    {
+      "id": "paraphrase-cache",
+      "query": "When does a stored discovery response expire?",
+      "mode": "semantic",
+      "support": "standard",
+      "seconds": 0.03538636909797788,
+      "relevant_sources": [
+        "retention"
+      ],
+      "hits": [
+        {
+          "source": "retention",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": {
+            "scope": "returned_passage_and_title",
+            "matched_count": 1,
+            "unmatched_count": 3,
+            "matched_terms": [
+              "expire"
+            ],
+            "unmatched_terms": [
+              "discovery",
+              "response",
+              "stored"
+            ],
+            "interpretation": "literal_overlap_only; paraphrases_may_not_share_terms"
+          },
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "paraphrase-cache",
+      "query": "When does a stored discovery response expire?",
+      "mode": "semantic",
+      "support": "broad",
+      "seconds": 0.03218647697940469,
+      "relevant_sources": [
+        "retention"
+      ],
+      "hits": [
+        {
+          "source": "retention",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": {
+            "scope": "returned_passage_and_title",
+            "matched_count": 1,
+            "unmatched_count": 3,
+            "matched_terms": [
+              "expire"
+            ],
+            "unmatched_terms": [
+              "discovery",
+              "response",
+              "stored"
+            ],
+            "interpretation": "literal_overlap_only; paraphrases_may_not_share_terms"
+          },
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "paraphrase-cache",
+      "query": "When does a stored discovery response expire?",
+      "mode": "hybrid",
+      "support": "standard",
+      "seconds": 0.021468241699039936,
+      "relevant_sources": [
+        "retention"
+      ],
+      "hits": [
+        {
+          "source": "retention",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": {
+            "scope": "returned_passage_and_title",
+            "matched_count": 1,
+            "unmatched_count": 3,
+            "matched_terms": [
+              "expire"
+            ],
+            "unmatched_terms": [
+              "discovery",
+              "response",
+              "stored"
+            ],
+            "interpretation": "literal_overlap_only; paraphrases_may_not_share_terms"
+          },
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "paraphrase-cache",
+      "query": "When does a stored discovery response expire?",
+      "mode": "hybrid",
+      "support": "broad",
+      "seconds": 0.04264337616041303,
+      "relevant_sources": [
+        "retention"
+      ],
+      "hits": [
+        {
+          "source": "retention",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": {
+            "scope": "returned_passage_and_title",
+            "matched_count": 1,
+            "unmatched_count": 3,
+            "matched_terms": [
+              "expire"
+            ],
+            "unmatched_terms": [
+              "discovery",
+              "response",
+              "stored"
+            ],
+            "interpretation": "literal_overlap_only; paraphrases_may_not_share_terms"
+          },
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "known-survey",
+      "query": "What boundary does the land survey mark?",
+      "mode": "lexical",
+      "support": "standard",
+      "seconds": 0.00024140020832419395,
+      "relevant_sources": [
+        "survey"
+      ],
+      "hits": []
+    },
+    {
+      "id": "known-survey",
+      "query": "What boundary does the land survey mark?",
+      "mode": "lexical",
+      "support": "broad",
+      "seconds": 0.00018591387197375298,
+      "relevant_sources": [
+        "survey"
+      ],
+      "hits": []
+    },
+    {
+      "id": "known-survey",
+      "query": "What boundary does the land survey mark?",
+      "mode": "semantic",
+      "support": "standard",
+      "seconds": 0.0407672137953341,
+      "relevant_sources": [
+        "survey"
+      ],
+      "hits": [
+        {
+          "source": "survey",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": {
+            "scope": "returned_passage_and_title",
+            "matched_count": 3,
+            "unmatched_count": 1,
+            "matched_terms": [
+              "boundary",
+              "land",
+              "survey"
+            ],
+            "unmatched_terms": [
+              "mark"
+            ],
+            "interpretation": "literal_overlap_only; paraphrases_may_not_share_terms"
+          },
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "known-survey",
+      "query": "What boundary does the land survey mark?",
+      "mode": "semantic",
+      "support": "broad",
+      "seconds": 0.03629915835335851,
+      "relevant_sources": [
+        "survey"
+      ],
+      "hits": [
+        {
+          "source": "survey",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": {
+            "scope": "returned_passage_and_title",
+            "matched_count": 3,
+            "unmatched_count": 1,
+            "matched_terms": [
+              "boundary",
+              "land",
+              "survey"
+            ],
+            "unmatched_terms": [
+              "mark"
+            ],
+            "interpretation": "literal_overlap_only; paraphrases_may_not_share_terms"
+          },
+          "supports_predefined_task": true
+        },
+        {
+          "source": "exit",
+          "support_status": "unconfirmed",
+          "answer_support": "unverified",
+          "query_anchors": {
+            "scope": "returned_passage_and_title",
+            "matched_count": 0,
+            "unmatched_count": 4,
+            "matched_terms": [],
+            "unmatched_terms": [
+              "boundary",
+              "land",
+              "mark",
+              "survey"
+            ],
+            "interpretation": "literal_overlap_only; paraphrases_may_not_share_terms"
+          },
+          "supports_predefined_task": false
+        }
+      ]
+    },
+    {
+      "id": "known-survey",
+      "query": "What boundary does the land survey mark?",
+      "mode": "hybrid",
+      "support": "standard",
+      "seconds": 0.04129224317148328,
+      "relevant_sources": [
+        "survey"
+      ],
+      "hits": [
+        {
+          "source": "survey",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": {
+            "scope": "returned_passage_and_title",
+            "matched_count": 3,
+            "unmatched_count": 1,
+            "matched_terms": [
+              "boundary",
+              "land",
+              "survey"
+            ],
+            "unmatched_terms": [
+              "mark"
+            ],
+            "interpretation": "literal_overlap_only; paraphrases_may_not_share_terms"
+          },
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "known-survey",
+      "query": "What boundary does the land survey mark?",
+      "mode": "hybrid",
+      "support": "broad",
+      "seconds": 0.03958121594041586,
+      "relevant_sources": [
+        "survey"
+      ],
+      "hits": [
+        {
+          "source": "survey",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": {
+            "scope": "returned_passage_and_title",
+            "matched_count": 3,
+            "unmatched_count": 1,
+            "matched_terms": [
+              "boundary",
+              "land",
+              "survey"
+            ],
+            "unmatched_terms": [
+              "mark"
+            ],
+            "interpretation": "literal_overlap_only; paraphrases_may_not_share_terms"
+          },
+          "supports_predefined_task": true
+        },
+        {
+          "source": "exit",
+          "support_status": "unconfirmed",
+          "answer_support": "unverified",
+          "query_anchors": {
+            "scope": "returned_passage_and_title",
+            "matched_count": 0,
+            "unmatched_count": 4,
+            "matched_terms": [],
+            "unmatched_terms": [
+              "boundary",
+              "land",
+              "mark",
+              "survey"
+            ],
+            "interpretation": "literal_overlap_only; paraphrases_may_not_share_terms"
+          },
+          "supports_predefined_task": false
+        }
+      ]
+    },
+    {
+      "id": "paraphrase-survey",
+      "query": "Which watercourse defines the field edge?",
+      "mode": "lexical",
+      "support": "standard",
+      "seconds": 0.00022597983479499817,
+      "relevant_sources": [
+        "survey"
+      ],
+      "hits": []
+    },
+    {
+      "id": "paraphrase-survey",
+      "query": "Which watercourse defines the field edge?",
+      "mode": "lexical",
+      "support": "broad",
+      "seconds": 0.00017394078895449638,
+      "relevant_sources": [
+        "survey"
+      ],
+      "hits": []
+    },
+    {
+      "id": "paraphrase-survey",
+      "query": "Which watercourse defines the field edge?",
+      "mode": "semantic",
+      "support": "standard",
+      "seconds": 0.057133450638502836,
+      "relevant_sources": [
+        "survey"
+      ],
+      "hits": [
+        {
+          "source": "survey",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": {
+            "scope": "returned_passage_and_title",
+            "matched_count": 1,
+            "unmatched_count": 3,
+            "matched_terms": [
+              "field"
+            ],
+            "unmatched_terms": [
+              "defines",
+              "edge",
+              "watercourse"
+            ],
+            "interpretation": "literal_overlap_only; paraphrases_may_not_share_terms"
+          },
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "paraphrase-survey",
+      "query": "Which watercourse defines the field edge?",
+      "mode": "semantic",
+      "support": "broad",
+      "seconds": 0.05278201820328832,
+      "relevant_sources": [
+        "survey"
+      ],
+      "hits": [
+        {
+          "source": "survey",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": {
+            "scope": "returned_passage_and_title",
+            "matched_count": 1,
+            "unmatched_count": 3,
+            "matched_terms": [
+              "field"
+            ],
+            "unmatched_terms": [
+              "defines",
+              "edge",
+              "watercourse"
+            ],
+            "interpretation": "literal_overlap_only; paraphrases_may_not_share_terms"
+          },
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "paraphrase-survey",
+      "query": "Which watercourse defines the field edge?",
+      "mode": "hybrid",
+      "support": "standard",
+      "seconds": 0.05931351287290454,
+      "relevant_sources": [
+        "survey"
+      ],
+      "hits": [
+        {
+          "source": "survey",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": {
+            "scope": "returned_passage_and_title",
+            "matched_count": 1,
+            "unmatched_count": 3,
+            "matched_terms": [
+              "field"
+            ],
+            "unmatched_terms": [
+              "defines",
+              "edge",
+              "watercourse"
+            ],
+            "interpretation": "literal_overlap_only; paraphrases_may_not_share_terms"
+          },
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "paraphrase-survey",
+      "query": "Which watercourse defines the field edge?",
+      "mode": "hybrid",
+      "support": "broad",
+      "seconds": 0.05009148409590125,
+      "relevant_sources": [
+        "survey"
+      ],
+      "hits": [
+        {
+          "source": "survey",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": {
+            "scope": "returned_passage_and_title",
+            "matched_count": 1,
+            "unmatched_count": 3,
+            "matched_terms": [
+              "field"
+            ],
+            "unmatched_terms": [
+              "defines",
+              "edge",
+              "watercourse"
+            ],
+            "interpretation": "literal_overlap_only; paraphrases_may_not_share_terms"
+          },
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "absent-patent",
+      "query": "land patent",
+      "mode": "lexical",
+      "support": "standard",
+      "seconds": 0.00023604882881045341,
+      "relevant_sources": [],
+      "hits": []
+    },
+    {
+      "id": "absent-patent",
+      "query": "land patent",
+      "mode": "lexical",
+      "support": "broad",
+      "seconds": 0.00017822906374931335,
+      "relevant_sources": [],
+      "hits": []
+    },
+    {
+      "id": "absent-patent",
+      "query": "land patent",
+      "mode": "semantic",
+      "support": "standard",
+      "seconds": 0.04684498393908143,
+      "relevant_sources": [],
+      "hits": []
+    },
+    {
+      "id": "absent-patent",
+      "query": "land patent",
+      "mode": "semantic",
+      "support": "broad",
+      "seconds": 0.031604018062353134,
+      "relevant_sources": [],
+      "hits": [
+        {
+          "source": "survey",
+          "support_status": "unconfirmed",
+          "answer_support": "unverified",
+          "query_anchors": {
+            "scope": "returned_passage_and_title",
+            "matched_count": 1,
+            "unmatched_count": 1,
+            "matched_terms": [
+              "land"
+            ],
+            "unmatched_terms": [
+              "patent"
+            ],
+            "interpretation": "literal_overlap_only; paraphrases_may_not_share_terms"
+          },
+          "supports_predefined_task": false
+        }
+      ]
+    },
+    {
+      "id": "absent-patent",
+      "query": "land patent",
+      "mode": "hybrid",
+      "support": "standard",
+      "seconds": 0.031919488683342934,
+      "relevant_sources": [],
+      "hits": []
+    },
+    {
+      "id": "absent-patent",
+      "query": "land patent",
+      "mode": "hybrid",
+      "support": "broad",
+      "seconds": 0.031005437951534986,
+      "relevant_sources": [],
+      "hits": [
+        {
+          "source": "survey",
+          "support_status": "unconfirmed",
+          "answer_support": "unverified",
+          "query_anchors": {
+            "scope": "returned_passage_and_title",
+            "matched_count": 1,
+            "unmatched_count": 1,
+            "matched_terms": [
+              "land"
+            ],
+            "unmatched_terms": [
+              "patent"
+            ],
+            "interpretation": "literal_overlap_only; paraphrases_may_not_share_terms"
+          },
+          "supports_predefined_task": false
+        }
+      ]
+    },
+    {
+      "id": "related-insufficient",
+      "query": "Who granted the 1726 land patent?",
+      "mode": "lexical",
+      "support": "standard",
+      "seconds": 0.00023322412744164467,
+      "relevant_sources": [],
+      "hits": []
+    },
+    {
+      "id": "related-insufficient",
+      "query": "Who granted the 1726 land patent?",
+      "mode": "lexical",
+      "support": "broad",
+      "seconds": 0.00017086509615182877,
+      "relevant_sources": [],
+      "hits": []
+    },
+    {
+      "id": "related-insufficient",
+      "query": "Who granted the 1726 land patent?",
+      "mode": "semantic",
+      "support": "standard",
+      "seconds": 0.0334452441893518,
+      "relevant_sources": [],
+      "hits": []
+    },
+    {
+      "id": "related-insufficient",
+      "query": "Who granted the 1726 land patent?",
+      "mode": "semantic",
+      "support": "broad",
+      "seconds": 0.031174110248684883,
+      "relevant_sources": [],
+      "hits": []
+    },
+    {
+      "id": "related-insufficient",
+      "query": "Who granted the 1726 land patent?",
+      "mode": "hybrid",
+      "support": "standard",
+      "seconds": 0.019909745082259178,
+      "relevant_sources": [],
+      "hits": []
+    },
+    {
+      "id": "related-insufficient",
+      "query": "Who granted the 1726 land patent?",
+      "mode": "hybrid",
+      "support": "broad",
+      "seconds": 0.02080189296975732,
+      "relevant_sources": [],
+      "hits": []
+    },
+    {
+      "id": "absent-exit-date",
+      "query": "When was the emergency exit marker installed?",
+      "mode": "lexical",
+      "support": "standard",
+      "seconds": 0.0003048502840101719,
+      "relevant_sources": [],
+      "hits": []
+    },
+    {
+      "id": "absent-exit-date",
+      "query": "When was the emergency exit marker installed?",
+      "mode": "lexical",
+      "support": "broad",
+      "seconds": 0.0001970650628209114,
+      "relevant_sources": [],
+      "hits": []
+    },
+    {
+      "id": "absent-exit-date",
+      "query": "When was the emergency exit marker installed?",
+      "mode": "semantic",
+      "support": "standard",
+      "seconds": 0.03779456298798323,
+      "relevant_sources": [],
+      "hits": [
+        {
+          "source": "exit",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": {
+            "scope": "returned_passage_and_title",
+            "matched_count": 3,
+            "unmatched_count": 1,
+            "matched_terms": [
+              "emergency",
+              "exit",
+              "marker"
+            ],
+            "unmatched_terms": [
+              "installed"
+            ],
+            "interpretation": "literal_overlap_only; paraphrases_may_not_share_terms"
+          },
+          "supports_predefined_task": false
+        }
+      ]
+    },
+    {
+      "id": "absent-exit-date",
+      "query": "When was the emergency exit marker installed?",
+      "mode": "semantic",
+      "support": "broad",
+      "seconds": 0.040776112116873264,
+      "relevant_sources": [],
+      "hits": [
+        {
+          "source": "exit",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": {
+            "scope": "returned_passage_and_title",
+            "matched_count": 3,
+            "unmatched_count": 1,
+            "matched_terms": [
+              "emergency",
+              "exit",
+              "marker"
+            ],
+            "unmatched_terms": [
+              "installed"
+            ],
+            "interpretation": "literal_overlap_only; paraphrases_may_not_share_terms"
+          },
+          "supports_predefined_task": false
+        }
+      ]
+    },
+    {
+      "id": "absent-exit-date",
+      "query": "When was the emergency exit marker installed?",
+      "mode": "hybrid",
+      "support": "standard",
+      "seconds": 0.07817227626219392,
+      "relevant_sources": [],
+      "hits": [
+        {
+          "source": "exit",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": {
+            "scope": "returned_passage_and_title",
+            "matched_count": 3,
+            "unmatched_count": 1,
+            "matched_terms": [
+              "emergency",
+              "exit",
+              "marker"
+            ],
+            "unmatched_terms": [
+              "installed"
+            ],
+            "interpretation": "literal_overlap_only; paraphrases_may_not_share_terms"
+          },
+          "supports_predefined_task": false
+        }
+      ]
+    },
+    {
+      "id": "absent-exit-date",
+      "query": "When was the emergency exit marker installed?",
+      "mode": "hybrid",
+      "support": "broad",
+      "seconds": 0.07787844678387046,
+      "relevant_sources": [],
+      "hits": [
+        {
+          "source": "exit",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": {
+            "scope": "returned_passage_and_title",
+            "matched_count": 3,
+            "unmatched_count": 1,
+            "matched_terms": [
+              "emergency",
+              "exit",
+              "marker"
+            ],
+            "unmatched_terms": [
+              "installed"
+            ],
+            "interpretation": "literal_overlap_only; paraphrases_may_not_share_terms"
+          },
+          "supports_predefined_task": false
+        }
+      ]
+    },
+    {
+      "id": "absent-medication",
+      "query": "What medicine should treat pneumonia?",
+      "mode": "lexical",
+      "support": "standard",
+      "seconds": 0.00022108107805252075,
+      "relevant_sources": [],
+      "hits": []
+    },
+    {
+      "id": "absent-medication",
+      "query": "What medicine should treat pneumonia?",
+      "mode": "lexical",
+      "support": "broad",
+      "seconds": 0.00018114503473043442,
+      "relevant_sources": [],
+      "hits": []
+    },
+    {
+      "id": "absent-medication",
+      "query": "What medicine should treat pneumonia?",
+      "mode": "semantic",
+      "support": "standard",
+      "seconds": 0.055721153039485216,
+      "relevant_sources": [],
+      "hits": []
+    },
+    {
+      "id": "absent-medication",
+      "query": "What medicine should treat pneumonia?",
+      "mode": "semantic",
+      "support": "broad",
+      "seconds": 0.05902996193617582,
+      "relevant_sources": [],
+      "hits": []
+    },
+    {
+      "id": "absent-medication",
+      "query": "What medicine should treat pneumonia?",
+      "mode": "hybrid",
+      "support": "standard",
+      "seconds": 0.08847957011312246,
+      "relevant_sources": [],
+      "hits": []
+    },
+    {
+      "id": "absent-medication",
+      "query": "What medicine should treat pneumonia?",
+      "mode": "hybrid",
+      "support": "broad",
+      "seconds": 0.04367573093622923,
+      "relevant_sources": [],
+      "hits": []
+    }
+  ],
+  "limitations": [
+    "Small diagnostic fixture, not a retrieval-quality leaderboard.",
+    "Refrigeration paraphrase omits medicine identity; only temperature facts are labelled.",
+    "Manual labels apply to these fixed sources and tasks only."
+  ]
+}

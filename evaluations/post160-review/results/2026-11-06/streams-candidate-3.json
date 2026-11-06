@@ -1,0 +1,15 @@
+{
+  "label": "candidate",
+  "download": {
+    "bytes_expected": 4194304,
+    "bytes_received": 4194304,
+    "hash_matches": true,
+    "new_connection_blocked": true,
+    "seconds": 0.01987065514549613
+  },
+  "websocket": {
+    "frames_expected": 9,
+    "frames_received": 9,
+    "post_update_frames_received": 8
+  }
+}

@@ -95,3 +95,14 @@ and do not establish new universal minimum requirements. Final publication and d
 The [adblock evaluation](../evaluations/adblock/README.md) separates per-process
 list memory, startup parsing CPU and complete browser workloads. These are measured
 additional costs for the recorded snapshot, not new universal machine minimums.
+
+## Comparing deployment memory
+
+Record the exact service set when comparing memory. A full eight-container
+installation (including optional layout/media and a separately deployed PDF
+worker) is not the five-service default stack. Report the memory metric, model
+initialization, warmed browser/cache state and background load. Idle observations
+after one workload are not universal RAM requirements or proof of a memory leak;
+container limits are not reservations. Comparisons with other engines require
+comparable service scope, workload and accounting. Long-document text extraction
+and optional table/model inference have separate costs.

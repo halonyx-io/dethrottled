@@ -140,7 +140,10 @@ class Filter:
             body = data["body"].encode("utf-8")
             if hashlib.sha256(body).hexdigest() != data["sha256"]:
                 raise ValueError("cache_checksum_mismatch")
-            rules = parse(body)
+            # Metadata-only refreshes still validate the body checksum, but
+            # need not rebuild the same immutable domain set in every worker.
+            rules = (self.rules if self.rules and self.metadata.get("sha256") == data["sha256"]
+                     else parse(body))
             self.rules, self.metadata, self._signature = (
                 rules,
                 {k: v for k, v in data.items() if k != "body"},
@@ -190,9 +193,11 @@ class Filter:
                             if (
                                 hashlib.sha256(data["body"].encode()).hexdigest()
                                 != self.metadata["sha256"]
+                                or data.get("sha256") != self.metadata["sha256"]
+                                or data.get("source") != source
                             ):
                                 raise ValueError("cache_checksum_mismatch")
-                            data["checked_at"] = now
+                            data = dict(self.metadata, body=data["body"], checked_at=now)
                             rules = self.rules
                         else:
                             if response.code != 200:
@@ -208,13 +213,15 @@ class Filter:
                                 if size > MAX_BYTES or time.monotonic() - began > 45:
                                     raise ValueError("update_size_or_time_limit")
                             body = b"".join(chunks)
-                            rules = parse(body)
+                            digest = hashlib.sha256(body).hexdigest()
+                            unchanged = bool(self.rules) and digest == self.metadata.get("sha256")
+                            rules = self.rules if unchanged else parse(body)
                             # Reject catastrophic truncation even if its header changes.
                             if self.rules and len(rules) < len(self.rules) // 2:
                                 raise ValueError("suspicious_rule_count_drop")
                             data = dict(
                                 body=body.decode(),
-                                sha256=hashlib.sha256(body).hexdigest(),
+                                sha256=digest,
                                 source=source,
                                 updated_at=now,
                                 checked_at=now,

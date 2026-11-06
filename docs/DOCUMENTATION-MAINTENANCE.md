@@ -126,3 +126,45 @@ it cannot establish that the prose explains their semantics correctly.
 The inventory guard prevents missing files; source-derived references prevent
 parameter-table drift; controlled examples and review catch semantic drift. None
 replaces the others.
+
+## 1.6.1 completed work
+
+Checked items are included in 1.6.1. The dated investigations retain their
+original candidate observations; final publication checks belong to the release. See the [retained investigation](../evaluations/retrieval-review/results/2026-11-06/REPORT.md).
+
+- [x] Improve corpus discovery in `GET /v2/capabilities`. Preserve the existing
+  endpoint fields and add explicit HTTP methods, required query parameters and
+  a runnable example for `GET /corpus/search?q=...`; identify `GET /corpus/stats`
+  as the statistics route. Make the REST `q` versus MCP `query` distinction clear.
+  Add a focused regression test for the advertised contract and exercise the
+  example against the route. Reconcile the API guide, agent playbook and generated
+  references as needed. Keep current response shapes and retrieval behaviour.
+  Raised by post-release 1.6.0 agent testing on 2026-11-06.
+
+- [x] Investigate whether corpus responses and agent instructions clearly distinguish
+  retrieved semantic candidates from evidence supporting the requested facts.
+  Trigger: `land patent` returned six standard semantic/hybrid candidates but zero
+  lexical hits; a contemporaneous database check found no passage containing
+  `patent`. This observation establishes neither answer coverage nor a general
+  retrieval defect. Evaluate known-answer, related-but-insufficient, absent-answer
+  and useful-paraphrase cases across standard/broad support and lexical/semantic/
+  hybrid modes. Inspect existing provenance, warnings and answer-support labels
+  before proposing minimal, backward-compatible diagnostic or instruction changes.
+  Do not require literal query words or change ranking/filtering without evidence.
+  Retain per-case results and verify that useful paraphrases remain discoverable.
+  Raised by post-release 1.6.0 agent testing on 2026-11-06.
+
+- [x] Review unchanged blocklist refreshes and active stream policy. Reuse validated
+  equal-content rules; preserve check/update semantics and protect metadata.
+  Keep admitted streams alive while checking new connections. Retain local
+  transfer/update evidence and document the TLS connection-reuse limitation.
+- [x] Correlate MCP admission refusals with JSON-RPC IDs and bounded request reads;
+  preserve REST/auth/transport retry contracts. Verify actual adapter integration.
+- [x] Extend required-parameter discovery across core HTTP routes from OpenAPI;
+  test crawl thin-navigation discovery, explicit no-`ok` outcomes and multi-URL
+  job progress. Preserve original quality, failure and scope policy.
+
+The [post-1.6.0 report](../evaluations/post160-review/results/2026-11-06/REPORT.md)
+records cumulative changes and deliberately unchanged network/admission policies.
+Release gates include native AMD64/ARM64 CI and final package/deployment verification;
+see the [1.6.1 release](https://github.com/halonyx-io/dethrottled/releases/tag/v1.6.1).

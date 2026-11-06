@@ -19,6 +19,9 @@ from .content import decode_html, short_text
 
 EXPANDED_LIMIT = 64 * 1024 * 1024
 MEMBER_LIMIT = 50
+# Native text is cheap compared with OCR/layout inference. Keep an independent
+# work bound for sparse/malicious PDFs, without truncating ordinary long RFCs.
+PDF_PAGE_CAP = 1000
 
 
 def kind_of(data, url="", content_type=""):
@@ -150,6 +153,7 @@ def pdf_text(data, limit, allow_ocr, options):
     from . import ocr
 
     parts, pages, warnings = [], [], []
+    size, truncated_page = 0, None
     ocr_count = 0
     start = options.get("page_start", 1) - 1
     requested_end = options.get("page_end")
@@ -158,7 +162,7 @@ def pdf_text(data, limit, allow_ocr, options):
             raise ValueError("pdf_password_required")
         if start >= len(doc):
             raise ValueError("pdf_page_out_of_range")
-        stop = min(len(doc), requested_end if requested_end is not None else start + 100)
+        stop = min(len(doc), requested_end if requested_end is not None else start + PDF_PAGE_CAP)
         for number in range(start, stop):
             page = doc[number]
             text = page.get_text(sort=True)
@@ -183,9 +187,23 @@ def pdf_text(data, limit, allow_ocr, options):
                     warnings.append(
                         f"Page {number + 1}: OCR page cap reached; select this page next."
                     )
+                    # Do not mark unread scanned pages as consumed. The next
+                    # range gets a fresh bounded OCR budget for this exact page.
+                    break
             elif not text.strip():
                 warnings.append(f"Page {number + 1} has no text layer; OCR was not performed.")
-            parts.append(f"## Page {number + 1}\n{text}")
+            part = f"## Page {number + 1}\n{text}"
+            added = len(part) + (2 if parts else 0)
+            # Do not consume a page and then discard its tail: a page-based
+            # continuation must begin at the first page not retained in full.
+            if parts and size + added > limit:
+                break
+            parts.append(part)
+            size += added
+            if size > limit:
+                truncated_page = number + 1
+                warnings.append(f"Page {number + 1}: page_text_truncated; "
+                                "this page exceeds the character budget; inspect source pixels.")
             layout = [{"bbox": list(block[:4]), "text": block[4][:500],
                        "text_truncated": len(block[4]) > 500}
                       for block in page.get_text("blocks", sort=True)[:30] if block[6] == 0]
@@ -193,7 +211,7 @@ def pdf_text(data, limit, allow_ocr, options):
                           "text_layer_blocks": layout,
                           "layout_coordinate_space": "PDF points, origin top-left",
                           "layout_may_be_incomplete": True})
-            if sum(map(len, parts)) >= limit:
+            if size >= limit:
                 break
         joined = "\n\n".join(parts)
         if not any(page["text_chars"] for page in pages):
@@ -203,11 +221,14 @@ def pdf_text(data, limit, allow_ocr, options):
             for warning in warnings
         )
         partial = start > 0 or len(pages) < len(doc) or len(joined) > limit or incomplete
+        if start + len(pages) < len(doc):
+            warnings.append("PDF text window is partial; continue at next_page.")
         return joined[:limit], {
             "pages": pages,
             "total_pages": len(doc),
             "next_page": start + len(pages) + 1 if start + len(pages) < len(doc) else None,
             "partial": partial,
+            "truncated_page": truncated_page,
             "warnings": sorted(set(warnings)),
         }
 

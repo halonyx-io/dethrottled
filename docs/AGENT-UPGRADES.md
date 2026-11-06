@@ -15,6 +15,8 @@ adapter or cached client contract; the server version does not prove that a
 remote plugin loaded new code.
 
 For REST, start with `GET /v2/capabilities` and use the same workflow policy.
+Capabilities include corpus HTTP methods, required parameters and examples in
+`corpus.requests`; REST search uses `q`, while MCP uses `query`.
 Inspect `/v2/status` for worker readiness. Capabilities describe configuration;
 readiness and a successful functional request provide different evidence.
 See [public access](PUBLIC-ACCESS.md) for authentication and deployment.

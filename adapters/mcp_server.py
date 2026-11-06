@@ -790,6 +790,9 @@ async def corpus_search(query: str,
 
     Start with standard; when empty or incomplete, use broad to inspect possible
     cross-language matches, or rewrite/search the web. Matches do not verify answers.
+    Count measures candidates, not subject coverage. Model agreement is retriever
+    corroboration, not independent sources. Inspect text and query_anchors; absent
+    literal terms may also reflect paraphrases, not missing facts.
     """
     params: dict[str, Any] = {"q": query, "limit": _bounded_int(limit, 1, 10), "mode": mode}
     if support != "standard":
@@ -842,4 +845,4 @@ async def stats() -> dict[str, Any]:
 
 
 app = BackendIdentityMiddleware(AccessMiddleware(
-    BearerAuthMiddleware(mcp.streamable_http_app())))
+    BearerAuthMiddleware(mcp.streamable_http_app()), mcp=True))

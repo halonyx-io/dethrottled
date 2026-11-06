@@ -1,0 +1,16 @@
+{
+  "label": "baseline",
+  "rule_count": 222452,
+  "sha256": "60d08482e3de2686856a32e7ef5c05e6723d8f1fa659caed80e7effeac08dbfa",
+  "seconds": 0.8539284919388592,
+  "cpu_seconds": 0.791050209,
+  "parse_calls": 3,
+  "parse_cpu_seconds": 0.7273019629999999,
+  "reader_rules_reused": [
+    false,
+    false,
+    false
+  ],
+  "durable_last_check": 1793980021.638,
+  "content_updated_at": 1793893621.638
+}

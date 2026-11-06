@@ -64,9 +64,11 @@ class Gate:
         return b"Proxy-Authorization: Basic " + base64.b64encode(secret) + b"\r\n"
 
     async def tunnel(self, source, destination, url):
+        # The connection was admitted in handle(). Rule refreshes govern new
+        # connections, not arbitrary chunks of a TLS download or WebSocket.
         while True:
             chunk = await source.read(65536)
-            if not chunk or self.blocked(url):
+            if not chunk:
                 return
             destination.write(chunk)
             await destination.drain()

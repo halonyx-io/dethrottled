@@ -274,3 +274,24 @@ content is fetched by another caller. It also repairs existing source references
 from the verified public-document registry on first startup. This corrects retained
 document availability and prevents later reindex jobs from using a stale namespace;
 it does not change passage ranking, model floors or public eligibility.
+
+## Candidates are not answer coverage
+
+`/corpus/search` labels its result kind as `retrieval_candidates`. `count` counts
+returned passages, not supported facts. `support_status=model_agreement` means
+retrievers selected the same source; it is not corroboration by independent
+sources and does not establish that an answer is present. Both standard and broad
+support retain `answer_support=unverified`.
+
+Schema-2 hits include bounded `query_anchors`: matched/unmatched meaningful query
+term counts and up to twelve terms in each list (64 characters per term), scoped
+to the returned passage and title. This is literal overlap, not entailment or a
+whole-corpus coverage check. A missing term can reflect an absent fact or a useful
+paraphrase. These diagnostics do not change filtering, model floors or ordering.
+Inspect the actual passage before asserting coverage; lexical queries can help
+locate exact names/identifiers but cannot establish the absence of paraphrases.
+
+Capabilities retain `corpus.endpoints` and add `corpus.requests` with HTTP methods,
+required query parameters and an executable example. REST uses
+`GET /corpus/search?q=...`; MCP uses `corpus_search(query=...)`. Stats use
+`GET /corpus/stats` without a required query parameter.

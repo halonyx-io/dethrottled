@@ -82,11 +82,18 @@ GitHub release alone does not prove PyPI publication. Attach the tested wheel,
 source archive and SHA256 manifest to the GitHub release. Updating source, a
 GitHub release or PyPI never upgrades an already running Docker deployment.
 
-For 1.6.0, rebuild/recreate API and browser images plus SearXNG/Crawl4AI so
+When upgrading from before 1.6.0, rebuild/recreate API and browser images plus SearXNG/Crawl4AI so
 all four receive the filtering setting, shared cache volume and integration hooks.
 Refresh host-managed MCP adapter code, workflow and version modules together;
 its SDK remains pinned to 1.30.0. Verify actual worker filter observations and
 public adapter/backend identity after rollout. See [filter operations](ADBLOCK.md).
+
+For 1.6.1, rebuild the API and browser images, then recreate SearXNG/Crawl4AI
+so their mounted filter modules reload too. Update the public adapter's shared
+access module, MCP source, workflow and version module together; the SDK stays
+pinned to 1.30.0. Preserve all data/browser/filter/model volumes. Existing cached
+partial PDF extractions are not rewritten: use refresh/bypass to reassess them.
+Reconnect MCP clients that cache instructions or tool schemas.
 
 ## State and backups
 

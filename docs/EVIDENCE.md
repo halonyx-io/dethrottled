@@ -77,3 +77,16 @@ or universal performance claims.
 retain original failed approaches, local network/evidence controls, native
 architecture checks and a small live comparison. They do not claim universal
 challenge recovery or zero false positives.
+
+## 1.6.1 retrieval and client-contract evidence
+
+The [1.6.1 candidate investigation](../evaluations/retrieval-review/results/2026-11-06/REPORT.md)
+retains the RFC 9110 three-fact comparison, PDF/OCR continuation regressions,
+corpus diagnostic cases and performance limitations. The dated reports preserve their original local candidate observations. Final
+CI/package/deployment checks are attached to the
+[1.6.1 release](https://github.com/halonyx-io/dethrottled/releases/tag/v1.6.1).
+
+The [post-1.6.0 follow-up](../evaluations/post160-review/results/2026-11-06/REPORT.md)
+adds unchanged-refresh CPU measurements, real socket transfers during rule
+changes, MCP admission framing and crawl/job contract checks. It includes the
+cumulative change summary and the gates outstanding at the time of that experiment.

@@ -1,0 +1,15 @@
+{
+  "label": "baseline",
+  "download": {
+    "bytes_expected": 4194304,
+    "bytes_received": 65536,
+    "hash_matches": false,
+    "new_connection_blocked": true,
+    "seconds": 0.006633397191762924
+  },
+  "websocket": {
+    "frames_expected": 9,
+    "frames_received": 1,
+    "post_update_frames_received": 0
+  }
+}

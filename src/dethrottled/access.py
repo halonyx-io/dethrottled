@@ -160,8 +160,9 @@ def require_scope(scope):
 
 
 class AccessMiddleware:
-    def __init__(self, app, *, registry=None, admission=None):
+    def __init__(self, app, *, registry=None, admission=None, mcp=False):
         self.app = app
+        self.mcp = mcp
         self.registry = registry or Registry(os.environ.get(
             "DETHROTTLED_TOKEN_REGISTRY", "/etc/dethrottled-access/tokens.json"))
         self.admission = admission or Admission(os.environ.get(
@@ -202,11 +203,27 @@ class AccessMiddleware:
             limiter = ("request_rate" if exc.code == "rate_limited" else
                        "caller_concurrency" if exc.code == "caller_busy" else
                        "global_concurrency" if exc.code == "service_busy" else "access")
-            body = json.dumps({"error": exc.code, "reason": exc.code, "limiter": limiter,
-                               "retryable": exc.status in {429, 503},
-                               "retry_after_seconds": exc.retry_after,
-                               "retry_kind": "window" if exc.code == "rate_limited" else "poll",
-                               "request_id": request_id}).encode()
+            detail = {"error": exc.code, "reason": exc.code, "limiter": limiter,
+                      "retryable": exc.status in {429, 503},
+                      "retry_after_seconds": exc.retry_after,
+                      "retry_kind": "window" if exc.code == "rate_limited" else "poll",
+                      "request_id": request_id}
+            payload = detail
+            if self.mcp and exc.status in {429, 503}:
+                payload = {"jsonrpc": "2.0", "error": {
+                    "code": -32000, "message": exc.code, "data": detail}}
+                if scope.get("method") == "POST":
+                    # Rejected requests never reach the SDK. Read only a bounded
+                    # body to correlate their error; accepted streams are untouched.
+                    try:
+                        request = await asyncio.wait_for(self._rpc_request(receive), timeout=1)
+                        if (isinstance(request, dict) and request.get("jsonrpc") == "2.0"
+                                and isinstance(request.get("method"), str)
+                                and type(request.get("id")) in {str, int}):
+                            payload["id"] = request["id"]
+                    except (ValueError, TypeError, asyncio.TimeoutError):
+                        pass
+            body = json.dumps(payload).encode()
             response_headers = [(b"content-type", b"application/json"),
                                 (b"x-request-id", request_id.encode())]
             if exc.status == 401:
@@ -235,3 +252,16 @@ class AccessMiddleware:
             await asyncio.to_thread(self.admission.release, lease)
             CLAIMS.reset(claims_token)
             REQUEST_ID.reset(trace_token)
+
+    @staticmethod
+    async def _rpc_request(receive):
+        body = bytearray()
+        while True:
+            message = await receive()
+            if message["type"] != "http.request":
+                return None
+            body.extend(message.get("body", b""))
+            if len(body) > 262144:
+                return None
+            if not message.get("more_body", False):
+                return json.loads(body)
