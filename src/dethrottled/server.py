@@ -527,6 +527,7 @@ def v2_capabilities():
     import importlib.util
     import shutil
 
+    from .contracts import requests as http_requests
     from .readplan import recovery_budget
 
     def installed(name: str) -> bool:
@@ -558,6 +559,7 @@ def v2_capabilities():
     from .adblock import status as adblock_status
     return {
         "service": "dethrottled",
+        "request_contracts": http_requests(app.openapi()),
         "optional_search_providers": providers.configured(),
         "adblock": adblock_status(),
         "version": VERSION,
@@ -634,7 +636,15 @@ def v2_capabilities():
                    "support_policies": (["standard", "broad"] if os.getenv(
                        "DETHROTTLED_CORPUS_SCHEMA", "2") != "1" else ["legacy"]),
                    "endpoints": {"search": "/corpus/search", "stats": "/corpus/stats"},
+                   "requests": {
+                       "search": {"method": "GET", "path": "/corpus/search",
+                                  "required_query_parameters": ["q"],
+                                  "example": "/corpus/search?q=land%20patent&mode=lexical",
+                                  "mcp_query_parameter": "query"},
+                       "stats": {"method": "GET", "path": "/corpus/stats",
+                                 "required_query_parameters": []}},
                    "answer_support": "unverified",
+                   "result_kind": "retrieval_candidates",
                    "modes": ["auto", "semantic", "lexical"] +
                             (["hybrid"] if os.getenv(
                                 "DETHROTTLED_CORPUS_SCHEMA", "2") != "1" else []),
@@ -1015,7 +1025,12 @@ def read_document(body: DocumentReadBody):
             text, extraction = formats.read_blob(artifact["data"], kind, fetcher.CACHE_CHARS,
                 allow_ocr=body.ocr_mode != "never", options=options)
             metadata.update(extraction=extraction, warnings=extraction.get("warnings", []),
-                            source_partial=extraction.get("partial", False))
+                            source_partial=extraction.get("partial", False),
+                            content_status="partial" if extraction.get("partial") else "complete",
+                            content_chars=len(text))
+            # This is a new extraction version, not the old recovery plan's
+            # unresolved gap. Its original trace remains on the original handle.
+            metadata.pop("read_plan", None)
             from .content import assess_content
             metadata["content_assessment"] = assess_content(text, structured=True)
             record.update(documents().put(body.evidence_namespace, record["url"], text, metadata))
@@ -1438,6 +1453,11 @@ def corpus_search(q: str, limit: int = 10, floor: float | None = None,
             "support": support if options else "legacy",
             "retrieval_warnings": retrieval_warnings,
             "answer_support": "unverified",
+            "result_kind": "retrieval_candidates",
+            "support_note": "Support status describes retrieval corroboration, not answer "
+                            "presence. Model agreement is not independent source agreement. "
+                            "Inspect passage text; counts do not establish subject coverage. "
+                            "Query anchors show literal overlap only, not answer support.",
             "broader_retrieval": ("Use support=broad for warned, unconfirmed candidates; "
             "an empty result does not prove absence. Use mode=lexical when semantic models "
             "are unavailable." if options else "Schema 1 retains legacy retrieval; "

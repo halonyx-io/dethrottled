@@ -1,0 +1,85 @@
+{
+  "label": "candidate",
+  "thin_navigation": {
+    "operation": "site_crawl",
+    "outcome": "partial",
+    "sources": [
+      {
+        "url": "https://fixture.example/index",
+        "depth": 0,
+        "parent": null,
+        "quality": "thin",
+        "document_id": null,
+        "failure_reason": null,
+        "source_partial": false,
+        "warnings": [
+          "Short index; evidence coverage unverified"
+        ],
+        "policy_blocked": null,
+        "discovery_truncated": false
+      },
+      {
+        "url": "https://fixture.example/report",
+        "depth": 1,
+        "parent": "https://fixture.example/index",
+        "quality": "ok",
+        "document_id": null,
+        "failure_reason": null,
+        "source_partial": false,
+        "warnings": [],
+        "policy_blocked": null,
+        "discovery_truncated": false
+      }
+    ],
+    "coverage": {
+      "attempted": 2,
+      "succeeded": 1,
+      "failed": 1,
+      "discovered_in_scope": 2,
+      "pending": 0,
+      "depth_or_discovery_limited": 0,
+      "duplicate_links": 0,
+      "outside_scope": 0,
+      "frontier_exhausted": true,
+      "whole_site_complete": null,
+      "stop_reason": "observed_frontier_exhausted",
+      "limitation": "Only linked/sitemap URLs observed; unlinked and JS-only sources may be absent."
+    },
+    "continuation_urls": [],
+    "answer_verified": false
+  },
+  "failed_seed": {
+    "operation": "site_crawl",
+    "outcome": "no_ok_pages",
+    "sources": [
+      {
+        "url": "https://fixture.example/",
+        "depth": 0,
+        "parent": null,
+        "quality": "failed",
+        "document_id": null,
+        "failure_reason": "controlled_network_failure",
+        "source_partial": false,
+        "warnings": [],
+        "policy_blocked": null,
+        "discovery_truncated": false
+      }
+    ],
+    "coverage": {
+      "attempted": 1,
+      "succeeded": 0,
+      "failed": 1,
+      "discovered_in_scope": 1,
+      "pending": 0,
+      "depth_or_discovery_limited": 0,
+      "duplicate_links": 0,
+      "outside_scope": 0,
+      "frontier_exhausted": true,
+      "whole_site_complete": null,
+      "stop_reason": "observed_frontier_exhausted",
+      "limitation": "Only linked/sitemap URLs observed; unlinked and JS-only sources may be absent."
+    },
+    "continuation_urls": [],
+    "answer_verified": false
+  }
+}

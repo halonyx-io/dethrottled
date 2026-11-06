@@ -40,6 +40,13 @@ transport/format/OCR recovery and bounded content recovery. When configured, Out
 MSG and XLSB use the local format fallback; scanned PDF tables escalate to OCR layout.
 Compose includes the format reader and discovers started speech/layout workers automatically.
 An unready model worker with initialization=first_use_download downloads weights on first use.
+For HTTP argument names inspect capabilities.request_contracts and /openapi.json:
+research uses question, search query, corpus q, fetch/crawl urls, documents document_id,
+and job polling job_id. MCP uses its advertised tool schemas.
+An HTTP 200 batch can contain failed URLs; job completion counts finished positions,
+including failures. Crawl outcome=no_ok_pages means no source was rated ok, not that
+thin/suspect material was deleted. MCP admission errors use error.data for retry hints;
+inspect non-2xx responses instead of treating them as empty tool results.
 Corpus stats use REST /corpus/stats or MCP corpus_stats; Corpus v2 is a storage schema,
 not a /v2/corpus URL prefix. Capabilities corpus.endpoints advertises the actual routes.
 Schema-2 stats lifetimes distinguishes search/extraction caches, retained documents and corpus
@@ -51,6 +58,10 @@ agreement or literal query anchors. If empty or incomplete, support=broad expose
 unconfirmed candidates, including cross-language matches. Inspect their evidence; neither
 policy verifies an answer, and empty results do not establish absence. Set recovery=manual for
 explicit control; explicit render=never and OCR choices are respected.
+Corpus count is a candidate count, not answer coverage. Model agreement means retrievers
+selected the same source, not independent sources supporting a fact. Inspect passage text
+and query_anchors: unmatched terms can mean missing evidence or useful paraphrases, never
+proof that the whole corpus lacks a fact. Do not report subject coverage from counts alone.
 Read each result's workflow, warnings, source_partial and truncation fields. quality=ok
 means text was extracted, not that the answer is present or the source is complete.
 quality=thin retains short evidence; coverage is unverified. Preserve its warnings.
@@ -281,7 +292,8 @@ def guidance(row, *, offset=0, focused=False, rendered_allowed=True):
                 for p in extraction.get("pages", [])
                 if p.get("ocr") or "ocr" in p.get("method", "")
             ),
-            1,
+            extraction.get("truncated_page")
+            or next((p["page"] for p in extraction.get("pages", []) if p.get("page")), 1),
         )
         action(
             "view_document_image",

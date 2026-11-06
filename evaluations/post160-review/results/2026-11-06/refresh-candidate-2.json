@@ -1,0 +1,16 @@
+{
+  "label": "candidate",
+  "rule_count": 222452,
+  "sha256": "60d08482e3de2686856a32e7ef5c05e6723d8f1fa659caed80e7effeac08dbfa",
+  "seconds": 0.21171060809865594,
+  "cpu_seconds": 0.06858853700000012,
+  "parse_calls": 0,
+  "parse_cpu_seconds": 0,
+  "reader_rules_reused": [
+    true,
+    true,
+    true
+  ],
+  "durable_last_check": 1793980021.638,
+  "content_updated_at": 1793893621.638
+}

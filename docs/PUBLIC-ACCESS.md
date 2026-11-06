@@ -218,3 +218,23 @@ Native adblock filtering applies in the backend for both REST and MCP clients;
 it adds no public per-request override. A refused fetch reports `policy_blocked`
 and stops automatic recovery. Operators should inspect backend `/v2/status` for
 list availability and worker observations. See [native filtering](ADBLOCK.md).
+
+## Admission refusals and request discovery
+
+REST admission refusals retain their HTTP 429/503, `Retry-After`, limiter headers
+and structured retry body. MCP admission refusals use a JSON-RPC error with
+`error.code=-32000` and the same diagnostics in `error.data`. For a bounded,
+valid POST request, `id` matches the request (including zero/string IDs). A
+notification, malformed/oversize body, body-read timeout or GET has no correlated
+request ID; no invented tool result is returned. Authentication errors remain
+HTTP authentication failures. Clients must inspect non-2xx transport responses
+and retry hints instead of reporting them as empty tool results.
+
+Capabilities `request_contracts` derives methods, accepted body field names,
+required fields and query parameter names from the actual core OpenAPI schema.
+For full types/defaults/constraints use the linked `/openapi.json` or generated
+HTTP reference. REST research requires `question`; search requires `query`;
+corpus search is GET with `q`; fetch/crawl/job submission require `urls`;
+document reads require `document_id`; job polling requires `job_id`. MCP tool
+schemas remain authoritative for MCP argument names. No new REST aliases were
+added to conceal these differences.

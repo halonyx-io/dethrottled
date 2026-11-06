@@ -53,12 +53,16 @@ def crawl(seeds, read, *, max_pages=20, max_depth=2, path_prefix="/", budget_sec
                  "quality": row.get("quality", "failed"),
                  "document_id": row.get("document_id"),
                  "failure_reason": row.get("failure_reason"),
-                 "source_partial": row.get("source_partial", False)}
+                 "source_partial": row.get("source_partial", False),
+                 "warnings": row.get("warnings", [])[:10],
+                 "policy_blocked": row.get("policy_blocked")}
         entry["discovery_truncated"] = bool(row.get("truncated"))
         if not in_scope:
             entry.update(quality="failed", failure_reason="redirect_outside_site_scope")
         rows.append(entry)
-        if row.get("quality") != "ok" or not in_scope:
+        # A small index page can be thin as evidence but still expose useful
+        # links. Do not discard its same-origin frontier because prose is short.
+        if row.get("quality") not in {"ok", "thin", "suspect"} or not in_scope:
             continue
         found = links(row.get("html") or row.get("content", ""), final)
         for target in found:
@@ -82,9 +86,13 @@ def crawl(seeds, read, *, max_pages=20, max_depth=2, path_prefix="/", budget_sec
                 queue.append((target, depth + 1, url))
             else:
                 dropped += 1
-    return {"sources": rows,
+    succeeded = sum(r["quality"] == "ok" for r in rows)
+    return {"operation": "site_crawl",
+            "outcome": ("no_ok_pages" if not succeeded else
+                        "partial" if succeeded < len(rows) or queue or dropped else "pages_read"),
+            "sources": rows,
             "coverage": {"attempted": len(rows),
-                         "succeeded": sum(r["quality"] == "ok" for r in rows),
+                         "succeeded": succeeded,
                          "failed": sum(r["quality"] != "ok" for r in rows),
                          "discovered_in_scope": len(seen), "pending": len(queue),
                          "depth_or_discovery_limited": dropped,

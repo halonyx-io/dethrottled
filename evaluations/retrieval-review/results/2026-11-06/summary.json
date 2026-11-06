@@ -1,0 +1,88 @@
+{
+  "auto": {
+    "baseline": {
+      "runs": 3,
+      "fact_counts": [
+        1,
+        1,
+        1
+      ],
+      "read_pages": [
+        100,
+        100,
+        100
+      ],
+      "median_seconds": 52.761448077857494,
+      "median_cpu_seconds": 473.55679032300003,
+      "median_peak_process_rss_mib": 370.984375
+    },
+    "candidate": {
+      "runs": 3,
+      "fact_counts": [
+        3,
+        3,
+        3
+      ],
+      "read_pages": [
+        194,
+        194,
+        194
+      ],
+      "median_seconds": 58.82654501264915,
+      "median_cpu_seconds": 436.938886206,
+      "median_peak_process_rss_mib": 391.6015625
+    }
+  },
+  "native": {
+    "baseline": {
+      "runs": 3,
+      "fact_counts": [
+        1,
+        1,
+        1
+      ],
+      "read_pages": [
+        100,
+        100,
+        100
+      ],
+      "median_seconds": 3.6015091193839908,
+      "median_cpu_seconds": 9.123253149,
+      "median_peak_process_rss_mib": 158.70703125
+    },
+    "candidate": {
+      "runs": 3,
+      "fact_counts": [
+        3,
+        3,
+        3
+      ],
+      "read_pages": [
+        194,
+        194,
+        194
+      ],
+      "median_seconds": 5.633085458073765,
+      "median_cpu_seconds": 10.531868534000001,
+      "median_peak_process_rss_mib": 158.80078125
+    }
+  },
+  "performance_limitations": [
+    "Shared host with changing background load (observed load average 36.93 on 16 logical CPUs).",
+    "First auto baseline overlapped corpus-model evaluation; preserve it but do not treat timings as clean isolated comparisons.",
+    "Some native repeats overlapped focused regressions. CPU/RSS are per parser process, not whole-stack metrics.",
+    "Native observations precede final OCR-only continuation fix; final regressions cover that path.",
+    "These data establish fact recovery, not a latency win or a universal memory requirement."
+  ],
+  "baseline_image_id": "sha256:d65cc92443f4c041c62bd95ce3ff8f2139e1cc71159248ec58f6dddf60f8d8de",
+  "baseline_commit": "0006cdf559b7689585be68411d31c6b10756d1b6",
+  "final_candidate_source_sha256": {
+    "src/dethrottled/formats.py": "c4ea174758f25a0565ce0340e1c19f015df1df45ea93c1a0621fdbb0dba1d1c3",
+    "src/dethrottled/layout.py": "243ab72cf738d549a2c2ff452568ac62af9e898af25aef0a0e7af4f268ff646a",
+    "src/dethrottled/readplan.py": "29cdcba532c79396c9a9f9d0fc743f6787baeaf4f4e04d54c6d6f770a5e23d54",
+    "src/dethrottled/server.py": "1d87166ec85fa26925628282b91dffefa76b2a3fcb0928250871868dc9ae63d6",
+    "src/dethrottled/workflow.py": "584ad9f8fd1934b0472647706fb245def9c9d98a613cf59bff3155520ac04651",
+    "src/dethrottled/corpus_support.py": "7dc1c66dd192f17547bfb6b1fe1415ee0f14f5d749ac5bf1bbac8b811881aaec",
+    "src/dethrottled/corpus_query.py": "766e4e6f0fa8fa58bafe12eaef8f555d2eadb1f16d3b11b255bef16f38574ffc"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "label": "candidate",
+  "architecture": "x86_64",
+  "fixture_sha256": "60b30efa1048900833d1758440247fe8ac85a3134f2327388dcb24e07d814c89",
+  "mode": "auto",
+  "seconds": 51.030008391011506,
+  "cpu_seconds": 488.538599963,
+  "peak_rss_kib": 376964,
+  "content_chars": 522376,
+  "read_pages": 194,
+  "total_pages": 194,
+  "partial": false,
+  "next_page": null,
+  "warnings": [
+    "native_table_scan_partial; select a later page range for table analysis",
+    "table_structure_is_inferred; verify_critical_cells_against_source"
+  ],
+  "facts": [
+    {
+      "text": "a user agent may send a date header field in a request",
+      "found": true
+    },
+    {
+      "text": "transparent content negotiation in http",
+      "found": true
+    },
+    {
+      "text": "ought to respond with a 415",
+      "found": true
+    }
+  ],
+  "table_scan": {
+    "page_start": 1,
+    "page_end": 100,
+    "partial": true
+  },
+  "native_tables": 4
+}

@@ -15,8 +15,16 @@ def read_pdf(data, text, metadata, limit, options):
     native_tables, table_text, complex_layout = [], [], False
     start = options.get("page_start", 1)
     end = metadata["pages"][-1]["page"]
+    # Expanding native text must not multiply the expensive table-analysis
+    # budget. Explicit ranges can target any later pages (API maximum: 100).
+    scan_end = min(end, start + 99)
+    metadata["native_table_scan"] = {"page_start": start, "page_end": scan_end,
+                                     "partial": scan_end < end}
+    if scan_end < end:
+        metadata["warnings"].append(
+            "native_table_scan_partial; select a later page range for table analysis")
     with pymupdf.open(stream=data, filetype="pdf") as pdf:
-        for number in range(start - 1, end):
+        for number in range(start - 1, scan_end):
             page = pdf[number]
             blocks = page.get_text("blocks")
             left = [b for b in blocks if b[2] < page.rect.width * .6]
@@ -59,6 +67,9 @@ def read_pdf(data, text, metadata, limit, options):
         return text, metadata
     scan = any("ocr" in page.get("method", "") for page in metadata.get("pages", []))
     if mode == "auto" and ((not complex_layout and not scan) or native_tables or end - start >= 10):
+        return text, metadata
+    if end - start >= 100:
+        metadata["warnings"].append("layout_page_range_required; native_parser_used")
         return text, metadata
     try:
         response = requests.post(worker + "/convert", data=data,

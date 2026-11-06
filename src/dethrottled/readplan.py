@@ -64,6 +64,21 @@ def run(url, initial, *, read, drive, options, browser_available, allow_assets=T
     decisions, best, seen = [], initial, set()
     focus = options.get("focus", "")
 
+    # A successfully acquired document is not an HTML loading gap. Its bounded
+    # parser/range/OCR continuation is exposed by workflow.guidance; navigating
+    # Chromium's PDF viewer cannot recover the missing source pages or rows.
+    document_read = (initial.get("quality") != "failed"
+                     and initial.get("content_type") not in {None, "", "html", "text/html"}
+                     and bool(initial.get("extraction")))
+    if document_read:
+        initial["read_plan"] = dict(
+            revision=1, decisions=[], initial_gap=gap(initial), final_gap=gap(initial),
+            answer_verified=False,
+            stop_reason="document_continuation_required" if gap(initial) else "evidence_available",
+            render_allowed=options.get("allow_render", True), browser_configured=browser_available,
+            elapsed_ms=round((time.monotonic() - started) * 1000, 2), budget_seconds=budget)
+        return initial
+
     def available():
         return time.monotonic() < deadline and len(decisions) < 6
 

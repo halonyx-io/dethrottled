@@ -1,6 +1,7 @@
 # Native ad/tracker filtering
 
-Available in Dethrottled 1.6.0.
+Introduced in Dethrottled 1.6.0; unchanged-refresh reuse and connection-lifetime
+admission are included in 1.6.1.
 
 Dethrottled uses **HaGeZi Multi PRO** with one operator switch:
 
@@ -133,3 +134,21 @@ runtime rather than bundled or relabelled as MIT. The original list headers are
 retained in its cache; an accompanying `license.json` records attribution and the
 [bundled upstream license text](../src/dethrottled/licenses/HAGEZI-GPL-3.0.txt).
 Redistributing downloaded list data requires preserving its upstream licensing.
+
+## Unchanged refreshes and active connections
+
+A validated snapshot with the same SHA-256 reuses the existing immutable rule
+set. This applies to reader reloads after HTTP 304 and to identical HTTP 200
+bodies. Check times/validators still persist atomically; `last_update` retains the successful HTTP 200 snapshot-refresh time (including
+identical bodies); HTTP 304 advances only the check time. `last_check` denotes a
+refresh attempt.
+Restarted workers still checksum, validate and parse their first snapshot.
+Offline/corrupt updates retain the working in-memory policy.
+
+Browser policy admission lasts for an HTTP/CONNECT connection. An update does
+not terminate an admitted download or WebSocket mid-stream. New connections
+consult the current rules before dialing, and explicit `Page.goto` navigation
+checks remain. Redirects requiring a new connection are checked there. Encrypted
+requests reusing an admitted TLS connection retain its admission until it closes;
+the gate does not inspect TLS contents or promise immediate revocation of every
+request inside an existing tunnel. Existing RPC/DNS-pinning security checks remain.

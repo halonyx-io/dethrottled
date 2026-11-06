@@ -1,0 +1,51 @@
+{
+  "base_release": "1.6.0",
+  "base_commit": "0006cdf559b7689585be68411d31c6b10756d1b6",
+  "state": "uncommitted; not pushed, published or deployed",
+  "refresh": {
+    "baseline": {
+      "runs": 3,
+      "median_seconds": 0.8671930520795286,
+      "median_cpu_seconds": 0.8117444739999999,
+      "parse_calls": [
+        3,
+        3,
+        3
+      ]
+    },
+    "candidate": {
+      "runs": 3,
+      "median_seconds": 0.16946486895903945,
+      "median_cpu_seconds": 0.06832584499999994,
+      "parse_calls": [
+        0,
+        0,
+        0
+      ]
+    }
+  },
+  "tests": {
+    "combined_passed": 296,
+    "final_affected_passed": 122,
+    "counts_overlap": true,
+    "native_arm64": "not run: SSH authentication rejected",
+    "release_ci": "not run for uncommitted candidate"
+  },
+  "adapter_sdk": "1.30.0",
+  "new_runtime_dependencies": [],
+  "final_candidate_source_sha256": {
+    "adapters/mcp_server.py": "bba387994320b9f981f68b6b4fdea25e7ea24b0af447d4aa09e6747f66a86536",
+    "src/dethrottled/access.py": "338efbc1adb81d8d6624e03c619d68ec442823ddfb9c6a4195c23e7d1f83e223",
+    "src/dethrottled/adblock.py": "385f2ebf816e260cbc253e296b9c14a3699fe7c1943847566f08cc96524ed988",
+    "src/dethrottled/adblock_proxy.py": "d36b6513badb73415eb1f417eb330db21f45396dabed2ea79e015d3966ea47bd",
+    "src/dethrottled/contracts.py": "772690ba2f87347d0af9806db66c5f9918e1514f15b2213dcf583e522d002672",
+    "src/dethrottled/corpus_query.py": "766e4e6f0fa8fa58bafe12eaef8f555d2eadb1f16d3b11b255bef16f38574ffc",
+    "src/dethrottled/corpus_support.py": "7dc1c66dd192f17547bfb6b1fe1415ee0f14f5d749ac5bf1bbac8b811881aaec",
+    "src/dethrottled/formats.py": "c4ea174758f25a0565ce0340e1c19f015df1df45ea93c1a0621fdbb0dba1d1c3",
+    "src/dethrottled/layout.py": "243ab72cf738d549a2c2ff452568ac62af9e898af25aef0a0e7af4f268ff646a",
+    "src/dethrottled/readplan.py": "29cdcba532c79396c9a9f9d0fc743f6787baeaf4f4e04d54c6d6f770a5e23d54",
+    "src/dethrottled/server.py": "99789a63dfd4e1e4da6a9b55c39fa1837bfb18583fdc67422a0327e72335ebd0",
+    "src/dethrottled/site.py": "e738a6199f04e357ad4e940b50e0d39ab3c5e331f771a798eaf504f64ec8ccaf",
+    "src/dethrottled/workflow.py": "45a8dc3ce20d04147f8ba265d4f78abccb35138d53ba2e1c311de37ce9123b59"
+  }
+}

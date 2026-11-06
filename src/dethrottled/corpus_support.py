@@ -17,6 +17,22 @@ def terms(text):
     return {word for word in re.findall(r"\w+", text.casefold()) if word not in _STOP}
 
 
+def query_anchors(query, row):
+    """Bounded literal overlap diagnostics; absence can also mean paraphrase.
+
+    These describe the returned passage/title, never the whole corpus or
+    whether a fact is supported. They do not participate in ranking/filtering.
+    """
+    words = terms(query)
+    matched = words & terms(row["title"] + " " + row["text"])
+    missing = words - matched
+    return {"scope": "returned_passage_and_title", "matched_count": len(matched),
+            "unmatched_count": len(missing),
+            "matched_terms": [word[:64] for word in sorted(matched)[:12]],
+            "unmatched_terms": [word[:64] for word in sorted(missing)[:12]],
+            "interpretation": "literal_overlap_only; paraphrases_may_not_share_terms"}
+
+
 def assess(query, row, models):
     """Require model/source agreement or meaningful literal anchors.
 

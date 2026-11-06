@@ -229,3 +229,35 @@ For schema 2 the stats envelope adds `lifetimes`: search/extraction cache defaul
 TTLs, actual document TTL/size policy, configured corpus days and independent-clock
 semantics. Existing `models`/`index` fields and schema-1 responses are preserved.
 See [lifetime diagnostics](CORPUS.md#lifetimes-are-independent).
+
+## Corpus discovery and candidate diagnostics
+
+`GET /v2/capabilities` exposes `corpus.requests.search` and `.stats` alongside the
+unchanged `corpus.endpoints`. Search requires the REST query parameter `q`, for
+example `GET /corpus/search?q=land%20patent&mode=lexical`; MCP names it `query`.
+The search envelope reports `result_kind=retrieval_candidates`, a `support_note`
+and `answer_support=unverified`. Schema-2 hits add bounded `query_anchors` literal
+overlap diagnostics. Neither counts, overlap nor model agreement verify answers.
+See [corpus semantics](CORPUS.md#candidates-are-not-answer-coverage).
+
+## Request discovery, crawl outcomes and progressive jobs
+
+`/v2/capabilities.request_contracts` is generated from OpenAPI and describes
+methods, required/accepted body fields and query names. It complements the
+corpus-specific example without duplicating a hand-maintained parameter list.
+REST names differ deliberately: `question` for research, `query` for search, `q`
+for corpus lookup, `urls` for fetch/crawl/job submission, `document_id` for retained
+reads and `job_id` for job polling. Use `limit`, not an invented `maxResults`.
+
+`/site/crawl` identifies `operation=site_crawl` and reports `outcome=pages_read`,
+`partial` or `no_ok_pages`, alongside the existing `sources`, coverage ledger and
+continuation URLs. `no_ok_pages` means no attempted source was rated `quality=ok`;
+it does not erase thin/suspect evidence. Short navigation pages can still supply
+bounded same-origin links. Per-source warnings and policy refusals are retained.
+The legacy `coverage.failed` count includes every non-`ok` row. HTTP 200 means the
+bounded traversal ran, not that pages were acquired or an answer was verified.
+
+The same distinction applies to batch fetches and jobs. Inspect each URL's
+quality/failure diagnostics. Job `completed` counts finished positions, including
+failed reads; a running 1/2 job may legitimately await its second URL. Poll using
+`next_cursor`/`poll_after_ms` and preserve each returned source's outcome.

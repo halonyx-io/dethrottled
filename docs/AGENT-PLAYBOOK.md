@@ -52,6 +52,9 @@ that standard corroboration rejects; it can also return irrelevant candidates.
 Inspect `support_status`, `model_scores`, `retrieval_warning` and response-level
 `retrieval_warnings`. `answer_support="unverified"` applies to both policies.
 Standard checks and model agreement do not establish answer presence or truth.
+`count` counts candidates, not subject coverage. Inspect each passage and its bounded
+`query_anchors`; unmatched terms may reflect missing evidence or a useful paraphrase.
+Model agreement is retriever corroboration, not independent source agreement.
 
 Review `coverage`, omissions, offsets, freshness and `document_available`.
 Reopen a valid `document_id` with `read_document`; if the handle has expired,
@@ -291,3 +294,17 @@ With [native adblock filtering](ADBLOCK.md), `policy_blocked=adblock` and
 source; retrying other tiers cannot override it. `/v2/status`, capabilities and
 `/stats` expose list availability and errors. Enabled without valid rules permits
 acquisition while retaining existing public-target security.
+
+## Avoid parameter guessing and false empty results
+
+Use `capabilities.request_contracts` for HTTP methods and required fields, then
+OpenAPI for constraints. Research uses `question`, search `query`, corpus GET `q`,
+fetch/crawl/job submission `urls`, document reads `document_id` and job polling
+`job_id`. MCP tool schemas can use different names. Do not invent aliases.
+
+A REST 200 batch response can include failed sources. A crawl's `no_ok_pages`
+outcome exposes that none was rated `ok`; thin/suspect rows and link discovery
+remain visible. Job completion is progress, not proof every URL succeeded. An
+HTTP admission refusal is not an empty search/fetch. MCP retry metadata lives in
+`error.data` and its request ID is correlated when available; respect transport
+status and `Retry-After` too.

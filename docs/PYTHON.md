@@ -115,7 +115,7 @@ kinds; broader format dispatch includes other readers beyond that helper.
 
 ## Native filtering
 
-Dethrottled 1.6.0 supports `DETHROTTLED_ADBLOCK=1` (default) or `0` in standalone
+Dethrottled supports `DETHROTTLED_ADBLOCK=1` (default) or `0` in standalone
 Python and managed workers. Installing/importing the package does not download
 the list; acquisition or server startup starts background maintenance. The
 managed stack shares a persistent list cache. See [native filtering](ADBLOCK.md).

@@ -1,0 +1,31 @@
+{
+  "label": "candidate",
+  "architecture": "x86_64",
+  "fixture_sha256": "60b30efa1048900833d1758440247fe8ac85a3134f2327388dcb24e07d814c89",
+  "mode": "native",
+  "seconds": 4.605340766720474,
+  "cpu_seconds": 9.927653799,
+  "peak_rss_kib": 162540,
+  "content_chars": 520633,
+  "read_pages": 194,
+  "total_pages": 194,
+  "partial": false,
+  "next_page": null,
+  "warnings": [],
+  "facts": [
+    {
+      "text": "a user agent may send a date header field in a request",
+      "found": true
+    },
+    {
+      "text": "transparent content negotiation in http",
+      "found": true
+    },
+    {
+      "text": "ought to respond with a 415",
+      "found": true
+    }
+  ],
+  "table_scan": null,
+  "native_tables": 0
+}

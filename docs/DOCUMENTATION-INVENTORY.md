@@ -12,9 +12,9 @@ must be classified; unknown paths fail generation/checking.
 | current-guide | 25 |
 | dependency-input | 4 |
 | generated | 4 |
-| harness-guide | 13 |
-| historical-evidence | 35 |
-| source-contract | 121 |
+| harness-guide | 15 |
+| historical-evidence | 42 |
+| source-contract | 122 |
 | third-party-notice | 4 |
 | visual | 8 |
 
@@ -87,9 +87,11 @@ Harness maintainer: check runnable commands and label dated assumptions.
 | [evaluations/dependable/README.md](../evaluations/dependable/README.md) |
 | [evaluations/drive-recovery/README.md](../evaluations/drive-recovery/README.md) |
 | [evaluations/install-showcase/README.md](../evaluations/install-showcase/README.md) |
+| [evaluations/post160-review/README.md](../evaluations/post160-review/README.md) |
 | [evaluations/read-loop/README.md](../evaluations/read-loop/README.md) |
 | [evaluations/release/README.md](../evaluations/release/README.md) |
 | [evaluations/retrieval-metadata/README.md](../evaluations/retrieval-metadata/README.md) |
+| [evaluations/retrieval-review/README.md](../evaluations/retrieval-review/README.md) |
 | [evaluations/search-policy/README.md](../evaluations/search-policy/README.md) |
 
 ## historical-evidence
@@ -125,10 +127,17 @@ Evidence maintainer: preserve observations; append explicit corrections.
 | [evaluations/install-showcase/results/2026-11-04/failures/pypi-index-propagation.txt](../evaluations/install-showcase/results/2026-11-04/failures/pypi-index-propagation.txt) |
 | [evaluations/mcp-maintenance/2026-11-02/REPORT.md](../evaluations/mcp-maintenance/2026-11-02/REPORT.md) |
 | [evaluations/module-refactor/README.md](../evaluations/module-refactor/README.md) |
+| [evaluations/post160-review/results/2026-11-06/REPORT.md](../evaluations/post160-review/results/2026-11-06/REPORT.md) |
+| [evaluations/post160-review/results/2026-11-06/combined-tests.txt](../evaluations/post160-review/results/2026-11-06/combined-tests.txt) |
+| [evaluations/post160-review/results/2026-11-06/final-affected-tests.txt](../evaluations/post160-review/results/2026-11-06/final-affected-tests.txt) |
+| [evaluations/post160-review/results/2026-11-06/refresh-before-tests.txt](../evaluations/post160-review/results/2026-11-06/refresh-before-tests.txt) |
 | [evaluations/read-loop/results/2026-11-02/DEPLOYMENT.md](../evaluations/read-loop/results/2026-11-02/DEPLOYMENT.md) |
 | [evaluations/read-loop/results/2026-11-02/REPORT.md](../evaluations/read-loop/results/2026-11-02/REPORT.md) |
 | [evaluations/release/results/2026-11-02/REPORT.md](../evaluations/release/results/2026-11-02/REPORT.md) |
 | [evaluations/retrieval-reliability/REPORT.md](../evaluations/retrieval-reliability/REPORT.md) |
+| [evaluations/retrieval-review/results/2026-11-06/REPORT.md](../evaluations/retrieval-review/results/2026-11-06/REPORT.md) |
+| [evaluations/retrieval-review/results/2026-11-06/final-tests.txt](../evaluations/retrieval-review/results/2026-11-06/final-tests.txt) |
+| [evaluations/retrieval-review/results/2026-11-06/pdf-before-regressions.txt](../evaluations/retrieval-review/results/2026-11-06/pdf-before-regressions.txt) |
 | [evaluations/search-breadth/results/2026-11-02/REPORT.md](../evaluations/search-breadth/results/2026-11-02/REPORT.md) |
 | [evaluations/search-policy/results/2026-11-03/ATTRIBUTION.md](../evaluations/search-policy/results/2026-11-03/ATTRIBUTION.md) |
 | [evaluations/search-policy/results/2026-11-03/REPORT.md](../evaluations/search-policy/results/2026-11-03/REPORT.md) |
@@ -220,6 +229,7 @@ Change author: audit docs impact, advertised defaults and generated contracts.
 | [src/dethrottled/challenges.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/challenges.py) |
 | [src/dethrottled/cli.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/cli.py) |
 | [src/dethrottled/content.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/content.py) |
+| [src/dethrottled/contracts.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/contracts.py) |
 | [src/dethrottled/corpus.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/corpus.py) |
 | [src/dethrottled/corpus_chunks.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/corpus_chunks.py) |
 | [src/dethrottled/corpus_config.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/corpus_config.py) |

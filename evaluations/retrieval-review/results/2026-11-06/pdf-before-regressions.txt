@@ -1,0 +1,91 @@
+F.FFF                                                                    [100%]
+=================================== FAILURES ===================================
+_________________ test_implicit_range_keeps_late_native_facts __________________
+
+    def test_implicit_range_keeps_late_native_facts():
+        blob = pdf_bytes([f'PAGE {n} evidence marker' for n in range(1, 195)])
+        text, meta = formats.pdf_text(blob, 1000000, False, {})
+>       assert 'PAGE 194 evidence marker' in text
+E       AssertionError: assert 'PAGE 194 evidence marker' in '## Page 1\nPAGE 1 evidence marker\n\n## Page 2\nPAGE 2 evidence marker\n\n## Page 3\nPAGE 3 evidence marker\n\n## Pag...n\n## Page 98\nPAGE 98 evidence marker\n\n## Page 99\nPAGE 99 evidence marker\n\n## Page 100\nPAGE 100 evidence marker'
+
+tests/test_pdf_continuation.py:19: AssertionError
+___________ test_character_window_stops_before_clipping_a_later_page ___________
+
+    def test_character_window_stops_before_clipping_a_later_page():
+        labels = ['FIRST fact 47', 'SECOND fact 89', 'THIRD fact 123']
+        blob = pdf_bytes(labels)
+        first, _ = formats.pdf_text(blob, 10000, False, {'page_end': 1})
+        text, meta = formats.pdf_text(blob, len(first) + 10, False, {})
+>       assert text == first
+E       AssertionError: assert '## Page 1\nF...7\n\n## Page ' == '## Page 1\nFIRST fact 47'
+E         
+E           ## Page 1
+E         - FIRST fact 47
+E         + FIRST fact 47
+E         ?              +
+E         + 
+E         + ## Page
+
+tests/test_pdf_continuation.py:37: AssertionError
+______________ test_single_oversize_page_is_explicitly_incomplete ______________
+
+    def test_single_oversize_page_is_explicitly_incomplete():
+        blob = pdf_bytes(['Beginning of page; IMPORTANT END FACT 47'])
+        _, meta = formats.pdf_text(blob, 30, False, {})
+        assert meta['partial']
+>       assert meta['truncated_page'] == 1
+               ^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'truncated_page'
+
+tests/test_pdf_continuation.py:47: KeyError
+_________________ test_partial_pdf_does_not_drive_html_browser _________________
+
+    def test_partial_pdf_does_not_drive_html_browser():
+        def forbidden(*args, **kwargs):
+            pytest.fail('A PDF range needs PDF continuation, not HTML browser recovery')
+        initial = {'url': 'https://example.org/report.pdf', 'quality': 'ok',
+                   'content_type': 'application/pdf', 'content_status': 'partial',
+                   'source_partial': True, 'content': 'Readable PDF evidence',
+                   'extraction': {'next_page': 101, 'total_pages': 194}}
+>       row = run(initial['url'], initial, read=forbidden, drive=forbidden,
+                  options={}, browser_available=True)
+
+tests/test_pdf_continuation.py:58: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/dethrottled/readplan.py:244: in run
+    attempt("browser_inspect", gap(best), lambda: observe([], navigate=True))
+src/dethrottled/readplan.py:77: in attempt
+    candidate = operation()
+                ^^^^^^^^^^^
+src/dethrottled/readplan.py:244: in <lambda>
+    attempt("browser_inspect", gap(best), lambda: observe([], navigate=True))
+                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/dethrottled/readplan.py:182: in observe
+    result = drive(payload, timeout=min(remaining + 1, 14))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = ({'session': 'auto-reader-f81dd6e74856cad0ba67215d9c03fa7e', 'allowed_hosts': ['example.org'], 'public_only': False, 'screenshot': 'never', ...},)
+kwargs = {'timeout': 14}
+
+    def forbidden(*args, **kwargs):
+>       pytest.fail('A PDF range needs PDF continuation, not HTML browser recovery')
+E       Failed: A PDF range needs PDF continuation, not HTML browser recovery
+
+tests/test_pdf_continuation.py:53: Failed
+=============================== warnings summary ===============================
+../home/dethrottled/.local/lib/python3.12/site-packages/_pytest/cacheprovider.py:487
+  /home/dethrottled/.local/lib/python3.12/site-packages/_pytest/cacheprovider.py:487: PytestCacheWarning: could not create cache path /work/.pytest_cache/v/cache/nodeids: [Errno 13] Permission denied: '/work/pytest-cache-files-l5mlwlor'
+    config.cache.set("cache/nodeids", sorted(str(n) for n in self.cached_nodeids))
+
+../home/dethrottled/.local/lib/python3.12/site-packages/_pytest/cacheprovider.py:439
+  /home/dethrottled/.local/lib/python3.12/site-packages/_pytest/cacheprovider.py:439: PytestCacheWarning: could not create cache path /work/.pytest_cache/v/cache/lastfailed: [Errno 13] Permission denied: '/work/pytest-cache-files-cinim5tv'
+    config.cache.set("cache/lastfailed", current_lastfailed)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_pdf_continuation.py::test_implicit_range_keeps_late_native_facts
+FAILED tests/test_pdf_continuation.py::test_character_window_stops_before_clipping_a_later_page
+FAILED tests/test_pdf_continuation.py::test_single_oversize_page_is_explicitly_incomplete
+FAILED tests/test_pdf_continuation.py::test_partial_pdf_does_not_drive_html_browser
+4 failed, 1 passed, 2 warnings in 1.87s

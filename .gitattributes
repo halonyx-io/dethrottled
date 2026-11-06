@@ -4,3 +4,7 @@
 
 # Preserve byte-exact document fixtures and avoid text diffs/line-ending conversion.
 *.pdf binary
+
+# Retain original pytest output, including warning indentation/trailing spaces.
+evaluations/retrieval-review/results/**/*.txt -whitespace
+evaluations/post160-review/results/**/*.txt -whitespace

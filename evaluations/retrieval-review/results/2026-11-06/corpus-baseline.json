@@ -1,0 +1,1093 @@
+{
+  "label": "baseline",
+  "architecture": "x86_64",
+  "sources": {
+    "exit": "The emergency exit marker is green. Follow the illuminated sign to leave the building.",
+    "survey": "The land survey marks a river boundary. Surveyors measure the field corners and record distances.",
+    "temperature": "Keep the refrigerator between two and eight degrees Celsius. Close its door after use.",
+    "retention": "Search results expire after six hours. Corpus passages expire after ninety days."
+  },
+  "cases": [
+    {
+      "id": "known-exit",
+      "query": "What colour is the emergency exit marker?",
+      "mode": "lexical",
+      "support": "standard",
+      "seconds": 0.0028230641037225723,
+      "relevant_sources": [
+        "exit"
+      ],
+      "hits": []
+    },
+    {
+      "id": "known-exit",
+      "query": "What colour is the emergency exit marker?",
+      "mode": "lexical",
+      "support": "broad",
+      "seconds": 0.00040839705616235733,
+      "relevant_sources": [
+        "exit"
+      ],
+      "hits": []
+    },
+    {
+      "id": "known-exit",
+      "query": "What colour is the emergency exit marker?",
+      "mode": "semantic",
+      "support": "standard",
+      "seconds": 0.017346884123981,
+      "relevant_sources": [
+        "exit"
+      ],
+      "hits": [
+        {
+          "source": "exit",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": null,
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "known-exit",
+      "query": "What colour is the emergency exit marker?",
+      "mode": "semantic",
+      "support": "broad",
+      "seconds": 0.011778874788433313,
+      "relevant_sources": [
+        "exit"
+      ],
+      "hits": [
+        {
+          "source": "exit",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": null,
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "known-exit",
+      "query": "What colour is the emergency exit marker?",
+      "mode": "hybrid",
+      "support": "standard",
+      "seconds": 0.011744509916752577,
+      "relevant_sources": [
+        "exit"
+      ],
+      "hits": [
+        {
+          "source": "exit",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": null,
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "known-exit",
+      "query": "What colour is the emergency exit marker?",
+      "mode": "hybrid",
+      "support": "broad",
+      "seconds": 0.015470733866095543,
+      "relevant_sources": [
+        "exit"
+      ],
+      "hits": [
+        {
+          "source": "exit",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": null,
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "paraphrase-exit",
+      "query": "What hue indicates the escape route?",
+      "mode": "lexical",
+      "support": "standard",
+      "seconds": 0.00023071886971592903,
+      "relevant_sources": [
+        "exit"
+      ],
+      "hits": []
+    },
+    {
+      "id": "paraphrase-exit",
+      "query": "What hue indicates the escape route?",
+      "mode": "lexical",
+      "support": "broad",
+      "seconds": 0.0001740921288728714,
+      "relevant_sources": [
+        "exit"
+      ],
+      "hits": []
+    },
+    {
+      "id": "paraphrase-exit",
+      "query": "What hue indicates the escape route?",
+      "mode": "semantic",
+      "support": "standard",
+      "seconds": 0.014686630107462406,
+      "relevant_sources": [
+        "exit"
+      ],
+      "hits": [
+        {
+          "source": "exit",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": null,
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "paraphrase-exit",
+      "query": "What hue indicates the escape route?",
+      "mode": "semantic",
+      "support": "broad",
+      "seconds": 0.022639861796051264,
+      "relevant_sources": [
+        "exit"
+      ],
+      "hits": [
+        {
+          "source": "exit",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": null,
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "paraphrase-exit",
+      "query": "What hue indicates the escape route?",
+      "mode": "hybrid",
+      "support": "standard",
+      "seconds": 0.013427183032035828,
+      "relevant_sources": [
+        "exit"
+      ],
+      "hits": [
+        {
+          "source": "exit",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": null,
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "paraphrase-exit",
+      "query": "What hue indicates the escape route?",
+      "mode": "hybrid",
+      "support": "broad",
+      "seconds": 0.015936459880322218,
+      "relevant_sources": [
+        "exit"
+      ],
+      "hits": [
+        {
+          "source": "exit",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": null,
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "known-temperature",
+      "query": "What temperature range should the refrigerator maintain?",
+      "mode": "lexical",
+      "support": "standard",
+      "seconds": 0.0002673291601240635,
+      "relevant_sources": [
+        "temperature"
+      ],
+      "hits": []
+    },
+    {
+      "id": "known-temperature",
+      "query": "What temperature range should the refrigerator maintain?",
+      "mode": "lexical",
+      "support": "broad",
+      "seconds": 0.00022724224254488945,
+      "relevant_sources": [
+        "temperature"
+      ],
+      "hits": []
+    },
+    {
+      "id": "known-temperature",
+      "query": "What temperature range should the refrigerator maintain?",
+      "mode": "semantic",
+      "support": "standard",
+      "seconds": 0.013238604180514812,
+      "relevant_sources": [
+        "temperature"
+      ],
+      "hits": [
+        {
+          "source": "temperature",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": null,
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "known-temperature",
+      "query": "What temperature range should the refrigerator maintain?",
+      "mode": "semantic",
+      "support": "broad",
+      "seconds": 0.01584129873663187,
+      "relevant_sources": [
+        "temperature"
+      ],
+      "hits": [
+        {
+          "source": "temperature",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": null,
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "known-temperature",
+      "query": "What temperature range should the refrigerator maintain?",
+      "mode": "hybrid",
+      "support": "standard",
+      "seconds": 0.012400398030877113,
+      "relevant_sources": [
+        "temperature"
+      ],
+      "hits": [
+        {
+          "source": "temperature",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": null,
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "known-temperature",
+      "query": "What temperature range should the refrigerator maintain?",
+      "mode": "hybrid",
+      "support": "broad",
+      "seconds": 0.014652765821665525,
+      "relevant_sources": [
+        "temperature"
+      ],
+      "hits": [
+        {
+          "source": "temperature",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": null,
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "paraphrase-temperature",
+      "query": "How cold should medicines in refrigerated storage be kept?",
+      "mode": "lexical",
+      "support": "standard",
+      "seconds": 0.0002781189978122711,
+      "relevant_sources": [
+        "temperature"
+      ],
+      "hits": []
+    },
+    {
+      "id": "paraphrase-temperature",
+      "query": "How cold should medicines in refrigerated storage be kept?",
+      "mode": "lexical",
+      "support": "broad",
+      "seconds": 0.00022520776838064194,
+      "relevant_sources": [
+        "temperature"
+      ],
+      "hits": []
+    },
+    {
+      "id": "paraphrase-temperature",
+      "query": "How cold should medicines in refrigerated storage be kept?",
+      "mode": "semantic",
+      "support": "standard",
+      "seconds": 0.015427079983055592,
+      "relevant_sources": [
+        "temperature"
+      ],
+      "hits": [
+        {
+          "source": "temperature",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": null,
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "paraphrase-temperature",
+      "query": "How cold should medicines in refrigerated storage be kept?",
+      "mode": "semantic",
+      "support": "broad",
+      "seconds": 0.01970433397218585,
+      "relevant_sources": [
+        "temperature"
+      ],
+      "hits": [
+        {
+          "source": "temperature",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": null,
+          "supports_predefined_task": true
+        },
+        {
+          "source": "retention",
+          "support_status": "unconfirmed",
+          "answer_support": "unverified",
+          "query_anchors": null,
+          "supports_predefined_task": false
+        }
+      ]
+    },
+    {
+      "id": "paraphrase-temperature",
+      "query": "How cold should medicines in refrigerated storage be kept?",
+      "mode": "hybrid",
+      "support": "standard",
+      "seconds": 0.015409566927701235,
+      "relevant_sources": [
+        "temperature"
+      ],
+      "hits": [
+        {
+          "source": "temperature",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": null,
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "paraphrase-temperature",
+      "query": "How cold should medicines in refrigerated storage be kept?",
+      "mode": "hybrid",
+      "support": "broad",
+      "seconds": 0.017131865955889225,
+      "relevant_sources": [
+        "temperature"
+      ],
+      "hits": [
+        {
+          "source": "temperature",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": null,
+          "supports_predefined_task": true
+        },
+        {
+          "source": "retention",
+          "support_status": "unconfirmed",
+          "answer_support": "unverified",
+          "query_anchors": null,
+          "supports_predefined_task": false
+        }
+      ]
+    },
+    {
+      "id": "known-cache",
+      "query": "How long are search results cached?",
+      "mode": "lexical",
+      "support": "standard",
+      "seconds": 0.00024281209334731102,
+      "relevant_sources": [
+        "retention"
+      ],
+      "hits": []
+    },
+    {
+      "id": "known-cache",
+      "query": "How long are search results cached?",
+      "mode": "lexical",
+      "support": "broad",
+      "seconds": 0.00018736720085144043,
+      "relevant_sources": [
+        "retention"
+      ],
+      "hits": []
+    },
+    {
+      "id": "known-cache",
+      "query": "How long are search results cached?",
+      "mode": "semantic",
+      "support": "standard",
+      "seconds": 0.012055560946464539,
+      "relevant_sources": [
+        "retention"
+      ],
+      "hits": [
+        {
+          "source": "retention",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": null,
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "known-cache",
+      "query": "How long are search results cached?",
+      "mode": "semantic",
+      "support": "broad",
+      "seconds": 0.012409785762429237,
+      "relevant_sources": [
+        "retention"
+      ],
+      "hits": [
+        {
+          "source": "retention",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": null,
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "known-cache",
+      "query": "How long are search results cached?",
+      "mode": "hybrid",
+      "support": "standard",
+      "seconds": 0.015353821218013763,
+      "relevant_sources": [
+        "retention"
+      ],
+      "hits": [
+        {
+          "source": "retention",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": null,
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "known-cache",
+      "query": "How long are search results cached?",
+      "mode": "hybrid",
+      "support": "broad",
+      "seconds": 0.013637062162160873,
+      "relevant_sources": [
+        "retention"
+      ],
+      "hits": [
+        {
+          "source": "retention",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": null,
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "paraphrase-cache",
+      "query": "When does a stored discovery response expire?",
+      "mode": "lexical",
+      "support": "standard",
+      "seconds": 0.0002572392113506794,
+      "relevant_sources": [
+        "retention"
+      ],
+      "hits": []
+    },
+    {
+      "id": "paraphrase-cache",
+      "query": "When does a stored discovery response expire?",
+      "mode": "lexical",
+      "support": "broad",
+      "seconds": 0.00019860779866576195,
+      "relevant_sources": [
+        "retention"
+      ],
+      "hits": []
+    },
+    {
+      "id": "paraphrase-cache",
+      "query": "When does a stored discovery response expire?",
+      "mode": "semantic",
+      "support": "standard",
+      "seconds": 0.020181692205369473,
+      "relevant_sources": [
+        "retention"
+      ],
+      "hits": [
+        {
+          "source": "retention",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": null,
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "paraphrase-cache",
+      "query": "When does a stored discovery response expire?",
+      "mode": "semantic",
+      "support": "broad",
+      "seconds": 0.015611480921506882,
+      "relevant_sources": [
+        "retention"
+      ],
+      "hits": [
+        {
+          "source": "retention",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": null,
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "paraphrase-cache",
+      "query": "When does a stored discovery response expire?",
+      "mode": "hybrid",
+      "support": "standard",
+      "seconds": 0.012896092142909765,
+      "relevant_sources": [
+        "retention"
+      ],
+      "hits": [
+        {
+          "source": "retention",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": null,
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "paraphrase-cache",
+      "query": "When does a stored discovery response expire?",
+      "mode": "hybrid",
+      "support": "broad",
+      "seconds": 0.013272447977215052,
+      "relevant_sources": [
+        "retention"
+      ],
+      "hits": [
+        {
+          "source": "retention",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": null,
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "known-survey",
+      "query": "What boundary does the land survey mark?",
+      "mode": "lexical",
+      "support": "standard",
+      "seconds": 0.0002507469616830349,
+      "relevant_sources": [
+        "survey"
+      ],
+      "hits": []
+    },
+    {
+      "id": "known-survey",
+      "query": "What boundary does the land survey mark?",
+      "mode": "lexical",
+      "support": "broad",
+      "seconds": 0.00021267496049404144,
+      "relevant_sources": [
+        "survey"
+      ],
+      "hits": []
+    },
+    {
+      "id": "known-survey",
+      "query": "What boundary does the land survey mark?",
+      "mode": "semantic",
+      "support": "standard",
+      "seconds": 0.01246160501614213,
+      "relevant_sources": [
+        "survey"
+      ],
+      "hits": [
+        {
+          "source": "survey",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": null,
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "known-survey",
+      "query": "What boundary does the land survey mark?",
+      "mode": "semantic",
+      "support": "broad",
+      "seconds": 0.011766050942242146,
+      "relevant_sources": [
+        "survey"
+      ],
+      "hits": [
+        {
+          "source": "survey",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": null,
+          "supports_predefined_task": true
+        },
+        {
+          "source": "exit",
+          "support_status": "unconfirmed",
+          "answer_support": "unverified",
+          "query_anchors": null,
+          "supports_predefined_task": false
+        }
+      ]
+    },
+    {
+      "id": "known-survey",
+      "query": "What boundary does the land survey mark?",
+      "mode": "hybrid",
+      "support": "standard",
+      "seconds": 0.011934230104088783,
+      "relevant_sources": [
+        "survey"
+      ],
+      "hits": [
+        {
+          "source": "survey",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": null,
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "known-survey",
+      "query": "What boundary does the land survey mark?",
+      "mode": "hybrid",
+      "support": "broad",
+      "seconds": 0.013465456198900938,
+      "relevant_sources": [
+        "survey"
+      ],
+      "hits": [
+        {
+          "source": "survey",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": null,
+          "supports_predefined_task": true
+        },
+        {
+          "source": "exit",
+          "support_status": "unconfirmed",
+          "answer_support": "unverified",
+          "query_anchors": null,
+          "supports_predefined_task": false
+        }
+      ]
+    },
+    {
+      "id": "paraphrase-survey",
+      "query": "Which watercourse defines the field edge?",
+      "mode": "lexical",
+      "support": "standard",
+      "seconds": 0.00022681104019284248,
+      "relevant_sources": [
+        "survey"
+      ],
+      "hits": []
+    },
+    {
+      "id": "paraphrase-survey",
+      "query": "Which watercourse defines the field edge?",
+      "mode": "lexical",
+      "support": "broad",
+      "seconds": 0.00017922092229127884,
+      "relevant_sources": [
+        "survey"
+      ],
+      "hits": []
+    },
+    {
+      "id": "paraphrase-survey",
+      "query": "Which watercourse defines the field edge?",
+      "mode": "semantic",
+      "support": "standard",
+      "seconds": 0.011323236860334873,
+      "relevant_sources": [
+        "survey"
+      ],
+      "hits": [
+        {
+          "source": "survey",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": null,
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "paraphrase-survey",
+      "query": "Which watercourse defines the field edge?",
+      "mode": "semantic",
+      "support": "broad",
+      "seconds": 0.010949344839900732,
+      "relevant_sources": [
+        "survey"
+      ],
+      "hits": [
+        {
+          "source": "survey",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": null,
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "paraphrase-survey",
+      "query": "Which watercourse defines the field edge?",
+      "mode": "hybrid",
+      "support": "standard",
+      "seconds": 0.01099490188062191,
+      "relevant_sources": [
+        "survey"
+      ],
+      "hits": [
+        {
+          "source": "survey",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": null,
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "paraphrase-survey",
+      "query": "Which watercourse defines the field edge?",
+      "mode": "hybrid",
+      "support": "broad",
+      "seconds": 0.011484003625810146,
+      "relevant_sources": [
+        "survey"
+      ],
+      "hits": [
+        {
+          "source": "survey",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": null,
+          "supports_predefined_task": true
+        }
+      ]
+    },
+    {
+      "id": "absent-patent",
+      "query": "land patent",
+      "mode": "lexical",
+      "support": "standard",
+      "seconds": 0.00017053401097655296,
+      "relevant_sources": [],
+      "hits": []
+    },
+    {
+      "id": "absent-patent",
+      "query": "land patent",
+      "mode": "lexical",
+      "support": "broad",
+      "seconds": 0.00012005819007754326,
+      "relevant_sources": [],
+      "hits": []
+    },
+    {
+      "id": "absent-patent",
+      "query": "land patent",
+      "mode": "semantic",
+      "support": "standard",
+      "seconds": 0.013001832645386457,
+      "relevant_sources": [],
+      "hits": []
+    },
+    {
+      "id": "absent-patent",
+      "query": "land patent",
+      "mode": "semantic",
+      "support": "broad",
+      "seconds": 0.009989378042519093,
+      "relevant_sources": [],
+      "hits": [
+        {
+          "source": "survey",
+          "support_status": "unconfirmed",
+          "answer_support": "unverified",
+          "query_anchors": null,
+          "supports_predefined_task": false
+        }
+      ]
+    },
+    {
+      "id": "absent-patent",
+      "query": "land patent",
+      "mode": "hybrid",
+      "support": "standard",
+      "seconds": 0.01078891009092331,
+      "relevant_sources": [],
+      "hits": []
+    },
+    {
+      "id": "absent-patent",
+      "query": "land patent",
+      "mode": "hybrid",
+      "support": "broad",
+      "seconds": 0.012447949033230543,
+      "relevant_sources": [],
+      "hits": [
+        {
+          "source": "survey",
+          "support_status": "unconfirmed",
+          "answer_support": "unverified",
+          "query_anchors": null,
+          "supports_predefined_task": false
+        }
+      ]
+    },
+    {
+      "id": "related-insufficient",
+      "query": "Who granted the 1726 land patent?",
+      "mode": "lexical",
+      "support": "standard",
+      "seconds": 0.0002931179478764534,
+      "relevant_sources": [],
+      "hits": []
+    },
+    {
+      "id": "related-insufficient",
+      "query": "Who granted the 1726 land patent?",
+      "mode": "lexical",
+      "support": "broad",
+      "seconds": 0.00024558836594223976,
+      "relevant_sources": [],
+      "hits": []
+    },
+    {
+      "id": "related-insufficient",
+      "query": "Who granted the 1726 land patent?",
+      "mode": "semantic",
+      "support": "standard",
+      "seconds": 0.015748281963169575,
+      "relevant_sources": [],
+      "hits": []
+    },
+    {
+      "id": "related-insufficient",
+      "query": "Who granted the 1726 land patent?",
+      "mode": "semantic",
+      "support": "broad",
+      "seconds": 0.013111191801726818,
+      "relevant_sources": [],
+      "hits": []
+    },
+    {
+      "id": "related-insufficient",
+      "query": "Who granted the 1726 land patent?",
+      "mode": "hybrid",
+      "support": "standard",
+      "seconds": 0.01485478039830923,
+      "relevant_sources": [],
+      "hits": []
+    },
+    {
+      "id": "related-insufficient",
+      "query": "Who granted the 1726 land patent?",
+      "mode": "hybrid",
+      "support": "broad",
+      "seconds": 0.011679685674607754,
+      "relevant_sources": [],
+      "hits": []
+    },
+    {
+      "id": "absent-exit-date",
+      "query": "When was the emergency exit marker installed?",
+      "mode": "lexical",
+      "support": "standard",
+      "seconds": 0.00035632774233818054,
+      "relevant_sources": [],
+      "hits": []
+    },
+    {
+      "id": "absent-exit-date",
+      "query": "When was the emergency exit marker installed?",
+      "mode": "lexical",
+      "support": "broad",
+      "seconds": 0.00019858824089169502,
+      "relevant_sources": [],
+      "hits": []
+    },
+    {
+      "id": "absent-exit-date",
+      "query": "When was the emergency exit marker installed?",
+      "mode": "semantic",
+      "support": "standard",
+      "seconds": 0.015455414075404406,
+      "relevant_sources": [],
+      "hits": [
+        {
+          "source": "exit",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": null,
+          "supports_predefined_task": false
+        }
+      ]
+    },
+    {
+      "id": "absent-exit-date",
+      "query": "When was the emergency exit marker installed?",
+      "mode": "semantic",
+      "support": "broad",
+      "seconds": 0.02436735015362501,
+      "relevant_sources": [],
+      "hits": [
+        {
+          "source": "exit",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": null,
+          "supports_predefined_task": false
+        }
+      ]
+    },
+    {
+      "id": "absent-exit-date",
+      "query": "When was the emergency exit marker installed?",
+      "mode": "hybrid",
+      "support": "standard",
+      "seconds": 0.013073899783194065,
+      "relevant_sources": [],
+      "hits": [
+        {
+          "source": "exit",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": null,
+          "supports_predefined_task": false
+        }
+      ]
+    },
+    {
+      "id": "absent-exit-date",
+      "query": "When was the emergency exit marker installed?",
+      "mode": "hybrid",
+      "support": "broad",
+      "seconds": 0.015924737323075533,
+      "relevant_sources": [],
+      "hits": [
+        {
+          "source": "exit",
+          "support_status": "model_agreement",
+          "answer_support": "unverified",
+          "query_anchors": null,
+          "supports_predefined_task": false
+        }
+      ]
+    },
+    {
+      "id": "absent-medication",
+      "query": "What medicine should treat pneumonia?",
+      "mode": "lexical",
+      "support": "standard",
+      "seconds": 0.0003145490773022175,
+      "relevant_sources": [],
+      "hits": []
+    },
+    {
+      "id": "absent-medication",
+      "query": "What medicine should treat pneumonia?",
+      "mode": "lexical",
+      "support": "broad",
+      "seconds": 0.0002460489049553871,
+      "relevant_sources": [],
+      "hits": []
+    },
+    {
+      "id": "absent-medication",
+      "query": "What medicine should treat pneumonia?",
+      "mode": "semantic",
+      "support": "standard",
+      "seconds": 0.013286896049976349,
+      "relevant_sources": [],
+      "hits": []
+    },
+    {
+      "id": "absent-medication",
+      "query": "What medicine should treat pneumonia?",
+      "mode": "semantic",
+      "support": "broad",
+      "seconds": 0.01269253483042121,
+      "relevant_sources": [],
+      "hits": []
+    },
+    {
+      "id": "absent-medication",
+      "query": "What medicine should treat pneumonia?",
+      "mode": "hybrid",
+      "support": "standard",
+      "seconds": 0.014130752068012953,
+      "relevant_sources": [],
+      "hits": []
+    },
+    {
+      "id": "absent-medication",
+      "query": "What medicine should treat pneumonia?",
+      "mode": "hybrid",
+      "support": "broad",
+      "seconds": 0.021599802188575268,
+      "relevant_sources": [],
+      "hits": []
+    }
+  ],
+  "limitations": [
+    "Small diagnostic fixture, not a retrieval-quality leaderboard.",
+    "Refrigeration paraphrase omits medicine identity; only temperature facts are labelled.",
+    "Manual labels apply to these fixed sources and tasks only."
+  ]
+}

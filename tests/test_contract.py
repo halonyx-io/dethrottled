@@ -208,3 +208,24 @@ def test_legacy_corpus_stats_shape_is_preserved(client, monkeypatch):
     monkeypatch.setattr(srv, 'shared_corpus', lambda: LegacyCorpus())
     assert client.get('/corpus/stats').json() == {
         'ok': True, 'models': {'legacy': {'passages': 2}}, 'schema': 1}
+
+
+def test_corpus_capability_request_example_is_executable(client, monkeypatch):
+    class EmptyCorpus:
+        def search(self, q, **kwargs):
+            assert q == 'land patent'
+            assert kwargs['mode'] == 'lexical'
+            return []
+    monkeypatch.setattr(srv, 'shared_corpus', EmptyCorpus)
+    corpus = client.get('/v2/capabilities').json()['corpus']
+    contract = corpus['requests']['search']
+    assert contract['method'] == 'GET' and contract['path'] == corpus['endpoints']['search']
+    assert contract['required_query_parameters'] == ['q']
+    assert contract['mcp_query_parameter'] == 'query'
+    assert client.get(contract['example']).status_code == 200
+    assert client.get(contract['path'], params={'query': 'land patent'}).status_code == 422
+    assert client.post(contract['path'], json={'q': 'land patent'}).status_code == 405
+    response = client.get(contract['example']).json()
+    assert response['result_kind'] == 'retrieval_candidates'
+    assert response['answer_support'] == 'unverified'
+    assert 'not answer presence' in response['support_note']

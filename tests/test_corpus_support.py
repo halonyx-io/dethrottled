@@ -133,3 +133,42 @@ def test_schema_one_rollback_reports_legacy_policy_and_no_broad_hint(monkeypatch
     assert result["support"] == "legacy"
     assert "Use support=broad" not in result["broader_retrieval"]
     assert not server.corpus_search("a query", support="broad")["ok"]
+
+
+def test_candidate_diagnostics_do_not_filter_useful_paraphrases(store, monkeypatch):
+    from dethrottled import corpus_vectors
+    admit(store, 'The emergency exit marker is green. Follow the illuminated sign. ' * 10)
+    finish(store)
+    identifier = store.db.execute('select id from passages limit 1').fetchone()[0]
+    monkeypatch.setattr(corpus_vectors, 'candidates',
+                        lambda _, model, *args: [(identifier, 0.9, model)])
+    hits = store.search('What hue indicates the escape route?', mode='semantic')
+    assert hits and hits[0]['support_status'] == 'model_agreement'
+    assert hits[0]['answer_support'] == 'unverified'
+    anchors = hits[0]['query_anchors']
+    assert anchors['unmatched_count'] > 0
+    assert 'hue' in anchors['unmatched_terms']
+    assert 'green' in hits[0]['text']
+
+
+def test_related_candidate_does_not_claim_patent_coverage(store, monkeypatch):
+    from dethrottled import corpus_vectors
+    admit(store, 'The land survey shows boundary markers beside the river. ' * 10)
+    finish(store)
+    identifier = store.db.execute('select id from passages limit 1').fetchone()[0]
+    monkeypatch.setattr(corpus_vectors, 'candidates',
+                        lambda _, model, *args: [(identifier, 0.9, model)])
+    assert store.search('land patent', mode='lexical') == []
+    hits = store.search('land patent', mode='semantic')
+    assert hits[0]['query_anchors']['unmatched_terms'] == ['patent']
+    assert hits[0]['query_anchors']['scope'] == 'returned_passage_and_title'
+    assert hits[0]['answer_support'] == 'unverified'
+
+
+def test_literal_diagnostic_payload_is_bounded():
+    from dethrottled.corpus_support import query_anchors
+    query = ' '.join('term' + str(i) + 'x' * 100 for i in range(100))
+    result = query_anchors(query, {'title': '', 'text': ''})
+    assert result['unmatched_count'] == 100
+    assert len(result['unmatched_terms']) == 12
+    assert all(len(word) <= 64 for word in result['unmatched_terms'])

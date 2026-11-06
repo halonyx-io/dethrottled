@@ -130,3 +130,9 @@ real rendering too. The [evidence index](EVIDENCE.md) distinguishes capability t
 live access results.
 
 [Documentation home](README.md) · [API](API.md) · [Browser operation](DRIVE.md)
+
+Successfully acquired non-HTML documents use their format/range/OCR continuation
+instead of HTML browser inspection. A remaining gap is reported as
+`document_continuation_required`; consult `workflow.next_actions`. This does not
+alter browser recovery for HTML challenge pages served at document-looking URLs.
+See [long PDF limits](LIMITS.md#long-pdf-reads).

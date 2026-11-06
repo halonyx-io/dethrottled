@@ -125,3 +125,101 @@ def test_cancelled_admission_releases_lease_created_by_worker_thread():
             await request
         assert released == ["abandoned-lease"]
     asyncio.run(run())
+
+
+@pytest.mark.parametrize('identifier', [0, 17, 'call-17', ''])
+def test_mcp_admission_errors_correlate_request_and_preserve_retry_metadata(identifier):
+    from starlette.testclient import TestClient
+    class FakeRegistry:
+        def verify(self, _):
+            return {'namespace': 'test', 'scopes': ['web']}
+    class Busy:
+        def acquire(self, _):
+            raise AccessError('caller_busy', 429, retry_after=2)
+    async def forbidden(*_):
+        pytest.fail('busy request reached backend')
+    app = AccessMiddleware(forbidden, registry=FakeRegistry(), admission=Busy(), mcp=True)
+    response = TestClient(app).post('/mcp', json={
+        'jsonrpc': '2.0', 'id': identifier, 'method': 'tools/call', 'params': {}})
+    data = response.json()
+    assert response.status_code == 429 and response.headers['retry-after'] == '2'
+    assert data['jsonrpc'] == '2.0' and data['id'] == identifier
+    assert data['error']['code'] == -32000
+    assert data['error']['data']['limiter'] == 'caller_concurrency'
+    assert data['error']['data']['request_id'] == response.headers['x-request-id']
+    assert data['error']['data']['retryable']
+
+
+def test_rest_admission_contract_and_accepted_mcp_body_are_unchanged():
+    from starlette.testclient import TestClient
+    class FakeRegistry:
+        def verify(self, _):
+            return {'namespace': 'test', 'scopes': ['web']}
+    class Gate:
+        def acquire(self, _):
+            raise AccessError('caller_busy', 429)
+        def release(self, _):
+            pass
+    async def echo(scope, receive, send):
+        message = await receive()
+        await send({'type': 'http.response.start', 'status': 200, 'headers': []})
+        await send({'type': 'http.response.body', 'body': message['body']})
+    gate = Gate()
+    response = TestClient(AccessMiddleware(echo, registry=FakeRegistry(), admission=gate)).post(
+        '/fetch', json={'urls': ['https://example.org']})
+    assert response.json()['error'] == 'caller_busy' and 'jsonrpc' not in response.json()
+    gate.acquire = lambda _: 'lease'
+    request = {'jsonrpc': '2.0', 'id': 11, 'method': 'tools/list'}
+    response = TestClient(AccessMiddleware(
+        echo, registry=FakeRegistry(), admission=gate, mcp=True)).post('/mcp', json=request)
+    assert response.json() == request
+
+
+@pytest.mark.parametrize('payload', [
+    {'jsonrpc': '2.0', 'method': 'notifications/initialized'},
+    {'jsonrpc': '2.0', 'id': True, 'method': 'tools/list'},
+    ['unsupported batch'], 'invalid',
+])
+def test_busy_mcp_does_not_invent_request_ids(payload):
+    from starlette.testclient import TestClient
+    class FakeRegistry:
+        def verify(self, _):
+            return {'namespace': 'test', 'scopes': ['web']}
+    class Busy:
+        def acquire(self, _):
+            raise AccessError('service_busy', 429)
+    async def forbidden(*_):
+        pytest.fail('busy request reached backend')
+    response = TestClient(AccessMiddleware(
+        forbidden, registry=FakeRegistry(), admission=Busy(), mcp=True)).post('/mcp', json=payload)
+    assert response.status_code == 429 and 'id' not in response.json()
+    assert response.json()['error']['data']['reason'] == 'service_busy'
+
+
+def test_rejected_mcp_body_read_is_bounded_and_preserves_transport_error():
+    class FakeRegistry:
+        def verify(self, _):
+            return {'namespace': 'test', 'scopes': ['web']}
+    class Busy:
+        def acquire(self, _):
+            raise AccessError('service_busy', 503, retry_after=3)
+    async def forbidden(*_):
+        pytest.fail('busy request reached backend')
+    async def run(receive):
+        sent = []
+        async def send(message):
+            sent.append(message)
+        app = AccessMiddleware(forbidden, registry=FakeRegistry(), admission=Busy(), mcp=True)
+        await asyncio.wait_for(app({'type': 'http', 'path': '/mcp', 'method': 'POST',
+                                   'headers': []}, receive, send), 3)
+        assert sent[0]['status'] == 503
+        payload = json.loads(sent[1]['body'])
+        assert 'id' not in payload
+        assert payload['error']['data']['limiter'] == 'global_concurrency'
+        assert payload['error']['data']['retry_after_seconds'] == 3
+    async def oversized():
+        return {'type': 'http.request', 'body': b' ' * 262145, 'more_body': True}
+    async def stalled():
+        await asyncio.sleep(10)
+    asyncio.run(run(oversized))
+    asyncio.run(run(stalled))

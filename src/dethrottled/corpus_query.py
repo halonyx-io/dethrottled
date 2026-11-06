@@ -108,7 +108,7 @@ def search(store, query, *, limit=10, per_url=2, floor=None, domains=None, mode=
             scores[identifier] = scores.get(identifier, 0) + 1 / (60 + rank)
             details.setdefault(identifier, {})[model] = {"score": score, "rank": rank}
     records = store._records(list(scores))
-    from .corpus_support import assess
+    from .corpus_support import assess, query_anchors
 
     source_models = {}
     for identifier, individual in details.items():
@@ -140,6 +140,7 @@ def search(store, query, *, limit=10, per_url=2, floor=None, domains=None, mode=
             schema=2,
             support_status=support_status,
             answer_support="unverified",
+            query_anchors=query_anchors(clean, row),
         )
         if support_status == "unconfirmed":
             row["retrieval_warning"] = ["single_model_match_without_query_anchors"]
