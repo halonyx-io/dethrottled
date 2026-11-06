@@ -49,7 +49,7 @@ import sqlite3
 import threading
 import time
 import uuid
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
 from pathlib import Path
 from typing import Literal
 
@@ -88,7 +88,7 @@ from .api_models import (
 )
 from .api_models import DriveStep as DriveStep
 from .cache import DEFAULT_TTL, Cache, CacheView
-from .content import compact_row, constrained, passage_excerpt
+from .content import constrained, passage_excerpt, present_row
 from .corpus import index_fetched, shared_corpus
 from .evidence import Documents
 from .jobs import JobError, Jobs
@@ -175,10 +175,29 @@ _FETCH_POOL = ThreadPoolExecutor(max_workers=8, thread_name_prefix="page-fetch")
 
 
 def _read_batch(items, read):
-    rows = []
-    for start in range(0, len(items), 4):
-        futures = [_FETCH_POOL.submit(read, item) for item in items[start:start + 4]]
-        rows.extend(future.result() for future in futures)
+    """Refill completed slots without changing the four-read limit or row order."""
+    rows = [None] * len(items)
+    remaining = iter(enumerate(items))
+    pending = {}
+
+    def submit_next():
+        item = next(remaining, None)
+        if item is not None:
+            index, value = item
+            pending[_FETCH_POOL.submit(read, value)] = index
+
+    for _ in range(min(4, len(items))):
+        submit_next()
+    try:
+        while pending:
+            completed, _ = wait(pending, return_when=FIRST_COMPLETED)
+            for future in completed:
+                index = pending.pop(future)
+                rows[index] = future.result()
+                submit_next()
+    finally:
+        for future in pending:
+            future.cancel()  # Already-running reads keep their normal cleanup.
     return rows
 
 
@@ -404,7 +423,7 @@ def _extract_once(url: str, max_chars: int, allow_ocr: bool = True,
         # Falls back to the prose on an empty result rather than handing
         # back nothing: a page whose anchors could not be parsed is still
         # a page the caller asked to read.
-        annotated = fx.links(result.get("html", ""), url, max_chars=max_chars)
+        annotated = fx.links(result.get("html", ""), result.get("url", url), max_chars=max_chars)
         if annotated:
             row["content"] = annotated
     elif raw and result.get("html"):
@@ -415,7 +434,8 @@ def _extract_once(url: str, max_chars: int, allow_ocr: bool = True,
         row["truncated"] = len(result["html"]) > max_chars
     if retain_html:
         row["_selector_html"] = result.get("html", "")
-        row["_selector_html_partial"] = result.get("reason") == "html_truncated"
+        row["_selector_html_partial"] = (result.get("reason") == "html_truncated"
+                                         or bool(result.get("extraction", {}).get("partial")))
     return row
 
 
@@ -902,7 +922,7 @@ def fetch_urls(body: FetchBody, background: BackgroundTasks):
     # Harvest the canonical extraction rather than the display format or excerpt.
     _finish_selectors(rows, body)
     _queue_corpus(rows, background, namespace=body.evidence_namespace)
-    return [compact_row(row) for row in rows] if body.response_format == "concise" else rows
+    return [present_row(row, body.response_format) for row in rows]
 
 
 def _finish_selectors(rows, body):
@@ -932,7 +952,7 @@ def _job_read(body, url):
                        retain_html=bool(body.selectors))
     _finish_selectors([row], body)
     _queue_corpus([row], namespace=body.evidence_namespace)
-    return compact_row(row) if body.response_format == "concise" else row
+    return present_row(row, body.response_format)
 
 
 @app.post("/jobs/fetch")
@@ -1112,7 +1132,7 @@ def read_document(body: DocumentReadBody):
         row.update(content=text[body.offset:end], offset=body.offset,
                    truncated=end < len(text), next_offset=end if end < len(text) else None)
     row["workflow"] = guidance(row, offset=body.offset, focused=bool(body.focus))
-    return compact_row(row) if body.response_format == "concise" else row
+    return present_row(row, body.response_format)
 
 
 @app.post("/documents/image")
@@ -1475,9 +1495,8 @@ def research(body: ResearchBody, background: BackgroundTasks):
         coverage["candidate_scope"] = "shared_bounded_pool"
         coverage["candidate_limits"] = {"ddg_per_query": 10, "per_supplement_per_query": 3,
                                         "per_query": 15, "total": 24, "max_sources": 20}
-        if body.response_format == "concise":
-            sources = [compact_row(row) for row in sources]
-            partial_sources = [compact_row(row) for row in partial_sources]
+        sources = [present_row(row, body.response_format) for row in sources]
+        partial_sources = [present_row(row, body.response_format) for row in partial_sources]
         return {"coverage": coverage, "question": body.question, "queries": telemetry,
                 "sources": sources, "partial_sources": partial_sources, "skipped": skipped,
                 "summary": {"candidates": len(admitted),

@@ -1,0 +1,26 @@
+{
+  "source": "one cached live RFC 9110 PDF response; identical source row replayed",
+  "source_sha256": "19a31b2c6fe889050a0dec42cb6770528f9a62b78d2efcf00da4ddf5fd74395f",
+  "source_partial": false,
+  "document_chars": 466034,
+  "page_count": 194,
+  "payload_bytes": {
+    "detailed": 939642,
+    "concise": 45686
+  },
+  "reduction_percent": 95.14,
+  "presentation_samples": 300,
+  "presentation_latency": {
+    "detailed": {
+      "median_us": 113.04,
+      "p95_us": 126.65
+    },
+    "concise": {
+      "median_us": 47.07,
+      "p95_us": 51.47
+    }
+  },
+  "detailed_warning": "large_detailed_response; use response_format=concise to omit duplicate representations; use max_chars to reduce the text excerpt",
+  "same_content": true,
+  "same_document_hash": true
+}

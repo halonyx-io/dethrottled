@@ -1,0 +1,135 @@
+{
+  "protocol": "alternating scheduler order; local timed fixtures; no upstream requests",
+  "baseline_git": "a774f15",
+  "workloads": {
+    "one_slow": {
+      "urls": 12,
+      "runs_per_scheduler": 12,
+      "same_ordered_evidence_sha256": "2345f4f098f9ee41c1fb677eab2e4e8b0cfb197e859e52e194ff61c65c2d7154",
+      "peak_active": {
+        "chunked": 4,
+        "rolling": 4
+      },
+      "elapsed_ms": {
+        "chunked": [
+          242.261,
+          241.821,
+          242.213,
+          242.238,
+          241.828,
+          242.408,
+          241.818,
+          241.793,
+          241.909,
+          242.665,
+          241.197,
+          241.078
+        ],
+        "rolling": [
+          180.433,
+          180.51,
+          180.429,
+          180.566,
+          180.359,
+          180.831,
+          180.282,
+          180.585,
+          180.627,
+          180.521,
+          180.6,
+          180.274
+        ]
+      },
+      "median_ms": {
+        "chunked": 241.868,
+        "rolling": 180.515
+      }
+    },
+    "two_slow": {
+      "urls": 12,
+      "runs_per_scheduler": 12,
+      "same_ordered_evidence_sha256": "2345f4f098f9ee41c1fb677eab2e4e8b0cfb197e859e52e194ff61c65c2d7154",
+      "peak_active": {
+        "chunked": 4,
+        "rolling": 4
+      },
+      "elapsed_ms": {
+        "chunked": [
+          392.561,
+          391.546,
+          391.225,
+          392.009,
+          391.232,
+          392.067,
+          391.971,
+          391.548,
+          391.619,
+          392.129,
+          391.321,
+          390.855
+        ],
+        "rolling": [
+          210.885,
+          211.073,
+          210.591,
+          210.975,
+          210.866,
+          211.167,
+          211.455,
+          211.091,
+          211.427,
+          210.937,
+          210.918,
+          210.797
+        ]
+      },
+      "median_ms": {
+        "chunked": 391.584,
+        "rolling": 210.956
+      }
+    },
+    "uniform": {
+      "urls": 12,
+      "runs_per_scheduler": 12,
+      "same_ordered_evidence_sha256": "2345f4f098f9ee41c1fb677eab2e4e8b0cfb197e859e52e194ff61c65c2d7154",
+      "peak_active": {
+        "chunked": 4,
+        "rolling": 4
+      },
+      "elapsed_ms": {
+        "chunked": [
+          91.294,
+          92.412,
+          91.914,
+          92.213,
+          91.503,
+          92.064,
+          92.433,
+          92.522,
+          92.436,
+          91.907,
+          92.635,
+          92.599
+        ],
+        "rolling": [
+          92.047,
+          91.79,
+          92.285,
+          92.31,
+          92.602,
+          92.078,
+          92.363,
+          92.191,
+          91.566,
+          91.525,
+          92.243,
+          93.184
+        ]
+      },
+      "median_ms": {
+        "chunked": 92.312,
+        "rolling": 92.217
+      }
+    }
+  }
+}

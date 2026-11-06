@@ -1,0 +1,26 @@
+{
+  "baseline_git": "a774f15",
+  "architecture": "x86_64",
+  "environment": "published 1.7.0 image with mounted candidate source and test-only dependencies",
+  "non_network_tests": {
+    "passed": 993,
+    "skipped": 15,
+    "deselected": 2,
+    "elapsed_s": 71.24
+  },
+  "focused_followup_tests": 125,
+  "baseline_followup_regressions": {
+    "failed": 16,
+    "passed": 3
+  },
+  "source_sha256": {
+    "src/dethrottled/cache.py": "9b4b1f71fb8356341612bcb19e3e2d7d4b489fe7b69cfc29e1dd7168b231e8d4",
+    "src/dethrottled/server.py": "f9f9b07521649049d54fb81ea49fb552d8019df843967d2f077d1feafff3d269",
+    "src/dethrottled/fetch.py": "a25c3aa0aff1653c241d835cb924405da8f8a16c7f6e9312591364bec9fed5f8",
+    "src/dethrottled/content.py": "eb750ff80a8050baa52351fdd0e21fc938d97c7468b06f9a6236d7a0b3b93dc9",
+    "tests/test_fetch_efficiency.py": "26475b44da43d48afd127a01f93dc05a7a6f160d33f7a83d74487c792f5359a4",
+    "tests/test_fetch_edge_cases.py": "f01d6d4a1fb89e488633c824aaf4c207f830fff312f2b132f85137b6db2c81b8"
+  },
+  "published": false,
+  "deployed": false
+}

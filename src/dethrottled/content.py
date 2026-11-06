@@ -298,3 +298,24 @@ def compact_row(row: dict) -> dict:
             evidence.append(item)
         row["evidence"] = evidence
     return row
+
+
+def present_row(row: dict, response_format: str) -> dict:
+    """Warn on large detailed text without serializing/copying the full payload."""
+    if response_format == "concise":
+        return compact_row(row)
+    # Character count is a lower bound on JSON bytes, not a payload-size claim.
+    # Count the known large representations; metadata can also contribute bytes.
+    size = len(row.get("content") or "") + len(row.get("html") or "")
+    for page in (row.get("extraction") or {}).get("pages", []):
+        if isinstance(page, dict):
+            size += sum(len(block.get("text") or "")
+                        for block in page.get("text_layer_blocks", [])
+                        if isinstance(block, dict))
+        if size >= 131072:
+            break
+    if size < 131072:
+        return row
+    warning = ("large_detailed_response; use response_format=concise to omit duplicate "
+               "representations; use max_chars to reduce the text excerpt")
+    return dict(row, warnings=list(dict.fromkeys([*row.get("warnings", []), warning])))

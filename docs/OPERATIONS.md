@@ -109,6 +109,15 @@ extraction, site mapping and terminal-target handling on every affected transpor
 The packaged root SKILL-dethrottled.md and generated references describe the new controls.
 Unchanged workers and the pinned MCP SDK need no upgrade. Preserve all volumes.
 
+For 1.7.1, rebuild/recreate the API and refresh the host-managed MCP application
+version module so backend identity remains matched. Containerized adapters need
+the matching adapter image. The browser runtime and unchanged parsing workers
+need no restart. Preserve all volumes; no cache or corpus migration is required.
+The default direct/TLS connect allowance is two seconds, independently of
+response reading; override `DETHROTTLED_CONNECT_TIMEOUT` for slower networks.
+REST still defaults to detailed responses and now warns on large text payloads.
+The renamed root `SKILL-dethrottled.md` is included in the package and image.
+
 ## State and backups
 
 | Storage | Contents |

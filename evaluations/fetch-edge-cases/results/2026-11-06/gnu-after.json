@@ -1,0 +1,1 @@
+{"scope": "direct and TLS only; workers deliberately excluded", "elapsed_s": 4.162, "ok": false, "reason": "direct:ConnectionError | tls:tls_Timeout", "attempts": [{"tier": "direct", "reason": "ConnectionError", "outcome": "failed", "elapsed_ms": 2005.45}, {"tier": "tls", "reason": "tls_Timeout", "outcome": "failed", "elapsed_ms": 2076.79}], "content_chars": 0}

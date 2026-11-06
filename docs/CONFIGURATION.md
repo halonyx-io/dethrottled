@@ -111,7 +111,8 @@ mapped. Change them against recorded coverage and failure cases, not just latenc
 | `DETHROTTLED_BROWSER_RECOVERY` | `auto` | Browser worker: observed host-scoped navigation recipes and bounded readiness; `off` disables them. Forwarded by base Compose. |
 | `DETHROTTLED_THIN_CHARS` | `600` | HTML threshold; structured short documents differ |
 | `DETHROTTLED_PAGE_BUDGET`, `DETHROTTLED_PAGE_BUDGET_BULK` | `60`, `25` seconds | Soft ladder budgets; a known recovery case can receive a bounded headed attempt afterward |
-| `DETHROTTLED_TLS_TIMEOUT` | `8` seconds | TLS tier |
+| `DETHROTTLED_CONNECT_TIMEOUT` | `2` seconds | Direct/TLS connection establishment per attempt/address; does not shorten direct response reads. Resolver time and multiple addresses can exceed this; workers retain their own deadlines. |
+| `DETHROTTLED_TLS_TIMEOUT` | `8` seconds | TLS streaming low-speed allowance; its connect allowance is bounded by `DETHROTTLED_CONNECT_TIMEOUT`. |
 | `DETHROTTLED_CRAWL4AI_TIMEOUT`, `DETHROTTLED_CRAWL4AI_RENDER_MS` | `25` seconds, `20000` ms | Renderer transport/browser timing |
 | `DETHROTTLED_RENDER_MAX_WAITING`, `DETHROTTLED_RENDER_PER_CLIENT` | `32`, `8` | Renderer waiting bounds |
 | `DETHROTTLED_RENDER_QUEUE_SECONDS` | `60` | Renderer admission wait |
