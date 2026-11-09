@@ -203,6 +203,9 @@ fetch relevance, decoy-bucket filtering, normalized search cache identity, token
 estimates and boundary-aware truncation. See
 [P0-BUGS-EFFICIENCY.md](experiments/dnb/results/2026-11-09/P0-BUGS-EFFICIENCY.md)
 and [P1-AGENT-SIGNALS.md](experiments/dnb/results/2026-11-09/P1-AGENT-SIGNALS.md).
+P2 keeps search fan-out, neural rerank, semantic cache, persistent search
+profiles and provider key/proxy rotation opt-in; the tested outcomes are in
+[P2-EXPLORATORY.md](experiments/dnb/results/2026-11-09/P2-EXPLORATORY.md).
 The full record is in [PHASE-6.md](experiments/dnb/results/2026-11-09/PHASE-6.md),
 and the next layer-by-layer comparison is in
 [CANDIDATE-BENCHMARK-PLAN.md](experiments/dnb/results/2026-11-09/CANDIDATE-BENCHMARK-PLAN.md).

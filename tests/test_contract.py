@@ -20,8 +20,11 @@ from dethrottled import server as srv  # noqa: E402
 SEARCH_ROW_FIELDS = {
     "url", "title", "snippet", "snippet_tokens", "publishedDate", "date_source",
     "published_age_days", "source_type", "fetch_relevance", "engine", "engines",
+    "engines_consensus", "consensus_score",
     "category", "score", "cached", "search_attempts", "search_elapsed_ms",
-    "ranking", "dated_results", "freshness_note", "decoy_buckets", "from_corpus",
+    "ranking", "fanout_queries", "dated_results", "freshness_note", "decoy_buckets",
+    "semantic_cache",
+    "from_corpus",
 }
 EXTRACT_ROW_FIELDS = {"url", "content", "content_type", "quality", "tier", "cached",
                       "tokens_estimated", "source_type", "page_type", "date_source"}

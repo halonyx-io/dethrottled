@@ -66,7 +66,8 @@ resource discipline and small quality signals**, not more tools.
 
 Implementation record: P0.1-P0.4 and P0.6 are implemented; P0.5 was tested and
 not adopted because `old.reddit.com` failed in this stack. P1.1-P1.5 are also
-implemented in [P1-AGENT-SIGNALS.md](P1-AGENT-SIGNALS.md). Measurements and tests
+implemented in [P1-AGENT-SIGNALS.md](P1-AGENT-SIGNALS.md), and the P2 exploratory
+set is in [P2-EXPLORATORY.md](P2-EXPLORATORY.md). Measurements and tests
 are in [P0-BUGS-EFFICIENCY.md](P0-BUGS-EFFICIENCY.md).
 
 ### P0.1 Cache growth has no enforcement

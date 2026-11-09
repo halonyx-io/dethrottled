@@ -1003,6 +1003,11 @@
       "review": "Evidence maintainer: preserve observations; append explicit corrections."
     },
     {
+      "path": "experiments/dnb/results/2026-11-09/P2-EXPLORATORY.md",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
       "path": "experiments/dnb/results/2026-11-09/PHASE-4.md",
       "lifecycle": "historical-evidence",
       "review": "Evidence maintainer: preserve observations; append explicit corrections."
@@ -1134,6 +1139,41 @@
     },
     {
       "path": "experiments/dnb/results/2026-11-09/p1-targeted-tests.log",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "experiments/dnb/results/2026-11-09/p2-fanout.json",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "experiments/dnb/results/2026-11-09/p2-host-suite.log",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "experiments/dnb/results/2026-11-09/p2-image-suite.log",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "experiments/dnb/results/2026-11-09/p2-profile.json",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "experiments/dnb/results/2026-11-09/p2-rerank.json",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "experiments/dnb/results/2026-11-09/p2-semantic.json",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "experiments/dnb/results/2026-11-09/p2-targeted-tests.log",
       "lifecycle": "historical-evidence",
       "review": "Evidence maintainer: preserve observations; append explicit corrections."
     },
@@ -1758,6 +1798,11 @@
       "review": "Change author: audit docs impact, advertised defaults and generated contracts."
     },
     {
+      "path": "src/dethrottled/consensus.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
       "path": "src/dethrottled/content.py",
       "lifecycle": "source-contract",
       "review": "Change author: audit docs impact, advertised defaults and generated contracts."
@@ -1923,6 +1968,11 @@
       "review": "Change author: audit docs impact, advertised defaults and generated contracts."
     },
     {
+      "path": "src/dethrottled/rerank.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
       "path": "src/dethrottled/research.py",
       "lifecycle": "source-contract",
       "review": "Change author: audit docs impact, advertised defaults and generated contracts."
@@ -1944,6 +1994,11 @@
     },
     {
       "path": "src/dethrottled/selectors.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/semantic_cache.py",
       "lifecycle": "source-contract",
       "review": "Change author: audit docs impact, advertised defaults and generated contracts."
     },

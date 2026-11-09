@@ -1,0 +1,56 @@
+............................................s........................... [  6%]
+........................................................................ [ 13%]
+.............................................................s.......... [ 20%]
+.........................................ssssssssssssss................. [ 27%]
+.......sssssss.ssssssss.s.sss....s.ss.sssssssssss.s.ssssssss..ss.sssssss [ 34%]
+sssssssssssssssssss..............ss............s....s...s..s............ [ 41%]
+...........sss.......................................ss............sssss [ 48%]
+s.....s.sss..ss..ss..................................................... [ 55%]
+.....................................s......s........................... [ 62%]
+......................................s.s.......ss...................... [ 68%]
+............................s...ssss.sss.ss............................. [ 75%]
+..................s..................................................... [ 82%]
+.............................................ss...s..................... [ 89%]
+........................................................................ [ 96%]
+................s...................                                     [100%]
+=============================== warnings summary ===============================
+src/dethrottled/server.py:537
+  /home/adminion/Documents/Codex/2026-11-06/dethrottled-dnb/src/dethrottled/server.py:537: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event("startup")
+
+../../../../../../tmp/opencode/dnb-venv/lib/python3.13/site-packages/fastapi/applications.py:4723
+../../../../../../tmp/opencode/dnb-venv/lib/python3.13/site-packages/fastapi/applications.py:4723
+../../../../../../tmp/opencode/dnb-venv/lib/python3.13/site-packages/fastapi/applications.py:4723
+  /tmp/opencode/dnb-venv/lib/python3.13/site-packages/fastapi/applications.py:4723: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    return self.router.on_event(event_type)  # ty: ignore[deprecated]
+
+src/dethrottled/server.py:544
+  /home/adminion/Documents/Codex/2026-11-06/dethrottled-dnb/src/dethrottled/server.py:544: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event("startup")
+
+src/dethrottled/server.py:554
+  /home/adminion/Documents/Codex/2026-11-06/dethrottled-dnb/src/dethrottled/server.py:554: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event("shutdown")
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+912 passed, 137 skipped, 2 deselected, 6 warnings in 105.32s (0:01:45)

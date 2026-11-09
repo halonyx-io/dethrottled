@@ -1,0 +1,19 @@
+{
+  "mode": "opt-in DETHROTTLED_SEARCH_PROFILE storage_state for the public search context",
+  "first_search": {
+    "ok": true,
+    "engine": "ddg-lite",
+    "results": 3
+  },
+  "after_worker_restart": {
+    "ok": true,
+    "engine": "ddg-lite",
+    "results": 3
+  },
+  "profile_file": "/tmp/opencode/p2/profile/search-profile.json",
+  "profile_contents": {
+    "cookies": [],
+    "origins": []
+  },
+  "limits": "Cookies/localStorage only, not the full Chromium disk cache; public search only; drive checkpoints remain separate."
+}

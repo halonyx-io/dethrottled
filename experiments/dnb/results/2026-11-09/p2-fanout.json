@@ -1,0 +1,35 @@
+{
+  "query": "rust vs go performance",
+  "intent": "comparison",
+  "variants": [
+    "rust vs go performance",
+    "rust vs go performance comparison benchmark"
+  ],
+  "merged": [
+    {
+      "url": "https://example.com/rust-go",
+      "engines_consensus": 2,
+      "consensus_score": 2.5,
+      "query_variants": [
+        0,
+        1
+      ]
+    },
+    {
+      "url": "https://example.com/rust",
+      "engines_consensus": 1,
+      "consensus_score": 1.0,
+      "query_variants": [
+        0
+      ]
+    },
+    {
+      "url": "https://example.com/go",
+      "engines_consensus": 1,
+      "consensus_score": 1.0,
+      "query_variants": [
+        1
+      ]
+    }
+  ]
+}

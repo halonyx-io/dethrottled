@@ -43,6 +43,7 @@ from __future__ import annotations
 
 import argparse
 import base64
+import json
 import os
 import secrets
 import sqlite3
@@ -90,7 +91,7 @@ from .api_models import DriveStep as DriveStep
 from .cache import DEFAULT_TTL, NEWS_SEARCH_TTL, Cache, CacheView
 from .concurrency import ContextExecutor as ThreadPoolExecutor
 from .content import constrained, estimate_tokens, passage_excerpt, present_row, smart_truncate
-from . import signals
+from . import consensus, rerank, semantic_cache, signals
 from .corpus import index_fetched, shared_corpus
 from .evidence import Documents
 from .jobs import JobError, Jobs
@@ -271,6 +272,8 @@ def _search_row(row: dict, meta: dict, index: int) -> dict:
         "fetch_relevance": row.get("fetch_relevance") or signals.fetch_relevance(row),
         "engine": row.get("engine", "dethrottled"),
         "engines": [row.get("engine", "dethrottled")],
+        "engines_consensus": row.get("engines_consensus", 1),
+        "consensus_score": row.get("consensus_score", 1.0),
         "discovery": row.get("discovery", []),
         "category": None,
         "score": row.get("score"),
@@ -282,9 +285,11 @@ def _search_row(row: dict, meta: dict, index: int) -> dict:
         "search_elapsed_ms": meta.get("elapsed_ms", 0),
         # Which ranking stages actually ran.
         "ranking": meta.get("ranking", []) if index == 0 else [],
+        "fanout_queries": meta.get("fanout_queries") if index == 0 else None,
         "dated_results": meta.get("dated_results") if index == 0 else None,
         "freshness_note": meta.get("freshness_note") if index == 0 else None,
         "decoy_buckets": meta.get("decoy_buckets") if index == 0 else None,
+        "semantic_cache": meta.get("semantic_cache") if index == 0 else None,
         "from_corpus": bool(row.get("from_corpus")),
         **({"constraints": meta["constraints"]} if index == 0 and "constraints" in meta else {}),
         **({"corpus_evidence": row["corpus_evidence"]} if row.get("corpus_evidence") else {}),
@@ -319,6 +324,16 @@ def _search_cache_max_age(body) -> float | None:
     if body.max_age is None:
         return NEWS_SEARCH_TTL
     return min(body.max_age, NEWS_SEARCH_TTL)
+
+
+def _semantic_context(body, limit: int) -> str:
+    return json.dumps({
+        "categories": body.categories, "profile": body.profile, "engines": body.engines,
+        "language": body.language, "domains": body.domains,
+        "exclude_domains": body.exclude_domains, "prefer_domains": body.prefer_domains,
+        "ranking": body.ranking, "recency": body.recency, "corpus": body.corpus,
+        "limit": limit,
+    }, sort_keys=True)
 
 
 def _render_mode(render) -> str:
@@ -842,21 +857,55 @@ def _ranked(body) -> tuple:
         return [], {"ranking": [], "discovery": {
             "outcome": "constraints_unsatisfiable", "degraded": False,
             "reason": "include/exclude and site constraints have no intersection"}}, limit
-    rows, meta = fs.search(provider_query, max_items=pool,
-                           categories=body.categories,
-                           language=body.language or None,
-                           # Same again: fresh bypasses the six-hour search
-                           # cache rather than being accepted and ignored.
-                           cache=CacheView(cache(),
-                                           mode="refresh" if body.fresh else body.cache_mode,
-                                           max_age=_search_cache_max_age(body)),
-                           profile=body.profile, engines=body.engines)
+    search_options = dict(
+        max_items=pool, categories=body.categories, language=body.language or None,
+        # Same again: fresh bypasses the six-hour search cache rather than
+        # being accepted and ignored.
+        cache=CacheView(cache(), mode="refresh" if body.fresh else body.cache_mode,
+                        max_age=_search_cache_max_age(body)),
+        profile=body.profile, engines=body.engines,
+    )
+    fanout = os.getenv("DETHROTTLED_SEARCH_FANOUT", "0").lower() not in {
+        "0", "false", "no", "off", "",
+    }
+    semantic = semantic_cache.shared() if not fanout else None
+    semantic_context = _semantic_context(body, limit)
+    semantic_hit = None
+    if (semantic is not None and not body.fresh and body.cache_mode == "use"):
+        semantic_hit = semantic.get(provider_query, semantic_context)
+    if semantic_hit is not None:
+        rows = semantic_hit["value"].get("rows", [])
+        meta = dict(semantic_hit["value"].get("meta", {}),
+                    semantic_cache={"hit": True,
+                                    "similarity": semantic_hit["similarity"],
+                                    "age_seconds": semantic_hit["age_seconds"]})
+    else:
+        variants = consensus.expand_queries(provider_query) if fanout else [provider_query]
+        if len(variants) > 1:
+            groups, metas = [], []
+            for variant in variants:
+                variant_rows, variant_meta = fs.search(variant, **search_options)
+                groups.append(variant_rows)
+                metas.append(variant_meta)
+            rows = consensus.merge_variants(groups)
+            meta = dict(metas[0], fanout_queries=variants)
+        else:
+            rows, meta = fs.search(provider_query, **search_options)
+        if (semantic is not None and rows and not body.fresh
+                and body.cache_mode != "bypass"):
+            semantic.put(provider_query, semantic_context,
+                         {"rows": rows, "meta": meta})
+    consensus.annotate_consensus(rows)
     rows, stages = ranker.apply(
         rows, body.query, bm25=body.rank or body.ranking == "bm25",
         corpus=body.corpus, recency=body.recency)
     if body.ranking == "fusion":
         rows = ranker.fuse_rows(rows, body.query, recency=body.recency)
         stages.append("rank_fusion")
+    if (os.getenv("DETHROTTLED_RERANK", "0").lower() not in
+            {"0", "false", "no", "off", ""} and rerank.available()):
+        rows = rerank.rerank_rows(rows, provider_query)
+        stages.append("neural_rerank")
     if body.prefer_domains:
         rows = fs.rank(rows, body.prefer_domains)
         stages.append("preferred_domains")
@@ -912,6 +961,8 @@ def search_envelope(body: SearchBody):
             "dated_results": meta.get("dated_results"),
             "freshness_note": meta.get("freshness_note"),
             "decoy_buckets": meta.get("decoy_buckets"),
+            "fanout_queries": meta.get("fanout_queries"),
+            "semantic_cache": meta.get("semantic_cache"),
             **({"constraints": meta["constraints"]} if "constraints" in meta else {}),
             "attempts": _attempts(meta), "elapsed_ms": meta.get("elapsed_ms"),
             "ranking": meta.get("ranking", []), "profile": body.profile}

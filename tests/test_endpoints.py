@@ -349,3 +349,42 @@ def test_search_warns_when_most_results_are_undated(monkeypatch):
     result = TestClient(srv.app).post("/search", json={"query": "q"}).json()
     assert result[0]["dated_results"] == 0
     assert "Most results are undated" in result[0]["freshness_note"]
+
+
+def test_opt_in_fanout_merges_variants_and_reports_queries(monkeypatch):
+    calls = []
+
+    def fake_search(query, **kw):
+        calls.append(query)
+        suffix = "two" if "comparison" in query else "one"
+        rows = [{"url": "https://example.com/" + suffix,
+                 "title": "Title " + suffix, "snippet": "snippet",
+                 "publishedDate": "", "engine": "web-" + suffix}]
+        return rows, dict(FAKE_META)
+
+    monkeypatch.setenv("DETHROTTLED_SEARCH_FANOUT", "1")
+    monkeypatch.setattr(srv.fs, "search", fake_search)
+    result = TestClient(srv.app).post(
+        "/search", json={"query": "rust vs go performance"}).json()
+    assert len(calls) == 2
+    assert result[0]["fanout_queries"] == ["rust vs go performance",
+                                           "rust vs go performance comparison benchmark"]
+    assert len(result) == 2
+    assert all(row["engines_consensus"] >= 1 for row in result)
+
+
+def test_semantic_cache_hit_skips_search_and_is_explicit(monkeypatch):
+    class FakeSemantic:
+        def get(self, query, context):
+            return {"value": {"rows": list(FAKE_ROWS), "meta": dict(FAKE_META)},
+                    "similarity": 0.95, "age_seconds": 4}
+
+        def put(self, *args, **kwargs):
+            raise AssertionError("a hit must not write a second copy")
+
+    monkeypatch.setattr(srv.semantic_cache, "shared", lambda: FakeSemantic())
+    monkeypatch.setattr(srv.fs, "search",
+                        lambda *a, **k: (_ for _ in ()).throw(AssertionError("search")))
+    result = TestClient(srv.app).post("/search", json={"query": "q"}).json()
+    assert result[0]["semantic_cache"]["hit"] is True
+    assert result[0]["semantic_cache"]["similarity"] == 0.95

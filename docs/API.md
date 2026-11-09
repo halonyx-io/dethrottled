@@ -39,7 +39,8 @@ novel Yandex/Yahoo choices alternating after DDG. Partial provider failures leav
 healthy sources available; fewer than fifteen results is normal.
 
 Search rows carry additive `source_type`, `fetch_relevance`, `snippet_tokens`,
-`date_source` (`structured`, `snippet`, `none`) and `published_age_days`.
+`date_source` (`structured`, `snippet`, `none`), `published_age_days`,
+`engines_consensus` and `consensus_score`.
 `/v2/search`, and the first row of `/search`, also expose `dated_results`,
 `freshness_note` and `decoy_buckets`. A snippet date is a lead, not a verified
 publication date. A decoy bucket is dropped only when another provider proves the

@@ -240,10 +240,51 @@ async def _engine(context, engine: str, query: str, delay: float, limit: int = 1
     return attempt
 
 
+SEARCH_PROFILE = os.getenv("DETHROTTLED_SEARCH_PROFILE", "").strip()
+
+
+def _profile_path():
+    if not SEARCH_PROFILE or SEARCH_PROFILE.lower() in {"0", "false", "no", "off"}:
+        return None
+    if SEARCH_PROFILE.lower() in {"1", "true", "yes", "on"}:
+        return Path("/state/search-profile.json")
+    return Path(SEARCH_PROFILE)
+
+
+def _load_search_profile():
+    path = _profile_path()
+    if path is None:
+        return None
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+        return data if isinstance(data, dict) else None
+    except (OSError, ValueError):
+        return None
+
+
+def _save_search_profile(state) -> None:
+    path = _profile_path()
+    if path is None or not isinstance(state, dict):
+        return
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        temporary = path.with_suffix(path.suffix + ".tmp")
+        temporary.write_text(json.dumps(state), encoding="utf-8")
+        os.replace(temporary, path)
+    except OSError:
+        pass
+
+
 async def _race(browser, query: str, limit: int = 10) -> dict:
     limit = max(1, min(limit, 10))
     started = time.monotonic()
-    context = await browser.new_context()
+    profile = _load_search_profile()
+    try:
+        context = await browser.new_context(
+            **({"storage_state": profile} if profile else {})
+        )
+    except Exception:
+        context = await browser.new_context()
     pending = {asyncio.create_task(_engine(context, engine, query, i * STAGGER, limit)): engine
                for i, engine in enumerate(ORDER)}
     attempts, winner, backoff = [], None, False
@@ -281,6 +322,11 @@ async def _race(browser, query: str, limit: int = 10) -> dict:
                          "reason": "cancelled_by_winner" if winner else "retry_after" if backoff
                          else "race_timeout",
                          "count": 0} for engine in cancelled)
+        if _profile_path() is not None:
+            try:
+                _save_search_profile(await context.storage_state())
+            except Exception:
+                pass
         await context.close()
     return {"ok":winner is not None,
             "constraint_outcome": winner.get("reason") if winner else None,
