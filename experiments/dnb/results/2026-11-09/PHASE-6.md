@@ -92,6 +92,17 @@ Evidence: [phase6-arm64-summary.json](phase6-arm64-summary.json),
 [phase6-arm64-health.json](phase6-arm64-health.json),
 [phase6-arm64-tests.log](phase6-arm64-tests.log).
 
+## HTML ceiling
+
+A 13.7 MB HTML file exceeded the existing 8 MiB capture limit. Both reference
+and candidate returned HTTP 200 with the same `html_capture_limit` warning,
+300 content characters, and did not include the fact placed after the ceiling.
+The warning is retained rather than presenting a truncated page as complete. This
+confirms the candidate preserves the existing acquisition limit; it does not
+silently widen it.
+
+Evidence: [phase6-html-ceiling.json](phase6-html-ceiling.json).
+
 ## Remaining Phase 6 work
 
 1. PDF/OCR/Office/media/layout coverage and mixed batches, including the 8 MiB

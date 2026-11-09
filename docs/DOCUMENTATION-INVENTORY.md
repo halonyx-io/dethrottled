@@ -13,7 +13,7 @@ must be classified; unknown paths fail generation/checking.
 | dependency-input | 4 |
 | generated | 4 |
 | harness-guide | 20 |
-| historical-evidence | 124 |
+| historical-evidence | 125 |
 | planned-work | 1 |
 | source-contract | 162 |
 | third-party-notice | 4 |
@@ -226,6 +226,7 @@ Evidence maintainer: preserve observations; append explicit corrections.
 | [experiments/dnb/results/2026-11-09/phase6-arm64-health.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase6-arm64-health.json) |
 | [experiments/dnb/results/2026-11-09/phase6-arm64-summary.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase6-arm64-summary.json) |
 | [experiments/dnb/results/2026-11-09/phase6-arm64-tests.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase6-arm64-tests.log) |
+| [experiments/dnb/results/2026-11-09/phase6-html-ceiling.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase6-html-ceiling.json) |
 | [experiments/dnb/results/2026-11-09/phase6-layout-mixed.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase6-layout-mixed.json) |
 | [experiments/dnb/results/2026-11-09/phase6-optional-summary.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase6-optional-summary.json) |
 | [experiments/dnb/results/2026-11-09/phase6-pdf-candidate.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase6-pdf-candidate.json) |
