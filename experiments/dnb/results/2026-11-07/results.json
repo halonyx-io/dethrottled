@@ -1,0 +1,979 @@
+{
+  "isolation": {
+    "fresh": {
+      "same_owner_storage_retained": true,
+      "other_owner_isolated": true,
+      "other_session_isolated": true,
+      "fresh_page_resets_session_storage": true
+    },
+    "persistent": {
+      "same_owner_storage_retained": true,
+      "other_owner_isolated": true,
+      "other_session_isolated": true,
+      "fresh_page_resets_session_storage": false
+    },
+    "anonymous_isolated": true,
+    "lru_destroys_state": true,
+    "same_session_concurrent_rejected": true,
+    "untrusted_identity_rejected": true,
+    "restart_drops_state": true
+  },
+  "summary": {
+    "reference": {
+      "reads": 12,
+      "facts": 36,
+      "median_ms": 632.5908943545073,
+      "median_cpu_seconds_per_4": 0.902532
+    },
+    "anonymous": {
+      "reads": 12,
+      "facts": 36,
+      "median_ms": 631.5183599945158,
+      "median_cpu_seconds_per_4": 2.782289
+    },
+    "fresh": {
+      "reads": 12,
+      "facts": 36,
+      "median_ms": 627.3293055128306,
+      "median_cpu_seconds_per_4": 2.262415
+    },
+    "persistent": {
+      "reads": 12,
+      "facts": 36,
+      "median_ms": 546.7007032129914,
+      "median_cpu_seconds_per_4": 0.598602
+    }
+  },
+  "records": [
+    {
+      "mode": "reference",
+      "repeat": 0,
+      "cpu_seconds": 0.895896,
+      "requests": [
+        {
+          "ms": 634.512500371784,
+          "facts": 3,
+          "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": null
+        },
+        {
+          "ms": 631.4004408195615,
+          "facts": 3,
+          "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": null
+        },
+        {
+          "ms": 633.2614398561418,
+          "facts": 3,
+          "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": null
+        },
+        {
+          "ms": 631.9203488528728,
+          "facts": 3,
+          "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": null
+        }
+      ],
+      "working_set_snapshot": [
+        {
+          "BlockIO": "35.7MB / 795kB",
+          "CPUPerc": "0.43%",
+          "Container": "3a9a240374842dd3ecf4309f5a3a03bf36fb5872fc930d7f461e88d2c6f81a1c",
+          "ID": "3a9a24037484",
+          "MemPerc": "1.43%",
+          "MemUsage": "451.5MiB / 30.76GiB",
+          "Name": "dethrottled-dnb-lab-reference-render-1",
+          "NetIO": "135kB / 467kB",
+          "PIDs": "167"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "0.01%",
+          "Container": "184a454292a1b92fdc4beff4feb62237a176163c08e785020020de897b32eb47",
+          "ID": "184a454292a1",
+          "MemPerc": "0.03%",
+          "MemUsage": "9.836MiB / 30.76GiB",
+          "Name": "dethrottled-dnb-lab-fixture-1",
+          "NetIO": "180kB / 434kB",
+          "PIDs": "1"
+        },
+        {
+          "BlockIO": "139kB / 16.9MB",
+          "CPUPerc": "1.62%",
+          "Container": "87915214038f6c138df22028ba1c7fa482293897682cfba009c806886a0b3f70",
+          "ID": "87915214038f",
+          "MemPerc": "1.97%",
+          "MemUsage": "620.6MiB / 30.76GiB",
+          "Name": "dethrottled-dnb-lab-candidate-1",
+          "NetIO": "348kB / 298kB",
+          "PIDs": "264"
+        },
+        {
+          "BlockIO": "90.9MB / 28.7MB",
+          "CPUPerc": "0.19%",
+          "Container": "fae337c2bd3a654297c261b076920f9df5ddf08273d0d161d318df71c5a748b2",
+          "ID": "fae337c2bd3a",
+          "MemPerc": "0.93%",
+          "MemUsage": "294MiB / 30.76GiB",
+          "Name": "dethrottled-dnb-lab-reference-browser-1",
+          "NetIO": "9.35MB / 88.9kB",
+          "PIDs": "115"
+        }
+      ]
+    },
+    {
+      "mode": "anonymous",
+      "repeat": 0,
+      "cpu_seconds": 2.683426,
+      "requests": [
+        {
+          "ms": 625.1994627527893,
+          "facts": 3,
+          "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": false
+        },
+        {
+          "ms": 635.55365242064,
+          "facts": 3,
+          "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": false
+        },
+        {
+          "ms": 659.8044149577618,
+          "facts": 3,
+          "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": false
+        },
+        {
+          "ms": 631.1973738484085,
+          "facts": 3,
+          "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": false
+        }
+      ],
+      "working_set_snapshot": [
+        {
+          "BlockIO": "35.7MB / 795kB",
+          "CPUPerc": "0.35%",
+          "Container": "3a9a240374842dd3ecf4309f5a3a03bf36fb5872fc930d7f461e88d2c6f81a1c",
+          "ID": "3a9a24037484",
+          "MemPerc": "1.43%",
+          "MemUsage": "451MiB / 30.76GiB",
+          "Name": "dethrottled-dnb-lab-reference-render-1",
+          "NetIO": "135kB / 467kB",
+          "PIDs": "167"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "0.01%",
+          "Container": "184a454292a1b92fdc4beff4feb62237a176163c08e785020020de897b32eb47",
+          "ID": "184a454292a1",
+          "MemPerc": "0.03%",
+          "MemUsage": "9.836MiB / 30.76GiB",
+          "Name": "dethrottled-dnb-lab-fixture-1",
+          "NetIO": "189kB / 459kB",
+          "PIDs": "1"
+        },
+        {
+          "BlockIO": "139kB / 27.8MB",
+          "CPUPerc": "1.38%",
+          "Container": "87915214038f6c138df22028ba1c7fa482293897682cfba009c806886a0b3f70",
+          "ID": "87915214038f",
+          "MemPerc": "1.95%",
+          "MemUsage": "613.7MiB / 30.76GiB",
+          "Name": "dethrottled-dnb-lab-candidate-1",
+          "NetIO": "443kB / 417kB",
+          "PIDs": "255"
+        },
+        {
+          "BlockIO": "90.9MB / 28.7MB",
+          "CPUPerc": "0.14%",
+          "Container": "fae337c2bd3a654297c261b076920f9df5ddf08273d0d161d318df71c5a748b2",
+          "ID": "fae337c2bd3a",
+          "MemPerc": "0.93%",
+          "MemUsage": "294MiB / 30.76GiB",
+          "Name": "dethrottled-dnb-lab-reference-browser-1",
+          "NetIO": "9.36MB / 95.1kB",
+          "PIDs": "115"
+        }
+      ]
+    },
+    {
+      "mode": "fresh",
+      "repeat": 0,
+      "cpu_seconds": 2.510847,
+      "requests": [
+        {
+          "ms": 617.1754291281104,
+          "facts": 3,
+          "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": true
+        },
+        {
+          "ms": 638.2259759120643,
+          "facts": 3,
+          "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": true
+        },
+        {
+          "ms": 713.9893756248057,
+          "facts": 3,
+          "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": true
+        },
+        {
+          "ms": 618.8736697658896,
+          "facts": 3,
+          "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": true
+        }
+      ],
+      "working_set_snapshot": [
+        {
+          "BlockIO": "35.7MB / 799kB",
+          "CPUPerc": "0.36%",
+          "Container": "3a9a240374842dd3ecf4309f5a3a03bf36fb5872fc930d7f461e88d2c6f81a1c",
+          "ID": "3a9a24037484",
+          "MemPerc": "1.43%",
+          "MemUsage": "450.8MiB / 30.76GiB",
+          "Name": "dethrottled-dnb-lab-reference-render-1",
+          "NetIO": "135kB / 467kB",
+          "PIDs": "167"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "0.01%",
+          "Container": "184a454292a1b92fdc4beff4feb62237a176163c08e785020020de897b32eb47",
+          "ID": "184a454292a1",
+          "MemPerc": "0.03%",
+          "MemUsage": "9.836MiB / 30.76GiB",
+          "Name": "dethrottled-dnb-lab-fixture-1",
+          "NetIO": "199kB / 484kB",
+          "PIDs": "1"
+        },
+        {
+          "BlockIO": "143kB / 41.3MB",
+          "CPUPerc": "0.79%",
+          "Container": "87915214038f6c138df22028ba1c7fa482293897682cfba009c806886a0b3f70",
+          "ID": "87915214038f",
+          "MemPerc": "2.12%",
+          "MemUsage": "667.4MiB / 30.76GiB",
+          "Name": "dethrottled-dnb-lab-candidate-1",
+          "NetIO": "9.73MB / 539kB",
+          "PIDs": "267"
+        },
+        {
+          "BlockIO": "90.9MB / 28.7MB",
+          "CPUPerc": "0.18%",
+          "Container": "fae337c2bd3a654297c261b076920f9df5ddf08273d0d161d318df71c5a748b2",
+          "ID": "fae337c2bd3a",
+          "MemPerc": "0.93%",
+          "MemUsage": "294MiB / 30.76GiB",
+          "Name": "dethrottled-dnb-lab-reference-browser-1",
+          "NetIO": "9.36MB / 95.2kB",
+          "PIDs": "115"
+        }
+      ]
+    },
+    {
+      "mode": "persistent",
+      "repeat": 0,
+      "cpu_seconds": 0.598602,
+      "requests": [
+        {
+          "ms": 557.4230458587408,
+          "facts": 3,
+          "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": true
+        },
+        {
+          "ms": 547.7956109680235,
+          "facts": 3,
+          "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": true
+        },
+        {
+          "ms": 546.4755492284894,
+          "facts": 3,
+          "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": true
+        },
+        {
+          "ms": 545.4854359850287,
+          "facts": 3,
+          "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": true
+        }
+      ],
+      "working_set_snapshot": [
+        {
+          "BlockIO": "35.7MB / 799kB",
+          "CPUPerc": "0.47%",
+          "Container": "3a9a240374842dd3ecf4309f5a3a03bf36fb5872fc930d7f461e88d2c6f81a1c",
+          "ID": "3a9a24037484",
+          "MemPerc": "1.43%",
+          "MemUsage": "450.8MiB / 30.76GiB",
+          "Name": "dethrottled-dnb-lab-reference-render-1",
+          "NetIO": "135kB / 467kB",
+          "PIDs": "167"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "0.01%",
+          "Container": "184a454292a1b92fdc4beff4feb62237a176163c08e785020020de897b32eb47",
+          "ID": "184a454292a1",
+          "MemPerc": "0.03%",
+          "MemUsage": "9.84MiB / 30.76GiB",
+          "Name": "dethrottled-dnb-lab-fixture-1",
+          "NetIO": "209kB / 509kB",
+          "PIDs": "1"
+        },
+        {
+          "BlockIO": "143kB / 41.3MB",
+          "CPUPerc": "1.58%",
+          "Container": "87915214038f6c138df22028ba1c7fa482293897682cfba009c806886a0b3f70",
+          "ID": "87915214038f",
+          "MemPerc": "2.14%",
+          "MemUsage": "673.9MiB / 30.76GiB",
+          "Name": "dethrottled-dnb-lab-candidate-1",
+          "NetIO": "9.77MB / 627kB",
+          "PIDs": "268"
+        },
+        {
+          "BlockIO": "90.9MB / 28.7MB",
+          "CPUPerc": "0.20%",
+          "Container": "fae337c2bd3a654297c261b076920f9df5ddf08273d0d161d318df71c5a748b2",
+          "ID": "fae337c2bd3a",
+          "MemPerc": "0.93%",
+          "MemUsage": "294MiB / 30.76GiB",
+          "Name": "dethrottled-dnb-lab-reference-browser-1",
+          "NetIO": "9.36MB / 95.2kB",
+          "PIDs": "115"
+        }
+      ]
+    },
+    {
+      "mode": "persistent",
+      "repeat": 1,
+      "cpu_seconds": 0.553097,
+      "requests": [
+        {
+          "ms": 547.9824459180236,
+          "facts": 3,
+          "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": true
+        },
+        {
+          "ms": 541.6020792908967,
+          "facts": 3,
+          "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": true
+        },
+        {
+          "ms": 546.9258571974933,
+          "facts": 3,
+          "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": true
+        },
+        {
+          "ms": 546.4079109951854,
+          "facts": 3,
+          "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": true
+        }
+      ],
+      "working_set_snapshot": [
+        {
+          "BlockIO": "35.7MB / 799kB",
+          "CPUPerc": "0.45%",
+          "Container": "3a9a240374842dd3ecf4309f5a3a03bf36fb5872fc930d7f461e88d2c6f81a1c",
+          "ID": "3a9a24037484",
+          "MemPerc": "1.43%",
+          "MemUsage": "450.8MiB / 30.76GiB",
+          "Name": "dethrottled-dnb-lab-reference-render-1",
+          "NetIO": "135kB / 467kB",
+          "PIDs": "167"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "0.01%",
+          "Container": "184a454292a1b92fdc4beff4feb62237a176163c08e785020020de897b32eb47",
+          "ID": "184a454292a1",
+          "MemPerc": "0.03%",
+          "MemUsage": "9.844MiB / 30.76GiB",
+          "Name": "dethrottled-dnb-lab-fixture-1",
+          "NetIO": "218kB / 535kB",
+          "PIDs": "1"
+        },
+        {
+          "BlockIO": "143kB / 41.4MB",
+          "CPUPerc": "0.58%",
+          "Container": "87915214038f6c138df22028ba1c7fa482293897682cfba009c806886a0b3f70",
+          "ID": "87915214038f",
+          "MemPerc": "2.17%",
+          "MemUsage": "684.5MiB / 30.76GiB",
+          "Name": "dethrottled-dnb-lab-candidate-1",
+          "NetIO": "9.8MB / 711kB",
+          "PIDs": "269"
+        },
+        {
+          "BlockIO": "90.9MB / 28.7MB",
+          "CPUPerc": "0.18%",
+          "Container": "fae337c2bd3a654297c261b076920f9df5ddf08273d0d161d318df71c5a748b2",
+          "ID": "fae337c2bd3a",
+          "MemPerc": "0.93%",
+          "MemUsage": "294MiB / 30.76GiB",
+          "Name": "dethrottled-dnb-lab-reference-browser-1",
+          "NetIO": "9.36MB / 95.2kB",
+          "PIDs": "115"
+        }
+      ]
+    },
+    {
+      "mode": "fresh",
+      "repeat": 1,
+      "cpu_seconds": 2.262415,
+      "requests": [
+        {
+          "ms": 619.7011438198388,
+          "facts": 3,
+          "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": true
+        },
+        {
+          "ms": 649.9530049040914,
+          "facts": 3,
+          "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": true
+        },
+        {
+          "ms": 634.5162470825016,
+          "facts": 3,
+          "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": true
+        },
+        {
+          "ms": 615.5766667798162,
+          "facts": 3,
+          "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": true
+        }
+      ],
+      "working_set_snapshot": [
+        {
+          "BlockIO": "35.7MB / 799kB",
+          "CPUPerc": "0.35%",
+          "Container": "3a9a240374842dd3ecf4309f5a3a03bf36fb5872fc930d7f461e88d2c6f81a1c",
+          "ID": "3a9a24037484",
+          "MemPerc": "1.43%",
+          "MemUsage": "450.8MiB / 30.76GiB",
+          "Name": "dethrottled-dnb-lab-reference-render-1",
+          "NetIO": "135kB / 467kB",
+          "PIDs": "167"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "0.01%",
+          "Container": "184a454292a1b92fdc4beff4feb62237a176163c08e785020020de897b32eb47",
+          "ID": "184a454292a1",
+          "MemPerc": "0.03%",
+          "MemUsage": "9.84MiB / 30.76GiB",
+          "Name": "dethrottled-dnb-lab-fixture-1",
+          "NetIO": "228kB / 560kB",
+          "PIDs": "1"
+        },
+        {
+          "BlockIO": "143kB / 53.5MB",
+          "CPUPerc": "10.61%",
+          "Container": "87915214038f6c138df22028ba1c7fa482293897682cfba009c806886a0b3f70",
+          "ID": "87915214038f",
+          "MemPerc": "2.32%",
+          "MemUsage": "731.2MiB / 30.76GiB",
+          "Name": "dethrottled-dnb-lab-candidate-1",
+          "NetIO": "9.83MB / 796kB",
+          "PIDs": "293"
+        },
+        {
+          "BlockIO": "90.9MB / 28.9MB",
+          "CPUPerc": "0.19%",
+          "Container": "fae337c2bd3a654297c261b076920f9df5ddf08273d0d161d318df71c5a748b2",
+          "ID": "fae337c2bd3a",
+          "MemPerc": "0.93%",
+          "MemUsage": "294MiB / 30.76GiB",
+          "Name": "dethrottled-dnb-lab-reference-browser-1",
+          "NetIO": "9.36MB / 95.2kB",
+          "PIDs": "115"
+        }
+      ]
+    },
+    {
+      "mode": "anonymous",
+      "repeat": 1,
+      "cpu_seconds": 2.782289,
+      "requests": [
+        {
+          "ms": 626.7802808433771,
+          "facts": 3,
+          "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": false
+        },
+        {
+          "ms": 651.491270866245,
+          "facts": 3,
+          "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": false
+        },
+        {
+          "ms": 630.7345540262759,
+          "facts": 3,
+          "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": false
+        },
+        {
+          "ms": 631.8393461406231,
+          "facts": 3,
+          "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": false
+        }
+      ],
+      "working_set_snapshot": [
+        {
+          "BlockIO": "35.7MB / 799kB",
+          "CPUPerc": "0.35%",
+          "Container": "3a9a240374842dd3ecf4309f5a3a03bf36fb5872fc930d7f461e88d2c6f81a1c",
+          "ID": "3a9a24037484",
+          "MemPerc": "1.43%",
+          "MemUsage": "450.8MiB / 30.76GiB",
+          "Name": "dethrottled-dnb-lab-reference-render-1",
+          "NetIO": "135kB / 467kB",
+          "PIDs": "167"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "0.01%",
+          "Container": "184a454292a1b92fdc4beff4feb62237a176163c08e785020020de897b32eb47",
+          "ID": "184a454292a1",
+          "MemPerc": "0.03%",
+          "MemUsage": "9.84MiB / 30.76GiB",
+          "Name": "dethrottled-dnb-lab-fixture-1",
+          "NetIO": "237kB / 585kB",
+          "PIDs": "1"
+        },
+        {
+          "BlockIO": "143kB / 80.6MB",
+          "CPUPerc": "0.26%",
+          "Container": "87915214038f6c138df22028ba1c7fa482293897682cfba009c806886a0b3f70",
+          "ID": "87915214038f",
+          "MemPerc": "2.22%",
+          "MemUsage": "698.9MiB / 30.76GiB",
+          "Name": "dethrottled-dnb-lab-candidate-1",
+          "NetIO": "9.93MB / 922kB",
+          "PIDs": "297"
+        },
+        {
+          "BlockIO": "90.9MB / 28.9MB",
+          "CPUPerc": "0.13%",
+          "Container": "fae337c2bd3a654297c261b076920f9df5ddf08273d0d161d318df71c5a748b2",
+          "ID": "fae337c2bd3a",
+          "MemPerc": "0.93%",
+          "MemUsage": "294MiB / 30.76GiB",
+          "Name": "dethrottled-dnb-lab-reference-browser-1",
+          "NetIO": "9.36MB / 95.2kB",
+          "PIDs": "115"
+        }
+      ]
+    },
+    {
+      "mode": "reference",
+      "repeat": 1,
+      "cpu_seconds": 0.907216,
+      "requests": [
+        {
+          "ms": 646.2609912268817,
+          "facts": 3,
+          "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": null
+        },
+        {
+          "ms": 631.6509456373751,
+          "facts": 3,
+          "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": null
+        },
+        {
+          "ms": 625.9276890195906,
+          "facts": 3,
+          "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": null
+        },
+        {
+          "ms": 631.316339597106,
+          "facts": 3,
+          "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": null
+        }
+      ],
+      "working_set_snapshot": [
+        {
+          "BlockIO": "35.7MB / 799kB",
+          "CPUPerc": "0.38%",
+          "Container": "3a9a240374842dd3ecf4309f5a3a03bf36fb5872fc930d7f461e88d2c6f81a1c",
+          "ID": "3a9a24037484",
+          "MemPerc": "1.43%",
+          "MemUsage": "452MiB / 30.76GiB",
+          "Name": "dethrottled-dnb-lab-reference-render-1",
+          "NetIO": "164kB / 571kB",
+          "PIDs": "167"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "0.01%",
+          "Container": "184a454292a1b92fdc4beff4feb62237a176163c08e785020020de897b32eb47",
+          "ID": "184a454292a1",
+          "MemPerc": "0.03%",
+          "MemUsage": "9.84MiB / 30.76GiB",
+          "Name": "dethrottled-dnb-lab-fixture-1",
+          "NetIO": "248kB / 610kB",
+          "PIDs": "1"
+        },
+        {
+          "BlockIO": "143kB / 81.5MB",
+          "CPUPerc": "0.25%",
+          "Container": "87915214038f6c138df22028ba1c7fa482293897682cfba009c806886a0b3f70",
+          "ID": "87915214038f",
+          "MemPerc": "2.20%",
+          "MemUsage": "692.7MiB / 30.76GiB",
+          "Name": "dethrottled-dnb-lab-candidate-1",
+          "NetIO": "9.93MB / 922kB",
+          "PIDs": "297"
+        },
+        {
+          "BlockIO": "90.9MB / 28.9MB",
+          "CPUPerc": "0.15%",
+          "Container": "fae337c2bd3a654297c261b076920f9df5ddf08273d0d161d318df71c5a748b2",
+          "ID": "fae337c2bd3a",
+          "MemPerc": "0.93%",
+          "MemUsage": "294MiB / 30.76GiB",
+          "Name": "dethrottled-dnb-lab-reference-browser-1",
+          "NetIO": "9.36MB / 95.2kB",
+          "PIDs": "115"
+        }
+      ]
+    },
+    {
+      "mode": "fresh",
+      "repeat": 2,
+      "cpu_seconds": 2.245493,
+      "requests": [
+        {
+          "ms": 625.1366441138089,
+          "facts": 3,
+          "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": true
+        },
+        {
+          "ms": 629.5219669118524,
+          "facts": 3,
+          "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": true
+        },
+        {
+          "ms": 623.9608665928245,
+          "facts": 3,
+          "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": true
+        },
+        {
+          "ms": 632.7736829407513,
+          "facts": 3,
+          "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": true
+        }
+      ],
+      "working_set_snapshot": [
+        {
+          "BlockIO": "35.7MB / 803kB",
+          "CPUPerc": "0.38%",
+          "Container": "3a9a240374842dd3ecf4309f5a3a03bf36fb5872fc930d7f461e88d2c6f81a1c",
+          "ID": "3a9a24037484",
+          "MemPerc": "1.43%",
+          "MemUsage": "451.1MiB / 30.76GiB",
+          "Name": "dethrottled-dnb-lab-reference-render-1",
+          "NetIO": "164kB / 571kB",
+          "PIDs": "167"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "0.01%",
+          "Container": "184a454292a1b92fdc4beff4feb62237a176163c08e785020020de897b32eb47",
+          "ID": "184a454292a1",
+          "MemPerc": "0.03%",
+          "MemUsage": "9.84MiB / 30.76GiB",
+          "Name": "dethrottled-dnb-lab-fixture-1",
+          "NetIO": "257kB / 636kB",
+          "PIDs": "1"
+        },
+        {
+          "BlockIO": "147kB / 81.5MB",
+          "CPUPerc": "0.63%",
+          "Container": "87915214038f6c138df22028ba1c7fa482293897682cfba009c806886a0b3f70",
+          "ID": "87915214038f",
+          "MemPerc": "2.26%",
+          "MemUsage": "711.9MiB / 30.76GiB",
+          "Name": "dethrottled-dnb-lab-candidate-1",
+          "NetIO": "9.96MB / 1.01MB",
+          "PIDs": "306"
+        },
+        {
+          "BlockIO": "90.9MB / 28.9MB",
+          "CPUPerc": "0.15%",
+          "Container": "fae337c2bd3a654297c261b076920f9df5ddf08273d0d161d318df71c5a748b2",
+          "ID": "fae337c2bd3a",
+          "MemPerc": "0.93%",
+          "MemUsage": "294MiB / 30.76GiB",
+          "Name": "dethrottled-dnb-lab-reference-browser-1",
+          "NetIO": "9.36MB / 95.2kB",
+          "PIDs": "115"
+        }
+      ]
+    },
+    {
+      "mode": "reference",
+      "repeat": 2,
+      "cpu_seconds": 0.902532,
+      "requests": [
+        {
+          "ms": 633.5384766571224,
+          "facts": 3,
+          "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": null
+        },
+        {
+          "ms": 633.8801071979105,
+          "facts": 3,
+          "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": null
+        },
+        {
+          "ms": 660.3064709343016,
+          "facts": 3,
+          "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": null
+        },
+        {
+          "ms": 629.7577149234712,
+          "facts": 3,
+          "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": null
+        }
+      ],
+      "working_set_snapshot": [
+        {
+          "BlockIO": "35.7MB / 803kB",
+          "CPUPerc": "4.09%",
+          "Container": "3a9a240374842dd3ecf4309f5a3a03bf36fb5872fc930d7f461e88d2c6f81a1c",
+          "ID": "3a9a24037484",
+          "MemPerc": "1.44%",
+          "MemUsage": "452.7MiB / 30.76GiB",
+          "Name": "dethrottled-dnb-lab-reference-render-1",
+          "NetIO": "194kB / 675kB",
+          "PIDs": "167"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "0.01%",
+          "Container": "184a454292a1b92fdc4beff4feb62237a176163c08e785020020de897b32eb47",
+          "ID": "184a454292a1",
+          "MemPerc": "0.03%",
+          "MemUsage": "9.84MiB / 30.76GiB",
+          "Name": "dethrottled-dnb-lab-fixture-1",
+          "NetIO": "267kB / 661kB",
+          "PIDs": "1"
+        },
+        {
+          "BlockIO": "147kB / 81.5MB",
+          "CPUPerc": "0.62%",
+          "Container": "87915214038f6c138df22028ba1c7fa482293897682cfba009c806886a0b3f70",
+          "ID": "87915214038f",
+          "MemPerc": "2.24%",
+          "MemUsage": "706.3MiB / 30.76GiB",
+          "Name": "dethrottled-dnb-lab-candidate-1",
+          "NetIO": "9.96MB / 1.01MB",
+          "PIDs": "306"
+        },
+        {
+          "BlockIO": "90.9MB / 28.9MB",
+          "CPUPerc": "0.16%",
+          "Container": "fae337c2bd3a654297c261b076920f9df5ddf08273d0d161d318df71c5a748b2",
+          "ID": "fae337c2bd3a",
+          "MemPerc": "0.93%",
+          "MemUsage": "294MiB / 30.76GiB",
+          "Name": "dethrottled-dnb-lab-reference-browser-1",
+          "NetIO": "9.36MB / 95.2kB",
+          "PIDs": "115"
+        }
+      ]
+    },
+    {
+      "mode": "persistent",
+      "repeat": 2,
+      "cpu_seconds": 0.630294,
+      "requests": [
+        {
+          "ms": 549.9751083552837,
+          "facts": 3,
+          "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": true
+        },
+        {
+          "ms": 546.036274638027,
+          "facts": 3,
+          "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": true
+        },
+        {
+          "ms": 553.1619591638446,
+          "facts": 3,
+          "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": true
+        },
+        {
+          "ms": 540.8585937693715,
+          "facts": 3,
+          "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": true
+        }
+      ],
+      "working_set_snapshot": [
+        {
+          "BlockIO": "35.7MB / 811kB",
+          "CPUPerc": "0.58%",
+          "Container": "3a9a240374842dd3ecf4309f5a3a03bf36fb5872fc930d7f461e88d2c6f81a1c",
+          "ID": "3a9a24037484",
+          "MemPerc": "1.44%",
+          "MemUsage": "452.7MiB / 30.76GiB",
+          "Name": "dethrottled-dnb-lab-reference-render-1",
+          "NetIO": "194kB / 675kB",
+          "PIDs": "167"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "0.01%",
+          "Container": "184a454292a1b92fdc4beff4feb62237a176163c08e785020020de897b32eb47",
+          "ID": "184a454292a1",
+          "MemPerc": "0.03%",
+          "MemUsage": "9.844MiB / 30.76GiB",
+          "Name": "dethrottled-dnb-lab-fixture-1",
+          "NetIO": "277kB / 686kB",
+          "PIDs": "1"
+        },
+        {
+          "BlockIO": "147kB / 81.5MB",
+          "CPUPerc": "0.55%",
+          "Container": "87915214038f6c138df22028ba1c7fa482293897682cfba009c806886a0b3f70",
+          "ID": "87915214038f",
+          "MemPerc": "2.03%",
+          "MemUsage": "638.8MiB / 30.76GiB",
+          "Name": "dethrottled-dnb-lab-candidate-1",
+          "NetIO": "9.99MB / 1.09MB",
+          "PIDs": "306"
+        },
+        {
+          "BlockIO": "90.9MB / 28.9MB",
+          "CPUPerc": "0.25%",
+          "Container": "fae337c2bd3a654297c261b076920f9df5ddf08273d0d161d318df71c5a748b2",
+          "ID": "fae337c2bd3a",
+          "MemPerc": "0.93%",
+          "MemUsage": "294MiB / 30.76GiB",
+          "Name": "dethrottled-dnb-lab-reference-browser-1",
+          "NetIO": "9.36MB / 95.2kB",
+          "PIDs": "115"
+        }
+      ]
+    },
+    {
+      "mode": "anonymous",
+      "repeat": 2,
+      "cpu_seconds": 2.812697,
+      "requests": [
+        {
+          "ms": 625.9625148959458,
+          "facts": 3,
+          "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": false
+        },
+        {
+          "ms": 644.0750421024859,
+          "facts": 3,
+          "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": false
+        },
+        {
+          "ms": 632.5016948394477,
+          "facts": 3,
+          "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": false
+        },
+        {
+          "ms": 627.3971041664481,
+          "facts": 3,
+          "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": false
+        }
+      ],
+      "working_set_snapshot": [
+        {
+          "BlockIO": "35.7MB / 811kB",
+          "CPUPerc": "0.48%",
+          "Container": "3a9a240374842dd3ecf4309f5a3a03bf36fb5872fc930d7f461e88d2c6f81a1c",
+          "ID": "3a9a24037484",
+          "MemPerc": "1.44%",
+          "MemUsage": "452.9MiB / 30.76GiB",
+          "Name": "dethrottled-dnb-lab-reference-render-1",
+          "NetIO": "194kB / 675kB",
+          "PIDs": "167"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "0.01%",
+          "Container": "184a454292a1b92fdc4beff4feb62237a176163c08e785020020de897b32eb47",
+          "ID": "184a454292a1",
+          "MemPerc": "0.03%",
+          "MemUsage": "9.844MiB / 30.76GiB",
+          "Name": "dethrottled-dnb-lab-fixture-1",
+          "NetIO": "286kB / 711kB",
+          "PIDs": "1"
+        },
+        {
+          "BlockIO": "147kB / 92.5MB",
+          "CPUPerc": "0.30%",
+          "Container": "87915214038f6c138df22028ba1c7fa482293897682cfba009c806886a0b3f70",
+          "ID": "87915214038f",
+          "MemPerc": "2.02%",
+          "MemUsage": "635.8MiB / 30.76GiB",
+          "Name": "dethrottled-dnb-lab-candidate-1",
+          "NetIO": "10.1MB / 1.21MB",
+          "PIDs": "297"
+        },
+        {
+          "BlockIO": "90.9MB / 28.9MB",
+          "CPUPerc": "0.29%",
+          "Container": "fae337c2bd3a654297c261b076920f9df5ddf08273d0d161d318df71c5a748b2",
+          "ID": "fae337c2bd3a",
+          "MemPerc": "0.93%",
+          "MemUsage": "294MiB / 30.76GiB",
+          "Name": "dethrottled-dnb-lab-reference-browser-1",
+          "NetIO": "9.36MB / 95.2kB",
+          "PIDs": "115"
+        }
+      ]
+    }
+  ],
+  "scope": "one host; 12 warm renders per variant; 0.5-second settle; no live providers",
+  "notes": [
+    "CPU source counter is usage_usec; exported values converted to seconds.",
+    "Original harness mislabeled microseconds; raw original retained privately; conversion does not require rerunning acquisition.",
+    "A first run completed acquisition but restart readiness probe reset before writing results; harness now saves measurements before restart and waits for health."
+  ]
+}

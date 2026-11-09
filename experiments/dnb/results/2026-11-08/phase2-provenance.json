@@ -1,0 +1,51 @@
+{
+  "date": "2026-11-08",
+  "phase": "DNB worker phase 2",
+  "architecture": "x86_64",
+  "reference_version": "1.7.1",
+  "image_id": "sha256:5ab3b8e02baddebff257217bf312a97bb70eb4afb17a6d6876126fa7458870b5",
+  "container_user": "browsersearch",
+  "retained_image_tag": "dethrottled-dnb:phase2-accepted-20261108",
+  "tests_passed": 60,
+  "controlled_browser_gate": "passed using built /app modules and normal non-root user",
+  "lab_limits": {
+    "memory_bytes": 4294967296,
+    "cpu_count": 4,
+    "pids": 1024
+  },
+  "network": {
+    "internal": true,
+    "subnet": "11.253.72.0/24",
+    "internet_requests": 0,
+    "published_ports": 0
+  },
+  "filter": "synthetic 10000-rule fixture; reader-only; wiring test, not list coverage",
+  "tls": "ephemeral certificate SPKI trusted only in test launch",
+  "source_sha256": {
+    "experiments/dnb/Dockerfile": "64c8d1b896bf8e8a1b76117c5323515d6e69d54c72dab959081c620f45fd8e88",
+    "experiments/dnb/dnb_service.py": "63491584144348c0dd00b6c0b6d706a42a290654b6a9778aba88c1785a36f3de",
+    "experiments/dnb/navigation_guard.py": "3d5e54cf12e9bff91f46f470dbdbe16c179f9778f2cccd5b1ab608cd0f3e8f2e",
+    "experiments/dnb/network_policy.py": "fb776e89ecaedbb487bdf18f95767cd9610cd10771c2c5fa1ad190f5be269ba0",
+    "experiments/dnb/context_pool.py": "b87672411b7eb1c67604fbb5f3391a1852e9c189f9bbf9425866874b0fabf907",
+    "experiments/dnb/lifecycle.py": "28caa10875789da5b730f17a01dc0d2a45d5ab1e8588fb222d1105010422213d",
+    "experiments/dnb/phase2_check.py": "38595c10fc9cab8ad5051515747ab6a57376b5880c54bf234d0e3ccc9545d953",
+    "experiments/dnb/phase2_lab.sh": "70b54b0c2b28d10af4090ba9462e10aaa61df65f02f4984c498cf3dadda4b928",
+    "experiments/dnb/test_navigation_scope.py": "e2f8b10d77092daad4e8c29d4af26c21a048fe6c100fc18a1c6b8aea11328aa8",
+    "experiments/dnb/test_network_policy.py": "e454796f8079b83d78cba93d06b69c6278f69e6fbf7f1c1436ec4245139c4756",
+    "experiments/dnb/test_pool.py": "c6aa344dc02dbbf9bdf5e578864bec6e85a72d428e638c854984b9601ec71468",
+    "experiments/dnb/test_dnb.py": "8251911b1e5e6c54f116b6428745117e1e0a420fa1ebbd68cc0c9c1a92ae4e7d",
+    "experiments/dnb/test_lifecycle.py": "a50aff28b3a5a927fd8da8bbfe94ea6289e0eba487082dc9fa9608267e3e3a92",
+    "experiments/dnb/test_extraction_pool.py": "241bf48c7b247f28bf0ddb6ae5640980e3766e406b0f3356ec695b893e9b647e",
+    "src/dethrottled/delegation.py": "05172e2f064746c31d5bbe377f5954473bcd89ce876c3a1b0610b6e89484c880"
+  },
+  "artifact_sha256": {
+    "phase2-initial-failure.json": "a0cc5a7de65d20469477365ace00219e9049b7312e11482c55b28ae7bff6c032",
+    "phase2-tests.log": "482d8154d4397473c0859ede1b10affa173f50f05f4082bf7e61dd39f7e829f3",
+    "phase2-wire.json": "5382457d1b27e22f21820a68e2366edb6dc53589e4f6f96d565269ae029cba0f",
+    "phase2-lifecycle-regression.json": "5deedd046c0088adf92c2e2cddf6a81b193c68dafcce20651967de030da847fa"
+  },
+  "performance_claim": null,
+  "production_changed": false,
+  "published": false,
+  "lifecycle_regression": "Signed HTTP cancellation/extraction/stall/mutation/crash gate passed again on accepted image; separate private bridge and loopback ports"
+}

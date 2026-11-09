@@ -49,6 +49,7 @@ Issues = "https://github.com/halonyx-io/dethrottled/issues"
 Changelog = "https://github.com/halonyx-io/dethrottled/releases"
 
 [project.optional-dependencies]
+browser = ["PyJWT[crypto]>=2.15,<3"]
 # Documents as text: PDF, the Office formats, OpenDocument, EPUB and RTF.
 #
 # Every one of these is a direct parser. MarkItDown was measured as the

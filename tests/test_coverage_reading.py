@@ -712,3 +712,69 @@ def test_concise_keeps_other_document_page_metadata():
         {"page": 1, "method": "ocr", "language": "eng", "warnings": ["verify pixels"]},
         {"page": 2, "method": "ocr", "text_layer_blocks": None}]}}
     assert compact_row(row) == row
+
+
+def test_concise_pdf_omits_structured_table_metadata():
+    from copy import deepcopy
+
+    from dethrottled.content import compact_row
+
+    row = {
+        "content": "Requested evidence excerpt.",
+        "document_id": "doc_large",
+        "document_chars": 900000,
+        "truncated": True,
+        "warnings": ["table_structure_is_inferred; verify_critical_cells_against_source"],
+        "extraction": {
+            "total_pages": 200,
+            "pages": [{"page": n, "method": "text", "text_chars": 5000,
+                       "text_layer_blocks": [{"text": "block " * 200, "bbox": [0, 0, 1, 1]}]}
+                      for n in range(1, 201)],
+            "native_pdf_tables": [
+                {"page": n, "cells": [[("cell-%d-%d-" % (n, r)) + "x" * 180
+                                       for _ in range(10)] for r in range(30)]}
+                for n in range(2, 4)
+            ],
+            "layout_tables": [{"page": n, "cells": [["big"] * 10] * 30} for n in range(1, 4)],
+            "native_table_scan": {"page_start": 1, "page_end": 100, "partial": True},
+            "layout_tables_total": 3,
+        },
+    }
+    before = deepcopy(row)
+    compact = compact_row(row)
+    assert row == before
+    extraction = compact["extraction"]
+    assert "native_pdf_tables" not in extraction
+    assert "layout_tables" not in extraction
+    assert extraction["native_pdf_table_count"] == 2
+    assert extraction["layout_table_count"] == 3
+    assert extraction["layout_tables_total"] == 3
+    assert extraction["native_table_scan"] == before["extraction"]["native_table_scan"]
+    assert extraction["presentation"]["omitted_table_metadata"] == {
+        "native_pdf_tables": 2, "layout_tables": 3}
+    assert extraction["presentation"]["detail_available_with"] == {
+        "response_format": "detailed"}
+    assert compact["content"] == before["content"]
+    assert compact["document_id"] == "doc_large"
+    assert compact["truncated"] is True
+    assert compact["warnings"] == before["warnings"]
+    assert len(__import__("json").dumps(compact)) < 20000
+    assert compact_row(compact) == compact
+
+
+def test_concise_mixed_batch_compacts_pdf_tables_and_keeps_plain_rows():
+    from dethrottled.content import present_row
+
+    pdf = {
+        "content": "PDF excerpt",
+        "extraction": {
+            "pages": [{"page": 1, "method": "text"}],
+            "native_pdf_tables": [{"page": 1, "cells": [["x" * 500] * 10] * 20}],
+        },
+    }
+    plain = {"content": "Plain excerpt", "quality": "ok"}
+    out = [present_row(row, "concise") for row in (pdf, plain)]
+    assert "native_pdf_tables" not in out[0]["extraction"]
+    assert out[0]["extraction"]["native_pdf_table_count"] == 1
+    assert out[1] == plain
+    assert len(__import__("json").dumps(out)) < 5000

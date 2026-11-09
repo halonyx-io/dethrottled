@@ -76,3 +76,7 @@ uvicorn==0.54.0
 xlrd==2.0.2
 xlsxwriter==3.3.1
 youtube-transcript-api==1.2.4
+
+# Private DNB delegation; compatible with the adapter and browser locks.
+cryptography==50.0.2
+PyJWT==2.15.1

@@ -1,0 +1,28 @@
+{
+  "date": "2026-11-08",
+  "phase": "DNB worker phase 1",
+  "architecture": "x86_64",
+  "image_id": "sha256:21507b23bc4782d98f3011459a71630c41cf071f59ba67265ac18fa1bffef8b1",
+  "source_sha256": {
+    "experiments/dnb/dnb_service.py": "e7283250afdfd85b5d5b62988a930017d7a2596ad1c184717de513557f681bd6",
+    "experiments/dnb/extraction_pool.py": "917b8d2badc42b46d289e132774345504574e38ea1362ddf33bb83f0b9429f41",
+    "experiments/dnb/extract_worker.py": "7fbf548e9c91fc736a5dd333a1db26b21b63fee87fc531e22645ccbcc18ccec0",
+    "experiments/dnb/html_extract.py": "f5dcd630cece32a75ef6026337277e0f6c500ca1e0214ba6760d5f23cfd3a5ef",
+    "experiments/dnb/lifecycle.py": "28caa10875789da5b730f17a01dc0d2a45d5ab1e8588fb222d1105010422213d",
+    "experiments/dnb/context_pool.py": "b87672411b7eb1c67604fbb5f3391a1852e9c189f9bbf9425866874b0fabf907",
+    "experiments/dnb/phase1_check.py": "e5c69744a0ad3721fdd0bf281d0d535f513b1775fd936b12b6048c9bfb8ffc41",
+    "experiments/dnb/test_extraction_pool.py": "241bf48c7b247f28bf0ddb6ae5640980e3766e406b0f3356ec695b893e9b647e",
+    "experiments/dnb/test_lifecycle.py": "a50aff28b3a5a927fd8da8bbfe94ea6289e0eba487082dc9fa9608267e3e3a92",
+    "experiments/dnb/test_dnb.py": "8251911b1e5e6c54f116b6428745117e1e0a420fa1ebbd68cc0c9c1a92ae4e7d",
+    "experiments/dnb/Dockerfile": "64c8d1b896bf8e8a1b76117c5323515d6e69d54c72dab959081c620f45fd8e88"
+  },
+  "lab_limits": {
+    "memory_bytes": 4294967296,
+    "cpu_count": 4.0,
+    "pids": 1024,
+    "restart_policy": "unless-stopped"
+  },
+  "tests_passed": 33,
+  "production_changed": false,
+  "retained_image_tag": "dethrottled-dnb:phase1-accepted-20261108"
+}

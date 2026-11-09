@@ -1,0 +1,21 @@
+{
+  "requests": 20,
+  "failures": 0,
+  "median_seconds": 1.663,
+  "p95_seconds": 1.726,
+  "max_seconds": 1.731,
+  "worker_rss_kb_before": 105840,
+  "worker_rss_kb_after": 106548,
+  "contexts_before": 1,
+  "contexts_after": 1,
+  "counts_before": {
+    "success": 2,
+    "failed": 1
+  },
+  "counts_after": {
+    "success": 22,
+    "failed": 1
+  },
+  "operations_before": 2,
+  "operations_after": 2
+}

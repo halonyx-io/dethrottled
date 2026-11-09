@@ -1,0 +1,45 @@
+{
+  "rest_synthetic": {
+    "concise_before_bytes": 1178896,
+    "concise_after_bytes": 15640,
+    "detailed_before_bytes": 1423701,
+    "detailed_after_bytes": 1423701,
+    "content_chars": 200,
+    "native_pdf_tables_before": 20,
+    "native_pdf_table_count_after": 20
+  },
+  "rest_real_pdf": {
+    "row_bytes": 248800,
+    "old_concise_bytes": 104127,
+    "new_concise_bytes": 4396,
+    "content_chars": 300,
+    "native_pdf_tables": 20,
+    "native_table_chars": 99791
+  },
+  "mcp_synthetic": {
+    "tool": "search_and_fetch",
+    "transport": "MCP streamable HTTP via adapters/mcp_server.py",
+    "max_chars": 300,
+    "concise_before_bytes": 100754,
+    "concise_after_bytes": 4419,
+    "detailed_after_bytes": 241495,
+    "content_chars": 300,
+    "native_pdf_tables_before": 20,
+    "native_pdf_table_count_after": 20,
+    "concise_reduction": "98.6%"
+  },
+  "mcp_real_network": {
+    "tool": "fetch",
+    "transport": "MCP streamable HTTP via adapters/mcp_server.py",
+    "url": "https://www.irs.gov/pub/irs-pdf/f1040.pdf",
+    "network": "real public PDF fetch",
+    "max_chars": 300,
+    "concise_bytes": 4466,
+    "detailed_bytes": 32640,
+    "content_chars": 300,
+    "tier": "direct/direct-native",
+    "native_pdf_tables_detailed": 3,
+    "native_pdf_table_count_concise": 3,
+    "concise_reduction": "86.3%"
+  }
+}

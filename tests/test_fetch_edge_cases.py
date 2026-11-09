@@ -47,6 +47,36 @@ def response(url):
                            url=url, close=lambda: None, iter_content=lambda n: [html])
 
 
+def test_crawl4ai_payload_preserves_html_only_when_requested():
+    from dethrottled import fetch
+
+    payload = {"markdown": "prose " * 100,
+               "html": "<html><body><h1>Example Domain</h1><p>" + "padding " * 200 + "</p></body></html>",
+               "cleaned_html": "<html><body><p>cleaned</p></body></html>"}
+    token = fetch._READ_OPTIONS.set({"keep_html": True})
+    try:
+        result, reason, _ = fetch._crawl4ai_payload(payload, "https://example.com")
+    finally:
+        fetch._READ_OPTIONS.reset(token)
+    assert not reason and "Example Domain" in result["html"]
+    assert "prose" in result["text"]
+
+    tiny = {"markdown": "short", "cleaned_html": "<h1>Tiny</h1>"}
+    token = fetch._READ_OPTIONS.set({"keep_html": True})
+    try:
+        result, _, _ = fetch._crawl4ai_payload(tiny, "https://example.com")
+    finally:
+        fetch._READ_OPTIONS.reset(token)
+    assert result["html"] == "<h1>Tiny</h1>"
+
+    token = fetch._READ_OPTIONS.set({"keep_html": False})
+    try:
+        result, _, _ = fetch._crawl4ai_payload(payload, "https://example.com")
+    finally:
+        fetch._READ_OPTIONS.reset(token)
+    assert "html" not in result
+
+
 def test_direct_has_short_connect_budget_and_original_read_budget(monkeypatch):
     seen = {}
     monkeypatch.setattr(fetch, "_throttle", lambda *a: None)

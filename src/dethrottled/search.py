@@ -20,7 +20,6 @@ import re
 import threading
 import time
 from collections import deque
-from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from urllib.parse import parse_qs, quote_plus, urlparse
 
@@ -29,6 +28,7 @@ import feedparser
 from . import adblock, providers, search_diagnostics
 from . import netfilter as requests
 from . import paths as _paths
+from .concurrency import ContextExecutor as ThreadPoolExecutor
 from .content import constrained
 from .discovery import SOURCE_PROFILES, tls_search
 from .fetch import USER_AGENT
@@ -698,8 +698,23 @@ def browser_drive(payload: dict, *, timeout: int | None = None) -> dict:
     try:
         if timeout is None:
             timeout = max(90, int(payload.get("timeout_ms", 45000) / 1000) + 15)
+        options = {}
+        if os.getenv("DETHROTTLED_DNB", "0") == "1":
+            from .access import CLAIMS
+            from .delegation import sign
+            claims = CLAIMS.get()
+            if claims:
+                payload = dict(payload, public_only=True)
+            public = payload.get("public_only",False)
+            timeout = max(timeout, payload.get("timeout_ms",45000)/1000 + 20)
+            options["headers"] = {"X-DNB-Delegation":sign(payload,
+                owner=claims["namespace"] if claims else None,
+                session=payload.get("session", ""),
+                scope="public-drive" if public else "local-drive",public_only=public,
+                allowed_hosts=payload.get("allowed_hosts",[]),
+                operation=payload.get("operation_id", ""),path="/drive")}
         response = requests.post(BROWSER_SEARCH_URL + "/drive",
-                                 json=payload, timeout=timeout)
+                                 json=payload, timeout=timeout, **options)
     except requests.RequestException as exc:
         raise BrowserWorkerError(None, "browser worker unreachable: %s" % exc) from exc
     if response.status_code >= 400:

@@ -1,0 +1,28 @@
+{
+  "prototype": {
+    "exit_status": 0,
+    "stdout_sha256": "1d21d05afac7c04d59f1aa908182557962ac9edeb2af038e4db430d2dcac992b",
+    "result": "17 passed in 1.03s"
+  },
+  "existing_regressions": {
+    "exit_status": 0,
+    "stdout_sha256": "b10080b35efca1a4f9fe7a47dc036603a21c0c63934aa76b0a67985ab79dfc2b",
+    "result": "72 passed, 4 warnings in 4.57s"
+  },
+  "documentation": {
+    "exit_status": 0,
+    "stdout_sha256": "aae11101ba89c1b8042e625c136c5001334e4817d594b488d29f8d989a282014",
+    "result": {
+      "status": "passed",
+      "pages": 89,
+      "links": 631,
+      "examples": 55,
+      "requests": 10
+    }
+  },
+  "verification": {
+    "exit_status": 0,
+    "stdout_sha256": "10327f73ca6df08ee258e9172e1b6ff6212d9cef9ee4d4b2b78c03704ffb8e60",
+    "result": "{\"reference\": {\"facts\": 27, \"actions\": 27, \"download_exact\": true, \"network_fact\": true, \"concurrent\": true, \"checkpoint_restart_restored\": true}, \"candidate\": {\"facts\": 27, \"actions\": 27, \"download_exact\": true, \"network_fact\": true, \"concurrent\": true, \"checkpoint_restart_restored\": true}}"
+  }
+}

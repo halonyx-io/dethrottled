@@ -1,0 +1,32 @@
+[
+  {
+    "url": "https://example.com/",
+    "status": 200,
+    "seconds": 1.752,
+    "tier": "headed/read-plan",
+    "quality": "ok",
+    "fact": "documentation examples",
+    "fact_present": true,
+    "chars": 800
+  },
+  {
+    "url": "https://docs.python.org/3/library/sqlite3.html",
+    "status": 200,
+    "seconds": 1.099,
+    "tier": "direct/trafilatura",
+    "quality": "ok",
+    "fact": "sqlite3",
+    "fact_present": true,
+    "chars": 800
+  },
+  {
+    "url": "https://www.iana.org/help/example-domains",
+    "status": 200,
+    "seconds": 1.096,
+    "tier": "direct/trafilatura",
+    "quality": "ok",
+    "fact": "example",
+    "fact_present": true,
+    "chars": 745
+  }
+]

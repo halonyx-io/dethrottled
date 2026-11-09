@@ -1,0 +1,26 @@
+{
+  "software_no_device": {
+    "webgl": true,
+    "renderer": "ANGLE (Mesa, llvmpipe (LLVM 19.1.7 256 bits), OpenGL 4.5)",
+    "pixel": [
+      64,
+      128,
+      191,
+      255
+    ],
+    "hardware_verified": false,
+    "requested_mode": "auto"
+  },
+  "hardware_device": {
+    "webgl": true,
+    "renderer": "ANGLE (AMD, AMD Radeon Graphics (radeonsi renoir ACO DRM 3.61 6.12.111+deb13-amd64), OpenGL ES 3.2)",
+    "pixel": [
+      64,
+      128,
+      191,
+      255
+    ],
+    "hardware_verified": true,
+    "requested_mode": "auto"
+  }
+}

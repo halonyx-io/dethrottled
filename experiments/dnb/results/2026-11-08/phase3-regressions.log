@@ -1,0 +1,10 @@
+# Host (no crawl4ai/patchright extras):
+experiments/dnb/extraction_pool.py:96: ExtractionFailure
+=========================== short test summary info ============================
+FAILED experiments/dnb/test_extraction_pool.py::test_actual_upstream_extractor_in_bounded_process
+1 failed, 17 passed in 0.62s
+
+# Built phase-3 image (all extras, non-root worker): extraction pool, context pool, lifecycle
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+29 passed, 1 warning in 2.35s

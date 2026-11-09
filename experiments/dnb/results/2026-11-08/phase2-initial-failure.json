@@ -1,0 +1,56 @@
+[
+  {
+    "host": "origin.test:8443",
+    "path": "/page",
+    "connection": 43328,
+    "origin_cookie": false
+  },
+  {
+    "host": "cdn.test:8443",
+    "path": "/style.css",
+    "connection": 43340,
+    "origin_cookie": false
+  },
+  {
+    "host": "cdn.test:8443",
+    "path": "/app.js",
+    "connection": 43350,
+    "origin_cookie": false
+  },
+  {
+    "host": "cdn.test:8443",
+    "path": "/private.js",
+    "connection": 43360,
+    "origin_cookie": false
+  },
+  {
+    "host": "origin.test:8443",
+    "path": "/jump",
+    "connection": 43328,
+    "origin_cookie": true
+  },
+  {
+    "host": "origin.test:8443",
+    "path": "/hop",
+    "connection": 43328,
+    "origin_cookie": true
+  },
+  {
+    "host": "origin.test:8443",
+    "path": "/jump",
+    "connection": 43328,
+    "origin_cookie": true
+  },
+  {
+    "host": "origin.test:8443",
+    "path": "/hop",
+    "connection": 43328,
+    "origin_cookie": true
+  },
+  {
+    "host": "forbidden.test:8443",
+    "path": "/forbidden",
+    "connection": 43362,
+    "origin_cookie": false
+  }
+]

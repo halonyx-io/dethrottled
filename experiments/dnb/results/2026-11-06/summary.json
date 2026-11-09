@@ -1,0 +1,759 @@
+{
+  "schema": 1,
+  "reference": {
+    "version": "1.7.1",
+    "source_commit": "9ad5fa36a6290c442fcfcc9aebeb8bdcf6a4aa80",
+    "images": {
+      "dethrottled": {
+        "id": "sha256:891c3a1774bbca3444a5d6148e3577d57bba46b2bb514ef303293babd17c8ef9",
+        "size": 2156640664
+      },
+      "browser-search": {
+        "id": "sha256:c1726a324dbab92a632425108a58da4803e93af44eb44fac7379b6fea227801c",
+        "size": 1497833106
+      },
+      "crawl4ai": {
+        "id": "sha256:0b05666882bfb67f45d559a5b827839c54127b74aedd723f8ab338a3571b5fc9",
+        "size": 8176619938
+      }
+    }
+  },
+  "candidate_image": {
+    "id": "sha256:1f989d7438eef20c317e05ecde2727ce78a1236405cd65c36070736b4e0be7f3",
+    "logical_bytes": 2407548859,
+    "architecture": "amd64"
+  },
+  "platform": "x86_64; AMD Ryzen 7 5800U; 16 logical CPUs; software rendering",
+  "controlled": {
+    "records": [
+      {
+        "side": "reference",
+        "repeat": 0,
+        "path": "/article",
+        "elapsed_ms": 643.173,
+        "bytes": 22322,
+        "success": true,
+        "target_status": 200,
+        "facts": {
+          "cobalt-731": true,
+          "amber-592": true,
+          "violet-683": true
+        },
+        "markdown_chars": 3694,
+        "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1"
+      },
+      {
+        "side": "reference",
+        "repeat": 0,
+        "path": "/tiny",
+        "elapsed_ms": 630.758,
+        "bytes": 1606,
+        "success": false,
+        "target_status": 200,
+        "facts": {
+          "quartz-452": true
+        },
+        "markdown_chars": 23,
+        "markdown_sha256": "0db37d810947f4d9749aab578a278e644d6ba22f31cb23b38a09f6b3edd04997"
+      },
+      {
+        "side": "reference",
+        "repeat": 0,
+        "path": "/long",
+        "elapsed_ms": 670.056,
+        "bytes": 539286,
+        "success": true,
+        "target_status": 200,
+        "facts": {
+          "cobalt-731": true,
+          "amber-592": true
+        },
+        "markdown_chars": 104271,
+        "markdown_sha256": "f28aebe4528b5179a6e66f0b8c58dc992e9a22fc2fe73ea8f86a3e84dc016352"
+      },
+      {
+        "side": "reference",
+        "repeat": 0,
+        "path": "/redirect",
+        "elapsed_ms": 638.858,
+        "bytes": 22287,
+        "success": true,
+        "target_status": 302,
+        "facts": {
+          "cobalt-731": true,
+          "amber-592": true,
+          "violet-683": true
+        },
+        "markdown_chars": 3694,
+        "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1"
+      },
+      {
+        "side": "reference",
+        "repeat": 0,
+        "path": "/missing",
+        "elapsed_ms": 620.861,
+        "bytes": 1753,
+        "success": false,
+        "target_status": 404,
+        "facts": {},
+        "markdown_chars": 43,
+        "markdown_sha256": "a9700ebc4ac7265579196bc7bccaada2924e88ccea33c394a557c312c95800ab"
+      },
+      {
+        "side": "candidate",
+        "repeat": 0,
+        "path": "/article",
+        "elapsed_ms": 631.894,
+        "bytes": 17725,
+        "success": true,
+        "target_status": 200,
+        "facts": {
+          "cobalt-731": true,
+          "amber-592": true,
+          "violet-683": true
+        },
+        "markdown_chars": 3694,
+        "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1"
+      },
+      {
+        "side": "candidate",
+        "repeat": 0,
+        "path": "/tiny",
+        "elapsed_ms": 639.43,
+        "bytes": 998,
+        "success": true,
+        "target_status": 200,
+        "facts": {
+          "quartz-452": true
+        },
+        "markdown_chars": 23,
+        "markdown_sha256": "0db37d810947f4d9749aab578a278e644d6ba22f31cb23b38a09f6b3edd04997"
+      },
+      {
+        "side": "candidate",
+        "repeat": 0,
+        "path": "/long",
+        "elapsed_ms": 649.142,
+        "bytes": 430038,
+        "success": true,
+        "target_status": 200,
+        "facts": {
+          "cobalt-731": true,
+          "amber-592": true
+        },
+        "markdown_chars": 104271,
+        "markdown_sha256": "f28aebe4528b5179a6e66f0b8c58dc992e9a22fc2fe73ea8f86a3e84dc016352"
+      },
+      {
+        "side": "candidate",
+        "repeat": 0,
+        "path": "/redirect",
+        "elapsed_ms": 634.301,
+        "bytes": 17725,
+        "success": true,
+        "target_status": 200,
+        "facts": {
+          "cobalt-731": true,
+          "amber-592": true,
+          "violet-683": true
+        },
+        "markdown_chars": 3694,
+        "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1"
+      },
+      {
+        "side": "candidate",
+        "repeat": 0,
+        "path": "/missing",
+        "elapsed_ms": 617.88,
+        "bytes": 1108,
+        "success": false,
+        "target_status": 404,
+        "facts": {},
+        "markdown_chars": 43,
+        "markdown_sha256": "a9700ebc4ac7265579196bc7bccaada2924e88ccea33c394a557c312c95800ab"
+      },
+      {
+        "side": "candidate",
+        "repeat": 1,
+        "path": "/article",
+        "elapsed_ms": 642.727,
+        "bytes": 17724,
+        "success": true,
+        "target_status": 200,
+        "facts": {
+          "cobalt-731": true,
+          "amber-592": true,
+          "violet-683": true
+        },
+        "markdown_chars": 3694,
+        "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1"
+      },
+      {
+        "side": "candidate",
+        "repeat": 1,
+        "path": "/tiny",
+        "elapsed_ms": 623.124,
+        "bytes": 998,
+        "success": true,
+        "target_status": 200,
+        "facts": {
+          "quartz-452": true
+        },
+        "markdown_chars": 23,
+        "markdown_sha256": "0db37d810947f4d9749aab578a278e644d6ba22f31cb23b38a09f6b3edd04997"
+      },
+      {
+        "side": "candidate",
+        "repeat": 1,
+        "path": "/long",
+        "elapsed_ms": 648.904,
+        "bytes": 430038,
+        "success": true,
+        "target_status": 200,
+        "facts": {
+          "cobalt-731": true,
+          "amber-592": true
+        },
+        "markdown_chars": 104271,
+        "markdown_sha256": "f28aebe4528b5179a6e66f0b8c58dc992e9a22fc2fe73ea8f86a3e84dc016352"
+      },
+      {
+        "side": "candidate",
+        "repeat": 1,
+        "path": "/redirect",
+        "elapsed_ms": 685.38,
+        "bytes": 17725,
+        "success": true,
+        "target_status": 200,
+        "facts": {
+          "cobalt-731": true,
+          "amber-592": true,
+          "violet-683": true
+        },
+        "markdown_chars": 3694,
+        "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1"
+      },
+      {
+        "side": "candidate",
+        "repeat": 1,
+        "path": "/missing",
+        "elapsed_ms": 625.471,
+        "bytes": 1109,
+        "success": false,
+        "target_status": 404,
+        "facts": {},
+        "markdown_chars": 43,
+        "markdown_sha256": "a9700ebc4ac7265579196bc7bccaada2924e88ccea33c394a557c312c95800ab"
+      },
+      {
+        "side": "reference",
+        "repeat": 1,
+        "path": "/article",
+        "elapsed_ms": 626.238,
+        "bytes": 22315,
+        "success": true,
+        "target_status": 200,
+        "facts": {
+          "cobalt-731": true,
+          "amber-592": true,
+          "violet-683": true
+        },
+        "markdown_chars": 3694,
+        "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1"
+      },
+      {
+        "side": "reference",
+        "repeat": 1,
+        "path": "/tiny",
+        "elapsed_ms": 624.513,
+        "bytes": 1598,
+        "success": false,
+        "target_status": 200,
+        "facts": {
+          "quartz-452": true
+        },
+        "markdown_chars": 23,
+        "markdown_sha256": "0db37d810947f4d9749aab578a278e644d6ba22f31cb23b38a09f6b3edd04997"
+      },
+      {
+        "side": "reference",
+        "repeat": 1,
+        "path": "/long",
+        "elapsed_ms": 667.762,
+        "bytes": 539286,
+        "success": true,
+        "target_status": 200,
+        "facts": {
+          "cobalt-731": true,
+          "amber-592": true
+        },
+        "markdown_chars": 104271,
+        "markdown_sha256": "f28aebe4528b5179a6e66f0b8c58dc992e9a22fc2fe73ea8f86a3e84dc016352"
+      },
+      {
+        "side": "reference",
+        "repeat": 1,
+        "path": "/redirect",
+        "elapsed_ms": 633.877,
+        "bytes": 22296,
+        "success": true,
+        "target_status": 302,
+        "facts": {
+          "cobalt-731": true,
+          "amber-592": true,
+          "violet-683": true
+        },
+        "markdown_chars": 3694,
+        "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1"
+      },
+      {
+        "side": "reference",
+        "repeat": 1,
+        "path": "/missing",
+        "elapsed_ms": 628.189,
+        "bytes": 1753,
+        "success": false,
+        "target_status": 404,
+        "facts": {},
+        "markdown_chars": 43,
+        "markdown_sha256": "a9700ebc4ac7265579196bc7bccaada2924e88ccea33c394a557c312c95800ab"
+      },
+      {
+        "side": "reference",
+        "repeat": 2,
+        "path": "/article",
+        "elapsed_ms": 632.908,
+        "bytes": 22315,
+        "success": true,
+        "target_status": 200,
+        "facts": {
+          "cobalt-731": true,
+          "amber-592": true,
+          "violet-683": true
+        },
+        "markdown_chars": 3694,
+        "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1"
+      },
+      {
+        "side": "reference",
+        "repeat": 2,
+        "path": "/tiny",
+        "elapsed_ms": 623.447,
+        "bytes": 1599,
+        "success": false,
+        "target_status": 200,
+        "facts": {
+          "quartz-452": true
+        },
+        "markdown_chars": 23,
+        "markdown_sha256": "0db37d810947f4d9749aab578a278e644d6ba22f31cb23b38a09f6b3edd04997"
+      },
+      {
+        "side": "reference",
+        "repeat": 2,
+        "path": "/long",
+        "elapsed_ms": 662.28,
+        "bytes": 539286,
+        "success": true,
+        "target_status": 200,
+        "facts": {
+          "cobalt-731": true,
+          "amber-592": true
+        },
+        "markdown_chars": 104271,
+        "markdown_sha256": "f28aebe4528b5179a6e66f0b8c58dc992e9a22fc2fe73ea8f86a3e84dc016352"
+      },
+      {
+        "side": "reference",
+        "repeat": 2,
+        "path": "/redirect",
+        "elapsed_ms": 624.953,
+        "bytes": 22287,
+        "success": true,
+        "target_status": 302,
+        "facts": {
+          "cobalt-731": true,
+          "amber-592": true,
+          "violet-683": true
+        },
+        "markdown_chars": 3694,
+        "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1"
+      },
+      {
+        "side": "reference",
+        "repeat": 2,
+        "path": "/missing",
+        "elapsed_ms": 632.567,
+        "bytes": 1752,
+        "success": false,
+        "target_status": 404,
+        "facts": {},
+        "markdown_chars": 43,
+        "markdown_sha256": "a9700ebc4ac7265579196bc7bccaada2924e88ccea33c394a557c312c95800ab"
+      },
+      {
+        "side": "candidate",
+        "repeat": 2,
+        "path": "/article",
+        "elapsed_ms": 616.333,
+        "bytes": 17725,
+        "success": true,
+        "target_status": 200,
+        "facts": {
+          "cobalt-731": true,
+          "amber-592": true,
+          "violet-683": true
+        },
+        "markdown_chars": 3694,
+        "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1"
+      },
+      {
+        "side": "candidate",
+        "repeat": 2,
+        "path": "/tiny",
+        "elapsed_ms": 624.96,
+        "bytes": 998,
+        "success": true,
+        "target_status": 200,
+        "facts": {
+          "quartz-452": true
+        },
+        "markdown_chars": 23,
+        "markdown_sha256": "0db37d810947f4d9749aab578a278e644d6ba22f31cb23b38a09f6b3edd04997"
+      },
+      {
+        "side": "candidate",
+        "repeat": 2,
+        "path": "/long",
+        "elapsed_ms": 656.498,
+        "bytes": 430038,
+        "success": true,
+        "target_status": 200,
+        "facts": {
+          "cobalt-731": true,
+          "amber-592": true
+        },
+        "markdown_chars": 104271,
+        "markdown_sha256": "f28aebe4528b5179a6e66f0b8c58dc992e9a22fc2fe73ea8f86a3e84dc016352"
+      },
+      {
+        "side": "candidate",
+        "repeat": 2,
+        "path": "/redirect",
+        "elapsed_ms": 628.751,
+        "bytes": 17725,
+        "success": true,
+        "target_status": 200,
+        "facts": {
+          "cobalt-731": true,
+          "amber-592": true,
+          "violet-683": true
+        },
+        "markdown_chars": 3694,
+        "markdown_sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1"
+      },
+      {
+        "side": "candidate",
+        "repeat": 2,
+        "path": "/missing",
+        "elapsed_ms": 616.669,
+        "bytes": 1109,
+        "success": false,
+        "target_status": 404,
+        "facts": {},
+        "markdown_chars": 43,
+        "markdown_sha256": "a9700ebc4ac7265579196bc7bccaada2924e88ccea33c394a557c312c95800ab"
+      }
+    ],
+    "median_ms": {
+      "reference": 632.567,
+      "candidate": 631.894
+    }
+  },
+  "verification": {
+    "reference": {
+      "facts": 27,
+      "actions": 27,
+      "download_exact": true,
+      "network_fact": true,
+      "concurrent": true,
+      "checkpoint_restart_restored": true
+    },
+    "candidate": {
+      "facts": 27,
+      "actions": 27,
+      "download_exact": true,
+      "network_fact": true,
+      "concurrent": true,
+      "checkpoint_restart_restored": true
+    }
+  },
+  "resources": {
+    "reference": {
+      "requests": 30,
+      "successes": 30,
+      "median_request_ms": 661.4175,
+      "median_cpu_seconds_per_10": 2.650072,
+      "median_working_set_mib": 832.3,
+      "peak_observed_working_set_mib": 843.0,
+      "memory_samples": 12
+    },
+    "candidate": {
+      "requests": 30,
+      "successes": 30,
+      "median_request_ms": 657.6475,
+      "median_cpu_seconds_per_10": 6.785066,
+      "median_working_set_mib": 409.2,
+      "peak_observed_working_set_mib": 449.6,
+      "memory_samples": 12
+    }
+  },
+  "context_ablation": [
+    {
+      "same_owner_context_reused": false,
+      "requests": 10,
+      "cpu_seconds": 6.799896000000004,
+      "elapsed_s": 6.559903016779572
+    },
+    {
+      "same_owner_context_reused": true,
+      "requests": 10,
+      "cpu_seconds": 1.9878170000000068,
+      "elapsed_s": 5.3909453437663615
+    },
+    {
+      "same_owner_context_reused": true,
+      "requests": 10,
+      "cpu_seconds": 1.7862999999999971,
+      "elapsed_s": 5.396105281077325
+    },
+    {
+      "same_owner_context_reused": false,
+      "requests": 10,
+      "cpu_seconds": 6.538259999999994,
+      "elapsed_s": 6.278497179038823
+    }
+  ],
+  "limitations": [
+    "single host with background production load",
+    "live pilot is not an anti-bot success benchmark",
+    "ARM64 not tested",
+    "logical image sizes are not unique disk use",
+    "all fixtures public synthetic; filter test uses synthetic 10000-rule snapshot"
+  ],
+  "policy": {
+    "top": {
+      "http_status": 200,
+      "success": false,
+      "error": "adblock_blocked:blocked.dnb-test.invalid",
+      "blocked": null,
+      "rule_count": null
+    },
+    "redirect": {
+      "http_status": 200,
+      "success": false,
+      "error": "adblock_blocked:blocked.dnb-test.invalid",
+      "blocked": null,
+      "rule_count": null
+    },
+    "subresource": {
+      "http_status": 200,
+      "success": true,
+      "error": null,
+      "blocked": [
+        {
+          "domain": "blocked.dnb-test.invalid",
+          "kind": "browser",
+          "at": 2460076.986694963
+        }
+      ],
+      "rule_count": null
+    },
+    "drive": {
+      "http_status": 200,
+      "success": true,
+      "error": null,
+      "blocked": [
+        {
+          "domain": "blocked.dnb-test.invalid",
+          "kind": "browser"
+        }
+      ],
+      "rule_count": 10000
+    },
+    "status": {
+      "http_status": 200,
+      "success": true,
+      "error": null,
+      "blocked": null,
+      "rule_count": 10000
+    }
+  },
+  "live_initial": [
+    {
+      "id": "live-0-candidate",
+      "url": "https://example.com",
+      "elapsed_ms": 715.577,
+      "transport_success": true,
+      "markdown_chars": 953,
+      "sha256": "bd9f58a4be5fed93a9ff4ca4a681369b77887166ec3069fe828488b9ad777db4",
+      "error": null
+    },
+    {
+      "id": "live-0-reference",
+      "url": "https://example.com",
+      "elapsed_ms": 1012.807,
+      "transport_success": true,
+      "markdown_chars": 953,
+      "sha256": "bd9f58a4be5fed93a9ff4ca4a681369b77887166ec3069fe828488b9ad777db4",
+      "error": ""
+    },
+    {
+      "id": "live-1-candidate",
+      "url": "https://www.reddit.com/r/python/",
+      "elapsed_ms": 776.793,
+      "transport_success": true,
+      "markdown_chars": 516,
+      "sha256": "8cc7bc025176a5ac32db0939b5213938070e61f189d79bd025258f59050a0cd2",
+      "error": null
+    },
+    {
+      "id": "live-1-reference",
+      "url": "https://www.reddit.com/r/python/",
+      "elapsed_ms": 2156.84,
+      "transport_success": true,
+      "markdown_chars": 72,
+      "sha256": "84e92a21362945d06638b541923bb709dc0f1485dc694f6dde4444a68f945ea8",
+      "error": ""
+    },
+    {
+      "id": "live-2-candidate",
+      "url": "https://en.wikipedia.org/wiki/HTTP",
+      "elapsed_ms": 1110.386,
+      "transport_success": true,
+      "markdown_chars": 180445,
+      "sha256": "380a0b12e45fe577778f10c90984764c604af8cd74b2e7849fe788db5610a786",
+      "error": null
+    },
+    {
+      "id": "live-2-reference",
+      "url": "https://en.wikipedia.org/wiki/HTTP",
+      "elapsed_ms": 1772.65,
+      "transport_success": true,
+      "markdown_chars": 179931,
+      "sha256": "00a3b0f1da218097ff295ce30986bb5cbc9602094b2b0a5c92f740b1fb7c7190",
+      "error": ""
+    },
+    {
+      "id": "live-3-candidate",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript",
+      "elapsed_ms": 1288.288,
+      "transport_success": true,
+      "markdown_chars": 78419,
+      "sha256": "fad45f35b68e99b17b556294b4bb89b3a2bca14ff9633311a6f70da23ffe030f",
+      "error": null
+    },
+    {
+      "id": "live-3-reference",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript",
+      "elapsed_ms": 1050.94,
+      "transport_success": true,
+      "markdown_chars": 78419,
+      "sha256": "fad45f35b68e99b17b556294b4bb89b3a2bca14ff9633311a6f70da23ffe030f",
+      "error": ""
+    },
+    {
+      "id": "live-4-candidate",
+      "url": "https://www.booking.com/",
+      "elapsed_ms": 759.032,
+      "transport_success": true,
+      "markdown_chars": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "error": null
+    },
+    {
+      "id": "live-4-reference",
+      "url": "https://www.booking.com/",
+      "elapsed_ms": 2895.722,
+      "transport_success": false,
+      "markdown_chars": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "error": "Blocked by anti-bot protection: Structural: no <body> tag (22738 bytes)"
+    },
+    {
+      "id": "live-5-candidate",
+      "url": "https://www.crunchbase.com/",
+      "elapsed_ms": 1000.723,
+      "transport_success": true,
+      "markdown_chars": 14719,
+      "sha256": "fb276619f3943ac091cd92ad2b42bf67b64828d9b862ce37216b03fe7f222236",
+      "error": null
+    },
+    {
+      "id": "live-5-reference",
+      "url": "https://www.crunchbase.com/",
+      "elapsed_ms": 3563.856,
+      "transport_success": true,
+      "markdown_chars": 14719,
+      "sha256": "fb276619f3943ac091cd92ad2b42bf67b64828d9b862ce37216b03fe7f222236",
+      "error": ""
+    }
+  ],
+  "live_retests": {
+    "reddit": {
+      "success": true,
+      "elapsed_ms": 4416.713,
+      "markdown_chars": 17738,
+      "error": null,
+      "access": {
+        "status": "content_observed",
+        "reason": "visible_text_present",
+        "answer_verified": false,
+        "source_complete": false
+      },
+      "recovery": {
+        "name": "reddit_cookie_preference",
+        "cookie_added": true,
+        "existing_preference_preserved": false,
+        "settle_ms": 5000,
+        "settled": true,
+        "elapsed_ms": 3662.03
+      },
+      "reddit_post_links_present": true
+    },
+    "booking": {
+      "success": false,
+      "elapsed_ms": 872.659,
+      "markdown_chars": 1,
+      "error": "empty_extracted_content",
+      "access": {
+        "status": "unknown",
+        "reason": "no_clear_content_signal",
+        "answer_verified": false,
+        "source_complete": false
+      },
+      "recovery": null,
+      "reddit_post_links_present": false
+    }
+  },
+  "api_integration": {
+    "version": "1.7.1",
+    "fetch_http": 200,
+    "tier": "crawl4ai/crawl4ai-native",
+    "quality": "ok",
+    "facts": {
+      "cobalt-731": true,
+      "amber-592": true,
+      "violet-683": true
+    },
+    "drive_ok": true,
+    "drive_delayed_fact": "Delayed fact violet-683"
+  },
+  "initial_failures": [
+    "Docker FROM bare sha256 ID was interpreted as registry reference; fixed with dedicated frozen local tag",
+    "First candidate skipped guarded Reddit navigation and labelled blank Markdown successful; fixed and retested",
+    "Initial harness closed/deleted checkpoint, so did not establish restore; separate real restart assertion added",
+    "First resource run overlapped live traffic; retained privately and excluded from reported numbers",
+    "Context diagnostic needed DISPLAY=:99 when invoked by docker exec; corrected"
+  ]
+}

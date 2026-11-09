@@ -308,20 +308,30 @@ async def lifespan(app):
             raise ValueError("DETHROTTLED_BROWSER_GRAPHICS must be default, mesa or auto")
         graphics_args = (["--use-gl=angle", "--use-angle=gl", "--ignore-gpu-blocklist"]
                          if graphics in {"mesa", "auto"} else [])
+        headless = os.environ.get("DETHROTTLED_BROWSER_HEADLESS", "0") == "1"
         hardware_candidate = graphics == "auto" and bool(list(Path('/dev/dri').glob('renderD*')))
         if hardware_candidate:
             graphics_args[1] = "--use-angle=gl-egl"
+            graphics_args += ["--enable-gpu-rasterization", "--enable-zero-copy"]
+        def launch_options(args):
+            options = {"headless": headless, "downloads_path": str(DOWNLOAD_DIR),
+                       "args": args}
+            if headless:
+                # The image ships full Chromium, not chrome-headless-shell.
+                options["channel"] = "chromium"
+            return options
+
         launch_fallback = False
         try:
             app.state.browser = await playwright.chromium.launch(
-                headless=False, downloads_path=str(DOWNLOAD_DIR), args=graphics_args)
+                **launch_options(graphics_args))
         except Exception:
             if not hardware_candidate:
                 raise
             launch_fallback = True
             graphics_args[1] = '--use-angle=gl'
             app.state.browser = await playwright.chromium.launch(
-                headless=False, downloads_path=str(DOWNLOAD_DIR), args=graphics_args)
+                **launch_options(graphics_args))
         async def probe_graphics():
             context = await app.state.browser.new_context()
             try:
@@ -338,6 +348,17 @@ async def lifespan(app):
                 }""")
             finally:
                 await context.close()
+
+        async def probe_features():
+            try:
+                session = await app.state.browser.new_browser_cdp_session()
+                info = await session.send("SystemInfo.getInfo")
+                features = info.get("gpu", {}).get("featureStatus", {})
+                keys = ("2d_canvas", "gpu_compositing", "rasterization",
+                        "webgl", "video_decode")
+                return {key: features.get(key) for key in keys}
+            except Exception:
+                return {}
         try:
             info = await probe_graphics()
         except Exception:
@@ -348,9 +369,9 @@ async def lifespan(app):
                                    info.get('pixel') != [64, 128, 191, 255] or
                                    software(info.get('renderer', ''))):
             await app.state.browser.close()
-            app.state.browser = await playwright.chromium.launch(headless=False,
-                downloads_path=str(DOWNLOAD_DIR),
-                args=['--use-gl=angle', '--use-angle=gl', '--ignore-gpu-blocklist'])
+            app.state.browser = await playwright.chromium.launch(
+                **launch_options(['--use-gl=angle', '--use-angle=gl',
+                                  '--ignore-gpu-blocklist']))
             info = await probe_graphics()
             info['fallback_reason'] = 'hardware_not_verified'
         if launch_fallback:
@@ -359,6 +380,8 @@ async def lifespan(app):
             info.get('pixel') == [64, 128, 191, 255] and
             not software(info.get('renderer', 'software')))
         info['requested_mode'] = graphics
+        info['effective_headless'] = headless
+        info['feature_status'] = await probe_features()
         app.state.graphics = info
         watcher = asyncio.create_task(_watch_browser(app))
         session_reaper = asyncio.create_task(_reap_drive_sessions())

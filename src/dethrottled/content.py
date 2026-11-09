@@ -265,25 +265,42 @@ def compact_row(row: dict) -> dict:
     """Opt-in removal of duplicate representations, retaining evidence text once."""
     row = dict(row)
     extraction = row.get("extraction")
-    if isinstance(extraction, dict) and isinstance(extraction.get("pages"), list):
-        # Native PDF blocks repeat the full document, regardless of max_chars.
-        # Keep canonical metadata intact for detailed reads and retained evidence.
-        pages = []
+    if isinstance(extraction, dict):
+        extraction = dict(extraction)
         omitted = 0
-        for page in extraction["pages"]:
-            if isinstance(page, dict) and isinstance(page.get("text_layer_blocks"), list):
-                page = dict(page)
-                blocks = page.pop("text_layer_blocks")
-                page["text_layer_block_count"] = len(blocks)
-                omitted += len(blocks)
-            pages.append(page)
-        row["extraction"] = dict(extraction, pages=pages)
-        if omitted:
-            row["extraction"]["presentation"] = {
-                "omitted_text_layer_blocks": omitted,
-                "detail_available_with": {"response_format": "detailed"},
-                "source_extraction_unchanged": True,
-            }
+        pages = extraction.get("pages")
+        if isinstance(pages, list):
+            # Native PDF blocks repeat the full document, regardless of max_chars.
+            # Keep canonical metadata intact for detailed reads and retained evidence.
+            compact_pages = []
+            for page in pages:
+                if isinstance(page, dict) and isinstance(page.get("text_layer_blocks"), list):
+                    page = dict(page)
+                    blocks = page.pop("text_layer_blocks")
+                    page["text_layer_block_count"] = len(blocks)
+                    omitted += len(blocks)
+                compact_pages.append(page)
+            extraction["pages"] = compact_pages
+        table_counts = {}
+        for field, count_key in (
+            ("native_pdf_tables", "native_pdf_table_count"),
+            ("layout_tables", "layout_table_count"),
+        ):
+            tables = extraction.get(field)
+            if isinstance(tables, list):
+                table_counts[field] = len(tables)
+                extraction[count_key] = len(tables)
+                extraction.pop(field, None)
+        if omitted or table_counts:
+            presentation = dict(extraction.get("presentation") or {})
+            if omitted:
+                presentation["omitted_text_layer_blocks"] = omitted
+            if table_counts:
+                presentation["omitted_table_metadata"] = table_counts
+            presentation["detail_available_with"] = {"response_format": "detailed"}
+            presentation["source_extraction_unchanged"] = True
+            extraction["presentation"] = presentation
+        row["extraction"] = extraction
     if row.get("html") == row.get("content"):
         row.pop("html", None)
     if row.get("evidence"):

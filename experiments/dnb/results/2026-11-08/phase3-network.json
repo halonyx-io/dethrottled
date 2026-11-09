@@ -1,0 +1,6 @@
+{
+  "lan_address": "192.168.0.7",
+  "trusted_loopback_status": 200,
+  "untrusted_lan_status": 403,
+  "passed": true
+}

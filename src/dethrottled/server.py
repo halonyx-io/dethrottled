@@ -49,7 +49,7 @@ import sqlite3
 import threading
 import time
 import uuid
-from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
+from concurrent.futures import FIRST_COMPLETED, wait
 from pathlib import Path
 from typing import Literal
 
@@ -88,6 +88,7 @@ from .api_models import (
 )
 from .api_models import DriveStep as DriveStep
 from .cache import DEFAULT_TTL, Cache, CacheView
+from .concurrency import ContextExecutor as ThreadPoolExecutor
 from .content import constrained, passage_excerpt, present_row
 from .corpus import index_fetched, shared_corpus
 from .evidence import Documents
@@ -482,6 +483,18 @@ def _extract_row(url, max_chars, *, recovery="auto", asset_recovery=True, **opti
 from .backfill import BackfillJob  # noqa: E402
 
 _BACKFILL_JOB = BackfillJob()
+
+
+from .delegation import CallerIdentityMiddleware  # noqa: E402
+
+app.add_middleware(CallerIdentityMiddleware)
+
+
+@app.on_event("startup")
+def initialize_browser_identity():
+    if os.getenv("DETHROTTLED_DNB", "0") == "1":
+        from .delegation import ensure_keys
+        ensure_keys()
 
 
 @app.on_event("startup")
@@ -1342,7 +1355,7 @@ def search_and_fetch(body: SearchFetchBody, background: BackgroundTasks):
     # This is the high-volume route, so it is the one that actually grows the
     # corpus -- and it was growing it by nothing at all.
     _queue_corpus(out, background, namespace=body.evidence_namespace)
-    return out
+    return [present_row(row, body.response_format) for row in out]
 
 
 _RESEARCH_REQUESTS = threading.BoundedSemaphore(2)

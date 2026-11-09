@@ -1,0 +1,268 @@
+[
+  {
+    "mode": "headed-software",
+    "graphics": {
+      "webgl": true,
+      "renderer": "ANGLE (Mesa, llvmpipe (LLVM 19.1.7 256 bits), OpenGL 4.5)",
+      "pixel": [
+        64,
+        128,
+        191,
+        255
+      ],
+      "hardware_verified": false,
+      "requested_mode": "mesa",
+      "effective_headless": false,
+      "feature_status": {
+        "2d_canvas": "enabled",
+        "gpu_compositing": "enabled",
+        "rasterization": "enabled",
+        "webgl": "enabled",
+        "video_decode": "enabled"
+      }
+    },
+    "requests": 18,
+    "failures": 3,
+    "facts_failed": 0,
+    "median_ms": 646.67,
+    "screenshot": {
+      "status": 200,
+      "elapsed_ms": 191.64,
+      "ok": true,
+      "screenshot_bytes": 139155,
+      "screenshot_error": null
+    },
+    "screenshot_median_ms": 201.3,
+    "screenshot_bytes": 139155,
+    "screenshot_failures": 0,
+    "cpu_percent": "1.07%",
+    "mem_usage": "509.3MiB / 30.76GiB",
+    "restarts": [
+      "0",
+      "0"
+    ],
+    "gpu_before": {
+      "gpu_busy_percent": 0,
+      "mem_info_vram_used": 37679104,
+      "mem_info_gtt_used": 21221376
+    },
+    "gpu_after": {
+      "gpu_busy_percent": 0,
+      "mem_info_vram_used": 37679104,
+      "mem_info_gtt_used": 21221376
+    }
+  },
+  {
+    "mode": "headed-hardware",
+    "graphics": {
+      "webgl": true,
+      "renderer": "ANGLE (AMD, AMD Radeon Graphics (radeonsi renoir ACO DRM 3.61 6.12.111+deb13-amd64), OpenGL ES 3.2)",
+      "pixel": [
+        64,
+        128,
+        191,
+        255
+      ],
+      "hardware_verified": true,
+      "requested_mode": "auto",
+      "effective_headless": false,
+      "feature_status": {
+        "2d_canvas": "enabled",
+        "gpu_compositing": "disabled_software",
+        "rasterization": "enabled_force",
+        "webgl": "enabled_readback",
+        "video_decode": "enabled"
+      }
+    },
+    "requests": 18,
+    "failures": 3,
+    "facts_failed": 0,
+    "median_ms": 646.77,
+    "screenshot": {
+      "status": 200,
+      "elapsed_ms": 174.28,
+      "ok": true,
+      "screenshot_bytes": 139206,
+      "screenshot_error": null
+    },
+    "screenshot_median_ms": 180.11,
+    "screenshot_bytes": 139206,
+    "screenshot_failures": 0,
+    "cpu_percent": "0.86%",
+    "mem_usage": "470.6MiB / 30.76GiB",
+    "restarts": [
+      "0",
+      "0"
+    ],
+    "gpu_before": {
+      "gpu_busy_percent": 0,
+      "mem_info_vram_used": 37679104,
+      "mem_info_gtt_used": 21221376
+    },
+    "gpu_after": {
+      "gpu_busy_percent": 0,
+      "mem_info_vram_used": 54480896,
+      "mem_info_gtt_used": 27529216
+    }
+  },
+  {
+    "mode": "headed-hardware-unmapped",
+    "graphics": {
+      "webgl": true,
+      "renderer": "ANGLE (Mesa, llvmpipe (LLVM 19.1.7 256 bits), OpenGL 4.5)",
+      "pixel": [
+        64,
+        128,
+        191,
+        255
+      ],
+      "fallback_reason": "hardware_not_verified",
+      "hardware_verified": false,
+      "requested_mode": "auto",
+      "effective_headless": false,
+      "feature_status": {
+        "2d_canvas": "enabled",
+        "gpu_compositing": "enabled",
+        "rasterization": "enabled",
+        "webgl": "enabled",
+        "video_decode": "enabled"
+      }
+    },
+    "requests": 18,
+    "failures": 3,
+    "facts_failed": 0,
+    "median_ms": 648.41,
+    "screenshot": {
+      "status": 200,
+      "elapsed_ms": 190.78,
+      "ok": true,
+      "screenshot_bytes": 139155,
+      "screenshot_error": null
+    },
+    "screenshot_median_ms": 211.96,
+    "screenshot_bytes": 139155,
+    "screenshot_failures": 0,
+    "cpu_percent": "1.07%",
+    "mem_usage": "505.4MiB / 30.76GiB",
+    "restarts": [
+      "0",
+      "0"
+    ],
+    "gpu_before": {
+      "gpu_busy_percent": 0,
+      "mem_info_vram_used": 37679104,
+      "mem_info_gtt_used": 21221376
+    },
+    "gpu_after": {
+      "gpu_busy_percent": 0,
+      "mem_info_vram_used": 37679104,
+      "mem_info_gtt_used": 21221376
+    }
+  },
+  {
+    "mode": "headless-software",
+    "graphics": {
+      "webgl": true,
+      "renderer": "ANGLE (Mesa, llvmpipe (LLVM 19.1.7 256 bits), OpenGL 4.5)",
+      "pixel": [
+        64,
+        128,
+        191,
+        255
+      ],
+      "hardware_verified": false,
+      "requested_mode": "mesa",
+      "effective_headless": true,
+      "feature_status": {
+        "2d_canvas": "enabled",
+        "gpu_compositing": "enabled",
+        "rasterization": "enabled",
+        "webgl": "enabled",
+        "video_decode": "enabled"
+      }
+    },
+    "requests": 18,
+    "failures": 3,
+    "facts_failed": 0,
+    "median_ms": 651.2,
+    "screenshot": {
+      "status": 200,
+      "elapsed_ms": 177.18,
+      "ok": true,
+      "screenshot_bytes": 138789,
+      "screenshot_error": null
+    },
+    "screenshot_median_ms": 179.16,
+    "screenshot_bytes": 138789,
+    "screenshot_failures": 0,
+    "cpu_percent": "0.25%",
+    "mem_usage": "527.2MiB / 30.76GiB",
+    "restarts": [
+      "0",
+      "0"
+    ],
+    "gpu_before": {
+      "gpu_busy_percent": 0,
+      "mem_info_vram_used": 37679104,
+      "mem_info_gtt_used": 21221376
+    },
+    "gpu_after": {
+      "gpu_busy_percent": 0,
+      "mem_info_vram_used": 37679104,
+      "mem_info_gtt_used": 21221376
+    }
+  },
+  {
+    "mode": "headless-hardware",
+    "graphics": {
+      "webgl": true,
+      "renderer": "ANGLE (AMD, AMD Radeon Graphics (radeonsi renoir ACO DRM 3.61 6.12.111+deb13-amd64), OpenGL ES 3.2)",
+      "pixel": [
+        64,
+        128,
+        191,
+        255
+      ],
+      "hardware_verified": true,
+      "requested_mode": "auto",
+      "effective_headless": true,
+      "feature_status": {
+        "2d_canvas": "enabled",
+        "gpu_compositing": "enabled",
+        "rasterization": "enabled_force",
+        "webgl": "enabled",
+        "video_decode": "enabled"
+      }
+    },
+    "requests": 18,
+    "failures": 3,
+    "facts_failed": 0,
+    "median_ms": 645.22,
+    "screenshot": {
+      "status": 200,
+      "elapsed_ms": 207.15,
+      "ok": true,
+      "screenshot_bytes": 138789,
+      "screenshot_error": null
+    },
+    "screenshot_median_ms": 204.87,
+    "screenshot_bytes": 138789,
+    "screenshot_failures": 0,
+    "cpu_percent": "0.83%",
+    "mem_usage": "489.1MiB / 30.76GiB",
+    "restarts": [
+      "0",
+      "0"
+    ],
+    "gpu_before": {
+      "gpu_busy_percent": 0,
+      "mem_info_vram_used": 37679104,
+      "mem_info_gtt_used": 21221376
+    },
+    "gpu_after": {
+      "gpu_busy_percent": 3,
+      "mem_info_vram_used": 100278272,
+      "mem_info_gtt_used": 43290624
+    }
+  }
+]

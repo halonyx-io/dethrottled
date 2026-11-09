@@ -1,0 +1,1146 @@
+{
+  "modes": [
+    {
+      "mode": {
+        "name": "headed-software",
+        "headless": "0",
+        "graphics": "mesa",
+        "device": false
+      },
+      "gpu_before": {
+        "gpu_busy_percent": 0,
+        "mem_info_vram_used": 37679104,
+        "mem_info_gtt_used": 21221376
+      },
+      "graphics": {
+        "webgl": true,
+        "renderer": "ANGLE (Mesa, llvmpipe (LLVM 19.1.7 256 bits), OpenGL 4.5)",
+        "pixel": [
+          64,
+          128,
+          191,
+          255
+        ],
+        "hardware_verified": false,
+        "requested_mode": "mesa",
+        "effective_headless": false,
+        "feature_status": {
+          "2d_canvas": "enabled",
+          "gpu_compositing": "enabled",
+          "rasterization": "enabled",
+          "webgl": "enabled",
+          "video_decode": "enabled"
+        }
+      },
+      "restart_count_before": "0",
+      "workloads": [
+        {
+          "path": "/article",
+          "status": 200,
+          "elapsed_ms": 649.56,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/article",
+          "status": 200,
+          "elapsed_ms": 632.78,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/article",
+          "status": 200,
+          "elapsed_ms": 636.05,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/tiny",
+          "status": 200,
+          "elapsed_ms": 658.5,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/tiny",
+          "status": 200,
+          "elapsed_ms": 643.7,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/tiny",
+          "status": 200,
+          "elapsed_ms": 632.27,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/long",
+          "status": 200,
+          "elapsed_ms": 675.09,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/long",
+          "status": 200,
+          "elapsed_ms": 661.09,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/long",
+          "status": 200,
+          "elapsed_ms": 676.06,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/ticker",
+          "status": 200,
+          "elapsed_ms": 688.48,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/ticker",
+          "status": 200,
+          "elapsed_ms": 644.16,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/ticker",
+          "status": 200,
+          "elapsed_ms": 646.49,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/redirect",
+          "status": 200,
+          "elapsed_ms": 632.81,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/redirect",
+          "status": 200,
+          "elapsed_ms": 640.95,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/redirect",
+          "status": 200,
+          "elapsed_ms": 642.92,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/missing",
+          "status": 200,
+          "elapsed_ms": 660.64,
+          "success": false,
+          "facts_present": null,
+          "reason": "network_policy:allowed_host"
+        },
+        {
+          "path": "/missing",
+          "status": 200,
+          "elapsed_ms": 696.95,
+          "success": false,
+          "facts_present": null,
+          "reason": "network_policy:allowed_host"
+        },
+        {
+          "path": "/missing",
+          "status": 200,
+          "elapsed_ms": 646.67,
+          "success": false,
+          "facts_present": null,
+          "reason": "network_policy:allowed_host"
+        }
+      ],
+      "screenshots": [
+        {
+          "status": 200,
+          "elapsed_ms": 300.18,
+          "ok": true,
+          "screenshot_bytes": 139155,
+          "screenshot_error": null
+        },
+        {
+          "status": 200,
+          "elapsed_ms": 201.3,
+          "ok": true,
+          "screenshot_bytes": 139155,
+          "screenshot_error": null
+        },
+        {
+          "status": 200,
+          "elapsed_ms": 191.64,
+          "ok": true,
+          "screenshot_bytes": 139155,
+          "screenshot_error": null
+        }
+      ],
+      "screenshot": {
+        "status": 200,
+        "elapsed_ms": 191.64,
+        "ok": true,
+        "screenshot_bytes": 139155,
+        "screenshot_error": null
+      },
+      "stats": {
+        "BlockIO": "4.1kB / 15.9MB",
+        "CPUPerc": "1.07%",
+        "Container": "p5-headed-software",
+        "ID": "7f2fe1fb9997",
+        "MemPerc": "1.62%",
+        "MemUsage": "509.3MiB / 30.76GiB",
+        "Name": "p5-headed-software",
+        "NetIO": "0B / 0B",
+        "PIDs": "122"
+      },
+      "gpu_after": {
+        "gpu_busy_percent": 0,
+        "mem_info_vram_used": 37679104,
+        "mem_info_gtt_used": 21221376
+      },
+      "health_after": 200,
+      "restart_count_after": "0"
+    },
+    {
+      "mode": {
+        "name": "headed-hardware",
+        "headless": "0",
+        "graphics": "auto",
+        "device": true
+      },
+      "gpu_before": {
+        "gpu_busy_percent": 0,
+        "mem_info_vram_used": 37679104,
+        "mem_info_gtt_used": 21221376
+      },
+      "graphics": {
+        "webgl": true,
+        "renderer": "ANGLE (AMD, AMD Radeon Graphics (radeonsi renoir ACO DRM 3.61 6.12.111+deb13-amd64), OpenGL ES 3.2)",
+        "pixel": [
+          64,
+          128,
+          191,
+          255
+        ],
+        "hardware_verified": true,
+        "requested_mode": "auto",
+        "effective_headless": false,
+        "feature_status": {
+          "2d_canvas": "enabled",
+          "gpu_compositing": "disabled_software",
+          "rasterization": "enabled_force",
+          "webgl": "enabled_readback",
+          "video_decode": "enabled"
+        }
+      },
+      "restart_count_before": "0",
+      "workloads": [
+        {
+          "path": "/article",
+          "status": 200,
+          "elapsed_ms": 642.01,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/article",
+          "status": 200,
+          "elapsed_ms": 644.4,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/article",
+          "status": 200,
+          "elapsed_ms": 673.79,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/tiny",
+          "status": 200,
+          "elapsed_ms": 716.34,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/tiny",
+          "status": 200,
+          "elapsed_ms": 647.27,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/tiny",
+          "status": 200,
+          "elapsed_ms": 635.21,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/long",
+          "status": 200,
+          "elapsed_ms": 659.01,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/long",
+          "status": 200,
+          "elapsed_ms": 689.24,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/long",
+          "status": 200,
+          "elapsed_ms": 690.2,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/ticker",
+          "status": 200,
+          "elapsed_ms": 667.98,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/ticker",
+          "status": 200,
+          "elapsed_ms": 639.12,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/ticker",
+          "status": 200,
+          "elapsed_ms": 646.77,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/redirect",
+          "status": 200,
+          "elapsed_ms": 630.79,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/redirect",
+          "status": 200,
+          "elapsed_ms": 640.5,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/redirect",
+          "status": 200,
+          "elapsed_ms": 637.53,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/missing",
+          "status": 200,
+          "elapsed_ms": 639.31,
+          "success": false,
+          "facts_present": null,
+          "reason": "network_policy:allowed_host"
+        },
+        {
+          "path": "/missing",
+          "status": 200,
+          "elapsed_ms": 632.21,
+          "success": false,
+          "facts_present": null,
+          "reason": "network_policy:allowed_host"
+        },
+        {
+          "path": "/missing",
+          "status": 200,
+          "elapsed_ms": 649.91,
+          "success": false,
+          "facts_present": null,
+          "reason": "network_policy:allowed_host"
+        }
+      ],
+      "screenshots": [
+        {
+          "status": 200,
+          "elapsed_ms": 187.33,
+          "ok": true,
+          "screenshot_bytes": 139206,
+          "screenshot_error": null
+        },
+        {
+          "status": 200,
+          "elapsed_ms": 180.11,
+          "ok": true,
+          "screenshot_bytes": 139206,
+          "screenshot_error": null
+        },
+        {
+          "status": 200,
+          "elapsed_ms": 174.28,
+          "ok": true,
+          "screenshot_bytes": 139206,
+          "screenshot_error": null
+        }
+      ],
+      "screenshot": {
+        "status": 200,
+        "elapsed_ms": 174.28,
+        "ok": true,
+        "screenshot_bytes": 139206,
+        "screenshot_error": null
+      },
+      "stats": {
+        "BlockIO": "28.7kB / 18.1MB",
+        "CPUPerc": "0.86%",
+        "Container": "p5-headed-hardware",
+        "ID": "694ecbb1b8dd",
+        "MemPerc": "1.49%",
+        "MemUsage": "470.6MiB / 30.76GiB",
+        "Name": "p5-headed-hardware",
+        "NetIO": "0B / 0B",
+        "PIDs": "100"
+      },
+      "gpu_after": {
+        "gpu_busy_percent": 0,
+        "mem_info_vram_used": 54480896,
+        "mem_info_gtt_used": 27529216
+      },
+      "health_after": 200,
+      "restart_count_after": "0"
+    },
+    {
+      "mode": {
+        "name": "headed-hardware-unmapped",
+        "headless": "0",
+        "graphics": "auto",
+        "device": true,
+        "groups": false
+      },
+      "gpu_before": {
+        "gpu_busy_percent": 0,
+        "mem_info_vram_used": 37679104,
+        "mem_info_gtt_used": 21221376
+      },
+      "graphics": {
+        "webgl": true,
+        "renderer": "ANGLE (Mesa, llvmpipe (LLVM 19.1.7 256 bits), OpenGL 4.5)",
+        "pixel": [
+          64,
+          128,
+          191,
+          255
+        ],
+        "fallback_reason": "hardware_not_verified",
+        "hardware_verified": false,
+        "requested_mode": "auto",
+        "effective_headless": false,
+        "feature_status": {
+          "2d_canvas": "enabled",
+          "gpu_compositing": "enabled",
+          "rasterization": "enabled",
+          "webgl": "enabled",
+          "video_decode": "enabled"
+        }
+      },
+      "restart_count_before": "0",
+      "workloads": [
+        {
+          "path": "/article",
+          "status": 200,
+          "elapsed_ms": 654.88,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/article",
+          "status": 200,
+          "elapsed_ms": 637.74,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/article",
+          "status": 200,
+          "elapsed_ms": 652.33,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/tiny",
+          "status": 200,
+          "elapsed_ms": 628.81,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/tiny",
+          "status": 200,
+          "elapsed_ms": 636.5,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/tiny",
+          "status": 200,
+          "elapsed_ms": 623.99,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/long",
+          "status": 200,
+          "elapsed_ms": 687.69,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/long",
+          "status": 200,
+          "elapsed_ms": 678.86,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/long",
+          "status": 200,
+          "elapsed_ms": 669.53,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/ticker",
+          "status": 200,
+          "elapsed_ms": 648.41,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/ticker",
+          "status": 200,
+          "elapsed_ms": 632.23,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/ticker",
+          "status": 200,
+          "elapsed_ms": 645.88,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/redirect",
+          "status": 200,
+          "elapsed_ms": 668.31,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/redirect",
+          "status": 200,
+          "elapsed_ms": 645.66,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/redirect",
+          "status": 200,
+          "elapsed_ms": 648.63,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/missing",
+          "status": 200,
+          "elapsed_ms": 616.99,
+          "success": false,
+          "facts_present": null,
+          "reason": "network_policy:allowed_host"
+        },
+        {
+          "path": "/missing",
+          "status": 200,
+          "elapsed_ms": 640.73,
+          "success": false,
+          "facts_present": null,
+          "reason": "network_policy:allowed_host"
+        },
+        {
+          "path": "/missing",
+          "status": 200,
+          "elapsed_ms": 673.71,
+          "success": false,
+          "facts_present": null,
+          "reason": "network_policy:allowed_host"
+        }
+      ],
+      "screenshots": [
+        {
+          "status": 200,
+          "elapsed_ms": 282.97,
+          "ok": true,
+          "screenshot_bytes": 139155,
+          "screenshot_error": null
+        },
+        {
+          "status": 200,
+          "elapsed_ms": 211.96,
+          "ok": true,
+          "screenshot_bytes": 139155,
+          "screenshot_error": null
+        },
+        {
+          "status": 200,
+          "elapsed_ms": 190.78,
+          "ok": true,
+          "screenshot_bytes": 139155,
+          "screenshot_error": null
+        }
+      ],
+      "screenshot": {
+        "status": 200,
+        "elapsed_ms": 190.78,
+        "ok": true,
+        "screenshot_bytes": 139155,
+        "screenshot_error": null
+      },
+      "stats": {
+        "BlockIO": "20.5kB / 14.8MB",
+        "CPUPerc": "1.07%",
+        "Container": "p5-headed-hardware-unmapped",
+        "ID": "80c7943ef880",
+        "MemPerc": "1.60%",
+        "MemUsage": "505.4MiB / 30.76GiB",
+        "Name": "p5-headed-hardware-unmapped",
+        "NetIO": "0B / 0B",
+        "PIDs": "126"
+      },
+      "gpu_after": {
+        "gpu_busy_percent": 0,
+        "mem_info_vram_used": 37679104,
+        "mem_info_gtt_used": 21221376
+      },
+      "health_after": 200,
+      "restart_count_after": "0"
+    },
+    {
+      "mode": {
+        "name": "headless-software",
+        "headless": "1",
+        "graphics": "mesa",
+        "device": false
+      },
+      "gpu_before": {
+        "gpu_busy_percent": 0,
+        "mem_info_vram_used": 37679104,
+        "mem_info_gtt_used": 21221376
+      },
+      "graphics": {
+        "webgl": true,
+        "renderer": "ANGLE (Mesa, llvmpipe (LLVM 19.1.7 256 bits), OpenGL 4.5)",
+        "pixel": [
+          64,
+          128,
+          191,
+          255
+        ],
+        "hardware_verified": false,
+        "requested_mode": "mesa",
+        "effective_headless": true,
+        "feature_status": {
+          "2d_canvas": "enabled",
+          "gpu_compositing": "enabled",
+          "rasterization": "enabled",
+          "webgl": "enabled",
+          "video_decode": "enabled"
+        }
+      },
+      "restart_count_before": "0",
+      "workloads": [
+        {
+          "path": "/article",
+          "status": 200,
+          "elapsed_ms": 664.85,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/article",
+          "status": 200,
+          "elapsed_ms": 651.2,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/article",
+          "status": 200,
+          "elapsed_ms": 633.53,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/tiny",
+          "status": 200,
+          "elapsed_ms": 624.6,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/tiny",
+          "status": 200,
+          "elapsed_ms": 630.96,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/tiny",
+          "status": 200,
+          "elapsed_ms": 621.86,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/long",
+          "status": 200,
+          "elapsed_ms": 659.29,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/long",
+          "status": 200,
+          "elapsed_ms": 668.28,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/long",
+          "status": 200,
+          "elapsed_ms": 667.12,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/ticker",
+          "status": 200,
+          "elapsed_ms": 635.93,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/ticker",
+          "status": 200,
+          "elapsed_ms": 640.43,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/ticker",
+          "status": 200,
+          "elapsed_ms": 632.93,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/redirect",
+          "status": 200,
+          "elapsed_ms": 651.23,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/redirect",
+          "status": 200,
+          "elapsed_ms": 657.9,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/redirect",
+          "status": 200,
+          "elapsed_ms": 660.1,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/missing",
+          "status": 200,
+          "elapsed_ms": 631.76,
+          "success": false,
+          "facts_present": null,
+          "reason": "network_policy:allowed_host"
+        },
+        {
+          "path": "/missing",
+          "status": 200,
+          "elapsed_ms": 659.04,
+          "success": false,
+          "facts_present": null,
+          "reason": "network_policy:allowed_host"
+        },
+        {
+          "path": "/missing",
+          "status": 200,
+          "elapsed_ms": 629.8,
+          "success": false,
+          "facts_present": null,
+          "reason": "network_policy:allowed_host"
+        }
+      ],
+      "screenshots": [
+        {
+          "status": 200,
+          "elapsed_ms": 225.95,
+          "ok": true,
+          "screenshot_bytes": 138789,
+          "screenshot_error": null
+        },
+        {
+          "status": 200,
+          "elapsed_ms": 179.16,
+          "ok": true,
+          "screenshot_bytes": 138789,
+          "screenshot_error": null
+        },
+        {
+          "status": 200,
+          "elapsed_ms": 177.18,
+          "ok": true,
+          "screenshot_bytes": 138789,
+          "screenshot_error": null
+        }
+      ],
+      "screenshot": {
+        "status": 200,
+        "elapsed_ms": 177.18,
+        "ok": true,
+        "screenshot_bytes": 138789,
+        "screenshot_error": null
+      },
+      "stats": {
+        "BlockIO": "16.4kB / 14.1MB",
+        "CPUPerc": "0.25%",
+        "Container": "p5-headless-software",
+        "ID": "e247526a4411",
+        "MemPerc": "1.67%",
+        "MemUsage": "527.2MiB / 30.76GiB",
+        "Name": "p5-headless-software",
+        "NetIO": "0B / 0B",
+        "PIDs": "120"
+      },
+      "gpu_after": {
+        "gpu_busy_percent": 0,
+        "mem_info_vram_used": 37679104,
+        "mem_info_gtt_used": 21221376
+      },
+      "health_after": 200,
+      "restart_count_after": "0"
+    },
+    {
+      "mode": {
+        "name": "headless-hardware",
+        "headless": "1",
+        "graphics": "auto",
+        "device": true
+      },
+      "gpu_before": {
+        "gpu_busy_percent": 0,
+        "mem_info_vram_used": 37679104,
+        "mem_info_gtt_used": 21221376
+      },
+      "graphics": {
+        "webgl": true,
+        "renderer": "ANGLE (AMD, AMD Radeon Graphics (radeonsi renoir ACO DRM 3.61 6.12.111+deb13-amd64), OpenGL ES 3.2)",
+        "pixel": [
+          64,
+          128,
+          191,
+          255
+        ],
+        "hardware_verified": true,
+        "requested_mode": "auto",
+        "effective_headless": true,
+        "feature_status": {
+          "2d_canvas": "enabled",
+          "gpu_compositing": "enabled",
+          "rasterization": "enabled_force",
+          "webgl": "enabled",
+          "video_decode": "enabled"
+        }
+      },
+      "restart_count_before": "0",
+      "workloads": [
+        {
+          "path": "/article",
+          "status": 200,
+          "elapsed_ms": 677.27,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/article",
+          "status": 200,
+          "elapsed_ms": 646.44,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/article",
+          "status": 200,
+          "elapsed_ms": 632.96,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/tiny",
+          "status": 200,
+          "elapsed_ms": 650.15,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/tiny",
+          "status": 200,
+          "elapsed_ms": 625.85,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/tiny",
+          "status": 200,
+          "elapsed_ms": 631.95,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/long",
+          "status": 200,
+          "elapsed_ms": 655.25,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/long",
+          "status": 200,
+          "elapsed_ms": 719.78,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/long",
+          "status": 200,
+          "elapsed_ms": 668.56,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/ticker",
+          "status": 200,
+          "elapsed_ms": 645.22,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/ticker",
+          "status": 200,
+          "elapsed_ms": 632.27,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/ticker",
+          "status": 200,
+          "elapsed_ms": 654.1,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/redirect",
+          "status": 200,
+          "elapsed_ms": 636.77,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/redirect",
+          "status": 200,
+          "elapsed_ms": 635.43,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/redirect",
+          "status": 200,
+          "elapsed_ms": 650.49,
+          "success": true,
+          "facts_present": true,
+          "reason": null
+        },
+        {
+          "path": "/missing",
+          "status": 200,
+          "elapsed_ms": 632.35,
+          "success": false,
+          "facts_present": null,
+          "reason": "network_policy:allowed_host"
+        },
+        {
+          "path": "/missing",
+          "status": 200,
+          "elapsed_ms": 623.08,
+          "success": false,
+          "facts_present": null,
+          "reason": "network_policy:allowed_host"
+        },
+        {
+          "path": "/missing",
+          "status": 200,
+          "elapsed_ms": 624.86,
+          "success": false,
+          "facts_present": null,
+          "reason": "network_policy:allowed_host"
+        }
+      ],
+      "screenshots": [
+        {
+          "status": 200,
+          "elapsed_ms": 204.87,
+          "ok": true,
+          "screenshot_bytes": 138789,
+          "screenshot_error": null
+        },
+        {
+          "status": 200,
+          "elapsed_ms": 202.63,
+          "ok": true,
+          "screenshot_bytes": 138789,
+          "screenshot_error": null
+        },
+        {
+          "status": 200,
+          "elapsed_ms": 207.15,
+          "ok": true,
+          "screenshot_bytes": 138789,
+          "screenshot_error": null
+        }
+      ],
+      "screenshot": {
+        "status": 200,
+        "elapsed_ms": 207.15,
+        "ok": true,
+        "screenshot_bytes": 138789,
+        "screenshot_error": null
+      },
+      "stats": {
+        "BlockIO": "20.5kB / 11.5MB",
+        "CPUPerc": "0.83%",
+        "Container": "p5-headless-hardware",
+        "ID": "c953367a0522",
+        "MemPerc": "1.55%",
+        "MemUsage": "489.1MiB / 30.76GiB",
+        "Name": "p5-headless-hardware",
+        "NetIO": "0B / 0B",
+        "PIDs": "100"
+      },
+      "gpu_after": {
+        "gpu_busy_percent": 3,
+        "mem_info_vram_used": 100278272,
+        "mem_info_gtt_used": 43290624
+      },
+      "health_after": 200,
+      "restart_count_after": "0"
+    }
+  ]
+}

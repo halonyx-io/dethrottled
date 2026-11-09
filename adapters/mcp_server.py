@@ -16,6 +16,7 @@ from urllib.parse import urlsplit
 
 import httpx
 from dethrottled_access import (
+    CALLER_AUTHORIZATION,
     CLAIMS,
     REQUEST_ID,
     AccessMiddleware,
@@ -244,7 +245,8 @@ async def _backend_get(path: str, params: dict[str, Any] | None = None) -> Any:
     require_scope("corpus" if path.startswith("/corpus/") else "web")
     async with httpx.AsyncClient(timeout=REQUEST_TIMEOUT, trust_env=False) as client:
         response = await client.get(f"{MCP_BACKEND_URL}{path}", params=params,
-                                    headers={"X-Request-ID": REQUEST_ID.get()})
+                                    headers={"X-Request-ID": REQUEST_ID.get(),
+                          "X-Dethrottled-Caller-Authorization": CALLER_AUTHORIZATION.get()})
         return _backend_result(response)
 
 
@@ -268,7 +270,8 @@ async def _backend_post(
         timeout=timeout or REQUEST_TIMEOUT, trust_env=False
     ) as client:
         response = await client.post(f"{MCP_BACKEND_URL}{path}", json=payload,
-                                     headers={"X-Request-ID": REQUEST_ID.get()})
+                                     headers={"X-Request-ID": REQUEST_ID.get(),
+                          "X-Dethrottled-Caller-Authorization": CALLER_AUTHORIZATION.get()})
         return _backend_result(response)
 
 
@@ -485,6 +488,7 @@ async def search_and_fetch(
     exclude_domains: list[str] | None = None,
     cache_mode: Literal["use", "refresh", "bypass"] = "use",
     max_age: float | None = None,
+    response_format: Literal["detailed", "concise"] = "detailed",
 ) -> Any:
     """Find pages and read them in one call.
 
@@ -502,6 +506,7 @@ async def search_and_fetch(
         "profile": profile, "engines": engines, "ranking": ranking,
         "prefer_domains": prefer_domains or [], "cache_mode": cache_mode, "max_age": max_age,
         "domains": domains or [], "exclude_domains": exclude_domains or [],
+        "response_format": response_format,
     })
 
 

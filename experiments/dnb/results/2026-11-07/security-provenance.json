@@ -1,0 +1,27 @@
+{
+  "image": "sha256:790917e02742dbced926388ab1ef5bdda66a32e8c6bafe4e4bcc104185a829c1",
+  "logical_bytes": 2407593070,
+  "sources": {
+    "experiments/dnb/context_pool.py": "3827e69de273dd4163f6b72857e2ea224d5d2e84fbcc4576145d59d12c9d4021",
+    "experiments/dnb/network_policy.py": "4e7f28173c73407eaeff13857f6d0c63ad20af4784a3b8a69d0c7a95f14bb746",
+    "experiments/dnb/test_pool.py": "361882e9256e95fe425bce24d5b6cb2b8f497b579b9f741837fc68a876a3de1e",
+    "experiments/dnb/verify.py": "7ff772ce433c755164e847178ded9438be795e9ccc8969f7526f8f447667a345",
+    "experiments/dnb/fixture.py": "b4bc75b0a469fbaf5cdc2e71e7d79f42312b1e49d8b568ecf1dc2666901caff4",
+    "experiments/dnb/test_dnb.py": "a4941e62230510444cb46f2688744626ce001cded21d849b181d17743cdf0625",
+    "experiments/dnb/compare.py": "4bcd72a6d1d042072c59dafac635b2e355f7b3facb29dd41eea205e282125d39",
+    "experiments/dnb/context_ablation.py": "78dd29a5f5c42de1b2f3e2a2eb75b49d22308547d32d85f74b0167ac80209289",
+    "experiments/dnb/test_network_policy.py": "e454796f8079b83d78cba93d06b69c6278f69e6fbf7f1c1436ec4245139c4756",
+    "experiments/dnb/pool_bench.py": "7bb25f93c2ffc1f502e306b79df060d6b1f6bc01829dd908fee2d183e112c605",
+    "experiments/dnb/security_check.py": "87288be73a9fa2ca6e4a01fbd4f3d65c5be9ed3e8aae34b1845b58e06636d5f4",
+    "experiments/dnb/summarize.py": "8b6a65e072a9ef6d89ee49fdf3863ce3f518e4a5a7893114ed81ab1dc02e7c68",
+    "experiments/dnb/measure.py": "2925c6bd83b68db77adf5d833e506db68062edb475841cc8edbf6850077381b7",
+    "experiments/dnb/dnb_service.py": "47de5eb1f206b2e45c9efe7a6e88094e9ecc93317d5893e56f0144bce59e3876",
+    "src/dethrottled/adblock_proxy.py": "2b300f3997fe990c0941242b9be26d356cfc251a4f43b95888a8134d874ebb02",
+    "experiments/dnb/Dockerfile": "1b73826e6c57891739eac23c01f49a04a5b8c7f80b0351cc23452ca8b753762f"
+  },
+  "tests": {
+    "prototype": 36,
+    "existing_proxy": 13
+  },
+  "selected_default": "fresh page within explicitly scoped context"
+}

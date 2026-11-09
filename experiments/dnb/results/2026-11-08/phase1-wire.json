@@ -1,0 +1,145 @@
+{
+  "queue_cancel_and_retry": {
+    "capacity_recovery_seconds": 0.832,
+    "state": {
+      "prototype": true,
+      "reference": "1.7.1",
+      "browser": "shared-headed-patchright",
+      "extractor": "crawl4ai-0.9.5",
+      "counts": {
+        "success": 1,
+        "disconnected": 6
+      },
+      "render_slots": 2,
+      "waiting": 0,
+      "active": 0,
+      "drive_inflight": 0,
+      "extraction": {
+        "workers": 2,
+        "active": 0,
+        "counts": {
+          "started": 2,
+          "completed": 1
+        }
+      },
+      "pool": {
+        "enabled": true,
+        "contexts": 0,
+        "maximum": 4,
+        "ttl_seconds": 60
+      },
+      "internal_urls_allowed": true,
+      "compatibility": "Dethrottled crawl subset; not full Crawl4AI API"
+    }
+  },
+  "extracting_disconnect": {
+    "capacity_recovery_seconds": 1.626,
+    "state": {
+      "prototype": true,
+      "reference": "1.7.1",
+      "browser": "shared-headed-patchright",
+      "extractor": "crawl4ai-0.9.5",
+      "counts": {
+        "success": 2,
+        "disconnected": 8
+      },
+      "render_slots": 2,
+      "waiting": 0,
+      "active": 0,
+      "drive_inflight": 0,
+      "extraction": {
+        "workers": 0,
+        "active": 0,
+        "counts": {
+          "started": 2,
+          "completed": 2,
+          "cancelled": 2,
+          "reaped": 2
+        }
+      },
+      "pool": {
+        "enabled": true,
+        "contexts": 0,
+        "maximum": 4,
+        "ttl_seconds": 60
+      },
+      "internal_urls_allowed": true,
+      "compatibility": "Dethrottled crawl subset; not full Crawl4AI API"
+    },
+    "cancelled_workers": 2
+  },
+  "busy_renderer": {
+    "status": 504,
+    "code": "browser_timeout",
+    "recovery_seconds": 4.851
+  },
+  "drive_cancel": {
+    "capacity_recovery_seconds": 0.798,
+    "state": {
+      "prototype": true,
+      "reference": "1.7.1",
+      "browser": "shared-headed-patchright",
+      "extractor": "crawl4ai-0.9.5",
+      "counts": {
+        "success": 4,
+        "disconnected": 8
+      },
+      "render_slots": 2,
+      "waiting": 0,
+      "active": 0,
+      "drive_inflight": 0,
+      "extraction": {
+        "workers": 2,
+        "active": 0,
+        "counts": {
+          "started": 4,
+          "completed": 4,
+          "cancelled": 2,
+          "reaped": 2
+        }
+      },
+      "pool": {
+        "enabled": true,
+        "contexts": 0,
+        "maximum": 4,
+        "ttl_seconds": 60
+      },
+      "internal_urls_allowed": true,
+      "compatibility": "Dethrottled crawl subset; not full Crawl4AI API"
+    },
+    "mutation_not_replayed": true
+  },
+  "worker_crash": {
+    "supervisor_restart_observed": true,
+    "mutation_not_replayed": true
+  },
+  "final_status": {
+    "prototype": true,
+    "reference": "1.7.1",
+    "browser": "shared-headed-patchright",
+    "extractor": "crawl4ai-0.9.5",
+    "counts": {
+      "success": 1
+    },
+    "render_slots": 2,
+    "waiting": 0,
+    "active": 0,
+    "drive_inflight": 0,
+    "extraction": {
+      "workers": 2,
+      "active": 0,
+      "counts": {
+        "started": 2,
+        "completed": 1
+      }
+    },
+    "pool": {
+      "enabled": true,
+      "contexts": 0,
+      "maximum": 4,
+      "ttl_seconds": 60
+    },
+    "internal_urls_allowed": true,
+    "compatibility": "Dethrottled crawl subset; not full Crawl4AI API"
+  }
+}

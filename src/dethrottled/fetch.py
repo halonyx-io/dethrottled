@@ -502,13 +502,30 @@ def _crawl4ai_payload(payload: dict, url: str) -> tuple:
         markdown = (markdown.get("fit_markdown")
                     or markdown.get("raw_markdown")
                     or markdown.get("markdown"))
-    if isinstance(markdown, str) and len(markdown.strip()) > 220:
-        return {"text": markdown}, "", final
-
-    for field in ("cleaned_html", "fit_html", "content", "html", "raw_html"):
+    html = ""
+    # Selectors and raw callers need the source DOM, not the extractor's
+    # cleaned article fragment. Prefer the full page HTML when requested.
+    keep_html = _READ_OPTIONS.get().get("keep_html")
+    fields = (("html", "raw_html", "cleaned_html", "fit_html", "content")
+              if keep_html
+              else ("cleaned_html", "fit_html", "content", "html", "raw_html"))
+    for field in fields:
         value = payload.get(field)
-        if isinstance(value, str) and _usable(value):
-            return {"html": value}, "", final
+        # A selector/raw caller can legitimately ask for a tiny page; do not
+        # discard a small but valid source DOM behind the prose threshold.
+        if isinstance(value, str) and (len(value) > 8 if keep_html else _usable(value)):
+            html = value
+            break
+    if isinstance(markdown, str) and len(markdown.strip()) > 220:
+        result = {"text": markdown}
+        # Markdown wins for prose, but selectors/raw callers still need the
+        # source DOM. Only retain it when the request asked for HTML.
+        if html and _READ_OPTIONS.get().get("keep_html"):
+            result["html"] = html
+        return result, "", final
+
+    if html:
+        return {"html": html}, "", final
     return {}, "crawl4ai_empty", url
 
 
@@ -538,9 +555,7 @@ def _crawl4ai_via_crawl(url: str) -> tuple:
     The response wraps results in a list, because the endpoint takes a list of
     URLs. One URL in, one result out, but the envelope is still there.
     """
-    response = requests.post(
-        CRAWL4AI_URL + "/crawl",
-        json={"urls": [url],
+    payload = {"urls": [url],
               "browser_config": {"type": "BrowserConfig",
                                  "params": {"headless": True}},
               "crawler_config": {"type": "CrawlerRunConfig",
@@ -551,9 +566,21 @@ def _crawl4ai_via_crawl(url: str) -> tuple:
                                                 "render_delay", 0.5),
                                             **({"wait_for": "css:" +
                                                 _READ_OPTIONS.get()["wait_for"]}
-                                               if _READ_OPTIONS.get().get("wait_for") else {})}}},
-        headers=_crawl4ai_headers(),
-        timeout=CRAWL4AI_TIMEOUT)
+                                               if _READ_OPTIONS.get().get("wait_for") else {})}}}
+    headers = _crawl4ai_headers()
+    if os.getenv("DETHROTTLED_DNB", "0") == "1":
+        from .access import CLAIMS, read_session_alias
+        from .delegation import sign
+        claims = CLAIMS.get()
+        public = bool(claims) or _READ_OPTIONS.get().get("public_only",False)
+        headers["X-DNB-Delegation"] = sign(payload,
+            owner=claims["namespace"] if claims else None,
+            session=read_session_alias(url,public),
+            scope="public-read" if public else "local-read",public_only=public)
+    response = requests.post(CRAWL4AI_URL + "/crawl", json=payload,
+                             headers=headers, timeout=max(CRAWL4AI_TIMEOUT,
+            CRAWL4AI_RENDER_MS/1000 + _READ_OPTIONS.get().get("render_delay",.5) + 25)
+            if os.getenv("DETHROTTLED_DNB", "0")=="1" else CRAWL4AI_TIMEOUT)
     if response.status_code != 200:
         return {}, "crawl4ai_http_%d" % response.status_code, url
     body = response.json()
@@ -891,8 +918,11 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
     # a row with no html would be the wrong kind of surprise.
     if cache is not None and not keep_html:
         # Keyed on the url alone. The stored copy is the generous one; what
-        # this caller wanted is a clip of it.
-        hit = cache.get("extract", url)
+        # this caller wanted is a clip of it. Validate the stored shape before
+        # counting it as a hit: a valid-JSON wrong-shape row is a miss.
+        from .cache import valid_extract
+
+        hit = cache.get("extract", url, validator=valid_extract)
         acquisition = (hit or {}).get("acquisition", {})
         compatible = not render_first or acquisition.get("rendered", False)
         if hit is not None and (challenge_kind(hit.get("text", "")) or
@@ -1393,6 +1423,7 @@ def fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAULT
     """Read a URL with request-local rendering/target policy and bounded output."""
     options = dict(format=format, wait_for=wait_for, render_delay=render_delay,
                    headed_fallback=headed_fallback, public_only=public_only,
+                   keep_html=keep_html,
                    ocr_language=ocr_language, ocr_mode=ocr_mode,
                    page_start=page_start, page_end=page_end,
                    allow_ocr=allow_ocr, row_start=row_start, row_end=row_end,

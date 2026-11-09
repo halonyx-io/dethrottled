@@ -1,0 +1,83 @@
+{
+  "date": "2026-11-08",
+  "phase": 3,
+  "description": "Signed delegation fixture. No private key or bearer token is stored.",
+  "public_key_sha256_prefix": "8b07d25667dafcb3",
+  "token_header": {
+    "alg": "EdDSA",
+    "kid": "8b07d25667dafcb3",
+    "typ": "JWT"
+  },
+  "token_claims": {
+    "iss": "dethrottled-api",
+    "aud": "dnb",
+    "iat": 1794151899,
+    "nbf": 1794151898,
+    "exp": 1794151959,
+    "jti": "57a6dc1f08f9411bbccde07ad4fd5c86",
+    "sub": "fixture-owner",
+    "session": "fixture-session",
+    "scope": "public-read",
+    "public_only": true,
+    "allowed_hosts": [],
+    "asset_hosts": null,
+    "page_mode": "fresh",
+    "path": "/crawl",
+    "method": "POST",
+    "body_sha256": "4cb1a9524bc5bce06fcaf632c4c71021faaa88dcbceb6c6f4cfd10384164a57b"
+  },
+  "body_sha256": "4cb1a9524bc5bce06fcaf632c4c71021faaa88dcbceb6c6f4cfd10384164a57b",
+  "verification_matrix": [
+    {
+      "case": "accepted fixture",
+      "expected": "accepted",
+      "why": "valid EdDSA, aud/iss/path/body/exp match"
+    },
+    {
+      "case": "modified body",
+      "expected": "rejected",
+      "why": "body_sha256 mismatch"
+    },
+    {
+      "case": "path /drive",
+      "expected": "rejected",
+      "why": "path claim mismatch"
+    },
+    {
+      "case": "expired",
+      "expected": "rejected",
+      "why": "exp required and bounded to 60s"
+    },
+    {
+      "case": "aud other",
+      "expected": "rejected",
+      "why": "audience dnb required"
+    },
+    {
+      "case": "iss other",
+      "expected": "rejected",
+      "why": "issuer dethrottled-api required"
+    },
+    {
+      "case": "missing jti/session/scope",
+      "expected": "rejected",
+      "why": "required claim set"
+    },
+    {
+      "case": "spoofed X-DNB-Owner",
+      "expected": "rejected",
+      "why": "worker rejects legacy owner headers before delegation"
+    },
+    {
+      "case": "same body within 60s",
+      "expected": "accepted/idempotent",
+      "why": "reads are body-bound; drive journal handles mutations"
+    },
+    {
+      "case": "old token after public-key rotation",
+      "expected": "rejected",
+      "why": "verifier rereads the public key file per admission"
+    }
+  ],
+  "source": "experiments/dnb/results/2026-11-08/phase3-tests.log and phase3-wire.json"
+}

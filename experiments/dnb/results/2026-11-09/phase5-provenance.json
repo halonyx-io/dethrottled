@@ -1,0 +1,44 @@
+{
+  "phase": 5,
+  "date": "2026-11-09",
+  "image": {
+    "tag": "dethrottled-dnb:phase5-20261109",
+    "id": "sha256:db15ee7c84ab2bc77421efd21466a09bcce6b43a1a4223e7b1c1290801e474bf",
+    "base": "dethrottled-dnb:phase3-20261109",
+    "runtime_user": "browsersearch uid=10002"
+  },
+  "host": {
+    "gpu": "AMD Cezanne Radeon Vega iGPU",
+    "devices": [
+      "/dev/dri/card0",
+      "/dev/dri/renderD128"
+    ],
+    "groups": {
+      "video": 44,
+      "render": 991
+    }
+  },
+  "commands": [
+    "docker run --network host --device /dev/dri --group-add 991 --group-add 44 -e DETHROTTLED_BROWSER_GRAPHICS=auto -e DETHROTTLED_BROWSER_HEADLESS=0",
+    "docker run --network host -e DETHROTTLED_BROWSER_GRAPHICS=mesa -e DETHROTTLED_BROWSER_HEADLESS=1",
+    "python experiments/dnb/phase5_check.py --image dethrottled-dnb:phase5-20261109 --repeats 3",
+    "python experiments/dnb/phase5_check.py --image dethrottled-dnb:phase5-20261109 --repeats 3 --output experiments/dnb/results/2026-11-09",
+    "phase3_check.py --rotate against the phase-5 image (23/23)"
+  ],
+  "evidence": {
+    "matrix": "phase5-matrix.json",
+    "summary": "phase5-summary.json",
+    "access": "phase5-access.json",
+    "phase12_tests": "phase5-phase12-tests.log",
+    "phase3_wire": "phase5-phase3-wire.json"
+  },
+  "notes": [
+    "No production Compose, host driver or system package change.",
+    "Headless is a lab-only env flag; default remains headed.",
+    "The existing fixture was reused; no new HTTP endpoint was added for Phase 5.",
+    "WebGL evidence is the per-launch probe: renderer, pixel readback and hardware_verified.",
+    "GPU rasterization/compositing feature status is captured from Chromium SystemInfo; headed hardware reports software compositing under Xvfb while rasterization is forced. Screenshot medians are measured, not a speedup claim.",
+    "The phase-3 wire accepts either a render-pool context or a drive session as worker work; drive_sessions is a real worker status count.",
+    "Final phase-5 image includes GPU rasterization/zero-copy flags for hardware modes, Chromium feature-status probe and drive_sessions status."
+  ]
+}

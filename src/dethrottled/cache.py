@@ -64,7 +64,7 @@ class Cache:
         digest = hashlib.blake2b(raw.encode("utf-8"), digest_size=16)
         return "%s:%s" % (kind, digest.hexdigest())
 
-    def get(self, kind: str, *parts, ttl: float | None = None, with_meta: bool = False):
+    def get(self, kind: str, *parts, ttl: float | None = None, with_meta: bool = False, validator=None):
         ttl = DEFAULT_TTL.get(kind, 3600) if ttl is None else ttl
         key = self.key(kind, *parts)
         with self._lock:
@@ -79,7 +79,10 @@ class Cache:
             return None
         try:
             decoded = json.loads(value)
-        except json.JSONDecodeError:
+        except (json.JSONDecodeError, RecursionError):
+            self.misses += 1
+            return None
+        if validator is not None and not validator(decoded):
             self.misses += 1
             return None
         self.hits += 1
@@ -124,37 +127,53 @@ class Cache:
             pass
 
 
+def valid_extract(value) -> bool:
+    """Shape check for the stored extract row, used before counting a cache hit."""
+    if (
+        not isinstance(value, dict)
+        or value.get("schema_version") != 3
+        or not isinstance(value.get("text"), str)
+    ):
+        return False
+    if any(
+        not isinstance(value.get(field, {}), dict)
+        for field in ("acquisition", "extraction", "content_assessment")
+    ):
+        return False
+    pages = value.get("extraction", {}).get("pages", [])
+    return isinstance(pages, list) and all(isinstance(page, dict) for page in pages)
+
+
 class CacheView:
     """Request-local cache policy; never mutate the shared cache's behavior."""
 
     def __init__(self, cache, *, mode="use", max_age=None):
         self.cache, self.mode, self.max_age = cache, mode, max_age
 
-    def get(self, kind, *parts, ttl=None):
+    @staticmethod
+    def _valid(kind, value):
+        if kind == "extract":
+            return valid_extract(value)
+        if kind == "search" and (
+                not isinstance(value, list) or any(
+                    not isinstance(row, dict) or not isinstance(row.get("url", ""), str)
+                    for row in value)):
+            return False
+        return True
+
+    def get(self, kind, *parts, ttl=None, validator=None):
         if self.mode != "use":
             return None
         age = DEFAULT_TTL.get(kind, 3600) if ttl is None else ttl
         if self.max_age is not None:
             age = min(age, self.max_age)
-        hit = self.cache.get(kind, *parts, ttl=age, with_meta=True)
+        def accepted(value):
+            return self._valid(kind, value) and (validator(value) if validator else True)
+        hit = self.cache.get(kind, *parts, ttl=age, with_meta=True,
+                             validator=accepted)
         if hit is None:
             return None
         value, retrieved = hit
-        if kind == "extract":
-            if (not isinstance(value, dict) or value.get("schema_version") != 3
-                    or not isinstance(value.get("text"), str)):
-                return None  # Refresh old/unusable representations instead of failing the read.
-            if any(not isinstance(value.get(field, {}), dict)
-                   for field in ("acquisition", "extraction", "content_assessment")):
-                return None
-            pages = value.get("extraction", {}).get("pages", [])
-            if not isinstance(pages, list) or any(not isinstance(page, dict) for page in pages):
-                return None
-        if kind == "search" and (
-                not isinstance(value, list) or any(
-                    not isinstance(row, dict) or not isinstance(row.get("url", ""), str)
-                    for row in value)):
-            return None
         from datetime import datetime, timezone
         metadata = {"cached": True, "cache_age_seconds": round(time.time() - retrieved, 3),
                     "retrieved_at": datetime.fromtimestamp(retrieved, timezone.utc).isoformat(),

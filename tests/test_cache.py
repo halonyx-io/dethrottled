@@ -108,3 +108,18 @@ def test_concurrent_writes_do_not_corrupt(cache):
         t.join()
     assert not errors
     assert cache.get("search", "k0") == {"i": 19}
+
+
+def test_cacheview_rejects_wrong_shape_extract_before_counting_a_hit(cache):
+    from dethrottled.cache import CacheView, valid_extract
+
+    cache.put("extract", "https://example.com/bad",
+              value={"schema_version": 3, "text": "x", "acquisition": {},
+                     "extraction": {"pages": "not-a-list"}, "content_assessment": {}})
+    assert cache.get("extract", "https://example.com/bad",
+                     validator=valid_extract) is None
+    view = CacheView(cache)
+    assert view.get("extract", "https://example.com/bad") is None
+    stats = cache.stats()
+    assert stats["hits"] == 0
+    assert stats["misses"] == 2
