@@ -255,6 +255,7 @@ Framework `/docs` and `/openapi.json` routes are available separately.
 | `rerank` | boolean | false |  |
 | `corpus` | integer | 0 | minimum=0.0; maximum=20.0 |
 | `recency` | number | 0.0 | minimum=0.0; maximum=1.0 |
+| `response_format` | "detailed", "concise" | "detailed" |  |
 | `document_mode` | "auto", "native", "layout" | "auto" |  |
 | `ocr_mode` | "auto", "always", "never" | "auto" |  |
 | `ocr_language` | string | "" | maxLength=100; pattern=^[a-z_]*(?:\+[a-z_]+)*$ |

@@ -13,7 +13,7 @@ must be classified; unknown paths fail generation/checking.
 | dependency-input | 4 |
 | generated | 4 |
 | harness-guide | 20 |
-| historical-evidence | 132 |
+| historical-evidence | 135 |
 | planned-work | 1 |
 | source-contract | 162 |
 | third-party-notice | 4 |
@@ -202,6 +202,7 @@ Evidence maintainer: preserve observations; append explicit corrections.
 | [experiments/dnb/results/2026-11-09/PHASE-6-PREP/resource-smoke.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/PHASE-6-PREP/resource-smoke.json) |
 | [experiments/dnb/results/2026-11-09/PHASE-6-RELEASE-GATE.md](../experiments/dnb/results/2026-11-09/PHASE-6-RELEASE-GATE.md) |
 | [experiments/dnb/results/2026-11-09/PHASE-6.md](../experiments/dnb/results/2026-11-09/PHASE-6.md) |
+| [experiments/dnb/results/2026-11-09/S0-S1-PROVENANCE-CONTRACTS.md](../experiments/dnb/results/2026-11-09/S0-S1-PROVENANCE-CONTRACTS.md) |
 | [experiments/dnb/results/2026-11-09/phase4-cache-tests.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase4-cache-tests.log) |
 | [experiments/dnb/results/2026-11-09/phase4-cache.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase4-cache.json) |
 | [experiments/dnb/results/2026-11-09/phase4-dom-after.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase4-dom-after.json) |
@@ -239,6 +240,8 @@ Evidence maintainer: preserve observations; append explicit corrections.
 | [experiments/dnb/results/2026-11-09/phase6-pdf-reference.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase6-pdf-reference.json) |
 | [experiments/dnb/results/2026-11-09/phase6-pdf-summary.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase6-pdf-summary.json) |
 | [experiments/dnb/results/2026-11-09/phase6-pytest.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase6-pytest.log) |
+| [experiments/dnb/results/2026-11-09/s1-openapi-candidate.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/s1-openapi-candidate.json) |
+| [experiments/dnb/results/2026-11-09/s1-openapi-reference.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/s1-openapi-reference.json) |
 
 ## planned-work
 

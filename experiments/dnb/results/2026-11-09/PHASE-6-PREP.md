@@ -30,10 +30,10 @@ on 8090. No production container or volume was used.
   checkpoint restore across a real restart.
 - Median render latency: reference 636 ms, candidate 641 ms.
 
-Evidence: [parity-summary.json](parity-summary.json),
-[parity-verification.json](parity-verification.json),
-[checkpoint-reference.json](checkpoint-reference.json),
-[checkpoint-candidate.json](checkpoint-candidate.json).
+Evidence: [parity-summary.json](PHASE-6-PREP/parity-summary.json),
+[parity-verification.json](PHASE-6-PREP/parity-verification.json),
+[checkpoint-reference.json](PHASE-6-PREP/checkpoint-reference.json),
+[checkpoint-candidate.json](PHASE-6-PREP/checkpoint-candidate.json).
 
 ## Resource smoke
 
@@ -45,7 +45,7 @@ Evidence: [parity-summary.json](parity-summary.json),
 
 The candidate uses more CPU, consistent with the consolidated extraction
 workers; the old pilot CPU figures must not be presented as this candidate's
-measurement. Evidence: [resource-smoke.json](resource-smoke.json).
+measurement. Evidence: [resource-smoke.json](PHASE-6-PREP/resource-smoke.json).
 
 ## ARM64 prep
 

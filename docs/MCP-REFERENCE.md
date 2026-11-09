@@ -94,6 +94,7 @@ Find pages and read them in one call.
 | `exclude_domains` | list[str] \| None | None |
 | `cache_mode` | Literal['use', 'refresh', 'bypass'] | 'use' |
 | `max_age` | float \| None | None |
+| `response_format` | Literal['detailed', 'concise'] | 'detailed' |
 ## research
 
 Gather cited sources and relevant excerpts across multiple searches.
