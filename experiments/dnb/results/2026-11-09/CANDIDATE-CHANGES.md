@@ -16,7 +16,7 @@ test-bed improvements, not a released version.
 - Baseline worker: `dethrottled-dnb:1.8.0-candidate-20261109`
 - Baseline API: `dethrottled-dnb-api:1.8.0-candidate-20261109`
 - Current test-bed API: `dethrottled-dnb-api:1.8.0-dev-20261109`
-  (`sha256:d6d2e2645294…`)
+  (`sha256:4bdeb3e31224…`)
 - Earlier OCR-only test image: `dethrottled-dnb-api:1.8.0-dev-ocr-20261109`
   (superseded)
 
