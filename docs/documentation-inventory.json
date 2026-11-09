@@ -1028,6 +1028,11 @@
       "review": "Evidence maintainer: preserve observations; append explicit corrections."
     },
     {
+      "path": "experiments/dnb/results/2026-11-09/PHASE-6.md",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
       "path": "experiments/dnb/results/2026-11-09/phase4-cache-tests.log",
       "lifecycle": "historical-evidence",
       "review": "Evidence maintainer: preserve observations; append explicit corrections."
@@ -1139,6 +1144,21 @@
     },
     {
       "path": "experiments/dnb/results/2026-11-09/phase5-summary.json",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "experiments/dnb/results/2026-11-09/phase6-pdf-candidate.json",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "experiments/dnb/results/2026-11-09/phase6-pdf-reference.json",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "experiments/dnb/results/2026-11-09/phase6-pdf-summary.json",
       "lifecycle": "historical-evidence",
       "review": "Evidence maintainer: preserve observations; append explicit corrections."
     },

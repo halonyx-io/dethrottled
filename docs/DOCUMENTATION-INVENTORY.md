@@ -13,7 +13,7 @@ must be classified; unknown paths fail generation/checking.
 | dependency-input | 4 |
 | generated | 4 |
 | harness-guide | 20 |
-| historical-evidence | 115 |
+| historical-evidence | 119 |
 | planned-work | 1 |
 | source-contract | 162 |
 | third-party-notice | 4 |
@@ -199,6 +199,7 @@ Evidence maintainer: preserve observations; append explicit corrections.
 | [experiments/dnb/results/2026-11-09/PHASE-6-PREP/parity-summary.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/PHASE-6-PREP/parity-summary.json) |
 | [experiments/dnb/results/2026-11-09/PHASE-6-PREP/parity-verification.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/PHASE-6-PREP/parity-verification.json) |
 | [experiments/dnb/results/2026-11-09/PHASE-6-PREP/resource-smoke.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/PHASE-6-PREP/resource-smoke.json) |
+| [experiments/dnb/results/2026-11-09/PHASE-6.md](../experiments/dnb/results/2026-11-09/PHASE-6.md) |
 | [experiments/dnb/results/2026-11-09/phase4-cache-tests.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase4-cache-tests.log) |
 | [experiments/dnb/results/2026-11-09/phase4-cache.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase4-cache.json) |
 | [experiments/dnb/results/2026-11-09/phase4-dom-after.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase4-dom-after.json) |
@@ -222,6 +223,9 @@ Evidence maintainer: preserve observations; append explicit corrections.
 | [experiments/dnb/results/2026-11-09/phase5-phase3-wire.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase5-phase3-wire.json) |
 | [experiments/dnb/results/2026-11-09/phase5-provenance.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase5-provenance.json) |
 | [experiments/dnb/results/2026-11-09/phase5-summary.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase5-summary.json) |
+| [experiments/dnb/results/2026-11-09/phase6-pdf-candidate.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase6-pdf-candidate.json) |
+| [experiments/dnb/results/2026-11-09/phase6-pdf-reference.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase6-pdf-reference.json) |
+| [experiments/dnb/results/2026-11-09/phase6-pdf-summary.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase6-pdf-summary.json) |
 
 ## planned-work
 

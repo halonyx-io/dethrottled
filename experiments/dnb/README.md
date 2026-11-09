@@ -79,7 +79,10 @@ A disposable parity smoke passed both reference and candidate for 27 facts, all
 27 drive actions, downloads, network evidence, concurrency and checkpoint
 restore. Resource smoke shows the candidate at higher CPU than 1.7.1, as
 expected from consolidation. ARM64 `q6a` is reachable but still needs its own
-build/parity run. See [the prep record](results/2026-11-09/PHASE-6-PREP.md).
+build/parity run. See [the prep record](results/2026-11-09/PHASE-6-PREP.md). Phase 6 execution has
+started: the candidate API image is built and its first PDF parity smoke passes
+with the expected concise-table presentation difference. See
+[the Phase 6 progress record](results/2026-11-09/PHASE-6.md).
 
 | Phase | Status | Remaining work |
 |---|---|---|
@@ -88,7 +91,7 @@ build/parity run. See [the prep record](results/2026-11-09/PHASE-6-PREP.md).
 | 3. Verified identity/integration | Accepted in the isolated x86_64 worker | Keep the REST/MCP/worker gate passing; full compatibility remains phase 6 |
 | 4. Inherited defects | Accepted in the isolated lab: PDF bloat and DOM adoption fixed; cache validator hardened | Keep the concise-size, DOM and cache regressions; full parity remains phase 6 |
 | 5. Browser modes/GPU | Accepted in the isolated lab: matched headed/headless x software/verified hardware matrix | Keep the probe and fallback regressions; native/release validation remains phase 6 |
-| 6. Candidate and release | Prep complete: candidate commit/tag/image frozen; parity and resource smoke passed | Full PDF/OCR/media coverage, live/hostile, ARM64 build, packaging/install, rollback and approval |
+| 6. Candidate and release | In progress: candidate commit/tag/worker/API images frozen; browser parity and PDF smoke passed | Full PDF/OCR/media coverage, optional workers, live/hostile, ARM64, packaging/install, rollback and approval |
 
 Production stays on 1.7.1. This branch remains unpublished development work;
 1.8.0 is not declared ready. The 1.8.2 DPR document is saved planning only.
