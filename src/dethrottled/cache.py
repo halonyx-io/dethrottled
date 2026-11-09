@@ -20,6 +20,8 @@ import threading
 import time
 from pathlib import Path
 
+NEWS_SEARCH_TTL = 30 * 60      # news moves faster than a general search menu
+
 DEFAULT_TTL = {
     "search": 6 * 3600,        # a search result set goes stale fast
     # The fetcher stores bodies under "extract". This table said "fetch", so

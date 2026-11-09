@@ -187,6 +187,7 @@ def test_corpus_stats_report_independent_live_lifetime_settings(client, tmp_path
         assert result['ok']
         assert result['lifetimes'] == {
             'search_cache_default_ttl_seconds': 21600,
+            'news_search_cache_ttl_seconds': 1800,
             'extraction_cache_default_ttl_seconds': 1814400,
             'retained_document_ttl_seconds': 3600,
             'retained_document_max_bytes': 12345,

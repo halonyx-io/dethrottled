@@ -1068,6 +1068,11 @@
       "review": "Evidence maintainer: preserve observations; append explicit corrections."
     },
     {
+      "path": "experiments/dnb/results/2026-11-09/SIMILAR-PROJECTS-IDEAS.md",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
       "path": "experiments/dnb/results/2026-11-09/phase4-cache-tests.log",
       "lifecycle": "historical-evidence",
       "review": "Evidence maintainer: preserve observations; append explicit corrections."
@@ -1269,6 +1274,11 @@
     },
     {
       "path": "experiments/dnb/results/2026-11-09/s2-extract-bench.json",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "experiments/dnb/results/2026-11-09/s2-news-ttl-tests.log",
       "lifecycle": "historical-evidence",
       "review": "Evidence maintainer: preserve observations; append explicit corrections."
     },

@@ -10,6 +10,7 @@ test-bed improvements, not a released version.
 | 2026-11-09 | Bounded 2x OCR upscale for small standalone images; PDF pages keep their OCR-DPI raster | [S3-OCR-RESOLUTION.md](S3-OCR-RESOLUTION.md) | 7 focused tests pass; full suite 876 passed |
 | 2026-11-09 | Transparent PNGs are composited on a contrasting background before OCR | [S3-OCR-RESOLUTION.md](S3-OCR-RESOLUTION.md) | 7 focused tests pass; dark text recovered |
 | 2026-11-09 | Separate headed non-GL crawl browser; drive keeps verified Mesa/WebGL | [S2-RENDERER-CPU.md](S2-RENDERER-CPU.md) | 0.706 -> 0.370 CPU-s/request; Crunchbase and drive pass |
+| 2026-11-09 | News searches use a 30-minute cache ceiling; caller `max_age` can tighten it | [SIMILAR-PROJECTS-IDEAS.md](SIMILAR-PROJECTS-IDEAS.md) | Endpoint tests pass |
 | 2026-11-09 | Concise PDF presentation no longer claims omitted table metadata when the table list is empty | `tests/test_coverage_reading.py` | Full suite 876 passed |
 
 ## Candidate images

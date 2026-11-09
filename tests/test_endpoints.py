@@ -216,6 +216,53 @@ def test_search_accepts_language_and_forwards_it(monkeypatch):
     assert seen.get("language") == "fr"
 
 
+def test_news_search_uses_a_short_cache_ttl(monkeypatch):
+    seen = {}
+
+    def fake_search(query, **kw):
+        seen.update(kw)
+        return list(FAKE_ROWS), dict(FAKE_META)
+
+    monkeypatch.setattr(srv.fs, "search", fake_search)
+    c = TestClient(srv.app)
+    assert c.post("/search", json={"query": "q", "categories": "news"}).status_code == 200
+    assert seen["cache"].max_age == srv.NEWS_SEARCH_TTL
+    seen.clear()
+    assert c.post("/search", json={"query": "q", "profile": "news"}).status_code == 200
+    assert seen["cache"].max_age == srv.NEWS_SEARCH_TTL
+
+
+def test_news_search_respects_a_tighter_caller_max_age(monkeypatch):
+    seen = {}
+
+    def fake_search(query, **kw):
+        seen.update(kw)
+        return list(FAKE_ROWS), dict(FAKE_META)
+
+    monkeypatch.setattr(srv.fs, "search", fake_search)
+    c = TestClient(srv.app)
+    assert c.post(
+        "/search", json={"query": "q", "categories": "news", "max_age": 600}
+    ).status_code == 200
+    assert seen["cache"].max_age == 600
+
+
+def test_general_search_keeps_its_requested_or_default_cache_ttl(monkeypatch):
+    seen = {}
+
+    def fake_search(query, **kw):
+        seen.update(kw)
+        return list(FAKE_ROWS), dict(FAKE_META)
+
+    monkeypatch.setattr(srv.fs, "search", fake_search)
+    c = TestClient(srv.app)
+    assert c.post("/search", json={"query": "q", "max_age": 7200}).status_code == 200
+    assert seen["cache"].max_age == 7200
+    seen.clear()
+    assert c.post("/search", json={"query": "q"}).status_code == 200
+    assert seen["cache"].max_age is None
+
+
 def test_absent_language_is_not_forwarded_as_empty(monkeypatch):
     """No language means no hint -- not an empty string to be interpreted."""
     seen = {}

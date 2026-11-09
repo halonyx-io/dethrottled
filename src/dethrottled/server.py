@@ -87,7 +87,7 @@ from .api_models import (
     StructureBody,
 )
 from .api_models import DriveStep as DriveStep
-from .cache import DEFAULT_TTL, Cache, CacheView
+from .cache import DEFAULT_TTL, NEWS_SEARCH_TTL, Cache, CacheView
 from .concurrency import ContextExecutor as ThreadPoolExecutor
 from .content import constrained, passage_excerpt, present_row
 from .corpus import index_fetched, shared_corpus
@@ -298,6 +298,16 @@ MIME = {
              ".presentationml.presentation"),
     "html": "text/html",
 }
+
+
+def _search_cache_max_age(body) -> float | None:
+    """News searches must not inherit the six-hour general-search TTL."""
+    news = body.categories == "news" or body.profile == "news"
+    if not news:
+        return body.max_age
+    if body.max_age is None:
+        return NEWS_SEARCH_TTL
+    return min(body.max_age, NEWS_SEARCH_TTL)
 
 
 def _render_mode(render) -> str:
@@ -765,6 +775,7 @@ def v2_capabilities():
         "leaves_network": False,
         # What `fresh` bypasses.
         "cache_ttl_seconds": 6 * 3600,
+        "news_cache_ttl_seconds": NEWS_SEARCH_TTL,
 
         # Beyond the core contract fields, which every engine takes. A client
         # sends core + whatever is listed here, so one client works against
@@ -819,7 +830,7 @@ def _ranked(body) -> tuple:
                            # cache rather than being accepted and ignored.
                            cache=CacheView(cache(),
                                            mode="refresh" if body.fresh else body.cache_mode,
-                                           max_age=body.max_age),
+                                           max_age=_search_cache_max_age(body)),
                            profile=body.profile, engines=body.engines)
     rows, stages = ranker.apply(
         rows, body.query, bm25=body.rank or body.ranking == "bm25",
@@ -1571,6 +1582,7 @@ def corpus_stats():
             index = corpus.status()
             result.update(index=index, lifetimes={
                 "search_cache_default_ttl_seconds": DEFAULT_TTL["search"],
+                "news_search_cache_ttl_seconds": NEWS_SEARCH_TTL,
                 "extraction_cache_default_ttl_seconds": DEFAULT_TTL["extract"],
                 "retained_document_ttl_seconds": corpus.documents.ttl,
                 "retained_document_max_bytes": corpus.documents.max_bytes,
