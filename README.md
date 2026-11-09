@@ -161,7 +161,7 @@ current test-bed API with the OCR improvements is
 |---|---|
 | Browser parity | Both sides passed 27 facts, 27 drive actions, exact download, network fact, concurrency and checkpoint restore |
 | PDF concise | Same 213 content characters, `direct/direct-native`, quality `ok`; reference kept one raw table array, candidate reported `native_pdf_table_count=1` and omitted the raw array |
-| Office / OCR | PDF, DOCX, XLSX and PPTX facts, quality and tier matched; both OCR runs returned the same text and the OCR warning, misreading `hotel-905` as `hote-005` |
+| Office / OCR | PDF, DOCX, XLSX and PPTX facts, quality and tier matched; the frozen baseline OCR returned the same text and warning on both sides, misreading `hotel-905` as `hote-005` (the test-bed fix below now reads it correctly) |
 | Layout / mixed batch | `parser=docling`, 158 characters and the same two inference warnings; a four-file mixed batch matched |
 | Media / speech | Same language `en`, duration 3.812875 s, transcript and speech-uncertainty warning; one-byte response-length difference |
 | HTML ceiling | A 13.7 MB page returned HTTP 200 with `html_capture_limit`, 300 characters and no post-limit fact on both sides |
@@ -177,8 +177,8 @@ Known differences and limits: the concise PDF table change is an intentional
 presentation change, not a capability loss. On the first live pass the candidate
 returned a readable Crunchbase/Expedia result where 1.7.1 returned a partial or
 failed result; the reversed second pass matched, so this is recorded as
-upstream/order variability rather than a claimed improvement. OCR output is
-identical but wrong on one generated token, and the warning is retained. ARM64
+upstream/order variability rather than a claimed improvement. The frozen baseline OCR was identical but wrong on one generated token; the
+test-bed fix now reads it, and the warning remains. ARM64
 used software rendering, not verified hardware acceleration. Package metadata
 remains 1.7.1 because the version bump is held.
 
