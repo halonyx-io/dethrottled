@@ -103,6 +103,54 @@ silently widen it.
 
 Evidence: [phase6-html-ceiling.json](phase6-html-ceiling.json).
 
+## Media / speech parity
+
+A 3.8-second public-domain-style spoken phrase fixture (the quick brown fox
+sentence, Wikimedia Commons CC BY-SA 4.0, sha256 `aabe7ed8…`; not redistributed
+here) was served from the local files container. Both cores sent the bytes to the
+existing `media-worker` and returned exactly the same result:
+
+- `quality=ok`, tier `direct/direct-native`
+- language `en`, duration 3.812875 s, one segment `[0.000-3.840]`
+- transcript "The quick brown fox jumps over the lazy dog."
+- the speech-recognition uncertainty warning on both sides
+
+The only difference was a one-byte JSON response length. Media transcription is
+confirmed against the reference worker path; no media code changed in the
+candidate.
+
+Evidence: [phase6-media-summary.json](phase6-media-summary.json).
+
+## Live and hostile parity
+
+Live sources used the frozen five-URL protocol from
+`docs/benchmarks/2026-11-01-recovery-next/live-protocol.json` (four hostile
+sources plus the Python `sqlite3` control), with predefined lexical markers and
+6-8 second pacing, two passes in reversed order. This is observational: upstream
+responses and challenge state can change between requests.
+
+| Case | Pass 1 reference | Pass 1 candidate | Pass 2 reference | Pass 2 candidate |
+|---|---|---|---|---|
+| cargurus | failed/tls | failed/tls | failed/tls | failed/tls |
+| crunchbase | ok/tls, 664 chars, 1 marker | ok/headed read-plan, 3,000 chars, 2 markers | ok/tls, 664 chars, 1 marker | ok/tls, 664 chars, 1 marker |
+| g2 | failed/headed | failed/headed | ok/headed-native, 3,000 chars, 2 markers | ok/headed-native, 3,000 chars, 2 markers |
+| expedia | failed/tls | ok/headed read-plan, 773 chars, 2 markers | failed/tls | failed/tls |
+| python-control | ok/direct, 3,000 chars, 2 markers | ok/direct, 3,000 chars, 2 markers | ok/direct, 3,000 chars, 2 markers | ok/direct, 3,000 chars, 2 markers |
+
+The two pass-1 differences were single-observation upstream outcomes; both sides
+reported the same failed or partial results when repeated. CarGurus and Expedia
+remain failed in the repeated pass, so **no new hostile-source success is
+claimed**. The Python control remained readable on both sides.
+
+Controlled hostile sources through `/fetch` matched exactly on both sides:
+redirect-to-article succeeded; cross-host redirect, private redirect and 404
+failed safely with zero content; thin content was labelled `thin` with the
+source-completeness warning; blocked resource, busy page and oversized page
+returned the same direct result and warnings. No candidate silently widened an
+allow-list or converted a failure into `ok`.
+
+Evidence: [phase6-live-hostile.json](phase6-live-hostile.json).
+
 ## Remaining Phase 6 work
 
 1. PDF/OCR/Office/media/layout coverage and mixed batches, including the 8 MiB
