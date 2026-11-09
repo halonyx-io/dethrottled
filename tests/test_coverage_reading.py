@@ -762,6 +762,24 @@ def test_concise_pdf_omits_structured_table_metadata():
     assert compact_row(compact) == compact
 
 
+def test_compact_row_does_not_claim_omitted_tables_when_none_exist():
+    from dethrottled.content import compact_row
+
+    row = {
+        "content": "No table here.",
+        "extraction": {
+            "pages": [{"page": 1, "method": "text"}],
+            "native_pdf_tables": [],
+            "layout_tables": [],
+        },
+    }
+    compact = compact_row(row)
+    extraction = compact["extraction"]
+    assert extraction["native_pdf_table_count"] == 0
+    assert extraction["layout_table_count"] == 0
+    assert "presentation" not in extraction
+
+
 def test_concise_mixed_batch_compacts_pdf_tables_and_keeps_plain_rows():
     from dethrottled.content import present_row
 

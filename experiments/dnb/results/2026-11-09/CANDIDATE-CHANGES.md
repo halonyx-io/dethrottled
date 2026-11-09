@@ -7,7 +7,8 @@ test-bed improvements, not a released version.
 | Date | Change | Evidence | Status |
 |---|---|---|---|
 | 2026-11-09 | Regenerated stale HTTP/MCP references and fixed five broken Phase 6 prep links | [S0-S1-PROVENANCE-CONTRACTS.md](S0-S1-PROVENANCE-CONTRACTS.md) | Docs checks pass |
-| 2026-11-09 | Bounded 2x OCR upscale for small standalone images; PDF pages keep their OCR-DPI raster | [S3-OCR-RESOLUTION.md](S3-OCR-RESOLUTION.md) | 4 focused tests pass; full suite 875 passed |
+| 2026-11-09 | Bounded 2x OCR upscale for small standalone images; PDF pages keep their OCR-DPI raster | [S3-OCR-RESOLUTION.md](S3-OCR-RESOLUTION.md) | 4 focused tests pass; full suite 876 passed |
+| 2026-11-09 | Concise PDF presentation no longer claims omitted table metadata when the table list is empty | `tests/test_coverage_reading.py` | Full suite 876 passed |
 
 ## Candidate images
 

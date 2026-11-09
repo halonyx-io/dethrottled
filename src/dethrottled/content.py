@@ -288,9 +288,10 @@ def compact_row(row: dict) -> dict:
         ):
             tables = extraction.get(field)
             if isinstance(tables, list):
-                table_counts[field] = len(tables)
                 extraction[count_key] = len(tables)
                 extraction.pop(field, None)
+                if tables:
+                    table_counts[field] = len(tables)
         if omitted or table_counts:
             presentation = dict(extraction.get("presentation") or {})
             if omitted:
