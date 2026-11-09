@@ -151,6 +151,37 @@ allow-list or converted a failure into `ok`.
 
 Evidence: [phase6-live-hostile.json](phase6-live-hostile.json).
 
+## Packaging and install routes
+
+Built a wheel and sdist from a clean `git archive` of the working commit (source
+tree identical to the frozen candidate; docs/experiments only after it):
+
+| Artifact | Size | SHA-256 |
+|---|---:|---|
+| `dethrottled-1.7.1-py3-none-any.whl` | 12,372,096 B | `2cbf5579…` |
+| `dethrottled-1.7.1.tar.gz` | 12,375,796 B | `f5ed9aa2…` |
+
+The wheel carries the inert deployment context (`_stack/context.tar.gz`, 974
+files, manifest version and digest checked), both console entry points, the MIT
+licence, and all extras. Installing the wheel, the sdist and the source tree
+outside the checkout each produced a working `dethrottled` import, health
+command and stack command. The packaged bundle extracted and validated under a
+fresh `DETHROTTLED_STACK_HOME`, and `dethrottled stack status` reported the
+expected services and `volumes_preserved_on_down=true`.
+
+The public routes were also exercised in clean venvs: `pip install
+dethrottled==1.7.1` from PyPI and `pip install
+git+https://github.com/halonyx-io/dethrottled.git@v1.7.1` both installed and ran
+the console commands.
+
+**Version caveat.** The package metadata is still `1.7.1`. Bumping to 1.8.0 is
+release-gated and was deliberately not performed, so these artifacts prove the
+build/install route and bundle integrity, not the final release artifacts. The
+wheel/sdist must be rebuilt after an approved version bump and the packaged
+`_stack` manifest must match that version.
+
+Evidence: [phase6-install.json](phase6-install.json).
+
 ## Remaining Phase 6 work
 
 1. PDF/OCR/Office/media/layout coverage and mixed batches, including the 8 MiB

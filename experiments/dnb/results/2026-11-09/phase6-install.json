@@ -1,0 +1,49 @@
+{
+  "source_head": "2d6f57f12c0c98a63caab07e121155d684305fd5",
+  "frozen_candidate": "735d420",
+  "package_version": "1.7.1",
+  "version_note": "1.8.0 version bump is release-gated and was not performed; artifacts are built from the frozen source tree at the current 1.7.1 metadata version.",
+  "artifacts": {
+    "dethrottled-1.7.1-py3-none-any.whl": {
+      "bytes": 12372096,
+      "sha256": "2cbf5579a67a66cb4a3cd827da5633c7159d76f0eb804cd4e88d913ef6b24a30"
+    },
+    "dethrottled-1.7.1.tar.gz": {
+      "bytes": 12375796,
+      "sha256": "f5ed9aa2c4ef775d32eedbd85559425bf77d5d96eba4c2d64d733e2d1a358e7d"
+    }
+  },
+  "wheel": {
+    "stack_manifest": {
+      "version": "1.7.1",
+      "sha256": "d0387d1e1d0761df9d737038c787fc13ec6dadec313310775aeb92ba5593c7bd",
+      "files": 974
+    },
+    "entry_points": [
+      "dethrottled",
+      "dethrottled-health"
+    ],
+    "license_file": true,
+    "extras": [
+      "browser",
+      "documents",
+      "media",
+      "semantic",
+      "tls",
+      "all",
+      "dev"
+    ]
+  },
+  "checks": {
+    "wheel_import": "1.7.1",
+    "wheel_health_help": "ok",
+    "wheel_stack_help": "ok",
+    "sdist_install": "1.7.1",
+    "source_install": "1.7.1",
+    "packaged_bundle_extracted": true,
+    "packaged_bundle_files": 975,
+    "managed_stack_status": "ran; no managed containers; volumes_preserved_on_down=true",
+    "pypi_1.7.1": "installed and health help ok",
+    "github_v1.7.1": "installed and stack help ok"
+  }
+}
