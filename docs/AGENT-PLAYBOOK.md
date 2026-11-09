@@ -180,6 +180,8 @@ not a request to fill every budget. See [limits](LIMITS.md).
 - `quality=ok` means extraction succeeded. It does not mean the answer is true,
   complete, current or relevant. `thin` retains short HTML evidence; `suspect`
   retains possible mixed-content pollution; `failed` records an unsuccessful read.
+  A `gate_page:login|paywall|access_denied|maintenance` warning means the page is
+  a wall rather than the requested content, even when it contains long prose.
 - Preserve `warnings`, `source_partial`, `truncated`, `extraction`, acquisition
   attempts/URLs, source dates, hashes and `read_plan`. A long page may still include
   an error banner. Inspect the exact retained ranges rather than deleting a phrase.

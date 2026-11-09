@@ -49,6 +49,17 @@ The complete interpolation map is in `docker-compose.yml` and the agents overlay
 this table covers the main controls. Keep mutable data in named volumes. Do not
 point the model directory at an empty mounted path that hides the baked weights.
 
+Component settings are not Compose interpolation; set them on the named service
+through a local override:
+
+| Name | Default | Applies to |
+|---|---|---|
+| `DETHROTTLED_CACHE_MAX_BYTES` | `536870912` | API: cache footprint ceiling; oldest rows are evicted past 90% and compacted |
+| `DETHROTTLED_CACHE_MAINTENANCE_EVERY` | `200` | API: writes between expiry/size maintenance runs; `0` disables automatic runs |
+| `DETHROTTLED_BROWSER_IDLE_SECONDS` | `300` | browser worker: close the separate crawl browser when idle; `0` keeps it warm |
+| `DETHROTTLED_MEMORY_PRESSURE` | `1` | browser worker: ask Chrome to release caches after crawl/drive; `0` disables |
+| `MCP_TOOL_PROFILE` | `full` | MCP adapter: `core` exposes six high-use tools; `full` exposes all 20 |
+
 ## Automatically connected local workers
 
 The format reader starts by default. Speech and layout inference stay optional

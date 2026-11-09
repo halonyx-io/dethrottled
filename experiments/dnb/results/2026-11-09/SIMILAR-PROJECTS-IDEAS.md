@@ -64,6 +64,10 @@ resource discipline and small quality signals**, not more tools.
 
 ## Priority 0 — bugs and efficiency (do first)
 
+Implementation record: P0.1-P0.4 and P0.6 are implemented; P0.5 was tested and
+not adopted because `old.reddit.com` failed in this stack. Measurements and tests
+are in [P0-BUGS-EFFICIENCY.md](P0-BUGS-EFFICIENCY.md).
+
 ### P0.1 Cache growth has no enforcement
 
 **Observed in Dethrottled:** `Cache.purge()` exists but has no callers. TTL

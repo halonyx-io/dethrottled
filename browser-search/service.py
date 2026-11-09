@@ -342,6 +342,8 @@ async def lifespan(app):
         # measured roughly half the CPU of the headed Mesa path. Keep this opt-in
         # so standalone search workers do not pay for a second browser.
         app.state.crawl_browser = None
+        app.state.crawl_factory = None
+        app.state.crawl_browser_headless = False
         if os.getenv("DETHROTTLED_CRAWL_SEPARATE", "0") == "1":
             crawl_headless = os.getenv("DETHROTTLED_CRAWL_HEADLESS", "0") == "1"
             crawl_graphics = os.getenv("DETHROTTLED_CRAWL_GRAPHICS", "default")
@@ -350,15 +352,18 @@ async def lifespan(app):
                 if crawl_graphics == "swiftshader"
                 else []
             )
-            app.state.crawl_browser = await playwright.chromium.launch(
-                headless=crawl_headless,
-                channel="chromium",
-                args=crawl_args,
-                downloads_path=str(DOWNLOAD_DIR),
-            )
+
+            async def launch_crawl():
+                return await playwright.chromium.launch(
+                    headless=crawl_headless,
+                    channel="chromium",
+                    args=crawl_args,
+                    downloads_path=str(DOWNLOAD_DIR),
+                )
+
+            app.state.crawl_factory = launch_crawl
+            app.state.crawl_browser = await launch_crawl()
             app.state.crawl_browser_headless = crawl_headless
-        else:
-            app.state.crawl_browser_headless = False
 
         async def probe_graphics():
             context = await app.state.browser.new_context()

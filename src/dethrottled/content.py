@@ -81,11 +81,49 @@ def assess_content(text: str, html: str = "", *, structured: bool = False) -> di
                 spans=spans)
 
 
+def gate_kind(title: str, text: str, html: str = "") -> str:
+    """Name an explicit login, paywall, access-denied or maintenance gate.
+
+    A gate is different from an error banner: the page may contain paragraphs
+    of real prose, but the requested content is still behind a wall. Require
+    both a gate-like title and a visible gate signal so an ordinary article
+    that merely links to a sign-in page is not downgraded.
+    """
+    title = " ".join((title or "").split()).casefold()
+    if not title and html:
+        match = re.search(r"<title[^>]*>(.*?)</title>", html, re.I | re.S)
+        title = " ".join(match[1].split()).casefold() if match else ""
+    visible = " ".join((text or "").split()).casefold()
+    if (title.startswith(("sign in", "log in", "login"))
+            and len(title) <= 60
+            and any(marker in visible for marker in
+                    ("password", "signed in", "sign in", "log in"))):
+        return "login"
+    if (("subscribe to continue" in title
+         or "available to subscribers" in visible
+         or "free trial to read" in visible)
+            and "subscrib" in visible):
+        return "paywall"
+    if "access denied" in title or "403 forbidden" in title:
+        return "access_denied"
+    if (("service temporarily unavailable" in title or "maintenance" in title)
+            and ("maintenance" in visible or "temporarily unavailable" in visible)):
+        return "maintenance"
+    return ""
+
+
 def annotate_content(row: dict, html: str = "", *, structured: bool = False) -> dict:
     """Attach diagnostics to canonical text; retain all existing evidence and warnings."""
     assessment = assess_content(row.get("text", ""), html, structured=structured)
     if row.get("extraction", {}).get("completeness", {}).get("status") == "suspected_incomplete":
         assessment["completeness"] = "suspected_incomplete"
+    gate = "" if structured else gate_kind(row.get("title", ""), row.get("text", ""), html)
+    if gate:
+        assessment["gate"] = gate
+        if row.get("quality") not in {"suspect", "failed"}:
+            row["quality"] = "thin"
+        row["warnings"] = list(dict.fromkeys([*row.get("warnings", []),
+            f"gate_page:{gate}; content_limited; inspect_source"]))
     row["content_assessment"] = assessment
     if assessment["pollution"] == "suspected":
         row["quality"] = "suspect"

@@ -121,6 +121,40 @@ document.querySelector('pre').id='ready'};tx.oncomplete=()=>db.close()};""".repl
             content = '<html><body><p id="frame-fact">Frame fact gold-214</p></body></html>'
         elif self.path == "/tiny":
             content = "<html><body><h1>Tiny fact quartz-452</h1></body></html>"
+        elif self.path == "/error-403":
+            content = "<html><body><h1>403 Forbidden</h1><p>Access denied by policy.</p></body></html>"
+            status = 403
+        elif self.path == "/error-429":
+            content = "<html><body><h1>Too Many Requests</h1><p>Slow down and retry later.</p></body></html>"
+            status = 429
+        elif self.path == "/maintenance":
+            content = "<html><body><h1>Service temporarily unavailable</h1><p>Maintenance in progress.</p></body></html>"
+            status = 503
+        elif self.path == "/login":
+            content = ("<html><head><title>Sign in</title></head><body><main><h1>Sign in</h1>"
+                       "<form><input name=user><input name=password type=password>"
+                       "<button>Sign in</button></form><p>You must be signed in to continue.</p>"
+                       "</main></body></html>")
+        elif self.path == "/paywall":
+            content = ("<html><head><title>Subscribe to continue</title></head><body><main>"
+                       "<h1>Subscribe to continue</h1><p>This article is available to subscribers. "
+                       "Start your free trial to read the full story.</p></main></body></html>")
+        elif self.path == "/access-denied":
+            content = ("<html><head><title>Access Denied</title></head><body><main>"
+                       "<h1>Access Denied</h1><p>You do not have permission to view this page.</p>"
+                       "</main></body></html>")
+        elif self.path == "/paywall-long":
+            content = ("<html><head><title>Subscribe to continue</title></head><body><main>"
+                       + ARTICLE + "<h1>Subscribe to continue</h1><p>This article is available to subscribers.</p>"
+                       "</main></body></html>")
+        elif self.path == "/login-long":
+            content = ("<html><head><title>Sign in</title></head><body><main>"
+                       + ARTICLE + "<h1>Sign in</h1><p>You must be signed in to continue.</p>"
+                       "</main></body></html>")
+        elif self.path == "/access-denied-long":
+            content = ("<html><head><title>Access Denied</title></head><body><main>"
+                       + ARTICLE + "<h1>Access Denied</h1><p>You do not have permission to view this page.</p>"
+                       "</main></body></html>")
         elif self.path == "/huge":
             content = (
                 "<html><body><article>"

@@ -11,16 +11,24 @@ test-bed improvements, not a released version.
 | 2026-11-09 | Transparent PNGs are composited on a contrasting background before OCR | [S3-OCR-RESOLUTION.md](S3-OCR-RESOLUTION.md) | 7 focused tests pass; dark text recovered |
 | 2026-11-09 | Separate headed non-GL crawl browser; drive keeps verified Mesa/WebGL | [S2-RENDERER-CPU.md](S2-RENDERER-CPU.md) | 0.706 -> 0.370 CPU-s/request; Crunchbase and drive pass |
 | 2026-11-09 | News searches use a 30-minute cache ceiling; caller `max_age` can tighten it | [SIMILAR-PROJECTS-IDEAS.md](SIMILAR-PROJECTS-IDEAS.md) | Endpoint tests pass |
+| 2026-11-09 | Cache expiry + 512 MiB ceiling + `/stats` bytes | [P0-BUGS-EFFICIENCY.md](P0-BUGS-EFFICIENCY.md) | 17 cache tests pass |
+| 2026-11-09 | Idle crawl-browser close + Chrome memory pressure | [P0-BUGS-EFFICIENCY.md](P0-BUGS-EFFICIENCY.md) | idle 691 -> 486 MiB; relaunch 1.18 s |
+| 2026-11-09 | PDF CID-corruption detection forces OCR | [P0-BUGS-EFFICIENCY.md](P0-BUGS-EFFICIENCY.md) | targeted PDF tests pass |
+| 2026-11-09 | Long login/paywall/access-denied pages no longer read as `ok` | [P0-BUGS-EFFICIENCY.md](P0-BUGS-EFFICIENCY.md) | controlled audit; gates warn |
+| 2026-11-09 | Tested Reddit `old.reddit.com` rewrite | [P0-BUGS-EFFICIENCY.md](P0-BUGS-EFFICIENCY.md) | not adopted; old.reddit failed |
+| 2026-11-09 | MCP `MCP_TOOL_PROFILE=core` cuts tool surface 20 -> 6 | [P0-BUGS-EFFICIENCY.md](P0-BUGS-EFFICIENCY.md) | 7.8K -> 4.2K approx tokens |
+
 | 2026-11-09 | Concise PDF presentation no longer claims omitted table metadata when the table list is empty | `tests/test_coverage_reading.py` | Full suite 876 passed |
 
 ## Candidate images
 
 - Baseline worker: `dethrottled-dnb:1.8.0-candidate-20261109`
 - Baseline API: `dethrottled-dnb-api:1.8.0-candidate-20261109`
-- Current test-bed API: `dethrottled-dnb-api:1.8.0-dev-20261109`
-  (`sha256:4bdeb3e31224…`)
-- Current test-bed worker: `dethrottled-dnb:1.8.0-dev-crawlsplit3-20261109`
-  (`sha256:e82fa102…`)
+- Current test-bed API: `dethrottled-dnb-api:1.8.0-dev-p0-20261109`
+  (`sha256:00fdfbcf…`)
+- Current test-bed worker: `dethrottled-dnb:1.8.0-dev-p0-20261109`
+  (`sha256:316174ac…`)
+- Current P0 worker/API also carry the cache, CID and gate fixes.
 - Earlier OCR-only test image: `dethrottled-dnb-api:1.8.0-dev-ocr-20261109`
   (superseded)
 

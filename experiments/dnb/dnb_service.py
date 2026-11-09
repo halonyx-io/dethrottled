@@ -51,6 +51,9 @@ EXTRACTORS = ExtractionPool()
 WAITING = 0
 DRIVE_INFLIGHT = 0
 OPERATIONS = {}
+CRAWL_BROWSER_LOCK = asyncio.Lock()
+CRAWL_IDLE_SECONDS = float(os.getenv("DETHROTTLED_BROWSER_IDLE_SECONDS", "300"))
+LAST_CRAWL_USE = time.monotonic()
 
 _STATE_DIR = Path(
     os.getenv(
@@ -75,6 +78,44 @@ DEFAULT_POLICY = Scope(not ALLOW_INTERNAL)
 CURRENT_POLICY = ContextVar("dnb_network_policy", default=DEFAULT_POLICY)
 
 
+async def _crawl_browser_locked():
+    """Return the separate crawl browser, relaunching it after an idle close."""
+    current = getattr(app.state, "crawl_browser", None)
+    if current is not None and current.is_connected():
+        return current
+    factory = getattr(app.state, "crawl_factory", None)
+    if factory is None:
+        return app.state.browser
+    current = await factory()
+    app.state.crawl_browser = current
+    return current
+
+
+async def new_crawl_context(proxy):
+    """Open a context while holding the same lock as the idle reaper."""
+    async with CRAWL_BROWSER_LOCK:
+        render_browser = await _crawl_browser_locked()
+        return await render_browser.new_context(accept_downloads=True, proxy=proxy)
+
+
+async def relieve_memory(state):
+    """Ask Chromium to release caches after a completed page operation."""
+    if os.getenv("DETHROTTLED_MEMORY_PRESSURE", "1").lower() in {"0", "false", "no", "off"}:
+        return
+    cdp = state.get("_dnb_cdp")
+    if cdp is None:
+        try:
+            cdp = await state["context"].new_cdp_session(state["page"])
+            state["_dnb_cdp"] = cdp
+        except Exception:
+            return
+    try:
+        await cdp.send("Memory.simulatePressureNotification", {"level": "critical"})
+        COUNTS["memory_pressure"] += 1
+    except Exception:
+        COUNTS["memory_pressure_failed"] += 1
+
+
 async def create_state():
     network = CURRENT_POLICY.get()
     gate = Gate(
@@ -85,8 +126,7 @@ async def create_state():
     context = None
     try:
         proxy = await gate.start()
-        render_browser = getattr(app.state, "crawl_browser", None) or app.state.browser
-        context = await render_browser.new_context(accept_downloads=True, proxy=proxy)
+        context = await new_crawl_context(proxy)
         page = await context.new_page()
         await install_navigation(context, network, gate.events)
         return {
@@ -97,6 +137,7 @@ async def create_state():
             "events": browser._new_event_store(),
             "responses": [],
             "network_gate": gate,
+            "_dnb_cdp": None,
         }
     except BaseException:
         if context:
@@ -139,13 +180,37 @@ async def lifespan(application):
                 await asyncio.sleep(10)
                 await POOL.reap()
 
+        async def reap_browser():
+            while True:
+                await asyncio.sleep(30)
+                if CRAWL_IDLE_SECONDS <= 0:
+                    continue
+                if time.monotonic() - LAST_CRAWL_USE < CRAWL_IDLE_SECONDS:
+                    continue
+                if RENDER_SLOTS._value < 2 or WAITING:
+                    continue
+                if getattr(app.state, "crawl_factory", None) is None:
+                    continue
+                async with CRAWL_BROWSER_LOCK:
+                    current = getattr(app.state, "crawl_browser", None)
+                    if current is None:
+                        continue
+                    await POOL.shutdown()
+                    app.state.crawl_browser = None
+                    try:
+                        await current.close()
+                    except Exception:
+                        pass
+
         task = asyncio.create_task(reap())
+        browser_task = asyncio.create_task(reap_browser())
         try:
             await EXTRACTORS.warm()
             yield
         finally:
+            browser_task.cancel()
             task.cancel()
-            await asyncio.gather(task, return_exceptions=True)
+            await asyncio.gather(browser_task, task, return_exceptions=True)
             await POOL.shutdown()
             await EXTRACTORS.close()
 
@@ -404,7 +469,8 @@ async def _crawl(body: CrawlRequest, request: Request = None):
         raise HTTPException(403, "non-public target")
     network_policy = policy(request, url)
     started = time.monotonic()
-    global WAITING
+    global WAITING, LAST_CRAWL_USE
+    LAST_CRAWL_USE = started
     if memory_pressure():
         raise retry_error("render_memory_pressure", 503, True)
     if WAITING >= 4:
@@ -487,6 +553,7 @@ async def _crawl(body: CrawlRequest, request: Request = None):
             if not result["success"] and "error_message" not in result:
                 result["error_message"] = "empty_extracted_content"
             COUNTS["success" if result["success"] else "failed"] += 1
+            await relieve_memory(state)
             return {"success": result["success"], "results": [result]}
     except TimeoutError:
         raise retry_error("browser_timeout", 504, False) from None
@@ -524,6 +591,7 @@ async def _crawl(body: CrawlRequest, request: Request = None):
             ],
         }
     finally:
+        LAST_CRAWL_USE = time.monotonic()
         CURRENT_POLICY.reset(policy_token)
         RENDER_SLOTS.release()
 
@@ -660,7 +728,9 @@ browser._close_drive_state = close_state
 
 async def drive_steps(state, body):
     try:
-        return await ORIGINAL_DRIVE_STEPS(state, body)
+        result = await ORIGINAL_DRIVE_STEPS(state, body)
+        await relieve_memory(state)
+        return result
     except asyncio.CancelledError:
         if body.session:
             await browser._drop_drive_session(body.session, expected=state)

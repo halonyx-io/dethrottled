@@ -218,12 +218,12 @@ review is in [SIMILAR-PROJECTS-IDEAS.md](SIMILAR-PROJECTS-IDEAS.md); Hound is
 
 | Priority | Item | Stage | Evidence / status |
 |---|---|---|---|
-| **P0.1** | Enforce cache expiry and a size ceiling; report cache bytes | S7, S9 | `Cache.purge()` has no callers and there is no size cap. Hound caps and evicts. |
-| **P0.2** | Browser idle close plus CDP memory-pressure after fetch/drive | S8 | Ten-minute browser grew 495 -> 619 MiB; split uses ~1.0 GiB. Hound closes idle browsers and sends memory pressure. |
-| **P0.3** | Detect PDF `(cid:` garbage and force OCR for the affected page | S3, S5 | No CID handling today. Hound's flagship PDF recovery. |
-| **P0.4** | Audit 404/403/429/login/paywall/error pages for false `ok` | S2, S3 | Hound's universal error detection. This is a correctness bug if any such page reads as success. |
-| **P0.5** | Reddit rewrite/read-path efficiency (`old.reddit.com`) | S2, S3 | No rewrite today. Hound reports a much smaller page; measure bytes/CPU and content parity. |
-| **P0.6** | Measure and trim MCP tool-definition token cost | S1, S10 | Hound ships 6 tools in ~2.7K tokens; Dethrottled has 20 unmeasured tools. |
+| **P0.1** | Enforce cache expiry and a size ceiling; report cache bytes | S7, S9 | **Implemented.** 512 MiB default, periodic expiry/eviction, `/stats` bytes; 17 cache tests. |
+| **P0.2** | Browser idle close plus CDP memory-pressure after fetch/drive | S8 | **Implemented.** Idle 691 -> 486 MiB; relaunch 1.18 s; pressure counter exposed. |
+| **P0.3** | Detect PDF `(cid:` garbage and force OCR for the affected page | S3, S5 | **Implemented.** CID pages force OCR, warn and record provenance; synthetic tests pass. |
+| **P0.4** | Audit 404/403/429/login/paywall/error pages for false `ok` | S2, S3 | **Fixed.** Long login/paywall/access-denied pages now `thin` + `gate_page:*`; clean article unchanged. |
+| **P0.5** | Reddit rewrite/read-path efficiency (`old.reddit.com`) | S2, S3 | **Tested, not adopted.** `www.reddit.com` worked; `old.reddit.com` failed after 7.1 s in this stack. |
+| **P0.6** | Measure and trim MCP tool-definition token cost | S1, S10 | **Implemented profile.** full 20 tools ~7.8K tokens; core 6 tools ~4.2K. |
 | **P1.1** | Search date provenance (`date_source`, `dated_results`, undated warning) | S6, S10 | free-search-mcp gives agents a trust signal; Dethrottled has dates but not their source. |
 | **P1.2** | `source_type` / `page_type` / fetch relevance fields | S10 | Hound exposes these; derive from existing URL/extraction data, no new classifier. |
 | **P1.3** | Whole-bucket decoy detection | S2, S6 | free-search-mcp's measured signal; needs a labelled query set before use. |

@@ -1,0 +1,20 @@
+[
+  {
+    "url": "https://www.reddit.com/r/programming/",
+    "status": 200,
+    "quality": "ok",
+    "tier": "crawl4ai/crawl4ai-native",
+    "chars": 1000,
+    "failure": null,
+    "elapsed_s": 1.83
+  },
+  {
+    "url": "https://old.reddit.com/r/programming/",
+    "status": 200,
+    "quality": "failed",
+    "tier": "headed",
+    "chars": 0,
+    "failure": "direct:http_403 | tls:fetched_but_no_extractor_succeeded | crawl4ai:crawl4ai_network_policy:allowed_host | headed:headed_HTTPError",
+    "elapsed_s": 7.12
+  }
+]

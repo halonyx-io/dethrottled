@@ -181,8 +181,9 @@ browser worker, SearXNG, renderer and optional parsing workers are private.
 The optional HTML-to-PDF overlay currently publishes 8788 on all host interfaces;
 review its mapping. Public adapters do not replace network egress isolation.
 
-Inspect `/stats` for tier rest state, cache and headed/renderer admission; research
-has its own two-request semaphore. Optional workers expose private readiness and
+Inspect `/stats` for tier rest state, cache and headed/renderer admission; the
+cache block reports `bytes`, `max_bytes` and the last expiry/eviction run.
+Research has its own two-request semaphore. Optional workers expose private readiness and
 metrics. Record exact URLs, expected facts, timestamps, input controls and raw
 results; distinguish missing source evidence from a transport or limiter failure.
 

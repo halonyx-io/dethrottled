@@ -28,6 +28,19 @@ PDF_PAGE_CAP = 1000
 # native size. Larger images already carry the detail, and upscaling them would
 # only add work and memory.
 OCR_UPSCALE_MAX_PIXELS = 2_500_000
+# Broken ToUnicode maps turn glyphs into "(cid:NNN)" tokens. A page can carry a
+# few in a diagram, but a high density means the text layer is unusable even
+# though it is long enough to look successful.
+CID_MARKER = re.compile(r"\(cid:\d+\)", re.I)
+
+
+def _cid_garbage(text: str) -> bool:
+    markers = CID_MARKER.findall(text or "")
+    if len(markers) >= 10:
+        return True
+    if len(markers) < 3:
+        return False
+    return sum(map(len, markers)) / max(len(text), 1) >= 0.02
 
 
 def _flatten_for_ocr(page):
@@ -214,8 +227,14 @@ def pdf_text(data, limit, allow_ocr, options):
             page = doc[number]
             text = page.get_text(sort=True)
             method = "text"
+            cid_garbage = _cid_garbage(text)
             # Sparse text often coexists with a scanned body; don't let a footer hide it.
-            force_ocr = options.get("ocr_mode") == "always"
+            # A CID-corrupted text layer is long but unusable, so it also forces OCR.
+            force_ocr = options.get("ocr_mode") == "always" or cid_garbage
+            if cid_garbage and not allow_ocr:
+                warnings.append(
+                    f"Page {number + 1}: cid_garbage; OCR disabled, inspect the source page"
+                )
             if allow_ocr and (force_ocr or (len(text.strip()) < 100 and page.get_images())):
                 if ocr_count < ocr.PAGE_CAP:
                     try:
@@ -227,11 +246,22 @@ def pdf_text(data, limit, allow_ocr, options):
                             png, limit, options.get("ocr_language", ""), upscale=False
                         )
                         if recovered.strip():
-                            if force_ocr and text.strip():
+                            if cid_garbage:
+                                text, method = recovered, "ocr"
+                                warnings.append(
+                                    f"Page {number + 1}: cid_garbage_recovered; "
+                                    "OCR replaced an unreadable font text layer"
+                                )
+                            elif force_ocr and text.strip():
                                 text, method = text + "\n[OCR reading]\n" + recovered, "text+ocr"
                             else:
                                 text, method = recovered, "ocr"
                             warnings.extend(meta["warnings"])
+                        elif cid_garbage:
+                            warnings.append(
+                                f"Page {number + 1}: cid_garbage_unrecovered; "
+                                "inspect the source page"
+                            )
                     except (ValueError, OSError, subprocess.TimeoutExpired) as exc:
                         warnings.append(f"Page {number + 1}: OCR failed: {exc}")
                 else:
@@ -259,6 +289,7 @@ def pdf_text(data, limit, allow_ocr, options):
                        "text_truncated": len(block[4]) > 500}
                       for block in page.get_text("blocks", sort=True)[:30] if block[6] == 0]
             pages.append({"page": number + 1, "method": method, "text_chars": len(text),
+                          "cid_garbage": cid_garbage,
                           "text_layer_blocks": layout,
                           "layout_coordinate_space": "PDF points, origin top-left",
                           "layout_may_be_incomplete": True})

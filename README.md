@@ -196,6 +196,10 @@ Test-bed improvements after the freeze are tracked in
 The first one recovers low-resolution OCR digits (`hotel-905`, reference read
 `hote-005`) with a bounded 2x upscale for standalone images; PDF page rasters
 keep their existing OCR-DPI resolution. The frozen images were not overwritten.
+P0 test-bed hardening now also enforces cache expiry/size, closes the idle crawl
+browser, adds CID-corrupted PDF OCR, warns on long login/paywall/access-denied
+pages, and offers a six-tool MCP profile. See
+[P0-BUGS-EFFICIENCY.md](experiments/dnb/results/2026-11-09/P0-BUGS-EFFICIENCY.md).
 The full record is in [PHASE-6.md](experiments/dnb/results/2026-11-09/PHASE-6.md),
 and the next layer-by-layer comparison is in
 [CANDIDATE-BENCHMARK-PLAN.md](experiments/dnb/results/2026-11-09/CANDIDATE-BENCHMARK-PLAN.md).

@@ -17,8 +17,8 @@
 | Docker server | 29.8.2 |
 | Python | 3.13.5 |
 | Production | 1.7.1 `dethrottled:local`, running healthy |
-| Current test-bed API | `dethrottled-dnb-api:1.8.0-dev-20261109` `sha256:4bdeb3e3…` |
-| Current test-bed worker | `dethrottled-dnb:1.8.0-dev-crawlsplit3-20261109` `sha256:e82fa102…` |
+| Current test-bed API | `dethrottled-dnb-api:1.8.0-dev-p0-20261109` `sha256:00fdfbcf…` |
+| Current test-bed worker | `dethrottled-dnb:1.8.0-dev-p0-20261109` `sha256:316174ac…` |
 
 ## S1 REST contract
 
@@ -67,6 +67,8 @@ The comparison and prioritisation are in
 carries the ordered backlog: **bugs/efficiency (P0) first**, then S2/S3
 correctness, then exploratory P2 work.
 
-Next: P0.1 cache ceiling, P0.2 browser idle/memory, P0.3 CID PDF OCR, P0.4
-false-error-page audit, P0.5 Reddit efficiency and P0.6 tool-definition tokens.
-Then resume S2 acquisition and S3 extraction with the fixed corpus.
+P0 is now recorded complete in [P0-BUGS-EFFICIENCY.md](P0-BUGS-EFFICIENCY.md):
+cache ceiling/expiry, browser idle close and pressure, CID PDF OCR, gate-page
+warnings, the Reddit test (not adopted), and the optional core MCP profile.
+Next is P1: date/source provenance, decoy buckets, cache-key normalization and
+token/truncation polish.

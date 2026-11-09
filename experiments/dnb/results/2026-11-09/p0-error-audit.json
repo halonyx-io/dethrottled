@@ -1,0 +1,207 @@
+{
+  "reference": {
+    "/error-403": {
+      "status": 200,
+      "quality": "failed",
+      "tier": "tls",
+      "chars": 0,
+      "failure": "direct:http_403 | tls:tls_http_403",
+      "warnings": null,
+      "gate": null
+    },
+    "/error-429": {
+      "status": 200,
+      "quality": "failed",
+      "tier": "tls",
+      "chars": 0,
+      "failure": "direct:http_429 | tls:tls_http_429",
+      "warnings": null,
+      "gate": null
+    },
+    "/maintenance": {
+      "status": 200,
+      "quality": "failed",
+      "tier": "tls",
+      "chars": 0,
+      "failure": "direct:http_503 | tls:tls_http_503",
+      "warnings": null,
+      "gate": null
+    },
+    "/login": {
+      "status": 200,
+      "quality": "thin",
+      "tier": "direct/short",
+      "chars": 42,
+      "failure": null,
+      "warnings": [
+        "thin_content; coverage_not_verified"
+      ],
+      "gate": null
+    },
+    "/paywall": {
+      "status": 200,
+      "quality": "thin",
+      "tier": "direct/short",
+      "chars": 109,
+      "failure": null,
+      "warnings": [
+        "thin_content; coverage_not_verified"
+      ],
+      "gate": null
+    },
+    "/access-denied": {
+      "status": 200,
+      "quality": "thin",
+      "tier": "direct/short",
+      "chars": 59,
+      "failure": null,
+      "warnings": [
+        "thin_content; coverage_not_verified"
+      ],
+      "gate": null
+    },
+    "/paywall-long": {
+      "status": 200,
+      "quality": "ok",
+      "tier": "direct/resiliparse",
+      "chars": 1000,
+      "failure": null,
+      "warnings": [],
+      "gate": null
+    },
+    "/login-long": {
+      "status": 200,
+      "quality": "ok",
+      "tier": "direct/resiliparse",
+      "chars": 1000,
+      "failure": null,
+      "warnings": [],
+      "gate": null
+    },
+    "/access-denied-long": {
+      "status": 200,
+      "quality": "ok",
+      "tier": "direct/resiliparse",
+      "chars": 1000,
+      "failure": null,
+      "warnings": [],
+      "gate": null
+    },
+    "/article": {
+      "status": 200,
+      "quality": "ok",
+      "tier": "direct/resiliparse",
+      "chars": 1000,
+      "failure": null,
+      "warnings": [],
+      "gate": null
+    }
+  },
+  "candidate": {
+    "/error-403": {
+      "status": 200,
+      "quality": "failed",
+      "tier": "tls",
+      "chars": 0,
+      "failure": "direct:http_403 | tls:tls_http_403",
+      "warnings": null,
+      "gate": null
+    },
+    "/error-429": {
+      "status": 200,
+      "quality": "failed",
+      "tier": "tls",
+      "chars": 0,
+      "failure": "direct:http_429 | tls:tls_http_429",
+      "warnings": null,
+      "gate": null
+    },
+    "/maintenance": {
+      "status": 200,
+      "quality": "failed",
+      "tier": "tls",
+      "chars": 0,
+      "failure": "direct:http_503 | tls:tls_http_503",
+      "warnings": null,
+      "gate": null
+    },
+    "/login": {
+      "status": 200,
+      "quality": "thin",
+      "tier": "direct/short",
+      "chars": 42,
+      "failure": null,
+      "warnings": [
+        "gate_page:login; content_limited; inspect_source",
+        "thin_content; coverage_not_verified"
+      ],
+      "gate": "login"
+    },
+    "/paywall": {
+      "status": 200,
+      "quality": "thin",
+      "tier": "direct/short",
+      "chars": 109,
+      "failure": null,
+      "warnings": [
+        "gate_page:paywall; content_limited; inspect_source",
+        "thin_content; coverage_not_verified"
+      ],
+      "gate": "paywall"
+    },
+    "/access-denied": {
+      "status": 200,
+      "quality": "thin",
+      "tier": "direct/short",
+      "chars": 59,
+      "failure": null,
+      "warnings": [
+        "gate_page:access_denied; content_limited; inspect_source",
+        "thin_content; coverage_not_verified"
+      ],
+      "gate": "access_denied"
+    },
+    "/paywall-long": {
+      "status": 200,
+      "quality": "thin",
+      "tier": "direct/resiliparse",
+      "chars": 1000,
+      "failure": null,
+      "warnings": [
+        "gate_page:paywall; content_limited; inspect_source"
+      ],
+      "gate": "paywall"
+    },
+    "/login-long": {
+      "status": 200,
+      "quality": "thin",
+      "tier": "direct/resiliparse",
+      "chars": 1000,
+      "failure": null,
+      "warnings": [
+        "gate_page:login; content_limited; inspect_source"
+      ],
+      "gate": "login"
+    },
+    "/access-denied-long": {
+      "status": 200,
+      "quality": "thin",
+      "tier": "direct/resiliparse",
+      "chars": 1000,
+      "failure": null,
+      "warnings": [
+        "gate_page:access_denied; content_limited; inspect_source"
+      ],
+      "gate": "access_denied"
+    },
+    "/article": {
+      "status": 200,
+      "quality": "ok",
+      "tier": "direct/resiliparse",
+      "chars": 1000,
+      "failure": null,
+      "warnings": [],
+      "gate": null
+    }
+  }
+}

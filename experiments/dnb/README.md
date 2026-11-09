@@ -179,6 +179,10 @@ checkpoints and is deliberately not used as evidence of restoration.
   not Crawl4AI's entire API. Unknown options fail validation. There is no arbitrary
   JavaScript execution, LLM extraction, deep-crawl, scheduled job or screenshot API
   added to `/crawl`; `/drive` retains its existing screenshot/actions contract.
+- Browser lifecycle: `DETHROTTLED_BROWSER_IDLE_SECONDS` (default 300, `0`
+  disables) closes the separate crawl browser when no render is active;
+  `DETHROTTLED_MEMORY_PRESSURE=0` disables the post-operation Chrome pressure
+  hint. The next crawl relaunches the crawl browser on demand.
 - Supported configs: `BrowserConfig.headless` (requested mode recorded, **effective
   mode is headed**), and `CrawlerRunConfig` bypass, no worker robots check,
   100–30,000 ms navigation budget, 0–5 s settling and optional `css:` wait.
