@@ -65,6 +65,33 @@ still to exercise.
 
 Evidence: [phase6-optional-summary.json](phase6-optional-summary.json).
 
+## Layout and mixed-batch parity
+
+Both cores used the existing docling layout worker and served the same generated
+files. `table.pdf` with `document_mode=layout` returned `parser=docling`, 158
+characters and the same two inference warnings on both sides. A mixed four-file
+batch (PDF, DOCX, XLSX, PPTX) returned the same quality, tier and character
+counts on both sides.
+
+Evidence: [phase6-layout-mixed.json](phase6-layout-mixed.json).
+
+## ARM64
+
+Built the reference browser and candidate on `q6a` (`aarch64`, Docker 29.9.3):
+
+- reference `dethrottled-dnb-browser:reference`
+  `sha256:b9e0fe2a…`
+- candidate `dethrottled-dnb:1.8.0-candidate-arm64`
+  `sha256:9fb7c41b…`
+
+The candidate starts and serves `/health` with software `llvmpipe`
+(`hardware_verified=false`, WebGL pixel correct) and a real `/crawl` retained
+`cobalt-731`. The focused phase-1/2 tests pass **29/29** on ARM64.
+
+Evidence: [phase6-arm64-summary.json](phase6-arm64-summary.json),
+[phase6-arm64-health.json](phase6-arm64-health.json),
+[phase6-arm64-tests.log](phase6-arm64-tests.log).
+
 ## Remaining Phase 6 work
 
 1. PDF/OCR/Office/media/layout coverage and mixed batches, including the 8 MiB

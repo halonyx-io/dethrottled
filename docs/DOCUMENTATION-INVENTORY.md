@@ -13,7 +13,7 @@ must be classified; unknown paths fail generation/checking.
 | dependency-input | 4 |
 | generated | 4 |
 | harness-guide | 20 |
-| historical-evidence | 120 |
+| historical-evidence | 124 |
 | planned-work | 1 |
 | source-contract | 162 |
 | third-party-notice | 4 |
@@ -223,6 +223,10 @@ Evidence maintainer: preserve observations; append explicit corrections.
 | [experiments/dnb/results/2026-11-09/phase5-phase3-wire.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase5-phase3-wire.json) |
 | [experiments/dnb/results/2026-11-09/phase5-provenance.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase5-provenance.json) |
 | [experiments/dnb/results/2026-11-09/phase5-summary.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase5-summary.json) |
+| [experiments/dnb/results/2026-11-09/phase6-arm64-health.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase6-arm64-health.json) |
+| [experiments/dnb/results/2026-11-09/phase6-arm64-summary.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase6-arm64-summary.json) |
+| [experiments/dnb/results/2026-11-09/phase6-arm64-tests.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase6-arm64-tests.log) |
+| [experiments/dnb/results/2026-11-09/phase6-layout-mixed.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase6-layout-mixed.json) |
 | [experiments/dnb/results/2026-11-09/phase6-optional-summary.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase6-optional-summary.json) |
 | [experiments/dnb/results/2026-11-09/phase6-pdf-candidate.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase6-pdf-candidate.json) |
 | [experiments/dnb/results/2026-11-09/phase6-pdf-reference.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase6-pdf-reference.json) |
