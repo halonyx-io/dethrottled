@@ -22,6 +22,23 @@ MEMBER_LIMIT = 50
 # Native text is cheap compared with OCR/layout inference. Keep an independent
 # work bound for sparse/malicious PDFs, without truncating ordinary long RFCs.
 PDF_PAGE_CAP = 1000
+# Tesseract needs enough pixels per glyph. Small screenshots and low-resolution
+# scans otherwise lose digits and hyphenated tokens; a bounded 2x Lanczos pass
+# recovered "hotel-905" from a low-resolution fixture that read "hote-005" at
+# native size. Larger images already carry the detail, and upscaling them would
+# only add work and memory.
+OCR_UPSCALE_MAX_PIXELS = 2_500_000
+
+
+def _ocr_png(page, upscale=True):
+    """PNG bytes for Tesseract, with a bounded upscale for small images."""
+    from PIL import Image
+
+    if upscale and page.width * page.height <= OCR_UPSCALE_MAX_PIXELS:
+        page = page.resize((page.width * 2, page.height * 2), Image.Resampling.LANCZOS)
+    buffer = io.BytesIO()
+    page.save(buffer, format="PNG")
+    return buffer.getvalue()
 
 
 def kind_of(data, url="", content_type=""):
@@ -92,7 +109,7 @@ def kind_of(data, url="", content_type=""):
     return ""
 
 
-def image_text(data, limit, language=""):
+def image_text(data, limit, language="", *, upscale=True):
     from PIL import Image, ImageOps
 
     from . import ocr
@@ -105,14 +122,13 @@ def image_text(data, limit, language=""):
             if image.width * image.height > 40_000_000:
                 raise ValueError("image_pixel_limit")
             page = ImageOps.exif_transpose(image).convert("RGB")
-            png = io.BytesIO()
-            page.save(png, format="PNG")
-            lang = language or ocr._choose(png.getvalue(), ocr.installed())[0]
+            png = _ocr_png(page, upscale=upscale)
+            lang = language or ocr._choose(png, ocr.installed())[0]
             if not re.fullmatch(r"[a-z_]+(?:\+[a-z_]+)*", lang):
                 raise ValueError("invalid_ocr_language")
             done = subprocess.run(
                 ["tesseract", "stdin", "stdout", "-l", lang, "tsv"],
-                input=png.getvalue(),
+                input=png,
                 capture_output=True,
                 timeout=ocr.PAGE_TIMEOUT,
                 env=ocr._environment(),
@@ -174,7 +190,11 @@ def pdf_text(data, limit, allow_ocr, options):
                     try:
                         ocr_count += 1
                         png = page.get_pixmap(dpi=ocr.DPI).tobytes("png")
-                        recovered, meta = image_text(png, limit, options.get("ocr_language", ""))
+                        # The page was already rendered at OCR DPI; upscaling it
+                        # again changed table row recognition, so keep its pixels.
+                        recovered, meta = image_text(
+                            png, limit, options.get("ocr_language", ""), upscale=False
+                        )
                         if recovered.strip():
                             if force_ocr and text.strip():
                                 text, method = text + "\n[OCR reading]\n" + recovered, "text+ocr"

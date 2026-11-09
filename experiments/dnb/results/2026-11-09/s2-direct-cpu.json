@@ -1,0 +1,18 @@
+{
+  "reference": {
+    "n": 40,
+    "cpu_seconds": 31.198754,
+    "cpu_per_request": 0.77996885,
+    "median_s": 1.5679959058761597,
+    "p95_s": 1.732231855392456,
+    "fails": 0
+  },
+  "candidate": {
+    "n": 40,
+    "cpu_seconds": 32.135212,
+    "cpu_per_request": 0.8033803,
+    "median_s": 1.5801897048950195,
+    "p95_s": 1.7679052352905273,
+    "fails": 0
+  }
+}

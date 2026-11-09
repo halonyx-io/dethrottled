@@ -13,7 +13,7 @@ must be classified; unknown paths fail generation/checking.
 | dependency-input | 4 |
 | generated | 4 |
 | harness-guide | 20 |
-| historical-evidence | 135 |
+| historical-evidence | 145 |
 | planned-work | 1 |
 | source-contract | 162 |
 | third-party-notice | 4 |
@@ -191,6 +191,7 @@ Evidence maintainer: preserve observations; append explicit corrections.
 | [experiments/dnb/results/2026-11-08/phase3-tests.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-08/phase3-tests.log) |
 | [experiments/dnb/results/2026-11-08/phase3-wire.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-08/phase3-wire.json) |
 | [experiments/dnb/results/2026-11-09/CANDIDATE-BENCHMARK-PLAN.md](../experiments/dnb/results/2026-11-09/CANDIDATE-BENCHMARK-PLAN.md) |
+| [experiments/dnb/results/2026-11-09/CANDIDATE-CHANGES.md](../experiments/dnb/results/2026-11-09/CANDIDATE-CHANGES.md) |
 | [experiments/dnb/results/2026-11-09/PHASE-4.md](../experiments/dnb/results/2026-11-09/PHASE-4.md) |
 | [experiments/dnb/results/2026-11-09/PHASE-5-PLAN.md](../experiments/dnb/results/2026-11-09/PHASE-5-PLAN.md) |
 | [experiments/dnb/results/2026-11-09/PHASE-5.md](../experiments/dnb/results/2026-11-09/PHASE-5.md) |
@@ -203,6 +204,8 @@ Evidence maintainer: preserve observations; append explicit corrections.
 | [experiments/dnb/results/2026-11-09/PHASE-6-RELEASE-GATE.md](../experiments/dnb/results/2026-11-09/PHASE-6-RELEASE-GATE.md) |
 | [experiments/dnb/results/2026-11-09/PHASE-6.md](../experiments/dnb/results/2026-11-09/PHASE-6.md) |
 | [experiments/dnb/results/2026-11-09/S0-S1-PROVENANCE-CONTRACTS.md](../experiments/dnb/results/2026-11-09/S0-S1-PROVENANCE-CONTRACTS.md) |
+| [experiments/dnb/results/2026-11-09/S2-RESOURCE-ATTRIBUTION.md](../experiments/dnb/results/2026-11-09/S2-RESOURCE-ATTRIBUTION.md) |
+| [experiments/dnb/results/2026-11-09/S3-OCR-RESOLUTION.md](../experiments/dnb/results/2026-11-09/S3-OCR-RESOLUTION.md) |
 | [experiments/dnb/results/2026-11-09/phase4-cache-tests.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase4-cache-tests.log) |
 | [experiments/dnb/results/2026-11-09/phase4-cache.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase4-cache.json) |
 | [experiments/dnb/results/2026-11-09/phase4-dom-after.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase4-dom-after.json) |
@@ -242,6 +245,13 @@ Evidence maintainer: preserve observations; append explicit corrections.
 | [experiments/dnb/results/2026-11-09/phase6-pytest.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase6-pytest.log) |
 | [experiments/dnb/results/2026-11-09/s1-openapi-candidate.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/s1-openapi-candidate.json) |
 | [experiments/dnb/results/2026-11-09/s1-openapi-reference.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/s1-openapi-reference.json) |
+| [experiments/dnb/results/2026-11-09/s2-direct-cpu.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/s2-direct-cpu.json) |
+| [experiments/dnb/results/2026-11-09/s2-extract-bench.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/s2-extract-bench.json) |
+| [experiments/dnb/results/2026-11-09/s3-ocr-candidate.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/s3-ocr-candidate.json) |
+| [experiments/dnb/results/2026-11-09/s3-ocr-reference.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/s3-ocr-reference.json) |
+| [experiments/dnb/results/2026-11-09/s3-ocr-table-candidate.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/s3-ocr-table-candidate.json) |
+| [experiments/dnb/results/2026-11-09/s3-ocr-table-reference.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/s3-ocr-table-reference.json) |
+| [experiments/dnb/results/2026-11-09/s3-ocr-tests.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/s3-ocr-tests.log) |
 
 ## planned-work
 

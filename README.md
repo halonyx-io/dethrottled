@@ -182,9 +182,17 @@ remains 1.7.1 because the version bump is held.
 
 The candidate uses roughly 6.8-7.2 CPU-seconds per 10 renders versus 2.4-2.8 for
 1.7.1 at similar latency; this is a measured target for improvement, not a
-speedup claim. The full record is in
-[PHASE-6.md](experiments/dnb/results/2026-11-09/PHASE-6.md), and the next
-layer-by-layer comparison is in
+speedup claim. Controlled direct extraction is within 3% (0.803 versus 0.780
+CPU-seconds per request) and the extraction worker itself is about 0.019
+CPU-seconds per request, so the renderer, not the reader, owns that gap.
+
+Test-bed improvements after the freeze are tracked in
+[CANDIDATE-CHANGES.md](experiments/dnb/results/2026-11-09/CANDIDATE-CHANGES.md).
+The first one recovers low-resolution OCR digits (`hotel-905`, reference read
+`hote-005`) with a bounded 2x upscale for standalone images; PDF page rasters
+keep their existing OCR-DPI resolution. The frozen images were not overwritten.
+The full record is in [PHASE-6.md](experiments/dnb/results/2026-11-09/PHASE-6.md),
+and the next layer-by-layer comparison is in
 [CANDIDATE-BENCHMARK-PLAN.md](experiments/dnb/results/2026-11-09/CANDIDATE-BENCHMARK-PLAN.md).
 No release or deployment happens without fresh approval.
 

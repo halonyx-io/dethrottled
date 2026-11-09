@@ -988,6 +988,11 @@
       "review": "Evidence maintainer: preserve observations; append explicit corrections."
     },
     {
+      "path": "experiments/dnb/results/2026-11-09/CANDIDATE-CHANGES.md",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
       "path": "experiments/dnb/results/2026-11-09/PHASE-4.md",
       "lifecycle": "historical-evidence",
       "review": "Evidence maintainer: preserve observations; append explicit corrections."
@@ -1044,6 +1049,16 @@
     },
     {
       "path": "experiments/dnb/results/2026-11-09/S0-S1-PROVENANCE-CONTRACTS.md",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "experiments/dnb/results/2026-11-09/S2-RESOURCE-ATTRIBUTION.md",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "experiments/dnb/results/2026-11-09/S3-OCR-RESOLUTION.md",
       "lifecycle": "historical-evidence",
       "review": "Evidence maintainer: preserve observations; append explicit corrections."
     },
@@ -1239,6 +1254,41 @@
     },
     {
       "path": "experiments/dnb/results/2026-11-09/s1-openapi-reference.json",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "experiments/dnb/results/2026-11-09/s2-direct-cpu.json",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "experiments/dnb/results/2026-11-09/s2-extract-bench.json",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "experiments/dnb/results/2026-11-09/s3-ocr-candidate.json",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "experiments/dnb/results/2026-11-09/s3-ocr-reference.json",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "experiments/dnb/results/2026-11-09/s3-ocr-table-candidate.json",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "experiments/dnb/results/2026-11-09/s3-ocr-table-reference.json",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
+      "path": "experiments/dnb/results/2026-11-09/s3-ocr-tests.log",
       "lifecycle": "historical-evidence",
       "review": "Evidence maintainer: preserve observations; append explicit corrections."
     },
