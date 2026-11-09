@@ -13,7 +13,7 @@ must be classified; unknown paths fail generation/checking.
 | dependency-input | 4 |
 | generated | 4 |
 | harness-guide | 20 |
-| historical-evidence | 131 |
+| historical-evidence | 132 |
 | planned-work | 1 |
 | source-contract | 162 |
 | third-party-notice | 4 |
@@ -190,6 +190,7 @@ Evidence maintainer: preserve observations; append explicit corrections.
 | [experiments/dnb/results/2026-11-08/phase3-soak.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-08/phase3-soak.json) |
 | [experiments/dnb/results/2026-11-08/phase3-tests.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-08/phase3-tests.log) |
 | [experiments/dnb/results/2026-11-08/phase3-wire.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-08/phase3-wire.json) |
+| [experiments/dnb/results/2026-11-09/CANDIDATE-BENCHMARK-PLAN.md](../experiments/dnb/results/2026-11-09/CANDIDATE-BENCHMARK-PLAN.md) |
 | [experiments/dnb/results/2026-11-09/PHASE-4.md](../experiments/dnb/results/2026-11-09/PHASE-4.md) |
 | [experiments/dnb/results/2026-11-09/PHASE-5-PLAN.md](../experiments/dnb/results/2026-11-09/PHASE-5-PLAN.md) |
 | [experiments/dnb/results/2026-11-09/PHASE-5.md](../experiments/dnb/results/2026-11-09/PHASE-5.md) |

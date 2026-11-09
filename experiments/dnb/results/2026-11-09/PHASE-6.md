@@ -248,18 +248,20 @@ no diff from the frozen candidate commit `735d420`.
 
 Evidence: [phase6-pytest.log](phase6-pytest.log).
 
-## Remaining Phase 6 work
+## Candidate held
 
-All technical Phase 6 checks above are complete. The only remaining work is the
-release gate, which requires explicit approval:
+All technical Phase 6 checks above pass, but the owner has **held the candidate**
+for further test-bed work before any release. The version remains 1.7.1 and
+production is untouched.
 
-1. Decide and apply the 1.8.0 version bump.
-2. Rebuild the wheel, sdist and container images from the approved commit.
-3. Re-run the packaged bundle version/digest check and a final install smoke.
-4. Publish only after approval; production remains on 1.7.1 until then.
+The next stage is a layer-by-layer benchmark and improvement campaign comparing
+1.8.0 with deployed 1.7.1. The full matrix, hypotheses and decision rules are in
+[CANDIDATE-BENCHMARK-PLAN.md](CANDIDATE-BENCHMARK-PLAN.md). The release checklist
+remains in [PHASE-6-RELEASE-GATE.md](PHASE-6-RELEASE-GATE.md) but is not
+authorised.
 
-The exact approval checklist and rollback plan are in
-[PHASE-6-RELEASE-GATE.md](PHASE-6-RELEASE-GATE.md).
+No version bump, publish or deployment happens until that plan is closed and the
+owner approves again.
 
 ## Resource note
 

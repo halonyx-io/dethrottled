@@ -1,7 +1,13 @@
 # Phase 6 release gate
 
-2026-11-09. All technical Phase 6 checks pass. Nothing below the gate has been
-released, published, version-bumped or deployed. Production remains on 1.7.1.
+2026-11-09. **Held by owner.** All technical Phase 6 checks pass, but the
+candidate needs further improvement work in the test bed before release. Nothing
+below the gate has been released, published, version-bumped or deployed.
+Production remains on 1.7.1.
+
+The follow-on benchmark and improvement plan is
+[CANDIDATE-BENCHMARK-PLAN.md](CANDIDATE-BENCHMARK-PLAN.md). Release steps below
+remain unauthorised until the owner closes that plan and approves again.
 
 ## What is verified
 

@@ -84,9 +84,11 @@ started: the candidate API image is built and its first PDF parity smoke passes
 with the expected concise-table presentation difference; layout, mixed-batch and
 ARM64 runtime checks also pass, as do media/live/hostile parity, packaging and
 install routes, mixed-load/crash containment and rollback preservation. Only the
-approved 1.8.0 version bump and release remain; the approval checklist is in
-[the release gate](results/2026-11-09/PHASE-6-RELEASE-GATE.md) and the full record
-in [the Phase 6 progress record](results/2026-11-09/PHASE-6.md).
+owner has held the candidate for further test-bed work. The next stage is the
+[layer-by-layer benchmark and improvement plan](results/2026-11-09/CANDIDATE-BENCHMARK-PLAN.md);
+the full record is in [the Phase 6 progress record](results/2026-11-09/PHASE-6.md)
+and the unauthorised release checklist in
+[the release gate](results/2026-11-09/PHASE-6-RELEASE-GATE.md).
 
 | Phase | Status | Remaining work |
 |---|---|---|
@@ -95,7 +97,7 @@ in [the Phase 6 progress record](results/2026-11-09/PHASE-6.md).
 | 3. Verified identity/integration | Accepted in the isolated x86_64 worker | Keep the REST/MCP/worker gate passing; full compatibility remains phase 6 |
 | 4. Inherited defects | Accepted in the isolated lab: PDF bloat and DOM adoption fixed; cache validator hardened | Keep the concise-size, DOM and cache regressions; full parity remains phase 6 |
 | 5. Browser modes/GPU | Accepted in the isolated lab: matched headed/headless x software/verified hardware matrix | Keep the probe and fallback regressions; native/release validation remains phase 6 |
-| 6. Candidate and release | Technical checks complete: parity, media/live/hostile, ARM64, packaging/install, load/crash/rollback | 1.8.0 version bump, final artifact rebuild and release approval |
+| 6. Candidate and release | Technical checks complete; candidate held for further improvement work | Layer-by-layer 1.8.0 vs 1.7.1 benchmark and accepted fixes; release re-approval |
 
 Production stays on 1.7.1. This branch remains unpublished development work;
 1.8.0 is not declared ready. The 1.8.2 DPR document is saved planning only.
