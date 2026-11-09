@@ -113,16 +113,21 @@ noise.
 
 ## Improvement hypotheses to test
 
-### H1. Per-render CPU overhead
+### H1. Per-render CPU overhead — improved
 
 Observed: the candidate used ~6.8-7.2 CPU-seconds per 10 renders versus ~2.4-2.8
-for 1.7.1, with similar latency. The consolidation may be doing extra work or
-re-parsing more than once.
+for 1.7.1, with similar latency. The consolidation was not the reader: direct
+extraction was within 3% and the extractor was ~0.019 CPU-seconds/call. The gap
+was the headed Mesa/llvmpipe browser.
 
-Test: paired 30-render batches with the same browser and fixtures; cgroup CPU
-deltas; `cProfile` on candidate extraction; per-tier breakdown. Target: at least
-10% lower CPU per successful read with no fact loss. If the cost buys a
-measurable quality gain, document the trade instead of hiding it.
+Implemented: a separate headed non-GL crawl browser; `/drive` keeps the verified
+Mesa/WebGL browser. Ten renders fell from **0.706 to 0.370 CPU-seconds/request**
+at the same latency, with Crunchbase and drive passing. The trade is about
+1.0 GiB browser memory versus 0.52 GiB. Reference remains 0.216. See
+[S2-RENDERER-CPU.md](S2-RENDERER-CPU.md).
+
+Next: H11 (browser idle/memory) and H12 (cache ceiling) before more renderer
+work.
 
 ### H2. Tier selection and headed fallback
 
@@ -145,15 +150,19 @@ retrieval, bytes and readability. Target: a compact table representation only if
 it improves usable information without the full array cost. Otherwise keep the
 current intentional difference and document it.
 
-### H4. OCR numeric and layout accuracy
+### H4. OCR numeric and layout accuracy — improved
 
 Observed: both sides misread the same generated PNG token (`hotel-905` became
 `hote-005`) with the warning retained.
 
-Test: a labelled OCR set with digits, punctuation, small fonts and rotated text;
-compare tesseract modes already installed, upscaling and crop. Target: fewer
-digit errors without new hallucinations. Any gain must be measured against the
-warning and confidence semantics.
+Implemented: bounded 2x upscale for small standalone images (candidate now reads
+`hotel-905`), no upscale for PDF pages already rendered at OCR DPI (the first
+version regressed table rows and was fixed), and transparent PNGs composited on
+a contrasting background (dark text on transparent black was empty before).
+See [S3-OCR-RESOLUTION.md](S3-OCR-RESOLUTION.md).
+
+Next: a labelled OCR set with digits, punctuation, small fonts and rotated text
+to check for regressions; P0.3 adds CID-garbage PDF recovery.
 
 ### H5. Worker sizing, timeouts and failure surfacing
 
@@ -200,19 +209,54 @@ pages. Compare `quality`, warnings and suggested next action. Target: no false
 `ok`; warnings name the limitation, not a generic disclaimer. This is the best
 place to improve trust without adding features.
 
+## Prioritized backlog
+
+Bugs and efficiency first. Exploratory work is deliberately last. The source
+review is in [SIMILAR-PROJECTS-IDEAS.md](SIMILAR-PROJECTS-IDEAS.md); Hound is
+`dondai1234/master-fetch` 12.4.1 and the second project is
+`sweetcornna/free-search-mcp`.
+
+| Priority | Item | Stage | Evidence / status |
+|---|---|---|---|
+| **P0.1** | Enforce cache expiry and a size ceiling; report cache bytes | S7, S9 | `Cache.purge()` has no callers and there is no size cap. Hound caps and evicts. |
+| **P0.2** | Browser idle close plus CDP memory-pressure after fetch/drive | S8 | Ten-minute browser grew 495 -> 619 MiB; split uses ~1.0 GiB. Hound closes idle browsers and sends memory pressure. |
+| **P0.3** | Detect PDF `(cid:` garbage and force OCR for the affected page | S3, S5 | No CID handling today. Hound's flagship PDF recovery. |
+| **P0.4** | Audit 404/403/429/login/paywall/error pages for false `ok` | S2, S3 | Hound's universal error detection. This is a correctness bug if any such page reads as success. |
+| **P0.5** | Reddit rewrite/read-path efficiency (`old.reddit.com`) | S2, S3 | No rewrite today. Hound reports a much smaller page; measure bytes/CPU and content parity. |
+| **P0.6** | Measure and trim MCP tool-definition token cost | S1, S10 | Hound ships 6 tools in ~2.7K tokens; Dethrottled has 20 unmeasured tools. |
+| **P1.1** | Search date provenance (`date_source`, `dated_results`, undated warning) | S6, S10 | free-search-mcp gives agents a trust signal; Dethrottled has dates but not their source. |
+| **P1.2** | `source_type` / `page_type` / fetch relevance fields | S10 | Hound exposes these; derive from existing URL/extraction data, no new classifier. |
+| **P1.3** | Whole-bucket decoy detection | S2, S6 | free-search-mcp's measured signal; needs a labelled query set before use. |
+| **P1.4** | Query normalization for cache identity only | S2 | Hound/free-search-mcp cache normalisation; measure hit rate, never change upstream text. |
+| **P1.5** | Token estimates and boundary-aware truncation | S3, S10 | free-search-mcp output shaping; keep canonical text/cache unchanged. |
+| **P2.1** | Search consensus / intent fan-out | S6 | Hound; measure recall and added requests before adopting. |
+| **P2.2** | Neural rerank | S6 | Hound uses an ONNX cross-encoder; Dethrottled deliberately has it off. Experiment only. |
+| **P2.3** | Semantic query cache | S6 | Hound two-level cache; separate namespace, false-hit precision at 0.90-0.95. |
+| **P2.4** | Persistent browser profile / stealth | S4, S8 | Hound; needs security review for cross-caller isolation. |
+| **P2.5** | Proxy / BYOK key rotation | S6, S9 | Hound; keep opt-in, never a default third-party route. |
+
+Already implemented in this cycle: P0 render CPU split, low-resolution OCR,
+transparent-PNG OCR, concise empty-table metadata, news cache ceiling, and the
+HTTP/MCP reference fixes. They remain in the suite as regressions.
+
 ## Execution order
 
-1. **S0-S1 provenance and contracts.** Re-record image IDs, freeze env, diff
-   OpenAPI/MCP surfaces. One week of work is not needed; this is a short gate.
-2. **S2-S3 acquisition and extraction.** Build the fixed corpus and paired
-   harness; run the first full matrix and publish the gap list.
-3. **S4-S6 browser, workers and corpus.** Reuse `compare.py`, `verify.py`,
+1. **Close S0/S1.** Provenance and contract diff are already recorded; add the
+   tool-definition token baseline (P0.6).
+2. **P0 bugs/efficiency.** Cache ceiling (P0.1), browser idle/memory (P0.2),
+   CID PDF OCR (P0.3), false-error-page audit (P0.4), Reddit efficiency (P0.5).
+   Do these before adding any new capability.
+3. **S2-S3 correctness.** Fixed corpus, paired extraction matrix, error and
+   warning review. Adopt only measured fixes.
+4. **S4-S6 browser, workers and corpus.** Reuse `compare.py`, `verify.py`,
    `phase5_check.py` and the existing worker lab; add only missing fixtures.
-4. **S7-S8 performance and robustness.** Run cgroup-based resource benches,
-   concurrency ladder, 60-minute soak and crash injection.
-5. **S9-S10 packaging and UX.** Clean install, stack upgrade/rollback, error and
-   warning review.
-6. **Decision round.** Rank improvements by user value, risk and measured gain;
+5. **S7-S8 performance and robustness.** Re-run cgroup resource benches,
+   concurrency ladder, 60-minute soak and crash injection after P0.
+6. **S9-S10 packaging and UX.** Clean install, stack upgrade/rollback, token
+   estimates, source/date provenance and tool-definition trimming.
+7. **P1/P2 exploratory work.** Only after P0/P1 correctness and efficiency are
+   stable; each experiment needs its own before/after evidence.
+8. **Decision round.** Rank improvements by user value, risk and measured gain;
    implement only the accepted set, then rerun the full suite.
 
 ## Deliverables per stage

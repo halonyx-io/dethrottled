@@ -1,171 +1,228 @@
-# Ideas from similar projects
+# Similar projects: Hound and free-search-mcp
 
-2026-11-09. Read-only review of two open-source projects for S2/S3 improvements.
-No code was copied; both are MIT-licensed and this note records design ideas and
-the tests that would justify adopting them.
+2026-11-09. Read-only review for S2/S3 and cross-layer improvements. No code was
+copied. Both projects are MIT-licensed.
 
-- **mcp-web-hound** (`ilgizar-valiullin/mcp-web-hound`): unified MCP search with
-  provider fallback, exact + semantic cache, NLI reranking and rate budgets.
-- **free-search-mcp** (`sweetcornna/free-search-mcp`): local-first MCP search,
-  fetch and document reading with multi-engine RRF, FTS5 cache, date provenance,
-  decoy-bucket detection and LLM-shaped output.
+| Project | Version / commit | What it is |
+|---|---|---|
+| [Hound / master-fetch](https://github.com/dondai1234/master-fetch) | `86d1b1329c0e…`, package 12.4.1 | One local MCP server for fetch, crawl, keyless search, screenshots, PDFs and OCR; HTTP first, Patchright stealth browser on block |
+| [free-search-mcp](https://github.com/sweetcornna/free-search-mcp) | `2c7fee99b890…` | Local-first MCP search/fetch/documents; multi-engine RRF, FTS5 cache, date provenance, decoy-bucket detection |
 
-"hound" is ambiguous; the code-search, GPS and BloodHound projects are not
-comparable to this retrieval stack. The review below uses `mcp-web-hound`.
+## What they do that is worth studying
 
-## What Dethrottled already does
+### Hound
 
-| Idea | Dethrottled status |
-|---|---|
-| Multi-engine search with fallback | Already has DDG/SearXNG/browser sources, engine rest and bounded menus |
-| Exact search/extraction cache | Already has SQLite cache with TTL and validators |
-| Reuse extracted text | Already has documents, corpus, focus excerpts and offsets |
-| Reader-mode extraction | Already Trafilatura/Resiliparse/Selectolax cascade |
-| Tool errors with next steps | Already has `workflow.next_actions` and structured failure reasons |
-| Provider health/backoff | Already has engine health and cooling |
-| Rate/budget gates | Already has admission, concurrency and search budgets |
-| PDF/Office/OCR/media | Already broader than either project |
-| Browser/drive | Already a first-class scoped browser, stronger than either |
+- **HTTP-first escalation.** Cheap HTTP first; Patchright only when blocked or
+  the page is a JS shell. One warm browser, closed after five idle minutes
+  (`HOUND_BROWSER_IDLE_TIMEOUT`, default 300s) and relaunched in ~2s.
+- **Memory pressure after fetch.** Sends Chrome
+  `Memory.simulatePressureNotification` after each fetch to trigger GC/cache
+  drop; reports RSS decreasing over sequential fetches.
+- **Cache discipline.** SQLite WAL; bad content is never cached; cache size cap
+  evicts oldest entries; `cache_ttl=0` forces fresh; pagination served from
+  cache.
+- **PDF quality.** Structured markdown with tables, headings, ToC, page ranges,
+  a `quality_score`, and **CID-corruption detection**: pages whose text is
+  `(cid:NNN)` garbage are rendered and OCR'd automatically.
+- **Query-focused extraction.** BM25 block selection with heading-aware
+  boosting and table/code preservation; avoids re-fetching.
+- **Agent signals.** `content_ok`, `page_type`, `next_action`, `summary`,
+  `content_age_days`/`is_stale`, `source_type`/`is_official`,
+  `relevance_score`/`fetch_relevance`.
+- **Search quality.** Ten keyless backends in parallel, cross-engine consensus,
+  intent-aware query fan-out, six-signal ranking, source-type detection,
+  per-domain diversity cap, circuit breakers and persistent warm sessions.
+- **Token economy.** ~2.7K tokens for six tools, hand-written definitions and a
+  one-time connect-time instruction block.
 
-The useful gap is therefore in **search-result quality signals**, **cache
-freshness**, and **small output-shaping details**, not in basic fetch coverage.
+### free-search-mcp
 
-## Implemented this round
+- **Whole-bucket decoy detection.** A CAPTCHA/empty result is obvious; the
+  dangerous failure is HTTP 200 results that match only the first query token.
+  It measures whether the bucket mentions query terms beyond the first and only
+  drops a bucket when another healthy bucket proves the query can be echoed.
+- **Date provenance.** `date_source` (`structured`, `snippet`, `none`),
+  `dated_results`, `freshness_note`; a snippet date is never presented as a
+  verified publication date.
+- **Output shaping.** Token estimates, paragraph/sentence-aware truncation,
+  Markdown-first responses, tool annotations and errors that name the next step.
+- **Cache and TTL.** Exact SQLite cache plus FTS5 page search; freshness and
+  category-specific TTLs (news shorter than general web, weather/rates shorter
+  still).
+- **Search hygiene.** RRF across engines, host-canonical and title-fuzzy
+  deduplication, lead snippets, category routing, engine benches/reserves.
+- **Browser fallback.** Persistent Playwright context with a real Chrome
+  channel and per-session viewport changes.
 
-### News search cache ceiling (Hound/free-search-mcp)
+## What Dethrottled already covers
 
-Hound shortens TTLs by query intent; free-search-mcp does the same for
-`freshness=day/week/month`. Dethrottled kept every search result for six hours,
-including `categories="news"` and `profile="news"`.
+Dethrottled already has a stronger fetch/document/browser surface than either:
+multi-tier acquisition, scoped drive with checkpoints, PDF/Office/OCR/media,
+documents with offsets, corpus v1/v2, worker isolation, admission control,
+warnings and `workflow.next_actions`. The useful work is therefore **bugs,
+resource discipline and small quality signals**, not more tools.
 
-Implemented: news searches now use a **30-minute** search-cache ceiling; a
-tighter caller `max_age` still wins. Capabilities expose
-`news_cache_ttl_seconds`, and the agent playbook documents the behaviour. Tests
-cover news, profile-news, tighter caller bounds and the unchanged general case.
+## Priority 0 — bugs and efficiency (do first)
 
-This is a low-risk freshness improvement, not a ranking claim.
+### P0.1 Cache growth has no enforcement
 
-## Prioritized ideas still to evaluate
+**Observed in Dethrottled:** `Cache.purge()` exists but has no callers. TTL
+expiry only turns a read into a miss; expired rows remain on disk. There is no
+size cap. A long-lived stack can grow the cache without bound.
 
-### P1. Whole-bucket decoy detection
+**Borrowed from Hound:** bad content is not cached, cache size is capped, oldest
+entries are evicted.
 
-**Source:** free-search-mcp `coherence.py`.
+**Work:** periodic expired-row purge; a configurable size ceiling (start at
+512 MiB); delete oldest rows when over the ceiling; compact only when needed;
+report cache bytes in `/stats` or `/v2/status`; test with a tiny cap. Map to S7
+and S9.
 
-Some engines answer HTTP 200 with well-formed results that match only the first
-query token (Bing returning the game "Rust" for "rust ownership borrowing"). Per
-result lexical scoring was measured and rejected there; the useful signal is the
-whole bucket.
+### P0.2 Browser memory and idle lifecycle
 
-**Proposed test:** capture real provider buckets for a fixed query set, label
-healthy vs decoy, compute the share of results mentioning a non-first query term.
-If Dethrottled's sources separate cleanly, add a bucket-level warning/drop that
-only removes a bucket when another healthy bucket proves the query can be
-echoed. Never drop a bucket on a single result.
+**Observed in Dethrottled:** the ten-minute soak held ~495-619 MiB in one
+browser; the new crawl/drive split uses ~1.0 GiB. The browser stays warm forever.
 
-**Value:** search precision and fewer confidently wrong source menus.
+**Borrowed from Hound:** close an idle browser after a timeout and relaunch on
+demand; send a CDP memory-pressure notification after fetch/drive.
 
-### P2. Date provenance per search result
+**Work:** measure `Memory.simulatePressureNotification` after `/crawl` and
+`/drive`; close idle browsers after a configurable timeout; measure next-request
+latency and RSS. Keep the health endpoint truthful during relaunch. Map to S8.
 
-**Source:** free-search-mcp `date_source`, `dated_results`, `freshness_note`.
+### P0.3 PDF CID-corruption pages are not detected
 
-Dethrottled carries `publishedDate` but does not say whether it came from
-structured metadata or was parsed from a snippet, and does not summarise how many
-results are dated.
+**Observed in Dethrottled:** no `(cid:` handling. A paper with broken font
+ToUnicode maps can return long, confident-looking garbage and never trigger the
+OCR fallback because the text length is high.
 
-**Proposed test:** for a fixed result set, classify dates as `structured`,
-`snippet` or `none`, compare with hand-labelled dates. Add `date_source`,
-`dated_results` and a warning when most results are undated. Keep the existing
-date value unchanged.
+**Borrowed from Hound:** detect CID garbage, render the page and OCR it.
 
-**Value:** agents stop treating an undated snippet as a current fact. This fits
-Dethrottled's existing warning-first design.
+**Work:** detect a high `(cid:` density, force OCR for that page, preserve the
+native text and add a `cid_garbage_recovered` warning; test with a synthetic
+PDF or a mocked page. Map to S3/S5.
 
-### P3. Search query normalisation for cache keys
+### P0.4 Error pages that look like success
 
-**Source:** mcp-web-hound query normaliser.
+**Borrowed from Hound:** universal error detection so 404/bot/auth/paywall pages
+do not return fake content.
 
-Dethrottled cache keys use the raw query. Collapsing whitespace and normalising
-case for cache identity (not for the upstream query) would turn
-`"python  asyncio"` and `"Python asyncio"` into one cache entry.
+**Work:** audit a labelled set of 404, 403, 429, login, paywall, access-denied and
+maintenance pages; compare `quality`, `content_status` and warnings. Fix any
+case that returns `ok` with the error page as the article. Map to S2/S3.
 
-**Proposed test:** cache hit-rate improvement over a recorded query log, with a
-check that upstream query text and ranking are unchanged. Low risk; do not
-normalise semantically or strip operators.
+### P0.5 Reddit is expensive
 
-### P4. Token estimate and boundary-aware truncation
+**Borrowed from Hound:** rewrite Reddit URLs to `old.reddit.com`, which is much
+smaller, and skip straight to the appropriate acquisition path.
 
-**Source:** free-search-mcp `formatting.py`.
+**Work:** measure bytes/CPU on a fixed Reddit thread with and without the
+rewrite. Add the rewrite only if content and warnings stay equivalent. Map to
+S2/S3.
 
-Dethrottled reports characters and truncation but not an approximate token cost,
-and some paths still cut at a character boundary. A cheap CJK/Latin char
-heuristic plus paragraph/sentence-aware truncation would help agents budget and
-avoid half-sentences.
+### P0.6 Tool-definition token cost
 
-**Proposed test:** measure truncation boundary quality and token-estimate error
-on English/CJK fixtures. Add estimates only where the response already reports
-`content_chars`; do not change canonical retained text.
+**Observed in Dethrottled:** 20 MCP tools; Hound ships six tools in ~2.7K tokens.
+Dethrottled's definitions and docstrings are not measured.
 
-### P5. Semantic search cache
+**Work:** add a no-dependency `tools/list` token counter (chars/4 Latin, CJK
+aware), record the baseline, then trim duplicated workflow text from tool
+descriptions while keeping the one-time instructions. Map to S1/S10.
 
-**Source:** mcp-web-hound two-level cache.
+## Priority 1 — correctness and agent usefulness
 
-Exact cache misses on paraphrases. A semantic layer would need an embedding
-model and a similarity threshold; Dethrottled already has MiniLM/E5 weights for
-the corpus, so the marginal model cost is small but the false-hit risk is real.
+### P1.1 Date provenance per search result
 
-**Proposed test:** fixed paraphrase pairs and unrelated-topic pairs; measure hit
-precision/recall at thresholds 0.90-0.95. Only adopt if precision is very high
-and the cache namespace is separate from evidence retrieval. This is a larger
-change than P1-P4 and should not be bundled with release work.
+Add `date_source` (`structured`/`snippet`/`none`), `dated_results` and a warning
+when most results are undated. This prevents an undated snippet from reading as
+a current fact. Map to S6/S10.
 
-### P6. NLI reranking
+### P1.2 Source/page type and fetch relevance
 
-**Source:** mcp-web-hound NLI reranker (DeBERTa-v3-xsmall).
+Add `source_type` (`docs`/`paper`/`repo`/`blog`/`forum`/`reference`/`news`) and
+`page_type` (`article`/`list`/`js_shell`) where the pipeline already knows them.
+Do not add a new classifier; derive from the URL host and extraction result.
+Map to S10.
 
-Dethrottled deliberately ships `rerank=false` and a deterministic lexical/
-corpus ranking. A neural reranker adds a model, latency and a new failure mode.
-It would need a controlled MRR/nDCG gain over the existing ranker before it is
-worth considering. Keep this as an experiment, not a default.
+### P1.3 Decoy-bucket detection
 
-### P7. Title-fuzzy syndication dedup
+Adopt free-search-mcp's whole-bucket signal, not per-result lexical scoring.
+Only drop or warn on a bucket when another healthy bucket proves the query can
+be echoed. Requires a labelled query set first. Map to S2/S6.
 
-**Source:** free-search-mcp title/host canonical dedup.
+### P1.4 Query normalization for cache identity
 
-This conflicts with Dethrottled's deliberate rule that titles alone cannot prove
-syndication and independent URLs are preserved. Do not adopt it as a default.
-A safer variant is a warning-level `possible_mirror` annotation, never a silent
-merge.
+Collapse whitespace and normalize case for the cache key only, not the upstream
+query. Measure hit-rate gain on a recorded query log. Map to S2.
 
-### P8. Persistent browser profile
+### P1.5 Token estimates and boundary-aware truncation
 
-**Source:** free-search-mcp `launch_persistent_context`.
+Add an approximate token count and truncate at paragraph/sentence boundaries
+where the response already reports `content_chars`. Do not change canonical
+retained text or cache payloads. Map to S3/S10.
 
-Persistent cookies improve some anti-bot flows but create a privacy and
-cross-caller isolation problem. Dethrottled already has checkpoints and
-owner-scoped sessions. Do not make the shared browser profile persistent without
-a separate security review.
+### P1.6 Reddit and error-page results in the read plan
 
-## Not worth adopting
+If P0.4/P0.5 identify a repeatable failure, encode the successful recovery as a
+read-plan action rather than a bespoke fetch rule. Map to S2/S3.
 
-- **Download/paper-graph tool surfaces:** Dethrottled's drive downloads and
-  research coverage already cover the use case.
-- **Hand-rolled MCP transport / no SDK:** Dethrottled's adapter contract is
-  settled.
-- **Category engine explosion:** Dethrottled's profiles and source menus are
-  already bounded; adding dozens of vertical engines would increase latency and
-  maintenance without a measured gap.
+## Priority 2 — exploratory, only after P0/P1
 
-## Suggested order
+### P2.1 Search consensus / multi-query fan-out
 
-1. P2 date provenance and P3 query normalisation (small, testable).
-2. P1 decoy buckets (quality gain, needs a labelled set).
-3. P4 token/truncation polish.
-4. P5 semantic cache and P6 NLI only as separate experiments.
+Hound's cross-engine consensus and intent-aware fan-out can improve recall, but
+Dethrottled already has source profiles and ranking. Measure against the frozen
+query set before adding requests or latency. Map to S6.
 
-Each item gets a paired before/after measurement and the same
-[benchmark rules](CANDIDATE-BENCHMARK-PLAN.md). None of these authorise a release.
+### P2.2 Neural reranking
+
+Hound uses a local ONNX cross-encoder. Dethrottled deliberately ships
+`rerank=false`. Run it as an experiment only; require a clear MRR/nDCG gain over
+the existing lexical/corpus ranking and document the model/latency cost. Map to
+S6.
+
+### P2.3 Semantic query cache
+
+A two-level exact+semantic cache can catch paraphrases. Use the existing
+MiniLM/E5 weights, but measure false-hit precision at 0.90-0.95 and keep it in a
+separate namespace from evidence retrieval. Map to S6.
+
+### P2.4 Persistent browser profile / stealth
+
+Hound's persistent context and JS patches improve some anti-bot flows but
+conflict with Dethrottled's owner/session isolation and privacy expectations.
+Needs a separate security review; do not make it the default. Map to S4/S8.
+
+### P2.5 Proxy and key rotation
+
+Useful for heavy search use, but Dethrottled already treats optional providers
+as opt-in and must not send queries to third parties by default. Keep as an
+operator option, not an automatic route. Map to S6/S9.
+
+## Deliberately rejected as defaults
+
+- **Title-fuzzy syndication dedup.** Dethrottled's rule that titles alone cannot
+  prove syndication is correct. At most add a `possible_mirror` warning.
+- **Persistent shared browser profile.** Cross-caller cookie leakage is a
+  security regression.
+- **Dozens of vertical search engines.** Dethrottled's source menus are bounded;
+  add only a measured gap.
+- **Category engine explosion / paid backends by default.** Keep the keyless,
+  no-account default.
+
+## Suggested execution order
+
+1. P0.1 cache ceiling, P0.2 browser memory/idle, P0.3 CID OCR, P0.4 error pages.
+2. P0.5 Reddit and P0.6 tool-definition tokens.
+3. P1.1 date provenance, P1.2 source/page type, P1.3 decoy buckets.
+4. P1.4 query normalization, P1.5 token/truncation polish.
+5. P2 experiments only after the P0/P1 suite is stable.
+
+Every item needs the paired before/after measurement in
+[CANDIDATE-BENCHMARK-PLAN.md](CANDIDATE-BENCHMARK-PLAN.md); no release action is
+authorised by this note.
 
 ## Sources
 
-- <https://github.com/ilgizar-valiullin/mcp-web-hound> (MIT)
-- <https://github.com/sweetcornna/free-search-mcp> (MIT)
+- <https://github.com/dondai1234/master-fetch> (MIT, 12.4.1, commit `86d1b132…`)
+- <https://github.com/sweetcornna/free-search-mcp> (MIT, commit `2c7fee99…`)

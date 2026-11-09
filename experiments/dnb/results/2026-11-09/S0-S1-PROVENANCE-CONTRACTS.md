@@ -17,6 +17,8 @@
 | Docker server | 29.8.2 |
 | Python | 3.13.5 |
 | Production | 1.7.1 `dethrottled:local`, running healthy |
+| Current test-bed API | `dethrottled-dnb-api:1.8.0-dev-20261109` `sha256:4bdeb3e3…` |
+| Current test-bed worker | `dethrottled-dnb:1.8.0-dev-crawlsplit3-20261109` `sha256:e82fa102…` |
 
 ## S1 REST contract
 
@@ -51,4 +53,20 @@ Verification after the fixes:
 Evidence: [s1-openapi-reference.json](s1-openapi-reference.json),
 [s1-openapi-candidate.json](s1-openapi-candidate.json).
 
-Next: S2 acquisition ladder and S3 extraction quality.
+## External project review
+
+Two MIT projects were reviewed read-only for the S2/S3 backlog:
+
+| Project | Version / commit | Scope |
+|---|---|---|
+| `dondai1234/master-fetch` (Hound) | 12.4.1, commit `86d1b132…` | HTTP-first fetch, Patchright stealth browser, cache discipline, PDF CID OCR, focus extraction, search consensus, token-optimized tools |
+| `sweetcornna/free-search-mcp` | commit `2c7fee99…` | Multi-engine RRF, FTS5 cache, date provenance, decoy-bucket detection, output shaping, freshness TTLs |
+
+The comparison and prioritisation are in
+[SIMILAR-PROJECTS-IDEAS.md](SIMILAR-PROJECTS-IDEAS.md). The S0-S10 plan now
+carries the ordered backlog: **bugs/efficiency (P0) first**, then S2/S3
+correctness, then exploratory P2 work.
+
+Next: P0.1 cache ceiling, P0.2 browser idle/memory, P0.3 CID PDF OCR, P0.4
+false-error-page audit, P0.5 Reddit efficiency and P0.6 tool-definition tokens.
+Then resume S2 acquisition and S3 extraction with the fixed corpus.
