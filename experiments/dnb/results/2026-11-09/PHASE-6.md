@@ -169,7 +169,9 @@ command and stack command. The packaged bundle extracted and validated under a
 fresh `DETHROTTLED_STACK_HOME`, and `dethrottled stack status` reported the
 expected services and `volumes_preserved_on_down=true`.
 
-The public routes were also exercised in clean venvs: `pip install
+`scripts/verify_stack_package.py` passed on the wheel (974 context files, 56 copy
+sources) and `twine check` passed for both artifacts. The public routes were also
+exercised in clean venvs: `pip install
 dethrottled==1.7.1` from PyPI and `pip install
 git+https://github.com/halonyx-io/dethrottled.git@v1.7.1` both installed and ran
 the console commands.

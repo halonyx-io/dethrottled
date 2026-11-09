@@ -44,6 +44,8 @@
     "packaged_bundle_files": 975,
     "managed_stack_status": "ran; no managed containers; volumes_preserved_on_down=true",
     "pypi_1.7.1": "installed and health help ok",
-    "github_v1.7.1": "installed and stack help ok"
+    "github_v1.7.1": "installed and stack help ok",
+    "verify_stack_package": "passed: 974 context files, 56 copy sources checked",
+    "twine_check": "passed for wheel and sdist"
   }
 }
