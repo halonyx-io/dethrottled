@@ -1213,6 +1213,11 @@
       "review": "Evidence maintainer: preserve observations; append explicit corrections."
     },
     {
+      "path": "experiments/dnb/results/2026-11-09/phase6-pytest.log",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
       "path": "experiments/dnb/security_check.py",
       "lifecycle": "source-contract",
       "review": "Change author: audit docs impact, advertised defaults and generated contracts."

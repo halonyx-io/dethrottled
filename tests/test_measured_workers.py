@@ -275,7 +275,7 @@ def test_upgraded_readers_refresh_only_affected_cached_content(
     )
 
     class Cache:
-        def get(self, *a):
+        def get(self, *a, **kw):
             return {
                 "ok": True,
                 "text": "old extraction",

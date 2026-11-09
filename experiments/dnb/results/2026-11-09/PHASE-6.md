@@ -232,6 +232,20 @@ by the first reference container survived every switch.
 
 Evidence: [phase6-load-crash-rollback.json](phase6-load-crash-rollback.json).
 
+## Full offline test suite
+
+The complete non-network suite was run against the frozen source: **875 passed,
+135 skipped, 2 deselected** in 135 s. Collection and execution used
+`PYTHONPATH=src` and the project test dependencies.
+
+The first run exposed one stale test double: `test_measured_workers`' fake cache
+`get()` did not accept the `validator` keyword that the current fetch path passes.
+The product code was correct; the double was updated to accept `**kw`, and the
+three affected cases then passed. This is a test-only change -- `src/` still has
+no diff from the frozen candidate commit `735d420`.
+
+Evidence: [phase6-pytest.log](phase6-pytest.log).
+
 ## Remaining Phase 6 work
 
 All technical Phase 6 checks above are complete. The only remaining work is the
