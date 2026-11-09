@@ -43,6 +43,28 @@ Evidence: [phase6-pdf-summary.json](phase6-pdf-summary.json),
 [phase6-pdf-reference.json](phase6-pdf-reference.json),
 [phase6-pdf-candidate.json](phase6-pdf-candidate.json).
 
+## Optional-worker parity
+
+The candidate API and reference 1.7.1 ran side by side on the production Docker
+network with the existing `format-worker`, `media-worker` and `docling-worker`.
+A local files container served generated PDF, DOCX, XLSX, PPTX and PNG files.
+
+| File | Reference | Candidate | Fact |
+|---|---|---|---|
+| office.pdf | ok / 27 chars | ok / 27 chars | golf-904 |
+| office.docx | ok / 33 chars | ok / 33 chars | delta-901 |
+| office.xlsx | ok / 31 chars | ok / 31 chars | echo-902 |
+| office.pptx | ok / 32 chars | ok / 32 chars | foxtrot-903 |
+| office.png | ok / OCR warning | ok / OCR warning | hote-005 (both; OCR misread hotel-905) |
+| table.pdf | 3,843 B | 3,622 B | candidate concise-table behavior |
+
+Office facts, tier and quality match. The PNG OCR output is identical on both
+sides but misreads the intended fact; the OCR warning is retained, so this is not
+an OCR accuracy claim. Media playback and a layout-worker-specific document are
+still to exercise.
+
+Evidence: [phase6-optional-summary.json](phase6-optional-summary.json).
+
 ## Remaining Phase 6 work
 
 1. PDF/OCR/Office/media/layout coverage and mixed batches, including the 8 MiB
