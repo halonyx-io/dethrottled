@@ -153,7 +153,9 @@ The 1.8.0 candidate is frozen but **held in the test bed**. It has not been
 version-bumped, published or deployed, and production remains on 1.7.1. Frozen
 source is commit `735d420`, tag `phase5-candidate-20261109`; candidate images are
 `dethrottled-dnb:1.8.0-candidate-20261109` (`sha256:c6633da3…`) and
-`dethrottled-dnb-api:1.8.0-candidate-20261109` (`sha256:bb859007…`).
+`dethrottled-dnb-api:1.8.0-candidate-20261109` (`sha256:bb859007…`). The
+current test-bed API with the OCR improvements is
+`dethrottled-dnb-api:1.8.0-dev-20261109`; the frozen images were not overwritten.
 
 | Layer | Result against the frozen 1.7.1 reference |
 |---|---|
