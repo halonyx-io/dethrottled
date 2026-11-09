@@ -36,6 +36,12 @@ def _image(text, size=10, width=420, height=90):
     return image
 
 
+def _transparent_image(text, fill, size=18):
+    image = Image.new("RGBA", (520, 100), (0, 0, 0, 0))
+    ImageDraw.Draw(image).text((20, 30), text, fill=fill, font=_font(size))
+    return image
+
+
 def test_small_images_are_upscaled_for_ocr():
     png = formats._ocr_png(_image("invoice AB-1234"))
     with Image.open(io.BytesIO(png)) as result:
@@ -64,3 +70,27 @@ def test_low_resolution_digits_survive_the_ocr_path():
     assert "AB-1234" in text
     assert meta["pages"][0]["method"] == "ocr"
     assert meta["warnings"]
+
+
+def test_transparent_dark_text_is_composited_on_white():
+    flattened = formats._flatten_for_ocr(_transparent_image("dark", (0, 0, 0, 255)))
+    assert flattened.mode == "RGB"
+    assert flattened.getpixel((0, 0)) == (255, 255, 255)
+
+
+def test_transparent_light_text_is_composited_on_black():
+    flattened = formats._flatten_for_ocr(
+        _transparent_image("light", (255, 255, 255, 255))
+    )
+    assert flattened.mode == "RGB"
+    assert flattened.getpixel((0, 0)) == (0, 0, 0)
+
+
+@pytest.mark.skipif(shutil.which("tesseract") is None, reason="tesseract not installed")
+def test_transparent_pngs_are_readable():
+    for fill, fact in (((0, 0, 0, 255), "alpha-717"), ((255, 255, 255, 255), "bravo-718")):
+        image = _transparent_image("transparent fact " + fact, fill)
+        buffer = io.BytesIO()
+        image.save(buffer, format="PNG")
+        text, _meta = formats.image_text(buffer.getvalue(), 1000)
+        assert fact in text

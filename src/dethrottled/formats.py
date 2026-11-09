@@ -30,6 +30,37 @@ PDF_PAGE_CAP = 1000
 OCR_UPSCALE_MAX_PIXELS = 2_500_000
 
 
+def _flatten_for_ocr(page):
+    """Composite transparency onto a background with contrast for the text."""
+    from PIL import Image
+
+    transparent = page.mode in ("RGBA", "LA") or (
+        page.mode == "P" and "transparency" in page.info
+    )
+    if not transparent:
+        return page.convert("RGB")
+    rgba = page.convert("RGBA")
+    if rgba.getchannel("A").getextrema()[0] == 255:
+        return rgba.convert("RGB")
+    # Transparent PNGs commonly store RGB 0,0,0 behind alpha 0. Converting that
+    # straight to RGB paints black text on black. Pick a background with
+    # contrast against the opaque pixels instead of assuming white.
+    sample = rgba.copy()
+    sample.thumbnail((64, 64))
+    pixels = getattr(sample, "get_flattened_data", None) or sample.getdata
+    visible = [pixel for pixel in pixels() if pixel[3] > 0]
+    if visible:
+        luminance = sum(
+            0.299 * red + 0.587 * green + 0.114 * blue
+            for red, green, blue, _alpha in visible
+        ) / len(visible)
+        background = (255, 255, 255, 255) if luminance < 128 else (0, 0, 0, 255)
+    else:
+        background = (255, 255, 255, 255)
+    canvas = Image.new("RGBA", rgba.size, background)
+    return Image.alpha_composite(canvas, rgba).convert("RGB")
+
+
 def _ocr_png(page, upscale=True):
     """PNG bytes for Tesseract, with a bounded upscale for small images."""
     from PIL import Image
@@ -121,7 +152,7 @@ def image_text(data, limit, language="", *, upscale=True):
             image.seek(number)
             if image.width * image.height > 40_000_000:
                 raise ValueError("image_pixel_limit")
-            page = ImageOps.exif_transpose(image).convert("RGB")
+            page = _flatten_for_ocr(ImageOps.exif_transpose(image))
             png = _ocr_png(page, upscale=upscale)
             lang = language or ocr._choose(png, ocr.installed())[0]
             if not re.fullmatch(r"[a-z_]+(?:\+[a-z_]+)*", lang):

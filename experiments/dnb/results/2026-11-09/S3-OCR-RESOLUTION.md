@@ -29,11 +29,27 @@ fixed before this record.
 | `table.pdf` forced OCR | 320 chars | 320 chars |
 | OCR warning | present | present |
 
-The four focused OCR tests pass, including native-resolution preservation for
-large images and PDF pages:
+## Transparent PNGs
+
+A transparent RGBA image commonly stores RGB 0,0,0 behind alpha 0. Converting
+that directly to RGB paints dark text on a black background. The reference
+returned empty content for a transparent image with dark text; the candidate now
+composites transparency onto a background chosen from the visible pixels'
+luminance: white for dark text, black for light text.
+
+| Input | Reference 1.7.1 | Candidate with fix |
+|---|---|---|
+| transparent dark text | empty | `transparent fact alpha-717` |
+| transparent light text | `transparent fact bravo-718` | `transparent fact bravo-718` |
+
+The focused OCR tests now cover both luminance directions and both transparent
+backgrounds. They pass **7/7** in the candidate image.
+
+The focused OCR tests pass, including native-resolution preservation for large
+images and PDF pages, plus transparent dark/light text:
 
 ```
-4 passed, 1 warning in 0.38s
+7 passed, 1 warning in 0.93s
 ```
 
 The candidate image used for this check is
@@ -42,6 +58,10 @@ The candidate image used for this check is
 source. The frozen candidate images are unchanged.
 
 Evidence: [s3-ocr-reference.json](s3-ocr-reference.json),
+[s3-ocr-alpha-dark-reference.json](s3-ocr-alpha-dark-reference.json),
+[s3-ocr-alpha-dark-candidate.json](s3-ocr-alpha-dark-candidate.json),
+[s3-ocr-alpha-light-reference.json](s3-ocr-alpha-light-reference.json),
+[s3-ocr-alpha-light-candidate.json](s3-ocr-alpha-light-candidate.json),
 [s3-ocr-candidate.json](s3-ocr-candidate.json),
 [s3-ocr-table-reference.json](s3-ocr-table-reference.json),
 [s3-ocr-table-candidate.json](s3-ocr-table-candidate.json),
