@@ -258,6 +258,9 @@ release gate, which requires explicit approval:
 3. Re-run the packaged bundle version/digest check and a final install smoke.
 4. Publish only after approval; production remains on 1.7.1 until then.
 
+The exact approval checklist and rollback plan are in
+[PHASE-6-RELEASE-GATE.md](PHASE-6-RELEASE-GATE.md).
+
 ## Resource note
 
 The prep resource smoke showed the candidate at ~6.8–7.2 CPU-seconds per 10

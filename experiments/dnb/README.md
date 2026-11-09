@@ -84,8 +84,9 @@ started: the candidate API image is built and its first PDF parity smoke passes
 with the expected concise-table presentation difference; layout, mixed-batch and
 ARM64 runtime checks also pass, as do media/live/hostile parity, packaging and
 install routes, mixed-load/crash containment and rollback preservation. Only the
-approved 1.8.0 version bump and release remain. See
-[the Phase 6 progress record](results/2026-11-09/PHASE-6.md).
+approved 1.8.0 version bump and release remain; the approval checklist is in
+[the release gate](results/2026-11-09/PHASE-6-RELEASE-GATE.md) and the full record
+in [the Phase 6 progress record](results/2026-11-09/PHASE-6.md).
 
 | Phase | Status | Remaining work |
 |---|---|---|
