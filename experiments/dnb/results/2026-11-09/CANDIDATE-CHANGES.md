@@ -23,7 +23,7 @@ test-bed improvements, not a released version.
 | 2026-11-09 | Search cache key normalizes case/whitespace only | [P1-AGENT-SIGNALS.md](P1-AGENT-SIGNALS.md) | cache test passes |
 | 2026-11-09 | Token estimates and boundary-aware truncation | [P1-AGENT-SIGNALS.md](P1-AGENT-SIGNALS.md) | token/clip tests pass |
 | 2026-11-09 | Opt-in intent fan-out + cross-variant consensus | [P2-EXPLORATORY.md](P2-EXPLORATORY.md) | consensus tests; default off |
-| 2026-11-09 | Opt-in ONNX cross-encoder rerank | [P2-EXPLORATORY.md](P2-EXPLORATORY.md) | tested; no default gain |
+| 2026-11-09 | Opt-in ONNX cross-encoder rerank | [P2-EXPLORATORY.md](P2-EXPLORATORY.md) | GTE +5.5 nDCG@10 on SciFact 60q; CI crosses 0; not default |
 | 2026-11-09 | Opt-in semantic paraphrased-query cache | [P2-EXPLORATORY.md](P2-EXPLORATORY.md) | threshold 0.55; 7/8 recall, 0 false hits in test |
 | 2026-11-09 | Opt-in persistent search storage state | [P2-EXPLORATORY.md](P2-EXPLORATORY.md) | profile survives worker restart |
 | 2026-11-09 | Provider key + proxy rotation | [P2-EXPLORATORY.md](P2-EXPLORATORY.md) | rotation tests |
@@ -37,9 +37,9 @@ test-bed improvements, not a released version.
 - Baseline worker: `dethrottled-dnb:1.8.0-candidate-20261109`
 - Baseline API: `dethrottled-dnb-api:1.8.0-candidate-20261109`
 - Current test-bed API: `dethrottled-dnb-api:1.8.0-dev-p2-20261109`
-  (`sha256:6c4e6318…`)
+  (`sha256:b4f219da…`)
 - Current test-bed worker: `dethrottled-dnb:1.8.0-dev-p2-20261109`
-  (`sha256:49623a83…`)
+  (`sha256:b44b4b39…`)
 - Current P0 worker/API also carry the cache, CID and gate fixes.
 - Earlier OCR-only test image: `dethrottled-dnb-api:1.8.0-dev-ocr-20261109`
   (superseded)

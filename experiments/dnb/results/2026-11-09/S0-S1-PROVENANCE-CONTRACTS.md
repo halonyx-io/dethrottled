@@ -17,8 +17,8 @@
 | Docker server | 29.8.2 |
 | Python | 3.13.5 |
 | Production | 1.7.1 `dethrottled:local`, running healthy |
-| Current test-bed API | `dethrottled-dnb-api:1.8.0-dev-p2-20261109` `sha256:6c4e6318…` |
-| Current test-bed worker | `dethrottled-dnb:1.8.0-dev-p2-20261109` `sha256:49623a83…` |
+| Current test-bed API | `dethrottled-dnb-api:1.8.0-dev-p2-20261109` `sha256:b4f219da…` |
+| Current test-bed worker | `dethrottled-dnb:1.8.0-dev-p2-20261109` `sha256:b44b4b39…` |
 
 ## S1 REST contract
 

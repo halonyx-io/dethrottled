@@ -25,31 +25,55 @@ had consensus 2.5, the single-source URLs 1.0.
 Evidence: [p2-fanout.json](p2-fanout.json), `tests/test_consensus.py`,
 `tests/test_endpoints.py`.
 
-## Neural rerank
+## Neural rerank — second pass, correctly configured
 
-Added `src/dethrottled/rerank.py`, opt-in with
-`DETHROTTLED_RERANK=1` and `DETHROTTLED_RERANK_MODEL=<dir>` containing
-`model.onnx` + `tokenizer.json`.
+Added `src/dethrottled/rerank.py`, opt-in with `DETHROTTLED_RERANK=1` and
+`DETHROTTLED_RERANK_MODEL=<dir>` containing `model.onnx`, `tokenizer.json` and
+`config.json`.
 
-I tested the same family Hound uses: `Xenova/ms-marco-MiniLM-L-6-v2`,
-`onnx/model_quantized.onnx` (23 MB) + `tokenizer.json`. No new package dependency;
-it uses the existing `onnxruntime`/`tokenizers` stack and is a no-op when the
-model is absent.
+The first pass used a tiny hand-labelled set and a fixed padding id. That was
+not a fair test. The second pass fixed the setup:
 
-On an 8-case hand-labelled hard set (relevant document at index 2, lexical
-decoys above it):
+- Model-specific pad id from `config.json` (BGE pad 1, GTE pad 50283), instead
+  of forcing 0.
+- Query/document pair encoding, 512-token truncation, model-specific input
+  names (GTE/BGE/MXBAI do not take `token_type_ids`).
+- Full title+text input up to 3,000 characters for reranking; BM25 baseline on
+  the same full text.
+- A real BEIR **SciFact** reranking set: 60 test queries, BM25 top-30 candidates,
+  nDCG@10 and MRR@10. Models are compared on exactly the same candidate lists.
 
-| Ranker | Mean MRR |
-|---|---:|
-| BM25 | **0.583** |
-| Cross-encoder | 0.489 |
+### Models tested
 
-The cross-encoder was **not better** on this small set, so it remains opt-in and
-is not claimed as an improvement. Hound's own benchmark and model choice are
-recorded as the reference, but this stack needs a larger labelled corpus before
-changing the default. The module preserves original order on model failure.
+| Model | License | 60-query nDCG@10 | MRR@10 | Time |
+|---|---|---:|---:|---:|
+| BM25 baseline | — | **0.7635** | **0.7390** | — |
+| `Xenova/bge-reranker-base` | MIT | 0.7645 | 0.7283 | 593 s |
+| `Xenova/ms-marco-MiniLM-L-12-v2` | Apache-2.0 | 0.7501 | 0.7167 | 220 s |
+| `Alibaba-NLP/gte-reranker-modernbert-base` | Apache-2.0 | **0.8187** | **0.7982** | 923 s |
+| `jinaai/jina-reranker-v2-base-multilingual` | **CC-BY-NC-4.0** | **0.8251** | **0.8076** | 725 s |
 
-Evidence: [p2-rerank.json](p2-rerank.json), `tests/test_rerank.py`.
+GTE gained **+0.055 nDCG@10** and **+0.059 MRR@10** over BM25. Per query:
+12 wins, 9 losses, 39 ties. A paired bootstrap over the 60 queries gave a 95%
+interval for the nDCG delta of **-0.0066 to +0.1216** (MRR -0.0131 to +0.1366),
+so the gain is promising but **not statistically conclusive** at 60 queries.
+Jina scored slightly higher but is non-commercial; it is not a bundle candidate.
+BGE and MiniLM-12 did not beat BM25 on MRR.
+
+The official GTE usage examples use `max_length=512` and paired query/document
+inputs; the corrected implementation follows that. Sentence-transformers applies
+softmax/sigmoid for display, but ranking is monotonic and our evidence is based on
+ordering.
+
+**Decision:** keep reranking opt-in. GTE is the recommended optional model
+(Apache-2.0, 144 MB quantized ONNX); do not make it a default until a larger
+SciFact/other labelled evaluation confirms the gain. `scripts/fetch-rerank-model.sh`
+fetches the pinned GTE model. The earlier small-set result is retained in
+`p2-rerank-small.json` so the failed first test is not hidden.
+
+Evidence: [p2-rerank.json](p2-rerank.json),
+[p2-rerank-small.json](p2-rerank-small.json),
+`tests/test_rerank.py`.
 
 ## Semantic query cache
 
@@ -130,9 +154,9 @@ Evidence: `tests/test_provider_rotation.py`.
 Images:
 
 - API: `dethrottled-dnb-api:1.8.0-dev-p2-20261109`
-  (`sha256:6c4e6318…`)
+  (`sha256:b4f219da…`)
 - Worker: `dethrottled-dnb:1.8.0-dev-p2-20261109`
-  (`sha256:49623a83…`)
+  (`sha256:b44b4b39…`)
 
 No default ranking, provider key, proxy or cookie behavior changed. P2 outcomes
 that did not earn a default stay opt-in, and no release action is authorised.

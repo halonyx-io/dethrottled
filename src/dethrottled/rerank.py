@@ -44,9 +44,13 @@ def _load():
         from tokenizers import Tokenizer
 
         root = model_dir()
+        with open(os.path.join(root, "config.json"), encoding="utf-8") as source:
+            config = __import__("json").load(source)
         tokenizer = Tokenizer.from_file(os.path.join(root, "tokenizer.json"))
         tokenizer.enable_truncation(max_length=512)
-        tokenizer.enable_padding(pad_id=0, pad_token="[PAD]")
+        pad_id = int(config.get("pad_token_id", 0))
+        tokenizer.enable_padding(pad_id=pad_id,
+                                 pad_token=tokenizer.id_to_token(pad_id) or "[PAD]")
         options = onnxruntime.SessionOptions()
         options.intra_op_num_threads = int(os.getenv("DETHROTTLED_RERANK_THREADS", "2"))
         options.log_severity_level = 3
@@ -76,7 +80,7 @@ def score(query: str, documents: list) -> list:
     return [float(row[0]) for row in logits]
 
 
-def rerank_rows(rows: list, query: str, *, text_chars: int = 600) -> list:
+def rerank_rows(rows: list, query: str, *, text_chars: int = 3000) -> list:
     """Sort rows by cross-encoder score; never raises on an unavailable model."""
     if not rows or not query or not available():
         return rows

@@ -13,9 +13,9 @@ must be classified; unknown paths fail generation/checking.
 | dependency-input | 4 |
 | generated | 4 |
 | harness-guide | 20 |
-| historical-evidence | 177 |
+| historical-evidence | 178 |
 | planned-work | 1 |
-| source-contract | 166 |
+| source-contract | 167 |
 | third-party-notice | 4 |
 | visual | 8 |
 
@@ -226,6 +226,7 @@ Evidence maintainer: preserve observations; append explicit corrections.
 | [experiments/dnb/results/2026-11-09/p2-host-suite.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-host-suite.log) |
 | [experiments/dnb/results/2026-11-09/p2-image-suite.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-image-suite.log) |
 | [experiments/dnb/results/2026-11-09/p2-profile.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-profile.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-small.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-small.json) |
 | [experiments/dnb/results/2026-11-09/p2-rerank.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank.json) |
 | [experiments/dnb/results/2026-11-09/p2-semantic.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-semantic.json) |
 | [experiments/dnb/results/2026-11-09/p2-targeted-tests.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-targeted-tests.log) |
@@ -385,6 +386,7 @@ Change author: audit docs impact, advertised defaults and generated contracts.
 | [scripts/documentation_inventory.py](https://github.com/halonyx-io/dethrottled/blob/main/scripts/documentation_inventory.py) |
 | [scripts/evaluate_content.py](https://github.com/halonyx-io/dethrottled/blob/main/scripts/evaluate_content.py) |
 | [scripts/fetch-models.sh](https://github.com/halonyx-io/dethrottled/blob/main/scripts/fetch-models.sh) |
+| [scripts/fetch-rerank-model.sh](https://github.com/halonyx-io/dethrottled/blob/main/scripts/fetch-rerank-model.sh) |
 | [scripts/probe_blocked.py](https://github.com/halonyx-io/dethrottled/blob/main/scripts/probe_blocked.py) |
 | [scripts/probe_embed.py](https://github.com/halonyx-io/dethrottled/blob/main/scripts/probe_embed.py) |
 | [scripts/probe_extract.py](https://github.com/halonyx-io/dethrottled/blob/main/scripts/probe_extract.py) |

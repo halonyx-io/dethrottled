@@ -1163,6 +1163,11 @@
       "review": "Evidence maintainer: preserve observations; append explicit corrections."
     },
     {
+      "path": "experiments/dnb/results/2026-11-09/p2-rerank-small.json",
+      "lifecycle": "historical-evidence",
+      "review": "Evidence maintainer: preserve observations; append explicit corrections."
+    },
+    {
       "path": "experiments/dnb/results/2026-11-09/p2-rerank.json",
       "lifecycle": "historical-evidence",
       "review": "Evidence maintainer: preserve observations; append explicit corrections."
@@ -1644,6 +1649,11 @@
     },
     {
       "path": "scripts/fetch-models.sh",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "scripts/fetch-rerank-model.sh",
       "lifecycle": "source-contract",
       "review": "Change author: audit docs impact, advertised defaults and generated contracts."
     },

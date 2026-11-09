@@ -61,7 +61,7 @@ through a local override:
 | `MCP_TOOL_PROFILE` | `full` | MCP adapter: `core` exposes six high-use tools; `full` exposes all 20 |
 | `DETHROTTLED_SEARCH_FANOUT` | `0` | API: one extra intent-aware query variant; extra upstream requests |
 | `DETHROTTLED_RERANK` | `0` | API: use a local ONNX cross-encoder when `DETHROTTLED_RERANK_MODEL` is set |
-| `DETHROTTLED_RERANK_MODEL` | empty | Directory with `model.onnx` and `tokenizer.json`; absent means no rerank |
+| `DETHROTTLED_RERANK_MODEL` | empty | Directory with `model.onnx`, `tokenizer.json`, `config.json`; GTE ModernBERT is recommended (`scripts/fetch-rerank-model.sh`) |
 | `DETHROTTLED_SEMANTIC_CACHE` | off | API: `1` or a SQLite path enables the separate paraphrase cache |
 | `DETHROTTLED_SEMANTIC_CACHE_THRESHOLD` | `0.55` | MiniLM cosine threshold; tune only with a labelled paraphrase set |
 | `DETHROTTLED_SEMANTIC_CACHE_TTL` | `21600` | Seconds before a semantic cache entry is ignored |
