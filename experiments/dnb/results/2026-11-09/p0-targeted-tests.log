@@ -47,4 +47,4 @@ tests/test_content_validity.py::test_research_keeps_suspect_evidence_and_continu
     config.cache.set("cache/nodeids", sorted(str(n) for n in self.cached_nodeids))
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-48 passed, 8 warnings in 3.63s
+48 passed, 8 warnings in 3.59s

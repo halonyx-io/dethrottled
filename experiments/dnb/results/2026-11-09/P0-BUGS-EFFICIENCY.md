@@ -98,7 +98,9 @@ the remaining difference is Dethrottled's richer schemas, not duplicated prose.
 
 ## Verification
 
-- Full offline suite: **886 passed, 137 skipped, 2 deselected**.
+- Host offline suite: **886 passed, 137 skipped, 2 deselected**.
+- Full suite inside the candidate API image: **1,035 passed, 15 skipped,
+  2 deselected** (includes PDF, Office and OCR tests skipped on the host).
 - Targeted cache, CID/PDF and gate tests: **48 passed**.
 - Documentation and agent-doc checks pass.
 - Production remains healthy on 1.7.1; no lab containers left.
@@ -114,6 +116,7 @@ Evidence: [p0-browser-lifecycle.json](p0-browser-lifecycle.json),
 [p0-error-audit.json](p0-error-audit.json), [p0-reddit.json](p0-reddit.json),
 [p0-tool-tokens.json](p0-tool-tokens.json),
 [p0-full-suite.log](p0-full-suite.log),
+[p0-image-suite.log](p0-image-suite.log),
 [p0-targeted-tests.log](p0-targeted-tests.log).
 
 Next: P1 date/source provenance, decoy buckets, query normalization and token /

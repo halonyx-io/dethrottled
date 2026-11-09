@@ -13,7 +13,7 @@ must be classified; unknown paths fail generation/checking.
 | dependency-input | 4 |
 | generated | 4 |
 | harness-guide | 20 |
-| historical-evidence | 163 |
+| historical-evidence | 164 |
 | planned-work | 1 |
 | source-contract | 162 |
 | third-party-notice | 4 |
@@ -212,6 +212,7 @@ Evidence maintainer: preserve observations; append explicit corrections.
 | [experiments/dnb/results/2026-11-09/p0-browser-lifecycle.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p0-browser-lifecycle.json) |
 | [experiments/dnb/results/2026-11-09/p0-error-audit.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p0-error-audit.json) |
 | [experiments/dnb/results/2026-11-09/p0-full-suite.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p0-full-suite.log) |
+| [experiments/dnb/results/2026-11-09/p0-image-suite.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p0-image-suite.log) |
 | [experiments/dnb/results/2026-11-09/p0-reddit.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p0-reddit.json) |
 | [experiments/dnb/results/2026-11-09/p0-targeted-tests.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p0-targeted-tests.log) |
 | [experiments/dnb/results/2026-11-09/p0-tool-tokens.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p0-tool-tokens.json) |
