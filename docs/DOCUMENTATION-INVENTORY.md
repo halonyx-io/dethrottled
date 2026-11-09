@@ -13,9 +13,9 @@ must be classified; unknown paths fail generation/checking.
 | dependency-input | 4 |
 | generated | 4 |
 | harness-guide | 20 |
-| historical-evidence | 109 |
+| historical-evidence | 115 |
 | planned-work | 1 |
-| source-contract | 160 |
+| source-contract | 162 |
 | third-party-notice | 4 |
 | visual | 8 |
 
@@ -193,6 +193,12 @@ Evidence maintainer: preserve observations; append explicit corrections.
 | [experiments/dnb/results/2026-11-09/PHASE-4.md](../experiments/dnb/results/2026-11-09/PHASE-4.md) |
 | [experiments/dnb/results/2026-11-09/PHASE-5-PLAN.md](../experiments/dnb/results/2026-11-09/PHASE-5-PLAN.md) |
 | [experiments/dnb/results/2026-11-09/PHASE-5.md](../experiments/dnb/results/2026-11-09/PHASE-5.md) |
+| [experiments/dnb/results/2026-11-09/PHASE-6-PREP.md](../experiments/dnb/results/2026-11-09/PHASE-6-PREP.md) |
+| [experiments/dnb/results/2026-11-09/PHASE-6-PREP/checkpoint-candidate.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/PHASE-6-PREP/checkpoint-candidate.json) |
+| [experiments/dnb/results/2026-11-09/PHASE-6-PREP/checkpoint-reference.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/PHASE-6-PREP/checkpoint-reference.json) |
+| [experiments/dnb/results/2026-11-09/PHASE-6-PREP/parity-summary.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/PHASE-6-PREP/parity-summary.json) |
+| [experiments/dnb/results/2026-11-09/PHASE-6-PREP/parity-verification.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/PHASE-6-PREP/parity-verification.json) |
+| [experiments/dnb/results/2026-11-09/PHASE-6-PREP/resource-smoke.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/PHASE-6-PREP/resource-smoke.json) |
 | [experiments/dnb/results/2026-11-09/phase4-cache-tests.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase4-cache-tests.log) |
 | [experiments/dnb/results/2026-11-09/phase4-cache.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase4-cache.json) |
 | [experiments/dnb/results/2026-11-09/phase4-dom-after.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase4-dom-after.json) |
@@ -259,6 +265,7 @@ Change author: audit docs impact, advertised defaults and generated contracts.
 | [docling-worker/convert.py](https://github.com/halonyx-io/dethrottled/blob/main/docling-worker/convert.py) |
 | [docling-worker/service.py](https://github.com/halonyx-io/dethrottled/blob/main/docling-worker/service.py) |
 | [experiments/dnb/Dockerfile](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/Dockerfile) |
+| [experiments/dnb/Dockerfile.api](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/Dockerfile.api) |
 | [experiments/dnb/compare.py](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/compare.py) |
 | [experiments/dnb/compose.yml](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/compose.yml) |
 | [experiments/dnb/context_ablation.py](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/context_ablation.py) |
@@ -345,6 +352,7 @@ Change author: audit docs impact, advertised defaults and generated contracts.
 | [src/dethrottled/cache.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/cache.py) |
 | [src/dethrottled/challenges.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/challenges.py) |
 | [src/dethrottled/cli.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/cli.py) |
+| [src/dethrottled/concurrency.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/concurrency.py) |
 | [src/dethrottled/content.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/content.py) |
 | [src/dethrottled/contracts.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/contracts.py) |
 | [src/dethrottled/corpus.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/corpus.py) |

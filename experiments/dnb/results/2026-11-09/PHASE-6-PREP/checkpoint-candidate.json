@@ -1,0 +1,79 @@
+{
+  "http_status": 200,
+  "elapsed_ms": 268.774,
+  "bytes": 1219,
+  "body": {
+    "ok": true,
+    "access": {
+      "status": "content_observed",
+      "reason": "visible_text_present",
+      "answer_verified": false,
+      "source_complete": false
+    },
+    "navigation_recovery": null,
+    "steps": [
+      {
+        "action": "read_state",
+        "ok": true,
+        "reason": null,
+        "elapsed_ms": 6,
+        "data": {
+          "ready_state": "interactive",
+          "main_selector": "main",
+          "expandable_details": 1,
+          "loading": false,
+          "scroll_remaining": 2008
+        }
+      },
+      {
+        "action": "attr",
+        "ok": true,
+        "reason": null,
+        "elapsed_ms": 21,
+        "data": "name"
+      }
+    ],
+    "final": {
+      "url": "http://fixture:8090/article",
+      "title": "DNB fixture"
+    },
+    "session": {
+      "id": "restart-proof",
+      "persistent": true,
+      "closed": false,
+      "ttl_seconds": 1800,
+      "allowed_hosts": [
+        "fixture"
+      ],
+      "restored_from_checkpoint": true,
+      "indexeddb_restore_attempts": 0
+    },
+    "canary_matches": [],
+    "service_s": 0.031,
+    "adblock": {
+      "enabled": false,
+      "available": false,
+      "state": "disabled",
+      "list": "HaGeZi Multi PRO",
+      "rule_count": 0,
+      "last_update": null,
+      "last_check": null,
+      "error": null,
+      "sha256": null,
+      "source": null,
+      "update_interval_seconds": 86400,
+      "blocked_requests": {},
+      "counter_units": "policy refusals; browser connection attempts include retries",
+      "component": "api",
+      "missing_list_policy": "allow; existing network security still applies",
+      "blocked": []
+    },
+    "events": {
+      "dialogs": [],
+      "console": [],
+      "page_errors": [],
+      "request_failures": [],
+      "http_errors": []
+    }
+  }
+}

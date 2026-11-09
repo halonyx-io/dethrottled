@@ -72,6 +72,15 @@ raster/compositing feature status were recorded. Headed remains the default;
 `auto` remains the graphics default and `mesa` is the explicit software baseline. See the
 [phase-5 acceptance record](results/2026-11-09/PHASE-5.md).
 
+**Phase 6 prep is complete.** Candidate source is frozen at `735d420` and tagged
+`phase5-candidate-20261109`; image
+`dethrottled-dnb:1.8.0-candidate-20261109` is built from the frozen reference.
+A disposable parity smoke passed both reference and candidate for 27 facts, all
+27 drive actions, downloads, network evidence, concurrency and checkpoint
+restore. Resource smoke shows the candidate at higher CPU than 1.7.1, as
+expected from consolidation. ARM64 `q6a` is reachable but still needs its own
+build/parity run. See [the prep record](results/2026-11-09/PHASE-6-PREP.md).
+
 | Phase | Status | Remaining work |
 |---|---|---|
 | 1. Bounded execution, cancellation, retries | Accepted in the isolated x86_64 worker | Keep this gate passing through later changes; native/release validation is still required |
@@ -79,7 +88,7 @@ raster/compositing feature status were recorded. Headed remains the default;
 | 3. Verified identity/integration | Accepted in the isolated x86_64 worker | Keep the REST/MCP/worker gate passing; full compatibility remains phase 6 |
 | 4. Inherited defects | Accepted in the isolated lab: PDF bloat and DOM adoption fixed; cache validator hardened | Keep the concise-size, DOM and cache regressions; full parity remains phase 6 |
 | 5. Browser modes/GPU | Accepted in the isolated lab: matched headed/headless x software/verified hardware matrix | Keep the probe and fallback regressions; native/release validation remains phase 6 |
-| 6. Candidate and release | Pending | Native ARM64, full parity/load/install/resource gates, packaging/docs and approval |
+| 6. Candidate and release | Prep complete: candidate commit/tag/image frozen; parity and resource smoke passed | Full PDF/OCR/media coverage, live/hostile, ARM64 build, packaging/install, rollback and approval |
 
 Production stays on 1.7.1. This branch remains unpublished development work;
 1.8.0 is not declared ready. The 1.8.2 DPR document is saved planning only.
