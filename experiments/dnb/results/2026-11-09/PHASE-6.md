@@ -182,17 +182,65 @@ wheel/sdist must be rebuilt after an approved version bump and the packaged
 
 Evidence: [phase6-install.json](phase6-install.json).
 
+## Mixed load, soak and crash containment
+
+Three-minute mixed load through `dethrottled-dnb-api` and the candidate browser
+service (concurrent fetch of HTML/PDF/DOCX/XLSX/PPTX/table plus browser drive):
+
+| Side | Requests | Failures | Median |
+|---|---:|---:|---:|
+| reference 1.7.1 | 859 | 0 | 20 ms |
+| candidate 1.8.0 | 829 | 0 | 20 ms |
+
+Memory stayed flat in the mixed run: candidate API 229.6 -> 237.7 MiB and its
+browser 470.7 -> 470.9 MiB; the reference API 237.7 -> 237.8 MiB and its browser
+300.8 -> 325.6 MiB. The local files are extraction-bound, so this run does not
+claim renderer throughput.
+
+A ten-minute soak added browser drive on every fourth operation. Candidate API
+memory was flat at ~238 MiB and its `/health` stayed 200 for the whole run. The
+browser process stayed between ~495 and ~619 MiB and did not restart or OOM; that
+is a bounded observation over ten minutes, not proof against a slow multi-hour
+leak.
+
+Crash containment was injected at 150 s of the five-minute soak by killing the
+browser container for 25 seconds:
+
+- 999/999 fetch requests succeeded throughout; direct extraction never depended
+  on the browser.
+- 33/333 drive requests failed explicitly with `Connection refused` only while
+  the container was absent; none hung or returned fabricated content.
+- The candidate API remained healthy (`/health` 200) throughout.
+- After restarting the container, browser health returned in 4.3 s and drive
+  requests resumed.
+
+The failure is contained and visible rather than masked; a caller sees a real
+error for the browser-only operation while the rest of the core stays usable.
+
+## Rollback and volume preservation
+
+A named `p6-rollback` volume was carried through reference -> candidate ->
+reference and then candidate default-schema -> reference. A marker file written
+by the first reference container survived every switch.
+
+- With `DETHROTTLED_CORPUS_SCHEMA=1`, the candidate read the reference cache
+  (`cached=true`) and the second reference read the cache again after rollback.
+- With the candidate's default schema 2, it created `corpus-v2.sqlite` alongside
+  the legacy `corpus.sqlite`; the legacy database was left intact, and reference
+  1.7.1 read the schema-2 corpus after rollback.
+- No test volume or container was left running; production stayed on 1.7.1.
+
+Evidence: [phase6-load-crash-rollback.json](phase6-load-crash-rollback.json).
+
 ## Remaining Phase 6 work
 
-1. PDF/OCR/Office/media/layout coverage and mixed batches, including the 8 MiB
-   HTML ceiling reconciliation.
-2. Optional-worker integration through the candidate API image.
-3. Paced live/hostile-source parity with predefined facts.
-4. ARM64 build/parity/resource run on `q6a`.
-5. PyPI/GitHub installation route outside the source checkout.
-6. Mixed-load, long-running memory and crash containment.
-7. Rollback/volume preservation and release artifact verification.
-8. Version/package 1.8.0 and release only after approval.
+All technical Phase 6 checks above are complete. The only remaining work is the
+release gate, which requires explicit approval:
+
+1. Decide and apply the 1.8.0 version bump.
+2. Rebuild the wheel, sdist and container images from the approved commit.
+3. Re-run the packaged bundle version/digest check and a final install smoke.
+4. Publish only after approval; production remains on 1.7.1 until then.
 
 ## Resource note
 

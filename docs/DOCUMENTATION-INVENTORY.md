@@ -13,7 +13,7 @@ must be classified; unknown paths fail generation/checking.
 | dependency-input | 4 |
 | generated | 4 |
 | harness-guide | 20 |
-| historical-evidence | 128 |
+| historical-evidence | 129 |
 | planned-work | 1 |
 | source-contract | 162 |
 | third-party-notice | 4 |
@@ -230,6 +230,7 @@ Evidence maintainer: preserve observations; append explicit corrections.
 | [experiments/dnb/results/2026-11-09/phase6-install.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase6-install.json) |
 | [experiments/dnb/results/2026-11-09/phase6-layout-mixed.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase6-layout-mixed.json) |
 | [experiments/dnb/results/2026-11-09/phase6-live-hostile.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase6-live-hostile.json) |
+| [experiments/dnb/results/2026-11-09/phase6-load-crash-rollback.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase6-load-crash-rollback.json) |
 | [experiments/dnb/results/2026-11-09/phase6-media-summary.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase6-media-summary.json) |
 | [experiments/dnb/results/2026-11-09/phase6-optional-summary.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase6-optional-summary.json) |
 | [experiments/dnb/results/2026-11-09/phase6-pdf-candidate.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase6-pdf-candidate.json) |
