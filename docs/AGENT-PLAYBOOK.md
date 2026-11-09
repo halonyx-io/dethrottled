@@ -98,6 +98,15 @@ No automatic DDG pagination fills that menu. Fewer usable results is normal.
 | `max_age` | Optional cache-age bound in seconds; inspect returned cache provenance |
 | `diagnostics` (MCP) | Request the richer search envelope; inspect `outcome`, `degraded` and per-provider reports rather than inferring success from legacy `status` |
 
+Search rows also carry `source_type` (`docs`, `paper`, `repo`, `forum`,
+`reference`, `news`, `blog`, `other`), `fetch_relevance` (`high`, `medium`,
+`low`), `snippet_tokens`, `date_source` (`structured`, `snippet`, `none`) and
+`published_age_days`. The first row and `/v2/search` carry `dated_results`,
+`freshness_note` and `decoy_buckets`. `date_source="snippet"` means the date was
+parsed from result text, not supplied by the engine; treat it as a lead. A
+nonempty `decoy_buckets` report means a low-coherence source was dropped only
+because another source proved the query could be echoed.
+
 REST also retains `num_results`/`max_items` compatibility fields; MCP does not
 accept every REST alias. A neural `rerank=true` request is unsupported. Do not
 invent an XGBoost, model-ranking or pagination parameter. Upstream result lists
@@ -183,7 +192,9 @@ not a request to fill every budget. See [limits](LIMITS.md).
   A `gate_page:login|paywall|access_denied|maintenance` warning means the page is
   a wall rather than the requested content, even when it contains long prose.
 - Preserve `warnings`, `source_partial`, `truncated`, `extraction`, acquisition
-  attempts/URLs, source dates, hashes and `read_plan`. A long page may still include
+  attempts/URLs, source dates, `date_source`, `source_type`, `page_type`,
+  `fetch_relevance`, `tokens_estimated`, hashes and `read_plan`. `tokens_estimated`
+  is a character-based approximation, not a tokenizer count. A long page may still include
   an error banner. Inspect the exact retained ranges rather than deleting a phrase.
 - Retain `document_id`/hash and use `read_document` with `offset`/`next_offset`,
   focus and ranges. Use `inspect_document` for blocks, tables and citation positions.

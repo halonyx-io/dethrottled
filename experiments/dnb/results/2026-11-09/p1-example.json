@@ -1,0 +1,42 @@
+{
+  "dated_results": 2,
+  "rows": [
+    {
+      "url": "https://github.com/python/cpython",
+      "title": "CPython",
+      "snippet": "Source code",
+      "publishedDate": "2026-11-09",
+      "engine": "web-ddg",
+      "date_source": "structured",
+      "published_age_days": 0,
+      "source_type": "repo",
+      "fetch_relevance": "high"
+    },
+    {
+      "url": "https://news.example/a",
+      "title": "Story",
+      "snippet": "Updated 8 November 2026",
+      "publishedDate": "8 November 2026",
+      "engine": "bing-news",
+      "date_source": "snippet",
+      "published_age_days": 1,
+      "source_type": "other",
+      "fetch_relevance": "medium"
+    }
+  ],
+  "decoy_report": [
+    {
+      "source": "bing",
+      "results": 4,
+      "coherence": 0.0,
+      "action": "dropped"
+    }
+  ],
+  "decoy_kept_engines": [
+    "web-ddg"
+  ],
+  "tokens_estimated": 237,
+  "truncated": true,
+  "truncated_chars": 76,
+  "truncated_end": " complete sentence about the \u2026"
+}

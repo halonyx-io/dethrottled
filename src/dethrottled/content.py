@@ -112,6 +112,43 @@ def gate_kind(title: str, text: str, html: str = "") -> str:
     return ""
 
 
+_CJK_RANGES = (
+    (0x3000, 0x303F), (0x3040, 0x30FF), (0x3400, 0x4DBF),
+    (0x4E00, 0x9FFF), (0xAC00, 0xD7A3), (0xF900, 0xFAFF), (0xFF00, 0xFFEF),
+)
+
+
+def estimate_tokens(text: str) -> int:
+    """Approximate LLM tokens: CJK one per character, Latin about four per token."""
+    if not text:
+        return 0
+    cjk = sum(1 for char in text if any(lo <= ord(char) <= hi for lo, hi in _CJK_RANGES))
+    latin = len(text) - cjk
+    return cjk + (max(1, latin // 4) if latin else 0)
+
+
+def smart_truncate(text: str, max_chars: int) -> tuple[str, bool]:
+    """Cut at a paragraph, sentence or word boundary within the character cap."""
+    if max_chars <= 0:
+        return "", bool(text)
+    if len(text) <= max_chars:
+        return text, False
+    marker = " …"
+    if max_chars <= len(marker):
+        return text[:max_chars], True
+    budget = max_chars - len(marker)
+    head = text[:budget]
+    floor = int(budget * 0.70)
+    best = -1
+    for separator in ("\n\n", "\n", ". ", "! ", "? ", "; ", ", ", " "):
+        index = head.rfind(separator)
+        if index >= floor and index + len(separator) > best:
+            best = index + len(separator)
+    if best <= 0:
+        return head.rstrip() + marker, True
+    return head[:best].rstrip() + marker, True
+
+
 def annotate_content(row: dict, html: str = "", *, structured: bool = False) -> dict:
     """Attach diagnostics to canonical text; retain all existing evidence and warnings."""
     assessment = assess_content(row.get("text", ""), html, structured=structured)
@@ -358,6 +395,8 @@ def compact_row(row: dict) -> dict:
 
 def present_row(row: dict, response_format: str) -> dict:
     """Warn on large detailed text without serializing/copying the full payload."""
+    row = dict(row)
+    row["tokens_estimated"] = estimate_tokens(row.get("content", ""))
     if response_format == "concise":
         return compact_row(row)
     # Character count is a lower bound on JSON bytes, not a payload-size claim.

@@ -224,11 +224,11 @@ review is in [SIMILAR-PROJECTS-IDEAS.md](SIMILAR-PROJECTS-IDEAS.md); Hound is
 | **P0.4** | Audit 404/403/429/login/paywall/error pages for false `ok` | S2, S3 | **Fixed.** Long login/paywall/access-denied pages now `thin` + `gate_page:*`; clean article unchanged. |
 | **P0.5** | Reddit rewrite/read-path efficiency (`old.reddit.com`) | S2, S3 | **Tested, not adopted.** `www.reddit.com` worked; `old.reddit.com` failed after 7.1 s in this stack. |
 | **P0.6** | Measure and trim MCP tool-definition token cost | S1, S10 | **Implemented profile.** full 20 tools ~7.8K tokens; core 6 tools ~4.2K. |
-| **P1.1** | Search date provenance (`date_source`, `dated_results`, undated warning) | S6, S10 | free-search-mcp gives agents a trust signal; Dethrottled has dates but not their source. |
-| **P1.2** | `source_type` / `page_type` / fetch relevance fields | S10 | Hound exposes these; derive from existing URL/extraction data, no new classifier. |
-| **P1.3** | Whole-bucket decoy detection | S2, S6 | free-search-mcp's measured signal; needs a labelled query set before use. |
-| **P1.4** | Query normalization for cache identity only | S2 | Hound/free-search-mcp cache normalisation; measure hit rate, never change upstream text. |
-| **P1.5** | Token estimates and boundary-aware truncation | S3, S10 | free-search-mcp output shaping; keep canonical text/cache unchanged. |
+| **P1.1** | Search date provenance (`date_source`, `dated_results`, undated warning) | S6, S10 | **Implemented.** Structured/snippet/none + age + freshness note. |
+| **P1.2** | `source_type` / `page_type` / fetch relevance fields | S10 | **Implemented.** URL/extraction heuristics; research sources preserve them. |
+| **P1.3** | Whole-bucket decoy detection | S2, S6 | **Implemented helper + witness rule.** Targeted tests; live labelled set still advisable. |
+| **P1.4** | Query normalization for cache identity only | S2 | **Implemented.** Case/whitespace only; upstream query unchanged. |
+| **P1.5** | Token estimates and boundary-aware truncation | S3, S10 | **Implemented.** CJK-aware estimate; boundary clip <= cap; raw HTML exact. |
 | **P2.1** | Search consensus / intent fan-out | S6 | Hound; measure recall and added requests before adopting. |
 | **P2.2** | Neural rerank | S6 | Hound uses an ONNX cross-encoder; Dethrottled deliberately has it off. Experiment only. |
 | **P2.3** | Semantic query cache | S6 | Hound two-level cache; separate namespace, false-hit precision at 0.90-0.95. |
@@ -248,7 +248,8 @@ HTTP/MCP reference fixes. They remain in the suite as regressions.
    Do these before adding any new capability.
 3. **S2-S3 correctness.** Fixed corpus, paired extraction matrix, error and
    warning review. Adopt only measured fixes.
-4. **S4-S6 browser, workers and corpus.** Reuse `compare.py`, `verify.py`,
+4. **S4-S6 browser, workers and corpus.** P1 signal fields are staged for the
+   fixed retrieval evaluation before P2. Reuse `compare.py`, `verify.py`,
    `phase5_check.py` and the existing worker lab; add only missing fixtures.
 5. **S7-S8 performance and robustness.** Re-run cgroup resource benches,
    concurrency ladder, 60-minute soak and crash injection after P0.

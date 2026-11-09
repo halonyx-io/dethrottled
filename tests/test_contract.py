@@ -18,11 +18,13 @@ from dethrottled import search as fs  # noqa: E402
 from dethrottled import server as srv  # noqa: E402
 
 SEARCH_ROW_FIELDS = {
-    "url", "title", "snippet", "publishedDate", "engine", "engines",
+    "url", "title", "snippet", "snippet_tokens", "publishedDate", "date_source",
+    "published_age_days", "source_type", "fetch_relevance", "engine", "engines",
     "category", "score", "cached", "search_attempts", "search_elapsed_ms",
-    "ranking", "from_corpus",
+    "ranking", "dated_results", "freshness_note", "decoy_buckets", "from_corpus",
 }
-EXTRACT_ROW_FIELDS = {"url", "content", "content_type", "quality", "tier", "cached"}
+EXTRACT_ROW_FIELDS = {"url", "content", "content_type", "quality", "tier", "cached",
+                      "tokens_estimated", "source_type", "page_type", "date_source"}
 
 FAKE_ROWS = [
     {"url": "https://example.com/one", "title": "One", "snippet": "first",

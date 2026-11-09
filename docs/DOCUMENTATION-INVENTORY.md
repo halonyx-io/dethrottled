@@ -13,9 +13,9 @@ must be classified; unknown paths fail generation/checking.
 | dependency-input | 4 |
 | generated | 4 |
 | harness-guide | 20 |
-| historical-evidence | 164 |
+| historical-evidence | 169 |
 | planned-work | 1 |
-| source-contract | 162 |
+| source-contract | 163 |
 | third-party-notice | 4 |
 | visual | 8 |
 
@@ -193,6 +193,7 @@ Evidence maintainer: preserve observations; append explicit corrections.
 | [experiments/dnb/results/2026-11-09/CANDIDATE-BENCHMARK-PLAN.md](../experiments/dnb/results/2026-11-09/CANDIDATE-BENCHMARK-PLAN.md) |
 | [experiments/dnb/results/2026-11-09/CANDIDATE-CHANGES.md](../experiments/dnb/results/2026-11-09/CANDIDATE-CHANGES.md) |
 | [experiments/dnb/results/2026-11-09/P0-BUGS-EFFICIENCY.md](../experiments/dnb/results/2026-11-09/P0-BUGS-EFFICIENCY.md) |
+| [experiments/dnb/results/2026-11-09/P1-AGENT-SIGNALS.md](../experiments/dnb/results/2026-11-09/P1-AGENT-SIGNALS.md) |
 | [experiments/dnb/results/2026-11-09/PHASE-4.md](../experiments/dnb/results/2026-11-09/PHASE-4.md) |
 | [experiments/dnb/results/2026-11-09/PHASE-5-PLAN.md](../experiments/dnb/results/2026-11-09/PHASE-5-PLAN.md) |
 | [experiments/dnb/results/2026-11-09/PHASE-5.md](../experiments/dnb/results/2026-11-09/PHASE-5.md) |
@@ -216,6 +217,10 @@ Evidence maintainer: preserve observations; append explicit corrections.
 | [experiments/dnb/results/2026-11-09/p0-reddit.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p0-reddit.json) |
 | [experiments/dnb/results/2026-11-09/p0-targeted-tests.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p0-targeted-tests.log) |
 | [experiments/dnb/results/2026-11-09/p0-tool-tokens.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p0-tool-tokens.json) |
+| [experiments/dnb/results/2026-11-09/p1-example.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p1-example.json) |
+| [experiments/dnb/results/2026-11-09/p1-host-suite.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p1-host-suite.log) |
+| [experiments/dnb/results/2026-11-09/p1-image-suite.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p1-image-suite.log) |
+| [experiments/dnb/results/2026-11-09/p1-targeted-tests.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p1-targeted-tests.log) |
 | [experiments/dnb/results/2026-11-09/phase4-cache-tests.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase4-cache-tests.log) |
 | [experiments/dnb/results/2026-11-09/phase4-cache.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase4-cache.json) |
 | [experiments/dnb/results/2026-11-09/phase4-dom-after.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase4-dom-after.json) |
@@ -440,6 +445,7 @@ Change author: audit docs impact, advertised defaults and generated contracts.
 | [src/dethrottled/search_diagnostics.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/search_diagnostics.py) |
 | [src/dethrottled/selectors.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/selectors.py) |
 | [src/dethrottled/server.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/server.py) |
+| [src/dethrottled/signals.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/signals.py) |
 | [src/dethrottled/site.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/site.py) |
 | [src/dethrottled/stack.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/stack.py) |
 | [src/dethrottled/structure.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/structure.py) |

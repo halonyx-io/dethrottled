@@ -136,7 +136,8 @@ def test_small_detailed_response_does_not_warn():
     from dethrottled.content import present_row
 
     row = {"content": "Short evidence", "quality": "ok"}
-    assert present_row(row, "detailed") == row
+    presented = present_row(row, "detailed")
+    assert presented["content"] == row["content"] and presented["tokens_estimated"] == 3
 
 
 def test_clipped_tiny_html_preserves_partial_flag(client, monkeypatch):

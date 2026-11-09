@@ -381,3 +381,22 @@ def test_searxng_single_page_parameters_and_original_ranks(monkeypatch):
                           pageno=1, language='all', safesearch=0)
     assert [r['discovery'][0]['rank'] for r in menu] == [1, 2, 3]
     assert all(r['discovery'][0]['provider'] == 'searxng:yahoo' for r in menu)
+
+
+def test_decoy_bucket_is_dropped_only_when_a_witness_exists():
+    decoy = [{"url": "https://game.example/%d" % n, "title": "Rust game %d" % n,
+              "snippet": "the game rust", "engine": "web-bing"} for n in range(4)]
+    healthy = [{"url": "https://docs.example/%d" % n, "title": "Rust ownership %d" % n,
+                "snippet": "borrowing and ownership", "engine": "web-duckduckgo"}
+               for n in range(4)]
+    kept, reports = fs.drop_decoy_buckets(decoy + healthy, "rust ownership borrowing")
+    assert {r["engine"] for r in kept} == {"web-duckduckgo"}
+    assert reports == [{"source": "bing", "results": 4, "coherence": 0.0,
+                        "action": "dropped"}]
+
+
+def test_decoy_bucket_without_witness_is_preserved():
+    decoy = [{"url": "https://game.example/%d" % n, "title": "Rust game %d" % n,
+              "snippet": "the game rust", "engine": "web-bing"} for n in range(4)]
+    kept, reports = fs.drop_decoy_buckets(decoy, "rust ownership borrowing")
+    assert kept == decoy and reports == []

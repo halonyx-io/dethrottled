@@ -200,3 +200,16 @@ def test_exhausted_local_transports_do_not_contact_other_hosts(monkeypatch):
     result = f.fetch_and_extract(target, allow_render=False)
     assert not result["ok"]
     assert requested == [target]
+
+
+def test_clip_ends_at_a_natural_boundary_and_never_exceeds_the_cap(monkeypatch):
+    text = ("First complete sentence about evidence. "
+            "Second complete sentence about the same source. "
+            "Third complete sentence that should not be reached. ") * 12
+    monkeypatch.setattr(f, "_tier_direct", tier(text=text))
+    result = f.fetch_and_extract("https://example.org/a", max_chars=55,
+                                 allow_render=False)
+    assert result["ok"] and result["truncated"]
+    assert len(result["text"]) <= 55
+    assert result["text"].endswith("…")
+    assert not result["text"].endswith("sou…")

@@ -80,6 +80,13 @@ class Cache:
 
     @staticmethod
     def key(kind: str, *parts) -> str:
+        # Cache identity only: whitespace/case changes should not create a new
+        # search entry, but the upstream query sent to the engine is unchanged.
+        if kind == "search":
+            parts = tuple(
+                " ".join(part.split()).casefold() if isinstance(part, str) else part
+                for part in parts
+            )
         raw = "|".join(str(p) for p in parts)
         digest = hashlib.blake2b(raw.encode("utf-8"), digest_size=16)
         return "%s:%s" % (kind, digest.hexdigest())

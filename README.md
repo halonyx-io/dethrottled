@@ -198,8 +198,11 @@ The first one recovers low-resolution OCR digits (`hotel-905`, reference read
 keep their existing OCR-DPI resolution. The frozen images were not overwritten.
 P0 test-bed hardening now also enforces cache expiry/size, closes the idle crawl
 browser, adds CID-corrupted PDF OCR, warns on long login/paywall/access-denied
-pages, and offers a six-tool MCP profile. See
-[P0-BUGS-EFFICIENCY.md](experiments/dnb/results/2026-11-09/P0-BUGS-EFFICIENCY.md).
+pages, and offers a six-tool MCP profile. P1 adds date/source/page signals,
+fetch relevance, decoy-bucket filtering, normalized search cache identity, token
+estimates and boundary-aware truncation. See
+[P0-BUGS-EFFICIENCY.md](experiments/dnb/results/2026-11-09/P0-BUGS-EFFICIENCY.md)
+and [P1-AGENT-SIGNALS.md](experiments/dnb/results/2026-11-09/P1-AGENT-SIGNALS.md).
 The full record is in [PHASE-6.md](experiments/dnb/results/2026-11-09/PHASE-6.md),
 and the next layer-by-layer comparison is in
 [CANDIDATE-BENCHMARK-PLAN.md](experiments/dnb/results/2026-11-09/CANDIDATE-BENCHMARK-PLAN.md).

@@ -185,3 +185,15 @@ def test_stats_reports_cache_bytes_and_limit(tmp_path):
         assert "expired" in stats["maintenance"]
     finally:
         cache.close()
+
+
+def test_search_cache_key_normalizes_case_and_whitespace_only(tmp_path):
+    cache = Cache(tmp_path / "cache.sqlite")
+    try:
+        cache.put("search", "Python   asyncio", value={"rows": [1]})
+        assert cache.get("search", "  python asyncio ") == {"rows": [1]}
+        # Extraction keys are not normalized: URLs and page bodies keep identity.
+        cache.put("extract", "https://Example.com/A", value={"text": "x"})
+        assert cache.get("extract", "https://example.com/a") is None
+    finally:
+        cache.close()

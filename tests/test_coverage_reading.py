@@ -794,5 +794,5 @@ def test_concise_mixed_batch_compacts_pdf_tables_and_keeps_plain_rows():
     out = [present_row(row, "concise") for row in (pdf, plain)]
     assert "native_pdf_tables" not in out[0]["extraction"]
     assert out[0]["extraction"]["native_pdf_table_count"] == 1
-    assert out[1] == plain
+    assert out[1]["content"] == plain["content"] and out[1]["tokens_estimated"] > 0
     assert len(__import__("json").dumps(out)) < 5000

@@ -31,7 +31,7 @@ from urllib.parse import urljoin, urlparse
 from . import __version__, adblock, workers
 from . import netfilter as requests
 from .challenges import classify as challenge_kind
-from .content import decode_html, page_details, short_text
+from .content import decode_html, page_details, short_text, smart_truncate
 from .urls import (
     canonical_url as canonical_url,
 )
@@ -873,7 +873,7 @@ def _clip(out: dict, max_chars: int) -> dict:
     if len(text) <= max_chars:
         return out
     clipped = dict(out)
-    clipped["text"] = text[:max_chars]
+    clipped["text"], _ = smart_truncate(text, max_chars)
     clipped["_index_text"] = text
     clipped["chars"] = len(clipped["text"])
     clipped["content_chars"] = len(text)

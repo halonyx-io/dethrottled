@@ -65,7 +65,8 @@ resource discipline and small quality signals**, not more tools.
 ## Priority 0 — bugs and efficiency (do first)
 
 Implementation record: P0.1-P0.4 and P0.6 are implemented; P0.5 was tested and
-not adopted because `old.reddit.com` failed in this stack. Measurements and tests
+not adopted because `old.reddit.com` failed in this stack. P1.1-P1.5 are also
+implemented in [P1-AGENT-SIGNALS.md](P1-AGENT-SIGNALS.md). Measurements and tests
 are in [P0-BUGS-EFFICIENCY.md](P0-BUGS-EFFICIENCY.md).
 
 ### P0.1 Cache growth has no enforcement

@@ -17,6 +17,12 @@ test-bed improvements, not a released version.
 | 2026-11-09 | Long login/paywall/access-denied pages no longer read as `ok` | [P0-BUGS-EFFICIENCY.md](P0-BUGS-EFFICIENCY.md) | controlled audit; gates warn |
 | 2026-11-09 | Tested Reddit `old.reddit.com` rewrite | [P0-BUGS-EFFICIENCY.md](P0-BUGS-EFFICIENCY.md) | not adopted; old.reddit failed |
 | 2026-11-09 | MCP `MCP_TOOL_PROFILE=core` cuts tool surface 20 -> 6 | [P0-BUGS-EFFICIENCY.md](P0-BUGS-EFFICIENCY.md) | 7.8K -> 4.2K approx tokens |
+| 2026-11-09 | Search `date_source`, `published_age_days`, `dated_results`, `freshness_note` | [P1-AGENT-SIGNALS.md](P1-AGENT-SIGNALS.md) | endpoint + signal tests |
+| 2026-11-09 | `source_type`, `page_type`, `fetch_relevance`, `snippet_tokens` | [P1-AGENT-SIGNALS.md](P1-AGENT-SIGNALS.md) | 125 targeted tests |
+| 2026-11-09 | Whole-bucket decoy detection with witness rule | [P1-AGENT-SIGNALS.md](P1-AGENT-SIGNALS.md) | decoy tests pass |
+| 2026-11-09 | Search cache key normalizes case/whitespace only | [P1-AGENT-SIGNALS.md](P1-AGENT-SIGNALS.md) | cache test passes |
+| 2026-11-09 | Token estimates and boundary-aware truncation | [P1-AGENT-SIGNALS.md](P1-AGENT-SIGNALS.md) | token/clip tests pass |
+
 
 | 2026-11-09 | Concise PDF presentation no longer claims omitted table metadata when the table list is empty | `tests/test_coverage_reading.py` | Full suite 876 passed |
 
@@ -24,8 +30,8 @@ test-bed improvements, not a released version.
 
 - Baseline worker: `dethrottled-dnb:1.8.0-candidate-20261109`
 - Baseline API: `dethrottled-dnb-api:1.8.0-candidate-20261109`
-- Current test-bed API: `dethrottled-dnb-api:1.8.0-dev-p0-20261109`
-  (`sha256:00fdfbcf…`)
+- Current test-bed API: `dethrottled-dnb-api:1.8.0-dev-p1-20261109`
+  (`sha256:a71e907d…`)
 - Current test-bed worker: `dethrottled-dnb:1.8.0-dev-p0-20261109`
   (`sha256:316174ac…`)
 - Current P0 worker/API also carry the cache, CID and gate fixes.

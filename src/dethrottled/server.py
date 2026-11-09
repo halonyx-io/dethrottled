@@ -89,7 +89,8 @@ from .api_models import (
 from .api_models import DriveStep as DriveStep
 from .cache import DEFAULT_TTL, NEWS_SEARCH_TTL, Cache, CacheView
 from .concurrency import ContextExecutor as ThreadPoolExecutor
-from .content import constrained, passage_excerpt, present_row
+from .content import constrained, estimate_tokens, passage_excerpt, present_row, smart_truncate
+from . import signals
 from .corpus import index_fetched, shared_corpus
 from .evidence import Documents
 from .jobs import JobError, Jobs
@@ -260,7 +261,14 @@ def _search_row(row: dict, meta: dict, index: int) -> dict:
         "url": row.get("url", ""),
         "title": row.get("title", ""),
         "snippet": row.get("snippet", ""),
+        "snippet_tokens": estimate_tokens(
+            (row.get("title", "") + " " + row.get("snippet", "")).strip()
+        ),
         "publishedDate": row.get("publishedDate") or None,
+        "date_source": row.get("date_source", "none"),
+        "published_age_days": row.get("published_age_days"),
+        "source_type": row.get("source_type") or signals.source_type(row.get("url", "")),
+        "fetch_relevance": row.get("fetch_relevance") or signals.fetch_relevance(row),
         "engine": row.get("engine", "dethrottled"),
         "engines": [row.get("engine", "dethrottled")],
         "discovery": row.get("discovery", []),
@@ -274,6 +282,9 @@ def _search_row(row: dict, meta: dict, index: int) -> dict:
         "search_elapsed_ms": meta.get("elapsed_ms", 0),
         # Which ranking stages actually ran.
         "ranking": meta.get("ranking", []) if index == 0 else [],
+        "dated_results": meta.get("dated_results") if index == 0 else None,
+        "freshness_note": meta.get("freshness_note") if index == 0 else None,
+        "decoy_buckets": meta.get("decoy_buckets") if index == 0 else None,
         "from_corpus": bool(row.get("from_corpus")),
         **({"constraints": meta["constraints"]} if index == 0 and "constraints" in meta else {}),
         **({"corpus_evidence": row["corpus_evidence"]} if row.get("corpus_evidence") else {}),
@@ -375,6 +386,10 @@ def _extract_once(url: str, max_chars: int, allow_ocr: bool = True,
                 "tier": result.get("tier"), "cached": result.get("cached", False),
                 "acquisition_attempts": result.get("acquisition_attempts", []),
                 "source_alternatives": result.get("source_alternatives", []),
+                "source_type": signals.source_type(url),
+                "page_type": "unreadable",
+                "date_source": "none",
+                "published_age_days": None,
                 **({"policy_blocked": result["policy_blocked"]}
                    if result.get("policy_blocked") else {})}
     row = {
@@ -412,6 +427,10 @@ def _extract_once(url: str, max_chars: int, allow_ocr: bool = True,
         "final_url": result.get("url", url),
         "source_sha256": result.get("extraction", {}).get("source_sha256"),
     }
+    row["source_type"] = signals.source_type(url)
+    row["page_type"] = signals.page_type(row)
+    row["date_source"] = "structured" if row.get("published") else "none"
+    row["published_age_days"] = signals.age_days(row.get("published", ""))
     # Only stateless, public-only acquisitions are automatically shareable.
     # Interactive/cookie-backed reads keep their caller namespace and are not
     # admitted merely because their URL is publicly routable.
@@ -477,7 +496,7 @@ def _extract_row(url, max_chars, *, recovery="auto", asset_recovery=True, **opti
                            focus_status="term_matches" if evidence else "no_term_matches",
                            truncated=len(selected) < len(canonical))
             else:
-                row["content"] = canonical[:max_chars]
+                row["content"], _ = smart_truncate(canonical, max_chars)
                 row["truncated"] = row.get("truncated", False) or len(canonical) > max_chars
             row["content_chars"] = len(canonical)
     if row.get("browser_recovery") or row.get("read_session") or any(
@@ -858,10 +877,21 @@ def _ranked(body) -> tuple:
     ordered = domain_health.order_for_fetching(rows) if isinstance(body, SearchFetchBody) else rows
     if ordered[:limit] != rows[:limit]:
         stages.append("fetchability")
-    rows = ordered
-
-    meta = dict(meta, ranking=stages)
-    return rows[:limit], meta, limit
+    rows = ordered[:limit]
+    rows, dated = signals.annotate_dates(rows)
+    scores = [row.get("score") for row in rows if isinstance(row.get("score"), (int, float))]
+    max_score = max(scores) if scores else None
+    for row in rows:
+        row["source_type"] = signals.source_type(row.get("url", ""))
+        row["fetch_relevance"] = signals.fetch_relevance(row, max_score)
+    freshness_note = None
+    if rows and dated * 2 < len(rows):
+        freshness_note = (
+            "Most results are undated; dates are leads, not verified publication dates."
+        )
+    meta = dict(meta, ranking=stages, dated_results=dated,
+                freshness_note=freshness_note)
+    return rows, meta, limit
 
 
 @app.post("/search")
@@ -879,6 +909,9 @@ def search_envelope(body: SearchBody):
             "outcome": meta.get("discovery", {}).get("outcome", "indeterminate"),
             "degraded": meta.get("discovery", {}).get("degraded", True),
             "discovery": meta.get("discovery", {}),
+            "dated_results": meta.get("dated_results"),
+            "freshness_note": meta.get("freshness_note"),
+            "decoy_buckets": meta.get("decoy_buckets"),
             **({"constraints": meta["constraints"]} if "constraints" in meta else {}),
             "attempts": _attempts(meta), "elapsed_ms": meta.get("elapsed_ms"),
             "ranking": meta.get("ranking", []), "profile": body.profile}

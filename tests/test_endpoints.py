@@ -314,3 +314,38 @@ def test_local_corpus_cannot_return_a_fifty_url_menu(client, monkeypatch):
     result = client.get('/corpus/search', params={'q': 'One', 'limit': 50})
     assert result.status_code == 200
     assert result.json()['count'] == 10
+
+
+def test_search_exposes_date_source_and_freshness_metadata(monkeypatch):
+    rows = [
+        {"url": "https://github.com/a/b", "title": "Repo", "snippet": "one",
+         "publishedDate": "2026-11-09", "engine": "web-ddg"},
+        {"url": "https://news.example/a", "title": "Story", "snippet": "Updated 8 November 2026",
+         "publishedDate": "", "engine": "bing-news"},
+        {"url": "https://random.example/a", "title": "Other", "snippet": "undated",
+         "publishedDate": "", "engine": "web-ddg"},
+    ]
+    monkeypatch.setattr(srv.fs, "search", lambda *a, **k: (rows, dict(FAKE_META)))
+    c = TestClient(srv.app)
+    result = c.post("/search", json={"query": "q"}).json()
+    assert result[0]["date_source"] == "structured"
+    assert result[1]["date_source"] == "snippet"
+    assert result[1]["publishedDate"] == "8 November 2026"
+    assert result[2]["date_source"] == "none"
+    assert result[0]["source_type"] == "repo"
+    assert result[0]["fetch_relevance"] == "high"
+    assert result[0]["snippet_tokens"] > 0
+    assert result[0]["dated_results"] == 2
+    assert result[0]["freshness_note"] is None
+    envelope = c.post("/v2/search", json={"query": "q"}).json()
+    assert envelope["dated_results"] == 2
+    assert envelope["freshness_note"] is None
+
+
+def test_search_warns_when_most_results_are_undated(monkeypatch):
+    rows = [{"url": "https://example.com/%d" % n, "title": "T", "snippet": "s",
+             "publishedDate": "", "engine": "web-ddg"} for n in range(3)]
+    monkeypatch.setattr(srv.fs, "search", lambda *a, **k: (rows, dict(FAKE_META)))
+    result = TestClient(srv.app).post("/search", json={"query": "q"}).json()
+    assert result[0]["dated_results"] == 0
+    assert "Most results are undated" in result[0]["freshness_note"]

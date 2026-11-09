@@ -17,7 +17,7 @@
 | Docker server | 29.8.2 |
 | Python | 3.13.5 |
 | Production | 1.7.1 `dethrottled:local`, running healthy |
-| Current test-bed API | `dethrottled-dnb-api:1.8.0-dev-p0-20261109` `sha256:00fdfbcf…` |
+| Current test-bed API | `dethrottled-dnb-api:1.8.0-dev-p1-20261109` `sha256:a71e907d…` |
 | Current test-bed worker | `dethrottled-dnb:1.8.0-dev-p0-20261109` `sha256:316174ac…` |
 
 ## S1 REST contract
@@ -70,5 +70,7 @@ correctness, then exploratory P2 work.
 P0 is now recorded complete in [P0-BUGS-EFFICIENCY.md](P0-BUGS-EFFICIENCY.md):
 cache ceiling/expiry, browser idle close and pressure, CID PDF OCR, gate-page
 warnings, the Reddit test (not adopted), and the optional core MCP profile.
-Next is P1: date/source provenance, decoy buckets, cache-key normalization and
-token/truncation polish.
+P1 is recorded in [P1-AGENT-SIGNALS.md](P1-AGENT-SIGNALS.md): date/source/page
+signals, fetch relevance, decoy buckets, normalized cache identity, token
+estimates and boundary-aware truncation. Next is the P2 exploratory queue after
+the P1 fields are evaluated against the fixed corpus.

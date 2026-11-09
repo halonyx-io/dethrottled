@@ -56,6 +56,70 @@ def result_family(row):
     return engine.removeprefix("web-browser-").removeprefix("web-").replace(" ", "-")
 
 
+_DECOY_MIN_RESULTS = 4
+_DECOY_LOW = 0.25
+_DECOY_WITNESS = 0.50
+
+
+def _coherence_terms(query: str) -> list:
+    """Ordered query terms worth checking in a result bucket."""
+    terms, seen = [], set()
+    for token in re.findall(r"[^\W_]+", (query or "").casefold()):
+        if len(token) <= 3 or token in seen:
+            continue
+        seen.add(token)
+        terms.append(token)
+    return terms
+
+
+def bucket_coherence(rows: list, query: str) -> float:
+    """Share of a bucket mentioning any query term beyond the first.
+
+    A bucket that only echoes the first word is the decoy pattern. When the
+    query has fewer than two useful terms there is no signal to measure.
+    """
+    terms = _coherence_terms(query)
+    if len(terms) < 2 or not rows:
+        return 1.0
+    rest = terms[1:]
+    hits = 0
+    for row in rows:
+        text = ("%s %s" % (row.get("title", ""), row.get("snippet", ""))).casefold()
+        if any(term in text for term in rest):
+            hits += 1
+    return hits / len(rows)
+
+
+def drop_decoy_buckets(rows: list, query: str) -> tuple:
+    """Drop a low-coherence source only when another source proves the query
+    can be echoed. Returns (kept rows, reports)."""
+    from collections import defaultdict
+
+    groups = defaultdict(list)
+    for row in rows:
+        groups[result_family(row)].append(row)
+    scores = {
+        family: (bucket_coherence(items, query), len(items))
+        for family, items in groups.items()
+    }
+    witness = any(
+        count >= _DECOY_MIN_RESULTS and score >= _DECOY_WITNESS
+        for score, count in scores.values()
+    )
+    if not witness or len(scores) < 2:
+        return rows, []
+    dropped = set()
+    reports = []
+    for family, (score, count) in scores.items():
+        if count >= _DECOY_MIN_RESULTS and score < _DECOY_LOW:
+            dropped.add(family)
+            reports.append({"source": family, "results": count,
+                            "coherence": round(score, 3), "action": "dropped"})
+    if not dropped:
+        return rows, []
+    return [row for row in rows if result_family(row) not in dropped], reports
+
+
 def bounded_results(rows, limit=SEARCH_MENU_LIMIT, *, primary_limit=PRIMARY_SEARCH_LIMIT):
     """One DDG-family budget; small supplements, canonical deduplication."""
     out, counts, seen, supplements = [], {}, set(), 0
@@ -1055,6 +1119,8 @@ def search(query: str, *, max_items: int = SEARCH_MENU_LIMIT, categories: str = 
                 resolved += 1
 
     merged = [r for r in merged if _domain(r.get("url", "")) not in JUNK_DOMAINS]
+    merged, decoy_reports = drop_decoy_buckets(merged, query)
+    decoy_dropped = sum(report["results"] for report in decoy_reports)
 
     # Self-tuning: only sweep when the pool is actually short of trusted
     # publishers, so a healthy query costs nothing extra and a thin one gets
@@ -1100,6 +1166,8 @@ def search(query: str, *, max_items: int = SEARCH_MENU_LIMIT, categories: str = 
         "profile": categories or profile,
         "sources": sorted(sources),
         "junk_dropped": dropped,
+        "decoy_dropped": decoy_dropped,
+        "decoy_buckets": decoy_reports,
         "swept": swept,
         "elapsed_ms": int((time.time() - started) * 1000),
         "cost": "potentially_metered" if sources.intersection(providers.NAMES) else "free",
