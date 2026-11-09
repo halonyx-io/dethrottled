@@ -9,6 +9,7 @@ test-bed improvements, not a released version.
 | 2026-11-09 | Regenerated stale HTTP/MCP references and fixed five broken Phase 6 prep links | [S0-S1-PROVENANCE-CONTRACTS.md](S0-S1-PROVENANCE-CONTRACTS.md) | Docs checks pass |
 | 2026-11-09 | Bounded 2x OCR upscale for small standalone images; PDF pages keep their OCR-DPI raster | [S3-OCR-RESOLUTION.md](S3-OCR-RESOLUTION.md) | 7 focused tests pass; full suite 876 passed |
 | 2026-11-09 | Transparent PNGs are composited on a contrasting background before OCR | [S3-OCR-RESOLUTION.md](S3-OCR-RESOLUTION.md) | 7 focused tests pass; dark text recovered |
+| 2026-11-09 | Separate headed non-GL crawl browser; drive keeps verified Mesa/WebGL | [S2-RENDERER-CPU.md](S2-RENDERER-CPU.md) | 0.706 -> 0.370 CPU-s/request; Crunchbase and drive pass |
 | 2026-11-09 | Concise PDF presentation no longer claims omitted table metadata when the table list is empty | `tests/test_coverage_reading.py` | Full suite 876 passed |
 
 ## Candidate images
@@ -17,6 +18,8 @@ test-bed improvements, not a released version.
 - Baseline API: `dethrottled-dnb-api:1.8.0-candidate-20261109`
 - Current test-bed API: `dethrottled-dnb-api:1.8.0-dev-20261109`
   (`sha256:4bdeb3e31224…`)
+- Current test-bed worker: `dethrottled-dnb:1.8.0-dev-crawlsplit3-20261109`
+  (`sha256:e82fa102…`)
 - Earlier OCR-only test image: `dethrottled-dnb-api:1.8.0-dev-ocr-20261109`
   (superseded)
 

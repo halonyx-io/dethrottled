@@ -186,7 +186,10 @@ The candidate uses roughly 6.8-7.2 CPU-seconds per 10 renders versus 2.4-2.8 for
 1.7.1 at similar latency; this is a measured target for improvement, not a
 speedup claim. Controlled direct extraction is within 3% (0.803 versus 0.780
 CPU-seconds per request) and the extraction worker itself is about 0.019
-CPU-seconds per request, so the renderer, not the reader, owns that gap.
+CPU-seconds per request, so the renderer, not the reader, owns that gap. A
+separate headed non-GL crawl browser cut render CPU from 0.706 to 0.370
+CPU-seconds per request at the same latency, while drive keeps verified WebGL and
+Crunchbase still reads; browser memory rises from about 0.52 to 1.0 GiB.
 
 Test-bed improvements after the freeze are tracked in
 [CANDIDATE-CHANGES.md](experiments/dnb/results/2026-11-09/CANDIDATE-CHANGES.md).

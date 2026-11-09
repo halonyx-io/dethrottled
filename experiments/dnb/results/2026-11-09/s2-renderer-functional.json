@@ -1,0 +1,70 @@
+{
+  "crunchbase": {
+    "quality": "ok",
+    "tier": "crawl4ai/crawl4ai-native",
+    "content_chars": 54125,
+    "failure_reason": null,
+    "acquisition_attempts": [
+      {
+        "tier": "direct",
+        "reason": "http_403",
+        "outcome": "failed",
+        "elapsed_ms": 19.35
+      },
+      {
+        "tier": "tls",
+        "reason": "tls_challenge_detected",
+        "outcome": "challenge",
+        "elapsed_ms": 56.69,
+        "provider": "unspecified"
+      },
+      {
+        "tier": "crawl4ai",
+        "reason": "",
+        "outcome": "extracted",
+        "elapsed_ms": 1427.36,
+        "content_assessment": {
+          "revision": 1,
+          "text_sha256": "98cf9120f3451de48b734f17795a12b1c92f8bc18534457a4f99e548240dee85",
+          "pollution": "none_detected",
+          "completeness": "unknown",
+          "usable_content": "unverified",
+          "inspected_chars": 54125,
+          "suspected_chars": 0,
+          "unflagged_chars": 54125
+        }
+      }
+    ]
+  },
+  "drive": {
+    "status": 200,
+    "steps": [
+      [
+        "goto",
+        true,
+        {
+          "access": {
+            "status": "content_observed",
+            "reason": "visible_text_present",
+            "answer_verified": false,
+            "source_complete": false
+          },
+          "url": "http://127.0.0.1:8090/article",
+          "status": 200,
+          "wait_until": "domcontentloaded",
+          "challenge_headers": {}
+        }
+      ],
+      [
+        "title",
+        true,
+        "DNB fixture"
+      ],
+      [
+        "text",
+        true,
+        "Browser evidence laboratory"
+      ]
+    ]
+  }
+}

@@ -10,8 +10,12 @@ recovery recipes and browser watchdog. It adds a bounded `/crawl` adapter which
 captures pages in isolated contexts in the same warm headed browser, then runs
 Crawl4AI 0.9.5's default scraper and Markdown generator in two bounded Python
 worker processes inside the same container.
-There is one Chromium installation and one browser process tree; neither
-`AsyncWebCrawler` nor a second Playwright browser is started.
+There is one Chromium installation. By default two browser process trees share
+the container: the verified headed Mesa/WebGL browser for drive and challenge
+recovery, and a separate headed non-GL crawl browser for bulk reads. Neither
+`AsyncWebCrawler` nor a second browser engine is installed. The split cut render
+CPU from 0.706 to 0.370 CPU-seconds per request at the same latency; see
+[S2-RENDERER-CPU.md](results/2026-11-09/S2-RENDERER-CPU.md).
 
 This retains upstream extraction code and its Apache-2.0 attribution in the
 installed distribution. Patchright and other dependencies retain their installed

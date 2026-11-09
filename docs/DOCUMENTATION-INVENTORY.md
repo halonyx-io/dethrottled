@@ -13,7 +13,7 @@ must be classified; unknown paths fail generation/checking.
 | dependency-input | 4 |
 | generated | 4 |
 | harness-guide | 20 |
-| historical-evidence | 150 |
+| historical-evidence | 154 |
 | planned-work | 1 |
 | source-contract | 162 |
 | third-party-notice | 4 |
@@ -204,6 +204,7 @@ Evidence maintainer: preserve observations; append explicit corrections.
 | [experiments/dnb/results/2026-11-09/PHASE-6-RELEASE-GATE.md](../experiments/dnb/results/2026-11-09/PHASE-6-RELEASE-GATE.md) |
 | [experiments/dnb/results/2026-11-09/PHASE-6.md](../experiments/dnb/results/2026-11-09/PHASE-6.md) |
 | [experiments/dnb/results/2026-11-09/S0-S1-PROVENANCE-CONTRACTS.md](../experiments/dnb/results/2026-11-09/S0-S1-PROVENANCE-CONTRACTS.md) |
+| [experiments/dnb/results/2026-11-09/S2-RENDERER-CPU.md](../experiments/dnb/results/2026-11-09/S2-RENDERER-CPU.md) |
 | [experiments/dnb/results/2026-11-09/S2-RESOURCE-ATTRIBUTION.md](../experiments/dnb/results/2026-11-09/S2-RESOURCE-ATTRIBUTION.md) |
 | [experiments/dnb/results/2026-11-09/S3-OCR-RESOLUTION.md](../experiments/dnb/results/2026-11-09/S3-OCR-RESOLUTION.md) |
 | [experiments/dnb/results/2026-11-09/phase4-cache-tests.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase4-cache-tests.log) |
@@ -247,6 +248,9 @@ Evidence maintainer: preserve observations; append explicit corrections.
 | [experiments/dnb/results/2026-11-09/s1-openapi-reference.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/s1-openapi-reference.json) |
 | [experiments/dnb/results/2026-11-09/s2-direct-cpu.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/s2-direct-cpu.json) |
 | [experiments/dnb/results/2026-11-09/s2-extract-bench.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/s2-extract-bench.json) |
+| [experiments/dnb/results/2026-11-09/s2-renderer-concurrency.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/s2-renderer-concurrency.json) |
+| [experiments/dnb/results/2026-11-09/s2-renderer-cpu.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/s2-renderer-cpu.json) |
+| [experiments/dnb/results/2026-11-09/s2-renderer-functional.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/s2-renderer-functional.json) |
 | [experiments/dnb/results/2026-11-09/s3-full-suite.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/s3-full-suite.log) |
 | [experiments/dnb/results/2026-11-09/s3-ocr-alpha-dark-candidate.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/s3-ocr-alpha-dark-candidate.json) |
 | [experiments/dnb/results/2026-11-09/s3-ocr-alpha-dark-reference.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/s3-ocr-alpha-dark-reference.json) |

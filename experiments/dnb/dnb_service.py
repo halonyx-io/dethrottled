@@ -85,7 +85,8 @@ async def create_state():
     context = None
     try:
         proxy = await gate.start()
-        context = await app.state.browser.new_context(accept_downloads=True, proxy=proxy)
+        render_browser = getattr(app.state, "crawl_browser", None) or app.state.browser
+        context = await render_browser.new_context(accept_downloads=True, proxy=proxy)
         page = await context.new_page()
         await install_navigation(context, network, gate.events)
         return {
@@ -364,6 +365,10 @@ async def dnb_status():
         "prototype": True,
         "reference": "1.7.1",
         "browser": "shared-headed-patchright",
+        "crawl_browser_separate": bool(getattr(app.state, "crawl_browser", None)),
+        "crawl_browser_headless": bool(
+            getattr(app.state, "crawl_browser_headless", False)
+        ),
         "extractor": "crawl4ai-0.9.5",
         "counts": dict(COUNTS),
         "render_slots": 2,

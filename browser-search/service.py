@@ -294,7 +294,11 @@ async def _race(browser, query: str, limit: int = 10) -> dict:
 async def _watch_browser(app):
     while True:
         await asyncio.sleep(3)
-        if not app.state.browser.is_connected():
+        browsers = [app.state.browser]
+        crawl = getattr(app.state, "crawl_browser", None)
+        if crawl is not None:
+            browsers.append(crawl)
+        if not all(browser.is_connected() for browser in browsers):
             os._exit(1)  # Compose restart policy restores the worker.
 
 
@@ -332,6 +336,30 @@ async def lifespan(app):
             graphics_args[1] = '--use-angle=gl'
             app.state.browser = await playwright.chromium.launch(
                 **launch_options(graphics_args))
+        # Bulk crawl and headed drive have different costs and different needs.
+        # The drive browser stays headed for interaction and challenge recovery;
+        # crawl can use a separate headless browser with software WebGL, which
+        # measured roughly half the CPU of the headed Mesa path. Keep this opt-in
+        # so standalone search workers do not pay for a second browser.
+        app.state.crawl_browser = None
+        if os.getenv("DETHROTTLED_CRAWL_SEPARATE", "0") == "1":
+            crawl_headless = os.getenv("DETHROTTLED_CRAWL_HEADLESS", "0") == "1"
+            crawl_graphics = os.getenv("DETHROTTLED_CRAWL_GRAPHICS", "default")
+            crawl_args = (
+                ["--use-gl=angle", "--use-angle=swiftshader", "--ignore-gpu-blocklist"]
+                if crawl_graphics == "swiftshader"
+                else []
+            )
+            app.state.crawl_browser = await playwright.chromium.launch(
+                headless=crawl_headless,
+                channel="chromium",
+                args=crawl_args,
+                downloads_path=str(DOWNLOAD_DIR),
+            )
+            app.state.crawl_browser_headless = crawl_headless
+        else:
+            app.state.crawl_browser_headless = False
+
         async def probe_graphics():
             context = await app.state.browser.new_context()
             try:
@@ -394,6 +422,8 @@ async def lifespan(app):
             await asyncio.gather(watcher, session_reaper, return_exceptions=True)
             await _close_all_drive_sessions()
             await app.state.browser.close()
+            if getattr(app.state, "crawl_browser", None):
+                await app.state.crawl_browser.close()
 
 
 app = FastAPI(title="Dethrottled browser search worker", lifespan=lifespan)

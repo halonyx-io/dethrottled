@@ -35,10 +35,11 @@ single candidate headless/Mesa observation was 9.44 CPU-seconds for 10 renders,
 so the result is dominated by browser mode and graphics backend, not by the
 reader.
 
-That does not prove the candidate is optimal. It means the next renderer
-comparison must hold browser mode and graphics constant, and should measure
-Chromium and Python worker CPU separately. Until then the gap is a documented
-rendering-mode trade, not a reader regression.
+The follow-up held the workload constant and separated the browsers: a headed
+non-GL crawl browser cut the candidate from 0.706 to 0.370 CPU-seconds per
+request while the drive browser kept verified Mesa/WebGL. See
+[S2-RENDERER-CPU.md](S2-RENDERER-CPU.md). The remaining gap is renderer
+implementation, not the reader.
 
 Evidence: [s2-direct-cpu.json](s2-direct-cpu.json),
 [s2-extract-bench.json](s2-extract-bench.json).
