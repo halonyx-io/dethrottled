@@ -62,7 +62,8 @@ def ensure_keys():
         fd, name = tempfile.mkstemp(dir=public.parent, prefix=".public-")
         try:
             with os.fdopen(fd, "wb") as output:
-                os.fchmod(output.fileno(), 0o640)
+                if hasattr(os, "fchmod"):
+                    os.fchmod(output.fileno(), 0o640)
                 output.write(data)
                 output.flush()
                 os.fsync(output.fileno())
