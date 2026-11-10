@@ -37,9 +37,9 @@ test-bed improvements, not a released version.
 - Baseline worker: `dethrottled-dnb:1.8.0-candidate-20261109`
 - Baseline API: `dethrottled-dnb-api:1.8.0-candidate-20261109`
 - Current test-bed API: `dethrottled-dnb-api:1.8.0-dev-p2-20261109`
-  (`sha256:b4f219da…`)
+  (`sha256:78e0112f…`)
 - Current test-bed worker: `dethrottled-dnb:1.8.0-dev-p2-20261109`
-  (`sha256:b44b4b39…`)
+  (`sha256:5b368530…`)
 - Current P0 worker/API also carry the cache, CID and gate fixes.
 - Earlier OCR-only test image: `dethrottled-dnb-api:1.8.0-dev-ocr-20261109`
   (superseded)

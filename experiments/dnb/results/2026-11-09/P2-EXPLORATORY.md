@@ -25,50 +25,78 @@ had consensus 2.5, the single-source URLs 1.0.
 Evidence: [p2-fanout.json](p2-fanout.json), `tests/test_consensus.py`,
 `tests/test_endpoints.py`.
 
-## Neural rerank — second pass, correctly configured
+## Neural rerank — correctly configured and tuned
 
 Added `src/dethrottled/rerank.py`, opt-in with `DETHROTTLED_RERANK=1` and
 `DETHROTTLED_RERANK_MODEL=<dir>` containing `model.onnx`, `tokenizer.json` and
 `config.json`.
 
-The first pass used a tiny hand-labelled set and a fixed padding id. That was
-not a fair test. The second pass fixed the setup:
+The earlier 8-case test was not a fair cross-encoder test. This pass fixed the
+setup and then tuned it:
 
-- Model-specific pad id from `config.json` (BGE pad 1, GTE pad 50283), instead
-  of forcing 0.
-- Query/document pair encoding, 512-token truncation, model-specific input
-  names (GTE/BGE/MXBAI do not take `token_type_ids`).
-- Full title+text input up to 3,000 characters for reranking; BM25 baseline on
-  the same full text.
-- A real BEIR **SciFact** reranking set: 60 test queries, BM25 top-30 candidates,
-  nDCG@10 and MRR@10. Models are compared on exactly the same candidate lists.
+- Model-specific pad id from `config.json` (BGE pad 1, GTE pad 50283).
+- Correct query/document pair encoding, paired special tokens and input names.
+- Tokenizer truncation length configurable and clamped to the model maximum.
+- Title + body up to 3,000 characters; BM25 saw the same full text.
+- Real BEIR **SciFact** data: 100 test queries, BM25 top-30 candidates, nDCG@10
+  and MRR@10 with identical candidate lists.
+- CPU threading tested (8 threads reduced GTE time from 923 s to ~940 s for the
+  100-query run versus the slower 60-query setup).
 
-### Models tested
+### Model comparison — 60 queries
 
-| Model | License | 60-query nDCG@10 | MRR@10 | Time |
-|---|---|---:|---:|---:|
-| BM25 baseline | — | **0.7635** | **0.7390** | — |
-| `Xenova/bge-reranker-base` | MIT | 0.7645 | 0.7283 | 593 s |
-| `Xenova/ms-marco-MiniLM-L-12-v2` | Apache-2.0 | 0.7501 | 0.7167 | 220 s |
-| `Alibaba-NLP/gte-reranker-modernbert-base` | Apache-2.0 | **0.8187** | **0.7982** | 923 s |
-| `jinaai/jina-reranker-v2-base-multilingual` | **CC-BY-NC-4.0** | **0.8251** | **0.8076** | 725 s |
+| Model | License | nDCG@10 | MRR@10 |
+|---|---|---:|---:|
+| BM25 baseline | — | 0.7635 | 0.7390 |
+| MiniLM-L12 | Apache-2.0 | 0.7501 | 0.7167 |
+| BGE base | MIT | 0.7645 | 0.7283 |
+| GTE ModernBERT (quantized) | Apache-2.0 | **0.8187** | **0.7982** |
+| Jina v2 (1024 tokens) | **CC-BY-NC-4.0** | **0.8251** | **0.8076** |
 
-GTE gained **+0.055 nDCG@10** and **+0.059 MRR@10** over BM25. Per query:
-12 wins, 9 losses, 39 ties. A paired bootstrap over the 60 queries gave a 95%
-interval for the nDCG delta of **-0.0066 to +0.1216** (MRR -0.0131 to +0.1366),
-so the gain is promising but **not statistically conclusive** at 60 queries.
-Jina scored slightly higher but is non-commercial; it is not a bundle candidate.
-BGE and MiniLM-12 did not beat BM25 on MRR.
+GTE gained +5.5 nDCG and +5.9 MRR over BM25. Per-query at 60: 12 wins, 9 losses,
+39 ties. The paired bootstrap 95% interval still crossed zero
+(nDCG -0.0066 to +0.1216), so it was not statistically conclusive.
 
-The official GTE usage examples use `max_length=512` and paired query/document
-inputs; the corrected implementation follows that. Sentence-transformers applies
-softmax/sigmoid for display, but ranking is monotonic and our evidence is based on
-ordering.
+### GTE settings sweep — 30 queries
+
+| Setting | nDCG@10 | MRR@10 |
+|---|---:|---:|
+| BM25 baseline | 0.7454 | 0.7158 |
+| 256 tokens, 3,000 chars, depth 30 | 0.7443 | 0.7367 |
+| **512 tokens, 3,000 chars, depth 30** | **0.8189** | **0.8000** |
+| 768 tokens, 3,000 chars, depth 30 | 0.7954 | 0.7844 |
+| 1,024 tokens, 3,000 chars, depth 30 | 0.7954 | 0.7844 |
+| 1,536 tokens, 3,000 chars, depth 30 | 0.7954 | 0.7844 |
+| 512 tokens, 600 chars, depth 30 | 0.7643 | 0.7493 |
+| 512 tokens, 1,500 chars, depth 30 | 0.7799 | 0.7603 |
+| 512 tokens, title omitted, depth 30 | 0.7915 | 0.7708 |
+| 512 tokens, depth 10 | 0.7979 | 0.7992 |
+| 512 tokens, depth 20 | 0.7936 | 0.7837 |
+| 512 tokens, depth 50 | 0.7804 | 0.7783 |
+| Full-precision GTE, 512 tokens, depth 30 | 0.8227 | 0.8167 |
+
+The best practical configuration is **quantized GTE, 512 tokens, title+text,
+3,000 characters, depth 30, 8 threads**. Longer token limits did not help
+SciFact; 256 hurt; 600/1,500 characters were too short; title text helped;
+depth 30 beat 10/20/50. The unquantized model was only +0.004 nDCG for 4x the
+disk and ~1.5x the runtime, so the quantized model is recommended.
+
+### Final GTE run — 100 queries
+
+| Metric | BM25 | GTE |
+|---|---:|---:|
+| nDCG@10 | 0.7222 | **0.7722** |
+| MRR@10 | 0.6913 | **0.7455** |
+
+Per query: 22 wins, 15 losses, 63 ties. This is a **+0.050 nDCG / +0.054 MRR**
+gain over a larger query sample. It is a real positive signal, but not yet enough
+to make reranking a default; the query-level wins are not overwhelming and a
+larger multi-dataset run is the right next step.
 
 **Decision:** keep reranking opt-in. GTE is the recommended optional model
-(Apache-2.0, 144 MB quantized ONNX); do not make it a default until a larger
-SciFact/other labelled evaluation confirms the gain. `scripts/fetch-rerank-model.sh`
-fetches the pinned GTE model. The earlier small-set result is retained in
+(Apache-2.0, 144 MB quantized ONNX). `scripts/fetch-rerank-model.sh` downloads
+the pinned GTE revision. Jina scored slightly higher but is CC-BY-NC and is not a
+bundle candidate. The earlier small-set result is retained in
 `p2-rerank-small.json` so the failed first test is not hidden.
 
 Evidence: [p2-rerank.json](p2-rerank.json),
@@ -145,18 +173,18 @@ Evidence: `tests/test_provider_rotation.py`.
 
 ## Verification
 
-- Host offline suite: **912 passed, 137 skipped, 2 deselected**.
+- Host offline suite: **913 passed, 137 skipped, 2 deselected**.
 - Full suite inside the candidate API image: **1,061 passed, 15 skipped,
   2 deselected**.
-- P2 targeted tests: **58 passed**.
+- P2 targeted tests: **59 passed**.
 - Documentation and agent-doc checks pass.
 
 Images:
 
 - API: `dethrottled-dnb-api:1.8.0-dev-p2-20261109`
-  (`sha256:b4f219da…`)
+  (`sha256:78e0112f…`)
 - Worker: `dethrottled-dnb:1.8.0-dev-p2-20261109`
-  (`sha256:b44b4b39…`)
+  (`sha256:5b368530…`)
 
 No default ranking, provider key, proxy or cookie behavior changed. P2 outcomes
 that did not earn a default stay opt-in, and no release action is authorised.

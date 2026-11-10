@@ -388,3 +388,17 @@ def test_semantic_cache_hit_skips_search_and_is_explicit(monkeypatch):
     result = TestClient(srv.app).post("/search", json={"query": "q"}).json()
     assert result[0]["semantic_cache"]["hit"] is True
     assert result[0]["semantic_cache"]["similarity"] == 0.95
+
+
+def test_neural_rerank_only_reorders_the_configured_depth(monkeypatch):
+    seen = []
+    monkeypatch.setenv("DETHROTTLED_RERANK", "1")
+    monkeypatch.setattr(srv.rerank, "available", lambda: True)
+    monkeypatch.setattr(srv.rerank, "rerank_rows",
+                        lambda rows, query: (seen.append(len(rows)) or rows[::-1]))
+    rows = [{"url": "https://example.com/%d" % n, "title": "T", "snippet": "s",
+             "publishedDate": "", "engine": "web-ddg"} for n in range(40)]
+    monkeypatch.setattr(srv.fs, "search", lambda *a, **k: (rows, dict(FAKE_META)))
+    result = TestClient(srv.app).post("/search", json={"query": "q"}).json()
+    assert seen == [30]
+    assert result

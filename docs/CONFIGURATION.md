@@ -62,6 +62,10 @@ through a local override:
 | `DETHROTTLED_SEARCH_FANOUT` | `0` | API: one extra intent-aware query variant; extra upstream requests |
 | `DETHROTTLED_RERANK` | `0` | API: use a local ONNX cross-encoder when `DETHROTTLED_RERANK_MODEL` is set |
 | `DETHROTTLED_RERANK_MODEL` | empty | Directory with `model.onnx`, `tokenizer.json`, `config.json`; GTE ModernBERT is recommended (`scripts/fetch-rerank-model.sh`) |
+| `DETHROTTLED_RERANK_MAX_TOKENS` | `512` | Tokenizer truncation length, clamped to the model maximum |
+| `DETHROTTLED_RERANK_TEXT_CHARS` | `3000` | Title+body characters supplied to the reranker before token truncation |
+| `DETHROTTLED_RERANK_DEPTH` | `30` | Only the first N search candidates are reranked |
+| `DETHROTTLED_RERANK_THREADS` | `2` | ONNX CPU threads for reranking |
 | `DETHROTTLED_SEMANTIC_CACHE` | off | API: `1` or a SQLite path enables the separate paraphrase cache |
 | `DETHROTTLED_SEMANTIC_CACHE_THRESHOLD` | `0.55` | MiniLM cosine threshold; tune only with a labelled paraphrase set |
 | `DETHROTTLED_SEMANTIC_CACHE_TTL` | `21600` | Seconds before a semantic cache entry is ignored |

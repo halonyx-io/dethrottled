@@ -12,7 +12,7 @@
 ........................................................................ [ 80%]
 ........................................................................ [ 86%]
 ........................................................................ [ 93%]
-....................................................................     [100%]
+.....................................................................    [100%]
 =============================== warnings summary ===============================
 ../usr/local/lib/python3.12/site-packages/fastapi/testclient.py:1
   /usr/local/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
@@ -65,4 +65,4 @@ tests/test_fetch_edge_cases.py::test_connected_slow_body_retains_read_allowance[
     config.cache.set("cache/nodeids", sorted(str(n) for n in self.cached_nodeids))
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-1061 passed, 15 skipped, 2 deselected, 9 warnings in 78.16s (0:01:18)
+1062 passed, 15 skipped, 2 deselected, 9 warnings in 80.80s (0:01:20)

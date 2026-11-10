@@ -904,7 +904,11 @@ def _ranked(body) -> tuple:
         stages.append("rank_fusion")
     if (os.getenv("DETHROTTLED_RERANK", "0").lower() not in
             {"0", "false", "no", "off", ""} and rerank.available()):
-        rows = rerank.rerank_rows(rows, provider_query)
+        depth = max(1, int(os.getenv("DETHROTTLED_RERANK_DEPTH", "30")))
+        if len(rows) > depth:
+            rows = rerank.rerank_rows(rows[:depth], provider_query) + rows[depth:]
+        else:
+            rows = rerank.rerank_rows(rows, provider_query)
         stages.append("neural_rerank")
     if body.prefer_domains:
         rows = fs.rank(rows, body.prefer_domains)

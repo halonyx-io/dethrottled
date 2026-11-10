@@ -47,7 +47,9 @@ def _load():
         with open(os.path.join(root, "config.json"), encoding="utf-8") as source:
             config = __import__("json").load(source)
         tokenizer = Tokenizer.from_file(os.path.join(root, "tokenizer.json"))
-        tokenizer.enable_truncation(max_length=512)
+        requested = int(os.getenv("DETHROTTLED_RERANK_MAX_TOKENS", "512"))
+        model_max = int(config.get("max_position_embeddings", requested) or requested)
+        tokenizer.enable_truncation(max_length=max(8, min(requested, model_max)))
         pad_id = int(config.get("pad_token_id", 0))
         tokenizer.enable_padding(pad_id=pad_id,
                                  pad_token=tokenizer.id_to_token(pad_id) or "[PAD]")
@@ -80,10 +82,12 @@ def score(query: str, documents: list) -> list:
     return [float(row[0]) for row in logits]
 
 
-def rerank_rows(rows: list, query: str, *, text_chars: int = 3000) -> list:
+def rerank_rows(rows: list, query: str, *, text_chars: int | None = None) -> list:
     """Sort rows by cross-encoder score; never raises on an unavailable model."""
     if not rows or not query or not available():
         return rows
+    if text_chars is None:
+        text_chars = int(os.getenv("DETHROTTLED_RERANK_TEXT_CHARS", "3000"))
     texts = [
         (str(row.get("title") or "") + " " +
          str(row.get("text") or row.get("snippet") or "")[:text_chars]).strip()

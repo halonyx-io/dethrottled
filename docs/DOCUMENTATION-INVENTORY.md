@@ -13,7 +13,7 @@ must be classified; unknown paths fail generation/checking.
 | dependency-input | 4 |
 | generated | 4 |
 | harness-guide | 20 |
-| historical-evidence | 178 |
+| historical-evidence | 191 |
 | planned-work | 1 |
 | source-contract | 167 |
 | third-party-notice | 4 |
@@ -226,7 +226,20 @@ Evidence maintainer: preserve observations; append explicit corrections.
 | [experiments/dnb/results/2026-11-09/p2-host-suite.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-host-suite.log) |
 | [experiments/dnb/results/2026-11-09/p2-image-suite.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-image-suite.log) |
 | [experiments/dnb/results/2026-11-09/p2-profile.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-profile.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-100.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-100.json) |
 | [experiments/dnb/results/2026-11-09/p2-rerank-small.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-small.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-sweep-1024.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-sweep-1024.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-sweep-1536.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-sweep-1536.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-sweep-256.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-sweep-256.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-sweep-512.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-sweep-512.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-sweep-768.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-sweep-768.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-sweep-depth10.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-sweep-depth10.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-sweep-depth20.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-sweep-depth20.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-sweep-depth50.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-sweep-depth50.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-sweep-full.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-sweep-full.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-sweep-text1500.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-sweep-text1500.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-sweep-text600.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-sweep-text600.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-sweep-textonly.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-sweep-textonly.json) |
 | [experiments/dnb/results/2026-11-09/p2-rerank.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank.json) |
 | [experiments/dnb/results/2026-11-09/p2-semantic.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-semantic.json) |
 | [experiments/dnb/results/2026-11-09/p2-targeted-tests.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-targeted-tests.log) |
