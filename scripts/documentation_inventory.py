@@ -79,6 +79,10 @@ GOVERNANCE = {
 }
 POLICIES = {
     "current-guide": "Change author: reconcile current behaviour, examples and navigation.",
+    "planned-work": (
+        "Planning maintainer: verify proposals against current contracts; "
+        "not implemented behaviour or execution authorization."
+    ),
     "generated": "Change author: regenerate from source; do not hand-edit generated tables.",
     "historical-evidence": (
         "Evidence maintainer: preserve observations; append explicit corrections."
@@ -99,11 +103,13 @@ def lifecycle(path):
         return "generated"
     if path in HISTORICAL or re.search(r"(?:^|/)\d{4}-\d{2}-\d{2}(?:/|-|$)", path):
         return "historical-evidence"
+    if path.startswith("docs/plans/"):
+        return "planned-work"
     if path in CURRENT:
         return "current-guide"
     if path.startswith("docs/benchmarks/"):
         return "historical-evidence"
-    if path.startswith("evaluations/") and path.endswith("/README.md"):
+    if path.startswith(("evaluations/", "experiments/")) and path.endswith("/README.md"):
         return "harness-guide"
     if Path(path).name in {"APACHE-LICENSE.txt", "HAGEZI-GPL-3.0.txt", "NOTICE.txt", "LICENSE"}:
         return "third-party-notice"
@@ -113,7 +119,7 @@ def lifecycle(path):
         return "visual"
     if path in GOVERNANCE or path.startswith("docker-compose"):
         return "source-contract"
-    if path.startswith(("requirements/", "docker/")):
+    if path.startswith(("requirements/", "docker/", "experiments/")):
         return "source-contract"
     if path.endswith((".py", "Dockerfile", ".sh")) and path.startswith(
         (
@@ -138,6 +144,7 @@ def selected(path):
         or path in GENERATED
         or path in GOVERNANCE
         or path.startswith("docker-compose")
+        or (path.startswith("experiments/") and not path.endswith(".pyc"))
         or (path.startswith("docs/assets/") and path.endswith(".svg"))
         or (path.startswith(("requirements/", "docker/")) and not path.endswith(".pyc"))
         or (
@@ -206,7 +213,7 @@ def generate(root, extra):
                 target = (
                     posixpath.relpath(path, "docs")
                     if Path(path).suffix.lower() in TEXT_SUFFIXES
-                    and not path.startswith((".github/", "requirements/"))
+                    and not path.startswith((".github/", "requirements/", "experiments/"))
                     and entry["lifecycle"] != "dependency-input"
                     else "https://github.com/halonyx-io/dethrottled/blob/main/" + path
                 )

@@ -61,6 +61,8 @@ Reopen a valid `document_id` with `read_document`; if the handle has expired,
 the indexed passage can still be useful or the original URL can be fetched again.
 Corpus passages/vectors last 90 days; this does not extend the independent
 six-hour search cache, 21-day extraction cache or retained-document expiry.
+`categories="news"` and `profile="news"` use a 30-minute search-cache ceiling;
+a tighter caller `max_age` still wins.
 Public handles may be reused across callers; private/authenticated/interactive
 reads are not automatically promoted into the shared corpus. See [Corpus](CORPUS.md)
 for operator budgets, indexing jobs, repair and rollback.
@@ -95,6 +97,17 @@ No automatic DDG pagination fills that menu. Fewer usable results is normal.
 | `cache_mode` | `use`, `refresh`, `bypass`; bypass avoids both cache reads and writes |
 | `max_age` | Optional cache-age bound in seconds; inspect returned cache provenance |
 | `diagnostics` (MCP) | Request the richer search envelope; inspect `outcome`, `degraded` and per-provider reports rather than inferring success from legacy `status` |
+
+Search rows also carry `source_type` (`docs`, `paper`, `repo`, `forum`,
+`reference`, `news`, `blog`, `other`), `fetch_relevance` (`high`, `medium`,
+`low`), `snippet_tokens`, `date_source` (`structured`, `snippet`, `none`) and
+`published_age_days`. They also expose `engines_consensus` and
+`consensus_score`; `DETHROTTLED_SEARCH_FANOUT=1` adds `fanout_queries`.
+The first row and `/v2/search` carry `dated_results`, `freshness_note`,
+`decoy_buckets` and, when enabled, `semantic_cache` hit provenance. `date_source="snippet"` means the date was
+parsed from result text, not supplied by the engine; treat it as a lead. A
+nonempty `decoy_buckets` report means a low-coherence source was dropped only
+because another source proved the query could be echoed.
 
 REST also retains `num_results`/`max_items` compatibility fields; MCP does not
 accept every REST alias. A neural `rerank=true` request is unsupported. Do not
@@ -178,8 +191,12 @@ not a request to fill every budget. See [limits](LIMITS.md).
 - `quality=ok` means extraction succeeded. It does not mean the answer is true,
   complete, current or relevant. `thin` retains short HTML evidence; `suspect`
   retains possible mixed-content pollution; `failed` records an unsuccessful read.
+  A `gate_page:login|paywall|access_denied|maintenance` warning means the page is
+  a wall rather than the requested content, even when it contains long prose.
 - Preserve `warnings`, `source_partial`, `truncated`, `extraction`, acquisition
-  attempts/URLs, source dates, hashes and `read_plan`. A long page may still include
+  attempts/URLs, source dates, `date_source`, `source_type`, `page_type`,
+  `fetch_relevance`, `tokens_estimated`, hashes and `read_plan`. `tokens_estimated`
+  is a character-based approximation, not a tokenizer count. A long page may still include
   an error banner. Inspect the exact retained ranges rather than deleting a phrase.
 - Retain `document_id`/hash and use `read_document` with `offset`/`next_offset`,
   focus and ranges. Use `inspect_document` for blocks, tables and citation positions.

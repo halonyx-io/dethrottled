@@ -1,0 +1,2 @@
+before: tier=crawl4ai/crawl4ai-native structured.p=None reason=html_unavailable
+after:  tier=crawl4ai/crawl4ai-native structured.p present reason=satisfied

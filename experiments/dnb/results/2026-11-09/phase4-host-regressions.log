@@ -1,0 +1,91 @@
+................F.                                                       [100%]
+=================================== FAILURES ===================================
+______________ test_actual_upstream_extractor_in_bounded_process _______________
+
+    def test_actual_upstream_extractor_in_bounded_process():
+        async def check():
+            pool = ExtractionPool(size=1)
+            try:
+                result = await pool.run(
+                    "https://example.org",
+                    "<article><h1>Worker fact cobalt-731</h1>"
+                    + "<p>This document contains useful evidence and preserves its final fact.</p>" * 30
+                    + "<p>Final fact amber-592</p></article>",
+                )
+                limits = Path(f"/proc/{pool.processes[0].pid}/limits").read_text()
+                memory_line = next(
+                    line for line in limits.splitlines() if line.startswith("Max address space")
+                )
+                assert "2147483648" in memory_line
+                cpu_line = next(line for line in limits.splitlines() if line.startswith("Max cpu time"))
+                assert "60" in cpu_line
+                text = result["markdown"]["raw_markdown"]
+                assert result["success"] and "cobalt-731" in text and "amber-592" in text
+            finally:
+                await pool.close()
+    
+>       asyncio.run(check())
+
+experiments/dnb/test_extraction_pool.py:107: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/lib/python3.13/asyncio/runners.py:195: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/usr/lib/python3.13/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.13/asyncio/base_events.py:725: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+experiments/dnb/test_extraction_pool.py:89: in check
+    result = await pool.run(
+experiments/dnb/extraction_pool.py:105: in run
+    process = await self._process(slot)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <extraction_pool.ExtractionPool object at 0x7f4cae0a3c50>, slot = 0
+
+    async def _process(self, slot):
+        process = self.processes.get(slot)
+        if process and process.returncode is None:
+            return process
+        await self._stop(slot)
+        launch = asyncio.create_task(
+            asyncio.create_subprocess_exec(
+                sys.executable,
+                "-u",
+                self.script,
+                stdin=asyncio.subprocess.PIPE,
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.DEVNULL,
+                limit=self.output_limit + 1024,
+                start_new_session=True,
+                env={
+                    **os.environ,
+                    "OPENBLAS_NUM_THREADS": "1",
+                    "OMP_NUM_THREADS": "1",
+                    "CRAWL4AI_NO_CLOUD_NOTICE": "1",
+                },
+            )
+        )
+        try:
+            process = await asyncio.shield(launch)
+        except asyncio.CancelledError:
+            from lifecycle import cleanup
+    
+            process = await cleanup(launch)
+            self.processes[slot] = process
+            await self._stop(slot)
+            raise
+        self.processes[slot] = process
+        self.counts["started"] += 1
+        ready = await asyncio.wait_for(process.stdout.readline(), 15)
+        if json.loads(ready or b"{}") != {"ready": True}:
+>           raise ExtractionFailure("extraction_worker_startup", 503, True)
+E           extraction_pool.ExtractionFailure: extraction_worker_startup
+
+experiments/dnb/extraction_pool.py:96: ExtractionFailure
+=========================== short test summary info ============================
+FAILED experiments/dnb/test_extraction_pool.py::test_actual_upstream_extractor_in_bounded_process
+1 failed, 17 passed in 0.61s

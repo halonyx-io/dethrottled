@@ -1,0 +1,280 @@
+{
+  "public_cdn_js_css_and_origin_facts": true,
+  "origin_cookie_not_sent_to_cdn": true,
+  "redirect_denied_fresh_and_reused_context": true,
+  "iframe_redirect_denied_parent_retained": true,
+  "popup_scoped_and_allowed_popup_works": true,
+  "service_worker_allowed_cdn_fetch": true,
+  "service_worker_navigation_redirect_denied": true,
+  "adblock_and_private_redirect_zero_destination_hits": true,
+  "policy_events": [
+    {
+      "domain": "blocked.test",
+      "kind": "browser",
+      "at": 2622329.175450523
+    },
+    {
+      "kind": "network_policy",
+      "domain": "127.0.0.1",
+      "reason": "network_policy:non_public_destination",
+      "at": 2622329.229365548
+    },
+    {
+      "kind": "navigation_policy",
+      "reason": "network_policy:document_host",
+      "domain": "forbidden.test",
+      "at": 2622329.784360118
+    },
+    {
+      "kind": "navigation_policy",
+      "reason": "network_policy:document_host",
+      "domain": "forbidden.test",
+      "at": 2622330.029136582
+    },
+    {
+      "kind": "navigation_policy",
+      "reason": "network_policy:document_host",
+      "domain": "forbidden.test",
+      "at": 2622330.264179913
+    },
+    {
+      "kind": "navigation_policy",
+      "reason": "network_policy:document_host",
+      "domain": "forbidden.test",
+      "at": 2622330.875659847
+    },
+    {
+      "kind": "navigation_policy",
+      "reason": "network_policy:document_host",
+      "domain": "forbidden.test",
+      "at": 2622331.708703071
+    }
+  ],
+  "internal_cdn_requires_explicit_trusted_asset_scope": true,
+  "explicit_public_asset_scope_is_restrictive": true,
+  "crawl_and_drive_handlers_preserve_cdn_evidence": true,
+  "forbidden_adblock_private_tcp_connections": {
+    "8444": 0,
+    "8445": 0,
+    "8091": 0
+  },
+  "elapsed_seconds": 9.43,
+  "fixture_hits": [
+    {
+      "host": "origin.test:8443",
+      "path": "/page",
+      "connection": 55214,
+      "origin_cookie": false
+    },
+    {
+      "host": "cdn.test:8443",
+      "path": "/style.css",
+      "connection": 55218,
+      "origin_cookie": false
+    },
+    {
+      "host": "cdn.test:8443",
+      "path": "/app.js",
+      "connection": 55230,
+      "origin_cookie": false
+    },
+    {
+      "host": "cdn.test:8443",
+      "path": "/private.js",
+      "connection": 55244,
+      "origin_cookie": false
+    },
+    {
+      "host": "origin.test:8443",
+      "path": "/jump",
+      "connection": 55214,
+      "origin_cookie": true
+    },
+    {
+      "host": "origin.test:8443",
+      "path": "/hop",
+      "connection": 55214,
+      "origin_cookie": true
+    },
+    {
+      "host": "origin.test:8443",
+      "path": "/jump",
+      "connection": 55214,
+      "origin_cookie": true
+    },
+    {
+      "host": "origin.test:8443",
+      "path": "/hop",
+      "connection": 55214,
+      "origin_cookie": true
+    },
+    {
+      "host": "origin.test:8443",
+      "path": "/frames",
+      "connection": 55214,
+      "origin_cookie": true
+    },
+    {
+      "host": "origin.test:8443",
+      "path": "/jump",
+      "connection": 55214,
+      "origin_cookie": true
+    },
+    {
+      "host": "origin.test:8443",
+      "path": "/hop",
+      "connection": 55214,
+      "origin_cookie": true
+    },
+    {
+      "host": "origin.test:8443",
+      "path": "/popup",
+      "connection": 55214,
+      "origin_cookie": true
+    },
+    {
+      "host": "origin.test:8443",
+      "path": "/jump",
+      "connection": 55214,
+      "origin_cookie": true
+    },
+    {
+      "host": "origin.test:8443",
+      "path": "/hop",
+      "connection": 55214,
+      "origin_cookie": true
+    },
+    {
+      "host": "origin.test:8443",
+      "path": "/safe",
+      "connection": 55214,
+      "origin_cookie": true
+    },
+    {
+      "host": "origin.test:8443",
+      "path": "/sw-page",
+      "connection": 55214,
+      "origin_cookie": true
+    },
+    {
+      "host": "origin.test:8443",
+      "path": "/sw.js",
+      "connection": 55214,
+      "origin_cookie": true
+    },
+    {
+      "host": "cdn.test:8443",
+      "path": "/sw-asset",
+      "connection": 36022,
+      "origin_cookie": false
+    },
+    {
+      "host": "origin.test:8443",
+      "path": "/page",
+      "connection": 36028,
+      "origin_cookie": false
+    },
+    {
+      "host": "origin.test:8443",
+      "path": "/page",
+      "connection": 36040,
+      "origin_cookie": false
+    },
+    {
+      "host": "cdn.test:8443",
+      "path": "/style.css",
+      "connection": 36042,
+      "origin_cookie": false
+    },
+    {
+      "host": "cdn.test:8443",
+      "path": "/app.js",
+      "connection": 36048,
+      "origin_cookie": false
+    },
+    {
+      "host": "cdn.test:8443",
+      "path": "/private.js",
+      "connection": 36050,
+      "origin_cookie": false
+    },
+    {
+      "host": "origin.test:8443",
+      "path": "/page",
+      "connection": 36052,
+      "origin_cookie": false
+    },
+    {
+      "host": "origin.test:8443",
+      "path": "/page",
+      "connection": 36058,
+      "origin_cookie": false
+    },
+    {
+      "host": "cdn.test:8443",
+      "path": "/style.css",
+      "connection": 36062,
+      "origin_cookie": false
+    },
+    {
+      "host": "cdn.test:8443",
+      "path": "/app.js",
+      "connection": 36076,
+      "origin_cookie": false
+    },
+    {
+      "host": "cdn.test:8443",
+      "path": "/private.js",
+      "connection": 36078,
+      "origin_cookie": false
+    },
+    {
+      "host": "origin.test:8443",
+      "path": "/page",
+      "connection": 36090,
+      "origin_cookie": false
+    },
+    {
+      "host": "cdn.test:8443",
+      "path": "/style.css",
+      "connection": 36096,
+      "origin_cookie": false
+    },
+    {
+      "host": "cdn.test:8443",
+      "path": "/app.js",
+      "connection": 36108,
+      "origin_cookie": false
+    },
+    {
+      "host": "cdn.test:8443",
+      "path": "/private.js",
+      "connection": 36116,
+      "origin_cookie": false
+    },
+    {
+      "host": "origin.test:8443",
+      "path": "/page",
+      "connection": 36124,
+      "origin_cookie": false
+    },
+    {
+      "host": "cdn.test:8443",
+      "path": "/style.css",
+      "connection": 36132,
+      "origin_cookie": false
+    },
+    {
+      "host": "cdn.test:8443",
+      "path": "/app.js",
+      "connection": 36142,
+      "origin_cookie": false
+    },
+    {
+      "host": "cdn.test:8443",
+      "path": "/private.js",
+      "connection": 36158,
+      "origin_cookie": false
+    }
+  ]
+}

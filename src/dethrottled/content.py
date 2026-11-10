@@ -81,11 +81,86 @@ def assess_content(text: str, html: str = "", *, structured: bool = False) -> di
                 spans=spans)
 
 
+def gate_kind(title: str, text: str, html: str = "") -> str:
+    """Name an explicit login, paywall, access-denied or maintenance gate.
+
+    A gate is different from an error banner: the page may contain paragraphs
+    of real prose, but the requested content is still behind a wall. Require
+    both a gate-like title and a visible gate signal so an ordinary article
+    that merely links to a sign-in page is not downgraded.
+    """
+    title = " ".join((title or "").split()).casefold()
+    if not title and html:
+        match = re.search(r"<title[^>]*>(.*?)</title>", html, re.I | re.S)
+        title = " ".join(match[1].split()).casefold() if match else ""
+    visible = " ".join((text or "").split()).casefold()
+    if (title.startswith(("sign in", "log in", "login"))
+            and len(title) <= 60
+            and any(marker in visible for marker in
+                    ("password", "signed in", "sign in", "log in"))):
+        return "login"
+    if (("subscribe to continue" in title
+         or "available to subscribers" in visible
+         or "free trial to read" in visible)
+            and "subscrib" in visible):
+        return "paywall"
+    if "access denied" in title or "403 forbidden" in title:
+        return "access_denied"
+    if (("service temporarily unavailable" in title or "maintenance" in title)
+            and ("maintenance" in visible or "temporarily unavailable" in visible)):
+        return "maintenance"
+    return ""
+
+
+_CJK_RANGES = (
+    (0x3000, 0x303F), (0x3040, 0x30FF), (0x3400, 0x4DBF),
+    (0x4E00, 0x9FFF), (0xAC00, 0xD7A3), (0xF900, 0xFAFF), (0xFF00, 0xFFEF),
+)
+
+
+def estimate_tokens(text: str) -> int:
+    """Approximate LLM tokens: CJK one per character, Latin about four per token."""
+    if not text:
+        return 0
+    cjk = sum(1 for char in text if any(lo <= ord(char) <= hi for lo, hi in _CJK_RANGES))
+    latin = len(text) - cjk
+    return cjk + (max(1, latin // 4) if latin else 0)
+
+
+def smart_truncate(text: str, max_chars: int) -> tuple[str, bool]:
+    """Cut at a paragraph, sentence or word boundary within the character cap."""
+    if max_chars <= 0:
+        return "", bool(text)
+    if len(text) <= max_chars:
+        return text, False
+    marker = " …"
+    if max_chars <= len(marker):
+        return text[:max_chars], True
+    budget = max_chars - len(marker)
+    head = text[:budget]
+    floor = int(budget * 0.70)
+    best = -1
+    for separator in ("\n\n", "\n", ". ", "! ", "? ", "; ", ", ", " "):
+        index = head.rfind(separator)
+        if index >= floor and index + len(separator) > best:
+            best = index + len(separator)
+    if best <= 0:
+        return head.rstrip() + marker, True
+    return head[:best].rstrip() + marker, True
+
+
 def annotate_content(row: dict, html: str = "", *, structured: bool = False) -> dict:
     """Attach diagnostics to canonical text; retain all existing evidence and warnings."""
     assessment = assess_content(row.get("text", ""), html, structured=structured)
     if row.get("extraction", {}).get("completeness", {}).get("status") == "suspected_incomplete":
         assessment["completeness"] = "suspected_incomplete"
+    gate = "" if structured else gate_kind(row.get("title", ""), row.get("text", ""), html)
+    if gate:
+        assessment["gate"] = gate
+        if row.get("quality") not in {"suspect", "failed"}:
+            row["quality"] = "thin"
+        row["warnings"] = list(dict.fromkeys([*row.get("warnings", []),
+            f"gate_page:{gate}; content_limited; inspect_source"]))
     row["content_assessment"] = assessment
     if assessment["pollution"] == "suspected":
         row["quality"] = "suspect"
@@ -265,25 +340,43 @@ def compact_row(row: dict) -> dict:
     """Opt-in removal of duplicate representations, retaining evidence text once."""
     row = dict(row)
     extraction = row.get("extraction")
-    if isinstance(extraction, dict) and isinstance(extraction.get("pages"), list):
-        # Native PDF blocks repeat the full document, regardless of max_chars.
-        # Keep canonical metadata intact for detailed reads and retained evidence.
-        pages = []
+    if isinstance(extraction, dict):
+        extraction = dict(extraction)
         omitted = 0
-        for page in extraction["pages"]:
-            if isinstance(page, dict) and isinstance(page.get("text_layer_blocks"), list):
-                page = dict(page)
-                blocks = page.pop("text_layer_blocks")
-                page["text_layer_block_count"] = len(blocks)
-                omitted += len(blocks)
-            pages.append(page)
-        row["extraction"] = dict(extraction, pages=pages)
-        if omitted:
-            row["extraction"]["presentation"] = {
-                "omitted_text_layer_blocks": omitted,
-                "detail_available_with": {"response_format": "detailed"},
-                "source_extraction_unchanged": True,
-            }
+        pages = extraction.get("pages")
+        if isinstance(pages, list):
+            # Native PDF blocks repeat the full document, regardless of max_chars.
+            # Keep canonical metadata intact for detailed reads and retained evidence.
+            compact_pages = []
+            for page in pages:
+                if isinstance(page, dict) and isinstance(page.get("text_layer_blocks"), list):
+                    page = dict(page)
+                    blocks = page.pop("text_layer_blocks")
+                    page["text_layer_block_count"] = len(blocks)
+                    omitted += len(blocks)
+                compact_pages.append(page)
+            extraction["pages"] = compact_pages
+        table_counts = {}
+        for field, count_key in (
+            ("native_pdf_tables", "native_pdf_table_count"),
+            ("layout_tables", "layout_table_count"),
+        ):
+            tables = extraction.get(field)
+            if isinstance(tables, list):
+                extraction[count_key] = len(tables)
+                extraction.pop(field, None)
+                if tables:
+                    table_counts[field] = len(tables)
+        if omitted or table_counts:
+            presentation = dict(extraction.get("presentation") or {})
+            if omitted:
+                presentation["omitted_text_layer_blocks"] = omitted
+            if table_counts:
+                presentation["omitted_table_metadata"] = table_counts
+            presentation["detail_available_with"] = {"response_format": "detailed"}
+            presentation["source_extraction_unchanged"] = True
+            extraction["presentation"] = presentation
+        row["extraction"] = extraction
     if row.get("html") == row.get("content"):
         row.pop("html", None)
     if row.get("evidence"):
@@ -302,6 +395,8 @@ def compact_row(row: dict) -> dict:
 
 def present_row(row: dict, response_format: str) -> dict:
     """Warn on large detailed text without serializing/copying the full payload."""
+    row = dict(row)
+    row["tokens_estimated"] = estimate_tokens(row.get("content", ""))
     if response_format == "concise":
         return compact_row(row)
     # Character count is a lower bound on JSON bytes, not a payload-size claim.

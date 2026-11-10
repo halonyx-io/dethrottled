@@ -1,0 +1,642 @@
+{
+  "protocol": "docs/benchmarks/2026-11-01-recovery-next/live-protocol.json",
+  "pacing_seconds": 6,
+  "live_passes": 2,
+  "live_runs": [
+    {
+      "case": "cargurus",
+      "side": "reference",
+      "status": 200,
+      "elapsed_s": 0.74,
+      "quality": "failed",
+      "tier": "tls",
+      "chars": 0,
+      "markers": {
+        "used": false,
+        "cars": false
+      },
+      "warnings": null,
+      "error": null,
+      "cached": false,
+      "pass": 1
+    },
+    {
+      "case": "cargurus",
+      "side": "candidate",
+      "status": 200,
+      "elapsed_s": 0.22,
+      "quality": "failed",
+      "tier": "tls",
+      "chars": 0,
+      "markers": {
+        "used": false,
+        "cars": false
+      },
+      "warnings": null,
+      "error": null,
+      "cached": false,
+      "pass": 1
+    },
+    {
+      "case": "crunchbase",
+      "side": "candidate",
+      "status": 200,
+      "elapsed_s": 4.55,
+      "quality": "ok",
+      "tier": "headed/read-plan",
+      "chars": 3000,
+      "markers": {
+        "OpenAI": true,
+        "San Francisco": true
+      },
+      "warnings": [
+        "Autonomous browser read; source completeness unverified.",
+        "Visible text may include navigation, ads and related content."
+      ],
+      "error": null,
+      "cached": false,
+      "pass": 1
+    },
+    {
+      "case": "crunchbase",
+      "side": "reference",
+      "status": 200,
+      "elapsed_s": 0.72,
+      "quality": "ok",
+      "tier": "tls/trafilatura",
+      "chars": 664,
+      "markers": {
+        "OpenAI": true,
+        "San Francisco": false
+      },
+      "warnings": [],
+      "error": null,
+      "cached": false,
+      "pass": 1
+    },
+    {
+      "case": "g2",
+      "side": "reference",
+      "status": 200,
+      "elapsed_s": 1.76,
+      "quality": "failed",
+      "tier": "headed",
+      "chars": 0,
+      "markers": {
+        "Notion": false,
+        "reviews": false
+      },
+      "warnings": null,
+      "error": null,
+      "cached": false,
+      "pass": 1
+    },
+    {
+      "case": "g2",
+      "side": "candidate",
+      "status": 200,
+      "elapsed_s": 1.18,
+      "quality": "failed",
+      "tier": "headed",
+      "chars": 0,
+      "markers": {
+        "Notion": false,
+        "reviews": false
+      },
+      "warnings": null,
+      "error": null,
+      "cached": false,
+      "pass": 1
+    },
+    {
+      "case": "expedia",
+      "side": "candidate",
+      "status": 200,
+      "elapsed_s": 3.85,
+      "quality": "ok",
+      "tier": "headed/read-plan",
+      "chars": 773,
+      "markers": {
+        "hotels": true,
+        "flights": true
+      },
+      "warnings": [
+        "Autonomous browser read; source completeness unverified.",
+        "Visible text may include navigation, ads and related content."
+      ],
+      "error": null,
+      "cached": false,
+      "pass": 1
+    },
+    {
+      "case": "expedia",
+      "side": "reference",
+      "status": 200,
+      "elapsed_s": 0.75,
+      "quality": "failed",
+      "tier": "tls",
+      "chars": 0,
+      "markers": {
+        "hotels": false,
+        "flights": false
+      },
+      "warnings": null,
+      "error": null,
+      "cached": false,
+      "pass": 1
+    },
+    {
+      "case": "python-control",
+      "side": "reference",
+      "status": 200,
+      "elapsed_s": 0.71,
+      "quality": "ok",
+      "tier": "direct/trafilatura",
+      "chars": 3000,
+      "markers": {
+        "sqlite3": true,
+        "connect": true
+      },
+      "warnings": [],
+      "error": null,
+      "cached": false,
+      "pass": 1
+    },
+    {
+      "case": "python-control",
+      "side": "candidate",
+      "status": 200,
+      "elapsed_s": 0.57,
+      "quality": "ok",
+      "tier": "direct/trafilatura",
+      "chars": 3000,
+      "markers": {
+        "sqlite3": true,
+        "connect": true
+      },
+      "warnings": [],
+      "error": null,
+      "cached": false,
+      "pass": 1
+    },
+    {
+      "pass": 2,
+      "case": "cargurus",
+      "side": "candidate",
+      "status": 200,
+      "elapsed_s": 0.19,
+      "quality": "failed",
+      "tier": "tls",
+      "chars": 0,
+      "markers": {
+        "used": false,
+        "cars": false
+      },
+      "warnings": null,
+      "error": null,
+      "cached": false
+    },
+    {
+      "pass": 2,
+      "case": "cargurus",
+      "side": "reference",
+      "status": 200,
+      "elapsed_s": 0.15,
+      "quality": "failed",
+      "tier": "tls",
+      "chars": 0,
+      "markers": {
+        "used": false,
+        "cars": false
+      },
+      "warnings": null,
+      "error": null,
+      "cached": false
+    },
+    {
+      "pass": 2,
+      "case": "crunchbase",
+      "side": "reference",
+      "status": 200,
+      "elapsed_s": 0.03,
+      "quality": "ok",
+      "tier": "tls/trafilatura",
+      "chars": 664,
+      "markers": {
+        "OpenAI": true,
+        "San Francisco": false
+      },
+      "warnings": [],
+      "error": null,
+      "cached": true
+    },
+    {
+      "pass": 2,
+      "case": "crunchbase",
+      "side": "candidate",
+      "status": 200,
+      "elapsed_s": 0.44,
+      "quality": "ok",
+      "tier": "tls/trafilatura",
+      "chars": 664,
+      "markers": {
+        "OpenAI": true,
+        "San Francisco": false
+      },
+      "warnings": [],
+      "error": null,
+      "cached": false
+    },
+    {
+      "pass": 2,
+      "case": "g2",
+      "side": "candidate",
+      "status": 200,
+      "elapsed_s": 2.81,
+      "quality": "ok",
+      "tier": "headed/headed-native",
+      "chars": 3000,
+      "markers": {
+        "Notion": true,
+        "reviews": true
+      },
+      "warnings": [
+        "Rendered visible-text fallback; may include navigation, ads and related content. Source completeness remains unverified."
+      ],
+      "error": null,
+      "cached": false
+    },
+    {
+      "pass": 2,
+      "case": "g2",
+      "side": "reference",
+      "status": 200,
+      "elapsed_s": 2.71,
+      "quality": "ok",
+      "tier": "headed/headed-native",
+      "chars": 3000,
+      "markers": {
+        "Notion": true,
+        "reviews": true
+      },
+      "warnings": [
+        "Rendered visible-text fallback; may include navigation, ads and related content. Source completeness remains unverified."
+      ],
+      "error": null,
+      "cached": false
+    },
+    {
+      "pass": 2,
+      "case": "expedia",
+      "side": "reference",
+      "status": 200,
+      "elapsed_s": 0.9,
+      "quality": "failed",
+      "tier": "tls",
+      "chars": 0,
+      "markers": {
+        "hotels": false,
+        "flights": false
+      },
+      "warnings": null,
+      "error": null,
+      "cached": false
+    },
+    {
+      "pass": 2,
+      "case": "expedia",
+      "side": "candidate",
+      "status": 200,
+      "elapsed_s": 1.25,
+      "quality": "failed",
+      "tier": "tls",
+      "chars": 0,
+      "markers": {
+        "hotels": false,
+        "flights": false
+      },
+      "warnings": null,
+      "error": null,
+      "cached": false
+    },
+    {
+      "pass": 2,
+      "case": "python-control",
+      "side": "candidate",
+      "status": 200,
+      "elapsed_s": 0.03,
+      "quality": "ok",
+      "tier": "direct/trafilatura",
+      "chars": 3000,
+      "markers": {
+        "sqlite3": true,
+        "connect": true
+      },
+      "warnings": [],
+      "error": null,
+      "cached": true
+    },
+    {
+      "pass": 2,
+      "case": "python-control",
+      "side": "reference",
+      "status": 200,
+      "elapsed_s": 0.03,
+      "quality": "ok",
+      "tier": "direct/trafilatura",
+      "chars": 3000,
+      "markers": {
+        "sqlite3": true,
+        "connect": true
+      },
+      "warnings": [],
+      "error": null,
+      "cached": true
+    }
+  ],
+  "hostile_runs": [
+    {
+      "path": "/redirect",
+      "side": "reference",
+      "status": 200,
+      "elapsed_s": 0.04,
+      "quality": "ok",
+      "tier": "direct/resiliparse",
+      "chars": 500,
+      "warnings": [],
+      "error": null,
+      "cached": true,
+      "fact_amber": false,
+      "fact_quartz": false
+    },
+    {
+      "path": "/redirect",
+      "side": "candidate",
+      "status": 200,
+      "elapsed_s": 0.03,
+      "quality": "ok",
+      "tier": "direct/resiliparse",
+      "chars": 500,
+      "warnings": [],
+      "error": null,
+      "cached": true,
+      "fact_amber": false,
+      "fact_quartz": false
+    },
+    {
+      "path": "/blocked-resource",
+      "side": "candidate",
+      "status": 200,
+      "elapsed_s": 0.04,
+      "quality": "ok",
+      "tier": "direct/resiliparse",
+      "chars": 500,
+      "warnings": [],
+      "error": null,
+      "cached": false,
+      "fact_amber": false,
+      "fact_quartz": false
+    },
+    {
+      "path": "/blocked-resource",
+      "side": "reference",
+      "status": 200,
+      "elapsed_s": 0.05,
+      "quality": "ok",
+      "tier": "direct/resiliparse",
+      "chars": 500,
+      "warnings": [],
+      "error": null,
+      "cached": false,
+      "fact_amber": false,
+      "fact_quartz": false
+    },
+    {
+      "path": "/private-redirect",
+      "side": "reference",
+      "status": 200,
+      "elapsed_s": 0.07,
+      "quality": "failed",
+      "tier": "tls",
+      "chars": 0,
+      "warnings": null,
+      "error": null,
+      "cached": false,
+      "fact_amber": false,
+      "fact_quartz": false
+    },
+    {
+      "path": "/private-redirect",
+      "side": "candidate",
+      "status": 200,
+      "elapsed_s": 0.04,
+      "quality": "failed",
+      "tier": "tls",
+      "chars": 0,
+      "warnings": null,
+      "error": null,
+      "cached": false,
+      "fact_amber": false,
+      "fact_quartz": false
+    },
+    {
+      "path": "/blocked-redirect",
+      "side": "candidate",
+      "status": 200,
+      "elapsed_s": 0.07,
+      "quality": "failed",
+      "tier": "tls",
+      "chars": 0,
+      "warnings": null,
+      "error": null,
+      "cached": false,
+      "fact_amber": false,
+      "fact_quartz": false
+    },
+    {
+      "path": "/blocked-redirect",
+      "side": "reference",
+      "status": 200,
+      "elapsed_s": 0.05,
+      "quality": "failed",
+      "tier": "tls",
+      "chars": 0,
+      "warnings": null,
+      "error": null,
+      "cached": false,
+      "fact_amber": false,
+      "fact_quartz": false
+    },
+    {
+      "path": "/missing",
+      "side": "reference",
+      "status": 200,
+      "elapsed_s": 0.08,
+      "quality": "failed",
+      "tier": "tls",
+      "chars": 0,
+      "warnings": null,
+      "error": null,
+      "cached": false,
+      "fact_amber": false,
+      "fact_quartz": false
+    },
+    {
+      "path": "/missing",
+      "side": "candidate",
+      "status": 200,
+      "elapsed_s": 0.07,
+      "quality": "failed",
+      "tier": "tls",
+      "chars": 0,
+      "warnings": null,
+      "error": null,
+      "cached": false,
+      "fact_amber": false,
+      "fact_quartz": false
+    },
+    {
+      "path": "/tiny",
+      "side": "candidate",
+      "status": 200,
+      "elapsed_s": 0.1,
+      "quality": "thin",
+      "tier": "headed/read-plan",
+      "chars": 20,
+      "warnings": [
+        "Autonomous browser read; source completeness unverified."
+      ],
+      "error": null,
+      "cached": false,
+      "fact_amber": false,
+      "fact_quartz": true
+    },
+    {
+      "path": "/tiny",
+      "side": "reference",
+      "status": 200,
+      "elapsed_s": 0.09,
+      "quality": "thin",
+      "tier": "headed/read-plan",
+      "chars": 20,
+      "warnings": [
+        "Autonomous browser read; source completeness unverified."
+      ],
+      "error": null,
+      "cached": false,
+      "fact_amber": false,
+      "fact_quartz": true
+    },
+    {
+      "path": "/busy",
+      "side": "reference",
+      "status": 200,
+      "elapsed_s": 0.04,
+      "quality": "ok",
+      "tier": "direct/resiliparse",
+      "chars": 500,
+      "warnings": [],
+      "error": null,
+      "cached": false,
+      "fact_amber": false,
+      "fact_quartz": false
+    },
+    {
+      "path": "/busy",
+      "side": "candidate",
+      "status": 200,
+      "elapsed_s": 0.04,
+      "quality": "ok",
+      "tier": "direct/resiliparse",
+      "chars": 500,
+      "warnings": [],
+      "error": null,
+      "cached": false,
+      "fact_amber": false,
+      "fact_quartz": false
+    },
+    {
+      "path": "/huge",
+      "side": "candidate",
+      "status": 200,
+      "elapsed_s": 2.22,
+      "quality": "ok",
+      "tier": "direct/resiliparse",
+      "chars": 500,
+      "warnings": [],
+      "error": null,
+      "cached": false,
+      "fact_amber": false,
+      "fact_quartz": false
+    },
+    {
+      "path": "/huge",
+      "side": "reference",
+      "status": 200,
+      "elapsed_s": 2.2,
+      "quality": "ok",
+      "tier": "direct/resiliparse",
+      "chars": 500,
+      "warnings": [],
+      "error": null,
+      "cached": false,
+      "fact_amber": false,
+      "fact_quartz": false
+    }
+  ],
+  "hostile_render_runs": [
+    {
+      "path": "/busy",
+      "mode": "render=always",
+      "side": "reference",
+      "status": 200,
+      "elapsed_s": 0.06,
+      "quality": "ok",
+      "tier": "direct/resiliparse",
+      "chars": 300,
+      "warnings": [],
+      "error": null,
+      "fact_amber": false
+    },
+    {
+      "path": "/busy",
+      "mode": "render=always",
+      "side": "candidate",
+      "status": 200,
+      "elapsed_s": 0.04,
+      "quality": "ok",
+      "tier": "direct/resiliparse",
+      "chars": 300,
+      "warnings": [],
+      "error": null,
+      "fact_amber": false
+    },
+    {
+      "path": "/huge",
+      "mode": "render=always",
+      "side": "candidate",
+      "status": 200,
+      "elapsed_s": 2.19,
+      "quality": "ok",
+      "tier": "direct/resiliparse",
+      "chars": 300,
+      "warnings": [],
+      "error": null,
+      "fact_amber": false
+    },
+    {
+      "path": "/huge",
+      "mode": "render=always",
+      "side": "reference",
+      "status": 200,
+      "elapsed_s": 2.22,
+      "quality": "ok",
+      "tier": "direct/resiliparse",
+      "chars": 300,
+      "warnings": [],
+      "error": null,
+      "fact_amber": false
+    }
+  ],
+  "notes": "Live upstream responses can change between sequential runs; these are observational outcomes, not a hostile-source success claim."
+}

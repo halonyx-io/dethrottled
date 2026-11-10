@@ -1,0 +1,192 @@
+{
+  "cases": [
+    {
+      "query": "database that lives in memory while the program runs",
+      "bm25_mrr": 1.0,
+      "neural_mrr": 1.0,
+      "bm25": [
+        "In-memory SQLite",
+        "SQLite database file format",
+        "Database product overview",
+        "PostgreSQL installation"
+      ],
+      "neural": [
+        "In-memory SQLite",
+        "Database product overview",
+        "SQLite database file format",
+        "PostgreSQL installation"
+      ],
+      "neural_scores": [
+        0.581307,
+        -8.228526,
+        -10.861092,
+        -11.4495
+      ]
+    },
+    {
+      "query": "stop a container from coming back after it exits",
+      "bm25_mrr": 1.0,
+      "neural_mrr": 0.5,
+      "bm25": [
+        "Container logs",
+        "Container restart policy",
+        "Docker image layers",
+        "Kubernetes pod lifecycle"
+      ],
+      "neural": [
+        "Container restart policy",
+        "Container logs",
+        "Kubernetes pod lifecycle",
+        "Docker image layers"
+      ],
+      "neural_scores": [
+        2.514547,
+        -8.842047,
+        -10.781542,
+        -11.323869
+      ]
+    },
+    {
+      "query": "run a blocking function without freezing the event loop",
+      "bm25_mrr": 1.0,
+      "neural_mrr": 1.0,
+      "bm25": [
+        "asyncio.to_thread",
+        "Asyncio event loop",
+        "Python threading",
+        "Multiprocessing pool"
+      ],
+      "neural": [
+        "asyncio.to_thread",
+        "Asyncio event loop",
+        "Python threading",
+        "Multiprocessing pool"
+      ],
+      "neural_scores": [
+        4.083941,
+        -6.657913,
+        -11.4034,
+        -11.438186
+      ]
+    },
+    {
+      "query": "keep browser cookies between separate runs",
+      "bm25_mrr": 0.25,
+      "neural_mrr": 0.25,
+      "bm25": [
+        "Browser cookies",
+        "Playwright storage_state",
+        "Browser history",
+        "HTTP cache headers"
+      ],
+      "neural": [
+        "Browser cookies",
+        "Playwright storage_state",
+        "Browser history",
+        "HTTP cache headers"
+      ],
+      "neural_scores": [
+        -1.662116,
+        -9.37149,
+        -10.88728,
+        -11.370458
+      ]
+    },
+    {
+      "query": "reclaim disk space after deleting many rows",
+      "bm25_mrr": 0.333,
+      "neural_mrr": 0.25,
+      "bm25": [
+        "VACUUM",
+        "SQLite DELETE",
+        "SQLite indexes",
+        "Database backups"
+      ],
+      "neural": [
+        "VACUUM",
+        "SQLite DELETE",
+        "Database backups",
+        "SQLite indexes"
+      ],
+      "neural_scores": [
+        0.064038,
+        -4.488445,
+        -11.323918,
+        -11.375201
+      ]
+    },
+    {
+      "query": "find a word on a rendered PDF page",
+      "bm25_mrr": 0.5,
+      "neural_mrr": 0.25,
+      "bm25": [
+        "PDF page rendering",
+        "PyMuPDF search_for",
+        "PDF text extraction",
+        "PDF bookmarks"
+      ],
+      "neural": [
+        "PDF page rendering",
+        "PDF text extraction",
+        "PDF bookmarks",
+        "PyMuPDF search_for"
+      ],
+      "neural_scores": [
+        -1.110279,
+        -3.868045,
+        -5.167219,
+        -8.870643
+      ]
+    },
+    {
+      "query": "why did the kernel kill my process",
+      "bm25_mrr": 0.333,
+      "neural_mrr": 0.333,
+      "bm25": [
+        "Linux OOM killer",
+        "Process signals",
+        "Linux memory usage",
+        "Systemd services"
+      ],
+      "neural": [
+        "Linux OOM killer",
+        "Process signals",
+        "Linux memory usage",
+        "Systemd services"
+      ],
+      "neural_scores": [
+        5.868915,
+        -10.811628,
+        -11.378176,
+        -11.385952
+      ]
+    },
+    {
+      "query": "how much memory is this container really using",
+      "bm25_mrr": 0.25,
+      "neural_mrr": 0.333,
+      "bm25": [
+        "Container images",
+        "Docker stats",
+        "cgroup memory.current",
+        "Linux page cache"
+      ],
+      "neural": [
+        "Container images",
+        "Docker stats",
+        "Linux page cache",
+        "cgroup memory.current"
+      ],
+      "neural_scores": [
+        -3.759496,
+        -3.879548,
+        -9.377812,
+        -10.623672
+      ]
+    }
+  ],
+  "bm25_mean": 0.58325,
+  "neural_mean": 0.4895,
+  "model": "Xenova/ms-marco-MiniLM-L-6-v2 onnx model_quantized",
+  "note": "10-case hand-labelled set; relevant document is index 2; neural was not better on this set"
+}

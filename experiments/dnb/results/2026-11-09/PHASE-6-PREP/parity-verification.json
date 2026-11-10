@@ -1,0 +1,18 @@
+{
+  "reference": {
+    "facts": 27,
+    "actions": 27,
+    "download_exact": true,
+    "network_fact": true,
+    "concurrent": true,
+    "checkpoint_restart_restored": true
+  },
+  "candidate": {
+    "facts": 27,
+    "actions": 27,
+    "download_exact": true,
+    "network_fact": true,
+    "concurrent": true,
+    "checkpoint_restart_restored": true
+  }
+}

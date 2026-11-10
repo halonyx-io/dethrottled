@@ -21,6 +21,7 @@ from contextlib import closing
 from pathlib import Path
 
 CLAIMS = contextvars.ContextVar("access_claims", default=None)
+CALLER_AUTHORIZATION = contextvars.ContextVar("caller_authorization", default="")
 REQUEST_ID = contextvars.ContextVar("request_id", default="")
 
 
@@ -235,6 +236,7 @@ class AccessMiddleware:
                         "headers": response_headers})
             await send({"type": "http.response.body", "body": body})
             return
+        authorization_token = CALLER_AUTHORIZATION.set(headers.get(b"authorization",b"").decode())
         claims_token = CLAIMS.set(claims)
         trace_token = REQUEST_ID.set(request_id)
 
@@ -250,6 +252,7 @@ class AccessMiddleware:
             await self.app(scope, receive, traced_send)
         finally:
             await asyncio.to_thread(self.admission.release, lease)
+            CALLER_AUTHORIZATION.reset(authorization_token)
             CLAIMS.reset(claims_token)
             REQUEST_ID.reset(trace_token)
 

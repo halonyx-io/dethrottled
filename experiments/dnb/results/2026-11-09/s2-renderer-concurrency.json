@@ -1,0 +1,22 @@
+{
+  "concurrency": [
+    {
+      "url": "http://127.0.0.1:8090/article",
+      "success": true,
+      "tier": "direct/resiliparse"
+    },
+    {
+      "url": "http://127.0.0.1:8090/long",
+      "success": true,
+      "tier": "crawl4ai/crawl4ai-native"
+    },
+    {
+      "url": "https://example.com",
+      "success": true,
+      "tier": "crawl4ai/crawl4ai-native"
+    },
+    {
+      "drive": true
+    }
+  ]
+}

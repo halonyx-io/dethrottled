@@ -43,13 +43,14 @@ from __future__ import annotations
 
 import argparse
 import base64
+import json
 import os
 import secrets
 import sqlite3
 import threading
 import time
 import uuid
-from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
+from concurrent.futures import FIRST_COMPLETED, wait
 from pathlib import Path
 from typing import Literal
 
@@ -64,12 +65,12 @@ from fastapi import BackgroundTasks, FastAPI, HTTPException
 #
 # Three places claiming a version is two too many.
 from . import __version__ as VERSION
+from . import consensus, providers, rerank, semantic_cache, signals, workers
 from . import domains as domain_health
 from . import extract as fx
 from . import fetch as fetcher
 from . import ocr as ocr_engine
 from . import paths as _paths
-from . import providers, workers
 from . import rank as ranker
 from . import research as research_engine
 from . import search as fs
@@ -87,8 +88,9 @@ from .api_models import (
     StructureBody,
 )
 from .api_models import DriveStep as DriveStep
-from .cache import DEFAULT_TTL, Cache, CacheView
-from .content import constrained, passage_excerpt, present_row
+from .cache import DEFAULT_TTL, NEWS_SEARCH_TTL, Cache, CacheView
+from .concurrency import ContextExecutor as ThreadPoolExecutor
+from .content import constrained, estimate_tokens, passage_excerpt, present_row, smart_truncate
 from .corpus import index_fetched, shared_corpus
 from .evidence import Documents
 from .jobs import JobError, Jobs
@@ -259,9 +261,18 @@ def _search_row(row: dict, meta: dict, index: int) -> dict:
         "url": row.get("url", ""),
         "title": row.get("title", ""),
         "snippet": row.get("snippet", ""),
+        "snippet_tokens": estimate_tokens(
+            (row.get("title", "") + " " + row.get("snippet", "")).strip()
+        ),
         "publishedDate": row.get("publishedDate") or None,
+        "date_source": row.get("date_source", "none"),
+        "published_age_days": row.get("published_age_days"),
+        "source_type": row.get("source_type") or signals.source_type(row.get("url", "")),
+        "fetch_relevance": row.get("fetch_relevance") or signals.fetch_relevance(row),
         "engine": row.get("engine", "dethrottled"),
         "engines": [row.get("engine", "dethrottled")],
+        "engines_consensus": row.get("engines_consensus", 1),
+        "consensus_score": row.get("consensus_score", 1.0),
         "discovery": row.get("discovery", []),
         "category": None,
         "score": row.get("score"),
@@ -273,6 +284,11 @@ def _search_row(row: dict, meta: dict, index: int) -> dict:
         "search_elapsed_ms": meta.get("elapsed_ms", 0),
         # Which ranking stages actually ran.
         "ranking": meta.get("ranking", []) if index == 0 else [],
+        "fanout_queries": meta.get("fanout_queries") if index == 0 else None,
+        "dated_results": meta.get("dated_results") if index == 0 else None,
+        "freshness_note": meta.get("freshness_note") if index == 0 else None,
+        "decoy_buckets": meta.get("decoy_buckets") if index == 0 else None,
+        "semantic_cache": meta.get("semantic_cache") if index == 0 else None,
         "from_corpus": bool(row.get("from_corpus")),
         **({"constraints": meta["constraints"]} if index == 0 and "constraints" in meta else {}),
         **({"corpus_evidence": row["corpus_evidence"]} if row.get("corpus_evidence") else {}),
@@ -297,6 +313,26 @@ MIME = {
              ".presentationml.presentation"),
     "html": "text/html",
 }
+
+
+def _search_cache_max_age(body) -> float | None:
+    """News searches must not inherit the six-hour general-search TTL."""
+    news = body.categories == "news" or body.profile == "news"
+    if not news:
+        return body.max_age
+    if body.max_age is None:
+        return NEWS_SEARCH_TTL
+    return min(body.max_age, NEWS_SEARCH_TTL)
+
+
+def _semantic_context(body, limit: int) -> str:
+    return json.dumps({
+        "categories": body.categories, "profile": body.profile, "engines": body.engines,
+        "language": body.language, "domains": body.domains,
+        "exclude_domains": body.exclude_domains, "prefer_domains": body.prefer_domains,
+        "ranking": body.ranking, "recency": body.recency, "corpus": body.corpus,
+        "limit": limit,
+    }, sort_keys=True)
 
 
 def _render_mode(render) -> str:
@@ -364,6 +400,10 @@ def _extract_once(url: str, max_chars: int, allow_ocr: bool = True,
                 "tier": result.get("tier"), "cached": result.get("cached", False),
                 "acquisition_attempts": result.get("acquisition_attempts", []),
                 "source_alternatives": result.get("source_alternatives", []),
+                "source_type": signals.source_type(url),
+                "page_type": "unreadable",
+                "date_source": "none",
+                "published_age_days": None,
                 **({"policy_blocked": result["policy_blocked"]}
                    if result.get("policy_blocked") else {})}
     row = {
@@ -401,6 +441,10 @@ def _extract_once(url: str, max_chars: int, allow_ocr: bool = True,
         "final_url": result.get("url", url),
         "source_sha256": result.get("extraction", {}).get("source_sha256"),
     }
+    row["source_type"] = signals.source_type(url)
+    row["page_type"] = signals.page_type(row)
+    row["date_source"] = "structured" if row.get("published") else "none"
+    row["published_age_days"] = signals.age_days(row.get("published", ""))
     # Only stateless, public-only acquisitions are automatically shareable.
     # Interactive/cookie-backed reads keep their caller namespace and are not
     # admitted merely because their URL is publicly routable.
@@ -466,7 +510,7 @@ def _extract_row(url, max_chars, *, recovery="auto", asset_recovery=True, **opti
                            focus_status="term_matches" if evidence else "no_term_matches",
                            truncated=len(selected) < len(canonical))
             else:
-                row["content"] = canonical[:max_chars]
+                row["content"], _ = smart_truncate(canonical, max_chars)
                 row["truncated"] = row.get("truncated", False) or len(canonical) > max_chars
             row["content_chars"] = len(canonical)
     if row.get("browser_recovery") or row.get("read_session") or any(
@@ -482,6 +526,18 @@ def _extract_row(url, max_chars, *, recovery="auto", asset_recovery=True, **opti
 from .backfill import BackfillJob  # noqa: E402
 
 _BACKFILL_JOB = BackfillJob()
+
+
+from .delegation import CallerIdentityMiddleware  # noqa: E402
+
+app.add_middleware(CallerIdentityMiddleware)
+
+
+@app.on_event("startup")
+def initialize_browser_identity():
+    if os.getenv("DETHROTTLED_DNB", "0") == "1":
+        from .delegation import ensure_keys
+        ensure_keys()
 
 
 @app.on_event("startup")
@@ -752,6 +808,7 @@ def v2_capabilities():
         "leaves_network": False,
         # What `fresh` bypasses.
         "cache_ttl_seconds": 6 * 3600,
+        "news_cache_ttl_seconds": NEWS_SEARCH_TTL,
 
         # Beyond the core contract fields, which every engine takes. A client
         # sends core + whatever is listed here, so one client works against
@@ -799,21 +856,59 @@ def _ranked(body) -> tuple:
         return [], {"ranking": [], "discovery": {
             "outcome": "constraints_unsatisfiable", "degraded": False,
             "reason": "include/exclude and site constraints have no intersection"}}, limit
-    rows, meta = fs.search(provider_query, max_items=pool,
-                           categories=body.categories,
-                           language=body.language or None,
-                           # Same again: fresh bypasses the six-hour search
-                           # cache rather than being accepted and ignored.
-                           cache=CacheView(cache(),
-                                           mode="refresh" if body.fresh else body.cache_mode,
-                                           max_age=body.max_age),
-                           profile=body.profile, engines=body.engines)
+    search_options = dict(
+        max_items=pool, categories=body.categories, language=body.language or None,
+        # Same again: fresh bypasses the six-hour search cache rather than
+        # being accepted and ignored.
+        cache=CacheView(cache(), mode="refresh" if body.fresh else body.cache_mode,
+                        max_age=_search_cache_max_age(body)),
+        profile=body.profile, engines=body.engines,
+    )
+    fanout = os.getenv("DETHROTTLED_SEARCH_FANOUT", "0").lower() not in {
+        "0", "false", "no", "off", "",
+    }
+    semantic = semantic_cache.shared() if not fanout else None
+    semantic_context = _semantic_context(body, limit)
+    semantic_hit = None
+    if (semantic is not None and not body.fresh and body.cache_mode == "use"):
+        semantic_hit = semantic.get(provider_query, semantic_context)
+    if semantic_hit is not None:
+        rows = semantic_hit["value"].get("rows", [])
+        meta = dict(semantic_hit["value"].get("meta", {}),
+                    semantic_cache={"hit": True,
+                                    "similarity": semantic_hit["similarity"],
+                                    "age_seconds": semantic_hit["age_seconds"]})
+    else:
+        variants = consensus.expand_queries(provider_query) if fanout else [provider_query]
+        if len(variants) > 1:
+            groups, metas = [], []
+            for variant in variants:
+                variant_rows, variant_meta = fs.search(variant, **search_options)
+                groups.append(variant_rows)
+                metas.append(variant_meta)
+            rows = consensus.merge_variants(groups)
+            meta = dict(metas[0], fanout_queries=variants)
+        else:
+            rows, meta = fs.search(provider_query, **search_options)
+        if (semantic is not None and rows and not body.fresh
+                and body.cache_mode != "bypass"):
+            semantic.put(provider_query, semantic_context,
+                         {"rows": rows, "meta": meta})
+    consensus.annotate_consensus(rows)
     rows, stages = ranker.apply(
         rows, body.query, bm25=body.rank or body.ranking == "bm25",
         corpus=body.corpus, recency=body.recency)
     if body.ranking == "fusion":
         rows = ranker.fuse_rows(rows, body.query, recency=body.recency)
         stages.append("rank_fusion")
+    if (os.getenv("DETHROTTLED_RERANK", "0").lower() not in
+            {"0", "false", "no", "off", ""} and rerank.available()):
+        depth = max(1, int(os.getenv("DETHROTTLED_RERANK_DEPTH", "30")))
+        if len(rows) > depth:
+            rows = rerank.rerank_rows(rows[:depth], provider_query) + rows[depth:]
+        else:
+            rows = rerank.rerank_rows(rows, provider_query)
+        stages.append("neural_rerank")
     if body.prefer_domains:
         rows = fs.rank(rows, body.prefer_domains)
         stages.append("preferred_domains")
@@ -834,10 +929,21 @@ def _ranked(body) -> tuple:
     ordered = domain_health.order_for_fetching(rows) if isinstance(body, SearchFetchBody) else rows
     if ordered[:limit] != rows[:limit]:
         stages.append("fetchability")
-    rows = ordered
-
-    meta = dict(meta, ranking=stages)
-    return rows[:limit], meta, limit
+    rows = ordered[:limit]
+    rows, dated = signals.annotate_dates(rows)
+    scores = [row.get("score") for row in rows if isinstance(row.get("score"), (int, float))]
+    max_score = max(scores) if scores else None
+    for row in rows:
+        row["source_type"] = signals.source_type(row.get("url", ""))
+        row["fetch_relevance"] = signals.fetch_relevance(row, max_score)
+    freshness_note = None
+    if rows and dated * 2 < len(rows):
+        freshness_note = (
+            "Most results are undated; dates are leads, not verified publication dates."
+        )
+    meta = dict(meta, ranking=stages, dated_results=dated,
+                freshness_note=freshness_note)
+    return rows, meta, limit
 
 
 @app.post("/search")
@@ -855,6 +961,11 @@ def search_envelope(body: SearchBody):
             "outcome": meta.get("discovery", {}).get("outcome", "indeterminate"),
             "degraded": meta.get("discovery", {}).get("degraded", True),
             "discovery": meta.get("discovery", {}),
+            "dated_results": meta.get("dated_results"),
+            "freshness_note": meta.get("freshness_note"),
+            "decoy_buckets": meta.get("decoy_buckets"),
+            "fanout_queries": meta.get("fanout_queries"),
+            "semantic_cache": meta.get("semantic_cache"),
             **({"constraints": meta["constraints"]} if "constraints" in meta else {}),
             "attempts": _attempts(meta), "elapsed_ms": meta.get("elapsed_ms"),
             "ranking": meta.get("ranking", []), "profile": body.profile}
@@ -1342,7 +1453,7 @@ def search_and_fetch(body: SearchFetchBody, background: BackgroundTasks):
     # This is the high-volume route, so it is the one that actually grows the
     # corpus -- and it was growing it by nothing at all.
     _queue_corpus(out, background, namespace=body.evidence_namespace)
-    return out
+    return [present_row(row, body.response_format) for row in out]
 
 
 _RESEARCH_REQUESTS = threading.BoundedSemaphore(2)
@@ -1558,6 +1669,7 @@ def corpus_stats():
             index = corpus.status()
             result.update(index=index, lifetimes={
                 "search_cache_default_ttl_seconds": DEFAULT_TTL["search"],
+                "news_search_cache_ttl_seconds": NEWS_SEARCH_TTL,
                 "extraction_cache_default_ttl_seconds": DEFAULT_TTL["extract"],
                 "retained_document_ttl_seconds": corpus.documents.ttl,
                 "retained_document_max_bytes": corpus.documents.max_bytes,

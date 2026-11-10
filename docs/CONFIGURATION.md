@@ -49,6 +49,30 @@ The complete interpolation map is in `docker-compose.yml` and the agents overlay
 this table covers the main controls. Keep mutable data in named volumes. Do not
 point the model directory at an empty mounted path that hides the baked weights.
 
+Component settings are not Compose interpolation; set them on the named service
+through a local override:
+
+| Name | Default | Applies to |
+|---|---|---|
+| `DETHROTTLED_CACHE_MAX_BYTES` | `536870912` | API: cache footprint ceiling; oldest rows are evicted past 90% and compacted |
+| `DETHROTTLED_CACHE_MAINTENANCE_EVERY` | `200` | API: writes between expiry/size maintenance runs; `0` disables automatic runs |
+| `DETHROTTLED_BROWSER_IDLE_SECONDS` | `300` | browser worker: close the separate crawl browser when idle; `0` keeps it warm |
+| `DETHROTTLED_MEMORY_PRESSURE` | `1` | browser worker: ask Chrome to release caches after crawl/drive; `0` disables |
+| `MCP_TOOL_PROFILE` | `full` | MCP adapter: `core` exposes six high-use tools; `full` exposes all 20 |
+| `DETHROTTLED_SEARCH_FANOUT` | `0` | API: one extra intent-aware query variant; extra upstream requests |
+| `DETHROTTLED_RERANK` | `0` | API: use the local Ettin 68M fp32 ONNX reranker when `DETHROTTLED_RERANK_MODEL` is set |
+| `DETHROTTLED_RERANK_MODEL` | empty | Directory produced by `scripts/fetch-rerank-model.sh`: Ettin 68M fp32 `model.onnx`, `tokenizer.json`, `config.json` and the `2_Dense`/`3_LayerNorm`/`4_Dense` modules |
+| `DETHROTTLED_RERANK_MAX_TOKENS` | `512` | Tokenizer truncation length, clamped to the model maximum |
+| `DETHROTTLED_RERANK_TEXT_CHARS` | `3000` | Title+body characters supplied to the reranker before token truncation |
+| `DETHROTTLED_RERANK_DEPTH` | `30` | Only the first N search candidates are reranked |
+| `DETHROTTLED_RERANK_THREADS` | `8` | ONNX CPU threads for reranking; the tested configuration |
+| `DETHROTTLED_SEMANTIC_CACHE` | off | API: `1` or a SQLite path enables the separate paraphrase cache |
+| `DETHROTTLED_SEMANTIC_CACHE_THRESHOLD` | `0.55` | MiniLM cosine threshold; tune only with a labelled paraphrase set |
+| `DETHROTTLED_SEMANTIC_CACHE_TTL` | `21600` | Seconds before a semantic cache entry is ignored |
+| `DETHROTTLED_SEARCH_PROFILE` | off | Browser worker: `1` or a path persists search cookies/localStorage |
+| `DETHROTTLED_SEARCH_PROXIES` | empty | Comma-separated provider proxies; round-robin per search call |
+| `DETHROTTLED_<PROVIDER>_API_KEYS` | empty | Comma-separated keys for `exa`, `tavily` or `parallel`; legacy single key still works |
+
 ## Automatically connected local workers
 
 The format reader starts by default. Speech and layout inference stay optional

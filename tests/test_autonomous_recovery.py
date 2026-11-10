@@ -261,13 +261,17 @@ def test_skipped_headed_tier_is_not_reported_as_attempted(tiers):
 
 def test_old_cached_thin_text_is_marked_without_refetch(tiers):
     class Cache:
-        def get(self, *a):
+        def get(self, *a, **kw):
             return {
+                "schema_version": 3,
                 "ok": True,
                 "text": "A real short source announcement.",
                 "chars": 33,
                 "reason": "thin, best available: direct:thin/33",
                 "tier": "direct",
+                "acquisition": {},
+                "extraction": {"pages": []},
+                "content_assessment": {},
             }
 
         def put(self, *a, **kw):
@@ -277,6 +281,19 @@ def test_old_cached_thin_text_is_marked_without_refetch(tiers):
     result = f.fetch_and_extract("https://source.example", cache=Cache())
     assert result["quality"] == "thin" and result["cached"]
     assert result["acquisition_attempts"] == [{"tier": "cache", "outcome": "hit", "reason": ""}]
+
+
+def test_wrong_shape_cached_extract_is_refetched(tiers, tmp_path):
+    from dethrottled.cache import Cache
+
+    cache = Cache(tmp_path / "cache.sqlite")
+    cache.put("extract", "https://source.example", value=["not", "a", "row"])
+    tiers.setattr(f, "_tier_direct",
+                  lambda *a: ({"html": ARTICLE}, "", a[0]))
+    result = f.fetch_and_extract("https://source.example", cache=cache)
+    assert "7341" in result["text"]
+    assert not result.get("cached")
+    assert cache.stats()["misses"] >= 1
 
 
 def test_renderer_reported_bot_block_can_reach_browser(tiers):

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "dethrottled"
-version = "1.7.1"
+version = "1.8.0"
 description = "Zero-API web search, fetch and extraction. No keys, no quota, no metered pool."
 readme = "README.md"
 license = { text = "MIT" }
@@ -49,6 +49,7 @@ Issues = "https://github.com/halonyx-io/dethrottled/issues"
 Changelog = "https://github.com/halonyx-io/dethrottled/releases"
 
 [project.optional-dependencies]
+browser = ["PyJWT[crypto]>=2.15,<3"]
 # Documents as text: PDF, the Office formats, OpenDocument, EPUB and RTF.
 #
 # Every one of these is a direct parser. MarkItDown was measured as the
@@ -95,7 +96,7 @@ semantic = [
 # than plain requests, not slower. aarch64 wheels available.
 tls = ["curl_cffi>=0.7"]
 all = ["dethrottled[documents,media,semantic,tls]"]
-dev = ["pytest>=8.0", "httpx>=0.27", "ruff>=0.4"]
+dev = ["pytest>=8.0", "httpx>=0.27", "ruff>=0.4", "PyJWT[crypto]>=2.15,<3"]
 
 [project.scripts]
 dethrottled = "dethrottled.cli:main"

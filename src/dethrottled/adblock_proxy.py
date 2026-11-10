@@ -22,7 +22,8 @@ _connect = asyncio.open_connection
 
 
 class Gate:
-    def __init__(self, upstream=None):
+    def __init__(self, upstream=None, *, connector=None):
+        self.connector = connector
         self.upstream = upstream or {}
         server = self.upstream.get("server", "")
         self.up = urlsplit(server if "://" in server else "http://" + server) if server else None
@@ -99,7 +100,23 @@ class Gate:
                 host = parsed.hostname
                 if self.up:
                     host, port = self.up.hostname, self.up.port or 80
-                up_reader, remote = await asyncio.wait_for(_connect(host, port), timeout=15)
+                try:
+                    up_reader, remote = await asyncio.wait_for(
+                        (self.connector or _connect)(host, port), timeout=15
+                    )
+                except PermissionError as exc:
+                    if self.connector is None:
+                        raise
+                    self.events.append(
+                        {
+                            "kind": "network_policy",
+                            "domain": host,
+                            "reason": str(exc),
+                            "at": time.monotonic(),
+                        }
+                    )
+                    await self.reply(writer, "403 Forbidden", str(exc))
+                    return
                 self.writers.add(remote)
                 if connect:
                     if self.up:

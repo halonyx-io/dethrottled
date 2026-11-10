@@ -18,11 +18,16 @@ from dethrottled import search as fs  # noqa: E402
 from dethrottled import server as srv  # noqa: E402
 
 SEARCH_ROW_FIELDS = {
-    "url", "title", "snippet", "publishedDate", "engine", "engines",
+    "url", "title", "snippet", "snippet_tokens", "publishedDate", "date_source",
+    "published_age_days", "source_type", "fetch_relevance", "engine", "engines",
+    "engines_consensus", "consensus_score",
     "category", "score", "cached", "search_attempts", "search_elapsed_ms",
-    "ranking", "from_corpus",
+    "ranking", "fanout_queries", "dated_results", "freshness_note", "decoy_buckets",
+    "semantic_cache",
+    "from_corpus",
 }
-EXTRACT_ROW_FIELDS = {"url", "content", "content_type", "quality", "tier", "cached"}
+EXTRACT_ROW_FIELDS = {"url", "content", "content_type", "quality", "tier", "cached",
+                      "tokens_estimated", "source_type", "page_type", "date_source"}
 
 FAKE_ROWS = [
     {"url": "https://example.com/one", "title": "One", "snippet": "first",
@@ -187,6 +192,7 @@ def test_corpus_stats_report_independent_live_lifetime_settings(client, tmp_path
         assert result['ok']
         assert result['lifetimes'] == {
             'search_cache_default_ttl_seconds': 21600,
+            'news_search_cache_ttl_seconds': 1800,
             'extraction_cache_default_ttl_seconds': 1814400,
             'retained_document_ttl_seconds': 3600,
             'retained_document_max_bytes': 12345,

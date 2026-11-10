@@ -1,0 +1,50 @@
+{
+  "reference": [
+    {
+      "fmt": "concise",
+      "status": 200,
+      "bytes": 3074,
+      "quality": "ok",
+      "chars": 300,
+      "fact": false,
+      "warnings": [
+        "html_capture_limit"
+      ]
+    },
+    {
+      "fmt": "detailed",
+      "status": 200,
+      "bytes": 2797,
+      "quality": "ok",
+      "chars": 300,
+      "fact": false,
+      "warnings": [
+        "html_capture_limit"
+      ]
+    }
+  ],
+  "candidate": [
+    {
+      "fmt": "concise",
+      "status": 200,
+      "bytes": 3074,
+      "quality": "ok",
+      "chars": 300,
+      "fact": false,
+      "warnings": [
+        "html_capture_limit"
+      ]
+    },
+    {
+      "fmt": "detailed",
+      "status": 200,
+      "bytes": 2796,
+      "quality": "ok",
+      "chars": 300,
+      "fact": false,
+      "warnings": [
+        "html_capture_limit"
+      ]
+    }
+  ]
+}

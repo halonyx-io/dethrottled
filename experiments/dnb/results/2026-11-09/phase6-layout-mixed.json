@@ -1,0 +1,78 @@
+{
+  "reference": {
+    "layout": {
+      "quality": "ok",
+      "tier": "direct/direct-native",
+      "parser": "docling",
+      "chars": 158,
+      "warnings": [
+        "table_structure_is_inferred; verify_critical_cells_against_source",
+        "layout_is_model_inferred; verify_critical_cells_against_source"
+      ]
+    },
+    "batch": [
+      {
+        "url": "office.pdf",
+        "quality": "ok",
+        "tier": "direct/direct-native",
+        "chars": 27
+      },
+      {
+        "url": "office.docx",
+        "quality": "ok",
+        "tier": "direct/direct-native",
+        "chars": 33
+      },
+      {
+        "url": "office.xlsx",
+        "quality": "ok",
+        "tier": "direct/direct-native",
+        "chars": 31
+      },
+      {
+        "url": "office.pptx",
+        "quality": "ok",
+        "tier": "direct/direct-native",
+        "chars": 32
+      }
+    ]
+  },
+  "candidate": {
+    "layout": {
+      "quality": "ok",
+      "tier": "direct/direct-native",
+      "parser": "docling",
+      "chars": 158,
+      "warnings": [
+        "table_structure_is_inferred; verify_critical_cells_against_source",
+        "layout_is_model_inferred; verify_critical_cells_against_source"
+      ]
+    },
+    "batch": [
+      {
+        "url": "office.pdf",
+        "quality": "ok",
+        "tier": "direct/direct-native",
+        "chars": 27
+      },
+      {
+        "url": "office.docx",
+        "quality": "ok",
+        "tier": "direct/direct-native",
+        "chars": 33
+      },
+      {
+        "url": "office.xlsx",
+        "quality": "ok",
+        "tier": "direct/direct-native",
+        "chars": 31
+      },
+      {
+        "url": "office.pptx",
+        "quality": "ok",
+        "tier": "direct/direct-native",
+        "chars": 32
+      }
+    ]
+  }
+}

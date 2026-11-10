@@ -1,0 +1,18 @@
+{
+  "name": "gte_m512_t3000_d30_n100",
+  "model": "/models/modelgte",
+  "n": 100,
+  "depth": 30,
+  "text_chars": 3000,
+  "max_tokens": "512",
+  "threads": "8",
+  "baseline_ndcg10": 0.7222,
+  "baseline_mrr10": 0.6913,
+  "ndcg10": 0.7722,
+  "mrr10": 0.7455,
+  "wins": 22,
+  "losses": 15,
+  "ties": 63,
+  "elapsed_s": 940.0,
+  "failures": 0
+}

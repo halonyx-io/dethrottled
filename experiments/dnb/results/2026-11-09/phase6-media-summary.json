@@ -1,0 +1,64 @@
+{
+  "reference": {
+    "status": 200,
+    "bytes": 3227,
+    "quality": "ok",
+    "tier": "direct/direct-native",
+    "content": "[0.000-3.840] The quick brown fox jumps over the lazy dog.",
+    "warnings": [
+      "Speech recognition can hallucinate or mishear; verify important claims against source audio. Timings are model estimates."
+    ],
+    "extraction_keys": [
+      "duration_seconds",
+      "language",
+      "method",
+      "partial",
+      "segments",
+      "source_bytes",
+      "source_sha256",
+      "total_segments",
+      "warnings"
+    ],
+    "media": null,
+    "duration": 3.812875,
+    "language": "en",
+    "segments": [
+      {
+        "start_seconds": 0.0,
+        "end_seconds": 3.84,
+        "text": "The quick brown fox jumps over the lazy dog."
+      }
+    ]
+  },
+  "candidate": {
+    "status": 200,
+    "bytes": 3228,
+    "quality": "ok",
+    "tier": "direct/direct-native",
+    "content": "[0.000-3.840] The quick brown fox jumps over the lazy dog.",
+    "warnings": [
+      "Speech recognition can hallucinate or mishear; verify important claims against source audio. Timings are model estimates."
+    ],
+    "extraction_keys": [
+      "duration_seconds",
+      "language",
+      "method",
+      "partial",
+      "segments",
+      "source_bytes",
+      "source_sha256",
+      "total_segments",
+      "warnings"
+    ],
+    "media": null,
+    "duration": 3.812875,
+    "language": "en",
+    "segments": [
+      {
+        "start_seconds": 0.0,
+        "end_seconds": 3.84,
+        "text": "The quick brown fox jumps over the lazy dog."
+      }
+    ]
+  }
+}

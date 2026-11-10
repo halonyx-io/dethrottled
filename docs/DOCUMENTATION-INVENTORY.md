@@ -12,9 +12,10 @@ must be classified; unknown paths fail generation/checking.
 | current-guide | 26 |
 | dependency-input | 4 |
 | generated | 4 |
-| harness-guide | 19 |
-| historical-evidence | 47 |
-| source-contract | 124 |
+| harness-guide | 20 |
+| historical-evidence | 215 |
+| planned-work | 1 |
+| source-contract | 167 |
 | third-party-notice | 4 |
 | visual | 8 |
 
@@ -98,6 +99,7 @@ Harness maintainer: check runnable commands and label dated assumptions.
 | [evaluations/retrieval-review/README.md](../evaluations/retrieval-review/README.md) |
 | [evaluations/scoped-retrieval/README.md](../evaluations/scoped-retrieval/README.md) |
 | [evaluations/search-policy/README.md](../evaluations/search-policy/README.md) |
+| [experiments/dnb/README.md](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/README.md) |
 
 ## historical-evidence
 
@@ -152,6 +154,182 @@ Evidence maintainer: preserve observations; append explicit corrections.
 | [evaluations/search-policy/results/2026-11-03/ATTRIBUTION.md](../evaluations/search-policy/results/2026-11-03/ATTRIBUTION.md) |
 | [evaluations/search-policy/results/2026-11-03/REPORT.md](../evaluations/search-policy/results/2026-11-03/REPORT.md) |
 | [evaluations/worker-audit/2026-11-01/REPORT.md](../evaluations/worker-audit/2026-11-01/REPORT.md) |
+| [experiments/dnb/results/2026-11-06/REPORT.md](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-06/REPORT.md) |
+| [experiments/dnb/results/2026-11-06/dependency-inventory.txt](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-06/dependency-inventory.txt) |
+| [experiments/dnb/results/2026-11-06/resource-samples.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-06/resource-samples.json) |
+| [experiments/dnb/results/2026-11-06/source-sha256.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-06/source-sha256.json) |
+| [experiments/dnb/results/2026-11-06/summary.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-06/summary.json) |
+| [experiments/dnb/results/2026-11-06/test-results.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-06/test-results.json) |
+| [experiments/dnb/results/2026-11-07/REPORT.md](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-07/REPORT.md) |
+| [experiments/dnb/results/2026-11-07/SECURITY-SCOPE.md](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-07/SECURITY-SCOPE.md) |
+| [experiments/dnb/results/2026-11-07/parked-results.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-07/parked-results.json) |
+| [experiments/dnb/results/2026-11-07/provenance.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-07/provenance.json) |
+| [experiments/dnb/results/2026-11-07/results.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-07/results.json) |
+| [experiments/dnb/results/2026-11-07/security-provenance.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-07/security-provenance.json) |
+| [experiments/dnb/results/2026-11-07/security-proxy-tests.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-07/security-proxy-tests.log) |
+| [experiments/dnb/results/2026-11-07/security-scope.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-07/security-scope.json) |
+| [experiments/dnb/results/2026-11-07/security-tests.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-07/security-tests.log) |
+| [experiments/dnb/results/2026-11-07/tests.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-07/tests.log) |
+| [experiments/dnb/results/2026-11-08/PHASE-1.md](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-08/PHASE-1.md) |
+| [experiments/dnb/results/2026-11-08/PHASE-2.md](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-08/PHASE-2.md) |
+| [experiments/dnb/results/2026-11-08/PHASE-3-PLAN.md](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-08/PHASE-3-PLAN.md) |
+| [experiments/dnb/results/2026-11-08/PHASE-3.md](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-08/PHASE-3.md) |
+| [experiments/dnb/results/2026-11-08/phase1-provenance.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-08/phase1-provenance.json) |
+| [experiments/dnb/results/2026-11-08/phase1-tests.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-08/phase1-tests.log) |
+| [experiments/dnb/results/2026-11-08/phase1-wire.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-08/phase1-wire.json) |
+| [experiments/dnb/results/2026-11-08/phase2-initial-failure.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-08/phase2-initial-failure.json) |
+| [experiments/dnb/results/2026-11-08/phase2-lifecycle-regression.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-08/phase2-lifecycle-regression.json) |
+| [experiments/dnb/results/2026-11-08/phase2-provenance.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-08/phase2-provenance.json) |
+| [experiments/dnb/results/2026-11-08/phase2-tests.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-08/phase2-tests.log) |
+| [experiments/dnb/results/2026-11-08/phase2-wire.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-08/phase2-wire.json) |
+| [experiments/dnb/results/2026-11-08/phase3-fixtures.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-08/phase3-fixtures.json) |
+| [experiments/dnb/results/2026-11-08/phase3-live-pilot.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-08/phase3-live-pilot.json) |
+| [experiments/dnb/results/2026-11-08/phase3-network.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-08/phase3-network.json) |
+| [experiments/dnb/results/2026-11-08/phase3-provenance.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-08/phase3-provenance.json) |
+| [experiments/dnb/results/2026-11-08/phase3-regressions.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-08/phase3-regressions.log) |
+| [experiments/dnb/results/2026-11-08/phase3-soak.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-08/phase3-soak.json) |
+| [experiments/dnb/results/2026-11-08/phase3-tests.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-08/phase3-tests.log) |
+| [experiments/dnb/results/2026-11-08/phase3-wire.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-08/phase3-wire.json) |
+| [experiments/dnb/results/2026-11-09/CANDIDATE-BENCHMARK-PLAN.md](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/CANDIDATE-BENCHMARK-PLAN.md) |
+| [experiments/dnb/results/2026-11-09/CANDIDATE-CHANGES.md](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/CANDIDATE-CHANGES.md) |
+| [experiments/dnb/results/2026-11-09/P0-BUGS-EFFICIENCY.md](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/P0-BUGS-EFFICIENCY.md) |
+| [experiments/dnb/results/2026-11-09/P1-AGENT-SIGNALS.md](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/P1-AGENT-SIGNALS.md) |
+| [experiments/dnb/results/2026-11-09/P2-EXPLORATORY.md](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/P2-EXPLORATORY.md) |
+| [experiments/dnb/results/2026-11-09/PHASE-4.md](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/PHASE-4.md) |
+| [experiments/dnb/results/2026-11-09/PHASE-5-PLAN.md](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/PHASE-5-PLAN.md) |
+| [experiments/dnb/results/2026-11-09/PHASE-5.md](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/PHASE-5.md) |
+| [experiments/dnb/results/2026-11-09/PHASE-6-PREP.md](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/PHASE-6-PREP.md) |
+| [experiments/dnb/results/2026-11-09/PHASE-6-PREP/checkpoint-candidate.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/PHASE-6-PREP/checkpoint-candidate.json) |
+| [experiments/dnb/results/2026-11-09/PHASE-6-PREP/checkpoint-reference.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/PHASE-6-PREP/checkpoint-reference.json) |
+| [experiments/dnb/results/2026-11-09/PHASE-6-PREP/parity-summary.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/PHASE-6-PREP/parity-summary.json) |
+| [experiments/dnb/results/2026-11-09/PHASE-6-PREP/parity-verification.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/PHASE-6-PREP/parity-verification.json) |
+| [experiments/dnb/results/2026-11-09/PHASE-6-PREP/resource-smoke.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/PHASE-6-PREP/resource-smoke.json) |
+| [experiments/dnb/results/2026-11-09/PHASE-6-RELEASE-GATE.md](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/PHASE-6-RELEASE-GATE.md) |
+| [experiments/dnb/results/2026-11-09/PHASE-6.md](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/PHASE-6.md) |
+| [experiments/dnb/results/2026-11-09/S0-S1-PROVENANCE-CONTRACTS.md](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/S0-S1-PROVENANCE-CONTRACTS.md) |
+| [experiments/dnb/results/2026-11-09/S2-RENDERER-CPU.md](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/S2-RENDERER-CPU.md) |
+| [experiments/dnb/results/2026-11-09/S2-RESOURCE-ATTRIBUTION.md](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/S2-RESOURCE-ATTRIBUTION.md) |
+| [experiments/dnb/results/2026-11-09/S3-OCR-RESOLUTION.md](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/S3-OCR-RESOLUTION.md) |
+| [experiments/dnb/results/2026-11-09/SIMILAR-PROJECTS-IDEAS.md](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/SIMILAR-PROJECTS-IDEAS.md) |
+| [experiments/dnb/results/2026-11-09/p0-browser-lifecycle.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p0-browser-lifecycle.json) |
+| [experiments/dnb/results/2026-11-09/p0-error-audit.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p0-error-audit.json) |
+| [experiments/dnb/results/2026-11-09/p0-full-suite.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p0-full-suite.log) |
+| [experiments/dnb/results/2026-11-09/p0-image-suite.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p0-image-suite.log) |
+| [experiments/dnb/results/2026-11-09/p0-reddit.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p0-reddit.json) |
+| [experiments/dnb/results/2026-11-09/p0-targeted-tests.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p0-targeted-tests.log) |
+| [experiments/dnb/results/2026-11-09/p0-tool-tokens.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p0-tool-tokens.json) |
+| [experiments/dnb/results/2026-11-09/p1-example.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p1-example.json) |
+| [experiments/dnb/results/2026-11-09/p1-host-suite.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p1-host-suite.log) |
+| [experiments/dnb/results/2026-11-09/p1-image-suite.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p1-image-suite.log) |
+| [experiments/dnb/results/2026-11-09/p1-targeted-tests.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p1-targeted-tests.log) |
+| [experiments/dnb/results/2026-11-09/p2-fanout.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-fanout.json) |
+| [experiments/dnb/results/2026-11-09/p2-host-suite.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-host-suite.log) |
+| [experiments/dnb/results/2026-11-09/p2-image-suite.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-image-suite.log) |
+| [experiments/dnb/results/2026-11-09/p2-profile.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-profile.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-1.7.1.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-1.7.1.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-100.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-100.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-ettin-100.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-ettin-100.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-ettin-O4-100.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-ettin-O4-100.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-ettin-O4-30.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-ettin-O4-30.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-ettin-depth10-100.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-ettin-depth10-100.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-ettin-fp32-100.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-ettin-fp32-100.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-ettin-fp32-depth10-100.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-ettin-fp32-depth10-100.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-ettin-fp32-depth20-100.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-ettin-fp32-depth20-100.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-ettin-sweep-1024.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-ettin-sweep-1024.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-ettin-sweep-256.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-ettin-sweep-256.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-ettin-sweep-512.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-ettin-sweep-512.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-ettin-sweep-depth10.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-ettin-sweep-depth10.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-ettin-sweep-depth20.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-ettin-sweep-depth20.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-ettin-sweep-depth50.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-ettin-sweep-depth50.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-ettin-sweep-full.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-ettin-sweep-full.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-ettin-sweep-text1500.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-ettin-sweep-text1500.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-ettin-sweep-text600.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-ettin-sweep-text600.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-gte-full-100.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-gte-full-100.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-jina_m1024_t3000_d30.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-jina_m1024_t3000_d30.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-jina_m512_t3000_d30.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-jina_m512_t3000_d30.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-small.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-small.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-sweep-1024.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-sweep-1024.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-sweep-1536.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-sweep-1536.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-sweep-256.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-sweep-256.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-sweep-512.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-sweep-512.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-sweep-768.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-sweep-768.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-sweep-blend0.5.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-sweep-blend0.5.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-sweep-blend0.75.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-sweep-blend0.75.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-sweep-depth10.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-sweep-depth10.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-sweep-depth20.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-sweep-depth20.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-sweep-depth50.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-sweep-depth50.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-sweep-full.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-sweep-full.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-sweep-prefix.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-sweep-prefix.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-sweep-text1500.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-sweep-text1500.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-sweep-text600.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-sweep-text600.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-sweep-textonly.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-sweep-textonly.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-sweep-title2.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-sweep-title2.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank.json) |
+| [experiments/dnb/results/2026-11-09/p2-semantic.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-semantic.json) |
+| [experiments/dnb/results/2026-11-09/p2-targeted-tests.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-targeted-tests.log) |
+| [experiments/dnb/results/2026-11-09/phase4-cache-tests.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase4-cache-tests.log) |
+| [experiments/dnb/results/2026-11-09/phase4-cache.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase4-cache.json) |
+| [experiments/dnb/results/2026-11-09/phase4-dom-after.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase4-dom-after.json) |
+| [experiments/dnb/results/2026-11-09/phase4-dom-before.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase4-dom-before.json) |
+| [experiments/dnb/results/2026-11-09/phase4-dom-local-after.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase4-dom-local-after.json) |
+| [experiments/dnb/results/2026-11-09/phase4-dom-parity.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase4-dom-parity.log) |
+| [experiments/dnb/results/2026-11-09/phase4-dom.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase4-dom.log) |
+| [experiments/dnb/results/2026-11-09/phase4-host-regressions.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase4-host-regressions.log) |
+| [experiments/dnb/results/2026-11-09/phase4-mcp-real.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase4-mcp-real.json) |
+| [experiments/dnb/results/2026-11-09/phase4-mcp-sizes.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase4-mcp-sizes.json) |
+| [experiments/dnb/results/2026-11-09/phase4-phase12-tests.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase4-phase12-tests.log) |
+| [experiments/dnb/results/2026-11-09/phase4-phase3-network.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase4-phase3-network.json) |
+| [experiments/dnb/results/2026-11-09/phase4-phase3-tests.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase4-phase3-tests.log) |
+| [experiments/dnb/results/2026-11-09/phase4-phase3-wire.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase4-phase3-wire.json) |
+| [experiments/dnb/results/2026-11-09/phase4-real-pdf-metrics.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase4-real-pdf-metrics.json) |
+| [experiments/dnb/results/2026-11-09/phase4-sf-concise-after.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase4-sf-concise-after.json) |
+| [experiments/dnb/results/2026-11-09/phase4-sf-summary.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase4-sf-summary.json) |
+| [experiments/dnb/results/2026-11-09/phase5-access.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase5-access.json) |
+| [experiments/dnb/results/2026-11-09/phase5-matrix.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase5-matrix.json) |
+| [experiments/dnb/results/2026-11-09/phase5-phase12-tests.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase5-phase12-tests.log) |
+| [experiments/dnb/results/2026-11-09/phase5-phase3-wire.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase5-phase3-wire.json) |
+| [experiments/dnb/results/2026-11-09/phase5-provenance.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase5-provenance.json) |
+| [experiments/dnb/results/2026-11-09/phase5-summary.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase5-summary.json) |
+| [experiments/dnb/results/2026-11-09/phase6-arm64-health.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase6-arm64-health.json) |
+| [experiments/dnb/results/2026-11-09/phase6-arm64-summary.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase6-arm64-summary.json) |
+| [experiments/dnb/results/2026-11-09/phase6-arm64-tests.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase6-arm64-tests.log) |
+| [experiments/dnb/results/2026-11-09/phase6-html-ceiling.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase6-html-ceiling.json) |
+| [experiments/dnb/results/2026-11-09/phase6-install.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase6-install.json) |
+| [experiments/dnb/results/2026-11-09/phase6-layout-mixed.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase6-layout-mixed.json) |
+| [experiments/dnb/results/2026-11-09/phase6-live-hostile.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase6-live-hostile.json) |
+| [experiments/dnb/results/2026-11-09/phase6-load-crash-rollback.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase6-load-crash-rollback.json) |
+| [experiments/dnb/results/2026-11-09/phase6-media-summary.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase6-media-summary.json) |
+| [experiments/dnb/results/2026-11-09/phase6-optional-summary.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase6-optional-summary.json) |
+| [experiments/dnb/results/2026-11-09/phase6-pdf-candidate.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase6-pdf-candidate.json) |
+| [experiments/dnb/results/2026-11-09/phase6-pdf-reference.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase6-pdf-reference.json) |
+| [experiments/dnb/results/2026-11-09/phase6-pdf-summary.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase6-pdf-summary.json) |
+| [experiments/dnb/results/2026-11-09/phase6-pytest.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/phase6-pytest.log) |
+| [experiments/dnb/results/2026-11-09/s1-openapi-candidate.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/s1-openapi-candidate.json) |
+| [experiments/dnb/results/2026-11-09/s1-openapi-reference.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/s1-openapi-reference.json) |
+| [experiments/dnb/results/2026-11-09/s2-direct-cpu.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/s2-direct-cpu.json) |
+| [experiments/dnb/results/2026-11-09/s2-extract-bench.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/s2-extract-bench.json) |
+| [experiments/dnb/results/2026-11-09/s2-news-ttl-tests.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/s2-news-ttl-tests.log) |
+| [experiments/dnb/results/2026-11-09/s2-renderer-concurrency.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/s2-renderer-concurrency.json) |
+| [experiments/dnb/results/2026-11-09/s2-renderer-cpu.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/s2-renderer-cpu.json) |
+| [experiments/dnb/results/2026-11-09/s2-renderer-functional.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/s2-renderer-functional.json) |
+| [experiments/dnb/results/2026-11-09/s3-full-suite.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/s3-full-suite.log) |
+| [experiments/dnb/results/2026-11-09/s3-ocr-alpha-dark-candidate.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/s3-ocr-alpha-dark-candidate.json) |
+| [experiments/dnb/results/2026-11-09/s3-ocr-alpha-dark-reference.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/s3-ocr-alpha-dark-reference.json) |
+| [experiments/dnb/results/2026-11-09/s3-ocr-alpha-light-candidate.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/s3-ocr-alpha-light-candidate.json) |
+| [experiments/dnb/results/2026-11-09/s3-ocr-alpha-light-reference.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/s3-ocr-alpha-light-reference.json) |
+| [experiments/dnb/results/2026-11-09/s3-ocr-candidate.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/s3-ocr-candidate.json) |
+| [experiments/dnb/results/2026-11-09/s3-ocr-reference.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/s3-ocr-reference.json) |
+| [experiments/dnb/results/2026-11-09/s3-ocr-table-candidate.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/s3-ocr-table-candidate.json) |
+| [experiments/dnb/results/2026-11-09/s3-ocr-table-reference.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/s3-ocr-table-reference.json) |
+| [experiments/dnb/results/2026-11-09/s3-ocr-tests.log](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/s3-ocr-tests.log) |
+
+## planned-work
+
+Planning maintainer: verify proposals against current contracts; not implemented behaviour or execution authorization.
+
+| File |
+|---|
+| [docs/plans/1.8.2-DPR.md](plans/1.8.2-DPR.md) |
 
 ## source-contract
 
@@ -186,6 +364,42 @@ Change author: audit docs impact, advertised defaults and generated contracts.
 | [docling-worker/Dockerfile](https://github.com/halonyx-io/dethrottled/blob/main/docling-worker/Dockerfile) |
 | [docling-worker/convert.py](https://github.com/halonyx-io/dethrottled/blob/main/docling-worker/convert.py) |
 | [docling-worker/service.py](https://github.com/halonyx-io/dethrottled/blob/main/docling-worker/service.py) |
+| [experiments/dnb/Dockerfile](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/Dockerfile) |
+| [experiments/dnb/Dockerfile.api](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/Dockerfile.api) |
+| [experiments/dnb/compare.py](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/compare.py) |
+| [experiments/dnb/compose.yml](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/compose.yml) |
+| [experiments/dnb/context_ablation.py](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/context_ablation.py) |
+| [experiments/dnb/context_pool.py](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/context_pool.py) |
+| [experiments/dnb/dnb_service.py](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/dnb_service.py) |
+| [experiments/dnb/extract_worker.py](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/extract_worker.py) |
+| [experiments/dnb/extraction_pool.py](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/extraction_pool.py) |
+| [experiments/dnb/fixture.py](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/fixture.py) |
+| [experiments/dnb/html_extract.py](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/html_extract.py) |
+| [experiments/dnb/lifecycle.py](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/lifecycle.py) |
+| [experiments/dnb/measure.py](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/measure.py) |
+| [experiments/dnb/navigation_guard.py](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/navigation_guard.py) |
+| [experiments/dnb/network_policy.py](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/network_policy.py) |
+| [experiments/dnb/operation_store.py](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/operation_store.py) |
+| [experiments/dnb/phase1_check.py](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/phase1_check.py) |
+| [experiments/dnb/phase2_check.py](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/phase2_check.py) |
+| [experiments/dnb/phase2_lab.sh](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/phase2_lab.sh) |
+| [experiments/dnb/phase3_check.py](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/phase3_check.py) |
+| [experiments/dnb/phase3_network_check.py](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/phase3_network_check.py) |
+| [experiments/dnb/phase5_check.py](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/phase5_check.py) |
+| [experiments/dnb/pool_bench.py](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/pool_bench.py) |
+| [experiments/dnb/security_check.py](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/security_check.py) |
+| [experiments/dnb/session_owners.py](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/session_owners.py) |
+| [experiments/dnb/start.sh](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/start.sh) |
+| [experiments/dnb/summarize.py](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/summarize.py) |
+| [experiments/dnb/test_dnb.py](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/test_dnb.py) |
+| [experiments/dnb/test_extraction_pool.py](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/test_extraction_pool.py) |
+| [experiments/dnb/test_lifecycle.py](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/test_lifecycle.py) |
+| [experiments/dnb/test_navigation_scope.py](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/test_navigation_scope.py) |
+| [experiments/dnb/test_network_policy.py](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/test_network_policy.py) |
+| [experiments/dnb/test_phase3_identity.py](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/test_phase3_identity.py) |
+| [experiments/dnb/test_phase3_operations.py](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/test_phase3_operations.py) |
+| [experiments/dnb/test_pool.py](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/test_pool.py) |
+| [experiments/dnb/verify.py](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/verify.py) |
 | [format-worker/Dockerfile](https://github.com/halonyx-io/dethrottled/blob/main/format-worker/Dockerfile) |
 | [format-worker/service.py](https://github.com/halonyx-io/dethrottled/blob/main/format-worker/service.py) |
 | [format-worker/tika_convert.py](https://github.com/halonyx-io/dethrottled/blob/main/format-worker/tika_convert.py) |
@@ -209,6 +423,7 @@ Change author: audit docs impact, advertised defaults and generated contracts.
 | [scripts/documentation_inventory.py](https://github.com/halonyx-io/dethrottled/blob/main/scripts/documentation_inventory.py) |
 | [scripts/evaluate_content.py](https://github.com/halonyx-io/dethrottled/blob/main/scripts/evaluate_content.py) |
 | [scripts/fetch-models.sh](https://github.com/halonyx-io/dethrottled/blob/main/scripts/fetch-models.sh) |
+| [scripts/fetch-rerank-model.sh](https://github.com/halonyx-io/dethrottled/blob/main/scripts/fetch-rerank-model.sh) |
 | [scripts/probe_blocked.py](https://github.com/halonyx-io/dethrottled/blob/main/scripts/probe_blocked.py) |
 | [scripts/probe_embed.py](https://github.com/halonyx-io/dethrottled/blob/main/scripts/probe_embed.py) |
 | [scripts/probe_extract.py](https://github.com/halonyx-io/dethrottled/blob/main/scripts/probe_extract.py) |
@@ -238,6 +453,8 @@ Change author: audit docs impact, advertised defaults and generated contracts.
 | [src/dethrottled/cache.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/cache.py) |
 | [src/dethrottled/challenges.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/challenges.py) |
 | [src/dethrottled/cli.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/cli.py) |
+| [src/dethrottled/concurrency.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/concurrency.py) |
+| [src/dethrottled/consensus.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/consensus.py) |
 | [src/dethrottled/content.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/content.py) |
 | [src/dethrottled/contracts.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/contracts.py) |
 | [src/dethrottled/corpus.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/corpus.py) |
@@ -250,6 +467,7 @@ Change author: audit docs impact, advertised defaults and generated contracts.
 | [src/dethrottled/corpus_support.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/corpus_support.py) |
 | [src/dethrottled/corpus_v2.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/corpus_v2.py) |
 | [src/dethrottled/corpus_vectors.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/corpus_vectors.py) |
+| [src/dethrottled/delegation.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/delegation.py) |
 | [src/dethrottled/discovery.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/discovery.py) |
 | [src/dethrottled/documents.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/documents.py) |
 | [src/dethrottled/domains.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/domains.py) |
@@ -269,12 +487,15 @@ Change author: audit docs impact, advertised defaults and generated contracts.
 | [src/dethrottled/providers.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/providers.py) |
 | [src/dethrottled/rank.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/rank.py) |
 | [src/dethrottled/readplan.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/readplan.py) |
+| [src/dethrottled/rerank.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/rerank.py) |
 | [src/dethrottled/research.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/research.py) |
 | [src/dethrottled/search.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/search.py) |
 | [src/dethrottled/search_constraints.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/search_constraints.py) |
 | [src/dethrottled/search_diagnostics.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/search_diagnostics.py) |
 | [src/dethrottled/selectors.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/selectors.py) |
+| [src/dethrottled/semantic_cache.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/semantic_cache.py) |
 | [src/dethrottled/server.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/server.py) |
+| [src/dethrottled/signals.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/signals.py) |
 | [src/dethrottled/site.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/site.py) |
 | [src/dethrottled/stack.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/stack.py) |
 | [src/dethrottled/structure.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/structure.py) |

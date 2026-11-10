@@ -13,7 +13,13 @@ from pathlib import Path
 from urllib.parse import urlsplit
 
 import httpx
-from dethrottled_access import CLAIMS, REQUEST_ID, AccessMiddleware, automatic_session
+from dethrottled_access import (
+    CALLER_AUTHORIZATION,
+    CLAIMS,
+    REQUEST_ID,
+    AccessMiddleware,
+    automatic_session,
+)
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, Response
 
@@ -165,7 +171,8 @@ async def upstream(
         async with httpx.AsyncClient(timeout=timeout, trust_env=False) as client:
             response = await client.request(
                 method, BACKEND + path, json=payload, params=params,
-                headers={"X-Request-ID": REQUEST_ID.get()}
+                headers={"X-Request-ID": REQUEST_ID.get(),
+                          "X-Dethrottled-Caller-Authorization": CALLER_AUTHORIZATION.get()}
             )
         content = response.content
         if session_alias and response.headers.get('content-type', '').startswith(

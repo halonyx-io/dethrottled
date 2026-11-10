@@ -240,10 +240,51 @@ async def _engine(context, engine: str, query: str, delay: float, limit: int = 1
     return attempt
 
 
+SEARCH_PROFILE = os.getenv("DETHROTTLED_SEARCH_PROFILE", "").strip()
+
+
+def _profile_path():
+    if not SEARCH_PROFILE or SEARCH_PROFILE.lower() in {"0", "false", "no", "off"}:
+        return None
+    if SEARCH_PROFILE.lower() in {"1", "true", "yes", "on"}:
+        return Path("/state/search-profile.json")
+    return Path(SEARCH_PROFILE)
+
+
+def _load_search_profile():
+    path = _profile_path()
+    if path is None:
+        return None
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+        return data if isinstance(data, dict) else None
+    except (OSError, ValueError):
+        return None
+
+
+def _save_search_profile(state) -> None:
+    path = _profile_path()
+    if path is None or not isinstance(state, dict):
+        return
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        temporary = path.with_suffix(path.suffix + ".tmp")
+        temporary.write_text(json.dumps(state), encoding="utf-8")
+        os.replace(temporary, path)
+    except OSError:
+        pass
+
+
 async def _race(browser, query: str, limit: int = 10) -> dict:
     limit = max(1, min(limit, 10))
     started = time.monotonic()
-    context = await browser.new_context()
+    profile = _load_search_profile()
+    try:
+        context = await browser.new_context(
+            **({"storage_state": profile} if profile else {})
+        )
+    except Exception:
+        context = await browser.new_context()
     pending = {asyncio.create_task(_engine(context, engine, query, i * STAGGER, limit)): engine
                for i, engine in enumerate(ORDER)}
     attempts, winner, backoff = [], None, False
@@ -281,6 +322,11 @@ async def _race(browser, query: str, limit: int = 10) -> dict:
                          "reason": "cancelled_by_winner" if winner else "retry_after" if backoff
                          else "race_timeout",
                          "count": 0} for engine in cancelled)
+        if _profile_path() is not None:
+            try:
+                _save_search_profile(await context.storage_state())
+            except Exception:
+                pass
         await context.close()
     return {"ok":winner is not None,
             "constraint_outcome": winner.get("reason") if winner else None,
@@ -294,7 +340,11 @@ async def _race(browser, query: str, limit: int = 10) -> dict:
 async def _watch_browser(app):
     while True:
         await asyncio.sleep(3)
-        if not app.state.browser.is_connected():
+        browsers = [app.state.browser]
+        crawl = getattr(app.state, "crawl_browser", None)
+        if crawl is not None:
+            browsers.append(crawl)
+        if not all(browser.is_connected() for browser in browsers):
             os._exit(1)  # Compose restart policy restores the worker.
 
 
@@ -308,20 +358,59 @@ async def lifespan(app):
             raise ValueError("DETHROTTLED_BROWSER_GRAPHICS must be default, mesa or auto")
         graphics_args = (["--use-gl=angle", "--use-angle=gl", "--ignore-gpu-blocklist"]
                          if graphics in {"mesa", "auto"} else [])
+        headless = os.environ.get("DETHROTTLED_BROWSER_HEADLESS", "0") == "1"
         hardware_candidate = graphics == "auto" and bool(list(Path('/dev/dri').glob('renderD*')))
         if hardware_candidate:
             graphics_args[1] = "--use-angle=gl-egl"
+            graphics_args += ["--enable-gpu-rasterization", "--enable-zero-copy"]
+        def launch_options(args):
+            options = {"headless": headless, "downloads_path": str(DOWNLOAD_DIR),
+                       "args": args}
+            if headless:
+                # The image ships full Chromium, not chrome-headless-shell.
+                options["channel"] = "chromium"
+            return options
+
         launch_fallback = False
         try:
             app.state.browser = await playwright.chromium.launch(
-                headless=False, downloads_path=str(DOWNLOAD_DIR), args=graphics_args)
+                **launch_options(graphics_args))
         except Exception:
             if not hardware_candidate:
                 raise
             launch_fallback = True
             graphics_args[1] = '--use-angle=gl'
             app.state.browser = await playwright.chromium.launch(
-                headless=False, downloads_path=str(DOWNLOAD_DIR), args=graphics_args)
+                **launch_options(graphics_args))
+        # Bulk crawl and headed drive have different costs and different needs.
+        # The drive browser stays headed for interaction and challenge recovery;
+        # crawl can use a separate headless browser with software WebGL, which
+        # measured roughly half the CPU of the headed Mesa path. Keep this opt-in
+        # so standalone search workers do not pay for a second browser.
+        app.state.crawl_browser = None
+        app.state.crawl_factory = None
+        app.state.crawl_browser_headless = False
+        if os.getenv("DETHROTTLED_CRAWL_SEPARATE", "0") == "1":
+            crawl_headless = os.getenv("DETHROTTLED_CRAWL_HEADLESS", "0") == "1"
+            crawl_graphics = os.getenv("DETHROTTLED_CRAWL_GRAPHICS", "default")
+            crawl_args = (
+                ["--use-gl=angle", "--use-angle=swiftshader", "--ignore-gpu-blocklist"]
+                if crawl_graphics == "swiftshader"
+                else []
+            )
+
+            async def launch_crawl():
+                return await playwright.chromium.launch(
+                    headless=crawl_headless,
+                    channel="chromium",
+                    args=crawl_args,
+                    downloads_path=str(DOWNLOAD_DIR),
+                )
+
+            app.state.crawl_factory = launch_crawl
+            app.state.crawl_browser = await launch_crawl()
+            app.state.crawl_browser_headless = crawl_headless
+
         async def probe_graphics():
             context = await app.state.browser.new_context()
             try:
@@ -338,6 +427,17 @@ async def lifespan(app):
                 }""")
             finally:
                 await context.close()
+
+        async def probe_features():
+            try:
+                session = await app.state.browser.new_browser_cdp_session()
+                info = await session.send("SystemInfo.getInfo")
+                features = info.get("gpu", {}).get("featureStatus", {})
+                keys = ("2d_canvas", "gpu_compositing", "rasterization",
+                        "webgl", "video_decode")
+                return {key: features.get(key) for key in keys}
+            except Exception:
+                return {}
         try:
             info = await probe_graphics()
         except Exception:
@@ -348,9 +448,9 @@ async def lifespan(app):
                                    info.get('pixel') != [64, 128, 191, 255] or
                                    software(info.get('renderer', ''))):
             await app.state.browser.close()
-            app.state.browser = await playwright.chromium.launch(headless=False,
-                downloads_path=str(DOWNLOAD_DIR),
-                args=['--use-gl=angle', '--use-angle=gl', '--ignore-gpu-blocklist'])
+            app.state.browser = await playwright.chromium.launch(
+                **launch_options(['--use-gl=angle', '--use-angle=gl',
+                                  '--ignore-gpu-blocklist']))
             info = await probe_graphics()
             info['fallback_reason'] = 'hardware_not_verified'
         if launch_fallback:
@@ -359,6 +459,8 @@ async def lifespan(app):
             info.get('pixel') == [64, 128, 191, 255] and
             not software(info.get('renderer', 'software')))
         info['requested_mode'] = graphics
+        info['effective_headless'] = headless
+        info['feature_status'] = await probe_features()
         app.state.graphics = info
         watcher = asyncio.create_task(_watch_browser(app))
         session_reaper = asyncio.create_task(_reap_drive_sessions())
@@ -371,6 +473,8 @@ async def lifespan(app):
             await asyncio.gather(watcher, session_reaper, return_exceptions=True)
             await _close_all_drive_sessions()
             await app.state.browser.close()
+            if getattr(app.state, "crawl_browser", None):
+                await app.state.crawl_browser.close()
 
 
 app = FastAPI(title="Dethrottled browser search worker", lifespan=lifespan)

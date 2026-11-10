@@ -1,0 +1,1313 @@
+{
+  "workload": "10 sequential .5s-settle article/long renders per phase",
+  "records": [
+    {
+      "side": "reference",
+      "repeat": 0,
+      "requests": 10,
+      "elapsed_s": 8.344831557944417,
+      "cpu_seconds": 2.670684,
+      "successes": 10,
+      "latency_ms": [
+        657.31,
+        668.838,
+        629.304,
+        664.812,
+        641.307,
+        664.97,
+        722.463,
+        668.197,
+        631.115,
+        661.343
+      ],
+      "samples": [
+        {
+          "elapsed_s": 0.0003131357952952385,
+          "containers": [
+            {
+              "BlockIO": "3.55MB / 56.2MB",
+              "CPUPerc": "0.25%",
+              "Container": "157e434612bc6599b7cf410d5f2d655aa8d78ccc84dba386d2b7d8f10a29b115",
+              "ID": "157e434612bc",
+              "MemPerc": "1.17%",
+              "MemUsage": "368.5MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-candidate-1",
+              "NetIO": "15.5MB / 8.32MB",
+              "PIDs": "132"
+            },
+            {
+              "BlockIO": "51.3MB / 975kB",
+              "CPUPerc": "44.20%",
+              "Container": "c67692b0d98f7d8d7e8ccad1870c0e78551338212520bb3a6f9118a181d10583",
+              "ID": "c67692b0d98f",
+              "MemPerc": "1.70%",
+              "MemUsage": "535.8MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-reference-render-1",
+              "NetIO": "7.79MB / 17.9MB",
+              "PIDs": "183"
+            },
+            {
+              "BlockIO": "1.92MB / 1.8MB",
+              "CPUPerc": "0.22%",
+              "Container": "8352e79b88d8f8626f6b650ba1150990e34bcbb3fdc7aaad011cfc0eebf4308a",
+              "ID": "8352e79b88d8",
+              "MemPerc": "0.05%",
+              "MemUsage": "15.41MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-fixture-1",
+              "NetIO": "305kB / 5.83MB",
+              "PIDs": "1"
+            },
+            {
+              "BlockIO": "537kB / 28.2MB",
+              "CPUPerc": "0.22%",
+              "Container": "78b1ef83dcc4e11edcfc5eb011f97d9fb60aecb50d15302d4ad60a7b0b039509",
+              "ID": "78b1ef83dcc4",
+              "MemPerc": "0.95%",
+              "MemUsage": "298.1MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-reference-browser-1",
+              "NetIO": "9.37MB / 100kB",
+              "PIDs": "118"
+            }
+          ]
+        },
+        {
+          "elapsed_s": 2.152694973628968,
+          "containers": [
+            {
+              "BlockIO": "3.55MB / 57.4MB",
+              "CPUPerc": "0.14%",
+              "Container": "157e434612bc6599b7cf410d5f2d655aa8d78ccc84dba386d2b7d8f10a29b115",
+              "ID": "157e434612bc",
+              "MemPerc": "1.17%",
+              "MemUsage": "367.7MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-candidate-1",
+              "NetIO": "15.5MB / 8.32MB",
+              "PIDs": "132"
+            },
+            {
+              "BlockIO": "51.3MB / 975kB",
+              "CPUPerc": "43.87%",
+              "Container": "c67692b0d98f7d8d7e8ccad1870c0e78551338212520bb3a6f9118a181d10583",
+              "ID": "c67692b0d98f",
+              "MemPerc": "1.69%",
+              "MemUsage": "533.7MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-reference-render-1",
+              "NetIO": "7.92MB / 19MB",
+              "PIDs": "183"
+            },
+            {
+              "BlockIO": "1.92MB / 1.8MB",
+              "CPUPerc": "0.20%",
+              "Container": "8352e79b88d8f8626f6b650ba1150990e34bcbb3fdc7aaad011cfc0eebf4308a",
+              "ID": "8352e79b88d8",
+              "MemPerc": "0.05%",
+              "MemUsage": "15.41MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-fixture-1",
+              "NetIO": "312kB / 5.95MB",
+              "PIDs": "1"
+            },
+            {
+              "BlockIO": "537kB / 28.2MB",
+              "CPUPerc": "0.13%",
+              "Container": "78b1ef83dcc4e11edcfc5eb011f97d9fb60aecb50d15302d4ad60a7b0b039509",
+              "ID": "78b1ef83dcc4",
+              "MemPerc": "0.95%",
+              "MemUsage": "298.1MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-reference-browser-1",
+              "NetIO": "9.37MB / 101kB",
+              "PIDs": "118"
+            }
+          ]
+        },
+        {
+          "elapsed_s": 4.2136278776451945,
+          "containers": [
+            {
+              "BlockIO": "3.55MB / 57.4MB",
+              "CPUPerc": "0.16%",
+              "Container": "157e434612bc6599b7cf410d5f2d655aa8d78ccc84dba386d2b7d8f10a29b115",
+              "ID": "157e434612bc",
+              "MemPerc": "1.17%",
+              "MemUsage": "367.7MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-candidate-1",
+              "NetIO": "15.5MB / 8.32MB",
+              "PIDs": "132"
+            },
+            {
+              "BlockIO": "51.3MB / 979kB",
+              "CPUPerc": "44.11%",
+              "Container": "c67692b0d98f7d8d7e8ccad1870c0e78551338212520bb3a6f9118a181d10583",
+              "ID": "c67692b0d98f",
+              "MemPerc": "1.71%",
+              "MemUsage": "539.7MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-reference-render-1",
+              "NetIO": "8.15MB / 19.6MB",
+              "PIDs": "183"
+            },
+            {
+              "BlockIO": "1.92MB / 1.8MB",
+              "CPUPerc": "0.21%",
+              "Container": "8352e79b88d8f8626f6b650ba1150990e34bcbb3fdc7aaad011cfc0eebf4308a",
+              "ID": "8352e79b88d8",
+              "MemPerc": "0.05%",
+              "MemUsage": "15.4MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-fixture-1",
+              "NetIO": "317kB / 6.18MB",
+              "PIDs": "1"
+            },
+            {
+              "BlockIO": "537kB / 28.2MB",
+              "CPUPerc": "0.20%",
+              "Container": "78b1ef83dcc4e11edcfc5eb011f97d9fb60aecb50d15302d4ad60a7b0b039509",
+              "ID": "78b1ef83dcc4",
+              "MemPerc": "0.95%",
+              "MemUsage": "298.1MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-reference-browser-1",
+              "NetIO": "9.37MB / 107kB",
+              "PIDs": "118"
+            }
+          ]
+        },
+        {
+          "elapsed_s": 6.279189765919,
+          "containers": [
+            {
+              "BlockIO": "3.55MB / 57.4MB",
+              "CPUPerc": "0.20%",
+              "Container": "157e434612bc6599b7cf410d5f2d655aa8d78ccc84dba386d2b7d8f10a29b115",
+              "ID": "157e434612bc",
+              "MemPerc": "1.17%",
+              "MemUsage": "367.7MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-candidate-1",
+              "NetIO": "15.5MB / 8.32MB",
+              "PIDs": "132"
+            },
+            {
+              "BlockIO": "51.3MB / 979kB",
+              "CPUPerc": "0.61%",
+              "Container": "c67692b0d98f7d8d7e8ccad1870c0e78551338212520bb3a6f9118a181d10583",
+              "ID": "c67692b0d98f",
+              "MemPerc": "1.63%",
+              "MemUsage": "512.8MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-reference-render-1",
+              "NetIO": "8.15MB / 20.1MB",
+              "PIDs": "170"
+            },
+            {
+              "BlockIO": "1.92MB / 1.8MB",
+              "CPUPerc": "0.01%",
+              "Container": "8352e79b88d8f8626f6b650ba1150990e34bcbb3fdc7aaad011cfc0eebf4308a",
+              "ID": "8352e79b88d8",
+              "MemPerc": "0.05%",
+              "MemUsage": "15.4MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-fixture-1",
+              "NetIO": "317kB / 6.18MB",
+              "PIDs": "1"
+            },
+            {
+              "BlockIO": "537kB / 28.4MB",
+              "CPUPerc": "0.16%",
+              "Container": "78b1ef83dcc4e11edcfc5eb011f97d9fb60aecb50d15302d4ad60a7b0b039509",
+              "ID": "78b1ef83dcc4",
+              "MemPerc": "0.95%",
+              "MemUsage": "298.1MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-reference-browser-1",
+              "NetIO": "9.37MB / 107kB",
+              "PIDs": "118"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "side": "candidate",
+      "repeat": 0,
+      "requests": 10,
+      "elapsed_s": 8.131870961748064,
+      "cpu_seconds": 6.796597,
+      "successes": 10,
+      "latency_ms": [
+        670.015,
+        865.589,
+        717.261,
+        671.183,
+        641.663,
+        647.692,
+        622.268,
+        655.903,
+        648.156,
+        670.895
+      ],
+      "samples": [
+        {
+          "elapsed_s": 0.0002858429215848446,
+          "containers": [
+            {
+              "BlockIO": "3.55MB / 67.8MB",
+              "CPUPerc": "68.45%",
+              "Container": "157e434612bc6599b7cf410d5f2d655aa8d78ccc84dba386d2b7d8f10a29b115",
+              "ID": "157e434612bc",
+              "MemPerc": "1.41%",
+              "MemUsage": "444.4MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-candidate-1",
+              "NetIO": "15.6MB / 8.8MB",
+              "PIDs": "173"
+            },
+            {
+              "BlockIO": "51.3MB / 987kB",
+              "CPUPerc": "0.31%",
+              "Container": "c67692b0d98f7d8d7e8ccad1870c0e78551338212520bb3a6f9118a181d10583",
+              "ID": "c67692b0d98f",
+              "MemPerc": "1.63%",
+              "MemUsage": "512.8MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-reference-render-1",
+              "NetIO": "8.15MB / 20.1MB",
+              "PIDs": "170"
+            },
+            {
+              "BlockIO": "1.92MB / 1.8MB",
+              "CPUPerc": "0.21%",
+              "Container": "8352e79b88d8f8626f6b650ba1150990e34bcbb3fdc7aaad011cfc0eebf4308a",
+              "ID": "8352e79b88d8",
+              "MemPerc": "0.05%",
+              "MemUsage": "15.4MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-fixture-1",
+              "NetIO": "323kB / 6.3MB",
+              "PIDs": "1"
+            },
+            {
+              "BlockIO": "537kB / 28.4MB",
+              "CPUPerc": "0.24%",
+              "Container": "78b1ef83dcc4e11edcfc5eb011f97d9fb60aecb50d15302d4ad60a7b0b039509",
+              "ID": "78b1ef83dcc4",
+              "MemPerc": "0.95%",
+              "MemUsage": "298.1MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-reference-browser-1",
+              "NetIO": "9.37MB / 107kB",
+              "PIDs": "118"
+            }
+          ]
+        },
+        {
+          "elapsed_s": 1.9464732888154685,
+          "containers": [
+            {
+              "BlockIO": "3.78MB / 67.8MB",
+              "CPUPerc": "110.82%",
+              "Container": "157e434612bc6599b7cf410d5f2d655aa8d78ccc84dba386d2b7d8f10a29b115",
+              "ID": "157e434612bc",
+              "MemPerc": "1.43%",
+              "MemUsage": "449.6MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-candidate-1",
+              "NetIO": "15.9MB / 9.29MB",
+              "PIDs": "171"
+            },
+            {
+              "BlockIO": "51.3MB / 987kB",
+              "CPUPerc": "0.56%",
+              "Container": "c67692b0d98f7d8d7e8ccad1870c0e78551338212520bb3a6f9118a181d10583",
+              "ID": "c67692b0d98f",
+              "MemPerc": "1.63%",
+              "MemUsage": "513MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-reference-render-1",
+              "NetIO": "8.15MB / 20.1MB",
+              "PIDs": "170"
+            },
+            {
+              "BlockIO": "1.92MB / 1.8MB",
+              "CPUPerc": "0.26%",
+              "Container": "8352e79b88d8f8626f6b650ba1150990e34bcbb3fdc7aaad011cfc0eebf4308a",
+              "ID": "8352e79b88d8",
+              "MemPerc": "0.05%",
+              "MemUsage": "15.4MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-fixture-1",
+              "NetIO": "328kB / 6.53MB",
+              "PIDs": "1"
+            },
+            {
+              "BlockIO": "537kB / 28.4MB",
+              "CPUPerc": "0.18%",
+              "Container": "78b1ef83dcc4e11edcfc5eb011f97d9fb60aecb50d15302d4ad60a7b0b039509",
+              "ID": "78b1ef83dcc4",
+              "MemPerc": "0.95%",
+              "MemUsage": "298.1MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-reference-browser-1",
+              "NetIO": "9.37MB / 107kB",
+              "PIDs": "118"
+            }
+          ]
+        },
+        {
+          "elapsed_s": 4.008180325850844,
+          "containers": [
+            {
+              "BlockIO": "3.78MB / 67.8MB",
+              "CPUPerc": "71.09%",
+              "Container": "157e434612bc6599b7cf410d5f2d655aa8d78ccc84dba386d2b7d8f10a29b115",
+              "ID": "157e434612bc",
+              "MemPerc": "1.41%",
+              "MemUsage": "444.4MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-candidate-1",
+              "NetIO": "16.1MB / 10.2MB",
+              "PIDs": "175"
+            },
+            {
+              "BlockIO": "51.3MB / 987kB",
+              "CPUPerc": "0.41%",
+              "Container": "c67692b0d98f7d8d7e8ccad1870c0e78551338212520bb3a6f9118a181d10583",
+              "ID": "c67692b0d98f",
+              "MemPerc": "1.63%",
+              "MemUsage": "512.8MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-reference-render-1",
+              "NetIO": "8.15MB / 20.1MB",
+              "PIDs": "170"
+            },
+            {
+              "BlockIO": "1.92MB / 1.8MB",
+              "CPUPerc": "0.19%",
+              "Container": "8352e79b88d8f8626f6b650ba1150990e34bcbb3fdc7aaad011cfc0eebf4308a",
+              "ID": "8352e79b88d8",
+              "MemPerc": "0.05%",
+              "MemUsage": "15.4MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-fixture-1",
+              "NetIO": "334kB / 6.65MB",
+              "PIDs": "1"
+            },
+            {
+              "BlockIO": "537kB / 28.4MB",
+              "CPUPerc": "0.23%",
+              "Container": "78b1ef83dcc4e11edcfc5eb011f97d9fb60aecb50d15302d4ad60a7b0b039509",
+              "ID": "78b1ef83dcc4",
+              "MemPerc": "0.95%",
+              "MemUsage": "298.1MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-reference-browser-1",
+              "NetIO": "9.37MB / 107kB",
+              "PIDs": "118"
+            }
+          ]
+        },
+        {
+          "elapsed_s": 6.068508156109601,
+          "containers": [
+            {
+              "BlockIO": "3.78MB / 67.8MB",
+              "CPUPerc": "7.11%",
+              "Container": "157e434612bc6599b7cf410d5f2d655aa8d78ccc84dba386d2b7d8f10a29b115",
+              "ID": "157e434612bc",
+              "MemPerc": "1.09%",
+              "MemUsage": "342.9MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-candidate-1",
+              "NetIO": "16.2MB / 10.7MB",
+              "PIDs": "133"
+            },
+            {
+              "BlockIO": "51.3MB / 987kB",
+              "CPUPerc": "0.37%",
+              "Container": "c67692b0d98f7d8d7e8ccad1870c0e78551338212520bb3a6f9118a181d10583",
+              "ID": "c67692b0d98f",
+              "MemPerc": "1.63%",
+              "MemUsage": "512.7MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-reference-render-1",
+              "NetIO": "8.15MB / 20.1MB",
+              "PIDs": "170"
+            },
+            {
+              "BlockIO": "1.92MB / 1.8MB",
+              "CPUPerc": "0.01%",
+              "Container": "8352e79b88d8f8626f6b650ba1150990e34bcbb3fdc7aaad011cfc0eebf4308a",
+              "ID": "8352e79b88d8",
+              "MemPerc": "0.05%",
+              "MemUsage": "15.4MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-fixture-1",
+              "NetIO": "335kB / 6.76MB",
+              "PIDs": "1"
+            },
+            {
+              "BlockIO": "537kB / 28.4MB",
+              "CPUPerc": "0.18%",
+              "Container": "78b1ef83dcc4e11edcfc5eb011f97d9fb60aecb50d15302d4ad60a7b0b039509",
+              "ID": "78b1ef83dcc4",
+              "MemPerc": "0.95%",
+              "MemUsage": "298.1MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-reference-browser-1",
+              "NetIO": "9.37MB / 107kB",
+              "PIDs": "118"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "side": "candidate",
+      "repeat": 1,
+      "requests": 10,
+      "elapsed_s": 8.168922040145844,
+      "cpu_seconds": 6.566491,
+      "successes": 10,
+      "latency_ms": [
+        676.297,
+        652.171,
+        634.668,
+        687.019,
+        623.782,
+        657.321,
+        628.443,
+        648.069,
+        627.769,
+        741.489
+      ],
+      "samples": [
+        {
+          "elapsed_s": 0.00028555281460285187,
+          "containers": [
+            {
+              "BlockIO": "3.79MB / 67.8MB",
+              "CPUPerc": "74.32%",
+              "Container": "157e434612bc6599b7cf410d5f2d655aa8d78ccc84dba386d2b7d8f10a29b115",
+              "ID": "157e434612bc",
+              "MemPerc": "1.22%",
+              "MemUsage": "383MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-candidate-1",
+              "NetIO": "16.4MB / 11.2MB",
+              "PIDs": "135"
+            },
+            {
+              "BlockIO": "51.3MB / 987kB",
+              "CPUPerc": "0.34%",
+              "Container": "c67692b0d98f7d8d7e8ccad1870c0e78551338212520bb3a6f9118a181d10583",
+              "ID": "c67692b0d98f",
+              "MemPerc": "1.63%",
+              "MemUsage": "512.7MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-reference-render-1",
+              "NetIO": "8.15MB / 20.1MB",
+              "PIDs": "170"
+            },
+            {
+              "BlockIO": "1.92MB / 1.8MB",
+              "CPUPerc": "0.21%",
+              "Container": "8352e79b88d8f8626f6b650ba1150990e34bcbb3fdc7aaad011cfc0eebf4308a",
+              "ID": "8352e79b88d8",
+              "MemPerc": "0.05%",
+              "MemUsage": "15.4MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-fixture-1",
+              "NetIO": "341kB / 6.88MB",
+              "PIDs": "1"
+            },
+            {
+              "BlockIO": "537kB / 28.4MB",
+              "CPUPerc": "0.22%",
+              "Container": "78b1ef83dcc4e11edcfc5eb011f97d9fb60aecb50d15302d4ad60a7b0b039509",
+              "ID": "78b1ef83dcc4",
+              "MemPerc": "0.95%",
+              "MemUsage": "298.1MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-reference-browser-1",
+              "NetIO": "9.37MB / 107kB",
+              "PIDs": "118"
+            }
+          ]
+        },
+        {
+          "elapsed_s": 1.9788762452080846,
+          "containers": [
+            {
+              "BlockIO": "3.79MB / 67.8MB",
+              "CPUPerc": "104.09%",
+              "Container": "157e434612bc6599b7cf410d5f2d655aa8d78ccc84dba386d2b7d8f10a29b115",
+              "ID": "157e434612bc",
+              "MemPerc": "1.27%",
+              "MemUsage": "399.2MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-candidate-1",
+              "NetIO": "16.7MB / 12.1MB",
+              "PIDs": "169"
+            },
+            {
+              "BlockIO": "51.3MB / 987kB",
+              "CPUPerc": "0.35%",
+              "Container": "c67692b0d98f7d8d7e8ccad1870c0e78551338212520bb3a6f9118a181d10583",
+              "ID": "c67692b0d98f",
+              "MemPerc": "1.63%",
+              "MemUsage": "512.7MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-reference-render-1",
+              "NetIO": "8.15MB / 20.1MB",
+              "PIDs": "170"
+            },
+            {
+              "BlockIO": "1.92MB / 1.8MB",
+              "CPUPerc": "0.31%",
+              "Container": "8352e79b88d8f8626f6b650ba1150990e34bcbb3fdc7aaad011cfc0eebf4308a",
+              "ID": "8352e79b88d8",
+              "MemPerc": "0.05%",
+              "MemUsage": "15.42MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-fixture-1",
+              "NetIO": "348kB / 7.11MB",
+              "PIDs": "1"
+            },
+            {
+              "BlockIO": "537kB / 28.4MB",
+              "CPUPerc": "0.17%",
+              "Container": "78b1ef83dcc4e11edcfc5eb011f97d9fb60aecb50d15302d4ad60a7b0b039509",
+              "ID": "78b1ef83dcc4",
+              "MemPerc": "0.95%",
+              "MemUsage": "298.1MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-reference-browser-1",
+              "NetIO": "9.37MB / 107kB",
+              "PIDs": "118"
+            }
+          ]
+        },
+        {
+          "elapsed_s": 4.04204575298354,
+          "containers": [
+            {
+              "BlockIO": "3.79MB / 67.8MB",
+              "CPUPerc": "121.95%",
+              "Container": "157e434612bc6599b7cf410d5f2d655aa8d78ccc84dba386d2b7d8f10a29b115",
+              "ID": "157e434612bc",
+              "MemPerc": "1.33%",
+              "MemUsage": "419.2MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-candidate-1",
+              "NetIO": "16.9MB / 12.6MB",
+              "PIDs": "170"
+            },
+            {
+              "BlockIO": "51.3MB / 987kB",
+              "CPUPerc": "4.56%",
+              "Container": "c67692b0d98f7d8d7e8ccad1870c0e78551338212520bb3a6f9118a181d10583",
+              "ID": "c67692b0d98f",
+              "MemPerc": "1.63%",
+              "MemUsage": "512.7MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-reference-render-1",
+              "NetIO": "8.15MB / 20.1MB",
+              "PIDs": "170"
+            },
+            {
+              "BlockIO": "1.92MB / 1.8MB",
+              "CPUPerc": "0.30%",
+              "Container": "8352e79b88d8f8626f6b650ba1150990e34bcbb3fdc7aaad011cfc0eebf4308a",
+              "ID": "8352e79b88d8",
+              "MemPerc": "0.05%",
+              "MemUsage": "15.4MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-fixture-1",
+              "NetIO": "352kB / 7.34MB",
+              "PIDs": "1"
+            },
+            {
+              "BlockIO": "537kB / 28.4MB",
+              "CPUPerc": "0.37%",
+              "Container": "78b1ef83dcc4e11edcfc5eb011f97d9fb60aecb50d15302d4ad60a7b0b039509",
+              "ID": "78b1ef83dcc4",
+              "MemPerc": "0.95%",
+              "MemUsage": "298.1MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-reference-browser-1",
+              "NetIO": "9.37MB / 107kB",
+              "PIDs": "118"
+            }
+          ]
+        },
+        {
+          "elapsed_s": 6.104335045907646,
+          "containers": [
+            {
+              "BlockIO": "3.79MB / 67.8MB",
+              "CPUPerc": "0.23%",
+              "Container": "157e434612bc6599b7cf410d5f2d655aa8d78ccc84dba386d2b7d8f10a29b115",
+              "ID": "157e434612bc",
+              "MemPerc": "1.10%",
+              "MemUsage": "346.3MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-candidate-1",
+              "NetIO": "16.9MB / 13MB",
+              "PIDs": "133"
+            },
+            {
+              "BlockIO": "51.3MB / 987kB",
+              "CPUPerc": "0.52%",
+              "Container": "c67692b0d98f7d8d7e8ccad1870c0e78551338212520bb3a6f9118a181d10583",
+              "ID": "c67692b0d98f",
+              "MemPerc": "1.63%",
+              "MemUsage": "512.6MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-reference-render-1",
+              "NetIO": "8.15MB / 20.1MB",
+              "PIDs": "170"
+            },
+            {
+              "BlockIO": "1.92MB / 1.8MB",
+              "CPUPerc": "0.01%",
+              "Container": "8352e79b88d8f8626f6b650ba1150990e34bcbb3fdc7aaad011cfc0eebf4308a",
+              "ID": "8352e79b88d8",
+              "MemPerc": "0.05%",
+              "MemUsage": "15.4MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-fixture-1",
+              "NetIO": "352kB / 7.34MB",
+              "PIDs": "1"
+            },
+            {
+              "BlockIO": "537kB / 28.5MB",
+              "CPUPerc": "0.20%",
+              "Container": "78b1ef83dcc4e11edcfc5eb011f97d9fb60aecb50d15302d4ad60a7b0b039509",
+              "ID": "78b1ef83dcc4",
+              "MemPerc": "0.95%",
+              "MemUsage": "298.1MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-reference-browser-1",
+              "NetIO": "9.37MB / 107kB",
+              "PIDs": "118"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "side": "reference",
+      "repeat": 1,
+      "requests": 10,
+      "elapsed_s": 8.115234652999789,
+      "cpu_seconds": 2.650072,
+      "successes": 10,
+      "latency_ms": [
+        651.704,
+        663.915,
+        630.687,
+        684.673,
+        630.497,
+        663.502,
+        648.595,
+        667.626,
+        630.552,
+        672.192
+      ],
+      "samples": [
+        {
+          "elapsed_s": 0.0002556256949901581,
+          "containers": [
+            {
+              "BlockIO": "3.79MB / 69.1MB",
+              "CPUPerc": "0.81%",
+              "Container": "157e434612bc6599b7cf410d5f2d655aa8d78ccc84dba386d2b7d8f10a29b115",
+              "ID": "157e434612bc",
+              "MemPerc": "1.09%",
+              "MemUsage": "344.8MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-candidate-1",
+              "NetIO": "16.9MB / 13MB",
+              "PIDs": "132"
+            },
+            {
+              "BlockIO": "51.3MB / 987kB",
+              "CPUPerc": "25.68%",
+              "Container": "c67692b0d98f7d8d7e8ccad1870c0e78551338212520bb3a6f9118a181d10583",
+              "ID": "c67692b0d98f",
+              "MemPerc": "1.69%",
+              "MemUsage": "533.6MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-reference-render-1",
+              "NetIO": "8.28MB / 20.7MB",
+              "PIDs": "183"
+            },
+            {
+              "BlockIO": "1.92MB / 1.8MB",
+              "CPUPerc": "0.16%",
+              "Container": "8352e79b88d8f8626f6b650ba1150990e34bcbb3fdc7aaad011cfc0eebf4308a",
+              "ID": "8352e79b88d8",
+              "MemPerc": "0.05%",
+              "MemUsage": "15.4MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-fixture-1",
+              "NetIO": "359kB / 7.46MB",
+              "PIDs": "1"
+            },
+            {
+              "BlockIO": "537kB / 28.5MB",
+              "CPUPerc": "10.98%",
+              "Container": "78b1ef83dcc4e11edcfc5eb011f97d9fb60aecb50d15302d4ad60a7b0b039509",
+              "ID": "78b1ef83dcc4",
+              "MemPerc": "0.98%",
+              "MemUsage": "309.4MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-reference-browser-1",
+              "NetIO": "9.37MB / 107kB",
+              "PIDs": "120"
+            }
+          ]
+        },
+        {
+          "elapsed_s": 1.9301819168031216,
+          "containers": [
+            {
+              "BlockIO": "3.79MB / 69.1MB",
+              "CPUPerc": "0.16%",
+              "Container": "157e434612bc6599b7cf410d5f2d655aa8d78ccc84dba386d2b7d8f10a29b115",
+              "ID": "157e434612bc",
+              "MemPerc": "1.09%",
+              "MemUsage": "344.8MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-candidate-1",
+              "NetIO": "16.9MB / 13MB",
+              "PIDs": "132"
+            },
+            {
+              "BlockIO": "51.3MB / 987kB",
+              "CPUPerc": "31.07%",
+              "Container": "c67692b0d98f7d8d7e8ccad1870c0e78551338212520bb3a6f9118a181d10583",
+              "ID": "c67692b0d98f",
+              "MemPerc": "1.64%",
+              "MemUsage": "515.5MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-reference-render-1",
+              "NetIO": "8.51MB / 21.8MB",
+              "PIDs": "170"
+            },
+            {
+              "BlockIO": "1.92MB / 1.8MB",
+              "CPUPerc": "0.07%",
+              "Container": "8352e79b88d8f8626f6b650ba1150990e34bcbb3fdc7aaad011cfc0eebf4308a",
+              "ID": "8352e79b88d8",
+              "MemPerc": "0.05%",
+              "MemUsage": "15.4MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-fixture-1",
+              "NetIO": "364kB / 7.69MB",
+              "PIDs": "1"
+            },
+            {
+              "BlockIO": "537kB / 28.5MB",
+              "CPUPerc": "0.16%",
+              "Container": "78b1ef83dcc4e11edcfc5eb011f97d9fb60aecb50d15302d4ad60a7b0b039509",
+              "ID": "78b1ef83dcc4",
+              "MemPerc": "0.95%",
+              "MemUsage": "298.1MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-reference-browser-1",
+              "NetIO": "9.37MB / 107kB",
+              "PIDs": "118"
+            }
+          ]
+        },
+        {
+          "elapsed_s": 3.993062363937497,
+          "containers": [
+            {
+              "BlockIO": "3.79MB / 69.1MB",
+              "CPUPerc": "20.08%",
+              "Container": "157e434612bc6599b7cf410d5f2d655aa8d78ccc84dba386d2b7d8f10a29b115",
+              "ID": "157e434612bc",
+              "MemPerc": "1.09%",
+              "MemUsage": "344.8MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-candidate-1",
+              "NetIO": "16.9MB / 13MB",
+              "PIDs": "132"
+            },
+            {
+              "BlockIO": "51.3MB / 995kB",
+              "CPUPerc": "45.12%",
+              "Container": "c67692b0d98f7d8d7e8ccad1870c0e78551338212520bb3a6f9118a181d10583",
+              "ID": "c67692b0d98f",
+              "MemPerc": "1.72%",
+              "MemUsage": "541.1MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-reference-render-1",
+              "NetIO": "8.75MB / 22.4MB",
+              "PIDs": "183"
+            },
+            {
+              "BlockIO": "1.92MB / 1.8MB",
+              "CPUPerc": "0.21%",
+              "Container": "8352e79b88d8f8626f6b650ba1150990e34bcbb3fdc7aaad011cfc0eebf4308a",
+              "ID": "8352e79b88d8",
+              "MemPerc": "0.05%",
+              "MemUsage": "15.4MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-fixture-1",
+              "NetIO": "372kB / 7.92MB",
+              "PIDs": "1"
+            },
+            {
+              "BlockIO": "537kB / 28.5MB",
+              "CPUPerc": "0.21%",
+              "Container": "78b1ef83dcc4e11edcfc5eb011f97d9fb60aecb50d15302d4ad60a7b0b039509",
+              "ID": "78b1ef83dcc4",
+              "MemPerc": "0.95%",
+              "MemUsage": "298.1MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-reference-browser-1",
+              "NetIO": "9.37MB / 107kB",
+              "PIDs": "118"
+            }
+          ]
+        },
+        {
+          "elapsed_s": 6.057258274871856,
+          "containers": [
+            {
+              "BlockIO": "3.79MB / 69.2MB",
+              "CPUPerc": "0.24%",
+              "Container": "157e434612bc6599b7cf410d5f2d655aa8d78ccc84dba386d2b7d8f10a29b115",
+              "ID": "157e434612bc",
+              "MemPerc": "1.09%",
+              "MemUsage": "344.8MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-candidate-1",
+              "NetIO": "16.9MB / 13MB",
+              "PIDs": "132"
+            },
+            {
+              "BlockIO": "51.3MB / 995kB",
+              "CPUPerc": "0.58%",
+              "Container": "c67692b0d98f7d8d7e8ccad1870c0e78551338212520bb3a6f9118a181d10583",
+              "ID": "c67692b0d98f",
+              "MemPerc": "1.64%",
+              "MemUsage": "515.8MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-reference-render-1",
+              "NetIO": "8.75MB / 23MB",
+              "PIDs": "170"
+            },
+            {
+              "BlockIO": "1.92MB / 1.8MB",
+              "CPUPerc": "0.01%",
+              "Container": "8352e79b88d8f8626f6b650ba1150990e34bcbb3fdc7aaad011cfc0eebf4308a",
+              "ID": "8352e79b88d8",
+              "MemPerc": "0.05%",
+              "MemUsage": "15.4MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-fixture-1",
+              "NetIO": "372kB / 7.92MB",
+              "PIDs": "1"
+            },
+            {
+              "BlockIO": "537kB / 28.5MB",
+              "CPUPerc": "0.21%",
+              "Container": "78b1ef83dcc4e11edcfc5eb011f97d9fb60aecb50d15302d4ad60a7b0b039509",
+              "ID": "78b1ef83dcc4",
+              "MemPerc": "0.95%",
+              "MemUsage": "298.1MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-reference-browser-1",
+              "NetIO": "9.37MB / 107kB",
+              "PIDs": "118"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "side": "reference",
+      "repeat": 2,
+      "requests": 10,
+      "elapsed_s": 8.075856648851186,
+      "cpu_seconds": 2.409953,
+      "successes": 10,
+      "latency_ms": [
+        658.874,
+        670.323,
+        629.041,
+        681.099,
+        635.48,
+        667.958,
+        655.307,
+        661.492,
+        634.471,
+        663.264
+      ],
+      "samples": [
+        {
+          "elapsed_s": 0.00028397003188729286,
+          "containers": [
+            {
+              "BlockIO": "3.79MB / 69.2MB",
+              "CPUPerc": "0.34%",
+              "Container": "157e434612bc6599b7cf410d5f2d655aa8d78ccc84dba386d2b7d8f10a29b115",
+              "ID": "157e434612bc",
+              "MemPerc": "1.09%",
+              "MemUsage": "344.6MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-candidate-1",
+              "NetIO": "16.9MB / 13MB",
+              "PIDs": "132"
+            },
+            {
+              "BlockIO": "51.3MB / 995kB",
+              "CPUPerc": "24.73%",
+              "Container": "c67692b0d98f7d8d7e8ccad1870c0e78551338212520bb3a6f9118a181d10583",
+              "ID": "c67692b0d98f",
+              "MemPerc": "1.70%",
+              "MemUsage": "536.7MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-reference-render-1",
+              "NetIO": "8.87MB / 23.5MB",
+              "PIDs": "183"
+            },
+            {
+              "BlockIO": "1.92MB / 1.8MB",
+              "CPUPerc": "0.15%",
+              "Container": "8352e79b88d8f8626f6b650ba1150990e34bcbb3fdc7aaad011cfc0eebf4308a",
+              "ID": "8352e79b88d8",
+              "MemPerc": "0.05%",
+              "MemUsage": "15.4MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-fixture-1",
+              "NetIO": "378kB / 8.04MB",
+              "PIDs": "1"
+            },
+            {
+              "BlockIO": "537kB / 28.5MB",
+              "CPUPerc": "0.21%",
+              "Container": "78b1ef83dcc4e11edcfc5eb011f97d9fb60aecb50d15302d4ad60a7b0b039509",
+              "ID": "78b1ef83dcc4",
+              "MemPerc": "0.95%",
+              "MemUsage": "298MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-reference-browser-1",
+              "NetIO": "9.37MB / 107kB",
+              "PIDs": "118"
+            }
+          ]
+        },
+        {
+          "elapsed_s": 1.9050718867219985,
+          "containers": [
+            {
+              "BlockIO": "3.79MB / 69.2MB",
+              "CPUPerc": "0.19%",
+              "Container": "157e434612bc6599b7cf410d5f2d655aa8d78ccc84dba386d2b7d8f10a29b115",
+              "ID": "157e434612bc",
+              "MemPerc": "1.09%",
+              "MemUsage": "344.6MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-candidate-1",
+              "NetIO": "16.9MB / 13MB",
+              "PIDs": "132"
+            },
+            {
+              "BlockIO": "51.3MB / 1MB",
+              "CPUPerc": "26.49%",
+              "Container": "c67692b0d98f7d8d7e8ccad1870c0e78551338212520bb3a6f9118a181d10583",
+              "ID": "c67692b0d98f",
+              "MemPerc": "1.64%",
+              "MemUsage": "516.9MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-reference-render-1",
+              "NetIO": "9.1MB / 24.7MB",
+              "PIDs": "171"
+            },
+            {
+              "BlockIO": "1.92MB / 1.8MB",
+              "CPUPerc": "0.07%",
+              "Container": "8352e79b88d8f8626f6b650ba1150990e34bcbb3fdc7aaad011cfc0eebf4308a",
+              "ID": "8352e79b88d8",
+              "MemPerc": "0.05%",
+              "MemUsage": "15.4MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-fixture-1",
+              "NetIO": "383kB / 8.27MB",
+              "PIDs": "1"
+            },
+            {
+              "BlockIO": "537kB / 28.6MB",
+              "CPUPerc": "0.30%",
+              "Container": "78b1ef83dcc4e11edcfc5eb011f97d9fb60aecb50d15302d4ad60a7b0b039509",
+              "ID": "78b1ef83dcc4",
+              "MemPerc": "0.95%",
+              "MemUsage": "298MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-reference-browser-1",
+              "NetIO": "9.37MB / 107kB",
+              "PIDs": "118"
+            }
+          ]
+        },
+        {
+          "elapsed_s": 3.9549375846982002,
+          "containers": [
+            {
+              "BlockIO": "3.79MB / 69.2MB",
+              "CPUPerc": "0.22%",
+              "Container": "157e434612bc6599b7cf410d5f2d655aa8d78ccc84dba386d2b7d8f10a29b115",
+              "ID": "157e434612bc",
+              "MemPerc": "1.09%",
+              "MemUsage": "344.6MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-candidate-1",
+              "NetIO": "16.9MB / 13MB",
+              "PIDs": "132"
+            },
+            {
+              "BlockIO": "51.3MB / 1MB",
+              "CPUPerc": "40.51%",
+              "Container": "c67692b0d98f7d8d7e8ccad1870c0e78551338212520bb3a6f9118a181d10583",
+              "ID": "c67692b0d98f",
+              "MemPerc": "1.70%",
+              "MemUsage": "534.8MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-reference-render-1",
+              "NetIO": "9.34MB / 25.3MB",
+              "PIDs": "180"
+            },
+            {
+              "BlockIO": "1.92MB / 1.8MB",
+              "CPUPerc": "0.23%",
+              "Container": "8352e79b88d8f8626f6b650ba1150990e34bcbb3fdc7aaad011cfc0eebf4308a",
+              "ID": "8352e79b88d8",
+              "MemPerc": "0.05%",
+              "MemUsage": "15.41MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-fixture-1",
+              "NetIO": "391kB / 8.5MB",
+              "PIDs": "1"
+            },
+            {
+              "BlockIO": "537kB / 28.6MB",
+              "CPUPerc": "0.13%",
+              "Container": "78b1ef83dcc4e11edcfc5eb011f97d9fb60aecb50d15302d4ad60a7b0b039509",
+              "ID": "78b1ef83dcc4",
+              "MemPerc": "0.95%",
+              "MemUsage": "298MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-reference-browser-1",
+              "NetIO": "9.37MB / 107kB",
+              "PIDs": "118"
+            }
+          ]
+        },
+        {
+          "elapsed_s": 6.008695055730641,
+          "containers": [
+            {
+              "BlockIO": "3.79MB / 69.2MB",
+              "CPUPerc": "0.20%",
+              "Container": "157e434612bc6599b7cf410d5f2d655aa8d78ccc84dba386d2b7d8f10a29b115",
+              "ID": "157e434612bc",
+              "MemPerc": "1.09%",
+              "MemUsage": "344.6MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-candidate-1",
+              "NetIO": "16.9MB / 13MB",
+              "PIDs": "132"
+            },
+            {
+              "BlockIO": "51.3MB / 1MB",
+              "CPUPerc": "0.41%",
+              "Container": "c67692b0d98f7d8d7e8ccad1870c0e78551338212520bb3a6f9118a181d10583",
+              "ID": "c67692b0d98f",
+              "MemPerc": "1.64%",
+              "MemUsage": "516.9MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-reference-render-1",
+              "NetIO": "9.34MB / 25.8MB",
+              "PIDs": "170"
+            },
+            {
+              "BlockIO": "1.92MB / 1.8MB",
+              "CPUPerc": "0.01%",
+              "Container": "8352e79b88d8f8626f6b650ba1150990e34bcbb3fdc7aaad011cfc0eebf4308a",
+              "ID": "8352e79b88d8",
+              "MemPerc": "0.05%",
+              "MemUsage": "15.4MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-fixture-1",
+              "NetIO": "391kB / 8.5MB",
+              "PIDs": "1"
+            },
+            {
+              "BlockIO": "537kB / 28.6MB",
+              "CPUPerc": "0.20%",
+              "Container": "78b1ef83dcc4e11edcfc5eb011f97d9fb60aecb50d15302d4ad60a7b0b039509",
+              "ID": "78b1ef83dcc4",
+              "MemPerc": "0.95%",
+              "MemUsage": "298MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-reference-browser-1",
+              "NetIO": "9.37MB / 107kB",
+              "PIDs": "118"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "side": "candidate",
+      "repeat": 2,
+      "requests": 10,
+      "elapsed_s": 8.129278892185539,
+      "cpu_seconds": 6.785066,
+      "successes": 10,
+      "latency_ms": [
+        657.974,
+        646.615,
+        665.898,
+        674.838,
+        630.857,
+        758.512,
+        639.18,
+        665.779,
+        661.781,
+        709.014
+      ],
+      "samples": [
+        {
+          "elapsed_s": 0.000264202244579792,
+          "containers": [
+            {
+              "BlockIO": "3.85MB / 69.2MB",
+              "CPUPerc": "64.73%",
+              "Container": "157e434612bc6599b7cf410d5f2d655aa8d78ccc84dba386d2b7d8f10a29b115",
+              "ID": "157e434612bc",
+              "MemPerc": "1.34%",
+              "MemUsage": "423.4MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-candidate-1",
+              "NetIO": "17.1MB / 13.5MB",
+              "PIDs": "175"
+            },
+            {
+              "BlockIO": "51.3MB / 1.01MB",
+              "CPUPerc": "0.39%",
+              "Container": "c67692b0d98f7d8d7e8ccad1870c0e78551338212520bb3a6f9118a181d10583",
+              "ID": "c67692b0d98f",
+              "MemPerc": "1.64%",
+              "MemUsage": "516.8MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-reference-render-1",
+              "NetIO": "9.34MB / 25.8MB",
+              "PIDs": "170"
+            },
+            {
+              "BlockIO": "1.92MB / 1.8MB",
+              "CPUPerc": "0.18%",
+              "Container": "8352e79b88d8f8626f6b650ba1150990e34bcbb3fdc7aaad011cfc0eebf4308a",
+              "ID": "8352e79b88d8",
+              "MemPerc": "0.05%",
+              "MemUsage": "15.4MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-fixture-1",
+              "NetIO": "397kB / 8.62MB",
+              "PIDs": "1"
+            },
+            {
+              "BlockIO": "537kB / 28.6MB",
+              "CPUPerc": "0.14%",
+              "Container": "78b1ef83dcc4e11edcfc5eb011f97d9fb60aecb50d15302d4ad60a7b0b039509",
+              "ID": "78b1ef83dcc4",
+              "MemPerc": "0.95%",
+              "MemUsage": "298MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-reference-browser-1",
+              "NetIO": "9.37MB / 107kB",
+              "PIDs": "118"
+            }
+          ]
+        },
+        {
+          "elapsed_s": 1.9406126509420574,
+          "containers": [
+            {
+              "BlockIO": "3.98MB / 79.9MB",
+              "CPUPerc": "66.56%",
+              "Container": "157e434612bc6599b7cf410d5f2d655aa8d78ccc84dba386d2b7d8f10a29b115",
+              "ID": "157e434612bc",
+              "MemPerc": "1.35%",
+              "MemUsage": "426.5MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-candidate-1",
+              "NetIO": "17.4MB / 14MB",
+              "PIDs": "173"
+            },
+            {
+              "BlockIO": "51.3MB / 1.01MB",
+              "CPUPerc": "0.43%",
+              "Container": "c67692b0d98f7d8d7e8ccad1870c0e78551338212520bb3a6f9118a181d10583",
+              "ID": "c67692b0d98f",
+              "MemPerc": "1.64%",
+              "MemUsage": "516MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-reference-render-1",
+              "NetIO": "9.34MB / 25.8MB",
+              "PIDs": "170"
+            },
+            {
+              "BlockIO": "1.92MB / 1.8MB",
+              "CPUPerc": "0.09%",
+              "Container": "8352e79b88d8f8626f6b650ba1150990e34bcbb3fdc7aaad011cfc0eebf4308a",
+              "ID": "8352e79b88d8",
+              "MemPerc": "0.05%",
+              "MemUsage": "15.4MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-fixture-1",
+              "NetIO": "401kB / 8.85MB",
+              "PIDs": "1"
+            },
+            {
+              "BlockIO": "537kB / 28.6MB",
+              "CPUPerc": "0.17%",
+              "Container": "78b1ef83dcc4e11edcfc5eb011f97d9fb60aecb50d15302d4ad60a7b0b039509",
+              "ID": "78b1ef83dcc4",
+              "MemPerc": "0.95%",
+              "MemUsage": "298MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-reference-browser-1",
+              "NetIO": "9.37MB / 107kB",
+              "PIDs": "118"
+            }
+          ]
+        },
+        {
+          "elapsed_s": 3.998797074891627,
+          "containers": [
+            {
+              "BlockIO": "3.99MB / 79.9MB",
+              "CPUPerc": "84.31%",
+              "Container": "157e434612bc6599b7cf410d5f2d655aa8d78ccc84dba386d2b7d8f10a29b115",
+              "ID": "157e434612bc",
+              "MemPerc": "1.19%",
+              "MemUsage": "374MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-candidate-1",
+              "NetIO": "17.5MB / 14.9MB",
+              "PIDs": "155"
+            },
+            {
+              "BlockIO": "51.3MB / 1.01MB",
+              "CPUPerc": "0.37%",
+              "Container": "c67692b0d98f7d8d7e8ccad1870c0e78551338212520bb3a6f9118a181d10583",
+              "ID": "c67692b0d98f",
+              "MemPerc": "1.64%",
+              "MemUsage": "516MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-reference-render-1",
+              "NetIO": "9.34MB / 25.8MB",
+              "PIDs": "170"
+            },
+            {
+              "BlockIO": "1.92MB / 1.8MB",
+              "CPUPerc": "0.19%",
+              "Container": "8352e79b88d8f8626f6b650ba1150990e34bcbb3fdc7aaad011cfc0eebf4308a",
+              "ID": "8352e79b88d8",
+              "MemPerc": "0.05%",
+              "MemUsage": "15.4MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-fixture-1",
+              "NetIO": "407kB / 8.97MB",
+              "PIDs": "1"
+            },
+            {
+              "BlockIO": "537kB / 28.6MB",
+              "CPUPerc": "19.29%",
+              "Container": "78b1ef83dcc4e11edcfc5eb011f97d9fb60aecb50d15302d4ad60a7b0b039509",
+              "ID": "78b1ef83dcc4",
+              "MemPerc": "0.95%",
+              "MemUsage": "298MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-reference-browser-1",
+              "NetIO": "9.38MB / 107kB",
+              "PIDs": "118"
+            }
+          ]
+        },
+        {
+          "elapsed_s": 6.064659515861422,
+          "containers": [
+            {
+              "BlockIO": "3.99MB / 79.9MB",
+              "CPUPerc": "0.25%",
+              "Container": "157e434612bc6599b7cf410d5f2d655aa8d78ccc84dba386d2b7d8f10a29b115",
+              "ID": "157e434612bc",
+              "MemPerc": "1.11%",
+              "MemUsage": "348.8MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-candidate-1",
+              "NetIO": "17.7MB / 15.3MB",
+              "PIDs": "133"
+            },
+            {
+              "BlockIO": "51.3MB / 1.01MB",
+              "CPUPerc": "0.38%",
+              "Container": "c67692b0d98f7d8d7e8ccad1870c0e78551338212520bb3a6f9118a181d10583",
+              "ID": "c67692b0d98f",
+              "MemPerc": "1.64%",
+              "MemUsage": "516MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-reference-render-1",
+              "NetIO": "9.34MB / 25.8MB",
+              "PIDs": "170"
+            },
+            {
+              "BlockIO": "1.92MB / 1.8MB",
+              "CPUPerc": "0.01%",
+              "Container": "8352e79b88d8f8626f6b650ba1150990e34bcbb3fdc7aaad011cfc0eebf4308a",
+              "ID": "8352e79b88d8",
+              "MemPerc": "0.05%",
+              "MemUsage": "15.4MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-fixture-1",
+              "NetIO": "409kB / 9.08MB",
+              "PIDs": "1"
+            },
+            {
+              "BlockIO": "537kB / 28.6MB",
+              "CPUPerc": "0.15%",
+              "Container": "78b1ef83dcc4e11edcfc5eb011f97d9fb60aecb50d15302d4ad60a7b0b039509",
+              "ID": "78b1ef83dcc4",
+              "MemPerc": "0.95%",
+              "MemUsage": "298MiB / 30.76GiB",
+              "Name": "dethrottled-dnb-lab-reference-browser-1",
+              "NetIO": "9.38MB / 107kB",
+              "PIDs": "118"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

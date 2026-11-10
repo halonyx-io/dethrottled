@@ -118,6 +118,16 @@ response reading; override `DETHROTTLED_CONNECT_TIMEOUT` for slower networks.
 REST still defaults to detailed responses and now warns on large text payloads.
 The renamed root `SKILL-dethrottled.md` is included in the package and image.
 
+For 1.8.0, rebuild/recreate the API and browser services and refresh the
+host-managed MCP source, workflow and application-version modules together.
+Containerized adapters need the matching adapter image. Unchanged parsing
+workers need no restart. Preserve all volumes; no cache or corpus reset is
+required. Corpus v2 writes `corpus-v2.sqlite` beside the legacy database, so
+keep both for rollback. Ettin reranking remains opt-in and the model is not
+bundled: fetch it with `scripts/fetch-rerank-model.sh`, mount that directory
+read-only, and pass the `DETHROTTLED_RERANK*` settings through Compose.
+Production remains on 1.7.1 until this rollout is performed.
+
 ## State and backups
 
 | Storage | Contents |
@@ -181,8 +191,9 @@ browser worker, SearXNG, renderer and optional parsing workers are private.
 The optional HTML-to-PDF overlay currently publishes 8788 on all host interfaces;
 review its mapping. Public adapters do not replace network egress isolation.
 
-Inspect `/stats` for tier rest state, cache and headed/renderer admission; research
-has its own two-request semaphore. Optional workers expose private readiness and
+Inspect `/stats` for tier rest state, cache and headed/renderer admission; the
+cache block reports `bytes`, `max_bytes` and the last expiry/eviction run.
+Research has its own two-request semaphore. Optional workers expose private readiness and
 metrics. Record exact URLs, expected facts, timestamps, input controls and raw
 results; distinguish missing source evidence from a transport or limiter failure.
 

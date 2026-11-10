@@ -185,3 +185,39 @@ def test_observed_retry_banners_are_non_destructive_and_quote_aware(banner):
         "pollution"] == "none_detected"
     assert assess_content(text, '<pre>' + banner + '</pre>')['pollution'] == 'none_detected'
     assert assess_content(text, structured=True)['pollution'] == 'not_assessed'
+
+
+def test_gate_pages_are_named_not_left_as_ok():
+    from dethrottled.content import annotate_content
+
+    cases = [
+        ("Subscribe to continue",
+         "Subscribe to continue. This article is available to subscribers."),
+        ("Sign in", "Sign in. You must be signed in to continue."),
+        ("Access Denied", "Access Denied. You do not have permission to view this page."),
+        ("Service temporarily unavailable", "Maintenance in progress."),
+    ]
+    expected = ["paywall", "login", "access_denied", "maintenance"]
+    for (title, text), gate in zip(cases, expected):
+        row = {"title": title, "text": ARTICLE + " " + text, "warnings": []}
+        annotate_content(row, structured=False)
+        assert row["content_assessment"]["gate"] == gate
+        assert row["quality"] == "thin"
+        assert any(w.startswith("gate_page:" + gate) for w in row["warnings"])
+
+
+def test_ordinary_article_with_a_sign_in_link_is_not_a_gate():
+    from dethrottled.content import gate_kind
+
+    assert gate_kind("How to sign in to your account",
+                     ARTICLE + " Follow the sign-in link to continue.") == ""
+    assert gate_kind("Region allocation report", ARTICLE + " Subscribe for updates.") == ""
+
+
+def test_structured_documents_are_not_classified_as_web_gates():
+    from dethrottled.content import annotate_content
+
+    row = {"title": "Sign in", "text": ARTICLE + " Sign in. Password policy.", "warnings": []}
+    annotate_content(row, structured=True)
+    assert "gate" not in row["content_assessment"]
+    assert row["warnings"] == []

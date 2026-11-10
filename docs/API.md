@@ -38,6 +38,14 @@ supplements do not displace primary choices. Source order is preserved, with
 novel Yandex/Yahoo choices alternating after DDG. Partial provider failures leave
 healthy sources available; fewer than fifteen results is normal.
 
+Search rows carry additive `source_type`, `fetch_relevance`, `snippet_tokens`,
+`date_source` (`structured`, `snippet`, `none`), `published_age_days`,
+`engines_consensus` and `consensus_score`.
+`/v2/search`, and the first row of `/search`, also expose `dated_results`,
+`freshness_note` and `decoy_buckets`. A snippet date is a lead, not a verified
+publication date. A decoy bucket is dropped only when another provider proves the
+query can be echoed.
+
 `profile="fast"` uses DDG alone. `balanced` uses the normal web combination;
 `thorough` also requests Mwmbl. Explicit news and academic profiles retain their
 specialist sources. `engines="web"` deliberately requests only the primary route;
@@ -111,7 +119,11 @@ not verify an answer. Retain `acquisition_url` and publisher-alternative provena
 | `document_id`, `document_sha256` | Scoped retained version for continuation and citations |
 | `workflow.next_actions` | Relevant follow-ups with exact tool names and arguments |
 | `browser_recovery` | Queue/poll timing, ready state, checkpoint restoration and initial navigation |
-| `content_assessment` | Non-destructive error-banner signals, exact full-extraction spans and text hash; not an answer verifier |
+| `content_assessment` | Non-destructive error-banner and gate-page signals, exact full-extraction spans and text hash; not an answer verifier |
+| `source_type`, `page_type` | URL-shape source class and extraction shape (article/list/document/unreadable) |
+| `date_source`, `published_age_days` | Whether the date was structured or parsed from text, and its age |
+| `tokens_estimated` | Character-based approximate LLM token cost, not a tokenizer count |
+| `gate_page:*` warning | Login, paywall, access-denied or maintenance wall; content may be partial even when long |
 
 Batch reads keep input URL order and at most four active reads per request;
 completed slots are refilled while slower reads continue. Link-format output

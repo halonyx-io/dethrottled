@@ -1,0 +1,22 @@
+{
+  "profile_full": {
+    "tools": 20,
+    "chars": 31205,
+    "approx_tokens": 7801
+  },
+  "profile_core": {
+    "tools": 6,
+    "chars": 16721,
+    "approx_tokens": 4180,
+    "names": [
+      "search",
+      "fetch",
+      "search_and_fetch",
+      "drive",
+      "read_document",
+      "capabilities"
+    ]
+  },
+  "method": "sum of MCP tools/list JSON, approximate tokens = chars/4",
+  "image": "dethrottled-dnb-api:1.8.0-dev-p0-20261109"
+}

@@ -216,6 +216,53 @@ def test_search_accepts_language_and_forwards_it(monkeypatch):
     assert seen.get("language") == "fr"
 
 
+def test_news_search_uses_a_short_cache_ttl(monkeypatch):
+    seen = {}
+
+    def fake_search(query, **kw):
+        seen.update(kw)
+        return list(FAKE_ROWS), dict(FAKE_META)
+
+    monkeypatch.setattr(srv.fs, "search", fake_search)
+    c = TestClient(srv.app)
+    assert c.post("/search", json={"query": "q", "categories": "news"}).status_code == 200
+    assert seen["cache"].max_age == srv.NEWS_SEARCH_TTL
+    seen.clear()
+    assert c.post("/search", json={"query": "q", "profile": "news"}).status_code == 200
+    assert seen["cache"].max_age == srv.NEWS_SEARCH_TTL
+
+
+def test_news_search_respects_a_tighter_caller_max_age(monkeypatch):
+    seen = {}
+
+    def fake_search(query, **kw):
+        seen.update(kw)
+        return list(FAKE_ROWS), dict(FAKE_META)
+
+    monkeypatch.setattr(srv.fs, "search", fake_search)
+    c = TestClient(srv.app)
+    assert c.post(
+        "/search", json={"query": "q", "categories": "news", "max_age": 600}
+    ).status_code == 200
+    assert seen["cache"].max_age == 600
+
+
+def test_general_search_keeps_its_requested_or_default_cache_ttl(monkeypatch):
+    seen = {}
+
+    def fake_search(query, **kw):
+        seen.update(kw)
+        return list(FAKE_ROWS), dict(FAKE_META)
+
+    monkeypatch.setattr(srv.fs, "search", fake_search)
+    c = TestClient(srv.app)
+    assert c.post("/search", json={"query": "q", "max_age": 7200}).status_code == 200
+    assert seen["cache"].max_age == 7200
+    seen.clear()
+    assert c.post("/search", json={"query": "q"}).status_code == 200
+    assert seen["cache"].max_age is None
+
+
 def test_absent_language_is_not_forwarded_as_empty(monkeypatch):
     """No language means no hint -- not an empty string to be interpreted."""
     seen = {}
@@ -267,3 +314,91 @@ def test_local_corpus_cannot_return_a_fifty_url_menu(client, monkeypatch):
     result = client.get('/corpus/search', params={'q': 'One', 'limit': 50})
     assert result.status_code == 200
     assert result.json()['count'] == 10
+
+
+def test_search_exposes_date_source_and_freshness_metadata(monkeypatch):
+    rows = [
+        {"url": "https://github.com/a/b", "title": "Repo", "snippet": "one",
+         "publishedDate": "2026-11-09", "engine": "web-ddg"},
+        {"url": "https://news.example/a", "title": "Story", "snippet": "Updated 8 November 2026",
+         "publishedDate": "", "engine": "bing-news"},
+        {"url": "https://random.example/a", "title": "Other", "snippet": "undated",
+         "publishedDate": "", "engine": "web-ddg"},
+    ]
+    monkeypatch.setattr(srv.fs, "search", lambda *a, **k: (rows, dict(FAKE_META)))
+    c = TestClient(srv.app)
+    result = c.post("/search", json={"query": "q"}).json()
+    assert result[0]["date_source"] == "structured"
+    assert result[1]["date_source"] == "snippet"
+    assert result[1]["publishedDate"] == "8 November 2026"
+    assert result[2]["date_source"] == "none"
+    assert result[0]["source_type"] == "repo"
+    assert result[0]["fetch_relevance"] == "high"
+    assert result[0]["snippet_tokens"] > 0
+    assert result[0]["dated_results"] == 2
+    assert result[0]["freshness_note"] is None
+    envelope = c.post("/v2/search", json={"query": "q"}).json()
+    assert envelope["dated_results"] == 2
+    assert envelope["freshness_note"] is None
+
+
+def test_search_warns_when_most_results_are_undated(monkeypatch):
+    rows = [{"url": "https://example.com/%d" % n, "title": "T", "snippet": "s",
+             "publishedDate": "", "engine": "web-ddg"} for n in range(3)]
+    monkeypatch.setattr(srv.fs, "search", lambda *a, **k: (rows, dict(FAKE_META)))
+    result = TestClient(srv.app).post("/search", json={"query": "q"}).json()
+    assert result[0]["dated_results"] == 0
+    assert "Most results are undated" in result[0]["freshness_note"]
+
+
+def test_opt_in_fanout_merges_variants_and_reports_queries(monkeypatch):
+    calls = []
+
+    def fake_search(query, **kw):
+        calls.append(query)
+        suffix = "two" if "comparison" in query else "one"
+        rows = [{"url": "https://example.com/" + suffix,
+                 "title": "Title " + suffix, "snippet": "snippet",
+                 "publishedDate": "", "engine": "web-" + suffix}]
+        return rows, dict(FAKE_META)
+
+    monkeypatch.setenv("DETHROTTLED_SEARCH_FANOUT", "1")
+    monkeypatch.setattr(srv.fs, "search", fake_search)
+    result = TestClient(srv.app).post(
+        "/search", json={"query": "rust vs go performance"}).json()
+    assert len(calls) == 2
+    assert result[0]["fanout_queries"] == ["rust vs go performance",
+                                           "rust vs go performance comparison benchmark"]
+    assert len(result) == 2
+    assert all(row["engines_consensus"] >= 1 for row in result)
+
+
+def test_semantic_cache_hit_skips_search_and_is_explicit(monkeypatch):
+    class FakeSemantic:
+        def get(self, query, context):
+            return {"value": {"rows": list(FAKE_ROWS), "meta": dict(FAKE_META)},
+                    "similarity": 0.95, "age_seconds": 4}
+
+        def put(self, *args, **kwargs):
+            raise AssertionError("a hit must not write a second copy")
+
+    monkeypatch.setattr(srv.semantic_cache, "shared", lambda: FakeSemantic())
+    monkeypatch.setattr(srv.fs, "search",
+                        lambda *a, **k: (_ for _ in ()).throw(AssertionError("search")))
+    result = TestClient(srv.app).post("/search", json={"query": "q"}).json()
+    assert result[0]["semantic_cache"]["hit"] is True
+    assert result[0]["semantic_cache"]["similarity"] == 0.95
+
+
+def test_neural_rerank_only_reorders_the_configured_depth(monkeypatch):
+    seen = []
+    monkeypatch.setenv("DETHROTTLED_RERANK", "1")
+    monkeypatch.setattr(srv.rerank, "available", lambda: True)
+    monkeypatch.setattr(srv.rerank, "rerank_rows",
+                        lambda rows, query: (seen.append(len(rows)) or rows[::-1]))
+    rows = [{"url": "https://example.com/%d" % n, "title": "T", "snippet": "s",
+             "publishedDate": "", "engine": "web-ddg"} for n in range(40)]
+    monkeypatch.setattr(srv.fs, "search", lambda *a, **k: (rows, dict(FAKE_META)))
+    result = TestClient(srv.app).post("/search", json={"query": "q"}).json()
+    assert seen == [30]
+    assert result

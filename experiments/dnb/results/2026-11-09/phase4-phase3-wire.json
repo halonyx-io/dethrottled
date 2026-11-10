@@ -1,0 +1,305 @@
+{
+  "checks": [
+    {
+      "check": "rest cold read",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "tier": "crawl4ai/crawl4ai-native"
+      }
+    },
+    {
+      "check": "rest cold read reached worker",
+      "passed": true,
+      "detail": {
+        "before": 0,
+        "after": 1
+      }
+    },
+    {
+      "check": "same-caller reuse",
+      "passed": true,
+      "detail": {
+        "contexts": 1
+      }
+    },
+    {
+      "check": "cross-caller partition",
+      "passed": true,
+      "detail": {
+        "contexts": 2
+      }
+    },
+    {
+      "check": "owner A keeps cookie/localStorage/sessionStorage/IndexedDB",
+      "passed": true,
+      "detail": {
+        "set": {
+          "cookie": "owner=alice",
+          "local": "alice",
+          "session": "alice",
+          "idb": "alice"
+        },
+        "read": {
+          "cookie": "owner=alice",
+          "local": "alice",
+          "session": "alice",
+          "idb": "alice"
+        }
+      }
+    },
+    {
+      "check": "owner B starts with no owner A storage",
+      "passed": true,
+      "detail": {
+        "cookie": "",
+        "local": null,
+        "session": null,
+        "idb": null
+      }
+    },
+    {
+      "check": "owners keep separate storage concurrently",
+      "passed": true,
+      "detail": {
+        "a": {
+          "cookie": "owner=alice",
+          "local": "alice",
+          "session": "alice",
+          "idb": "alice"
+        },
+        "b": {
+          "cookie": "owner=bob",
+          "local": "bob",
+          "session": "bob",
+          "idb": "bob"
+        }
+      }
+    },
+    {
+      "check": "concurrent cross-caller storage isolation",
+      "passed": true,
+      "detail": {
+        "alice": {
+          "cookie": "owner=alice",
+          "local": "alice",
+          "session": "alice",
+          "idb": "alice"
+        },
+        "bob": {
+          "cookie": "owner=bob",
+          "local": "bob",
+          "session": "bob",
+          "idb": "bob"
+        }
+      }
+    },
+    {
+      "check": "signed-adapter cookie isolation",
+      "passed": true,
+      "detail": {
+        "b_read": "{\n  \"cookies\": {}\n}\n",
+        "b_set": "{\n  \"cookies\": {\n    \"p3owner\": \"bob\"\n  }\n}\n",
+        "a_read": "{\n  \"cookies\": {\n    \"p3owner\": \"alice\"\n  }\n}\n"
+      }
+    },
+    {
+      "check": "autonomous escalation carries identity",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "tier": "headed/read-plan",
+        "method": "browser_read_plan"
+      }
+    },
+    {
+      "check": "mcp read",
+      "passed": true,
+      "detail": {
+        "is_error": false,
+        "text": "{\"url\":\"https://example.com/?p3=mcp-1794194917\",\"content\":\"This domain is for use in documentation examples without needing permission. This is not a service; \",\"content_type\":\"text/html\",\"quality\":\"ok\",\"tier\":\"crawl4ai/crawl4ai-native\",\"cached\":false,\"title\":\"\",\"published\":\"\",\"retrieved_at\":\"2026-11-09T03:28:56.109377+00:00\",\"cache_age_seconds\":0,\"cache_expires_at\":null,\"truncated\":true,\"content_"
+      }
+    },
+    {
+      "check": "drive owner first use",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ok": true,
+        "steps": [
+          [
+            "goto",
+            true,
+            null
+          ],
+          [
+            "checkpoint",
+            true,
+            null
+          ]
+        ]
+      }
+    },
+    {
+      "check": "drive owner mismatch rejected",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "detail": {
+          "code": "session_owner_mismatch",
+          "retryable": false,
+          "retry_after_seconds": null
+        }
+      }
+    },
+    {
+      "check": "spoofed owner header rejected",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "detail": {
+          "code": "untrusted_owner_headers",
+          "retryable": false,
+          "retry_after_seconds": null
+        }
+      }
+    },
+    {
+      "check": "drive replay is idempotent",
+      "passed": true,
+      "detail": {
+        "first": 200,
+        "replay": 200
+      }
+    },
+    {
+      "check": "changed payload under one operation id conflicts",
+      "passed": true,
+      "detail": {
+        "status": 409,
+        "detail": {
+          "code": "operation_id_payload_conflict",
+          "retryable": false,
+          "retry_after_seconds": null
+        }
+      }
+    },
+    {
+      "check": "completed operation survives restart",
+      "passed": true,
+      "detail": {
+        "first": 200,
+        "after_restart": 200
+      }
+    },
+    {
+      "check": "changed payload after restart still conflicts",
+      "passed": true,
+      "detail": {
+        "status": 409
+      }
+    },
+    {
+      "check": "checkpoint restore for owner",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "restored": true
+      }
+    },
+    {
+      "check": "checkpoint not readable by another owner",
+      "passed": true,
+      "detail": {
+        "status": 403
+      }
+    },
+    {
+      "check": "rotation rejects old token",
+      "passed": true,
+      "detail": {
+        "before": 200,
+        "after": 403
+      }
+    },
+    {
+      "check": "rotation accepts new token",
+      "passed": true,
+      "detail": {
+        "status": 200
+      }
+    },
+    {
+      "check": "logs expose no bearer/delegation/assertion/key material",
+      "passed": true,
+      "detail": {
+        "/tmp/opencode/p3/logs/core.log": [],
+        "/tmp/opencode/p3/logs/gateway.log": [],
+        "/tmp/opencode/p3/logs/mcp.log": [],
+        "p3-worker:stdout": [],
+        "p3-worker:stderr": []
+      }
+    }
+  ],
+  "passed": 23,
+  "failed": 0,
+  "worker_status_before": {
+    "prototype": true,
+    "reference": "1.7.1",
+    "browser": "shared-headed-patchright",
+    "extractor": "crawl4ai-0.9.5",
+    "counts": {},
+    "render_slots": 2,
+    "waiting": 0,
+    "active": 0,
+    "drive_inflight": 0,
+    "session_owners": 12,
+    "operations": 4,
+    "extraction": {
+      "workers": 2,
+      "active": 0,
+      "counts": {
+        "started": 2
+      }
+    },
+    "pool": {
+      "enabled": true,
+      "contexts": 0,
+      "maximum": 4,
+      "ttl_seconds": 60
+    },
+    "internal_urls_allowed": true,
+    "compatibility": "Dethrottled crawl subset; not full Crawl4AI API"
+  },
+  "worker_status_after": {
+    "prototype": true,
+    "reference": "1.7.1",
+    "browser": "shared-headed-patchright",
+    "extractor": "crawl4ai-0.9.5",
+    "counts": {
+      "success": 2
+    },
+    "render_slots": 2,
+    "waiting": 0,
+    "active": 0,
+    "drive_inflight": 0,
+    "session_owners": 17,
+    "operations": 6,
+    "extraction": {
+      "workers": 2,
+      "active": 0,
+      "counts": {
+        "started": 2,
+        "completed": 2
+      }
+    },
+    "pool": {
+      "enabled": true,
+      "contexts": 1,
+      "maximum": 4,
+      "ttl_seconds": 60
+    },
+    "internal_urls_allowed": true,
+    "compatibility": "Dethrottled crawl subset; not full Crawl4AI API"
+  }
+}

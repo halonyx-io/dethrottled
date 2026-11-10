@@ -20,7 +20,6 @@ import re
 import threading
 import time
 from collections import deque
-from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from urllib.parse import parse_qs, quote_plus, urlparse
 
@@ -29,6 +28,7 @@ import feedparser
 from . import adblock, providers, search_diagnostics
 from . import netfilter as requests
 from . import paths as _paths
+from .concurrency import ContextExecutor as ThreadPoolExecutor
 from .content import constrained
 from .discovery import SOURCE_PROFILES, tls_search
 from .fetch import USER_AGENT
@@ -54,6 +54,70 @@ def result_family(row):
                 "ddg", "duckduckgo")))):
         return "ddg"
     return engine.removeprefix("web-browser-").removeprefix("web-").replace(" ", "-")
+
+
+_DECOY_MIN_RESULTS = 4
+_DECOY_LOW = 0.25
+_DECOY_WITNESS = 0.50
+
+
+def _coherence_terms(query: str) -> list:
+    """Ordered query terms worth checking in a result bucket."""
+    terms, seen = [], set()
+    for token in re.findall(r"[^\W_]+", (query or "").casefold()):
+        if len(token) <= 3 or token in seen:
+            continue
+        seen.add(token)
+        terms.append(token)
+    return terms
+
+
+def bucket_coherence(rows: list, query: str) -> float:
+    """Share of a bucket mentioning any query term beyond the first.
+
+    A bucket that only echoes the first word is the decoy pattern. When the
+    query has fewer than two useful terms there is no signal to measure.
+    """
+    terms = _coherence_terms(query)
+    if len(terms) < 2 or not rows:
+        return 1.0
+    rest = terms[1:]
+    hits = 0
+    for row in rows:
+        text = ("%s %s" % (row.get("title", ""), row.get("snippet", ""))).casefold()
+        if any(term in text for term in rest):
+            hits += 1
+    return hits / len(rows)
+
+
+def drop_decoy_buckets(rows: list, query: str) -> tuple:
+    """Drop a low-coherence source only when another source proves the query
+    can be echoed. Returns (kept rows, reports)."""
+    from collections import defaultdict
+
+    groups = defaultdict(list)
+    for row in rows:
+        groups[result_family(row)].append(row)
+    scores = {
+        family: (bucket_coherence(items, query), len(items))
+        for family, items in groups.items()
+    }
+    witness = any(
+        count >= _DECOY_MIN_RESULTS and score >= _DECOY_WITNESS
+        for score, count in scores.values()
+    )
+    if not witness or len(scores) < 2:
+        return rows, []
+    dropped = set()
+    reports = []
+    for family, (score, count) in scores.items():
+        if count >= _DECOY_MIN_RESULTS and score < _DECOY_LOW:
+            dropped.add(family)
+            reports.append({"source": family, "results": count,
+                            "coherence": round(score, 3), "action": "dropped"})
+    if not dropped:
+        return rows, []
+    return [row for row in rows if result_family(row) not in dropped], reports
 
 
 def bounded_results(rows, limit=SEARCH_MENU_LIMIT, *, primary_limit=PRIMARY_SEARCH_LIMIT):
@@ -698,8 +762,23 @@ def browser_drive(payload: dict, *, timeout: int | None = None) -> dict:
     try:
         if timeout is None:
             timeout = max(90, int(payload.get("timeout_ms", 45000) / 1000) + 15)
+        options = {}
+        if os.getenv("DETHROTTLED_DNB", "0") == "1":
+            from .access import CLAIMS
+            from .delegation import sign
+            claims = CLAIMS.get()
+            if claims:
+                payload = dict(payload, public_only=True)
+            public = payload.get("public_only",False)
+            timeout = max(timeout, payload.get("timeout_ms",45000)/1000 + 20)
+            options["headers"] = {"X-DNB-Delegation":sign(payload,
+                owner=claims["namespace"] if claims else None,
+                session=payload.get("session", ""),
+                scope="public-drive" if public else "local-drive",public_only=public,
+                allowed_hosts=payload.get("allowed_hosts",[]),
+                operation=payload.get("operation_id", ""),path="/drive")}
         response = requests.post(BROWSER_SEARCH_URL + "/drive",
-                                 json=payload, timeout=timeout)
+                                 json=payload, timeout=timeout, **options)
     except requests.RequestException as exc:
         raise BrowserWorkerError(None, "browser worker unreachable: %s" % exc) from exc
     if response.status_code >= 400:
@@ -1040,6 +1119,8 @@ def search(query: str, *, max_items: int = SEARCH_MENU_LIMIT, categories: str = 
                 resolved += 1
 
     merged = [r for r in merged if _domain(r.get("url", "")) not in JUNK_DOMAINS]
+    merged, decoy_reports = drop_decoy_buckets(merged, query)
+    decoy_dropped = sum(report["results"] for report in decoy_reports)
 
     # Self-tuning: only sweep when the pool is actually short of trusted
     # publishers, so a healthy query costs nothing extra and a thin one gets
@@ -1085,6 +1166,8 @@ def search(query: str, *, max_items: int = SEARCH_MENU_LIMIT, categories: str = 
         "profile": categories or profile,
         "sources": sorted(sources),
         "junk_dropped": dropped,
+        "decoy_dropped": decoy_dropped,
+        "decoy_buckets": decoy_reports,
         "swept": swept,
         "elapsed_ms": int((time.time() - started) * 1000),
         "cost": "potentially_metered" if sources.intersection(providers.NAMES) else "free",

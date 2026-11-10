@@ -1,0 +1,12 @@
+{
+  "tool": "search_and_fetch",
+  "transport": "MCP streamable HTTP via adapters/mcp_server.py",
+  "max_chars": 300,
+  "concise_before_bytes": 100754,
+  "concise_after_bytes": 4419,
+  "detailed_after_bytes": 241495,
+  "content_chars": 300,
+  "native_pdf_tables_before": 20,
+  "native_pdf_table_count_after": 20,
+  "concise_reduction": "98.6%"
+}

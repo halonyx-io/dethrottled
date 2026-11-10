@@ -1,0 +1,85 @@
+{
+  "baseline": {
+    "reference": {
+      "n": 10,
+      "ok": 10,
+      "elapsed_s": 6.64,
+      "cpu_seconds": 2.159,
+      "cpu_per_req": 0.2159,
+      "median_s": 0.652,
+      "p95_s": 0.666
+    },
+    "candidate": {
+      "n": 10,
+      "ok": 10,
+      "elapsed_s": 6.41,
+      "cpu_seconds": 7.063,
+      "cpu_per_req": 0.7063,
+      "median_s": 0.631,
+      "p95_s": 0.644
+    }
+  },
+  "baseline_components_10_renders": {
+    "reference": {
+      "p6-ref": 0.112,
+      "p6-crawl": 1.964
+    },
+    "candidate": {
+      "p6-cand": 0.087,
+      "p6-browser": 6.815
+    }
+  },
+  "tried": {
+    "candidate_headless_swiftshader": {
+      "cpu_per_request": 0.338,
+      "crunchbase": "failed in one observation"
+    },
+    "candidate_headed_default_single": {
+      "cpu_per_request": 0.373,
+      "crunchbase": "ok"
+    },
+    "candidate_headed_swiftshader": {
+      "cpu_per_request": 1.733,
+      "accepted": false
+    }
+  },
+  "implemented": {
+    "mode": "separate headed crawl browser with default graphics; main drive browser retains Mesa/WebGL",
+    "cpu_seconds_10": 3.7,
+    "cpu_per_request": 0.37,
+    "core_cpu_seconds_10": 0.09,
+    "renderer_cpu_seconds_10": 3.599,
+    "median_s": 0.619,
+    "successful_renders": 10,
+    "crunchbase": {
+      "quality": "ok",
+      "tier": "crawl4ai/crawl4ai-native"
+    },
+    "drive": "title and h1 successful",
+    "worker_tests": "29 passed",
+    "browser_memory": "~1.0 GiB",
+    "baseline_browser_memory": "~0.52 GiB",
+    "image": "dethrottled-dnb:1.8.0-dev-crawlsplit3-20261109"
+  },
+  "concurrency": [
+    {
+      "url": "http://127.0.0.1:8090/article",
+      "success": true,
+      "tier": "direct/resiliparse"
+    },
+    {
+      "url": "http://127.0.0.1:8090/long",
+      "success": true,
+      "tier": "crawl4ai/crawl4ai-native"
+    },
+    {
+      "url": "https://example.com",
+      "success": true,
+      "tier": "crawl4ai/crawl4ai-native"
+    },
+    {
+      "drive": true
+    }
+  ],
+  "notes": "Reference renderer is Crawl4AI, a different implementation. CPU measured with cgroup v2 usage_usec. Live observations are single passes."
+}

@@ -1,0 +1,21 @@
+{
+  "name": "gte_prefixquery",
+  "model": "/models/modelgte",
+  "n": 30,
+  "depth": 30,
+  "text_chars": 3000,
+  "max_tokens": "512",
+  "threads": "8",
+  "blend": 1.0,
+  "title_repeat": 1,
+  "query_prefix": "query: ",
+  "baseline_ndcg10": 0.7454,
+  "baseline_mrr10": 0.7158,
+  "ndcg10": 0.7413,
+  "mrr10": 0.6972,
+  "wins": 4,
+  "losses": 4,
+  "ties": 22,
+  "elapsed_s": 285.68,
+  "failures": 0
+}

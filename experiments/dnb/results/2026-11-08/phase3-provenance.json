@@ -1,0 +1,63 @@
+{
+  "phase": 3,
+  "date": "2026-11-08",
+  "second_pass": "2026-11-09",
+  "checkout": {
+    "branch": "prototype/dnb",
+    "head": "9ad5fa36a6290c442fcfcc9aebeb8bdcf6a4aa80",
+    "reference_version": "1.7.1"
+  },
+  "image": {
+    "tag": "dethrottled-dnb:phase3-20261109",
+    "id": "sha256:56d5c3b3e6e591e9aef01d588ae984b712071a884264c73d1ff5203a46055f26",
+    "base": "dethrottled-dnb:phase2-accepted-20261108",
+    "worker_container": "p3-worker",
+    "runtime_user": "browsersearch uid=10002",
+    "mounted_overrides": [
+      "/tmp/opencode/p3/keys -> /keys:ro (read-only test data only; no code mounts)"
+    ]
+  },
+  "host": {
+    "python": "3.13.5",
+    "PyJWT": "2.15.1",
+    "fastapi": "0.162.2",
+    "httpx": "0.28.1",
+    "mcp": "<2 (FastMCP API)",
+    "pytest": "9.2.0"
+  },
+  "commands": [
+    "docker build -f experiments/dnb/Dockerfile --build-arg BROWSER_IMAGE=dethrottled-dnb:phase2-accepted-20261108 -t dethrottled-dnb:phase3-20261109 .",
+    "docker run --network host ... dethrottled-dnb:phase3-20261109",
+    "uvicorn dethrottled.server:app --host 127.0.0.1 --port 19984",
+    "uvicorn adapters.rest_gateway:app --host 127.0.0.1 --port 19983",
+    "uvicorn adapters.mcp_server:app --host 127.0.0.1 --port 19982",
+    "python experiments/dnb/fixture.py",
+    "python experiments/dnb/phase3_check.py --rotate --worker-container p3-worker --logs ...",
+    "python experiments/dnb/phase3_network_check.py --output /tmp/opencode/p3",
+    "pytest tests/test_dnb_delegation.py experiments/dnb/test_phase3_identity.py experiments/dnb/test_phase3_operations.py -q"
+  ],
+  "environment": {
+    "DETHROTTLED_DNB": "1",
+    "DETHROTTLED_BROWSER_SEARCH_URL": "http://127.0.0.1:19888",
+    "DETHROTTLED_CRAWL4AI_URL": "http://127.0.0.1:19888",
+    "DETHROTTLED_ADAPTER_CIDRS": "127.0.0.1/32,::1/128",
+    "DNB_ALLOW_INTERNAL_URLS": "true (lab fixture only)",
+    "DETHROTTLED_ADBLOCK": "0 (lab only)"
+  },
+  "evidence": {
+    "wire": "phase3-wire.json",
+    "network": "phase3-network.json",
+    "unit": "phase3-tests.log",
+    "regressions": "phase3-regressions.log",
+    "live_pilot": "phase3-live-pilot.json",
+    "bounded_soak": "phase3-soak.json"
+  },
+  "notes": [
+    "Loopback lab only; no production volume, cookie jar, model or account state mounted.",
+    "The worker image is the built phase-3 image; no source file is mounted over it.",
+    "The repo adapters forward the verified caller credential; the core re-verifies it and accepts it only from configured adapter peers.",
+    "The installed /opt adapters authenticate bearers but do not forward caller identity; a 1.8.0 deployment must use the repo adapters or add the same header.",
+    "Completed drive operations are persisted before and after the mutation; a restart replays completed results, refuses changed payloads and treats running/unknown outcomes as non-replayable.",
+    "Two owners were checked concurrently for cookie, localStorage, sessionStorage and IndexedDB isolation."
+  ]
+}

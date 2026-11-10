@@ -22,6 +22,67 @@ MEMBER_LIMIT = 50
 # Native text is cheap compared with OCR/layout inference. Keep an independent
 # work bound for sparse/malicious PDFs, without truncating ordinary long RFCs.
 PDF_PAGE_CAP = 1000
+# Tesseract needs enough pixels per glyph. Small screenshots and low-resolution
+# scans otherwise lose digits and hyphenated tokens; a bounded 2x Lanczos pass
+# recovered "hotel-905" from a low-resolution fixture that read "hote-005" at
+# native size. Larger images already carry the detail, and upscaling them would
+# only add work and memory.
+OCR_UPSCALE_MAX_PIXELS = 2_500_000
+# Broken ToUnicode maps turn glyphs into "(cid:NNN)" tokens. A page can carry a
+# few in a diagram, but a high density means the text layer is unusable even
+# though it is long enough to look successful.
+CID_MARKER = re.compile(r"\(cid:\d+\)", re.I)
+
+
+def _cid_garbage(text: str) -> bool:
+    markers = CID_MARKER.findall(text or "")
+    if len(markers) >= 10:
+        return True
+    if len(markers) < 3:
+        return False
+    return sum(map(len, markers)) / max(len(text), 1) >= 0.02
+
+
+def _flatten_for_ocr(page):
+    """Composite transparency onto a background with contrast for the text."""
+    from PIL import Image
+
+    transparent = page.mode in ("RGBA", "LA") or (
+        page.mode == "P" and "transparency" in page.info
+    )
+    if not transparent:
+        return page.convert("RGB")
+    rgba = page.convert("RGBA")
+    if rgba.getchannel("A").getextrema()[0] == 255:
+        return rgba.convert("RGB")
+    # Transparent PNGs commonly store RGB 0,0,0 behind alpha 0. Converting that
+    # straight to RGB paints black text on black. Pick a background with
+    # contrast against the opaque pixels instead of assuming white.
+    sample = rgba.copy()
+    sample.thumbnail((64, 64))
+    pixels = getattr(sample, "get_flattened_data", None) or sample.getdata
+    visible = [pixel for pixel in pixels() if pixel[3] > 0]
+    if visible:
+        luminance = sum(
+            0.299 * red + 0.587 * green + 0.114 * blue
+            for red, green, blue, _alpha in visible
+        ) / len(visible)
+        background = (255, 255, 255, 255) if luminance < 128 else (0, 0, 0, 255)
+    else:
+        background = (255, 255, 255, 255)
+    canvas = Image.new("RGBA", rgba.size, background)
+    return Image.alpha_composite(canvas, rgba).convert("RGB")
+
+
+def _ocr_png(page, upscale=True):
+    """PNG bytes for Tesseract, with a bounded upscale for small images."""
+    from PIL import Image
+
+    if upscale and page.width * page.height <= OCR_UPSCALE_MAX_PIXELS:
+        page = page.resize((page.width * 2, page.height * 2), Image.Resampling.LANCZOS)
+    buffer = io.BytesIO()
+    page.save(buffer, format="PNG")
+    return buffer.getvalue()
 
 
 def kind_of(data, url="", content_type=""):
@@ -92,7 +153,7 @@ def kind_of(data, url="", content_type=""):
     return ""
 
 
-def image_text(data, limit, language=""):
+def image_text(data, limit, language="", *, upscale=True):
     from PIL import Image, ImageOps
 
     from . import ocr
@@ -104,15 +165,14 @@ def image_text(data, limit, language=""):
             image.seek(number)
             if image.width * image.height > 40_000_000:
                 raise ValueError("image_pixel_limit")
-            page = ImageOps.exif_transpose(image).convert("RGB")
-            png = io.BytesIO()
-            page.save(png, format="PNG")
-            lang = language or ocr._choose(png.getvalue(), ocr.installed())[0]
+            page = _flatten_for_ocr(ImageOps.exif_transpose(image))
+            png = _ocr_png(page, upscale=upscale)
+            lang = language or ocr._choose(png, ocr.installed())[0]
             if not re.fullmatch(r"[a-z_]+(?:\+[a-z_]+)*", lang):
                 raise ValueError("invalid_ocr_language")
             done = subprocess.run(
                 ["tesseract", "stdin", "stdout", "-l", lang, "tsv"],
-                input=png.getvalue(),
+                input=png,
                 capture_output=True,
                 timeout=ocr.PAGE_TIMEOUT,
                 env=ocr._environment(),
@@ -167,20 +227,41 @@ def pdf_text(data, limit, allow_ocr, options):
             page = doc[number]
             text = page.get_text(sort=True)
             method = "text"
+            cid_garbage = _cid_garbage(text)
             # Sparse text often coexists with a scanned body; don't let a footer hide it.
-            force_ocr = options.get("ocr_mode") == "always"
+            # A CID-corrupted text layer is long but unusable, so it also forces OCR.
+            force_ocr = options.get("ocr_mode") == "always" or cid_garbage
+            if cid_garbage and not allow_ocr:
+                warnings.append(
+                    f"Page {number + 1}: cid_garbage; OCR disabled, inspect the source page"
+                )
             if allow_ocr and (force_ocr or (len(text.strip()) < 100 and page.get_images())):
                 if ocr_count < ocr.PAGE_CAP:
                     try:
                         ocr_count += 1
                         png = page.get_pixmap(dpi=ocr.DPI).tobytes("png")
-                        recovered, meta = image_text(png, limit, options.get("ocr_language", ""))
+                        # The page was already rendered at OCR DPI; upscaling it
+                        # again changed table row recognition, so keep its pixels.
+                        recovered, meta = image_text(
+                            png, limit, options.get("ocr_language", ""), upscale=False
+                        )
                         if recovered.strip():
-                            if force_ocr and text.strip():
+                            if cid_garbage:
+                                text, method = recovered, "ocr"
+                                warnings.append(
+                                    f"Page {number + 1}: cid_garbage_recovered; "
+                                    "OCR replaced an unreadable font text layer"
+                                )
+                            elif force_ocr and text.strip():
                                 text, method = text + "\n[OCR reading]\n" + recovered, "text+ocr"
                             else:
                                 text, method = recovered, "ocr"
                             warnings.extend(meta["warnings"])
+                        elif cid_garbage:
+                            warnings.append(
+                                f"Page {number + 1}: cid_garbage_unrecovered; "
+                                "inspect the source page"
+                            )
                     except (ValueError, OSError, subprocess.TimeoutExpired) as exc:
                         warnings.append(f"Page {number + 1}: OCR failed: {exc}")
                 else:
@@ -208,6 +289,7 @@ def pdf_text(data, limit, allow_ocr, options):
                        "text_truncated": len(block[4]) > 500}
                       for block in page.get_text("blocks", sort=True)[:30] if block[6] == 0]
             pages.append({"page": number + 1, "method": method, "text_chars": len(text),
+                          "cid_garbage": cid_garbage,
                           "text_layer_blocks": layout,
                           "layout_coordinate_space": "PDF points, origin top-left",
                           "layout_may_be_incomplete": True})

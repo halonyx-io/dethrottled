@@ -1,0 +1,14 @@
+{
+  "tool": "fetch",
+  "transport": "MCP streamable HTTP via adapters/mcp_server.py",
+  "url": "https://www.irs.gov/pub/irs-pdf/f1040.pdf",
+  "network": "real public PDF fetch",
+  "max_chars": 300,
+  "concise_bytes": 4466,
+  "detailed_bytes": 32640,
+  "content_chars": 300,
+  "tier": "direct/direct-native",
+  "native_pdf_tables_detailed": 3,
+  "native_pdf_table_count_concise": 3,
+  "concise_reduction": "86.3%"
+}

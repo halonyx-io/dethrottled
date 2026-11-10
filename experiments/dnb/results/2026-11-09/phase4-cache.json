@@ -1,0 +1,12 @@
+{
+  "raw_malformed_value": [
+    "not",
+    "a",
+    "row"
+  ],
+  "raw_hits": 1,
+  "raw_misses": 0,
+  "view_malformed": true,
+  "cacheview_hits": 1,
+  "cacheview_misses": 2
+}

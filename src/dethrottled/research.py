@@ -153,6 +153,10 @@ def select_sources(searches: list[list[dict]], limit: int,
             item = {"url": url, "title": row.get("title") or "",
                     "snippet": row.get("snippet") or "",
                     "publishedDate": row.get("publishedDate"),
+                    "date_source": row.get("date_source"),
+                    "published_age_days": row.get("published_age_days"),
+                    "source_type": row.get("source_type"),
+                    "fetch_relevance": row.get("fetch_relevance"),
                     "query_indexes": [query_index], "search_rank": rank + 1}
             by_url[key] = item
             if per_host.get(host, 0) < 2 and len(selected) < limit:

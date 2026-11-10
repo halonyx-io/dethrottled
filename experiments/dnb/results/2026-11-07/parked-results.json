@@ -1,0 +1,134 @@
+{
+  "isolation": {
+    "fresh": {
+      "same_owner_storage_retained": true,
+      "other_owner_isolated": true,
+      "other_session_isolated": true,
+      "fresh_page_resets_session_storage": true
+    },
+    "persistent": {
+      "same_owner_storage_retained": true,
+      "other_owner_isolated": true,
+      "other_session_isolated": true,
+      "fresh_page_resets_session_storage": false
+    },
+    "anonymous_isolated": true,
+    "lru_destroys_state": true,
+    "same_session_concurrent_rejected": true,
+    "untrusted_identity_rejected": true,
+    "parked_page_stops_source_timers": true,
+    "timer_fixture_positive_control": true
+  },
+  "records": [
+    {
+      "mode": "anonymous",
+      "cpu_seconds": 2.6672,
+      "reads": [
+        {
+          "ms": 632.4896151199937,
+          "sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": false
+        },
+        {
+          "ms": 635.7031078077853,
+          "sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": false
+        },
+        {
+          "ms": 623.1482229195535,
+          "sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": false
+        },
+        {
+          "ms": 633.3281099796295,
+          "sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": false
+        }
+      ]
+    },
+    {
+      "mode": "persistent",
+      "cpu_seconds": 1.093736,
+      "reads": [
+        {
+          "ms": 599.103856831789,
+          "sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": true
+        },
+        {
+          "ms": 568.0446671321988,
+          "sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": true
+        },
+        {
+          "ms": 572.858614847064,
+          "sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": true
+        },
+        {
+          "ms": 596.3408509269357,
+          "sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": true
+        }
+      ]
+    },
+    {
+      "mode": "persistent",
+      "cpu_seconds": 1.178049,
+      "reads": [
+        {
+          "ms": 577.0112862810493,
+          "sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": true
+        },
+        {
+          "ms": 578.2022322528064,
+          "sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": true
+        },
+        {
+          "ms": 579.0009410120547,
+          "sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": true
+        },
+        {
+          "ms": 605.7163067162037,
+          "sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": true
+        }
+      ]
+    },
+    {
+      "mode": "persistent",
+      "cpu_seconds": 1.217766,
+      "reads": [
+        {
+          "ms": 580.5748249404132,
+          "sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": true
+        },
+        {
+          "ms": 584.4711679965258,
+          "sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": true
+        },
+        {
+          "ms": 583.3365609869361,
+          "sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": true
+        },
+        {
+          "ms": 595.506242942065,
+          "sha256": "33d9da8e74f03cac53df5eb307860fbe0158eb920e8a68e55773d5b7cb40cbb1",
+          "reused": true
+        }
+      ]
+    }
+  ],
+  "timer_counts": [
+    0,
+    0,
+    9
+  ],
+  "note": "Final parked-page implementation; 12 persistent reads and 4 anonymous controls; .5s settle."
+}

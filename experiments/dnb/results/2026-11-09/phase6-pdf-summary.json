@@ -1,0 +1,18 @@
+{
+  "candidate": {
+    "bytes": 3373,
+    "tier": "direct/direct-native",
+    "quality": "ok",
+    "content_chars": 213,
+    "native_pdf_tables": 0,
+    "native_pdf_table_count": 1
+  },
+  "reference": {
+    "bytes": 3847,
+    "tier": "direct/direct-native",
+    "quality": "ok",
+    "content_chars": 213,
+    "native_pdf_tables": 1,
+    "native_pdf_table_count": null
+  }
+}

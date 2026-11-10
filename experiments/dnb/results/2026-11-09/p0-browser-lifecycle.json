@@ -1,0 +1,46 @@
+{
+  "worker_image": "dethrottled-dnb:1.8.0-dev-p0-20261109",
+  "idle_seconds": 2,
+  "render": {
+    "status": 200,
+    "quality": "ok",
+    "elapsed_s": 0.88,
+    "memory": "691.5MiB",
+    "counts": {
+      "success": 1,
+      "memory_pressure": 1
+    },
+    "crawl_browser_separate": true
+  },
+  "after_idle": {
+    "crawl_browser_separate": false,
+    "memory": "486.5MiB"
+  },
+  "relaunch": {
+    "status": 200,
+    "quality": "ok",
+    "elapsed_s": 1.18,
+    "crawl_browser_separate": true,
+    "memory": "687.4MiB"
+  },
+  "memory_pressure_30_renders": {
+    "with_pressure_mib": [
+      705,
+      706.6,
+      697.8,
+      700.3,
+      704.3,
+      706.2
+    ],
+    "without_pressure_mib": [
+      682.5,
+      699.7,
+      681.8,
+      684.6,
+      688.1,
+      694.7
+    ],
+    "note": "no measurable additional drop on example.com; pressure is cheap hygiene, idle close is the material saving"
+  },
+  "notes": "Idle close uses DETHROTTLED_BROWSER_IDLE_SECONDS; memory pressure can be disabled with DETHROTTLED_MEMORY_PRESSURE=0."
+}

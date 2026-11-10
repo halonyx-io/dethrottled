@@ -196,6 +196,7 @@ class FetchBody(BaseModel):
 
 
 class SearchFetchBody(SearchBody):
+    response_format: Literal["detailed", "concise"] = "detailed"
     document_mode: Literal["auto", "native", "layout"] = "auto"
     ocr_mode: Literal["auto", "always", "never"] = "auto"
     ocr_language: str = Field(default="", pattern=r"^[a-z_]*(?:\+[a-z_]+)*$", max_length=100)

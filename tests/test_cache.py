@@ -7,8 +7,11 @@ thrown away by a one-line config edit. Entries are stored at full length and
 clipped on read instead.
 """
 
+import time
+
 import pytest
 
+from dethrottled import cache as cache_module
 from dethrottled.cache import DEFAULT_TTL, Cache
 
 
@@ -108,3 +111,89 @@ def test_concurrent_writes_do_not_corrupt(cache):
         t.join()
     assert not errors
     assert cache.get("search", "k0") == {"i": 19}
+
+
+def test_cacheview_rejects_wrong_shape_extract_before_counting_a_hit(cache):
+    from dethrottled.cache import CacheView, valid_extract
+
+    cache.put("extract", "https://example.com/bad",
+              value={"schema_version": 3, "text": "x", "acquisition": {},
+                     "extraction": {"pages": "not-a-list"}, "content_assessment": {}})
+    assert cache.get("extract", "https://example.com/bad",
+                     validator=valid_extract) is None
+    view = CacheView(cache)
+    assert view.get("extract", "https://example.com/bad") is None
+    stats = cache.stats()
+    assert stats["hits"] == 0
+    assert stats["misses"] == 2
+
+
+def test_maintenance_deletes_expired_rows_instead_of_only_missing_them(tmp_path):
+    cache = Cache(tmp_path / "cache.sqlite")
+    try:
+        cache.put("search", "old", value={"a": 1})
+        cache._db.execute("UPDATE entries SET ts=?", (time.time() - 7 * 3600,))
+        cache._db.commit()
+        assert cache.get("search", "old") is None
+        result = cache.maintain()
+        assert result["expired"] >= 1
+        row = cache._db.execute("SELECT COUNT(*) FROM entries").fetchone()[0]
+        assert row == 0
+    finally:
+        cache.close()
+
+
+def test_maintenance_enforces_the_size_ceiling_and_keeps_newest(tmp_path):
+    cache = Cache(tmp_path / "cache.sqlite")
+    try:
+        cache.max_bytes = 120_000
+        for number in range(20):
+            cache.put("extract", "https://example.com/%d" % number,
+                      value={"text": ("%02d" % number) + "x" * 20_000})
+        result = cache.maintain()
+        assert result["bytes"] <= 120_000
+        assert result["evicted"] >= 1
+        assert cache.get("extract", "https://example.com/19") is not None
+        assert cache.get("extract", "https://example.com/0") is None
+    finally:
+        cache.close()
+
+
+def test_maintenance_runs_automatically_after_the_write_interval(tmp_path, monkeypatch):
+    monkeypatch.setattr(cache_module, "CACHE_MAINTENANCE_EVERY", 2)
+    cache = Cache(tmp_path / "cache.sqlite")
+    try:
+        cache.put("search", "old", value={"a": 1})
+        cache._db.execute("UPDATE entries SET ts=?", (time.time() - 7 * 3600,))
+        cache._db.commit()
+        cache.put("search", "new", value={"a": 2})
+        assert cache.get("search", "old") is None
+        assert cache.get("search", "new") == {"a": 2}
+        assert cache.maintenance["expired"] >= 1
+    finally:
+        cache.close()
+
+
+def test_stats_reports_cache_bytes_and_limit(tmp_path):
+    cache = Cache(tmp_path / "cache.sqlite")
+    try:
+        cache.put("search", "q", value={"a": 1})
+        stats = cache.stats()
+        assert stats["bytes"] > 0
+        assert stats["max_bytes"] == cache.max_bytes
+        assert stats["maintenance"]["bytes"] > 0
+        assert "expired" in stats["maintenance"]
+    finally:
+        cache.close()
+
+
+def test_search_cache_key_normalizes_case_and_whitespace_only(tmp_path):
+    cache = Cache(tmp_path / "cache.sqlite")
+    try:
+        cache.put("search", "Python   asyncio", value={"rows": [1]})
+        assert cache.get("search", "  python asyncio ") == {"rows": [1]}
+        # Extraction keys are not normalized: URLs and page bodies keep identity.
+        cache.put("extract", "https://Example.com/A", value={"text": "x"})
+        assert cache.get("extract", "https://example.com/a") is None
+    finally:
+        cache.close()

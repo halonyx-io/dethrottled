@@ -8,8 +8,10 @@ import sqlite3
 import threading
 import time
 import uuid
-from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
+from concurrent.futures import FIRST_COMPLETED, wait
 from pathlib import Path
+
+from .concurrency import ContextExecutor as ThreadPoolExecutor
 
 
 class JobError(ValueError):

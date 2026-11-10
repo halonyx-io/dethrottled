@@ -1,0 +1,21 @@
+{
+  "name": "ettin_O4_m512_t3000_d30_n100",
+  "model": "/models/modelettin",
+  "n": 100,
+  "depth": 30,
+  "text_chars": 3000,
+  "max_tokens": "512",
+  "threads": "8",
+  "blend": 1.0,
+  "title_repeat": 1,
+  "query_prefix": "",
+  "baseline_ndcg10": 0.7222,
+  "baseline_mrr10": 0.6913,
+  "ndcg10": 0.793,
+  "mrr10": 0.7699,
+  "wins": 27,
+  "losses": 11,
+  "ties": 62,
+  "elapsed_s": 865.54,
+  "failures": 0
+}

@@ -1,0 +1,102 @@
+{
+  "reference": {
+    "office.pdf": {
+      "status": 200,
+      "quality": "ok",
+      "tier": "direct/direct-native",
+      "chars": 27,
+      "fact": true,
+      "bytes": 3209
+    },
+    "office.docx": {
+      "status": 200,
+      "quality": "ok",
+      "tier": "direct/direct-native",
+      "chars": 33,
+      "fact": true,
+      "bytes": 3148
+    },
+    "office.xlsx": {
+      "status": 200,
+      "quality": "ok",
+      "tier": "direct/direct-native",
+      "chars": 31,
+      "fact": true,
+      "bytes": 3033
+    },
+    "office.pptx": {
+      "status": 200,
+      "quality": "ok",
+      "tier": "direct/direct-native",
+      "chars": 32,
+      "fact": true,
+      "bytes": 3151
+    },
+    "office.png": {
+      "status": 200,
+      "quality": "ok",
+      "tier": "direct/direct-native",
+      "chars": 17,
+      "fact": false,
+      "bytes": 3133
+    },
+    "table.pdf": {
+      "status": 200,
+      "quality": "ok",
+      "tier": "direct/direct-native",
+      "chars": 213,
+      "fact": false,
+      "bytes": 3843
+    }
+  },
+  "candidate": {
+    "office.pdf": {
+      "status": 200,
+      "quality": "ok",
+      "tier": "direct/direct-native",
+      "chars": 27,
+      "fact": true,
+      "bytes": 3209
+    },
+    "office.docx": {
+      "status": 200,
+      "quality": "ok",
+      "tier": "direct/direct-native",
+      "chars": 33,
+      "fact": true,
+      "bytes": 3148
+    },
+    "office.xlsx": {
+      "status": 200,
+      "quality": "ok",
+      "tier": "direct/direct-native",
+      "chars": 31,
+      "fact": true,
+      "bytes": 3034
+    },
+    "office.pptx": {
+      "status": 200,
+      "quality": "ok",
+      "tier": "direct/direct-native",
+      "chars": 32,
+      "fact": true,
+      "bytes": 3151
+    },
+    "office.png": {
+      "status": 200,
+      "quality": "ok",
+      "tier": "direct/direct-native",
+      "chars": 17,
+      "fact": false,
+      "bytes": 3133
+    },
+    "table.pdf": {
+      "status": 200,
+      "quality": "ok",
+      "tier": "direct/direct-native",
+      "chars": 213,
+      "fact": false,
+      "bytes": 3622
+    }
+  }
+}

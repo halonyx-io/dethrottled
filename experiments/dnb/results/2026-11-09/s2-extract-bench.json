@@ -1,0 +1,8 @@
+{
+  "workload": "10 in-process html_extract calls on the fixture article",
+  "elapsed_s": 0.187,
+  "cpu_seconds": 0.187,
+  "cpu_seconds_per_call": 0.0187,
+  "markdown_chars": 3475,
+  "success": true
+}

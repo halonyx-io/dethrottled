@@ -1,0 +1,40 @@
+{
+  "images": {
+    "dethrottled-dnb:frozen-pilot-20261106": {
+      "id": "sha256:1f989d7438eef20c317e05ecde2727ce78a1236405cd65c36070736b4e0be7f3",
+      "logical_bytes": 2407548859
+    },
+    "dethrottled-dnb:pool-measured-20261107": {
+      "id": "sha256:568b551b04fded594ad69e141bb0284c6fe823e1606143fc56f91c0154f798cf",
+      "logical_bytes": 2407558953
+    },
+    "dethrottled-dnb:parked-measured-20261107": {
+      "id": "sha256:c1f34e6d5c68a4dcda5aec3a77d993740d4dcd30bbd59e92a4b7ffb326359179",
+      "logical_bytes": 2407559120
+    },
+    "dethrottled-dnb:prototype": {
+      "id": "sha256:31cdd36be118a151c90c533aeed72126ff19c50932389d5254aafb79c92c4c76",
+      "logical_bytes": 2407559124
+    }
+  },
+  "source_sha256": {
+    "experiments/dnb/context_pool.py": "07502fa7eb52f3db9b0e5c2c35d41e2a9198351e0e220097242ebcfa580c1db2",
+    "experiments/dnb/compose.yml": "8c468e3d2eff604bc32178c1cf8481b867d380bc412e2dc450a68dd78f734cf1",
+    "experiments/dnb/start.sh": "5118611579236aa29404287e28429e2ca3d735018b5a69af39e2a64ef85dd6fd",
+    "experiments/dnb/test_pool.py": "cf744fc3fecb4d3ae20d67d9549fc89d96767d6ae8c70a80baf53341a24fc432",
+    "experiments/dnb/verify.py": "7ff772ce433c755164e847178ded9438be795e9ccc8969f7526f8f447667a345",
+    "experiments/dnb/fixture.py": "019cdfa05dc35a779084b5036d3de603fd1624c935ec87f6f6d3844d0858c6ca",
+    "experiments/dnb/test_dnb.py": "106fd0b9b77bfd94de57680ea17c6264e966524b96ac8be8b38a15d935ffdf4d",
+    "experiments/dnb/compare.py": "4bcd72a6d1d042072c59dafac635b2e355f7b3facb29dd41eea205e282125d39",
+    "experiments/dnb/context_ablation.py": "78dd29a5f5c42de1b2f3e2a2eb75b49d22308547d32d85f74b0167ac80209289",
+    "experiments/dnb/pool_bench.py": "93d3efe0c406e39d5d801b20b014db71e3b6778ee7dea30dca789632c7d422d8",
+    "experiments/dnb/Dockerfile": "20efda0964556c459148bda3a3b65283b66df4da30f8920b7400c4f3d4976a06",
+    "experiments/dnb/summarize.py": "8b6a65e072a9ef6d89ee49fdf3863ce3f518e4a5a7893114ed81ab1dc02e7c68",
+    "experiments/dnb/measure.py": "2925c6bd83b68db77adf5d833e506db68062edb475841cc8edbf6850077381b7",
+    "experiments/dnb/dnb_service.py": "ff8e960a55d12ee5bc2037165576c70ddefdd7fc005b1cd32397d89605d2d34e"
+  },
+  "notes": [
+    "Final authorized default selects persistent mode, the path explicitly used in parked measurements.",
+    "Counter units corrected from usage_usec to seconds; no acquisition replay needed."
+  ]
+}

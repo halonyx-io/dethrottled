@@ -1,0 +1,28 @@
+{
+  "host": "q6a",
+  "arch": "aarch64",
+  "docker": "29.9.3",
+  "reference_image": "sha256:b9e0fe2a0d13d9cf8f214b5e5e83c3ae702af25f93cef6ce55adf15e2e67cb9d",
+  "candidate_image": "sha256:9fb7c41bbf175d03db33ebd86804a345362e20b9f2c1472565defc651497657d",
+  "graphics": {
+    "webgl": true,
+    "renderer": "ANGLE (Mesa, llvmpipe (LLVM 19.1.7 128 bits), OpenGL 4.5)",
+    "pixel": [
+      64,
+      128,
+      191,
+      255
+    ],
+    "hardware_verified": false,
+    "requested_mode": "mesa",
+    "effective_headless": false,
+    "feature_status": {
+      "2d_canvas": "enabled",
+      "gpu_compositing": "enabled",
+      "rasterization": "enabled",
+      "webgl": "enabled",
+      "video_decode": "enabled"
+    }
+  },
+  "phase12_tests": "29 passed"
+}
