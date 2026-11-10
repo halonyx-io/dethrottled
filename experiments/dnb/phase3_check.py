@@ -214,7 +214,7 @@ async def main(args):
         status, row = await rest_fetch(alice, f"https://example.com/?p3=reuse-{stamp}",
                                        render="always", fresh=True)
         mid = await worker_status()
-        status2, row2 = await rest_fetch(alice, f"https://example.com/?p3=reuse-{stamp}",
+        status2, _row2 = await rest_fetch(alice, f"https://example.com/?p3=reuse-{stamp}",
                                          render="always", fresh=True)
         after2 = await worker_status()
         check("same-caller reuse", status == 200 and status2 == 200
@@ -322,7 +322,7 @@ async def main(args):
             "allowed_hosts": [],
         }
         first_status, _ = await direct_drive("alice", replay)
-        replay_status, replay_data = await direct_drive("alice", replay)
+        replay_status, _replay_data = await direct_drive("alice", replay)
         conflict_status, conflict_data = await direct_drive(
             "alice", {**replay, "url": args.fixture + "/article"})
         check("drive replay is idempotent",
@@ -345,7 +345,7 @@ async def main(args):
 
         await restart_worker()
 
-        persist_replay, persist_data = await direct_drive("alice", persisted)
+        persist_replay, _persist_data = await direct_drive("alice", persisted)
         persist_conflict, persist_conflict_data = await direct_drive(
             "alice", {**persisted, "url": args.fixture + "/article"})
         check("completed operation survives restart",

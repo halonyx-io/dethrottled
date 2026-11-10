@@ -58,7 +58,8 @@ LAST_CRAWL_USE = time.monotonic()
 _STATE_DIR = Path(
     os.getenv(
         "DETHROTTLED_DNB_STATE_DIR",
-        str(Path(os.getenv("DETHROTTLED_DATA_DIR", str(Path.home() / ".cache/dethrottled"))) / "dnb"),
+        str(Path(os.getenv("DETHROTTLED_DATA_DIR",
+                           str(Path.home() / ".cache/dethrottled"))) / "dnb"),
     )
 )
 try:

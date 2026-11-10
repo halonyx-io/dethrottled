@@ -191,7 +191,8 @@ def test_gate_pages_are_named_not_left_as_ok():
     from dethrottled.content import annotate_content
 
     cases = [
-        ("Subscribe to continue", "Subscribe to continue. This article is available to subscribers."),
+        ("Subscribe to continue",
+         "Subscribe to continue. This article is available to subscribers."),
         ("Sign in", "Sign in. You must be signed in to continue."),
         ("Access Denied", "Access Denied. You do not have permission to view this page."),
         ("Service temporarily unavailable", "Maintenance in progress."),

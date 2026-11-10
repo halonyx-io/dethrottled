@@ -154,7 +154,9 @@ def test_ocr_budget_continuation_starts_at_first_unread_scan(monkeypatch):
     from dethrottled import ocr
 
     monkeypatch.setattr(ocr, "PAGE_CAP", 1)
-    monkeypatch.setattr(formats, "image_text", lambda *args, **kwargs: ("SCANNED FACT 47", {"warnings": []}))
+    monkeypatch.setattr(
+        formats, "image_text",
+        lambda *args, **kwargs: ("SCANNED FACT 47", {"warnings": []}))
     png = io.BytesIO()
     image.new("RGB", (50, 50), "white").save(png, format="PNG")
     with pymupdf.open() as doc:

@@ -82,7 +82,8 @@ def source_type(url: str) -> str:
         return "forum"
     if any(host == item or host.endswith("." + item) for item in _REFERENCE_HOSTS):
         return "reference"
-    if any(host == item or host.endswith("." + item) for item in _NEWS_HOSTS) or path.startswith("/news"):
+    if (any(host == item or host.endswith("." + item) for item in _NEWS_HOSTS)
+            or path.startswith("/news")):
         return "news"
     if (host.startswith("blog.")
             or any(host == item or host.endswith("." + item) for item in _BLOG_HOSTS)):

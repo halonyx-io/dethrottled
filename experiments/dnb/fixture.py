@@ -73,7 +73,8 @@ class Handler(BaseHTTPRequestHandler):
             if self.path == "/mutation":
                 type(self).mutations += 1
             content = (
-                "<html><body><button id='mutate' onclick=\"fetch('/mutation')\">Submit</button></body></html>"
+                "<html><body><button id='mutate' "
+                "onclick=\"fetch('/mutation')\">Submit</button></body></html>"
                 if self.path == "/mutate"
                 else str(type(self).mutations)
             )
@@ -122,13 +123,16 @@ document.querySelector('pre').id='ready'};tx.oncomplete=()=>db.close()};""".repl
         elif self.path == "/tiny":
             content = "<html><body><h1>Tiny fact quartz-452</h1></body></html>"
         elif self.path == "/error-403":
-            content = "<html><body><h1>403 Forbidden</h1><p>Access denied by policy.</p></body></html>"
+            content = ("<html><body><h1>403 Forbidden</h1>"
+                       "<p>Access denied by policy.</p></body></html>")
             status = 403
         elif self.path == "/error-429":
-            content = "<html><body><h1>Too Many Requests</h1><p>Slow down and retry later.</p></body></html>"
+            content = ("<html><body><h1>Too Many Requests</h1>"
+                       "<p>Slow down and retry later.</p></body></html>")
             status = 429
         elif self.path == "/maintenance":
-            content = "<html><body><h1>Service temporarily unavailable</h1><p>Maintenance in progress.</p></body></html>"
+            content = ("<html><body><h1>Service temporarily unavailable</h1>"
+                       "<p>Maintenance in progress.</p></body></html>")
             status = 503
         elif self.path == "/login":
             content = ("<html><head><title>Sign in</title></head><body><main><h1>Sign in</h1>"
@@ -145,7 +149,8 @@ document.querySelector('pre').id='ready'};tx.oncomplete=()=>db.close()};""".repl
                        "</main></body></html>")
         elif self.path == "/paywall-long":
             content = ("<html><head><title>Subscribe to continue</title></head><body><main>"
-                       + ARTICLE + "<h1>Subscribe to continue</h1><p>This article is available to subscribers.</p>"
+                       + ARTICLE + "<h1>Subscribe to continue</h1>"
+                       "<p>This article is available to subscribers.</p>"
                        "</main></body></html>")
         elif self.path == "/login-long":
             content = ("<html><head><title>Sign in</title></head><body><main>"
@@ -153,7 +158,8 @@ document.querySelector('pre').id='ready'};tx.oncomplete=()=>db.close()};""".repl
                        "</main></body></html>")
         elif self.path == "/access-denied-long":
             content = ("<html><head><title>Access Denied</title></head><body><main>"
-                       + ARTICLE + "<h1>Access Denied</h1><p>You do not have permission to view this page.</p>"
+                       + ARTICLE + "<h1>Access Denied</h1>"
+                       "<p>You do not have permission to view this page.</p>"
                        "</main></body></html>")
         elif self.path == "/huge":
             content = (

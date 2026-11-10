@@ -145,19 +145,24 @@ superiority claim. Earlier evaluations proved native Reddit interaction and
 recovery on specific pages; Crunchbase and G2 remained blocked. Current live
 outcomes, historical reports and limits are linked in the
 [evidence index](https://github.com/halonyx-io/dethrottled/blob/main/docs/EVIDENCE.md).
-Neural live-web reranking remains disabled.
+Neural live-web reranking remains disabled by default; 1.8.0 adds an opt-in Ettin reranker.
 
-## 1.8.0 candidate status
+## 1.8.0 release status
 
-The 1.8.0 candidate is frozen but **held in the test bed**. It has not been
-version-bumped, published or deployed, and production remains on 1.7.1. Frozen
-source is commit `735d420`, tag `phase5-candidate-20261109`; candidate images are
+1.8.0 is the current release. It is tagged `v1.8.0`, published to PyPI as
+`dethrottled==1.8.0`, and has package artifacts attached to the GitHub release.
+Production remains on 1.7.1 until an operator performs the rollout below;
+publishing a package or GitHub release does not replace running services.
+
+The release candidate was frozen at commit `735d420` (tag
+`phase5-candidate-20261109`) and then extended with the OCR fixes and the opt-in
+Ettin reranker. Candidate images are
 `dethrottled-dnb:1.8.0-candidate-20261109` (`sha256:c6633da3…`) and
 `dethrottled-dnb-api:1.8.0-candidate-20261109` (`sha256:bb859007…`). The
-current test-bed API with the OCR improvements is
+test-bed API with the OCR improvements is
 `dethrottled-dnb-api:1.8.0-dev-20261109`; the frozen images were not overwritten.
 
-| Layer | Result against the frozen 1.7.1 reference |
+| Layer | 1.8.0 result against the frozen 1.7.1 reference |
 |---|---|
 | Browser parity | Both sides passed 27 facts, 27 drive actions, exact download, network fact, concurrency and checkpoint restore |
 | PDF concise | Same 213 content characters, `direct/direct-native`, quality `ok`; reference kept one raw table array, candidate reported `native_pdf_table_count=1` and omitted the raw array |
@@ -166,12 +171,13 @@ current test-bed API with the OCR improvements is
 | Media / speech | Same language `en`, duration 3.812875 s, transcript and speech-uncertainty warning; one-byte response-length difference |
 | HTML ceiling | A 13.7 MB page returned HTTP 200 with `html_capture_limit`, 300 characters and no post-limit fact on both sides |
 | Live / hostile | Two paced passes over the frozen five-URL protocol; controlled hostile routes matched exactly. CarGurus and Expedia remained failed on the repeated pass; no new hostile-source success is claimed |
+| Neural rerank | Opt-in Ettin 68M fp32: 0.7930 nDCG@10 / 0.7699 MRR@10 over 100 SciFact queries versus 0.7222/0.6913 for source order; no default change |
 | ARM64 | Native build on `q6a` (aarch64, Docker 29.9.3), reference `sha256:b9e0fe2a…`, candidate `sha256:9fb7c41b…`; llvmpipe WebGL, real crawl fact retained, 29/29 focused tests |
-| Packaging / install | Wheel and sdist built, `twine check` and `scripts/verify_stack_package.py` passed (974 context files, 56 copy sources); wheel, sdist, source, PyPI 1.7.1 and GitHub v1.7.1 install routes worked |
+| Packaging / install | Wheel and sdist built, `twine check` and `scripts/verify_stack_package.py` passed (979 context files, 56 copy sources); the 1.8.0 wheel installed in a clean venv and both CLI entry points ran, while the 1.7.1 PyPI/GitHub routes remain available for rollback |
 | Mixed load | 3-minute run: reference 859 requests / 0 failures / 20 ms median; candidate 829 / 0 / 20 ms |
 | Soak / crash | 10-minute API memory flat at ~238 MiB, browser 495-619 MiB without restart; injected browser kill caused 33/333 drive requests to fail explicitly while 999/999 fetches succeeded, API stayed healthy, recovery took 4.3 s |
 | Rollback | Marker and legacy databases survived reference → candidate → reference; candidate read the reference cache, schema 2 created `corpus-v2.sqlite` alongside `corpus.sqlite`, and 1.7.1 read it after rollback |
-| Offline suite | 875 passed, 135 skipped, 2 deselected; one stale test double was corrected, with no `src/` diff from the frozen candidate |
+| Offline suite | 915 passed, 139 skipped, 2 deselected on the host; 1,066 passed, 15 skipped, 2 deselected in the candidate API image |
 
 Known differences and limits: the concise PDF table change is an intentional
 presentation change, not a capability loss. On the first live pass the candidate
@@ -180,7 +186,7 @@ failed result; the reversed second pass matched, so this is recorded as
 upstream/order variability rather than a claimed improvement. The frozen baseline OCR was identical but wrong on one generated token; the
 test-bed fix now reads it, and the warning remains. ARM64
 used software rendering, not verified hardware acceleration. Package metadata
-remains 1.7.1 because the version bump is held.
+and the Compose user agent are 1.8.0.
 
 The candidate uses roughly 6.8-7.2 CPU-seconds per 10 renders versus 2.4-2.8 for
 1.7.1 at similar latency; this is a measured target for improvement, not a
@@ -236,7 +242,7 @@ The fetch ladder does not consult `robots.txt`. Raw API access to trusted LAN
 targets requires care; public adapters enforce narrower policies, alongside
 operator-provided network isolation. See [operations](https://github.com/halonyx-io/dethrottled/blob/main/docs/OPERATIONS.md).
 
-This checkout is **1.7.1**. Check `/health` and `/v2/capabilities` on the service you
+This checkout is **1.8.0**. Check `/health` and `/v2/capabilities` on the service you
 actually use; deployed services and remote plugins can differ from a checkout.
 
 [MIT license](https://github.com/halonyx-io/dethrottled/blob/main/LICENSE) · Maintained by [Halonyx](https://github.com/halonyx-io)

@@ -14,7 +14,7 @@ import pytest
 
 sys.path.insert(0, os.path.dirname(__file__))
 
-from session_owners import OwnerMismatch, SessionOwners, StoreUnavailable  # noqa: E402
+from session_owners import OwnerMismatch, SessionOwners, StoreUnavailable
 
 
 def digest(owner):

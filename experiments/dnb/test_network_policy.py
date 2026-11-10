@@ -22,7 +22,7 @@ def test_resolve_once_connect_only_numeric_ip(monkeypatch):
 
 
 @pytest.mark.parametrize(
-    "addresses", [["127.0.0.1"], ["169.254.169.254"], ["::1"], ["93.184.216.34", "192.168.0.1"]]
+    "addresses", [["127.0.0.1"], ["169.254.169.254"], ["::1"], ["93.184.216.34", "198.51.100.1"]]
 )
 def test_no_private_or_mixed_answers_are_dialled(monkeypatch, addresses):
     async def check():

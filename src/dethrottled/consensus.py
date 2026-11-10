@@ -9,7 +9,6 @@ lead than one found once. Nothing here changes the default path.
 from __future__ import annotations
 
 import re
-from collections import defaultdict
 from urllib.parse import urlsplit
 
 _TOKEN = re.compile(r"[^\W_]+", re.UNICODE)

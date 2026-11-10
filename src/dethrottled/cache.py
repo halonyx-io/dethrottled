@@ -91,7 +91,8 @@ class Cache:
         digest = hashlib.blake2b(raw.encode("utf-8"), digest_size=16)
         return "%s:%s" % (kind, digest.hexdigest())
 
-    def get(self, kind: str, *parts, ttl: float | None = None, with_meta: bool = False, validator=None):
+    def get(self, kind: str, *parts, ttl: float | None = None,
+            with_meta: bool = False, validator=None):
         ttl = DEFAULT_TTL.get(kind, 3600) if ttl is None else ttl
         key = self.key(kind, *parts)
         with self._lock:

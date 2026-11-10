@@ -7,12 +7,12 @@ import pytest
 
 sys.path.insert(0, os.path.dirname(__file__))
 
-from operation_store import (  # noqa: E402
+from operation_store import (
     OperationConflict,
     OperationState,
     OperationStore,
 )
-from session_owners import StoreUnavailable  # noqa: E402
+from session_owners import StoreUnavailable
 
 
 def test_begin_records_running_and_rejects_conflict(tmp_path):

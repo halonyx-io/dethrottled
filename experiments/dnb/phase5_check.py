@@ -210,7 +210,9 @@ def main(args):
                 "facts_failed": sum(item["facts_present"] is False for item in workloads),
                 "median_ms": sorted(item["elapsed_ms"] for item in workloads)[len(workloads)//2],
                 "screenshot": record["screenshot"],
-                "screenshot_median_ms": sorted(item["elapsed_ms"] for item in record["screenshots"])[len(record["screenshots"])//2],
+                "screenshot_median_ms": sorted(
+                    item["elapsed_ms"] for item in record["screenshots"]
+                )[len(record["screenshots"]) // 2],
                 "screenshot_bytes": record["screenshot"]["screenshot_bytes"],
                 "screenshot_failures": sum(not item["ok"] for item in record["screenshots"]),
                 "cpu_percent": record["stats"].get("CPUPerc"),

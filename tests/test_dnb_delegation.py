@@ -1,16 +1,13 @@
 """Worker delegation grants scoped authority, not arbitrary owner headers."""
 
 import json
-import os
-from concurrent.futures import wait
 
 import jwt
 import pytest
-from fastapi.testclient import TestClient
 
 from dethrottled.access import CLAIMS
 from dethrottled.concurrency import ContextExecutor
-from dethrottled.delegation import body_digest, ensure_keys, sign, verify
+from dethrottled.delegation import ensure_keys, sign, verify
 
 
 @pytest.fixture

@@ -51,7 +51,7 @@ anonymous callers even though the adapters authenticated them.
   `phase3_check.py --rotate --worker-container p3-worker`.
 - **Real-network identity check passed**: [phase3-network.json](phase3-network.json)
   — forwarded credential from loopback 200, the same credential from
-  `192.168.0.7` rejected 403 by the adapter-peer gate.
+  `198.51.100.7` rejected 403 by the adapter-peer gate.
 - **25 focused unit tests passed**: [phase3-tests.log](phase3-tests.log)
   (`tests/test_dnb_delegation.py`, `experiments/dnb/test_phase3_identity.py`,
   `experiments/dnb/test_phase3_operations.py`). The matrix covers delegation

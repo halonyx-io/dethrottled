@@ -65,12 +65,12 @@ from fastapi import BackgroundTasks, FastAPI, HTTPException
 #
 # Three places claiming a version is two too many.
 from . import __version__ as VERSION
+from . import consensus, providers, rerank, semantic_cache, signals, workers
 from . import domains as domain_health
 from . import extract as fx
 from . import fetch as fetcher
 from . import ocr as ocr_engine
 from . import paths as _paths
-from . import providers, workers
 from . import rank as ranker
 from . import research as research_engine
 from . import search as fs
@@ -91,7 +91,6 @@ from .api_models import DriveStep as DriveStep
 from .cache import DEFAULT_TTL, NEWS_SEARCH_TTL, Cache, CacheView
 from .concurrency import ContextExecutor as ThreadPoolExecutor
 from .content import constrained, estimate_tokens, passage_excerpt, present_row, smart_truncate
-from . import consensus, rerank, semantic_cache, signals
 from .corpus import index_fetched, shared_corpus
 from .evidence import Documents
 from .jobs import JobError, Jobs

@@ -51,7 +51,8 @@ def test_crawl4ai_payload_preserves_html_only_when_requested():
     from dethrottled import fetch
 
     payload = {"markdown": "prose " * 100,
-               "html": "<html><body><h1>Example Domain</h1><p>" + "padding " * 200 + "</p></body></html>",
+               "html": ("<html><body><h1>Example Domain</h1><p>"
+                        + "padding " * 200 + "</p></body></html>"),
                "cleaned_html": "<html><body><p>cleaned</p></body></html>"}
     token = fetch._READ_OPTIONS.set({"keep_html": True})
     try:
