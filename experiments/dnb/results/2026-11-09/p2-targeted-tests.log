@@ -1,4 +1,4 @@
-...........................................................              [100%]
+........ss.....................................................          [100%]
 =============================== warnings summary ===============================
 src/dethrottled/server.py:537
   /home/adminion/Documents/Codex/2026-11-06/dethrottled-dnb/src/dethrottled/server.py:537: DeprecationWarning: 
@@ -39,4 +39,4 @@ src/dethrottled/server.py:554
     @app.on_event("shutdown")
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-59 passed, 6 warnings in 61.09s (0:01:01)
+61 passed, 2 skipped, 6 warnings in 61.13s (0:01:01)

@@ -61,7 +61,8 @@ through a local override:
 | `MCP_TOOL_PROFILE` | `full` | MCP adapter: `core` exposes six high-use tools; `full` exposes all 20 |
 | `DETHROTTLED_SEARCH_FANOUT` | `0` | API: one extra intent-aware query variant; extra upstream requests |
 | `DETHROTTLED_RERANK` | `0` | API: use a local ONNX cross-encoder when `DETHROTTLED_RERANK_MODEL` is set |
-| `DETHROTTLED_RERANK_MODEL` | empty | Directory with `model.onnx`, `tokenizer.json`, `config.json`; GTE ModernBERT is recommended (`scripts/fetch-rerank-model.sh`) |
+| `DETHROTTLED_RERANK_MODEL` | empty | Directory with an ONNX model, `tokenizer.json` and `config.json`; GTE ModernBERT is recommended (`scripts/fetch-rerank-model.sh`). `model.onnx`, `model_quint8_avx2.onnx` and the other standard quantized names are detected |
+| `DETHROTTLED_RERANK_ONNX` | empty | Optional ONNX filename inside `DETHROTTLED_RERANK_MODEL`; use when a directory holds more than one export |
 | `DETHROTTLED_RERANK_MAX_TOKENS` | `512` | Tokenizer truncation length, clamped to the model maximum |
 | `DETHROTTLED_RERANK_TEXT_CHARS` | `3000` | Title+body characters supplied to the reranker before token truncation |
 | `DETHROTTLED_RERANK_DEPTH` | `30` | Only the first N search candidates are reranked |

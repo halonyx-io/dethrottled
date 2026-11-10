@@ -1,0 +1,21 @@
+{
+  "name": "ettin_q8_m512_t3000_d10",
+  "model": "/models/modelettin",
+  "n": 30,
+  "depth": 10,
+  "text_chars": 3000,
+  "max_tokens": "512",
+  "threads": "8",
+  "blend": 1.0,
+  "title_repeat": 1,
+  "query_prefix": "",
+  "baseline_ndcg10": 0.7454,
+  "baseline_mrr10": 0.7158,
+  "ndcg10": 0.7981,
+  "mrr10": 0.8053,
+  "wins": 7,
+  "losses": 4,
+  "ties": 19,
+  "elapsed_s": 53.85,
+  "failures": 0
+}

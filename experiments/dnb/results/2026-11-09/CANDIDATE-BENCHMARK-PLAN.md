@@ -230,7 +230,7 @@ review is in [SIMILAR-PROJECTS-IDEAS.md](SIMILAR-PROJECTS-IDEAS.md); Hound is
 | **P1.4** | Query normalization for cache identity only | S2 | **Implemented.** Case/whitespace only; upstream query unchanged. |
 | **P1.5** | Token estimates and boundary-aware truncation | S3, S10 | **Implemented.** CJK-aware estimate; boundary clip <= cap; raw HTML exact. |
 | **P2.1** | Search consensus / intent fan-out | S6 | **Implemented opt-in.** Intent expansion + consensus fields; default one query. |
-| **P2.2** | Neural rerank | S6 | **Implemented opt-in.** Corrected padding/pair setup and tuned GTE 512 tokens/title+text/depth30. SciFact 100q: GTE 0.7722 vs source-order 0.7222 and 1.7.1 BM25 0.6470 nDCG@10. No default. |
+| **P2.2** | Neural rerank | S6 | **Implemented opt-in.** Corrected padding/pair setup and tuned GTE 512 tokens/title+text/depth30. SciFact 100q: GTE 0.7722, Ettin 68M 0.7688, source order 0.7222, 1.7.1 BM25 0.6470 nDCG@10. No default. |
 | **P2.3** | Semantic query cache | S6 | **Implemented opt-in.** MiniLM threshold 0.55; 7/8 paraphrase recall, 0/8 false hits in test. |
 | **P2.4** | Persistent browser profile / stealth | S4, S8 | **Implemented opt-in search storage state.** Public search only; drive isolation unchanged. |
 | **P2.5** | Proxy / BYOK key rotation | S6, S9 | **Implemented opt-in.** Per-key cooldown + proxy round-robin; default off. |

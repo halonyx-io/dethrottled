@@ -28,8 +28,9 @@ Evidence: [p2-fanout.json](p2-fanout.json), `tests/test_consensus.py`,
 ## Neural rerank — correctly configured and tuned
 
 Added `src/dethrottled/rerank.py`, opt-in with `DETHROTTLED_RERANK=1` and
-`DETHROTTLED_RERANK_MODEL=<dir>` containing `model.onnx`, `tokenizer.json` and
-`config.json`.
+`DETHROTTLED_RERANK_MODEL=<dir>` containing an ONNX export, `tokenizer.json` and
+`config.json`. The loader accepts `model.onnx`, `model_quint8_avx2.onnx` and the
+other standard quantized names, or an explicit `DETHROTTLED_RERANK_ONNX`.
 
 The earlier 8-case test was not a fair cross-encoder test. This pass fixed the
 setup and then tuned it:
@@ -108,6 +109,77 @@ pool, not a full web search. The useful comparison is that GTE adds about
 **+0.05 nDCG / +0.054 MRR** over the source-order baseline, and about
 **+0.125 nDCG / +0.135 MRR** over the optional 1.7.1 BM25 ranker on the same pool.
 
+### Ettin reranker — encoder-only export gotchas
+
+Tested `cross-encoder/ettin-reranker-68m-v1` at revision `d166fa8`
+(Apache-2.0, 68M parameters, 67 MB `model_quint8_avx2.onnx`).
+
+Both `onnx/model.onnx` and `onnx/model_quint8_avx2.onnx` output
+`last_hidden_state`, not `logits`. Feeding either through a normal
+logits-only cross-encoder path returns token embeddings and meaningless scores.
+The published pipeline is:
+
+```
+Transformer -> CLS pooling (1_Pooling)
+            -> Dense 512 + GELU (2_Dense)
+            -> LayerNorm 512 (3_LayerNorm)
+            -> Dense 1 (4_Dense)
+```
+
+The loader now detects a 3-D output, reads those safetensors modules directly
+(no `safetensors` package needed), and applies CLS pooling, exact GELU, LayerNorm
+and the final Dense in numpy.
+
+Gotchas confirmed:
+
+- `config.json` says `classifier_pooling: mean`, but that is the unused
+  ModernBERT classification head. `1_Pooling/config.json` says `cls`, which is
+  what the model card architecture uses.
+- Pad id is **50283**, SEP **50282**, CLS **50281**, tokenizer maximum 7999.
+- The quantized AVX2 export shifts individual logits versus fp32. On the model
+  card example fp32 produced `[6.39, 11.53, 7.64, 10.48]` against the published
+  `[6.375, 11.5, 7.625, 10.4375]`; quint8 produced
+  `[5.30, 11.43, 6.66, 10.48]`. Rank order held, and the fp32 match is how the
+  head was validated.
+- The AVX2 file is the right choice for this AMD Ryzen test host (AVX2, no
+  AVX-512).
+
+Ettin settings sweep — 30 queries:
+
+| Setting | nDCG@10 | MRR@10 |
+|---|---:|---:|
+| BM25 baseline | 0.7454 | 0.7158 |
+| quint8, 256 tokens, depth 30 | 0.7843 | 0.7750 |
+| quint8, 512 tokens, depth 10 | 0.7981 | 0.8053 |
+| quint8, 512 tokens, depth 20 | 0.8085 | 0.8048 |
+| **quint8, 512 tokens, depth 30** | **0.8085** | **0.8048** |
+| quint8, 512 tokens, depth 50 | 0.7945 | 0.7875 |
+| quint8, 1,024 tokens, depth 30 | 0.7870 | 0.7770 |
+| quint8, 512 tokens, 1,500 chars | 0.7839 | 0.7742 |
+| quint8, 512 tokens, 600 chars | 0.7912 | 0.7819 |
+| fp32, 512 tokens, depth 30 | 0.7994 | 0.7854 |
+
+Ettin keeps the same shape as GTE: 512 tokens, title+text, 3,000 characters,
+depth 20–30. Unlike GTE, the 68M model is fast enough that depth 10 is a useful
+low-latency policy.
+
+### Ettin versus GTE versus 1.7.1 — 100 queries
+
+| Ranking policy | nDCG@10 | MRR@10 | Wall time |
+|---|---:|---:|---:|
+| 1.7.1 default source order | 0.7222 | 0.6913 | — |
+| 1.7.1 optional BM25 ranker | 0.6470 | 0.6108 | — |
+| GTE quint8, 512 tokens, depth 30 | **0.7722** | **0.7455** | 940 s |
+| Ettin quint8, 512 tokens, depth 30 | 0.7688 | 0.7441 | 572 s |
+| Ettin quint8, 512 tokens, depth 10 | 0.7547 | 0.7414 | 166 s |
+
+Ettin is **0.003 nDCG / 0.001 MRR behind GTE** over 100 queries — inside noise —
+while being roughly 40% faster and less than half the size. It reranks the top
+30 without losing MRR and keeps most of the gain even when only the top 10 are
+reranked. GTE stays the recommendation because it is marginally ahead on both
+metrics and has the larger 100-query evidence base; Ettin is a strong second
+choice, especially where latency or image size matters.
+
 ### Settings that did not help
 
 - Blend with normalized BM25: 0.50 blend 0.7971 nDCG; 0.75 blend 0.7954;
@@ -120,12 +192,15 @@ pool, not a full web search. The useful comparison is that GTE adds about
 
 **Decision:** keep reranking opt-in. GTE is the recommended optional model
 (Apache-2.0, 144 MB quantized ONNX). `scripts/fetch-rerank-model.sh` downloads
-the pinned GTE revision. Jina scored slightly higher but is CC-BY-NC and is not a
-bundle candidate. The earlier small-set result is retained in
+the pinned GTE revision. Ettin 68M is a close second (Apache-2.0, 67 MB, faster)
+and is supported through the encoder-only post-processing path. Jina scored
+slightly higher but is CC-BY-NC. The earlier small-set result is retained in
 `p2-rerank-small.json` so the failed first test is not hidden.
 
 Evidence: [p2-rerank.json](p2-rerank.json),
 [p2-rerank-small.json](p2-rerank-small.json),
+[p2-rerank-ettin-100.json](p2-rerank-ettin-100.json),
+[p2-rerank-ettin-depth10-100.json](p2-rerank-ettin-depth10-100.json),
 `tests/test_rerank.py`.
 
 ## Semantic query cache
@@ -198,18 +273,18 @@ Evidence: `tests/test_provider_rotation.py`.
 
 ## Verification
 
-- Host offline suite: **913 passed, 137 skipped, 2 deselected**.
-- Full suite inside the candidate API image: **1,061 passed, 15 skipped,
+- Host offline suite: **915 passed, 139 skipped, 2 deselected**.
+- Full suite inside the candidate API image: **1,066 passed, 15 skipped,
   2 deselected**.
-- P2 targeted tests: **59 passed**.
+- P2 targeted tests: **61 passed, 2 skipped**.
 - Documentation and agent-doc checks pass.
 
 Images:
 
 - API: `dethrottled-dnb-api:1.8.0-dev-p2-20261109`
-  (`sha256:7c59f476…`)
+  (`sha256:f8d90945…`)
 - Worker: `dethrottled-dnb:1.8.0-dev-p2-20261109`
-  (`sha256:3ad1a408…`)
+  (`sha256:7c8fd331…`)
 
 No default ranking, provider key, proxy or cookie behavior changed. P2 outcomes
 that did not earn a default stay opt-in, and no release action is authorised.
