@@ -51,7 +51,7 @@ setup and then tuned it:
 | MiniLM-L12 | Apache-2.0 | 0.7501 | 0.7167 |
 | BGE base | MIT | 0.7645 | 0.7283 |
 | GTE ModernBERT (quantized) | Apache-2.0 | **0.8187** | **0.7982** |
-| Jina v2 (1024 tokens) | **CC-BY-NC-4.0** | **0.8251** | **0.8076** |
+| Jina v2 (512 tokens) | **CC-BY-NC-4.0** | **0.8251** | **0.8076** |
 
 GTE gained +5.5 nDCG and +5.9 MRR over BM25. Per-query at 60: 12 wins, 9 losses,
 39 ties. The paired bootstrap 95% interval still crossed zero
