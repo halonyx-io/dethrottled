@@ -1,0 +1,18 @@
+{
+  "name": "jina_m1024_t3000_d30",
+  "model": "/models/modeljina",
+  "n": 30,
+  "depth": 30,
+  "text_chars": 3000,
+  "max_tokens": "1024",
+  "threads": "8",
+  "baseline_ndcg10": 0.7454,
+  "baseline_mrr10": 0.7158,
+  "ndcg10": 0.7996,
+  "mrr10": 0.7831,
+  "wins": 5,
+  "losses": 4,
+  "ties": 21,
+  "elapsed_s": 309.84,
+  "failures": 0
+}

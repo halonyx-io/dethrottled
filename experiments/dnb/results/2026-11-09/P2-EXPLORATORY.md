@@ -93,6 +93,31 @@ gain over a larger query sample. It is a real positive signal, but not yet enoug
 to make reranking a default; the query-level wins are not overwhelming and a
 larger multi-dataset run is the right next step.
 
+### What 1.7.1 does on the same candidate pools
+
+1.7.1 has no cross-encoder. On the same 100-query SciFact candidate pools:
+
+| Ranking policy | nDCG@10 | MRR@10 |
+|---|---:|---:|
+| 1.7.1 default source order (pool order) | 0.7222 | 0.6913 |
+| 1.7.1 optional BM25 ranker on the same 30 candidates | 0.6470 | 0.6108 |
+| GTE, tuned settings above | **0.7722** | **0.7455** |
+
+The 1.7.1 BM25 number is its ranker applied to an already-retrieved candidate
+pool, not a full web search. The useful comparison is that GTE adds about
+**+0.05 nDCG / +0.054 MRR** over the source-order baseline, and about
+**+0.125 nDCG / +0.135 MRR** over the optional 1.7.1 BM25 ranker on the same pool.
+
+### Settings that did not help
+
+- Blend with normalized BM25: 0.50 blend 0.7971 nDCG; 0.75 blend 0.7954;
+  pure GTE 0.8189 on the 30-query sweep.
+- Repeating the title twice: 0.7661.
+- Prefixing the query with `query: `: 0.7413.
+- Longer token limits, shorter text windows, text-only input, and depth 10/20/50
+  all scored below the chosen 512-token/title+text/depth-30 setting.
+
+
 **Decision:** keep reranking opt-in. GTE is the recommended optional model
 (Apache-2.0, 144 MB quantized ONNX). `scripts/fetch-rerank-model.sh` downloads
 the pinned GTE revision. Jina scored slightly higher but is CC-BY-NC and is not a
@@ -182,9 +207,9 @@ Evidence: `tests/test_provider_rotation.py`.
 Images:
 
 - API: `dethrottled-dnb-api:1.8.0-dev-p2-20261109`
-  (`sha256:78e0112f…`)
+  (`sha256:7c59f476…`)
 - Worker: `dethrottled-dnb:1.8.0-dev-p2-20261109`
-  (`sha256:5b368530…`)
+  (`sha256:3ad1a408…`)
 
 No default ranking, provider key, proxy or cookie behavior changed. P2 outcomes
 that did not earn a default stay opt-in, and no release action is authorised.

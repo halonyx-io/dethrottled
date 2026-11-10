@@ -65,4 +65,4 @@ tests/test_fetch_edge_cases.py::test_connected_slow_body_retains_read_allowance[
     config.cache.set("cache/nodeids", sorted(str(n) for n in self.cached_nodeids))
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-1062 passed, 15 skipped, 2 deselected, 9 warnings in 80.80s (0:01:20)
+1062 passed, 15 skipped, 2 deselected, 9 warnings in 78.97s (0:01:18)

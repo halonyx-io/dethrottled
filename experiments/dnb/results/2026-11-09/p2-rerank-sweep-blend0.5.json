@@ -1,0 +1,21 @@
+{
+  "name": "gte_blend0.5",
+  "model": "/models/modelgte",
+  "n": 30,
+  "depth": 30,
+  "text_chars": 3000,
+  "max_tokens": "512",
+  "threads": "8",
+  "blend": 0.5,
+  "title_repeat": 1,
+  "query_prefix": "",
+  "baseline_ndcg10": 0.7454,
+  "baseline_mrr10": 0.7158,
+  "ndcg10": 0.7971,
+  "mrr10": 0.7815,
+  "wins": 4,
+  "losses": 1,
+  "ties": 25,
+  "elapsed_s": 280.85,
+  "failures": 0
+}
