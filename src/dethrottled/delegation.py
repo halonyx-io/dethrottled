@@ -54,23 +54,37 @@ def ensure_keys():
         finally:
             os.unlink(name)
     key = serialization.load_pem_private_key(private.read_bytes(), password=None)
-    public.parent.mkdir(parents=True, exist_ok=True)
     data = key.public_key().public_bytes(
         serialization.Encoding.PEM, serialization.PublicFormat.SubjectPublicKeyInfo
     )
-    if not public.exists() or public.read_bytes() != data:
-        fd, name = tempfile.mkstemp(dir=public.parent, prefix=".public-")
+    # A host-managed deployment may mount the public key read-only. Skip the
+    # write path only when the mounted key already matches the private key;
+    # writable rotations still update normally, and a read-only mismatch fails
+    # loudly instead of signing with the wrong verifier.
+    if public.exists():
         try:
-            with os.fdopen(fd, "wb") as output:
-                if hasattr(os, "fchmod"):
-                    os.fchmod(output.fileno(), 0o640)
-                output.write(data)
-                output.flush()
-                os.fsync(output.fileno())
-            os.replace(name, public)
-        finally:
-            if os.path.exists(name):
-                os.unlink(name)
+            existing = public.read_bytes()
+        except OSError:
+            existing = None
+        if existing == data:
+            return key, hashlib.sha256(data).hexdigest()[:16]
+        if not os.access(public, os.W_OK):
+            raise RuntimeError(
+                "DNB public key is read-only and does not match the private key"
+            )
+    public.parent.mkdir(parents=True, exist_ok=True)
+    fd, name = tempfile.mkstemp(dir=public.parent, prefix=".public-")
+    try:
+        with os.fdopen(fd, "wb") as output:
+            if hasattr(os, "fchmod"):
+                os.fchmod(output.fileno(), 0o640)
+            output.write(data)
+            output.flush()
+            os.fsync(output.fileno())
+        os.replace(name, public)
+    finally:
+        if os.path.exists(name):
+            os.unlink(name)
     return key, hashlib.sha256(data).hexdigest()[:16]
 
 

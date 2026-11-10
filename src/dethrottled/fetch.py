@@ -1323,8 +1323,21 @@ def _headed_read(url: str, backend: str) -> tuple:
     read = {"action": "html", "selector": "html", "max_chars": 120000}
 
     def drive(steps, navigate=False):
-        response = requests.post(backend + "/drive", json={**body,
-            **({"url": url} if navigate else {}), "steps": steps}, timeout=15)
+        payload = {**body, **({"url": url} if navigate else {}), "steps": steps}
+        headers = {}
+        if os.getenv("DETHROTTLED_DNB", "0") == "1":
+            from . import delegation
+            headers["x-dnb-delegation"] = delegation.sign(
+                payload,
+                owner=session,
+                session=session,
+                scope="public-read",
+                public_only=bool(payload.get("public_only")),
+                allowed_hosts=payload.get("allowed_hosts") or (),
+                path="/drive",
+            )
+        response = requests.post(backend + "/drive", json=payload,
+                                 headers=headers, timeout=15)
         response.raise_for_status()
         value = response.json()
         if not value.get("ok"):
