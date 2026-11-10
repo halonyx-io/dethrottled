@@ -60,13 +60,12 @@ through a local override:
 | `DETHROTTLED_MEMORY_PRESSURE` | `1` | browser worker: ask Chrome to release caches after crawl/drive; `0` disables |
 | `MCP_TOOL_PROFILE` | `full` | MCP adapter: `core` exposes six high-use tools; `full` exposes all 20 |
 | `DETHROTTLED_SEARCH_FANOUT` | `0` | API: one extra intent-aware query variant; extra upstream requests |
-| `DETHROTTLED_RERANK` | `0` | API: use a local ONNX cross-encoder when `DETHROTTLED_RERANK_MODEL` is set |
-| `DETHROTTLED_RERANK_MODEL` | empty | Directory with an ONNX model, `tokenizer.json` and `config.json`; GTE ModernBERT is the measured quality leader (`scripts/fetch-rerank-model.sh`) and Ettin 68M `onnx/model.onnx` fp32 is the universal-CPU alternative. `model.onnx`, `model_quint8_avx2.onnx` and the other standard quantized names are detected |
-| `DETHROTTLED_RERANK_ONNX` | empty | Optional ONNX filename inside `DETHROTTLED_RERANK_MODEL`; use when a directory holds more than one export |
+| `DETHROTTLED_RERANK` | `0` | API: use the local Ettin 68M fp32 ONNX reranker when `DETHROTTLED_RERANK_MODEL` is set |
+| `DETHROTTLED_RERANK_MODEL` | empty | Directory produced by `scripts/fetch-rerank-model.sh`: Ettin 68M fp32 `model.onnx`, `tokenizer.json`, `config.json` and the `2_Dense`/`3_LayerNorm`/`4_Dense` modules |
 | `DETHROTTLED_RERANK_MAX_TOKENS` | `512` | Tokenizer truncation length, clamped to the model maximum |
 | `DETHROTTLED_RERANK_TEXT_CHARS` | `3000` | Title+body characters supplied to the reranker before token truncation |
 | `DETHROTTLED_RERANK_DEPTH` | `30` | Only the first N search candidates are reranked |
-| `DETHROTTLED_RERANK_THREADS` | `2` | ONNX CPU threads for reranking |
+| `DETHROTTLED_RERANK_THREADS` | `8` | ONNX CPU threads for reranking; the tested configuration |
 | `DETHROTTLED_SEMANTIC_CACHE` | off | API: `1` or a SQLite path enables the separate paraphrase cache |
 | `DETHROTTLED_SEMANTIC_CACHE_THRESHOLD` | `0.55` | MiniLM cosine threshold; tune only with a labelled paraphrase set |
 | `DETHROTTLED_SEMANTIC_CACHE_TTL` | `21600` | Seconds before a semantic cache entry is ignored |

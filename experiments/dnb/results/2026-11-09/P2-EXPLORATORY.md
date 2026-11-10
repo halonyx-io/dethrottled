@@ -25,12 +25,19 @@ had consensus 2.5, the single-source URLs 1.0.
 Evidence: [p2-fanout.json](p2-fanout.json), `tests/test_consensus.py`,
 `tests/test_endpoints.py`.
 
-## Neural rerank — correctly configured and tuned
+## Neural rerank — Ettin 68M fp32
+
+**1.8.0 decision:** exactly one reranker is supported: Ettin 68M fp32
+(`cross-encoder/ettin-reranker-68m-v1`, `onnx/model.onnx`). It is wired at the
+tested configuration — 512 tokens, title+text up to 3,000 characters, the top 30
+candidates and 8 ONNX threads — and stays opt-in. GTE, BGE, MiniLM, Jina and the
+Ettin quantized/O4 exports were evaluated but are **not supported** in this
+prototype. Their measurements remain below as evidence.
 
 Added `src/dethrottled/rerank.py`, opt-in with `DETHROTTLED_RERANK=1` and
-`DETHROTTLED_RERANK_MODEL=<dir>` containing an ONNX export, `tokenizer.json` and
-`config.json`. The loader accepts `model.onnx`, `model_quint8_avx2.onnx` and the
-other standard quantized names, or an explicit `DETHROTTLED_RERANK_ONNX`.
+`DETHROTTLED_RERANK_MODEL=<dir>` containing the fp32 Ettin export, tokenizer,
+config and post-processing modules. `scripts/fetch-rerank-model.sh` fetches the
+pinned revision.
 
 The earlier 8-case test was not a fair cross-encoder test. This pass fixed the
 setup and then tuned it:
@@ -222,13 +229,14 @@ to document: no AVX2/AVX-512 requirement, 261 MB, and the best Ettin scores.
   all scored below the chosen 512-token/title+text/depth-30 setting.
 
 
-**Decision:** keep reranking opt-in. The best measured quality is full-precision
-GTE (0.8030/0.7837, 572 MB). The best balance for a universal public artifact is
-fp32 Ettin (`onnx/model.onnx`, 0.7930/0.7699, 261 MB, no AVX requirement) — it
-beats the quantized GTE that was previously recommended. Quantized Ettin is the
-smallest/fastest option but loses about 0.024 nDCG. Jina scored slightly higher
-at 60 queries but is CC-BY-NC. The earlier small-set result is retained in
-`p2-rerank-small.json` so the failed first test is not hidden.
+**Decision:** 1.8.0 supports Ettin 68M fp32 only, remains opt-in, and uses the
+tested 512-token/title+text/depth-30/8-thread configuration. It scored
+0.7930 nDCG@10 and 0.7699 MRR@10 over 100 SciFact queries versus 0.7222/0.6913
+for source order and 0.6470/0.6108 for 1.7.1's optional BM25 ranker. GTE fp32
+measured slightly higher quality (0.8030/0.7837) but is not wired; it and the
+other evaluated models remain in this record as evidence. The earlier small-set
+result is retained in `p2-rerank-small.json` so the failed first test is not
+hidden.
 
 Evidence: [p2-rerank.json](p2-rerank.json),
 [p2-rerank-small.json](p2-rerank-small.json),
@@ -309,18 +317,18 @@ Evidence: `tests/test_provider_rotation.py`.
 
 ## Verification
 
-- Host offline suite: **916 passed, 139 skipped, 2 deselected**.
-- Full suite inside the candidate API image: **1,067 passed, 15 skipped,
+- Host offline suite: **915 passed, 139 skipped, 2 deselected**.
+- Full suite inside the candidate API image: **1,066 passed, 15 skipped,
   2 deselected**.
-- P2 targeted tests: **62 passed, 2 skipped**.
+- P2 targeted tests: **61 passed, 2 skipped**.
 - Documentation and agent-doc checks pass.
 
 Images:
 
 - API: `dethrottled-dnb-api:1.8.0-dev-p2-20261109`
-  (`sha256:4a16fd84…`)
+  (`sha256:98081954…`)
 - Worker: `dethrottled-dnb:1.8.0-dev-p2-20261109`
-  (`sha256:4ba2e983…`)
+  (`sha256:2070a269…`)
 
 No default ranking, provider key, proxy or cookie behavior changed. P2 outcomes
 that did not earn a default stay opt-in, and no release action is authorised.

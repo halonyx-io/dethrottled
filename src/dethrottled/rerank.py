@@ -1,20 +1,22 @@
-"""Optional ONNX cross-encoder reranking.
+"""Optional Ettin 68M fp32 ONNX reranking.
 
-A bi-encoder ranks by broad topical similarity. A cross-encoder reads the query
-and candidate together, which is why the open-source search projects that use
-one (Hound's ``ms-marco-MiniLM-L-6-v2`` is the reference point) report better
-top-k ordering. This module is deliberately opt-in: the model is not in the base
-image, the default stays lexical/source ranking, and an absent model is a no-op.
+The 68M Ettin export is encoder-only: `onnx/model.onnx` returns
+``last_hidden_state``, not reranker logits. Its published sentence-transformers
+head must be applied separately:
 
-Set ``DETHROTTLED_RERANK_MODEL`` to a directory containing an ONNX model and
-``tokenizer.json`` (a Transformers.js/Xenova or sentence-transformers export
-works) and set ``DETHROTTLED_RERANK=1``. The model is loaded lazily and reused.
+    Transformer -> CLS pooling
+                -> Dense 512 + GELU
+                -> LayerNorm 512
+                -> Dense 1
 
-Two export shapes are supported:
+This module loads the fp32 export and those post-processing modules from one
+directory. It is deliberately opt-in: the model is not in the base image, the
+default stays lexical/source ranking, and an absent model is a no-op.
 
-* a headless cross-encoder that returns ``logits`` (BGE, GTE, Jina);
-* an encoder-only export that returns ``last_hidden_state`` plus the
-  sentence-transformers post-processing modules on disk (Ettin rerankers).
+Set ``DETHROTTLED_RERANK_MODEL`` to the directory produced by
+``scripts/fetch-rerank-model.sh`` and set ``DETHROTTLED_RERANK=1``. The model is
+loaded lazily and reused. The tested configuration is 512 tokens, title+text up
+to 3,000 characters, the top 30 candidates and 8 ONNX threads.
 """
 
 from __future__ import annotations
@@ -27,11 +29,14 @@ import threading
 _MODEL = None
 _LOCK = threading.Lock()
 
-# Common sentence-transformers / optimum exports. Prefer fp32, then the
-# optimised O4 build, then the instruction-set-specific quantized files.
-_ONNX_NAMES = ("model.onnx", "model_O4.onnx", "model_quint8_avx2.onnx",
-               "model_qint8_avx2.onnx", "model_qint8_avx512.onnx",
-               "model_qint8_avx512_vnni.onnx", "model_qint8_arm64.onnx")
+_REQUIRED = (
+    "model.onnx",
+    "tokenizer.json",
+    "config.json",
+    "2_Dense/model.safetensors",
+    "3_LayerNorm/model.safetensors",
+    "4_Dense/model.safetensors",
+)
 
 
 def model_dir() -> str:
@@ -39,28 +44,18 @@ def model_dir() -> str:
 
 
 def onnx_path() -> str:
-    """Return the configured ONNX file, accepting the usual quantized names."""
-    root = model_dir()
-    if not root:
-        return ""
-    explicit = os.getenv("DETHROTTLED_RERANK_ONNX", "").strip()
-    if explicit:
-        return explicit if os.path.isabs(explicit) else os.path.join(root, explicit)
-    for name in _ONNX_NAMES:
-        candidate = os.path.join(root, name)
-        if os.path.isfile(candidate):
-            return candidate
-    return os.path.join(root, _ONNX_NAMES[0])
+    return os.path.join(model_dir(), "model.onnx")
 
 
 def available() -> bool:
-    return bool(model_dir()) and os.path.isfile(onnx_path()) and os.path.isfile(
-        os.path.join(model_dir(), "tokenizer.json")
+    root = model_dir()
+    return bool(root) and all(
+        os.path.isfile(os.path.join(root, name)) for name in _REQUIRED
     )
 
 
 def _read_safetensors(path: str, np):
-    """Read a plain F32/F16 safetensors file without the optional dependency."""
+    """Read a plain safetensors file without the optional dependency."""
     with open(path, "rb") as source:
         blob = source.read()
     if len(blob) < 9:
@@ -90,32 +85,18 @@ def _read_safetensors(path: str, np):
 
 
 def _load_head(root: str, np):
-    """Load sentence-transformers Dense/GELU/LayerNorm/Dense post-processing."""
-    pooling = {}
-    pooling_path = os.path.join(root, "1_Pooling", "config.json")
-    if os.path.isfile(pooling_path):
-        with open(pooling_path, encoding="utf-8") as source:
-            pooling = json.load(source)
-    dense2 = os.path.join(root, "2_Dense", "model.safetensors")
-    norm = os.path.join(root, "3_LayerNorm", "model.safetensors")
-    dense4 = os.path.join(root, "4_Dense", "model.safetensors")
-    if not (os.path.isfile(dense2) and os.path.isfile(norm) and
-            os.path.isfile(dense4)):
-        return None
-    try:
-        first = _read_safetensors(dense2, np)
-        layer_norm = _read_safetensors(norm, np)
-        last = _read_safetensors(dense4, np)
-        return {
-            "pooling": (pooling.get("pooling_mode") or "cls").lower(),
-            "w2": first["linear.weight"],
-            "ln_weight": layer_norm["norm.weight"],
-            "ln_bias": layer_norm["norm.bias"],
-            "w4": last["linear.weight"],
-            "b4": last["linear.bias"],
-        }
-    except (KeyError, OSError, ValueError):
-        return None
+    """Load the Ettin Dense/GELU/LayerNorm/Dense post-processing modules."""
+    first = _read_safetensors(os.path.join(root, "2_Dense", "model.safetensors"), np)
+    layer_norm = _read_safetensors(
+        os.path.join(root, "3_LayerNorm", "model.safetensors"), np)
+    last = _read_safetensors(os.path.join(root, "4_Dense", "model.safetensors"), np)
+    return {
+        "w2": first["linear.weight"],
+        "ln_weight": layer_norm["norm.weight"],
+        "ln_bias": layer_norm["norm.bias"],
+        "w4": last["linear.weight"],
+        "b4": last["linear.bias"],
+    }
 
 
 def _gelu(np, values):
@@ -126,24 +107,14 @@ def _gelu(np, values):
     return 0.5 * values * (1.0 + erf_vector(values / sqrt(2.0)).astype(np.float32))
 
 
-def _postprocess(np, hidden, head, mask=None):
-    """Turn last_hidden_state into one logit per pair, as sentence-transformers does."""
-    if head["pooling"] == "mean":
-        if mask is None:
-            pooled = hidden.mean(axis=1)
-        else:
-            weights = mask[:, :, None].astype(np.float32)
-            pooled = (hidden * weights).sum(axis=1) / np.maximum(
-                weights.sum(axis=1), 1.0)
-    else:
-        pooled = hidden[:, 0, :]
-    values = pooled @ head["w2"].T
+def _postprocess(np, hidden, head, eps):
+    """Turn Ettin's last_hidden_state into one logit per pair."""
+    values = hidden[:, 0, :] @ head["w2"].T
     values = _gelu(np, values)
     values = (values - values.mean(axis=1, keepdims=True)) / np.sqrt(
-        values.var(axis=1, keepdims=True) + head["eps"])
+        values.var(axis=1, keepdims=True) + eps)
     values = values * head["ln_weight"] + head["ln_bias"]
-    logits = values @ head["w4"].T + head["b4"]
-    return logits
+    return values @ head["w4"].T + head["b4"]
 
 
 def _load():
@@ -168,28 +139,26 @@ def _load():
         tokenizer.enable_padding(pad_id=pad_id,
                                  pad_token=tokenizer.id_to_token(pad_id) or "[PAD]")
         options = onnxruntime.SessionOptions()
-        options.intra_op_num_threads = int(os.getenv("DETHROTTLED_RERANK_THREADS", "2"))
+        options.intra_op_num_threads = int(os.getenv("DETHROTTLED_RERANK_THREADS", "8"))
         options.log_severity_level = 3
         session = onnxruntime.InferenceSession(
             onnx_path(), options, providers=["CPUExecutionProvider"],
         )
         outputs = session.get_outputs()
-        input_names = {item.name for item in session.get_inputs()}
-        head = None
-        # A 3-D output is the encoder's last_hidden_state, not a ready-made logit.
-        if outputs and len(outputs[0].shape) == 3:
-            head = _load_head(root, np)
-            if head is not None:
-                head["eps"] = float(config.get("layer_norm_eps", 1e-5))
-        _MODEL = (np, tokenizer, session, input_names, head)
+        if not outputs or len(outputs[0].shape) != 3:
+            raise RuntimeError("expected Ettin last_hidden_state output")
+        head = _load_head(root, np)
+        _MODEL = (np, tokenizer, session,
+                  {item.name for item in session.get_inputs()}, head,
+                  float(config.get("layer_norm_eps", 1e-5)))
         return _MODEL
 
 
 def score(query: str, documents: list) -> list:
-    """Return one cross-encoder logit per document; higher is more relevant."""
+    """Return one Ettin logit per document; higher is more relevant."""
     if not documents:
         return []
-    np, tokenizer, session, inputs, head = _load()
+    np, tokenizer, session, inputs, head, eps = _load()
     pairs = [(query or "", text or "") for text in documents]
     encoded = tokenizer.encode_batch(pairs)
     arrays = {
@@ -199,14 +168,12 @@ def score(query: str, documents: list) -> list:
         "token_type_ids": np.asarray([row.type_ids for row in encoded], dtype=np.int64),
     }
     feed = {key: value for key, value in arrays.items() if key in inputs}
-    output = session.run(None, feed)[0]
-    if head is not None:
-        output = _postprocess(np, output, head, arrays["attention_mask"])
-    return [float(row[0]) for row in output]
+    hidden = session.run(None, feed)[0]
+    return [float(row[0]) for row in _postprocess(np, hidden, head, eps)]
 
 
 def rerank_rows(rows: list, query: str, *, text_chars: int | None = None) -> list:
-    """Sort rows by cross-encoder score; never raises on an unavailable model."""
+    """Sort rows by Ettin score; never raises on an unavailable model."""
     if not rows or not query or not available():
         return rows
     if text_chars is None:
