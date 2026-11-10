@@ -198,7 +198,7 @@ CPU-seconds per request at the same latency, while drive keeps verified WebGL an
 Crunchbase still reads; browser memory rises from about 0.52 to 1.0 GiB.
 
 Test-bed improvements after the freeze are tracked in
-[CANDIDATE-CHANGES.md](experiments/dnb/results/2026-11-09/CANDIDATE-CHANGES.md).
+[CANDIDATE-CHANGES.md](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/CANDIDATE-CHANGES.md).
 The first one recovers low-resolution OCR digits (`hotel-905`, reference read
 `hote-005`) with a bounded 2x upscale for standalone images; PDF page rasters
 keep their existing OCR-DPI resolution. The frozen images were not overwritten.
@@ -207,18 +207,18 @@ browser, adds CID-corrupted PDF OCR, warns on long login/paywall/access-denied
 pages, and offers a six-tool MCP profile. P1 adds date/source/page signals,
 fetch relevance, decoy-bucket filtering, normalized search cache identity, token
 estimates and boundary-aware truncation. See
-[P0-BUGS-EFFICIENCY.md](experiments/dnb/results/2026-11-09/P0-BUGS-EFFICIENCY.md)
-and [P1-AGENT-SIGNALS.md](experiments/dnb/results/2026-11-09/P1-AGENT-SIGNALS.md).
+[P0-BUGS-EFFICIENCY.md](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/P0-BUGS-EFFICIENCY.md)
+and [P1-AGENT-SIGNALS.md](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/P1-AGENT-SIGNALS.md).
 P2 keeps search fan-out, neural rerank, semantic cache, persistent search
 profiles and provider key/proxy rotation opt-in. The 1.8.0 prototype supports one
 neural reranker, Ettin 68M fp32, at 512 tokens, title+text up to 3,000
 characters and the top 30 candidates. On 100 SciFact queries it reached 0.7930
 nDCG@10 and 0.7699 MRR@10 versus 0.7222/0.6913 for source order, but it remains
 opt-in. Results are in
-[P2-EXPLORATORY.md](experiments/dnb/results/2026-11-09/P2-EXPLORATORY.md).
-The full record is in [PHASE-6.md](experiments/dnb/results/2026-11-09/PHASE-6.md),
+[P2-EXPLORATORY.md](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/P2-EXPLORATORY.md).
+The full record is in [PHASE-6.md](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/PHASE-6.md),
 and the next layer-by-layer comparison is in
-[CANDIDATE-BENCHMARK-PLAN.md](experiments/dnb/results/2026-11-09/CANDIDATE-BENCHMARK-PLAN.md).
+[CANDIDATE-BENCHMARK-PLAN.md](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/CANDIDATE-BENCHMARK-PLAN.md).
 No release or deployment happens without fresh approval.
 
 ## Explore the engine

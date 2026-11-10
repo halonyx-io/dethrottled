@@ -213,7 +213,7 @@ def generate(root, extra):
                 target = (
                     posixpath.relpath(path, "docs")
                     if Path(path).suffix.lower() in TEXT_SUFFIXES
-                    and not path.startswith((".github/", "requirements/"))
+                    and not path.startswith((".github/", "requirements/", "experiments/"))
                     and entry["lifecycle"] != "dependency-input"
                     else "https://github.com/halonyx-io/dethrottled/blob/main/" + path
                 )
