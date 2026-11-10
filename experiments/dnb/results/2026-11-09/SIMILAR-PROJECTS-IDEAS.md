@@ -187,10 +187,10 @@ Hound uses a local ONNX cross-encoder. Dethrottled deliberately ships
 the existing lexical/corpus ranking and document the model/latency cost. Map to
 S6.
 
-**Measured:** tuned GTE ModernBERT reached 0.7722 nDCG@10 and 0.7455 MRR@10 on
-100 SciFact queries versus 0.7222/0.6913 for source order and 0.6470/0.6108 for
-1.7.1's optional BM25 ranker. Ettin 68M reached 0.7688/0.7441 while running
-about 40% faster. Keep it opt-in.
+**Measured:** on 100 SciFact queries, full-precision GTE reached 0.8030 nDCG@10
+and 0.7837 MRR@10; universal fp32 Ettin 68M reached 0.7930/0.7699 at 261 MB and
+no AVX requirement. Source order scored 0.7222/0.6913 and 1.7.1's optional BM25
+ranker 0.6470/0.6108. Keep it opt-in.
 
 ### P2.3 Semantic query cache
 

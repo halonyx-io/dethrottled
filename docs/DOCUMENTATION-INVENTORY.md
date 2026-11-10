@@ -13,7 +13,7 @@ must be classified; unknown paths fail generation/checking.
 | dependency-input | 4 |
 | generated | 4 |
 | harness-guide | 20 |
-| historical-evidence | 209 |
+| historical-evidence | 215 |
 | planned-work | 1 |
 | source-contract | 167 |
 | third-party-notice | 4 |
@@ -229,7 +229,12 @@ Evidence maintainer: preserve observations; append explicit corrections.
 | [experiments/dnb/results/2026-11-09/p2-rerank-1.7.1.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-1.7.1.json) |
 | [experiments/dnb/results/2026-11-09/p2-rerank-100.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-100.json) |
 | [experiments/dnb/results/2026-11-09/p2-rerank-ettin-100.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-ettin-100.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-ettin-O4-100.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-ettin-O4-100.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-ettin-O4-30.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-ettin-O4-30.json) |
 | [experiments/dnb/results/2026-11-09/p2-rerank-ettin-depth10-100.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-ettin-depth10-100.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-ettin-fp32-100.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-ettin-fp32-100.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-ettin-fp32-depth10-100.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-ettin-fp32-depth10-100.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-ettin-fp32-depth20-100.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-ettin-fp32-depth20-100.json) |
 | [experiments/dnb/results/2026-11-09/p2-rerank-ettin-sweep-1024.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-ettin-sweep-1024.json) |
 | [experiments/dnb/results/2026-11-09/p2-rerank-ettin-sweep-256.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-ettin-sweep-256.json) |
 | [experiments/dnb/results/2026-11-09/p2-rerank-ettin-sweep-512.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-ettin-sweep-512.json) |
@@ -239,6 +244,7 @@ Evidence maintainer: preserve observations; append explicit corrections.
 | [experiments/dnb/results/2026-11-09/p2-rerank-ettin-sweep-full.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-ettin-sweep-full.json) |
 | [experiments/dnb/results/2026-11-09/p2-rerank-ettin-sweep-text1500.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-ettin-sweep-text1500.json) |
 | [experiments/dnb/results/2026-11-09/p2-rerank-ettin-sweep-text600.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-ettin-sweep-text600.json) |
+| [experiments/dnb/results/2026-11-09/p2-rerank-gte-full-100.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-gte-full-100.json) |
 | [experiments/dnb/results/2026-11-09/p2-rerank-jina_m1024_t3000_d30.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-jina_m1024_t3000_d30.json) |
 | [experiments/dnb/results/2026-11-09/p2-rerank-jina_m512_t3000_d30.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-jina_m512_t3000_d30.json) |
 | [experiments/dnb/results/2026-11-09/p2-rerank-small.json](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/p2-rerank-small.json) |

@@ -62,6 +62,17 @@ def test_onnx_path_accepts_the_ettin_quantized_filename(tmp_path, monkeypatch):
     assert rerank.onnx_path().endswith("model_quint8_avx2.onnx")
 
 
+def test_onnx_path_prefers_fp32_then_o4(tmp_path, monkeypatch):
+    (tmp_path / "model_O4.onnx").write_bytes(b"o4")
+    (tmp_path / "model_quint8_avx2.onnx").write_bytes(b"q8")
+    (tmp_path / "tokenizer.json").write_text("{}", encoding="utf-8")
+    monkeypatch.setenv("DETHROTTLED_RERANK_MODEL", str(tmp_path))
+    monkeypatch.delenv("DETHROTTLED_RERANK_ONNX", raising=False)
+    assert rerank.onnx_path().endswith("model_O4.onnx")
+    (tmp_path / "model.onnx").write_bytes(b"fp32")
+    assert rerank.onnx_path().endswith("model.onnx")
+
+
 def test_explicit_onnx_filename_wins(tmp_path, monkeypatch):
     (tmp_path / "model.onnx").write_bytes(b"a")
     (tmp_path / "model_full.onnx").write_bytes(b"b")

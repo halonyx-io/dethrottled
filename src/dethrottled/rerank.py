@@ -27,9 +27,11 @@ import threading
 _MODEL = None
 _LOCK = threading.Lock()
 
-# The 68M Ettin export is published as model_quint8_avx2.onnx, not model.onnx.
-_ONNX_NAMES = ("model.onnx", "model_quint8_avx2.onnx", "model_qint8_avx2.onnx",
-               "model_qint8_avx512.onnx", "model_qint8_arm64.onnx")
+# Common sentence-transformers / optimum exports. Prefer fp32, then the
+# optimised O4 build, then the instruction-set-specific quantized files.
+_ONNX_NAMES = ("model.onnx", "model_O4.onnx", "model_quint8_avx2.onnx",
+               "model_qint8_avx2.onnx", "model_qint8_avx512.onnx",
+               "model_qint8_avx512_vnni.onnx", "model_qint8_arm64.onnx")
 
 
 def model_dir() -> str:

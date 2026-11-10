@@ -84,13 +84,14 @@ disk and ~1.5x the runtime, so the quantized model is recommended.
 
 ### Final GTE run — 100 queries
 
-| Metric | BM25 | GTE |
-|---|---:|---:|
-| nDCG@10 | 0.7222 | **0.7722** |
-| MRR@10 | 0.6913 | **0.7455** |
+| Metric | BM25 | GTE quint8 | GTE fp32 |
+|---|---:|---:|---:|
+| nDCG@10 | 0.7222 | **0.7722** | **0.8030** |
+| MRR@10 | 0.6913 | **0.7455** | **0.7837** |
 
-Per query: 22 wins, 15 losses, 63 ties. This is a **+0.050 nDCG / +0.054 MRR**
-gain over a larger query sample. It is a real positive signal, but not yet enough
+Per query, quantized GTE: 22 wins, 15 losses, 63 ties; full-precision GTE: 24
+wins, 13 losses, 63 ties. This is a **+0.050 nDCG / +0.054 MRR** gain for the
+quantized build and **+0.081 / +0.092** for fp32 over a larger query sample. It is a real positive signal, but not yet enough
 to make reranking a default; the query-level wins are not overwhelming and a
 larger multi-dataset run is the right next step.
 
@@ -102,7 +103,8 @@ larger multi-dataset run is the right next step.
 |---|---:|---:|
 | 1.7.1 default source order (pool order) | 0.7222 | 0.6913 |
 | 1.7.1 optional BM25 ranker on the same 30 candidates | 0.6470 | 0.6108 |
-| GTE, tuned settings above | **0.7722** | **0.7455** |
+| GTE quint8, tuned settings above | **0.7722** | **0.7455** |
+| GTE fp32, same settings | **0.8030** | **0.7837** |
 
 The 1.7.1 BM25 number is its ranker applied to an already-retrieved candidate
 pool, not a full web search. The useful comparison is that GTE adds about
@@ -112,7 +114,9 @@ pool, not a full web search. The useful comparison is that GTE adds about
 ### Ettin reranker — encoder-only export gotchas
 
 Tested `cross-encoder/ettin-reranker-68m-v1` at revision `d166fa8`
-(Apache-2.0, 68M parameters, 67 MB `model_quint8_avx2.onnx`).
+(Apache-2.0, 68M parameters). Three artifacts were compared: fp32
+`onnx/model.onnx` (261 MB), `onnx/model_O4.onnx` (131 MB) and
+`onnx/model_quint8_avx2.onnx` (67 MB).
 
 Both `onnx/model.onnx` and `onnx/model_quint8_avx2.onnx` output
 `last_hidden_state`, not `logits`. Feeding either through a normal
@@ -141,8 +145,13 @@ Gotchas confirmed:
   `[6.375, 11.5, 7.625, 10.4375]`; quint8 produced
   `[5.30, 11.43, 6.66, 10.48]`. Rank order held, and the fp32 match is how the
   head was validated.
-- The AVX2 file is the right choice for this AMD Ryzen test host (AVX2, no
-  AVX-512).
+- The AVX2 file is the right choice for an AVX2-only host (this AMD Ryzen test
+  machine), but it is **not universal** and it lost quality over 100 queries:
+  quint8 0.7688/0.7441 versus fp32 0.7930/0.7699.
+- `model_O4.onnx` produced exactly the same 30- and 100-query rankings as fp32
+  at half the file size, but was slower on this CPU (866 s versus 621 s for the
+  100-query run), consistent with an optimised/fp16 export adding cast work.
+- The universal public-repo choice is **`onnx/model.onnx` (fp32)**.
 
 Ettin settings sweep — 30 queries:
 
@@ -158,10 +167,23 @@ Ettin settings sweep — 30 queries:
 | quint8, 512 tokens, 1,500 chars | 0.7839 | 0.7742 |
 | quint8, 512 tokens, 600 chars | 0.7912 | 0.7819 |
 | fp32, 512 tokens, depth 30 | 0.7994 | 0.7854 |
+| O4, 512 tokens, depth 30 | 0.7994 | 0.7854 |
 
 Ettin keeps the same shape as GTE: 512 tokens, title+text, 3,000 characters,
-depth 20–30. Unlike GTE, the 68M model is fast enough that depth 10 is a useful
-low-latency policy.
+depth 20–30. The 30-query quint8 lead over fp32 did not survive the larger
+sample: over 100 queries fp32 is clearly better.
+
+Ettin artifact choice:
+
+| Artifact | Size | Portability | 100q nDCG@10 | 100q MRR@10 | Wall time |
+|---|---:|---|---:|---:|---:|
+| **`model.onnx` (fp32)** | 261 MB | any CPU | **0.7930** | **0.7699** | 621 s |
+| `model_O4.onnx` | 131 MB | ORT CPU, slower here | 0.7930 | 0.7699 | 866 s |
+| `model_quint8_avx2.onnx` | 67 MB | AVX2 only | 0.7688 | 0.7441 | 572 s |
+
+`model_qint8_avx512*.onnx` and `model_qint8_arm64.onnx` were not benchmarked.
+The fp32 export is the best Ettin result and the only one that is independent of
+CPU instruction set.
 
 ### Ettin versus GTE versus 1.7.1 — 100 queries
 
@@ -169,16 +191,26 @@ low-latency policy.
 |---|---:|---:|---:|
 | 1.7.1 default source order | 0.7222 | 0.6913 | — |
 | 1.7.1 optional BM25 ranker | 0.6470 | 0.6108 | — |
-| GTE quint8, 512 tokens, depth 30 | **0.7722** | **0.7455** | 940 s |
+| **GTE fp32, 512 tokens, depth 30** | **0.8030** | **0.7837** | 1,340 s |
+| **Ettin fp32, 512 tokens, depth 30** | **0.7930** | **0.7699** | 621 s |
+| Ettin O4, 512 tokens, depth 30 | 0.7930 | 0.7699 | 866 s |
+| Ettin fp32, 512 tokens, depth 20 | 0.7858 | 0.7629 | 405 s |
+| Ettin fp32, 512 tokens, depth 10 | 0.7662 | 0.7543 | 185 s |
+| GTE quint8, 512 tokens, depth 30 | 0.7722 | 0.7455 | 940 s |
 | Ettin quint8, 512 tokens, depth 30 | 0.7688 | 0.7441 | 572 s |
 | Ettin quint8, 512 tokens, depth 10 | 0.7547 | 0.7414 | 166 s |
 
-Ettin is **0.003 nDCG / 0.001 MRR behind GTE** over 100 queries — inside noise —
-while being roughly 40% faster and less than half the size. It reranks the top
-30 without losing MRR and keeps most of the gain even when only the top 10 are
-reranked. GTE stays the recommendation because it is marginally ahead on both
-metrics and has the larger 100-query evidence base; Ettin is a strong second
-choice, especially where latency or image size matters.
+Per-query, Ettin fp32 scored **27 wins / 11 losses / 62 ties** against source
+order, **+0.071 nDCG / +0.079 MRR**.
+
+The universal fp32 Ettin is **+0.021 nDCG / +0.024 MRR over quantized GTE** and
+**+0.024 / +0.026 over quantized Ettin**, while being faster than either GTE
+build. Full-precision GTE is still the quality leader at 0.8030/0.7837, but it
+costs 572 MB, is 2.2x the size of fp32 Ettin and 2.2x slower on this CPU.
+
+The best Ettin configuration is **fp32 `model.onnx`, 512 tokens, title+text,
+3,000 characters, depth 30, 8 threads**. For a public repo that is the artifact
+to document: no AVX2/AVX-512 requirement, 261 MB, and the best Ettin scores.
 
 ### Settings that did not help
 
@@ -190,16 +222,20 @@ choice, especially where latency or image size matters.
   all scored below the chosen 512-token/title+text/depth-30 setting.
 
 
-**Decision:** keep reranking opt-in. GTE is the recommended optional model
-(Apache-2.0, 144 MB quantized ONNX). `scripts/fetch-rerank-model.sh` downloads
-the pinned GTE revision. Ettin 68M is a close second (Apache-2.0, 67 MB, faster)
-and is supported through the encoder-only post-processing path. Jina scored
-slightly higher but is CC-BY-NC. The earlier small-set result is retained in
+**Decision:** keep reranking opt-in. The best measured quality is full-precision
+GTE (0.8030/0.7837, 572 MB). The best balance for a universal public artifact is
+fp32 Ettin (`onnx/model.onnx`, 0.7930/0.7699, 261 MB, no AVX requirement) — it
+beats the quantized GTE that was previously recommended. Quantized Ettin is the
+smallest/fastest option but loses about 0.024 nDCG. Jina scored slightly higher
+at 60 queries but is CC-BY-NC. The earlier small-set result is retained in
 `p2-rerank-small.json` so the failed first test is not hidden.
 
 Evidence: [p2-rerank.json](p2-rerank.json),
 [p2-rerank-small.json](p2-rerank-small.json),
 [p2-rerank-ettin-100.json](p2-rerank-ettin-100.json),
+[p2-rerank-ettin-fp32-100.json](p2-rerank-ettin-fp32-100.json),
+[p2-rerank-ettin-O4-100.json](p2-rerank-ettin-O4-100.json),
+[p2-rerank-gte-full-100.json](p2-rerank-gte-full-100.json),
 [p2-rerank-ettin-depth10-100.json](p2-rerank-ettin-depth10-100.json),
 `tests/test_rerank.py`.
 
@@ -273,18 +309,18 @@ Evidence: `tests/test_provider_rotation.py`.
 
 ## Verification
 
-- Host offline suite: **915 passed, 139 skipped, 2 deselected**.
-- Full suite inside the candidate API image: **1,066 passed, 15 skipped,
+- Host offline suite: **916 passed, 139 skipped, 2 deselected**.
+- Full suite inside the candidate API image: **1,067 passed, 15 skipped,
   2 deselected**.
-- P2 targeted tests: **61 passed, 2 skipped**.
+- P2 targeted tests: **62 passed, 2 skipped**.
 - Documentation and agent-doc checks pass.
 
 Images:
 
 - API: `dethrottled-dnb-api:1.8.0-dev-p2-20261109`
-  (`sha256:f8d90945…`)
+  (`sha256:4a16fd84…`)
 - Worker: `dethrottled-dnb:1.8.0-dev-p2-20261109`
-  (`sha256:7c8fd331…`)
+  (`sha256:4ba2e983…`)
 
 No default ranking, provider key, proxy or cookie behavior changed. P2 outcomes
 that did not earn a default stay opt-in, and no release action is authorised.
