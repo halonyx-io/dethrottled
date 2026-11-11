@@ -7,6 +7,7 @@ It does not produce an answer or call a language model.
 from __future__ import annotations
 
 import ipaddress
+import os
 import re
 import socket
 from urllib.parse import urlsplit
@@ -121,6 +122,17 @@ def public_url(url: str) -> bool:
         return False
 
 
+def _deferred_hosts() -> tuple[str, ...]:
+    raw = os.getenv("DETHROTTLED_RESEARCH_DEFER_HOSTS", "")
+    return tuple(item.strip().lower() for item in raw.split(",") if item.strip())
+
+
+def _defer_host(host: str) -> bool:
+    host = host.lower()
+    return any(host == item or host.endswith("." + item)
+               for item in _deferred_hosts())
+
+
 def select_sources(searches: list[list[dict]], limit: int,
                    *, official_first: bool = False) -> list[dict]:
     """Interleave queries, dedupe URLs, and avoid one site filling the pack.
@@ -159,6 +171,9 @@ def select_sources(searches: list[list[dict]], limit: int,
                     "fetch_relevance": row.get("fetch_relevance"),
                     "query_indexes": [query_index], "search_rank": rank + 1}
             by_url[key] = item
+            if _defer_host(host):
+                deferred.append(item)
+                continue
             if per_host.get(host, 0) < 2 and len(selected) < limit:
                 selected.append(item)
                 per_host[host] = per_host.get(host, 0) + 1

@@ -39,6 +39,20 @@ def test_default_primary_source_probe_leads_bundle(monkeypatch):
     assert selected[0]["url"] == "https://docs.example.org/guide"
 
 
+def test_selection_defers_configured_hosts(monkeypatch):
+    monkeypatch.setattr(engine, "public_url", lambda url: True)
+    monkeypatch.setenv("DETHROTTLED_RESEARCH_DEFER_HOSTS", "stackoverflow.com")
+    rows = [[
+        {"url": "https://stackoverflow.com/questions/1", "title": "SO"},
+        {"url": "https://docs.example.org/guide", "title": "Docs"},
+        {"url": "https://other.example/report", "title": "Other"},
+    ]]
+    selected = engine.select_sources(rows, 3)
+    assert [item["url"] for item in selected[:2]] == [
+        "https://docs.example.org/guide", "https://other.example/report"]
+    assert selected[2]["url"] == "https://stackoverflow.com/questions/1"
+
+
 def test_evidence_windows_points_back_into_source_text():
     text = ("Unrelated introduction. " * 60
             + "In 2025, Denmark had 5120 megawatts of solar capacity. ")
