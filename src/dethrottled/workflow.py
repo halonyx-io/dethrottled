@@ -20,7 +20,8 @@ max_discovery_requests. Mapping reads seeds/sitemaps; discovered candidates are 
 policy_blocked=adblock or adblock_blocked means deliberate content filtering. Do not retry
 through other tiers to override it. Report the refusal or choose another relevant source.
 Filtering status, list availability and update errors are in v2/status and stats.
-For discovery start with profile=web, limit=15, ranking=source. DDG Lite/HTML/TLS/browser
+For discovery start with profile=web, limit=5, ranking=source; request up to 15
+only when you need a broader menu. DDG Lite/HTML/TLS/browser
 share a hard ten-result budget, with no automatic search pagination. Supplementary
 engines contribute at most three URLs each; the complete menu is at most fifteen.
 Bing/Brave are not automatic general-web supplements. If evidence is missing, read

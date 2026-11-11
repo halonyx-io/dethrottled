@@ -46,7 +46,7 @@ gaps; it does not verify semantic support or operate arbitrary application contr
 6. Assess source authority, date, agreement and semantic support yourself. Stop
    when the question is supported, not merely when a tool reports success.
 
-For ordinary discovery, start with `profile="web", limit=15, ranking="source"`.
+For ordinary discovery, start with `profile="web", limit=5, ranking="source"; request up to 15 only for a broader menu`.
 When useful evidence is missing, read the promising choices, rewrite around the
 missing fact or choose the appropriate specialist profile. DDG is hard capped at
 ten across its acquisition routes; each supplementary engine gets three, with six

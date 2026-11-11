@@ -69,7 +69,7 @@ for operator budgets, indexing jobs, repair and rollback.
 
 ## Search controls
 
-Normal discovery starts with `profile="web", limit=15, ranking="source"`.
+Normal discovery starts with `profile="web", limit=5, ranking="source"; request up to 15 only for a broader menu`.
 DDG Lite/HTML/TLS/browser are acquisition alternatives within one ten-choice
 provider-family budget. Yahoo and Yandex supply small supplements, at most three
 URLs each, six total; the complete menu never exceeds fifteen unique URLs.

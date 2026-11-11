@@ -342,7 +342,7 @@ mcp._mcp_server.version = ADAPTER_VERSION
 @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, openWorldHint=True))
 async def search(
     query: str,
-    limit: Annotated[int, Field(ge=1, le=MAX_RESULTS)] = 15,
+    limit: Annotated[int, Field(ge=1, le=MAX_RESULTS)] = 5,
     fresh: bool = False,
     rank: bool = False,
     corpus: int = 0,
@@ -472,7 +472,7 @@ async def extract_with_links(
 @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, openWorldHint=True))
 async def search_and_fetch(
     query: str,
-    limit: Annotated[int, Field(ge=1, le=MAX_RESULTS)] = 5,
+    limit: Annotated[int, Field(ge=1, le=MAX_RESULTS)] = 3,
     max_chars: Annotated[int, Field(ge=1, le=MAX_CHARS)] = 3000,
     rank: bool = False,
     render: Literal["auto", "always", "never"] = "auto",

@@ -16,7 +16,7 @@ Find pages. Returns ranked results with url, title and snippet.
 | Argument | Type/choices | Required/default |
 |---|---|---|
 | `query` | str | required |
-| `limit` | Annotated[int, Field(ge=1, le=MAX_RESULTS)] | 15 |
+| `limit` | Annotated[int, Field(ge=1, le=MAX_RESULTS)] | 5 |
 | `fresh` | bool | False |
 | `rank` | bool | False |
 | `corpus` | int | 0 |
@@ -78,7 +78,7 @@ Find pages and read them in one call.
 | Argument | Type/choices | Required/default |
 |---|---|---|
 | `query` | str | required |
-| `limit` | Annotated[int, Field(ge=1, le=MAX_RESULTS)] | 5 |
+| `limit` | Annotated[int, Field(ge=1, le=MAX_RESULTS)] | 3 |
 | `max_chars` | Annotated[int, Field(ge=1, le=MAX_CHARS)] | 3000 |
 | `rank` | bool | False |
 | `render` | Literal['auto', 'always', 'never'] | 'auto' |
