@@ -246,6 +246,7 @@ if a.phase == "contracts":
 
     def checkpoint():
         value = drive(
+            operation_id="release-checkpoint",
             steps=[
                 {"action": "click", "selector": "#save"},
                 {

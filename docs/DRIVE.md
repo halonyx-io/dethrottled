@@ -131,9 +131,11 @@ outcomes without typed values, selectors or response bodies.
 
 Use an explicit session plus `operation_id` for retry protection. An identical
 completed operation can replay its saved result; changed payloads conflict.
-The durable bounded journal lasts 24 hours. Running/unknown outcomes after a
-crash require inspection; it is not an exactly-once guarantee for external effects.
-Very large results may retain the outcome without replayable evidence.
+Completed entries expire after 24 hours. Running and unknown entries have a
+seven-day retention limit. A full journal refuses new operations while existing
+entries remain available for retry checks. An interrupted operation may require
+inspecting the external state before acting again. Very large results retain the
+completion record without storing a second copy of the evidence.
 
 Automatic fetch recovery uses its own caller/exact-host browser identities and
 checkpoints. It does not export their cookies to curl or share them between

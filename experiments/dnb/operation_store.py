@@ -72,6 +72,12 @@ class OperationStore:
                 CREATE INDEX IF NOT EXISTS operation_updated ON operations(updated);
                 """
             )
+            # DNB starts one worker per state directory. Any previous running
+            # rows belong to the old worker and cannot report a final outcome.
+            self.connection.execute(
+                "UPDATE operations SET state=? WHERE state=?",
+                (OperationState.UNKNOWN, OperationState.RUNNING),
+            )
             self.connection.commit()
         except sqlite3.Error as exc:
             raise StoreUnavailable("operation store unavailable") from exc
@@ -82,13 +88,6 @@ class OperationStore:
             "OR (state!='completed' AND updated<?)",
             (now - COMPLETED_TTL, now - UNKNOWN_TTL),
         )
-        rows = self.connection.execute("SELECT COUNT(*) FROM operations").fetchone()[0]
-        if rows > self.max_rows:
-            self.connection.execute(
-                "DELETE FROM operations WHERE rowid IN ("
-                "SELECT rowid FROM operations ORDER BY updated ASC LIMIT ?)",
-                (rows - self.max_rows,),
-            )
 
     def begin(self, owner, session, operation_id, fingerprints):
         """Insert ``running`` or return the existing row.
@@ -99,71 +98,67 @@ class OperationStore:
         encoded = json.dumps(list(fingerprints))
         now = time.time()
         try:
-            with self.lock:
-                with closing(self.connection.cursor()) as cursor:
-                    cursor.execute("BEGIN IMMEDIATE")
-                    self._prune(now)
-                    row = cursor.execute(
-                        "SELECT state, fingerprints, result FROM operations "
-                        "WHERE owner=? AND session=? AND operation_id=?",
-                        (digest, session, operation_id),
-                    ).fetchone()
-                    if row is not None:
-                        self.connection.commit()
-                        stored = json.loads(row[1])
-                        if not any(item in stored for item in fingerprints):
-                            raise OperationConflict("operation id payload conflict")
-                        return Operation(row[0], stored, row[2])
-                    cursor.execute(
-                        "INSERT INTO operations VALUES(?,?,?,?,?,?,?,?)",
-                        (digest, session, operation_id, OperationState.RUNNING,
-                         encoded, None, now, now),
-                    )
-                    self.connection.commit()
-                    return None
-        except OperationConflict:
-            raise
+            with self.lock, self.connection, closing(self.connection.cursor()) as cursor:
+                cursor.execute("BEGIN IMMEDIATE")
+                self._prune(now)
+                row = cursor.execute(
+                    "SELECT state, fingerprints, result FROM operations "
+                    "WHERE owner=? AND session=? AND operation_id=?",
+                    (digest, session, operation_id),
+                ).fetchone()
+                if row is not None:
+                    stored = json.loads(row[1])
+                    if not any(item in stored for item in fingerprints):
+                        raise OperationConflict("operation id payload conflict")
+                    return Operation(row[0], stored, row[2])
+                rows = cursor.execute("SELECT COUNT(*) FROM operations").fetchone()[0]
+                if rows >= self.max_rows:
+                    # Losing an unexpired entry could allow a mutation to run twice.
+                    raise StoreUnavailable("operation journal full")
+                cursor.execute(
+                    "INSERT INTO operations VALUES(?,?,?,?,?,?,?,?)",
+                    (digest, session, operation_id, OperationState.RUNNING,
+                     encoded, None, now, now),
+                )
+                return None
         except (sqlite3.Error, ValueError, TypeError) as exc:
-            try:
-                self.connection.rollback()
-            except sqlite3.Error:
-                pass
             raise StoreUnavailable("operation store unavailable") from exc
 
     def complete(self, owner, session, operation_id, result):
         try:
-            with self.lock:
+            evidence = json.dumps(result)
+            # Match the browser journal's evidence limit across restarts.
+            if len(evidence) > 1_000_000:
+                evidence = None
+            with self.lock, self.connection:
                 self.connection.execute(
                     "UPDATE operations SET state=?, result=?, updated=? "
                     "WHERE owner=? AND session=? AND operation_id=?",
-                    (OperationState.COMPLETED, json.dumps(result), time.time(),
+                    (OperationState.COMPLETED, evidence, time.time(),
                      owner_digest(owner), session, operation_id),
                 )
-                self.connection.commit()
         except (sqlite3.Error, TypeError, ValueError) as exc:
             raise StoreUnavailable("operation store unavailable") from exc
 
     def mark_unknown(self, owner, session, operation_id):
         try:
-            with self.lock:
+            with self.lock, self.connection:
                 self.connection.execute(
                     "UPDATE operations SET state=?, updated=? "
                     "WHERE owner=? AND session=? AND operation_id=?",
                     (OperationState.UNKNOWN, time.time(), owner_digest(owner),
                      session, operation_id),
                 )
-                self.connection.commit()
         except sqlite3.Error as exc:
             raise StoreUnavailable("operation store unavailable") from exc
 
     def release_session(self, owner, session):
         try:
-            with self.lock:
+            with self.lock, self.connection:
                 self.connection.execute(
                     "DELETE FROM operations WHERE owner=? AND session=?",
                     (owner_digest(owner), session),
                 )
-                self.connection.commit()
         except sqlite3.Error as exc:
             raise StoreUnavailable("operation store unavailable") from exc
 

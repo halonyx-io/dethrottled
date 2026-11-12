@@ -179,13 +179,24 @@ class AccessMiddleware:
         request_id = uuid.uuid4().hex
         lease = None
         try:
-            claims = await asyncio.to_thread(
-                self.registry.verify, headers.get(b"authorization", b"").decode())
+            try:
+                authorization = headers.get(b"authorization", b"").decode("ascii")
+            except UnicodeDecodeError as exc:
+                raise AccessError("invalid_bearer_token") from exc
+            claims = await asyncio.to_thread(self.registry.verify, authorization)
             path = scope.get("path", "")
             required = "drive" if path == "/drive" else (
                 "corpus" if path.startswith("/corpus/") else "web")
             if not path.startswith("/mcp") and required not in claims["scopes"]:
                 raise AccessError("insufficient_scope", 403)
+            # The stateless adapter sends tool results in POST responses.
+            # Idle SSE streams must not hold tool execution leases.
+            if self.mcp and path.rstrip("/") == "/mcp" and scope.get("method") == "GET":
+                await send({"type": "http.response.start", "status": 405,
+                            "headers": [(b"allow", b"POST"),
+                                        (b"x-request-id", request_id.encode())]})
+                await send({"type": "http.response.body", "body": b""})
+                return
             admission_started = time.monotonic()
             acquiring = asyncio.create_task(asyncio.to_thread(
                 self.admission.acquire, claims["namespace"]))
@@ -236,7 +247,7 @@ class AccessMiddleware:
                         "headers": response_headers})
             await send({"type": "http.response.body", "body": body})
             return
-        authorization_token = CALLER_AUTHORIZATION.set(headers.get(b"authorization",b"").decode())
+        authorization_token = CALLER_AUTHORIZATION.set(authorization)
         claims_token = CLAIMS.set(claims)
         trace_token = REQUEST_ID.set(request_id)
 

@@ -1,7 +1,7 @@
-"""Experimental shared Patchright acquisition + upstream Crawl4AI extraction.
+"""DNB browser worker with Patchright and Crawl4AI extraction.
 
-Not a general replacement for Crawl4AI's API: accept only the contract used by
-Dethrottled 1.7.1. Existing search/drive handlers and lifecycle remain unchanged.
+Serves Dethrottled discovery, drive and the supported subset of the Crawl4AI
+read API. Owns browser admission, policy and extraction lifecycle.
 """
 
 from __future__ import annotations
@@ -70,7 +70,12 @@ except (OSError, StoreUnavailable):
     SESSION_OWNERS = None
 try:
     _STATE_DIR.mkdir(parents=True, exist_ok=True)
-    OPERATION_STORE = OperationStore(_STATE_DIR / "operations.sqlite")
+    # The browser already owns operations.sqlite when both state directories
+    # point at the same Compose volume. Leave its checkpoints and journal in place.
+    journal = "dnb-operations.sqlite" if _STATE_DIR.resolve() == browser.STATE_DIR.resolve() else (
+        "operations.sqlite"
+    )
+    OPERATION_STORE = OperationStore(_STATE_DIR / journal)
 except (OSError, StoreUnavailable):
     OPERATION_STORE = None
 
@@ -742,6 +747,17 @@ browser._drive = drive_steps
 
 
 async def bounded_drive(body, request):
+    try:
+        initial = urlparse(body.url).hostname or next(
+            (
+                urlparse(step.url).hostname
+                for step in body.steps
+                if step.action.lower() == "goto" and step.url
+            ),
+            "",
+        )
+    except ValueError:
+        raise retry_error("invalid_navigation_url", 422, False) from None
     claims = principal(request)
     durable_session = bool(body.session) and not body.session.startswith(
         ("auto-read-", "auto-reader-")
@@ -796,9 +812,12 @@ async def bounded_drive(body, request):
         except StoreUnavailable:
             raise retry_error("operation_store_unavailable", 503, True) from None
         if existing is not None:
-            if existing.state == OperationState.COMPLETED and existing.result:
+            if existing.state == OperationState.COMPLETED:
+                if existing.result is None:
+                    raise retry_error("operation_completed_evidence_unavailable_inspect_session",
+                                      409, False)
                 try:
-                    return json.loads(existing.result)
+                    return {**json.loads(existing.result), "operation_replayed": True}
                 except (TypeError, ValueError):
                     raise retry_error("operation_result_unreadable", 503, True) from None
             if existing.state == OperationState.RUNNING:
@@ -821,14 +840,6 @@ async def bounded_drive(body, request):
             raise
 
     assets = claims.get("asset_hosts") if claims else None
-    initial = urlparse(body.url).hostname or next(
-        (
-            urlparse(step.url).hostname
-            for step in body.steps
-            if step.action.lower() == "goto" and step.url
-        ),
-        "",
-    )
     token = DRIVE_POLICY.set((tuple(assets) if assets is not None else None, initial))
     try:
         result = await until_disconnect(

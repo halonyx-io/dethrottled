@@ -137,3 +137,33 @@ def test_port_probe_allows_restart_after_closed_connections():
             accepted.close()
             assert client.recv(1) == b''
     stack.check_port(port)
+
+
+def test_status_ignores_stale_healthy_flag_on_stopped_container(monkeypatch):
+    monkeypatch.setattr(stack, 'containers', lambda _: [{
+        'Config': {'Labels': {'com.docker.compose.service': 'dnb'}},
+        'State': {'Running': False, 'Status': 'exited', 'Health': {'Status': 'healthy'}},
+    }])
+    status = stack.inspect_status('test', 19087, 'default')
+    assert status['services']['dnb']['state'] == 'unavailable'
+
+
+def test_up_checks_port_when_only_other_services_exist(monkeypatch, tmp_path):
+    monkeypatch.setenv('DETHROTTLED_STACK_HOME', str(tmp_path))
+    root = tmp_path / 'test'
+    root.mkdir()
+    (root / 'project.json').write_text('{"port":19087}')
+    monkeypatch.setattr(stack, 'prerequisites', lambda: None)
+    monkeypatch.setattr(stack, 'containers', lambda _: [{
+        'Config': {'Labels': {'com.docker.compose.service': 'format-worker'}},
+        'State': {'Running': True},
+    }])
+
+    def busy(port):
+        assert port == 19087
+        raise stack.StackError('port in use')
+
+    monkeypatch.setattr(stack, 'check_port', busy)
+    monkeypatch.setattr(stack, 'prepare_context',
+                        lambda _: pytest.fail('occupied port reached setup'))
+    assert stack.main(['up', '--project', 'test']) == 1

@@ -71,3 +71,42 @@ def test_storage_failure_fails_closed(tmp_path):
     directory.mkdir()
     with pytest.raises(StoreUnavailable):
         OperationStore(directory)
+
+
+def test_capacity_preserves_unexpired_operations(tmp_path):
+    store = OperationStore(tmp_path / "ops.sqlite", max_rows=2)
+    try:
+        store.begin("alice", "s1", "running", ["fp-a"])
+        store.begin("alice", "s1", "unknown", ["fp-b"])
+        store.mark_unknown("alice", "s1", "unknown")
+        with pytest.raises(StoreUnavailable):
+            store.begin("alice", "s1", "new", ["fp-c"])
+        assert store.begin("alice", "s1", "running", ["fp-a"]).state == OperationState.RUNNING
+        assert store.begin("alice", "s1", "unknown", ["fp-b"]).state == OperationState.UNKNOWN
+        assert store.count() == 2
+    finally:
+        store.close()
+
+
+def test_restart_marks_pending_operation_unknown(tmp_path):
+    path = tmp_path / "ops.sqlite"
+    store = OperationStore(path)
+    store.begin("alice", "s1", "op", ["fp"])
+    store.close()
+    reopened = OperationStore(path)
+    try:
+        assert reopened.begin("alice", "s1", "op", ["fp"]).state == OperationState.UNKNOWN
+    finally:
+        reopened.close()
+
+
+def test_large_result_retains_completion_without_evidence(tmp_path):
+    store = OperationStore(tmp_path / "ops.sqlite")
+    try:
+        store.begin("alice", "s1", "op", ["fp"])
+        store.complete("alice", "s1", "op", {"evidence": "a" * 1_000_000})
+        existing = store.begin("alice", "s1", "op", ["fp"])
+        assert existing.state == OperationState.COMPLETED
+        assert existing.result is None
+    finally:
+        store.close()

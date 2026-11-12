@@ -36,8 +36,8 @@ overrides. Disabling retains the cached list without loading or updating it.
 | curl_cffi fetch/discovery and scoped identity sessions | Domain check on every redirect hop, preserving native TLS |
 | DDGS native client | Guarded native HTTP boundary and redirects |
 | Managed SearXNG engines | Guarded pinned asynchronous curl_cffi client and redirects |
-| Managed Patchright search, `/drive` and headed recovery | Per-context in-process HTTP/CONNECT gate |
-| Managed Crawl4AI browser | Same gate, chained through its existing egress-pinning proxy |
+| DNB search, rendering, `/drive` and headed recovery | Per-context HTTP/CONNECT gate with DNS pinning for rendering and drive |
+| Optional legacy Crawl4AI browser | Same gate, chained through its existing egress-pinning proxy |
 | Browser subresources, redirects, frames, popups, WebSockets and worker traffic | Browser connections pass through the context gate |
 | Documents, archives, images, audio and downloaded attachments | Acquisition uses the corresponding HTTP/TLS/browser transport; local parsing is unchanged |
 | Captions | Guarded transcript HTTP session |

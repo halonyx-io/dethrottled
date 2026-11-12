@@ -48,6 +48,11 @@ unique disk requirements. Shared layers, architecture, build cache, retained
 source data, corpus growth and optional model caches change actual disk use.
 A named volume surviving shutdown is expected; `stack down` does not reclaim it.
 
+The default DNB worker runs one Chromium installation through Patchright for
+search, rendering and browser interaction. It uses Crawl4AI's Python extractor
+inside the same worker and omits the unused Node executable bundled with
+Playwright's compatibility imports.
+
 ## Optional workers
 
 <picture>

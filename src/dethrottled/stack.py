@@ -58,9 +58,9 @@ def prerequisites():
 def clean_environment(port):
     env = {k: v for k, v in os.environ.items() if not k.startswith(
         ('DETHROTTLED_', 'COMPOSE_', 'CRAWL4AI_'))}
-    # One documented operator switch; continue excluding keys and parent Compose state.
-    if 'DETHROTTLED_ADBLOCK' in os.environ:
-        env['DETHROTTLED_ADBLOCK'] = os.environ['DETHROTTLED_ADBLOCK']
+    for switch in ('DETHROTTLED_ADBLOCK', 'DETHROTTLED_RERANK'):
+        if switch in os.environ:
+            env[switch] = os.environ[switch]
     env.update(DETHROTTLED_PORT=str(port), DETHROTTLED_BIND='127.0.0.1',
                DETHROTTLED_VERSION=__version__)
     return env
@@ -152,10 +152,12 @@ def inspect_status(project, port, profile):
         name = c['Config']['Labels']['com.docker.compose.service']
         state = c['State']
         health = state.get('Health', {}).get('Status')
-        services[name] = {'state': ('ready' if health == 'healthy' else 'running'
-                                  if state['Running'] and health is None else 'initializing'
-                                  if state['Running'] and health == 'starting' else 'unavailable'),
-                          'container_state': state['Status'], 'health': health}
+        readiness = 'unavailable'
+        if state['Running']:
+            readiness = {None: 'running', 'healthy': 'ready',
+                         'starting': 'initializing'}.get(health, 'unavailable')
+        services[name] = {'state': readiness, 'container_state': state['Status'],
+                          'health': health}
     expected = BASE + (['media-worker'] if profile in {'media', 'full'} else []) + (
         ['docling-worker'] if profile in {'layout', 'full'} else [])
     for name in expected:
@@ -223,7 +225,16 @@ def main(argv=None):
         profile = args.profile or previous.get('profile', 'default')
         existing = containers(args.project)
         if args.action == 'up':
-            if not existing or port != previous.get('port'):
+            port_is_ours = any(
+                c['State']['Running']
+                and c['Config']['Labels'].get('com.docker.compose.service') == 'dethrottled'
+                and any(binding.get('HostPort') == str(port)
+                        and binding.get('HostIp') in {'127.0.0.1', '0.0.0.0', ''}
+                        for binding in (c.get('NetworkSettings', {}).get('Ports', {})
+                                        .get('8787/tcp') or []))
+                for c in existing
+            )
+            if not port_is_ours:
                 check_port(port)
             context = prepare_context(root)
             # Managed image names never overwrite the production :local tags.

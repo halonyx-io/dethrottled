@@ -1,8 +1,8 @@
-# DNB browser consolidation prototype
+# DNB browser consolidation experiment
 
-An isolated experiment against Dethrottled **1.7.1**, commit
-`9ad5fa36a6290c442fcfcc9aebeb8bdcf6a4aa80`. Production code, deployments,
-package versions and releases are unchanged. Rust is outside this experiment.
+DNB is the default browser worker in 1.8.1. This records the experiment against Dethrottled **1.7.1**, commit
+`9ad5fa36a6290c442fcfcc9aebeb8bdcf6a4aa80`. For current setup, see the
+[quick start](../../docs/QUICKSTART.md).
 
 DNB imports the existing browser-search service, retaining its Patchright search,
 27 drive actions, scoped sessions, checkpoints, downloads, graphics selection,
@@ -24,7 +24,7 @@ universal anti-bot access. See the [initial measured pilot](results/2026-11-06/R
 [caller-isolated reuse follow-up](results/2026-11-07/REPORT.md). The current
 default and security decisions are in [the scope review](results/2026-11-07/SECURITY-SCOPE.md).
 
-## Current progress — 2026-11-08
+## Prototype progress recorded on 2026-11-08
 
 **Phase 1 is complete for the local x86_64 DNB worker.** Its 33 focused tests and
 real HTTP cancellation/crash gates passed. See the [acceptance record](results/2026-11-08/PHASE-1.md),
@@ -103,8 +103,9 @@ and the unauthorised release checklist in
 | 5. Browser modes/GPU | Accepted in the isolated lab: matched headed/headless x software/verified hardware matrix | Keep the probe and fallback regressions; native/release validation remains phase 6 |
 | 6. Candidate and release | Technical checks complete; candidate held for further improvement work | Layer-by-layer 1.8.0 vs 1.7.1 benchmark and accepted fixes; release re-approval |
 
-Production stays on 1.7.1. This branch remains unpublished development work;
-1.8.0 is not declared ready. The 1.8.2 DPR document is saved planning only.
+The table records the prototype milestones. DNB shipped in 1.8.0 and became
+the default in both installation paths in 1.8.1. The 1.8.2 DPR document remains
+a proposal.
 The new extractor processes change the resource footprint: old pilot CPU/RAM
 figures must not be presented as measurements of this candidate.
 
@@ -262,7 +263,7 @@ unchanged from the supplied brief. It proposes programmatic single-item and dura
 bulk acquisition after DNB and stabilization. Saving this proposal does not approve
 its implementation, fix release dates or change the current 1.8.0 scope.
 
-## Pending 1.8.0 plan
+## Historical 1.8.0 validation plan
 
 Phase status and evidence are tracked above. A local phase acceptance is not
 release acceptance; the remaining phases and their exit gates still apply.

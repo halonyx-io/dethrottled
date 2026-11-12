@@ -145,13 +145,15 @@ superiority claim. Earlier evaluations proved native Reddit interaction and
 recovery on specific pages; Crunchbase and G2 remained blocked. Current live
 outcomes, historical reports and limits are linked in the
 [evidence index](https://github.com/halonyx-io/dethrottled/blob/main/docs/EVIDENCE.md).
-Neural live-web reranking remains disabled by default; 1.8.0 adds an opt-in Ettin reranker.
+Compose enables the local Ettin reranker by default. Standalone Python can opt in.
 
-## 1.8.1 stabilization
+## Current stack
 
 GitHub Compose and the PyPI managed stack both build DNB from bundled source.
 DNB provides browser discovery, rendering and interaction. Compose generates
 a signing key in the API data volume and gives DNB the public verifier.
+DNB launches Chromium through Patchright and runs Crawl4AI extraction in bounded
+worker processes.
 
 ## Historical 1.8.0 validation
 
@@ -243,7 +245,7 @@ The fetch ladder does not consult `robots.txt`. Raw API access to trusted LAN
 targets requires care; public adapters enforce narrower policies, alongside
 operator-provided network isolation. See [operations](https://github.com/halonyx-io/dethrottled/blob/main/docs/OPERATIONS.md).
 
-This checkout is **1.8.1**. Check `/health` and `/v2/capabilities` on the service you
+This checkout is **1.8.2**. Check `/health` and `/v2/capabilities` on the service you
 actually use; deployed services and remote plugins can differ from a checkout.
 
 [MIT license](https://github.com/halonyx-io/dethrottled/blob/main/LICENSE) · Maintained by [Halonyx](https://github.com/halonyx-io)

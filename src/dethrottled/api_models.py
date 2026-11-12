@@ -77,15 +77,14 @@ class SearchBody(BaseModel):
         if len(rewritten) > 4096:
             raise ValueError("query plus domain constraints exceeds 4096 characters")
         return self
-    # Accept explicit false for existing callers. Reject true instead of
-    # claiming success when the removed model cannot run.
+    # Preserve the legacy request contract. Ettin is configured per server.
     rerank: bool = False
 
     @field_validator("rerank")
     @classmethod
-    def reranker_is_retired(cls, value: bool) -> bool:
+    def reranking_is_server_configured(cls, value: bool) -> bool:
         if value:
-            raise ValueError("Dethrottled no longer provides a reranker")
+            raise ValueError("Neural reranking is configured on the server, not per request")
         return value
     # How many already-fetched corpus passages to merge into the pool before
     # ranking. 0 disables it. These cost no fetch, so they are cheaper than the

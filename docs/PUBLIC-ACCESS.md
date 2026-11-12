@@ -34,7 +34,9 @@ A registry entry has this shape:
 ```
 
 Set `DETHROTTLED_TOKEN_REGISTRY_FILE` to the existing registry file. Arrange file
-ownership/permissions so container UID 10004 can read it; the management command
+ownership and permissions so the API and both adapters can read it. Set
+`DETHROTTLED_REGISTRY_GID` to the registry’s numeric group ID (default 10001).
+The management command
 uses mode 0640 and preserves existing owner/group on replacement. The bind mount
 fails if the source file is absent. Do not put plaintext bearers in Compose,
 command arguments, README examples or browser-side scripts.
@@ -179,16 +181,19 @@ Host-managed registry changes/revocation reload on subsequent requests and fail
 closed on unreadable or invalid credentials. For the container overlay, the
 registry is a file bind mount: an atomic replacement by `access-tokens.py` can
 leave an existing container reading the previous inode. After editing the host
-registry, recreate both adapters to remount the current file:
+registry, recreate the API and both adapters to remount the current file:
 
 ```sh
 docker compose -f docker-compose.yml -f docker-compose.agents.yml \
-  --profile public up -d --no-deps --force-recreate mcp rest
+  --profile public up -d --no-deps --force-recreate dethrottled mcp rest
 ```
 
 Do this immediately for revocations; do not assume the replaced host file is
-already visible inside running adapters. Revocation does not cancel work already
+already visible inside running services. Revocation does not cancel work already
 admitted. Named admission and engine data volumes are preserved by recreation.
+
+MCP uses stateless Streamable HTTP. Tool calls use POST. Authenticated GET
+event-stream requests return 405 without reserving an execution slot.
 
 Default admission is three concurrent requests per bearer identity, eight
 concurrent requests globally and 120 requests per minute per bearer identity.

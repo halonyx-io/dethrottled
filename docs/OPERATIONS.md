@@ -25,7 +25,7 @@ alone does not change running services. `stack down` preserves volumes. Use
 For a Git checkout:
 
 ```sh
-docker compose build dethrottled browser-search
+docker compose build dethrottled dnb
 docker run --rm --network none dethrottled:local python /app/verify_image.py
 docker compose up -d
 docker compose ps
@@ -127,8 +127,14 @@ The API publishes the matching public key in `dnb-trust`. Keep the previous
 deployment configuration and image IDs until the new stack passes smoke checks.
 
 Layout and speech workers use Compose networking. Operators using a host wake
-proxy can retain their host-specific worker URL overrides. Set
-`DETHROTTLED_RERANK=1` to seed and use the optional Ettin model.
+proxy can retain their host-specific worker URL overrides.
+
+For 1.8.2, rebuild the API and DNB with the existing Compose project and enabled
+profiles. Rebuild the authenticated adapters together if you use them, and check
+that they report a matching backend version. Keep the existing signing keys,
+browser state, corpus and model volumes. Compose seeds the Ettin model at startup
+and enables it by default. Set `DETHROTTLED_RERANK=0` to opt out. The default
+SearXNG engine selection is unchanged.
 
 ## State and backups
 

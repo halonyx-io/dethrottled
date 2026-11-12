@@ -127,6 +127,32 @@ def test_cancelled_admission_releases_lease_created_by_worker_thread():
     asyncio.run(run())
 
 
+def test_stateless_mcp_stream_does_not_reserve_admission():
+    from starlette.testclient import TestClient
+
+    class FakeRegistry:
+        def verify(self, authorization):
+            if authorization != "Bearer test-token":
+                raise AccessError("invalid_bearer_token")
+            return {"namespace": "test", "scopes": ["web"]}
+
+    class NoAdmission:
+        def acquire(self, _):
+            pytest.fail("idle stream reserved a tool slot")
+
+    async def forbidden(*_):
+        pytest.fail("idle stream reached the SDK")
+
+    client = TestClient(AccessMiddleware(
+        forbidden, registry=FakeRegistry(), admission=NoAdmission(), mcp=True
+    ))
+    assert client.get("/mcp").status_code == 401
+    assert client.get("/mcp", headers=[(b"authorization", b"Bearer \xff")]).status_code == 401
+    response = client.get("/mcp", headers={"Authorization": "Bearer test-token"})
+    assert response.status_code == 405
+    assert response.headers["allow"] == "POST"
+
+
 @pytest.mark.parametrize('identifier', [0, 17, 'call-17', ''])
 def test_mcp_admission_errors_correlate_request_and_preserve_retry_metadata(identifier):
     from starlette.testclient import TestClient

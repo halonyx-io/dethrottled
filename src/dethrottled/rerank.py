@@ -48,6 +48,10 @@ def onnx_path() -> str:
     return os.path.join(model_dir(), "model.onnx")
 
 
+def enabled() -> bool:
+    return os.getenv("DETHROTTLED_RERANK", "0").strip().lower() in {"1", "true", "yes", "on"}
+
+
 def available() -> bool:
     root = model_dir()
     return bool(root) and all(

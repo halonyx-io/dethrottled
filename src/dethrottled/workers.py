@@ -48,6 +48,14 @@ def endpoint(name):
 
 
 
+def _object_response(response):
+    try:
+        value = response.json()
+    except ValueError:
+        return None
+    return value if isinstance(value, dict) else None
+
+
 def status():
     urls = {
         "browser": (os.getenv("DETHROTTLED_BROWSER_SEARCH_URL"), "/health"),
@@ -74,34 +82,36 @@ def status():
                 "http_status": response.status_code,
             }
             if response.status_code == 503:
-                try:
-                    detail = response.json().get('detail', '')
-                except ValueError:
-                    detail = ''
+                detail = (_object_response(response) or {}).get("detail")
                 if isinstance(detail, str) and detail.startswith((
-                        'speech_model_not_cached;', 'layout_models_not_cached;')):
-                    result.update(reason='model_not_cached', initialization='first_use_download')
+                        "speech_model_not_cached;", "layout_models_not_cached;")):
+                    result.update(reason="model_not_cached", initialization="first_use_download")
             if name == "browser" and response.status_code == 200:
-                graphics = response.json().get("graphics", {})
-                result["graphics"] = {k: v for k, v in graphics.items() if k in {
-                    "webgl", "hardware_verified", "renderer", "requested_mode", "fallback_reason"}}
+                health = _object_response(response)
+                if health is None:
+                    result.update(status="unready", reason="invalid_health_response")
+                else:
+                    graphics = health.get("graphics")
+                    if isinstance(graphics, dict):
+                        result["graphics"] = {k: v for k, v in graphics.items() if k in {
+                            "webgl", "hardware_verified", "renderer", "requested_mode",
+                            "fallback_reason"}}
             if path == "/ready" and response.status_code == 200:
-                metrics = requests.get(
-                    base.rstrip("/") + "/metrics", timeout=2, allow_redirects=False
-                )
-                if metrics.status_code == 200:
-                    allowed = {
-                        "active",
-                        "active_seconds",
-                        "completed",
-                        "failed",
-                        "timed_out",
-                        "cancelled",
-                        "rejected",
-                        "deadline_seconds",
-                        "max_input_bytes",
-                    }
-                    result["metrics"] = {k: v for k, v in metrics.json().items() if k in allowed}
+                # Metrics are optional and can fail independently of readiness.
+                try:
+                    response = requests.get(
+                        base.rstrip("/") + "/metrics", timeout=2, allow_redirects=False
+                    )
+                except requests.RequestException:
+                    pass
+                else:
+                    metrics = _object_response(response) if response.status_code == 200 else None
+                    if metrics is not None:
+                        allowed = {
+                            "active", "active_seconds", "completed", "failed", "timed_out",
+                            "cancelled", "rejected", "deadline_seconds", "max_input_bytes",
+                        }
+                        result["metrics"] = {k: v for k, v in metrics.items() if k in allowed}
         except (requests.RequestException, ValueError):
             result = {"status": "unreachable"}
         result["probe_ms"] = int((time.monotonic() - started) * 1000)

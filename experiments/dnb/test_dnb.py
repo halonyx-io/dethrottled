@@ -108,3 +108,20 @@ def test_unknown_browser_config_is_not_silently_ignored():
     )
     with pytest.raises(HTTPException):
         dnb.options(request)
+
+
+@pytest.mark.parametrize("params", [
+    {"url": "http://["},
+    {"steps": [{"action": "goto", "url": "http://["}]},
+])
+def test_malformed_drive_url_leaves_no_admission_or_journal_entry(monkeypatch, params):
+    monkeypatch.setattr(dnb, "DRIVE_INFLIGHT", 0)
+    monkeypatch.setattr(dnb, "principal", lambda _: {"sub": "test-owner"})
+    journal = SimpleNamespace(begin=lambda *_: pytest.fail("invalid URL entered journal"))
+    monkeypatch.setattr(dnb, "OPERATION_STORE", journal)
+    monkeypatch.setattr(dnb, "SESSION_OWNERS", SimpleNamespace(claim=lambda *_: None))
+    body = dnb.browser.DriveRequest(session="fixture", operation_id="test", **params)
+    with pytest.raises(HTTPException) as error:
+        asyncio.run(dnb.bounded_drive(body, None))
+    assert error.value.status_code == 422
+    assert dnb.DRIVE_INFLIGHT == 0

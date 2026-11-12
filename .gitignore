@@ -6,6 +6,7 @@ dist/
 # .env.example tells people to copy this to .env and edit it, so it must
 # not be committable by accident -- it is where keys and the bind address go.
 .env
+secrets/
 
 .venv/
 venv/

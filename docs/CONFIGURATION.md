@@ -9,8 +9,9 @@ DNB handles browser discovery, JavaScript rendering and interaction. Optional pr
 Authenticated remote adapters are a separate overlay. The API image already contains native readers, Tesseract and
 corpus weights; a source install requires explicit dependencies and setup.
 
-The optional Ettin reranker starts with `DETHROTTLED_RERANK=1` in the checkout
-stack. The API seeds its project cache at startup. Search retains its prior
+Ettin is enabled by default in both Compose installation paths. Set
+`DETHROTTLED_RERANK=0` to opt out before starting either stack. The API seeds its
+project cache on first startup. Search retains its prior
 ordering if the model is unavailable or cannot score the full batch. The
 `ranking` trace records `neural_rerank_unavailable` or `neural_rerank_fallback`.
 
@@ -65,7 +66,7 @@ through a local override:
 | `DETHROTTLED_MEMORY_PRESSURE` | `1` | browser worker: ask Chrome to release caches after crawl/drive; `0` disables |
 | `MCP_TOOL_PROFILE` | `full` | MCP adapter: `core` exposes six high-use tools; `full` exposes all 20 |
 | `DETHROTTLED_SEARCH_FANOUT` | `0` | API: one extra intent-aware query variant; extra upstream requests |
-| `DETHROTTLED_RERANK` | `0` | API: use the local Ettin 68M fp32 ONNX reranker when `DETHROTTLED_RERANK_MODEL` is set |
+| `DETHROTTLED_RERANK` | `1` in Compose, `0` in standalone Python | API: use the local Ettin 68M fp32 ONNX reranker when `DETHROTTLED_RERANK_MODEL` is set |
 | `DETHROTTLED_RERANK_MODEL` | empty | Directory produced by `scripts/fetch-rerank-model.sh`: Ettin 68M fp32 `model.onnx`, `tokenizer.json`, `config.json` and the `2_Dense`/`3_LayerNorm`/`4_Dense` modules |
 | `DETHROTTLED_RERANK_MAX_TOKENS` | `512` | Tokenizer truncation length, clamped to the model maximum |
 | `DETHROTTLED_RERANK_TEXT_CHARS` | `3000` | Title+body characters supplied to the reranker before token truncation |

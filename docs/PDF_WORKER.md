@@ -48,7 +48,7 @@ with urlopen(request, timeout=120) as response:
 Supported `format` values are `A4`, `A3`, `Letter`, and `Legal`; the default
 is `A4`. `POST /pdf` returns `application/pdf`. Requests larger than 20 MB
 receive 413. The worker renders one request at a time; an overfull wait can
-return 503. `GET /health` checks its process. Keep the PDF worker image pin in
-step with Crawl4AI's pin in `docker-compose.yml` when upgrading.
+return 503. `GET /health` checks its process. Validate changes to the PDF
+worker image pin with an offline print fixture.
 
 [Documentation home](README.md) · [Configuration](CONFIGURATION.md) · [Operations](OPERATIONS.md)

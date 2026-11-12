@@ -12,7 +12,7 @@ browser and renderer paths.
 agent / application
   -> local HTTP API, or optional authenticated REST/MCP adapter
        -> discovery: headed DDG/Bing worker, keyless web/news/academic sources
-       -> read: direct HTTP -> TLS -> Crawl4AI -> conditional headed browser
+       -> read: direct HTTP -> TLS -> DNB render -> conditional browser recovery
        -> operate: stateful headed browser /drive
        -> parse: local readers, OCR, default format and optional speech/layout workers
        -> retain: versioned documents, source bytes where available, read jobs
@@ -48,7 +48,7 @@ across facets, reads ten sources by default, and allows twenty when requested.
 
 ## Acquisition and parsing
 
-The normal ladder is direct HTTP, Chrome-like TLS through curl_cffi, Crawl4AI,
+The normal ladder is direct HTTP, Chrome-like TLS through curl_cffi, DNB rendering,
 then conditional reuse of the headed browser. Rendering restrictions override
 automatic escalation. Requested URLs are not forwarded to a hosted-reader service.
 Challenges and nearly empty script/iframe shells can reach the headed tier
@@ -86,12 +86,12 @@ MiniLM and multilingual E5 use separate versioned 384-dimensional indexes and
 relevance floors. E5 prefixes queries/passages and fuses retrieval with MiniLM;
 FTS5 supports lexical and opaque-identifier lookup. [Corpus v2](CORPUS.md) shares lexical text across models, commits durable
 admission before returning reads, and runs inference in a background worker.
-The retained v1 path uses its supervised E5 backfill child. No live-web neural
-reranker or external model service is required.
+The retained v1 path uses its supervised E5 backfill child. Live-web ranking uses
+the separate, local Ettin model when available in the Compose deployment.
 
 The API image contains pinned model weights under `/opt/dethrottled/models`.
 `/data` holds mutable cache, corpus, documents, source files and jobs. Browser
-checkpoints and operation history use the separate browser-state volume.
+checkpoints and operation history use the separate `dnb-state` volume.
 Optional speech/layout weights have their own persistent volumes. Public
 adapters share token hashes and admission state outside the raw API.
 

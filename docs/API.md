@@ -60,12 +60,15 @@ fetching is triggered just to fill a menu. DDG acquisition alternatives count as
 one provider family. Provenance records supplementary engine, original rank and
 page before URL deduplication. Bing/Brave/Google are not automatic web supplements.
 
-Source order is default. `rank=true`/`ranking="bm25"` selects lexical ranking;
+Provider order is the baseline. `rank=true`/`ranking="bm25"` selects lexical ranking;
 `ranking="fusion"` combines source and lexical order. `prefer_domains`, `recency`
 and stored `corpus` candidates are explicit refinements. Neural `rerank=true`
-is rejected. Optional keyed engines are never implicitly added to defaults.
+is rejected as a request flag. Compose enables the local Ettin reranker by default.
+Check `ranking.rerank` in capabilities and `neural_score` and the ranking trace
+in search responses. Provider ordering remains available on model failure.
+Optional keyed engines require explicit selection.
 The [ranking evaluation](../evaluations/search-policy/results/2026-11-03/REPORT.md)
-does not justify adding XGBoost or semantic inference to the default runtime.
+records the earlier comparison of lexical and fusion policies.
 
 Research uses up to fifteen choices per query and interleaves facets into a
 **24-URL global candidate pool**. `max_sources` defaults to ten and allows up to
@@ -88,12 +91,12 @@ curl -sS http://127.0.0.1:8787/fetch \
 booleans; MCP uses canonical `format`. `focus` requires text format.
 
 `render=auto|always|never` controls rendering; legacy booleans map true to
-always and false to auto. `always` prioritizes Crawl4AI; `never` and read profile
+always and false to auto. `always` prioritizes browser rendering; `never` and read profile
 `fast` prohibit rendering. Fetch profile defaults to balanced; thorough also
 requests headed fallback. Challenges and script-only shells can trigger headed
 recovery automatically. `headed_fallback=true` additionally requests it for other
 failures. `wait_for` is a CSS readiness selector; `render_delay` configures the
-Crawl4AI delay and is not a guarantee of complete dynamic content.
+renderer delay and is not a guarantee of complete dynamic content.
 
 `fresh=true` refreshes/replaces cache entries. `cache_mode=use|refresh|bypass`
 and `max_age` provide finer control; bypass neither reads nor writes.

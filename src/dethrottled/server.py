@@ -276,6 +276,7 @@ def _search_row(row: dict, meta: dict, index: int) -> dict:
         "discovery": row.get("discovery", []),
         "category": None,
         "score": row.get("score"),
+        "neural_score": row.get("neural_score"),
         "cached": bool(row.get("cached")),
         "retrieved_at": row.get("retrieved_at"),
         "cache_age_seconds": row.get("cache_age_seconds"),
@@ -849,7 +850,9 @@ def _ranked(body) -> tuple:
     something for the ranker to reject.
     """
     limit = body.limit or body.max_items or body.num_results
-    pool = min(15, limit * 3) if body.rank or body.ranking != "source" else limit
+    neural_requested = rerank.enabled()
+    neural_ready = neural_requested and rerank.available()
+    pool = min(15, limit * 3) if body.rank or body.ranking != "source" or neural_ready else limit
     from .search_constraints import discovery_query
     provider_query, impossible = discovery_query(body.query, body.domains, body.exclude_domains)
     if impossible:
@@ -901,9 +904,8 @@ def _ranked(body) -> tuple:
     if body.ranking == "fusion":
         rows = ranker.fuse_rows(rows, body.query, recency=body.recency)
         stages.append("rank_fusion")
-    if rows and os.getenv("DETHROTTLED_RERANK", "0").lower() not in {
-            "0", "false", "no", "off", ""}:
-        if not rerank.available():
+    if rows and neural_requested:
+        if not neural_ready:
             stages.append("neural_rerank_unavailable")
         else:
             depth = max(1, int(os.getenv("DETHROTTLED_RERANK_DEPTH", "30")))

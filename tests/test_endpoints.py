@@ -402,3 +402,22 @@ def test_neural_rerank_only_reorders_the_configured_depth(monkeypatch):
     result = TestClient(srv.app).post("/search", json={"query": "q"}).json()
     assert seen == [30]
     assert result
+
+
+def test_neural_ranking_reports_scores_and_expands_bounded_pool(monkeypatch):
+    monkeypatch.setenv("DETHROTTLED_RERANK", "1")
+    monkeypatch.setattr(srv.rerank, "available", lambda: True)
+    monkeypatch.setattr(srv.rerank, "score", lambda q, texts: list(range(len(texts))))
+    calls = []
+
+    def source(query, **kwargs):
+        calls.append(kwargs["max_items"])
+        return [dict(FAKE_ROWS[0], url=f"https://example.com/{i}", engine="web-ddg-lite")
+                for i in range(kwargs["max_items"])], dict(FAKE_META)
+
+    monkeypatch.setattr(srv.fs, "search", source)
+    response = TestClient(srv.app).post("/v2/search", json={"query": "One", "limit": 5})
+    rows = response.json()["results"]
+    assert calls == [15]
+    assert [row["neural_score"] for row in rows] == [14, 13, 12, 11, 10]
+    assert "neural_rerank" in rows[0]["ranking"]

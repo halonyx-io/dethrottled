@@ -25,16 +25,18 @@ services; a supported format does not guarantee a correct or complete extraction
 | HTML-to-PDF output | Separate worker `POST :8788/pdf` | Optional overlay; offline printing of supplied HTML |
 
 The base API image includes HTML and document parsers, Tesseract language data
-and MiniLM/E5 corpus weights. The base Compose stack adds browser-search,
-SearXNG, Crawl4AI and the format reader. Media/layout model downloads may be needed on first use;
+and MiniLM/E5 corpus weights. The base Compose stack adds DNB, SearXNG and the format reader. DNB handles
+browser discovery, rendering and interaction. Media/layout model downloads may be needed on first use;
 format parsing uses its own worker. See the [format matrix](DEPENDABLE-WORKFLOWS.md)
 and [setup](CONFIGURATION.md).
 
-Search profiles and explicit engines actively select sources. Lexical BM25 and
-fusion ranking are supported; neural reranking is disabled and `rerank=true` is
-rejected. Corpus models retrieve stored passages, not live-web cross-encoder
-reranking. Optional Exa/Tavily/Parallel discovery is explicitly selected and can
-be metered; defaults remain keyless.
+Search profiles and explicit engines select sources. Lexical BM25 and fusion
+ranking are available per request. Compose enables the local Ettin reranker by
+default. Its availability is reported in `ranking.rerank` on the capabilities
+endpoint, and scored search rows include `neural_score`. Configure neural
+reranking on the server. The legacy request flag `rerank=true` is rejected.
+Corpus models separately retrieve stored passages. Exa, Tavily and Parallel
+require explicit selection and can be metered.
 
 Compose defaults to verified graphics `auto` mode. The optional host helper exposes
 DRM devices when available; the worker verifies hardware rendering or falls back
