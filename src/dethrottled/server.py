@@ -931,14 +931,18 @@ def _ranked(body) -> tuple:
         if not neural_ready:
             stages.append("neural_rerank_unavailable")
         else:
-            depth = max(1, int(os.getenv("DETHROTTLED_RERANK_DEPTH", "30")))
-            head, tail = rows[:depth], rows[depth:]
-            ranked = rerank.rerank_rows(head, provider_query)
-            if ranked is head:
-                stages.append("neural_rerank_fallback")
-            else:
-                rows = ranked + tail
-                stages.append("neural_rerank")
+            depth = rerank.positive_setting("DETHROTTLED_RERANK_DEPTH", 3)
+            protected = int(rerank.keep_first())
+            head = rows[protected:depth]
+            if len(head) >= 2:
+                ranked = rerank.rerank_rows(head, provider_query)
+                if ranked is head:
+                    stages.append("neural_rerank_fallback")
+                else:
+                    rows = rows[:protected] + ranked + rows[depth:]
+                    stages.append("neural_rerank")
+                    if protected:
+                        stages.append("first_stage_lead_retained")
     if body.prefer_domains:
         rows = fs.rank(rows, body.prefer_domains)
         stages.append("preferred_domains")

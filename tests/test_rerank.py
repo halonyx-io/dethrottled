@@ -50,13 +50,13 @@ def test_absent_model_is_a_no_op(monkeypatch):
 
 def test_rerank_sorts_by_neural_score(monkeypatch):
     monkeypatch.setattr(rerank, "available", lambda: True)
-    monkeypatch.setattr(rerank, "score", lambda query, docs: [0.2, 0.9])
+    monkeypatch.setattr(rerank, "score", lambda query, docs: [0.9000001, 0.9000002])
     rows = [{"url": "https://a.example", "title": "A"},
             {"url": "https://b.example", "title": "B"}]
     ranked = rerank.rerank_rows(rows, "q")
     assert [row["url"] for row in ranked] == [
         "https://b.example", "https://a.example"]
-    assert ranked[0]["neural_score"] == 0.9
+    assert ranked[0]["neural_score"] == 0.9000002
 
 
 def test_model_failure_preserves_the_original_order(monkeypatch):

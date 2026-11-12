@@ -17,6 +17,14 @@ Ettin is enabled by default in both Compose installation paths. Set
 project cache on first startup. Search retains its prior
 ordering if the model is unavailable or cannot score the full batch. The
 `ranking` trace records `neural_rerank_unavailable` or `neural_rerank_fallback`.
+By default the first-stage winner keeps its slot and Ettin orders positions
+two and three. `first_stage_lead_retained` records that policy. Raw
+`neural_score` is available on scored rows, and provider positions remain
+available for diagnostics.
+The API uses the FP32 ONNX export with ONNX Runtime's CPU provider and applies
+the published Ettin scoring head in FP32. REST and MCP forward the API's
+scores and ordering. The Compose and managed-stack paths accept the same
+token, character, depth and thread settings.
 
 ## PyPI-managed installation
 
@@ -72,8 +80,9 @@ through a local override:
 | `DETHROTTLED_RERANK` | `1` in Compose, `0` in standalone Python | API: use the local Ettin 68M fp32 ONNX reranker when `DETHROTTLED_RERANK_MODEL` is set |
 | `DETHROTTLED_RERANK_MODEL` | empty | Directory produced by `scripts/fetch-rerank-model.sh`: Ettin 68M fp32 `model.onnx`, `tokenizer.json`, `config.json` and the `2_Dense`/`3_LayerNorm`/`4_Dense` modules |
 | `DETHROTTLED_RERANK_MAX_TOKENS` | `512` | Tokenizer truncation length, clamped to the model maximum |
-| `DETHROTTLED_RERANK_TEXT_CHARS` | `3000` | Title+body characters supplied to the reranker before token truncation |
-| `DETHROTTLED_RERANK_DEPTH` | `30` | Only the first N search candidates are reranked |
+| `DETHROTTLED_RERANK_TEXT_CHARS` | `3000` | Characters of labelled title, URL and snippet or passage before token truncation |
+| `DETHROTTLED_RERANK_DEPTH` | `3` | Shortlist depth including any protected first slot. Candidates beyond it retain first-stage order. |
+| `DETHROTTLED_RERANK_KEEP_FIRST` | `1` | Protect the first-stage winner. Set to `0` to let Ettin order the entire shortlist. |
 | `DETHROTTLED_RERANK_THREADS` | `8` | ONNX CPU threads for reranking; the tested configuration |
 | `DETHROTTLED_SEMANTIC_CACHE` | off | API: `1` or a SQLite path enables the separate paraphrase cache |
 | `DETHROTTLED_SEMANTIC_CACHE_THRESHOLD` | `0.55` | MiniLM cosine threshold; tune only with a labelled paraphrase set |

@@ -225,7 +225,7 @@ def page_details(html: str, url: str) -> dict:
                 target = urljoin(url, node.attributes.get(attribute, ""))
                 if urlsplit(target).scheme not in {"http", "https"} or target in seen:
                     continue
-                label = node.attributes.get("alt", "") or node.text(strip=True)[:200]
+                label = node.attributes.get("alt", "") or " ".join(node.text().split())[:200]
                 if tag == "a" and not re.search(r"\.(pdf|xlsx?|docx?|png|jpe?g)(?:$|\?)",
                                                 target, re.I):
                     continue
