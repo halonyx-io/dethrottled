@@ -901,14 +901,19 @@ def _ranked(body) -> tuple:
     if body.ranking == "fusion":
         rows = ranker.fuse_rows(rows, body.query, recency=body.recency)
         stages.append("rank_fusion")
-    if (os.getenv("DETHROTTLED_RERANK", "0").lower() not in
-            {"0", "false", "no", "off", ""} and rerank.available()):
-        depth = max(1, int(os.getenv("DETHROTTLED_RERANK_DEPTH", "30")))
-        if len(rows) > depth:
-            rows = rerank.rerank_rows(rows[:depth], provider_query) + rows[depth:]
+    if rows and os.getenv("DETHROTTLED_RERANK", "0").lower() not in {
+            "0", "false", "no", "off", ""}:
+        if not rerank.available():
+            stages.append("neural_rerank_unavailable")
         else:
-            rows = rerank.rerank_rows(rows, provider_query)
-        stages.append("neural_rerank")
+            depth = max(1, int(os.getenv("DETHROTTLED_RERANK_DEPTH", "30")))
+            head, tail = rows[:depth], rows[depth:]
+            ranked = rerank.rerank_rows(head, provider_query)
+            if ranked is head:
+                stages.append("neural_rerank_fallback")
+            else:
+                rows = ranked + tail
+                stages.append("neural_rerank")
     if body.prefer_domains:
         rows = fs.rank(rows, body.prefer_domains)
         stages.append("preferred_domains")

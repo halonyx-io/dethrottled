@@ -22,6 +22,7 @@ to 3,000 characters, the top 30 candidates and 8 ONNX threads.
 from __future__ import annotations
 
 import json
+import math
 import os
 import struct
 import threading
@@ -185,6 +186,8 @@ def rerank_rows(rows: list, query: str, *, text_chars: int | None = None) -> lis
     ]
     try:
         scores = score(query, texts)
+        if len(scores) != len(rows) or not all(math.isfinite(value) for value in scores):
+            return rows
     except Exception:
         return rows
     ranked = [dict(row, neural_score=round(value, 6))

@@ -66,6 +66,14 @@ def test_model_failure_preserves_the_original_order(monkeypatch):
     assert rerank.rerank_rows(rows, "q") == rows
 
 
+@pytest.mark.parametrize("scores", [[0.5], [0.5, float("nan")]])
+def test_incomplete_or_invalid_scores_preserve_candidates(monkeypatch, scores):
+    monkeypatch.setattr(rerank, "available", lambda: True)
+    monkeypatch.setattr(rerank, "score", lambda query, docs: scores)
+    rows = [{"url": "https://a.example"}, {"url": "https://b.example"}]
+    assert rerank.rerank_rows(rows, "q") is rows
+
+
 def test_model_directory_is_model_onnx(tmp_path, monkeypatch):
     _model_files(tmp_path)
     monkeypatch.setenv("DETHROTTLED_RERANK_MODEL", str(tmp_path))

@@ -9,6 +9,11 @@ DNB handles browser discovery, JavaScript rendering and interaction. Optional pr
 Authenticated remote adapters are a separate overlay. The API image already contains native readers, Tesseract and
 corpus weights; a source install requires explicit dependencies and setup.
 
+The optional Ettin reranker starts with `DETHROTTLED_RERANK=1` in the checkout
+stack. The API seeds its project cache at startup. Search retains its prior
+ordering if the model is unavailable or cannot score the full batch. The
+`ranking` trace records `neural_rerank_unavailable` or `neural_rerank_fallback`.
+
 ## PyPI-managed installation
 
 After `pip install dethrottled`, use `dethrottled stack up` to start the complete
