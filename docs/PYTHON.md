@@ -31,7 +31,8 @@ prerequisites and never installs system packages, elevates privileges or changes
 firewall configuration itself. First startup builds/downloads API and worker images,
 including corpus weights. Optional speech/layout models initialize on first use.
 
-The default stack includes API, DDG browser, SearXNG, renderer and format reader.
+The default stack includes the API, DNB browser, SearXNG and format reader.
+DNB serves browser discovery, rendering and drive.
 Use `--profile media`, `--profile layout` or `--profile full` with `stack up` for
 optional inference workers. Status distinguishes ready, initializing and unavailable
 services. A first-use model download is reported separately from a failed worker.
@@ -42,7 +43,7 @@ separate from Git-checkout production images. Project ownership is checked befor
 changing existing containers. The extracted context and project settings live under
 `~/.local/share/dethrottled/stacks` (LOCALAPPDATA on Windows); override with
 `DETHROTTLED_STACK_HOME`. Commands ignore unrelated parent Compose/application secrets. The documented
-`DETHROTTLED_ADBLOCK` switch is passed to all four network-owning workers.
+`DETHROTTLED_ADBLOCK` switch is passed to all three network-owning services.
 Keep your chosen value exported in the environment used for subsequent `stack up`
 commands; an invocation without it uses the default ON. Running containers retain
 their selected setting across ordinary restarts.

@@ -320,6 +320,13 @@ class Filter:
         with self.lock:
             if self.thread is not None and self.thread.is_alive():
                 return
+            # Load once synchronously before the worker thread exists. The
+            # background _run() also calls load(), so the first requests raced
+            # it and were allowed through unfiltered: measured 2026-11-11, two
+            # ad domains returned ALLOWED immediately after start() and only
+            # one was blocked after the thread finished. A cold parse is about
+            # 0.27s, paid once at startup, and it closes that window.
+            self.load()
             self.stop_event.clear()
             self.thread = threading.Thread(
                 target=self._run, daemon=True, name="dethrottled-adblock"

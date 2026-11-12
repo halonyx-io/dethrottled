@@ -21,7 +21,7 @@ from . import __version__
 
 LABEL = 'io.dethrottled.managed'
 PROFILES = {'default': [], 'media': ['media'], 'layout': ['layout'], 'full': ['full']}
-BASE = ['dethrottled', 'browser-search', 'searxng', 'crawl4ai', 'format-worker']
+BASE = ['dethrottled', 'dnb', 'searxng', 'format-worker']
 
 
 class StackError(RuntimeError):
@@ -61,7 +61,8 @@ def clean_environment(port):
     # One documented operator switch; continue excluding keys and parent Compose state.
     if 'DETHROTTLED_ADBLOCK' in os.environ:
         env['DETHROTTLED_ADBLOCK'] = os.environ['DETHROTTLED_ADBLOCK']
-    env.update(DETHROTTLED_PORT=str(port), DETHROTTLED_BIND='127.0.0.1')
+    env.update(DETHROTTLED_PORT=str(port), DETHROTTLED_BIND='127.0.0.1',
+               DETHROTTLED_VERSION=__version__)
     return env
 
 
@@ -170,7 +171,7 @@ def inspect_status(project, port, profile):
                      '\nexcept Exception:r["searxng"]={"status":"unavailable"}'
                      '\nprint(json.dumps(r))')
             workers = json.loads(run(['docker', 'exec', api['Id'], 'python', '-c', probe]))
-            names = {'browser': 'browser-search', 'renderer': 'crawl4ai',
+            names = {'browser': 'dnb', 'renderer': 'dnb',
                      'formats': 'format-worker', 'speech': 'media-worker',
                      'layout': 'docling-worker', 'searxng': 'searxng'}
             for worker, report in workers.items():
@@ -181,6 +182,11 @@ def inspect_status(project, port, profile):
                 services[name].update(state='ready' if state == 'ready' else 'initializing'
                                       if report.get('initialization') == 'first_use_download'
                                       else 'unavailable', probe=report)
+            if 'dnb' in services:
+                probes = {k: workers.get(k, {}) for k in ('browser', 'renderer')}
+                services['dnb'].update(
+                    state='ready' if all(r.get('status') == 'ready' for r in probes.values())
+                    else 'unavailable', probe=probes)
             with urllib.request.urlopen(f'http://127.0.0.1:{port}/health', timeout=3) as response:
                 health = json.load(response)
             services['dethrottled']['runtime_version'] = health.get('version')
@@ -221,7 +227,7 @@ def main(argv=None):
                 check_port(port)
             context = prepare_context(root)
             # Managed image names never overwrite the production :local tags.
-            build_services = ['dethrottled', 'browser-search', 'format-worker',
+            build_services = ['dethrottled', 'dnb', 'format-worker',
                               'media-worker', 'docling-worker']
             override = {'services': {n: {'labels': {LABEL: '1',
                          'io.dethrottled.version': __version__},
@@ -262,6 +268,12 @@ def main(argv=None):
                 if accepted or time.monotonic() >= deadline:
                     break
                 time.sleep(2)
+            if accepted:
+                legacy = [c['Id'] for c in existing if c['State']['Running'] and
+                          c['Config']['Labels']['com.docker.compose.service'] in
+                          {'browser-search', 'crawl4ai'}]
+                if legacy:
+                    run(['docker', 'stop', *legacy])
             report['startup_seconds'] = round(time.monotonic() - started, 2)
             report['started'] = accepted
             print(json.dumps(report, indent=2))

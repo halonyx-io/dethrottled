@@ -1,5 +1,26 @@
-# Optional AMD/Intel Mesa DRM access. scripts/compose-auto.sh supplies numeric GIDs.
+# Optional GPU access for the browser. scripts/compose-auto.sh supplies the
+# numeric GIDs from whatever host it is running on, so nothing here is pinned to
+# one machine.
+#
+# What this does: passes the DRM render nodes into the browser containers so
+# Chromium can composite on the GPU instead of software. It is rendering only -
+# no model inference uses these devices.
+#
+# What happens without it: both services fall back to software rendering. That
+# is a working configuration, just more CPU per page. dethrottled itself does
+# not require this file.
+#
+# Both dnb and browser-search are covered because dnb replaced browser-search as
+# the default browser; whichever one is running gets the device.
 services:
+  dnb:
+    devices:
+      - /dev/dri:/dev/dri
+    group_add:
+      - "${DETHROTTLED_GPU_RENDER_GID:?use scripts/compose-auto.sh or set the render GID}"
+      - "${DETHROTTLED_GPU_VIDEO_GID:?use scripts/compose-auto.sh or set the card GID}"
+    environment:
+      DETHROTTLED_BROWSER_GRAPHICS: auto
   browser-search:
     devices:
       - /dev/dri:/dev/dri

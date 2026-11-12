@@ -35,8 +35,7 @@ py -m venv .venv
 
 The package includes matching deployment sources; no Git clone is required.
 Installation alone starts nothing and downloads no models. Explicit startup can
-build/download images and acquire corpus weights. The default starts API, browser,
-SearXNG, Crawl4AI and the format reader. First-time builds need network/disk/time;
+build/download images and acquire corpus weights. The default starts the API, DNB browser, SearXNG and the format reader. First-time builds need network/disk/time;
 read the reported failure or initialization state rather than assuming a hang.
 
 Choose one optional worker profile:

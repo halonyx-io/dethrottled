@@ -13,6 +13,8 @@ ROOT = Path(__file__).parent
 DIRECTORIES = ('src', 'requirements', 'browser-search', 'workers', 'format-worker',
                'media-worker', 'docling-worker', 'docker', 'adapters',
                'scripts', 'docs', 'evaluations')
+LOCAL_SCRIPTS = {'bootstrap', 'ensure-dnb-keys', 'seed-model-cache',
+                 'worker-idle-stop', 'worker-wake-proxy'}
 FILES = ('Dockerfile', 'README.md', 'AGENTS.md', 'SKILL-dethrottled.md', 'LICENSE',
          'pyproject.toml', 'setup.py', 'MANIFEST.in', '.dockerignore')
 
@@ -21,11 +23,17 @@ class BuildWithStack(build_py):
     def run(self):
         super().run()
         files = [ROOT / name for name in FILES]
-        files += list(ROOT.glob('docker-compose*.yml'))
+        files += [ROOT / name for name in ('docker-compose.yml', 'docker-compose.gpu.yml',
+                  'docker-compose.agents.yml', 'docker-compose.pdf-worker.yml')]
+        files += [ROOT / 'experiments/dnb' / name for name in (
+            'dnb_service.py', 'context_pool.py', 'network_policy.py', 'extraction_pool.py',
+            'extract_worker.py', 'html_extract.py', 'navigation_guard.py', 'lifecycle.py',
+            'session_owners.py', 'operation_store.py', 'start.sh')]
         for name in DIRECTORIES:
             files += [p for p in (ROOT / name).rglob('*') if p.is_file() and not p.is_symlink()
                       and not any(x in p.parts for x in ('__pycache__', '.pytest_cache', '_stack'))
-                      and not p.name.endswith(('.pyc', '.pyo'))]
+                      and not p.name.endswith(('.pyc', '.pyo'))
+                      and not (name == 'scripts' and p.name in LOCAL_SCRIPTS)]
         missing = [str(p) for p in files[:len(FILES)] if not p.is_file()]
         if missing:
             raise RuntimeError('Incomplete deployment source context: ' + ', '.join(missing))

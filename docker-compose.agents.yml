@@ -1,12 +1,24 @@
 # Optional public REST/MCP adapters; keyless content workers are in the base file.
 # docker compose -f docker-compose.yml -f docker-compose.agents.yml --profile public up -d --build
 services:
+  dethrottled:
+    environment:
+      DETHROTTLED_CALLER_REGISTRY: /run/secrets/tokens.json
+      DETHROTTLED_ADAPTER_CIDRS: "${DETHROTTLED_ADAPTER_CIDRS:-127.0.0.1/32,::1/128,172.16.0.0/12}"
+    volumes:
+      - type: bind
+        source: ${DETHROTTLED_TOKEN_REGISTRY_FILE:-./secrets/tokens.json}
+        target: /run/secrets/tokens.json
+        read_only: true
+        bind:
+          create_host_path: false
   mcp:
     profiles: [public]
+    group_add: ["10001"]
     build:
       context: .
       dockerfile: adapters/Dockerfile
-    image: dethrottled-adapters:local
+    image: dethrottled-adapters:${DETHROTTLED_VERSION:-1.8.1}
     restart: unless-stopped
     ports: ["127.0.0.1:${DETHROTTLED_MCP_PORT:-18184}:18184"]
     environment:
@@ -23,7 +35,8 @@ services:
     depends_on: [dethrottled]
   rest:
     profiles: [public]
-    image: dethrottled-adapters:local
+    group_add: ["10001"]
+    image: dethrottled-adapters:${DETHROTTLED_VERSION:-1.8.1}
     restart: unless-stopped
     command: [uvicorn, public_gateway:app, --host, 0.0.0.0, --port, "18186"]
     ports: ["127.0.0.1:${DETHROTTLED_REST_PORT:-18186}:18186"]

@@ -118,22 +118,26 @@ response reading; override `DETHROTTLED_CONNECT_TIMEOUT` for slower networks.
 REST still defaults to detailed responses and now warns on large text payloads.
 The renamed root `SKILL-dethrottled.md` is included in the package and image.
 
-For 1.8.0, rebuild/recreate the API and browser services and refresh the
-host-managed MCP source, workflow and application-version modules together.
-Containerized adapters need the matching adapter image. Unchanged parsing
-workers need no restart. Preserve all volumes; no cache or corpus reset is
-required. Corpus v2 writes `corpus-v2.sqlite` beside the legacy database, so
-keep both for rollback. Ettin reranking remains opt-in and the model is not
-bundled: fetch it with `scripts/fetch-rerank-model.sh`, mount that directory
-read-only, and pass the `DETHROTTLED_RERANK*` settings through Compose.
-Production remains on 1.7.1 until this rollout is performed.
+For 1.8.1, use the base Compose configuration to build the API and DNB. Keep the
+same Compose project name when upgrading an existing DNB deployment so that
+`dnb-state`, `dethrottled-data` and model volumes remain attached. If the old
+deployment supplied host-managed signing keys, preserve the issuer by installing
+its private key as `dnb/issuer.pem` in the API data volume before the first start.
+The API publishes the matching public key in `dnb-trust`. Keep the previous
+deployment configuration and image IDs until the new stack passes smoke checks.
+
+Layout and speech workers use Compose networking. Operators using a host wake
+proxy can retain their host-specific worker URL overrides. Set
+`DETHROTTLED_RERANK=1` to seed and use the optional Ettin model.
 
 ## State and backups
 
 | Storage | Contents |
 |---|---|
 | dethrottled-data | Cache, corpus, retained documents/source files and jobs |
-| browser-state | Sensitive checkpoints and browser operation journal |
+| dnb-state | Sensitive DNB checkpoints and browser operation journal |
+| dnb-trust | Public DNB issuer key |
+| browser-state | Checkpoints for the optional legacy browser |
 | adblock-state | Last-good HaGeZi list, attribution, validators and worker observations |
 | media-models, layout-models | Optional downloaded model assets |
 | adapter-state / host admission path | Public shared request admission |

@@ -1348,7 +1348,16 @@ async def _drive(state: dict, body: DriveRequest) -> dict:
         read_metadata = {}
         if action == "goto":
             async def call(s=s, scope=scope):
-                return await navigate(s.url, min(30000, s.ms or 20000))
+                # `ms` on a goto step is a NAVIGATION TIMEOUT, but its field
+                # default is 1000ms - a value that makes sense for click and
+                # wait, not for loading a page. Honouring the default meant any
+                # goto that did not set ms explicitly died after one second:
+                # "Page.goto: Timeout 1000ms exceeded" on example.com.
+                # Only honour ms when the caller actually sent it; otherwise use
+                # the request's own timeout_ms, which callers already set.
+                budget = (min(30000, s.ms) if "ms" in s.model_fields_set
+                          else min(30000, body.timeout_ms))
+                return await navigate(s.url, budget)
         elif action == "click":
             async def call(s=s, scope=scope):
                 target = locator(s)

@@ -2,8 +2,8 @@
 services:
   dethrottled:
     image: dethrottled:one-zero-candidate
-  browser-search:
-    image: dethrottled-browser-search:one-zero-candidate
+  dnb:
+    image: dethrottled-dnb:one-zero-candidate
   format-worker:
     image: dethrottled-formats:one-zero-candidate
   fixture:

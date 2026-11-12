@@ -62,9 +62,10 @@ RUN if [ "$WITH_MODELS" = "1" ]; then \
 
 # Source-only updates reuse dependency and model layers. Freeze the deployed
 # runtime independently of Python source-install compatibility ranges.
-COPY Dockerfile pyproject.toml setup.py MANIFEST.in README.md AGENTS.md SKILL-dethrottled.md LICENSE .dockerignore docker-compose*.yml ./
+COPY Dockerfile pyproject.toml setup.py MANIFEST.in README.md AGENTS.md SKILL-dethrottled.md LICENSE .dockerignore docker-compose.yml docker-compose.agents.yml docker-compose.gpu.yml docker-compose.pdf-worker.yml ./
 COPY docker/ ./docker/
 COPY browser-search/ ./browser-search/
+COPY experiments/dnb/*.py experiments/dnb/start.sh ./experiments/dnb/
 COPY workers/ ./workers/
 COPY format-worker/ ./format-worker/
 COPY media-worker/ ./media-worker/
@@ -89,7 +90,9 @@ COPY adapters/ ./adapters/
 COPY scripts/ ./scripts/
 COPY README.md AGENTS.md SKILL-dethrottled.md LICENSE ./
 RUN chmod -R a+rX /app/docs /app/evaluations
-RUN mkdir -p /filters && chown 10001:10001 /filters && chmod 2770 /filters
+RUN mkdir -p /filters /trust /models/rerank-ettin-68m \
+    && chown 10001:10001 /filters /trust /models/rerank-ettin-68m \
+    && chmod 2770 /filters /trust
 USER dethrottled
 
 ENV DETHROTTLED_DATA_DIR=/data \

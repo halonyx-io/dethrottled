@@ -136,9 +136,8 @@ jobs:
           docker compose config --quiet
           DETHROTTLED_GPU_RENDER_GID=1 DETHROTTLED_GPU_VIDEO_GID=2 \
             docker compose -f docker-compose.yml -f docker-compose.gpu.yml config --quiet
-          DETHROTTLED_GPU=off COMPOSE_FILE=docker-compose.yml:docker-compose.pdf-worker.yml \
-            scripts/compose-auto.sh config --format json > /tmp/compose-selected.json
-          python3 -c 'import json; c=json.load(open("/tmp/compose-selected.json")); assert "pdf-worker" in c["services"]; assert not c["services"]["browser-search"].get("devices")'
+          docker compose --profile full config --format json > /tmp/compose-selected.json
+          python3 -c 'import json; s=json.load(open("/tmp/compose-selected.json"))["services"]; assert set(s) == {"dethrottled","dnb","searxng","format-worker","docling-worker","media-worker"}; assert not s["dnb"].get("devices")'
       - name: Build API and browser images natively
         run: |
           docker build -t dethrottled:ci .
@@ -197,9 +196,23 @@ jobs:
       - name: Fresh default Compose functional gates, no GPU or dotenv
         run: |
           docker tag dethrottled:ci dethrottled:one-zero-candidate
-          docker tag dethrottled-browser-search:ci dethrottled-browser-search:one-zero-candidate
+          docker build -f browser-search/Dockerfile --target dnb -t dethrottled-dnb:one-zero-candidate .
           docker build -f format-worker/Dockerfile -t dethrottled-formats:one-zero-candidate .
           python3 evaluations/release/compose-check.py --no-build --out /tmp/release-gates
+      - name: Boot a fresh installed wheel with DNB
+        run: |
+          python3 -m venv /tmp/dethrottled-wheel
+          /tmp/dethrottled-wheel/bin/pip install build
+          /tmp/dethrottled-wheel/bin/python -m build --outdir /tmp/dethrottled-dist
+          python3 scripts/verify_stack_package.py /tmp/dethrottled-dist/*.whl
+          /tmp/dethrottled-wheel/bin/pip install /tmp/dethrottled-dist/*.whl
+          cd /tmp
+          cli=/tmp/dethrottled-wheel/bin/dethrottled
+          export DETHROTTLED_STACK_HOME=/tmp/dethrottled-wheel-state
+          trap '"$cli" stack down --project dethrottled-wheel-ci' EXIT
+          "$cli" stack up --project dethrottled-wheel-ci --port 19088 --timeout 180
+          "$cli" stack status --project dethrottled-wheel-ci > /tmp/release-gates/wheel-stack.json
+          python3 -c 'import json; r=json.load(open("/tmp/release-gates/wheel-stack.json")); assert r["ready"] and r["services"]["dnb"]["state"] == "ready"'
       - name: Preserve release gate observations and negative results
         if: always()
         uses: actions/upload-artifact@v4

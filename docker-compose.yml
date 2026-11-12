@@ -10,9 +10,7 @@
 #   dethrottled  the search/fetch/extract API
 #   searxng      real search engines, queried from your machine, not a hosted
 #                aggregator with a quota
-#   crawl4ai     headless Chromium, so a JavaScript page can be read locally
-#                instead of by sending its URL to somebody else's reader
-#   browser-search  a private headed Chromium for discovery and interaction
+#   dnb          private Chromium worker for discovery, rendering and interaction
 #   format-worker   private MSG/XLSB parsing, discovered automatically
 #
 # Add --profile media, --profile layout, or --profile full for local inference.
@@ -26,7 +24,7 @@ name: dethrottled
 services:
   dethrottled:
     build: .
-    image: dethrottled:local
+    image: dethrottled-api:${DETHROTTLED_VERSION:-1.8.1}
     ulimits:
       core: 0
     restart: unless-stopped
@@ -45,7 +43,12 @@ services:
       DETHROTTLED_ADBLOCK: "${DETHROTTLED_ADBLOCK:-1}"
       DETHROTTLED_ADBLOCK_DIR: /filters
       DETHROTTLED_SEARXNG_URL: http://searxng:8080
-      DETHROTTLED_BROWSER_SEARCH_URL: http://browser-search:19888
+      DETHROTTLED_BROWSER_SEARCH_URL: http://dnb:19888
+      DETHROTTLED_DNB: "1"
+      DETHROTTLED_DNB_PUBLIC_KEY: /trust/issuer.pub
+      MALLOC_ARENA_MAX: "2"
+      DETHROTTLED_RERANK: "${DETHROTTLED_RERANK:-0}"
+      DETHROTTLED_RERANK_MODEL: /models/rerank-ettin-68m
       DETHROTTLED_CONNECT_TIMEOUT: "${DETHROTTLED_CONNECT_TIMEOUT:-2}"
       DETHROTTLED_READ_PLAN_SECONDS: "${DETHROTTLED_READ_PLAN_SECONDS:-30}"
       DETHROTTLED_CHEAP_DISCOVERY: "${DETHROTTLED_CHEAP_DISCOVERY:-1}"
@@ -54,9 +57,8 @@ services:
       # DDG and Bing News answered the frozen news pool; Google News and
       # Reuters were repeatedly suspended/erroring in the 2026-10-03 probe.
       DETHROTTLED_SEARXNG_ENGINES: "duckduckgo news,bing news"
-      DETHROTTLED_CRAWL4AI_URL: http://crawl4ai:11235
+      DETHROTTLED_CRAWL4AI_URL: http://dnb:19888
       DETHROTTLED_CRAWL4AI_API: crawl
-      DETHROTTLED_CRAWL4AI_TOKEN: "${CRAWL4AI_TOKEN:-dethrottled-compose-local}"
       DETHROTTLED_AUTO_WORKERS: "${DETHROTTLED_AUTO_WORKERS:-1}"
       DETHROTTLED_DATA_DIR: /data
       DETHROTTLED_LAYOUT_WORKER_URL: "${DETHROTTLED_LAYOUT_WORKER_URL:-}"
@@ -79,7 +81,7 @@ services:
       DETHROTTLED_CRAWL4AI_BUDGET: "${DETHROTTLED_CRAWL4AI_BUDGET:--1}"
       DETHROTTLED_RENDER_CONCURRENCY: "${DETHROTTLED_RENDER_CONCURRENCY:-2}"
       DETHROTTLED_MEDIA_WORKER_URL: "${DETHROTTLED_MEDIA_WORKER_URL:-}"
-      DETHROTTLED_USER_AGENT: "${DETHROTTLED_USER_AGENT:-dethrottled/1.8.0 (automated fetcher)}"
+      DETHROTTLED_USER_AGENT: "${DETHROTTLED_USER_AGENT:-dethrottled/1.8.1 (automated fetcher)}"
       DETHROTTLED_EXTRACT_CACHE_CHARS: "${DETHROTTLED_EXTRACT_CACHE_CHARS:-1000000}"
       # MODEL_DIR is deliberately NOT set here. The image bakes the weights
       # into /opt/dethrottled/models, and pointing this at /data/models would
@@ -89,19 +91,62 @@ services:
     volumes:
       - adblock-state:/filters
       - dethrottled-data:/data
+      - dnb-trust:/trust
+      - rerank-models:/models/rerank-ettin-68m
+    command:
+      - /bin/sh
+      - -ec
+      - |
+        if [ "$$DETHROTTLED_RERANK" = 1 ]; then
+          sh /app/scripts/fetch-rerank-model.sh || echo "Reranker seed failed; provider order remains available" >&2
+        fi
+        exec dethrottled --host 0.0.0.0 --port 8787
     depends_on:
       searxng:
         condition: service_started
-      crawl4ai:
-        condition: service_started
+
+
+  dnb:
+    build:
+      context: .
+      dockerfile: browser-search/Dockerfile
+      target: dnb
+    image: dethrottled-dnb:${DETHROTTLED_VERSION:-1.8.1}
+    group_add: ["10001"]
+    init: true
+    restart: unless-stopped
+    shm_size: 1gb
+    mem_limit: 4g
+    cpus: 4
+    pids_limit: 1024
+    environment:
+      DETHROTTLED_BROWSER_STATE_DIR: /state
+      DETHROTTLED_DNB_STATE_DIR: /state
+      DETHROTTLED_ADBLOCK: "${DETHROTTLED_ADBLOCK:-1}"
+      DETHROTTLED_ADBLOCK_DIR: /filters
+      DETHROTTLED_ADBLOCK_COMPONENT: browser
+      DETHROTTLED_ADBLOCK_READER: "1"
+      DETHROTTLED_BROWSER_GRAPHICS: "${DETHROTTLED_BROWSER_GRAPHICS:-auto}"
+      DETHROTTLED_BROWSER_RECOVERY: "${DETHROTTLED_BROWSER_RECOVERY:-auto}"
+      DNB_ALLOW_INTERNAL_URLS: "${DNB_ALLOW_INTERNAL_URLS:-true}"
+      DNB_TRUST_PUBLIC_KEY: /trust/issuer.pub
+    volumes:
+      - dnb-state:/state
+      - adblock-state:/filters:ro
+      - dnb-trust:/trust:ro
+    depends_on:
+      dethrottled:
+        condition: service_healthy
+    expose: ["19888"]
 
   browser-search:
+    profiles: [legacy-browser-search]
     group_add: ["10001"]
     init: true
     build:
       context: .
       dockerfile: browser-search/Dockerfile
-    image: dethrottled-browser-search:local
+    image: dethrottled-browser-search:${DETHROTTLED_VERSION:-1.8.1}
     restart: unless-stopped
     environment:
       DETHROTTLED_BROWSER_STATE_DIR: /state
@@ -145,6 +190,7 @@ services:
       - "8080"
 
   crawl4ai:
+    profiles: [legacy-crawl4ai]
     group_add: ["10001"]
     # Pinned 0.9.5: safer untrusted requests and correct quoted CSS extraction.
     # Verified against JS, quoted selector/wait, missing-page and rejection probes.
@@ -192,11 +238,13 @@ services:
     build:
       context: .
       dockerfile: docling-worker/Dockerfile
-    image: dethrottled-docling:local
+    image: dethrottled-docling:${DETHROTTLED_VERSION:-1.8.1}
     ulimits:
       core: 0
     init: true
     restart: unless-stopped
+    environment:
+      OMP_NUM_THREADS: "${DETHROTTLED_WORKER_THREADS:-4}"
     volumes: [layout-models:/models]
     expose: ["19891"]
     mem_limit: 8g
@@ -206,7 +254,7 @@ services:
     build:
       context: .
       dockerfile: format-worker/Dockerfile
-    image: dethrottled-formats:local
+    image: dethrottled-formats:${DETHROTTLED_VERSION:-1.8.1}
     ulimits:
       core: 0
     init: true
@@ -220,18 +268,22 @@ services:
     build:
       context: .
       dockerfile: media-worker/Dockerfile
-    image: dethrottled-media:local
+    image: dethrottled-media:${DETHROTTLED_VERSION:-1.8.1}
     ulimits:
       core: 0
     init: true
     restart: unless-stopped
     environment:
+      OMP_NUM_THREADS: "${DETHROTTLED_WORKER_THREADS:-4}"
       WHISPER_MODEL: "${WHISPER_MODEL:-small}"
       MEDIA_MAX_SECONDS: "${MEDIA_MAX_SECONDS:-1800}"
     volumes: [media-models:/models]
     expose: ["19889"]
     mem_limit: 3g
 volumes:
+  dnb-state:
+  dnb-trust:
+  rerank-models:
   adblock-state:
   browser-state:
   dethrottled-data:

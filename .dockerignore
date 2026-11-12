@@ -54,3 +54,13 @@ examples/
 .DS_Store
 .idea/
 .vscode/
+
+# Keep local deployment overrides and credentials out of build contexts.
+docker-compose.180.yml
+docker-compose.dnb.yml
+secrets/
+scripts/bootstrap
+scripts/ensure-dnb-keys
+scripts/seed-model-cache
+scripts/worker-idle-stop
+scripts/worker-wake-proxy

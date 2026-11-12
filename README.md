@@ -35,7 +35,7 @@ dethrottled stack status
 ```
 
 The Python distribution includes matching deployment sources: **no Git clone is
-needed**. `stack up` builds/downloads the five default services and waits for
+needed**. `stack up` builds/downloads the four default services (API, DNB, SearXNG and format reader) and waits for
 readiness. Installing the package alone starts nothing and downloads no models.
 
 ```sh
@@ -147,12 +147,13 @@ outcomes, historical reports and limits are linked in the
 [evidence index](https://github.com/halonyx-io/dethrottled/blob/main/docs/EVIDENCE.md).
 Neural live-web reranking remains disabled by default; 1.8.0 adds an opt-in Ettin reranker.
 
-## 1.8.0 release status
+## 1.8.1 stabilization
 
-1.8.0 is the current release. It is tagged `v1.8.0`, published to PyPI as
-`dethrottled==1.8.0`, and has package artifacts attached to the GitHub release.
-Production remains on 1.7.1 until an operator performs the rollout below;
-publishing a package or GitHub release does not replace running services.
+GitHub Compose and the PyPI managed stack both build DNB from bundled source.
+DNB provides browser discovery, rendering and interaction. Compose generates
+a signing key in the API data volume and gives DNB the public verifier.
+
+## Historical 1.8.0 validation
 
 The release candidate was frozen at commit `735d420` (tag
 `phase5-candidate-20261109`) and then extended with the OCR fixes and the opt-in
@@ -242,7 +243,7 @@ The fetch ladder does not consult `robots.txt`. Raw API access to trusted LAN
 targets requires care; public adapters enforce narrower policies, alongside
 operator-provided network isolation. See [operations](https://github.com/halonyx-io/dethrottled/blob/main/docs/OPERATIONS.md).
 
-This checkout is **1.8.0**. Check `/health` and `/v2/capabilities` on the service you
+This checkout is **1.8.1**. Check `/health` and `/v2/capabilities` on the service you
 actually use; deployed services and remote plugins can differ from a checkout.
 
 [MIT license](https://github.com/halonyx-io/dethrottled/blob/main/LICENSE) · Maintained by [Halonyx](https://github.com/halonyx-io)

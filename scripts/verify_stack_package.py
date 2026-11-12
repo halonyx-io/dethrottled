@@ -29,6 +29,9 @@ with tarfile.open(fileobj=io.BytesIO(content), mode='r:gz') as archive:
                            n.startswith(prefix + source.rstrip('/') + '/') for n in names), (
                                filename, source)
                 checked += 1
+    assert 'docker-compose.180.yml' not in names and 'docker-compose.dnb.yml' not in names
+    compose = archive.extractfile('docker-compose.yml').read().decode()
+    assert 'target: dnb' in compose and 'http://dnb:19888' in compose
     assert 'docker/searxng/settings.yml' in names and 'workers/runtime.py' in names
     api_recipe = archive.extractfile('Dockerfile').read().decode()
     root_sources = [s for line in api_recipe.splitlines() if line.startswith('COPY ')

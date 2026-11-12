@@ -4,8 +4,8 @@
   <img src="assets/profiles.svg" alt="Default stack and optional profiles">
 </picture>
 
-Base Compose runs five services: API, browser-search, SearXNG, Crawl4AI and the
-MSG/XLSB format reader. Optional profiles add local speech and PDF layout.
+Base Compose runs the API, DNB browser, SearXNG and the MSG/XLSB format reader.
+DNB handles browser discovery, JavaScript rendering and interaction. Optional profiles add local speech and PDF layout.
 Authenticated remote adapters are a separate overlay. The API image already contains native readers, Tesseract and
 corpus weights; a source install requires explicit dependencies and setup.
 

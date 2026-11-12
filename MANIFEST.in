@@ -1,5 +1,6 @@
 include Dockerfile README.md LICENSE pyproject.toml setup.py .dockerignore
-include docker-compose*.yml
+include docker-compose.yml docker-compose.agents.yml docker-compose.gpu.yml docker-compose.pdf-worker.yml
+include experiments/dnb/*.py experiments/dnb/start.sh
 recursive-include requirements *
 recursive-include browser-search *
 recursive-include workers *
@@ -18,3 +19,6 @@ prune src/dethrottled/_stack
 include AGENTS.md SKILL-dethrottled.md
 
 recursive-include src/dethrottled/licenses *.txt
+
+exclude scripts/bootstrap scripts/ensure-dnb-keys scripts/seed-model-cache
+exclude scripts/worker-idle-stop scripts/worker-wake-proxy

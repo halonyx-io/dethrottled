@@ -52,18 +52,7 @@ protocol = dict(
 )
 (a.out / "deployment-protocol.json").write_text(json.dumps(protocol, indent=2))
 try:
-    if not a.no_build:
-        for tag, dockerfile, context in [
-            ("dethrottled:one-zero-candidate", "Dockerfile", "."),
-            (
-                "dethrottled-browser-search:one-zero-candidate",
-                "browser-search/Dockerfile",
-                ".",
-            ),
-            ("dethrottled-formats:one-zero-candidate", "format-worker/Dockerfile", "."),
-        ]:
-            run(["docker", "build", "-f", dockerfile, "-t", tag, context])
-    run([*compose, "up", "-d", "--no-build"])
+    run([*compose, "up", "-d", "--no-build" if a.no_build else "--build"])
     command = [
         sys.executable,
         str(repo / "evaluations/release/run.py"),
@@ -73,7 +62,7 @@ try:
         str(a.out),
     ]
     run(command)
-    run([*compose, "restart", "browser-search"])
+    run([*compose, "restart", "dnb"])
     run([*command, "--phase", "restore"])
     protocol["status"] = "passed"
 except Exception:
