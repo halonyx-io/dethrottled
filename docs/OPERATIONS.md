@@ -136,6 +136,17 @@ browser state, corpus and model volumes. Compose seeds the Ettin model at startu
 and enables it by default. Set `DETHROTTLED_RERANK=0` to opt out. The default
 SearXNG engine selection is unchanged.
 
+For 1.8.3, rebuild the API, DNB and authenticated adapters with the existing
+Compose project and enabled profiles, and update any operator override that pins
+an adapter image tag. Keep all volumes; DPR creates `dpr-jobs.sqlite` in the API
+data volume on first use. Ettin now orders only results two and three by default
+and the first-stage winner keeps its slot (`DETHROTTLED_RERANK_DEPTH=3`,
+`DETHROTTLED_RERANK_KEEP_FIRST=1`). DDG Lite titles and snippets, link text and
+asset labels keep the spaces around inline markup; earlier releases joined
+highlighted terms to their neighbours. Search and semantic caches written by
+earlier releases can still hold joined snippets until they expire, so use
+`cache_mode="refresh"` where that matters.
+
 ## Guided Setup and DPR
 
 [Guided Setup](GUIDED-SETUP.md) saves an override without starting services.

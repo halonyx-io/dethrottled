@@ -59,7 +59,9 @@ def prerequisites():
 def clean_environment(port):
     env = {k: v for k, v in os.environ.items() if not k.startswith(
         ('DETHROTTLED_', 'COMPOSE_', 'CRAWL4AI_'))}
-    for switch in ('DETHROTTLED_ADBLOCK', 'DETHROTTLED_RERANK'):
+    for switch in ('DETHROTTLED_ADBLOCK', 'DETHROTTLED_RERANK', 'DETHROTTLED_RERANK_DEPTH',
+                   'DETHROTTLED_RERANK_MAX_TOKENS', 'DETHROTTLED_RERANK_TEXT_CHARS',
+                   'DETHROTTLED_RERANK_THREADS', 'DETHROTTLED_RERANK_KEEP_FIRST'):
         if switch in os.environ:
             env[switch] = os.environ[switch]
     env.update(DETHROTTLED_PORT=str(port), DETHROTTLED_BIND='127.0.0.1',

@@ -2088,6 +2088,16 @@
       "review": "Change author: audit docs impact, advertised defaults and generated contracts."
     },
     {
+      "path": "src/dethrottled/dpr.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/dpr_cli.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
       "path": "src/dethrottled/evidence.py",
       "lifecycle": "source-contract",
       "review": "Change author: audit docs impact, advertised defaults and generated contracts."
@@ -2109,6 +2119,11 @@
     },
     {
       "path": "src/dethrottled/formats.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/guided.py",
       "lifecycle": "source-contract",
       "review": "Change author: audit docs impact, advertised defaults and generated contracts."
     },

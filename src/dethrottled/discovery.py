@@ -88,8 +88,11 @@ def tls_search(query, *, max_items=8, cache=None, diagnostics=None, worker=""):
                 parsed = urlsplit(target)
             if parsed.scheme not in {"http", "https"} or not parsed.hostname:
                 continue
-            title = link.text(strip=True)
-            snippet = snippets[index].text(strip=True) if index < len(snippets) else ""
+            # text(strip=True) strips each text node and joins them with no
+            # separator, gluing the words DDG wraps in <b> to their neighbours.
+            title = " ".join(link.text().split())
+            snippet = (" ".join(snippets[index].text().split())
+                       if index < len(snippets) else "")
             row = {"title": title[:300], "url": target, "snippet": snippet[:600],
                    "engine": "web-tls-ddg-lite", "publishedDate": "", "cached": False}
             if target in seen or len(title) < 10:

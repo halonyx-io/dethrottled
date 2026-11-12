@@ -422,6 +422,8 @@ def test_semantic_cache_hit_skips_search_and_is_explicit(monkeypatch):
 def test_neural_rerank_only_reorders_the_configured_depth(monkeypatch):
     seen = []
     monkeypatch.setenv("DETHROTTLED_RERANK", "1")
+    monkeypatch.setenv("DETHROTTLED_RERANK_DEPTH", "30")
+    monkeypatch.setenv("DETHROTTLED_RERANK_KEEP_FIRST", "0")
     monkeypatch.setattr(srv.rerank, "available", lambda: True)
     monkeypatch.setattr(srv.rerank, "rerank_rows",
                         lambda rows, query: (seen.append(len(rows)) or rows[::-1]))
@@ -435,6 +437,8 @@ def test_neural_rerank_only_reorders_the_configured_depth(monkeypatch):
 
 def test_neural_ranking_reports_scores_and_expands_bounded_pool(monkeypatch):
     monkeypatch.setenv("DETHROTTLED_RERANK", "1")
+    monkeypatch.delenv("DETHROTTLED_RERANK_DEPTH", raising=False)
+    monkeypatch.delenv("DETHROTTLED_RERANK_KEEP_FIRST", raising=False)
     monkeypatch.setattr(srv.rerank, "available", lambda: True)
     monkeypatch.setattr(srv.rerank, "score", lambda q, texts: list(range(len(texts))))
     calls = []
@@ -448,5 +452,7 @@ def test_neural_ranking_reports_scores_and_expands_bounded_pool(monkeypatch):
     response = TestClient(srv.app).post("/v2/search", json={"query": "One", "limit": 5})
     rows = response.json()["results"]
     assert calls == [15]
-    assert [row["neural_score"] for row in rows] == [14, 13, 12, 11, 10]
+    assert [row["url"].rsplit("/", 1)[1] for row in rows] == ["0", "2", "1", "3", "4"]
+    assert [row["neural_score"] for row in rows] == [None, 1, 0, None, None]
     assert "neural_rerank" in rows[0]["ranking"]
+    assert "first_stage_lead_retained" in rows[0]["ranking"]

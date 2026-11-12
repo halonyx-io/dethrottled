@@ -15,7 +15,7 @@ must be classified; unknown paths fail generation/checking.
 | harness-guide | 20 |
 | historical-evidence | 215 |
 | planned-work | 1 |
-| source-contract | 167 |
+| source-contract | 170 |
 | third-party-notice | 4 |
 | visual | 8 |
 
@@ -473,11 +473,14 @@ Change author: audit docs impact, advertised defaults and generated contracts.
 | [src/dethrottled/discovery.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/discovery.py) |
 | [src/dethrottled/documents.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/documents.py) |
 | [src/dethrottled/domains.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/domains.py) |
+| [src/dethrottled/dpr.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/dpr.py) |
+| [src/dethrottled/dpr_cli.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/dpr_cli.py) |
 | [src/dethrottled/evidence.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/evidence.py) |
 | [src/dethrottled/extract.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/extract.py) |
 | [src/dethrottled/fallback.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/fallback.py) |
 | [src/dethrottled/fetch.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/fetch.py) |
 | [src/dethrottled/formats.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/formats.py) |
+| [src/dethrottled/guided.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/guided.py) |
 | [src/dethrottled/health.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/health.py) |
 | [src/dethrottled/identity.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/identity.py) |
 | [src/dethrottled/jobs.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/jobs.py) |

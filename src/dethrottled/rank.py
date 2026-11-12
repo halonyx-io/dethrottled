@@ -97,7 +97,8 @@ def rank_rows(rows: list, want: str, *, recency: float = 0.0,
         scored.append((score, index))
 
     scored.sort(key=lambda pair: -pair[0])
-    return [dict(rows[i], score=round(score, 6), upstream_rank=i + 1) for score, i in scored]
+    return [dict(rows[i], score=round(score, 6), upstream_rank=rows[i].get("upstream_rank", i + 1))
+            for score, i in scored]
 
 
 def age_days(row: dict):
@@ -132,7 +133,8 @@ def fuse_rows(rows: list, want: str, *, recency: float = 0.0) -> list:
     for index, row in enumerate(lexical):
         upstream = positions.get(row.get("url"), index + 1)
         score = 1 / (60 + upstream) + 0.4 / (61 + index)
-        scored.append(dict(row, score=round(score, 8), upstream_rank=upstream))
+        scored.append(dict(row, score=round(score, 8),
+                           upstream_rank=row.get("upstream_rank", upstream)))
     return sorted(scored, key=lambda row: -row["score"])
 
 

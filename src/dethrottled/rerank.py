@@ -15,8 +15,8 @@ default stays lexical/source ranking, and an absent model is a no-op.
 
 Set ``DETHROTTLED_RERANK_MODEL`` to the directory produced by
 ``scripts/fetch-rerank-model.sh`` and set ``DETHROTTLED_RERANK=1``. The model is
-loaded lazily and reused. The tested configuration is 512 tokens, title+text up
-to 3,000 characters, the top 30 candidates and 8 ONNX threads.
+loaded lazily and reused. Search scores labelled title, URL and snippet fields
+for the configured shortlist.
 """
 
 from __future__ import annotations
@@ -29,6 +29,22 @@ import threading
 
 _MODEL = None
 _LOCK = threading.Lock()
+
+
+def positive_setting(name: str, default: int) -> int:
+    try:
+        value = int(os.getenv(name, str(default)))
+    except ValueError:
+        return default
+    return value if value > 0 else default
+
+
+def keep_first() -> bool:
+    """Give the first-stage winner a reserved slot in a discovery menu."""
+    return os.getenv("DETHROTTLED_RERANK_KEEP_FIRST", "1").strip().lower() not in {
+        "0", "false", "off", "no",
+    }
+
 
 _REQUIRED = (
     "model.onnx",
@@ -137,21 +153,21 @@ def _load():
         with open(os.path.join(root, "config.json"), encoding="utf-8") as source:
             config = json.load(source)
         tokenizer = Tokenizer.from_file(os.path.join(root, "tokenizer.json"))
-        requested = int(os.getenv("DETHROTTLED_RERANK_MAX_TOKENS", "512"))
+        requested = positive_setting("DETHROTTLED_RERANK_MAX_TOKENS", 512)
         model_max = int(config.get("max_position_embeddings", requested) or requested)
         tokenizer.enable_truncation(max_length=max(8, min(requested, model_max)))
         pad_id = int(config.get("pad_token_id", 0))
         tokenizer.enable_padding(pad_id=pad_id,
                                  pad_token=tokenizer.id_to_token(pad_id) or "[PAD]")
         options = onnxruntime.SessionOptions()
-        options.intra_op_num_threads = int(os.getenv("DETHROTTLED_RERANK_THREADS", "8"))
+        options.intra_op_num_threads = positive_setting("DETHROTTLED_RERANK_THREADS", 8)
         options.log_severity_level = 3
         session = onnxruntime.InferenceSession(
             onnx_path(), options, providers=["CPUExecutionProvider"],
         )
         outputs = session.get_outputs()
-        if not outputs or len(outputs[0].shape) != 3:
-            raise RuntimeError("expected Ettin last_hidden_state output")
+        if not outputs or outputs[0].type != "tensor(float)" or len(outputs[0].shape) != 3:
+            raise RuntimeError("expected FP32 Ettin last_hidden_state output")
         head = _load_head(root, np)
         _MODEL = (np, tokenizer, session,
                   {item.name for item in session.get_inputs()}, head,
@@ -182,10 +198,10 @@ def rerank_rows(rows: list, query: str, *, text_chars: int | None = None) -> lis
     if not rows or not query or not available():
         return rows
     if text_chars is None:
-        text_chars = int(os.getenv("DETHROTTLED_RERANK_TEXT_CHARS", "3000"))
+        text_chars = positive_setting("DETHROTTLED_RERANK_TEXT_CHARS", 3000)
     texts = [
-        (str(row.get("title") or "") + " " +
-         str(row.get("text") or row.get("snippet") or "")[:text_chars]).strip()
+        (f"Title: {row.get('title') or ''}\nURL: {row.get('url') or ''}\nSnippet: "
+         f"{row.get('text') or row.get('snippet') or ''}")[:text_chars]
         for row in rows
     ]
     try:
@@ -194,7 +210,7 @@ def rerank_rows(rows: list, query: str, *, text_chars: int | None = None) -> lis
             return rows
     except Exception:
         return rows
-    ranked = [dict(row, neural_score=round(value, 6))
+    ranked = [dict(row, neural_score=float(value))
               for row, value in zip(rows, scores)]
     ranked.sort(key=lambda row: -row["neural_score"])
     return ranked

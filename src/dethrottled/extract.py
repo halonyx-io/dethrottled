@@ -194,7 +194,7 @@ def _via_selectolax(html: str, url: str) -> dict:
             return {}
         title = tree.css_first("title")
         return {"text": text, "tier": "selectolax",
-                "title": title.text(strip=True) if title else ""}
+                "title": " ".join(title.text().split()) if title else ""}
     except Exception:
         return {}
 
@@ -205,7 +205,7 @@ def _title_of(html: str) -> str:
     try:
         from selectolax.lexbor import LexborHTMLParser
         node = LexborHTMLParser(html).css_first("title")
-        return node.text(strip=True) if node else ""
+        return " ".join(node.text().split()) if node else ""
     except Exception:
         return ""
 
@@ -352,7 +352,7 @@ def links(html: str, url: str = "", *, max_chars: int = 3500) -> str:
             return ""
         for anchor in body.css("a"):
             href = (anchor.attributes.get("href") or "").strip()
-            text = anchor.text(strip=True)
+            text = " ".join(anchor.text().split())
             if not href or not text:
                 continue
             if href.startswith(("#", "javascript:", "mailto:", "tel:")):

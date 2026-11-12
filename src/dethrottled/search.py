@@ -1001,7 +1001,7 @@ def search(query: str, *, max_items: int = SEARCH_MENU_LIMIT, categories: str = 
 
     def add(rows, tag):
         added = 0
-        for row in rows:
+        for position, row in enumerate(rows, 1):
             url = row.get("url", "")
             if not constrained(query, row):
                 continue
@@ -1013,6 +1013,12 @@ def search(query: str, *, max_items: int = SEARCH_MENU_LIMIT, categories: str = 
             row = dict(row)
             provenance = [dict(entry) for entry in row.get(
                 "discovery", [{"provider": tag, "query": query}])]
+            if tag == "web":
+                for entry in provenance:
+                    if entry.get("provider") == "web":
+                        entry.setdefault("rank", position)
+            row.setdefault("upstream_rank", next(
+                (entry["rank"] for entry in provenance if entry.get("rank")), position))
             row["discovery"] = provenance
             if key in seen:
                 for entry in provenance:
