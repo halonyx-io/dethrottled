@@ -1,5 +1,8 @@
 # Configuration
 
+[Guided Setup](GUIDED-SETUP.md) recommends Docker worker and inference settings
+and saves them as a reviewable Compose override.
+
 <picture>
   <img src="assets/profiles.svg" alt="Default stack and optional profiles">
 </picture>
@@ -44,7 +47,7 @@ application settings need an `environment` entry in a local override. Inspect
 | `DETHROTTLED_MULTILINGUAL_CORPUS` | `1` in Compose | Enable E5 alongside MiniLM; standalone opt-in |
 | `DETHROTTLED_EXTRACT_CACHE_CHARS` | `1000000` | Retained extraction budget |
 | `DETHROTTLED_CRAWL4AI_BUDGET` | `-1` | No hourly renderer quota; 0 disables; positive values cap/window |
-| `DETHROTTLED_RENDER_CONCURRENCY` | `2` | API-side active renderer work |
+| `DETHROTTLED_RENDER_CONCURRENCY` | `2` | Active render work at the API and DNB. Base Compose passes the same setting to both. |
 | `DETHROTTLED_DRIVE_SESSION_TTL`, `DETHROTTLED_DRIVE_MAX_SESSIONS` | `1800`, `8` | Browser session expiry and capacity |
 | `DETHROTTLED_BROWSER_GRAPHICS` | `auto` in Compose | Verify exposed hardware through GL EGL, fall back to software; `mesa` retains GL, `default` retains original args |
 | `DETHROTTLED_READ_PLAN_SECONDS` | `30` | Additional recovery admission budget, clamped to 0–120; in-flight operations retain their transport timeout |
@@ -150,6 +153,7 @@ mapped. Change them against recorded coverage and failure cases, not just latenc
 | `DETHROTTLED_CHALLENGE_WAIT_SECONDS` | `15` | Headed polling deadline, separate from queue and request timeouts |
 | `DETHROTTLED_MAX_HTML_BYTES`, `DETHROTTLED_PDF_MAX_BYTES`, `DETHROTTLED_DOC_MAX_BYTES` | 10,000,000; 25 MiB; 50 MiB | Input limits |
 | `DETHROTTLED_OCR_PAGE_CAP`, `DETHROTTLED_OCR_PAGE_TIMEOUT` | `8`, `30` seconds | OCR work bounds |
+| `DETHROTTLED_OCR_THREADS` | Embedding-thread setting, then visible CPUs | API-side Tesseract threads per process. Guided Setup writes this independently in its Compose override. |
 | `DETHROTTLED_DOC_MAX_ROWS`, `DETHROTTLED_DOC_MAX_CELL` | `2000`, `32767` | Table window/cell defaults; request overrides remain bounded |
 | `DETHROTTLED_CORPUS_MAX_PASSAGES`, `DETHROTTLED_CORPUS_RETENTION_DAYS` | `50000`, `90` | Corpus retention; cache lifetimes unchanged |
 

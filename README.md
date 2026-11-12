@@ -22,45 +22,49 @@ Native [HaGeZi ad/tracker filtering](docs/ADBLOCK.md) is enabled by default in t
 release, with one switch to disable it. Coverage and measured resource costs
 are described in that guide.
 
-## Install the complete engine
+## Start locally
 
-Install [Docker Engine and Compose](https://docs.docker.com/engine/install/), then:
-
-```sh
-python3 -m venv .venv
-. .venv/bin/activate
-pip install dethrottled
-dethrottled stack up
-dethrottled stack status
-```
-
-The Python distribution includes matching deployment sources: **no Git clone is
-needed**. `stack up` builds/downloads the four default services (API, DNB, SearXNG and format reader) and waits for
-readiness. Installing the package alone starts nothing and downloads no models.
-
-```sh
-dethrottled stack up --profile full  # add local speech and PDF layout workers
-dethrottled stack down               # keep documents, cache and model volumes
-```
-
-Use `--project NAME --port PORT` for an isolated installation. Speech/layout model
-weights initialize on first use; status reports this separately from readiness.
-See [installation choices](https://github.com/halonyx-io/dethrottled/blob/main/docs/PYTHON.md)
-and [measured requirements](https://github.com/halonyx-io/dethrottled/blob/main/docs/REQUIREMENTS.md).
-Standalone Python/library use remains available, with capabilities determined by
-its installed libraries, system tools and external workers.
-
-Prefer a checkout? Both routes run the same default services:
+With Docker Engine and Compose installed, run from a checkout:
 
 ```sh
 git clone https://github.com/halonyx-io/dethrottled.git
 cd dethrottled
-docker compose up -d --build
+docker compose up -d --build --wait
+curl -fsS http://127.0.0.1:8787/health
 ```
 
-The API listens on **`127.0.0.1:8787`**. Connect locally over REST, or configure the
-optional [authenticated REST/MCP adapters](https://github.com/halonyx-io/dethrottled/blob/main/docs/PUBLIC-ACCESS.md)
-for remote agents. The raw API has no caller authentication.
+Try a search after startup:
+
+```sh
+curl -fsS http://127.0.0.1:8787/v2/search \
+  -H 'Content-Type: application/json' \
+  -d '{"query":"Python sqlite3 backup documentation","limit":5}'
+```
+
+This starts search, browser rendering and interaction, document reading, corpus
+and the local reranker. The first build downloads images, dependencies and model
+weights. See [requirements](docs/REQUIREMENTS.md) for tested hardware and storage.
+
+### Install without a checkout
+
+With Python 3.10+ and Docker Compose available:
+
+```sh
+python3 -m venv .venv
+. .venv/bin/activate
+python -m pip install dethrottled
+dethrottled stack up
+dethrottled stack status
+```
+
+Choose [Guided Setup](docs/GUIDED-SETUP.md) for recommendations based on the
+machine and expected workload. It saves a Compose override you can review
+before applying. Speech and advanced PDF layout are selectable worker profiles.
+For a script processing a list of sources, start with [DPR](docs/DPR.md).
+For an AI client, start with the [agent skill](SKILL-dethrottled.md).
+
+The raw API listens on **`127.0.0.1:8787`** and has no caller authentication.
+For clients on other devices, set up [authenticated REST or MCP](docs/PUBLIC-ACCESS.md).
 
 ## Follow the evidence
 
@@ -245,7 +249,7 @@ The fetch ladder does not consult `robots.txt`. Raw API access to trusted LAN
 targets requires care; public adapters enforce narrower policies, alongside
 operator-provided network isolation. See [operations](https://github.com/halonyx-io/dethrottled/blob/main/docs/OPERATIONS.md).
 
-This checkout is **1.8.2**. Check `/health` and `/v2/capabilities` on the service you
+This checkout is **1.8.3**. Check `/health` and `/v2/capabilities` on the service you
 actually use; deployed services and remote plugins can differ from a checkout.
 
 [MIT license](https://github.com/halonyx-io/dethrottled/blob/main/LICENSE) · Maintained by [Halonyx](https://github.com/halonyx-io)

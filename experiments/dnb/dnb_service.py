@@ -41,7 +41,8 @@ DRIVE_POLICY = ContextVar("drive_asset_policy", default=(None, ""))
 install_drive_policy(browser, Gate, asset_policy=DRIVE_POLICY.get)
 
 app = browser.app
-RENDER_SLOTS = asyncio.Semaphore(2)
+RENDER_CAPACITY = max(1, int(os.getenv("DETHROTTLED_RENDER_CONCURRENCY", "2")))
+RENDER_SLOTS = asyncio.Semaphore(RENDER_CAPACITY)
 COUNTS = Counter()
 ALLOW_INTERNAL = os.getenv("DNB_ALLOW_INTERNAL_URLS", "false").lower() == "true"
 MAX_HTML = 8 * 1024 * 1024
@@ -193,7 +194,7 @@ async def lifespan(application):
                     continue
                 if time.monotonic() - LAST_CRAWL_USE < CRAWL_IDLE_SECONDS:
                     continue
-                if RENDER_SLOTS._value < 2 or WAITING:
+                if RENDER_SLOTS._value < RENDER_CAPACITY or WAITING:
                     continue
                 if getattr(app.state, "crawl_factory", None) is None:
                     continue
@@ -442,9 +443,9 @@ async def dnb_status():
         ),
         "extractor": "crawl4ai-0.9.5",
         "counts": dict(COUNTS),
-        "render_slots": 2,
+        "render_slots": RENDER_CAPACITY,
         "waiting": WAITING,
-        "active": 2 - RENDER_SLOTS._value,
+        "active": RENDER_CAPACITY - RENDER_SLOTS._value,
         "drive_inflight": DRIVE_INFLIGHT,
         "drive_sessions": len(browser.DRIVE_SESSIONS),
         "session_owners": owner_count,

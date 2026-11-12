@@ -38,6 +38,10 @@ Installation alone starts nothing and downloads no models. Explicit startup can
 build/download images and acquire corpus weights. The default starts the API, DNB browser, SearXNG and the format reader. First-time builds need network/disk/time;
 read the reported failure or initialization state rather than assuming a hang.
 
+Use [Guided Setup](GUIDED-SETUP.md) if you want a machine-specific recommendation
+before starting. For lists of public URLs, use [DPR](DPR.md) to submit a durable
+batch and export its evidence.
+
 Choose one optional worker profile:
 
 ```sh

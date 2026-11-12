@@ -260,7 +260,8 @@ async def _backend_post(
                 "/documents/read", "/documents/image"}:
         payload = dict(payload, public_only=True)
     if path in {"/fetch", "/extract-with-links", "/research", "/search-and-fetch",
-                "/documents/read", "/documents/image", "/jobs/fetch", "/jobs/read",
+                "/documents/read", "/documents/status", "/documents/image",
+                "/jobs/fetch", "/jobs/read",
                 "/jobs/cancel", "/jobs/resume", "/documents/structure", "/site/crawl", "/drive"}:
         payload = dict(payload, evidence_namespace=CLAIMS.get()["namespace"])
     if path in {"/fetch", "/extract-with-links", "/research", "/search-and-fetch"}:
@@ -697,6 +698,18 @@ async def read_document(document_id: str, focus: str = "", offset: int = 0,
         "page_start": page_start, "page_end": page_end, "ocr_mode": ocr_mode,
         "document_mode": document_mode,
         "ocr_language": ocr_language})
+
+
+@mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, openWorldHint=False))
+async def document_status(url: str | None = None, document_id: str | None = None,
+                          compare_to: str | None = None) -> dict[str, Any]:
+    """Look up your retained evidence by exact URL or document ID without a network read.
+
+    Supply exactly one of url or document_id. Optionally compare the retained
+    version with another document ID for the same URL. This never checks the origin.
+    """
+    return await _backend_post("/documents/status", {
+        "url": url, "document_id": document_id, "compare_to": compare_to})
 
 
 @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, openWorldHint=False))

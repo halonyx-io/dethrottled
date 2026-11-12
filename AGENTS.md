@@ -38,6 +38,9 @@ current instructions determine task scope; this file supplies repository default
   passage/vector lifetime separate from search, extraction and document caches.
   Standard support checks are not answer verification; preserve the warned broad
   path for additional multilingual/paraphrase candidates and report its tradeoffs.
+- DPR shares the read pipeline. Keep job cursors, item keys, caller ownership,
+  origin timestamps and extraction outcomes stable. Verify restart and capacity
+  recovery with controlled fixtures. Guided Setup saves a plan for explicit application.
 - Browser interaction may have side effects. Respect caller scope, public-target
   checks, explicit render/OCR restrictions and operation-id retry semantics.
 

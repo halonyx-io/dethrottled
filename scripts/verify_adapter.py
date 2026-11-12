@@ -94,7 +94,8 @@ async def verify(url, rest_url, token, registry):
                 assert init.instructions and 'read_document' in init.instructions
                 assert init.instructions == INSTRUCTIONS
                 listing = await client.list_tools()
-                assert len(listing.tools) == 20
+                assert len(listing.tools) == 21
+                assert any(t.name == 'document_status' for t in listing.tools)
                 for name in ('fetch', 'research', 'read_document'):
                     tool = next(t for t in listing.tools if t.name == name)
                     assert tool.inputSchema['properties']['response_format']['default'] == 'concise'

@@ -31,6 +31,8 @@ CURRENT = {
             "DRIVE",
             "EVIDENCE",
             "FEATURES",
+            "DPR",
+            "GUIDED-SETUP",
             "LIMITS",
             "OPERATIONS",
             "PDF_WORKER",

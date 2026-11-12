@@ -37,12 +37,8 @@ French at 0.981, more than good enough to recognise WHICH language it is even
 though it transcribes it worse. Page one is not OCRed twice unless the answer
 turns out not to be English.
 
-Pages are piped as PNG on stdin, so nothing touches disk. The thread limit
-follows DETHROTTLED_EMBED_THREADS -- the same knob the embedding path uses, so
-there is one way to constrain CPU rather than two. By default it takes every
-core the host reports: this project runs on machines with very different core
-counts, so the sensible default is the host, never a number picked on one board.
-Set the variable only to cap it.
+Pages are piped as PNG on stdin. DETHROTTLED_OCR_THREADS caps each Tesseract
+process. When unset, the legacy embedding-thread setting still applies.
 """
 import os
 import re
@@ -50,12 +46,9 @@ import subprocess
 
 DPI = int(os.environ.get("DETHROTTLED_OCR_DPI", "150"))
 PAGE_CAP = int(os.environ.get("DETHROTTLED_OCR_PAGE_CAP", "8"))
-# All cores by default, so the same image behaves on an 8-core board and a
-# 16-thread laptop. A bare number here would pin every install to whatever the
-# machine it was written on happened to have. Consistent with the embedding
-# path: 0 or unset means "size to the host", a positive value caps it.
-_EMBED_THREADS = int(os.environ.get("DETHROTTLED_EMBED_THREADS") or 0)
-THREADS = _EMBED_THREADS if _EMBED_THREADS > 0 else (os.cpu_count() or 1)
+_THREAD_LIMIT = int(os.getenv("DETHROTTLED_OCR_THREADS")
+                    or os.getenv("DETHROTTLED_EMBED_THREADS") or 0)
+THREADS = _THREAD_LIMIT if _THREAD_LIMIT > 0 else (os.cpu_count() or 1)
 PAGE_TIMEOUT = int(os.environ.get("DETHROTTLED_OCR_PAGE_TIMEOUT", "30"))
 
 # Language data installed without root. Tesseract reads TESSDATA_PREFIX, and a

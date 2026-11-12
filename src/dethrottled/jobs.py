@@ -21,8 +21,9 @@ class JobError(ValueError):
 
 
 class Jobs:
-    def __init__(self, path, max_bytes=200_000_000):
+    def __init__(self, path, max_bytes=200_000_000, *, bulk=False):
         self.max_bytes = max_bytes
+        self.bulk = bulk
         Path(path).parent.mkdir(parents=True, exist_ok=True)
         self.db = sqlite3.connect(path, check_same_thread=False)
         self.lock = threading.RLock()
@@ -44,18 +45,35 @@ class Jobs:
         self.db.execute("UPDATE jobs SET status='interrupted' WHERE status IN ('queued','running')")
         self.db.commit()
 
+    def _check_capacity(self, namespace):
+        if self.bulk:
+            keys = tuple(self.executions)
+            active = self.db.execute(
+                "SELECT namespace FROM jobs WHERE id IN (" + ",".join("?" for _ in keys) + ")",
+                keys,
+            ).fetchall() if keys else []
+        else:
+            active = self.db.execute(
+                "SELECT namespace FROM jobs WHERE status IN ('queued','running')"
+            ).fetchall()
+        if len(active) >= 4 or sum(row[0] == namespace for row in active) >= 2:
+            raise JobError("read_jobs_busy", 429)
+
     def submit(self, namespace, payload, operation, read, workers):
         fingerprint = hashlib.sha256(json.dumps(payload, sort_keys=True).encode()).hexdigest()
         now = time.time()
         with self.lock, self.db:
+            expired = "expires<?"
+            if self.bulk:
+                expired += " AND status NOT IN ('queued','running')"
             self.db.execute(
-                "DELETE FROM results WHERE job IN (SELECT id FROM jobs WHERE expires<?)", (now,)
+                f"DELETE FROM results WHERE job IN (SELECT id FROM jobs WHERE {expired})", (now,)
             )
             self.db.execute(
-                "DELETE FROM job_payloads WHERE job IN (SELECT id FROM jobs WHERE expires<?)",
+                f"DELETE FROM job_payloads WHERE job IN (SELECT id FROM jobs WHERE {expired})",
                 (now,),
             )
-            self.db.execute("DELETE FROM jobs WHERE expires<?", (now,))
+            self.db.execute(f"DELETE FROM jobs WHERE {expired}", (now,))
             if operation:
                 previous = self.db.execute(
                     "SELECT id,fingerprint FROM jobs WHERE namespace=? AND operation=?",
@@ -65,11 +83,7 @@ class Jobs:
                     if previous[1] != fingerprint:
                         raise JobError("operation_id_payload_conflict", 409)
                     return previous[0]
-            active = self.db.execute(
-                "SELECT namespace FROM jobs WHERE status IN ('queued','running')"
-            ).fetchall()
-            if len(active) >= 4 or sum(row[0] == namespace for row in active) >= 2:
-                raise JobError("read_jobs_busy", 429)
+            self._check_capacity(namespace)
             identifier = "job_" + uuid.uuid4().hex
             self.db.execute(
                 "INSERT INTO jobs "
@@ -99,6 +113,27 @@ class Jobs:
             row = self.db.execute("SELECT status FROM jobs WHERE id=?", (identifier,)).fetchone()
             return row is not None and row[0] in {"queued", "running"}
 
+    def _unfinished(self, urls, finished):
+        if not self.bulk:
+            return ((url, [index]) for index, url in enumerate(urls) if index not in finished)
+        groups = {}
+        for index, url in enumerate(urls):
+            if index not in finished:
+                groups.setdefault(url, []).append(index)
+        return iter(groups.items())
+
+    def payload(self, namespace, identifier):
+        with self.lock:
+            row = self.db.execute(
+                "SELECT payload FROM jobs JOIN job_payloads ON jobs.id=job_payloads.job "
+                "WHERE id=? AND namespace=? AND "
+                "(expires>? OR status IN ('queued','running'))",
+                (identifier, namespace, time.time()),
+            ).fetchone()
+        if row is None:
+            raise JobError("job_missing_or_expired")
+        return json.loads(row[0])
+
     def resume(self, namespace, identifier, reader_factory, workers):
         """Explicitly restart unfinished reads; completed source positions survive."""
         self.get(namespace, identifier)
@@ -112,11 +147,9 @@ class Jobs:
                 raise JobError("job_not_resumable", 409)
             if not row[1]:
                 raise JobError("legacy_job_payload_unavailable", 409)
-            active = self.db.execute(
-                "SELECT namespace FROM jobs WHERE status IN ('queued','running')"
-            ).fetchall()
-            if len(active) >= 4 or sum(r[0] == namespace for r in active) >= 2:
-                raise JobError("read_jobs_busy", 429)
+            if self.bulk and identifier in self.executions:
+                raise JobError("job_draining", 429)
+            self._check_capacity(namespace)
             payload = json.loads(row[1])
             read = reader_factory(payload)
             self.db.execute("UPDATE jobs SET status='queued' WHERE id=?", (identifier,))
@@ -125,7 +158,7 @@ class Jobs:
         return self.get(namespace, identifier)
 
     def _run(self, identifier, urls, read, workers, execution):
-        pending, next_index = {}, 0
+        pending = {}
         try:
             with self.lock, self.db:
                 if not self._active(identifier, execution):
@@ -135,36 +168,42 @@ class Jobs:
                 self.db.execute(
                     "UPDATE jobs SET status='running' WHERE id=? AND status='queued'", (identifier,)
                 )
+            remaining = self._unfinished(urls, finished)
+            concurrency = 1 if self.bulk else 4
             while self._active(identifier, execution):
-                while (next_index < len(urls) and len(pending) < 4
-                       and self._active(identifier, execution)):
-                    index = next_index
-                    next_index += 1
-                    if index in finished:
-                        continue
-                    pending[workers.submit(read, urls[index])] = index
+                while len(pending) < concurrency and self._active(identifier, execution):
+                    source = next(remaining, None)
+                    if source is None:
+                        break
+                    url, indices = source
+                    pending[workers.submit(read, url)] = (url, indices)
                 if not pending:
                     break
                 done, _ = wait(pending, timeout=0.1, return_when=FIRST_COMPLETED)
                 for future in done:
-                    index = pending.pop(future)
+                    url, indices = pending.pop(future)
                     try:
                         row = future.result()
                     except Exception as exc:
                         row = {
-                            "url": urls[index],
+                            "url": url,
                             "quality": "failed",
                             "failure_reason": type(exc).__name__,
                             "content": "",
                         }
+                        if self.bulk:
+                            from .dpr import evidence
+                            row = evidence(url, row)
                     with self.lock, self.db:
                         if self._active(identifier, execution):
                             position = self.db.execute(
                                 "SELECT COUNT(*) FROM results WHERE job=?", (identifier,)
                             ).fetchone()[0]
-                            self.db.execute(
+                            encoded = json.dumps(row, ensure_ascii=not self.bulk)
+                            self.db.executemany(
                                 "INSERT INTO results VALUES(?,?,?,?)",
-                                (identifier, position, index, json.dumps(row)),
+                                ((identifier, position + offset, index, encoded)
+                                 for offset, index in enumerate(indices)),
                             )
                             total = self.db.execute(
                                 "SELECT COALESCE(SUM(length(CAST(value AS BLOB))),0) FROM results"
@@ -193,6 +232,9 @@ class Jobs:
                         "UPDATE jobs SET status='completed' WHERE id=? AND status='running'",
                         (identifier,),
                     )
+                    if self.bulk:
+                        self.db.execute("UPDATE jobs SET expires=? WHERE id=?",
+                                        (time.time() + 86400, identifier))
         except Exception:
             with self.lock, self.db:
                 if self._active(identifier, execution):
@@ -203,12 +245,20 @@ class Jobs:
         finally:
             for future in pending:
                 future.cancel()  # In-flight origin requests may still finish.
+            if self.bulk and pending:
+                wait(pending)
+            with self.lock:
+                if self.executions.get(identifier) == execution:
+                    self.executions.pop(identifier)
 
     def get(self, namespace, identifier, cursor=0, limit=10):
         with self.lock:
+            available = "expires>?"
+            if self.bulk:
+                available = "(expires>? OR status IN ('queued','running'))"
             row = self.db.execute(
                 "SELECT status,total,expires,EXISTS(SELECT 1 FROM job_payloads WHERE job=jobs.id) "
-                "FROM jobs WHERE namespace=? AND id=? AND expires>?",
+                f"FROM jobs WHERE namespace=? AND id=? AND {available}",
                 (namespace, identifier, time.time()),
             ).fetchone()
             if row is None:
@@ -242,9 +292,12 @@ class Jobs:
     def cancel(self, namespace, identifier):
         self.get(namespace, identifier)
         with self.lock, self.db:
-            self.db.execute(
+            cancelled = self.db.execute(
                 "UPDATE jobs SET status='cancelled' WHERE id=? AND namespace=? "
                 "AND status IN ('queued','running')",
                 (identifier, namespace),
             )
+            if self.bulk and cancelled.rowcount:
+                self.db.execute("UPDATE jobs SET expires=? WHERE id=?",
+                                (time.time() + 86400, identifier))
         return self.get(namespace, identifier)

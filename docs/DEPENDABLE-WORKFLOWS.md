@@ -41,6 +41,20 @@ row. Retained text defaults to seven-day retention and a 200 MB storage budget;
 earlier eviction is possible. Re-fetch deliberately when current information is
 needed. A document hash does not assert that a website is unchanged.
 
+## Check retained evidence before rereading
+
+Call MCP `document_status` or `POST /documents/status` with an exact `url` or
+`document_id`. It returns caller-scoped metadata for the most recently retained
+version of that URL or the selected document. Check its acquisition timestamp,
+quality, expiry and partial flag before reusing it with `read_document`.
+
+Pass an older document ID as `compare_to` to compare two retained versions of
+the same URL. A different version can reflect changed source bytes, extraction
+settings or coverage. Older records may lack a stored text hash. This operation
+only reads local metadata. For a live comparison, fetch with
+`cache_mode: "refresh"` and comparable read settings, then compare the returned
+version or text hash.
+
 ## PDF pages, OCR and layout
 
 Use `page_start`/`page_end` for at most 100 selected pages. Inspect total pages,

@@ -9,7 +9,7 @@ must be classified; unknown paths fail generation/checking.
 
 | Lifecycle | Files |
 |---|---:|
-| current-guide | 26 |
+| current-guide | 28 |
 | dependency-input | 4 |
 | generated | 4 |
 | harness-guide | 20 |
@@ -38,9 +38,11 @@ Change author: reconcile current behaviour, examples and navigation.
 | [docs/CORPUS.md](CORPUS.md) |
 | [docs/DEPENDABLE-WORKFLOWS.md](DEPENDABLE-WORKFLOWS.md) |
 | [docs/DOCUMENTATION-MAINTENANCE.md](DOCUMENTATION-MAINTENANCE.md) |
+| [docs/DPR.md](DPR.md) |
 | [docs/DRIVE.md](DRIVE.md) |
 | [docs/EVIDENCE.md](EVIDENCE.md) |
 | [docs/FEATURES.md](FEATURES.md) |
+| [docs/GUIDED-SETUP.md](GUIDED-SETUP.md) |
 | [docs/LIMITS.md](LIMITS.md) |
 | [docs/OPERATIONS.md](OPERATIONS.md) |
 | [docs/PDF_WORKER.md](PDF_WORKER.md) |

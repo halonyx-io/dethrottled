@@ -407,6 +407,11 @@ def _tier_direct(url: str, timeout: int, allow_ocr: bool = False) -> tuple:
         return _tier_direct_once(url, timeout, allow_ocr, get=get)
 
 
+def _origin_response(response):
+    return {"status": response.status_code,
+            "last_modified": (response.headers.get("Last-Modified") or "")[:128] or None}
+
+
 def _tier_direct_once(url: str, timeout: int, allow_ocr: bool = False, *, get=None) -> tuple:
     domain = _domain(url)
     response = None
@@ -431,10 +436,11 @@ def _tier_direct_once(url: str, timeout: int, allow_ocr: bool = False, *, get=No
                 if len(error_head) >= 8192:
                     break
             response.close()
+            final_url = str(getattr(response, "url", None) or url)
             return "", _http_reason("", response.status_code,
                                     response.headers,
                                     error_head.decode(response.encoding or "utf-8",
-                                                      errors="replace")), url
+                                                      errors="replace")), final_url
         ctype = response.headers.get("Content-Type", "")
         # Read the first chunk before choosing a parser. A server's header or
         # the URL can lie in either direction: a PDF may be served as HTML, and
@@ -456,7 +462,11 @@ def _tier_direct_once(url: str, timeout: int, allow_ocr: bool = False, *, get=No
                         response.close()
                     return {}, "document_too_large", str(response.url)
                 data.append(chunk)
-            return _binary_payload(b"".join(data), str(response.url), ctype, allow_ocr, filename)
+            payload, reason, final = _binary_payload(
+                b"".join(data), str(response.url), ctype, allow_ocr, filename)
+            if isinstance(payload, dict) and payload:
+                payload["origin_response"] = _origin_response(response)
+            return payload, reason, final
         if not is_html and "html" not in ctype and "xml" not in ctype:
             return "", "content_type:%s" % ctype[:30], url
         html_chunks, size, clipped = [], 0, False
@@ -470,7 +480,7 @@ def _tier_direct_once(url: str, timeout: int, allow_ocr: bool = False, *, get=No
         # Truncation used to be invisible. It has to be reported, because the
         # symptom is a short article rather than a failure, and a short article
         # is indistinguishable from a page that was simply short.
-        return ({"html": html, "clipped": clipped},
+        return ({"html": html, "clipped": clipped, "origin_response": _origin_response(response)},
                 "html_truncated" if clipped else "", str(response.url))
     except Exception as exc:
         return ({}, str(exc) if isinstance(exc, (adblock.AdblockBlocked, TargetPolicyError))
@@ -800,8 +810,10 @@ def _tier_tls_once(url: str, *, get=None) -> tuple:
                                  _READ_OPTIONS.get().get("allow_ocr", True),
                                  _filename_hint(response.headers, str(response.url)))
         if parsed is not None:
+            if isinstance(parsed[0], dict) and parsed[0]:
+                parsed[0]["origin_response"] = _origin_response(response)
             return parsed
-        return {"html": text}, "", str(response.url)
+        return {"html": text, "origin_response": _origin_response(response)}, "", str(response.url)
     except Exception as exc:
         return {}, "tls_" + type(exc).__name__, str(response.url)
     finally:
@@ -1115,6 +1127,10 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
         payload, reason, final = run()
         attempt = {"tier": name, "reason": reason, "outcome": "response" if payload else "failed",
                    "elapsed_ms": round((time.monotonic() - attempt_started) * 1000, 2)}
+        status = re.fullmatch(r"(?:tls_)?http_(\d{3})", reason)
+        if status:
+            attempt.update(http_status=int(status[1]), final_url=final,
+                           observed_at=datetime.now(timezone.utc).isoformat())
         attempts.append(attempt)
         if (reason.startswith('adblock_blocked:')
                 or reason in {"public_target_required", "redirect_target_not_public"}):
@@ -1219,6 +1235,8 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
 
         if payload.get("browser_recovery"):
             candidate["browser_recovery"] = payload["browser_recovery"]
+        if payload.get("origin_response"):
+            candidate["origin_response"] = payload["origin_response"]
         pending = (payload.get("browser_recovery") or {}).get("document_ready_state") == "loading"
         visible_capture = candidate.get("extraction", {}).get("method") == "browser_visible_text"
         if candidate.get("content_type") == "html" and (

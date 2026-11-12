@@ -266,12 +266,19 @@ and connected server control which fields are supported. Framework `/docs` and
 | `POST /drive` | `drive` |
 | `POST /site/crawl` | `crawl_site` |
 | `POST /documents/read` | `read_document` |
+| `POST /documents/status` | `document_status` |
 | `POST /documents/structure` | `inspect_document` |
 | `POST /documents/image` | `view_document_image` |
 | `POST /jobs/fetch` | `start_fetch_job` |
 | `POST /jobs/read` | `read_fetch_job` |
 | `POST /jobs/cancel` | `cancel_fetch_job` |
 | `POST /jobs/resume` | `resume_fetch_job` |
+| `POST /v1/dpr/jobs` | [DPR](DPR.md) HTTP submission for large URL lists |
+| `POST /v1/dpr/jobs/read` | DPR progress and evidence pages |
+| `POST /v1/dpr/jobs/cancel` | DPR cooperative cancellation |
+| `POST /v1/dpr/jobs/resume` | DPR resume of unfinished items |
+| `POST /v1/dpr/jobs/retry` | DPR new job for failed items |
+| `POST /v1/dpr/resolve` | DPR query to one usable source |
 | `GET /corpus/search` | `corpus_search` |
 | `GET /corpus/stats` | `corpus_stats` |
 | `GET /ready` | `ready` |

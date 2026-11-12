@@ -329,8 +329,12 @@ def test_search_exposes_date_source_and_freshness_metadata(monkeypatch):
     c = TestClient(srv.app)
     result = c.post("/search", json={"query": "q"}).json()
     assert result[0]["date_source"] == "structured"
+    assert result[0]["published_at"] == "2026-11-09"
     assert result[1]["date_source"] == "snippet"
     assert result[1]["publishedDate"] == "8 November 2026"
+    assert result[1]["published_at"] is None
+    assert result[1]["date_hint"] == {
+        "source": "snippet", "value": "8 November 2026", "verified": False}
     assert result[2]["date_source"] == "none"
     assert result[0]["source_type"] == "repo"
     assert result[0]["fetch_relevance"] == "high"
@@ -339,7 +343,32 @@ def test_search_exposes_date_source_and_freshness_metadata(monkeypatch):
     assert result[0]["freshness_note"] is None
     envelope = c.post("/v2/search", json={"query": "q"}).json()
     assert envelope["dated_results"] == 2
+    assert envelope["results"][1]["published_at"] is None
     assert envelope["freshness_note"] is None
+
+
+def test_document_status_is_scoped_and_compares_retained_versions(tmp_path, monkeypatch):
+    from dethrottled.evidence import Documents
+
+    store = Documents(tmp_path / "evidence.sqlite")
+    monkeypatch.setattr(srv, "documents", lambda: store)
+    url = "https://example.org/file"
+    old = store.put("local", url, "original", {"retrieved_at": "2026-11-01T00:00:00Z"})
+    new = store.put("local", url, "updated", {"retrieved_at": "2026-11-02T00:00:00Z"})
+    client = TestClient(srv.app)
+    result = client.post("/documents/status", json={"url": url, "compare_to": old["document_id"]})
+    assert result.is_success
+    info = result.json()
+    assert info["document"]["document_id"] == new["document_id"]
+    assert info["document"]["document_sha256"] == new["document_sha256"]
+    assert info["comparison"] == "different_retained_version" and not info["origin_checked"]
+    assert "text" not in info["document"]
+    same = client.post("/documents/status", json={
+        "document_id": new["document_id"], "compare_to": new["document_id"]}).json()
+    assert same["comparison"] == "same_retained_version"
+    unknown = client.post("/documents/status", json={
+        "url": url, "compare_to": old["document_id"], "evidence_namespace": "other"}).json()
+    assert unknown["state"] == "unknown" and unknown["comparison"] == "unavailable"
 
 
 def test_search_warns_when_most_results_are_undated(monkeypatch):

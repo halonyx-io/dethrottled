@@ -276,6 +276,20 @@ class DocumentReadBody(BaseModel):
         return self
 
 
+class DocumentStatusBody(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    url: str | None = Field(default=None, min_length=1, max_length=2048)
+    document_id: str | None = Field(default=None, min_length=1, max_length=100)
+    compare_to: str | None = Field(default=None, min_length=1, max_length=100)
+    evidence_namespace: str = Field(default="local", max_length=100)
+
+    @model_validator(mode="after")
+    def one_selector(self):
+        if (self.url is None) == (self.document_id is None):
+            raise ValueError("provide exactly one of url or document_id")
+        return self
+
+
 class DocumentImageBody(BaseModel):
     model_config = ConfigDict(extra="forbid")
     public_only: bool = False

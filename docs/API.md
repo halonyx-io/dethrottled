@@ -34,13 +34,16 @@ In 1.6.0, research `queries` also preserve `outcome` and
 Search defaults to `profile="web"`: DDG Lite/HTML/TLS/browser acquire up to ten
 primary choices while SearXNG Yahoo and Yandex each contribute up to three.
 The normal menu defaults to and is capped at **15 unique URLs**. Duplicate
-supplements do not displace primary choices. Source order is preserved, with
-novel Yandex/Yahoo choices alternating after DDG. Partial provider failures leave
+supplements do not displace primary choices in the candidate menu. Before
+reranking, novel Yandex/Yahoo choices alternate after DDG. Partial provider failures leave
 healthy sources available; fewer than fifteen results is normal.
 
 Search rows carry additive `source_type`, `fetch_relevance`, `snippet_tokens`,
 `date_source` (`structured`, `snippet`, `none`), `published_age_days`,
 `engines_consensus` and `consensus_score`.
+Use `published_at` for a parseable provider-reported calendar date. `date_hint`
+separately labels provider or snippet text, including relative snippet dates.
+Both are unverified. Fetch the source when the publication date is material.
 `/v2/search`, and the first row of `/search`, also expose `dated_results`,
 `freshness_note` and `decoy_buckets`. A snippet date is a lead, not a verified
 publication date. A decoy bucket is dropped only when another provider proves the
@@ -217,6 +220,8 @@ excess work returns a typed 429 with a retry hint.
 | Exact blocks/citations/structure | `POST /documents/structure` |
 | Supported source pixels | `POST /documents/image` |
 | Bounded site traversal | `POST /site/crawl` |
+| Programmatic resolve and bulk exports | [DPR](DPR.md), `POST /v1/dpr/jobs`, `POST /v1/dpr/resolve` |
+| Retained metadata and version comparison | `POST /documents/status` or MCP `document_status` |
 | Durable read batches | `POST /jobs/fetch`, `/jobs/read`, `/jobs/resume`, `/jobs/cancel` |
 | Browser interaction, downloads and app data | `POST /drive` |
 | Stored semantic/lexical/hybrid retrieval | `GET /corpus/search`, `/corpus/stats` |

@@ -52,7 +52,8 @@ def prerequisites():
     version = re.search(r'v?(\d+)\.\d+', compose)
     if not version or int(version[1]) < 2:
         raise StackError('Docker Compose plugin v2 or newer is required.')
-    return {k: engine.get(k) for k in ('ServerVersion', 'Architecture', 'NCPU', 'MemTotal')}
+    return {k: engine.get(k) for k in ('ServerVersion', 'Architecture', 'NCPU', 'MemTotal',
+                                       'DockerRootDir', 'OperatingSystem')}
 
 
 def clean_environment(port):
@@ -130,12 +131,12 @@ def prepare_context(root):
     return target
 
 
-def containers(project):
+def containers(project, *, managed=True):
     ids = run(['docker', 'ps', '-aq', '--filter', 'label=com.docker.compose.project=' + project])
     if not ids.strip():
         return []
     values = json.loads(run(['docker', 'inspect', *ids.split()]))
-    if any(c.get('Config', {}).get('Labels', {}).get(LABEL) != '1' for c in values):
+    if managed and any(c.get('Config', {}).get('Labels', {}).get(LABEL) != '1' for c in values):
         raise StackError('Project is unmanaged. Choose a different --project.')
     return values
 
@@ -204,15 +205,33 @@ def inspect_status(project, port, profile):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(prog='dethrottled stack', description=__doc__)
-    parser.add_argument('action', choices=['up', 'status', 'down'])
-    parser.add_argument('--project', default='dethrottled-managed')
+    parser.add_argument('action', choices=['up', 'status', 'down', 'configure'])
+    parser.add_argument('--project')
     parser.add_argument('--port', type=int)
     parser.add_argument('--profile', choices=list(PROFILES))
     parser.add_argument('--timeout', type=int, default=180,
                         help='Readiness wait after build, seconds')
     parser.add_argument('--json', action='store_true', help='Machine-readable final report')
+    parser.add_argument('--output', type=Path, help='Save a Guided Setup override here')
+    parser.add_argument('--config', type=Path, help='Apply a saved Guided Setup override')
     args = parser.parse_args(argv)
     try:
+        from . import guided
+
+        if args.config and args.action != 'up':
+            raise StackError('--config is supported by stack up.')
+        if args.output and args.action != 'configure':
+            raise StackError('--output is supported by stack configure.')
+        plan = guided.load(args.config) if args.config else None
+        if plan:
+            metadata = plan[guided.PLAN_KEY]
+            if any(value is not None and value != metadata[name]
+                   for name, value in (('project', args.project), ('port', args.port),
+                                       ('profile', args.profile))):
+                raise StackError('Project, port and profile must match the Guided Setup override.')
+            args.project, args.port, args.profile = (
+                metadata['project'], metadata['port'], metadata['profile'])
+        args.project = args.project or 'dethrottled-managed'
         if args.port is not None and not 1 <= args.port <= 65535:
             raise StackError('Port must be between 1 and 65535.')
         if args.timeout < 1:
@@ -221,6 +240,12 @@ def main(argv=None):
         root = stack_root(args.project)
         settings = root / 'project.json'
         previous = json.loads(settings.read_text()) if settings.exists() else {}
+        if args.action == 'configure':
+            if args.json:
+                raise StackError('Guided Setup requires interactive choices.')
+            return guided.run_guided(args, engine, previous,
+                                     containers(args.project, managed=False), run, check_port)
+        plan = plan or previous.get('guided')
         port = args.port or previous.get('port', 8787)
         profile = args.profile or previous.get('profile', 'default')
         existing = containers(args.project)
@@ -245,9 +270,13 @@ def main(argv=None):
                          **({'image': f'dethrottled-managed-{n}:{__version__}'}
                             if n in build_services else {})}
                          for n in [*BASE, 'media-worker', 'docling-worker']}}
+            if plan:
+                for name, options in plan['services'].items():
+                    override['services'][name].update(options)
             (context / 'managed.json').write_text(json.dumps(override, indent=2))
             settings.write_text(json.dumps({'port': port, 'profile': profile,
-                                           'version': __version__}, indent=2))
+                                           'version': __version__,
+                                           **({'guided': plan} if plan else {})}, indent=2))
             if engine:
                 print(f'Docker host: {engine["Architecture"]}, {engine["NCPU"]} CPUs, '
                       f'{engine["MemTotal"] / 1024**3:.1f} GiB RAM. Selected profile: {profile}. '
@@ -305,6 +334,9 @@ def main(argv=None):
             print(json.dumps({'project': args.project, 'state': 'stopped',
                               'volumes_preserved': True}))
         return 0
-    except (StackError, OSError, ValueError, KeyError) as exc:
+    except (KeyboardInterrupt, EOFError):
+        print('Guided Setup cancelled.', file=sys.stderr)
+        return 1
+    except (StackError, OSError, ValueError, KeyError, TypeError) as exc:
         print(json.dumps({'error': str(exc), 'action': args.action}), file=sys.stderr)
         return 1

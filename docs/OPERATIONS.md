@@ -136,6 +136,13 @@ browser state, corpus and model volumes. Compose seeds the Ettin model at startu
 and enables it by default. Set `DETHROTTLED_RERANK=0` to opt out. The default
 SearXNG engine selection is unchanged.
 
+## Guided Setup and DPR
+
+[Guided Setup](GUIDED-SETUP.md) saves an override without starting services.
+Keep the existing Compose project name and inspect the plan before applying it.
+DPR jobs use `dpr-jobs.sqlite` in the API data volume. Active jobs become
+interrupted after an API process restart and can be [resumed by the caller](DPR.md).
+
 ## State and backups
 
 | Storage | Contents |

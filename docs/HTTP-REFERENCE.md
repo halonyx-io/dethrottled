@@ -13,6 +13,7 @@ Framework `/docs` and `/openapi.json` routes are available separately.
 | `GET /corpus/stats` | — | — |
 | `POST /documents/image` | DocumentImageBody | — |
 | `POST /documents/read` | DocumentReadBody | — |
+| `POST /documents/status` | DocumentStatusBody | — |
 | `POST /documents/structure` | StructureBody | — |
 | `POST /drive` | DriveBody | — |
 | `POST /extract` | FetchBody | — |
@@ -30,6 +31,12 @@ Framework `/docs` and `/openapi.json` routes are available separately.
 | `POST /search-and-fetch` | SearchFetchBody | — |
 | `POST /site/crawl` | SiteBody | — |
 | `GET /stats` | — | — |
+| `POST /v1/dpr/jobs` | BatchBody | — |
+| `POST /v1/dpr/jobs/cancel` | BatchReadBody | — |
+| `POST /v1/dpr/jobs/read` | BatchReadBody | — |
+| `POST /v1/dpr/jobs/resume` | BatchReadBody | — |
+| `POST /v1/dpr/jobs/retry` | BatchRetryBody | — |
+| `POST /v1/dpr/resolve` | ResolveQueryBody | — |
 | `GET /v2/capabilities` | — | — |
 | `POST /v2/search` | SearchBody | — |
 | `GET /v2/status` | — | — |
@@ -44,6 +51,39 @@ Framework `/docs` and `/openapi.json` routes are available separately.
 | `mode` | "auto", "semantic", "lexical", "hybrid" | "auto" |  |
 | `domains` | string | "" |  |
 | `support` | "standard", "broad" | "standard" |  |
+
+## BatchBody
+
+| Field | Type/choices | Required/default | Bounds |
+|---|---|---|---|
+| `render` | "auto", "never" | "auto" |  |
+| `cache_mode` | "use", "refresh", "bypass" | "use" |  |
+| `max_age` | number or null | factory/default; see runtime schema | minimum=0.0; maximum=1814400.0 |
+| `max_chars` | integer | 2000 | minimum=100.0; maximum=16000.0 |
+| `index_public` | boolean | false |  |
+| `evidence_namespace` | string | "local" | maxLength=100 |
+| `urls` | array of string | required | minItems=1; maxItems=500 |
+| `item_keys` | array of string or null | factory/default; see runtime schema | maxItems=500 |
+| `operation_id` | string | "" | maxLength=100; pattern=^[A-Za-z0-9._-]*$ |
+
+## BatchReadBody
+
+| Field | Type/choices | Required/default | Bounds |
+|---|---|---|---|
+| `job_id` | string | required | minLength=1; maxLength=100 |
+| `cursor` | integer | 0 | minimum=0.0 |
+| `limit` | integer | 10 | minimum=1.0; maximum=50.0 |
+| `evidence_namespace` | string | "local" | maxLength=100 |
+
+## BatchRetryBody
+
+| Field | Type/choices | Required/default | Bounds |
+|---|---|---|---|
+| `job_id` | string | required | minLength=1; maxLength=100 |
+| `cursor` | integer | 0 | minimum=0.0 |
+| `limit` | integer | 10 | minimum=1.0; maximum=50.0 |
+| `evidence_namespace` | string | "local" | maxLength=100 |
+| `operation_id` | string | required | minLength=1; maxLength=100; pattern=^[A-Za-z0-9._-]+$ |
 
 ## DocumentImageBody
 
@@ -76,6 +116,15 @@ Framework `/docs` and `/openapi.json` routes are available separately.
 | `offset` | integer | 0 | minimum=0.0 |
 | `max_chars` | integer | 12000 | minimum=1.0; maximum=1000000.0 |
 | `response_format` | "detailed", "concise" | "detailed" |  |
+| `evidence_namespace` | string | "local" | maxLength=100 |
+
+## DocumentStatusBody
+
+| Field | Type/choices | Required/default | Bounds |
+|---|---|---|---|
+| `url` | string or null | factory/default; see runtime schema | minLength=1; maxLength=2048 |
+| `document_id` | string or null | factory/default; see runtime schema | minLength=1; maxLength=100 |
+| `compare_to` | string or null | factory/default; see runtime schema | minLength=1; maxLength=100 |
 | `evidence_namespace` | string | "local" | maxLength=100 |
 
 ## DriveBody
@@ -207,6 +256,19 @@ Framework `/docs` and `/openapi.json` routes are available separately.
 | `categories` | string | "" |  |
 | `response_format` | "detailed", "concise" | "detailed" |  |
 | `evidence_namespace` | string | "local" | maxLength=100 |
+
+## ResolveQueryBody
+
+| Field | Type/choices | Required/default | Bounds |
+|---|---|---|---|
+| `render` | "auto", "never" | "auto" |  |
+| `cache_mode` | "use", "refresh", "bypass" | "use" |  |
+| `max_age` | number or null | factory/default; see runtime schema | minimum=0.0; maximum=1814400.0 |
+| `max_chars` | integer | 2000 | minimum=100.0; maximum=16000.0 |
+| `index_public` | boolean | false |  |
+| `evidence_namespace` | string | "local" | maxLength=100 |
+| `search` | SearchBody | required |  |
+| `alternatives` | integer | 0 | minimum=0.0; maximum=4.0 |
 
 ## SearchBody
 

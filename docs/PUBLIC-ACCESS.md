@@ -203,10 +203,16 @@ HTTP 429 identifies the limiter and supplies retry hints; admission-storage fail
 returns 503. Crashed leases expire after 300 seconds, so a restart can temporarily
 leave stale leases. That expiry differs from a short busy/retry hint.
 
+DPR is available through authenticated REST under `/v1/dpr/`. Jobs use the
+bearer namespace and fetch only public targets. Indexing public job evidence
+requires corpus scope. DPR does not add MCP tools. See [DPR](DPR.md) for limits.
+
 The same bearer can reopen scoped documents/jobs through REST and MCP. Explicit
 browser session IDs use transport-specific namespaces. Reserved `auto-read-*`
 continuation handles are the exception: adapters map them to the same caller-scoped
 recovery identity. The shared corpus is not made private per bearer by these scopes.
+Use `POST /documents/status` or MCP `document_status` to inspect the caller's own
+retained document metadata without fetching a URL.
 
 Direct/TLS redirects and headed subrequests receive public-target checks. This is
 not full DNS pinning or complete Crawl4AI egress containment; retain appropriate

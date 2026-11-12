@@ -29,8 +29,13 @@ MAX_BODY = 262_144
 MAX_URLS = 10
 MAX_QUERY = 500
 SLOTS = asyncio.Semaphore(8)
+DPR_PATHS = {
+    '/v1/dpr/jobs', '/v1/dpr/jobs/read', '/v1/dpr/jobs/cancel', '/v1/dpr/jobs/resume',
+    '/v1/dpr/jobs/retry', '/v1/dpr/resolve',
+}
 POST_PATHS = {
-    '/documents/read', '/documents/image', '/documents/structure', '/site/crawl',
+    '/documents/read', '/documents/status', '/documents/image', '/documents/structure',
+    '/site/crawl',
     '/jobs/fetch', '/jobs/read', '/jobs/cancel', '/jobs/resume',
     '/drive',
     '/extract',
@@ -41,7 +46,7 @@ POST_PATHS = {
     '/v2/search',
     '/search-and-extract',
     '/search-and-fetch',
-}
+} | DPR_PATHS
 GET_PATHS = {
     '/corpus/search',
     '/corpus/stats',
@@ -228,6 +233,10 @@ async def dispatch(path: str, request: Request):
         return JSONResponse({'error': 'invalid JSON'}, status_code=400)
     if not isinstance(payload, dict):
         return JSONResponse({'error': 'JSON object required'}, status_code=400)
+    if route in DPR_PATHS:
+        if payload.get('index_public') and 'corpus' not in CLAIMS.get()['scopes']:
+            return JSONResponse({'error': 'insufficient_corpus_scope'}, status_code=403)
+        return await upstream('POST', route, dict(payload, evidence_namespace=namespace))
     if route in SEARCH_PATHS | {'/research'}:
         query = payload.get('question' if route == '/research' else 'query')
         if not isinstance(query, str) or not 0 < len(query.strip()) <= MAX_QUERY:
@@ -282,7 +291,8 @@ async def dispatch(path: str, request: Request):
     if route in FETCH_PATHS or route in {'/documents/read', '/documents/image', '/site/crawl'}:
         payload = dict(payload, public_only=True)
     if route in FETCH_PATHS or route in {
-            '/documents/read', '/documents/image', '/documents/structure', '/site/crawl',
+            '/documents/read', '/documents/status', '/documents/image',
+            '/documents/structure', '/site/crawl',
             '/jobs/read', '/jobs/cancel', '/jobs/resume', '/research',
             '/search-and-fetch', '/search-and-extract'}:
         payload = dict(payload, evidence_namespace=namespace)

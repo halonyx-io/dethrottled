@@ -321,6 +321,8 @@ class CacheView:
                     "cache_expires_at": datetime.fromtimestamp(
                         retrieved + age, timezone.utc).isoformat()}
         if isinstance(value, dict):
+            if kind == "extract" and value.get("retrieved_at"):
+                metadata["retrieved_at"] = value["retrieved_at"]
             value.update(metadata)
         elif isinstance(value, list):
             value = [dict(row, **metadata) if isinstance(row, dict) else row for row in value]

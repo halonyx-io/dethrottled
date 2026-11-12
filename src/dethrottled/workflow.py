@@ -45,7 +45,9 @@ Use response_format=concise for agent reads (MCP default; REST detailed by defau
 Concise omits duplicate PDF text-layer blocks, retaining page summaries and continuation;
 request detailed explicitly for text-layer block coordinates/text. This presentation
 choice does not change the canonical retained document or source completeness.
-Known URL: call fetch directly, normally with focus set to the question. Unknown sources:
+For a previously read URL, document_status checks retained evidence without contacting the site.
+Search published_at is provider-reported; date_hint can be an unverified snippet lead.
+Known URL without suitable retained evidence: call fetch, normally with focus. Unknown sources:
 search then fetch selected URLs, or research for a multi-source evidence bundle. Corpus
 is optional reusable evidence, never a compulsory first step. fetch automatically tries
 transport/format/OCR recovery and bounded content recovery. When configured, Outlook

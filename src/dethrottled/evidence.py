@@ -41,6 +41,7 @@ class Documents:
             else digest
         )
         expires = time.time() + self.ttl
+        metadata = {**metadata, "document_sha256": digest}
         with self.lock, self.db:
             self.db.execute("DELETE FROM documents WHERE expires<?", (time.time(),))
             self.db.execute(
@@ -117,6 +118,35 @@ class Documents:
             "text": row[2],
             "metadata": json.loads(row[3]),
             "document_expires_at": row[4],
+        }
+
+    def status(self, namespace, *, url=None, identifier=None):
+        """Read scoped metadata without materializing retained document text."""
+        with self.lock:
+            if identifier is None:
+                row = self.db.execute(
+                    "SELECT id,url,digest,metadata,expires FROM documents "
+                    "WHERE namespace=? AND url=? AND expires>? ORDER BY expires DESC LIMIT 1",
+                    (namespace, url, time.time()),
+                ).fetchone()
+            else:
+                row = self.db.execute(
+                    "SELECT id,url,digest,metadata,expires FROM documents "
+                    "WHERE namespace=? AND id=? AND expires>?",
+                    (namespace, identifier, time.time()),
+                ).fetchone()
+        if row is None:
+            return None
+        doc_id, source, version, raw, expires = row
+        metadata = json.loads(raw)
+        return {
+            "document_id": doc_id, "url": source, "document_expires_at": expires,
+            "version_key": version, "document_sha256": metadata.get("document_sha256"),
+            "retrieved_at": metadata.get("retrieved_at"),
+            "published_at": metadata.get("published") or None,
+            "last_modified": (metadata.get("origin_response") or {}).get("last_modified"),
+            "quality": metadata.get("quality"), "tier": metadata.get("tier"),
+            "source_partial": metadata.get("source_partial"),
         }
 
     def put_artifact(self, namespace, filename, data):

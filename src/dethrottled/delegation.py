@@ -234,13 +234,16 @@ class CallerIdentityMiddleware:
 
         from .access import CLAIMS, AccessError
 
-        if scope["type"] != "http" or os.getenv("DETHROTTLED_DNB", "0") != "1":
+        path = scope.get("path", "")
+        if scope["type"] != "http" or (
+            os.getenv("DETHROTTLED_DNB", "0") != "1"
+            and not path.startswith("/v1/dpr/") and path != "/documents/status"
+        ):
             return await self.app(scope, receive, send)
         from starlette.responses import JSONResponse
 
         headers = dict(scope.get("headers", []))
         forwarded = headers.get(b"x-dethrottled-caller-authorization")
-        path = scope.get("path", "")
         required = (
             "drive"
             if path == "/drive"

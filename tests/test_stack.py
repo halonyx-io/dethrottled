@@ -167,3 +167,54 @@ def test_up_checks_port_when_only_other_services_exist(monkeypatch, tmp_path):
     monkeypatch.setattr(stack, 'prepare_context',
                         lambda _: pytest.fail('occupied port reached setup'))
     assert stack.main(['up', '--project', 'test']) == 1
+
+
+def test_guided_setup_saves_portable_plan_without_starting(tmp_path, monkeypatch, capsys):
+    from dethrottled import guided
+
+    disk = 145 * guided.GIB
+    edge = {"cpus": 8, "docker_ram": 11 * guided.GIB, "host_ram": 11 * guided.GIB,
+            "available_ram": 6 * guided.GIB, "disk_free": disk, "native": True, "gpu_nodes": []}
+    mini = {**edge, "cpus": 16, "docker_ram": 30 * guided.GIB}
+    assert guided.recommend(edge, "remote", True, "full") == {
+        "concurrency": 1, "threads": 2, "rerank_threads": 4, "ocr_threads": 4,
+        "rerank": True, "index": True}
+    assert guided.recommend(mini, "remote", True, "full") == {
+        "concurrency": 2, "threads": 4, "rerank_threads": 8, "ocr_threads": 8,
+        "rerank": True, "index": True}
+    hybrid = {**mini, "cpus": 8, "cpu_capacities": [382] * 4 + [889] * 3 + [1024]}
+    assert guided.recommend(hybrid, "remote", True, "full") == {
+        "concurrency": 1, "threads": 2, "rerank_threads": 4, "ocr_threads": 4,
+        "rerank": True, "index": True}
+    monkeypatch.setenv("DETHROTTLED_STACK_HOME", str(tmp_path / "state"))
+    monkeypatch.setattr(stack, "prerequisites", dict)
+    monkeypatch.setattr(stack, "containers", lambda *a, **k: [])
+    monkeypatch.setattr(stack, "check_port", lambda _: None)
+    monkeypatch.setattr(guided, "inspect", lambda *a: edge)
+    original = guided.run_guided
+    responses = iter(["3", "", "", "", "", "", "", "", "", "y"])
+    monkeypatch.setattr(guided, "run_guided",
+                        lambda *a: original(*a, ask=lambda _: next(responses)))
+    output = tmp_path / "plan.json"
+    assert stack.main(["configure", "--project", "guided-test", "--port", "19096",
+                       "--profile", "full", "--output", str(output)]) == 0
+    assert not (tmp_path / "state").exists()
+    plan = guided.load(output)
+    assert plan[guided.PLAN_KEY]["profile"] == "full"
+    assert plan["services"]["dnb"]["environment"]["DETHROTTLED_RENDER_CONCURRENCY"] == "1"
+    api = plan["services"]["dethrottled"]["environment"]
+    assert api["DETHROTTLED_RERANK_THREADS"] == api["DETHROTTLED_OCR_THREADS"] == "4"
+    assert api["DETHROTTLED_EMBED_THREADS"] == "2"
+    assert "authenticated REST/MCP separately" in capsys.readouterr().out
+
+    context = tmp_path / "state" / "guided-test" / stack.__version__
+    context.mkdir(parents=True)
+    monkeypatch.setattr(stack, "prepare_context", lambda _: context)
+    monkeypatch.setattr(stack, "run", lambda *a, **k: None)
+    monkeypatch.setattr(stack, "inspect_status", lambda *a: {
+        "selected_services": ["dnb"], "services": {"dnb": {"state": "ready"}}})
+    assert stack.main(["up", "--config", str(output)]) == 0
+    applied = json.loads((context / "managed.json").read_text())
+    assert applied["services"]["dnb"]["environment"] == plan["services"]["dnb"]["environment"]
+    settings = json.loads((context.parent / "project.json").read_text())
+    assert settings["port"] == 19096 and settings["guided"] == plan

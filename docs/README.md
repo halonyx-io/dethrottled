@@ -15,6 +15,8 @@ assets and public adapters may differ.
 | Read a source or file | [Reading and evidence](DEPENDABLE-WORKFLOWS.md) | [HTTP API](API.md), [browser operation](DRIVE.md) |
 | Understand automatic escalation | [Read planner](READ-PLANNER.md) | [Agent integration](AGENT-UPGRADES.md), [evidence](EVIDENCE.md) |
 | Install or extend the stack | [Python and managed installation](PYTHON.md) | [Requirements](REQUIREMENTS.md), [configuration](CONFIGURATION.md) |
+| Run a list of URLs from a script | [DPR](DPR.md) | [HTTP reference](HTTP-REFERENCE.md) |
+| Choose machine-specific settings | [Guided Setup](GUIDED-SETUP.md) | [Configuration](CONFIGURATION.md) |
 | Call from application code | [HTTP API](API.md) | [Request reference](HTTP-REFERENCE.md), [Python API](PYTHON.md) |
 | Manage ad/tracker filtering | [Native adblock](ADBLOCK.md) | [Measurements](../evaluations/adblock/README.md) |
 | Assess capabilities and quality | [Feature inventory](FEATURES.md) | [Evidence and limits](EVIDENCE.md) |

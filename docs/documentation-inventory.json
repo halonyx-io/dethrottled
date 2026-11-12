@@ -223,6 +223,11 @@
       "review": "Change author: reconcile current behaviour, examples and navigation."
     },
     {
+      "path": "docs/DPR.md",
+      "lifecycle": "current-guide",
+      "review": "Change author: reconcile current behaviour, examples and navigation."
+    },
+    {
       "path": "docs/DRIVE.md",
       "lifecycle": "current-guide",
       "review": "Change author: reconcile current behaviour, examples and navigation."
@@ -234,6 +239,11 @@
     },
     {
       "path": "docs/FEATURES.md",
+      "lifecycle": "current-guide",
+      "review": "Change author: reconcile current behaviour, examples and navigation."
+    },
+    {
+      "path": "docs/GUIDED-SETUP.md",
       "lifecycle": "current-guide",
       "review": "Change author: reconcile current behaviour, examples and navigation."
     },

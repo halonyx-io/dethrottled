@@ -168,7 +168,7 @@ def date_provenance(row: dict) -> tuple[str, str]:
     """Return (date, source). A snippet date is a lead, never a publication proof."""
     raw = (row.get("publishedDate") or row.get("published") or "").strip()
     if raw:
-        return raw, "structured"
+        return raw, "snippet" if row.get("date_source") == "snippet" else "structured"
     snippet = (row.get("snippet") or "").strip()
     if snippet:
         for pattern in _DATE_PATTERNS:
@@ -176,6 +176,22 @@ def date_provenance(row: dict) -> tuple[str, str]:
             if match:
                 return match.group(1), "snippet"
     return "", "none"
+
+
+def search_date_fields(row):
+    """Expose provider-reported publication days separately from snippet leads."""
+    value, source = date_provenance(row)
+    if source == "structured" and (parsed := parse_date(value)):
+        return {"published_at": parsed.date().isoformat(),
+                "date_hint": {"value": value, "source": "provider", "verified": False}}
+    if not value:
+        match = re.match(r"^\s*(\d+\s+(?:hours?|days?|weeks?|months?|years?)\s+ago)\b",
+                         row.get("snippet") or "", re.IGNORECASE)
+        if match:
+            value, source = match[1], "snippet"
+    return {"published_at": None, "date_hint": (
+        {"value": value, "source": "snippet", "verified": False}
+        if source == "snippet" else None)}
 
 
 def annotate_dates(rows: list) -> tuple[list, int]:

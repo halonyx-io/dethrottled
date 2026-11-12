@@ -208,6 +208,8 @@ class CorpusV2(IndexWorker):
                 "corpus_visibility",
                 "tier",
                 "retrieved_at",
+                "origin_response",
+                "final_url",
                 "source_sha256",
                 "source_partial",
                 "warnings",

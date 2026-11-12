@@ -12,6 +12,8 @@ Common entry points (see docs/HTTP-REFERENCE.md for the complete contract):
     POST /site/crawl          bounded same-origin site traversal
     POST /documents/read      retained text and continuation ranges
     POST /jobs/fetch          durable background reads
+    POST /v1/dpr/jobs         resumable URL batches for scripts
+    POST /v1/dpr/resolve      select and read a source for a query
     GET  /corpus/search       search previously indexed evidence
     GET  /health              process identity and version
     GET  /v2/status           source and worker readiness
@@ -65,7 +67,7 @@ from fastapi import BackgroundTasks, FastAPI, HTTPException
 #
 # Three places claiming a version is two too many.
 from . import __version__ as VERSION
-from . import consensus, providers, rerank, semantic_cache, signals, workers
+from . import consensus, dpr, providers, rerank, semantic_cache, signals, workers
 from . import domains as domain_health
 from . import extract as fx
 from . import fetch as fetcher
@@ -74,9 +76,11 @@ from . import paths as _paths
 from . import rank as ranker
 from . import research as research_engine
 from . import search as fs
+from .access import CLAIMS
 from .api_models import (
     DocumentImageBody,
     DocumentReadBody,
+    DocumentStatusBody,
     DriveBody,
     FetchBody,
     FetchJobBody,
@@ -136,6 +140,18 @@ def jobs():
         if _jobs is None:
             _jobs = Jobs(_paths.data_dir() / "jobs.sqlite")
         return _jobs
+
+
+_dpr_jobs = None
+_DPR_POOL = ThreadPoolExecutor(max_workers=2, thread_name_prefix="dpr-fetch")
+
+
+def dpr_jobs():
+    global _dpr_jobs
+    with _jobs_lock:
+        if _dpr_jobs is None:
+            _dpr_jobs = Jobs(_paths.data_dir() / "dpr-jobs.sqlite", bulk=True)
+        return _dpr_jobs
 
 
 STARTED = time.time()
@@ -265,6 +281,7 @@ def _search_row(row: dict, meta: dict, index: int) -> dict:
             (row.get("title", "") + " " + row.get("snippet", "")).strip()
         ),
         "publishedDate": row.get("publishedDate") or None,
+        **signals.search_date_fields(row),
         "date_source": row.get("date_source", "none"),
         "published_age_days": row.get("published_age_days"),
         "source_type": row.get("source_type") or signals.source_type(row.get("url", "")),
@@ -441,6 +458,7 @@ def _extract_once(url: str, max_chars: int, allow_ocr: bool = True,
         "source_partial": bool(result.get("extraction", {}).get("partial")),
         "final_url": result.get("url", url),
         "source_sha256": result.get("extraction", {}).get("source_sha256"),
+        **({"origin_response": result["origin_response"]} if result.get("origin_response") else {}),
     }
     row["source_type"] = signals.source_type(url)
     row["page_type"] = signals.page_type(row)
@@ -782,6 +800,7 @@ def v2_capabilities():
             "next_actions": "Each read returns tool, endpoint, arguments, reason and prerequisites",
             "manual_control": "fetch recovery=manual; explicit render/OCR/ranges remain available"},
         "documents": {"read_endpoint": "/documents/read", "versioned": True,
+                      "status_endpoint": "/documents/status",
                       "retention_seconds": 604800, "scoped": True,
                       "structure_endpoint": "/documents/structure",
                       "citation_selectors": "exact text offsets and version hash"},
@@ -793,6 +812,10 @@ def v2_capabilities():
                  "cancel_endpoint": "/jobs/cancel", "retention_seconds": 86400,
                  "progressive": True, "restart_policy": "unfinished jobs become interrupted",
                  "resume_endpoint": "/jobs/resume", "resume": "explicit; missing sources only"},
+        "dpr": {"schema_version": dpr.SCHEMA, "max_items": dpr.MAX_ITEMS,
+                "submit_endpoint": "/v1/dpr/jobs", "read_endpoint": "/v1/dpr/jobs/read",
+                "resolve_endpoint": "/v1/dpr/resolve", "public_targets_only": True,
+                "corpus_indexing": "explicit opt-in"},
         "quotas": None,
         "keys_required": False,
 
@@ -1116,6 +1139,131 @@ def resume_fetch_job(body: JobReadBody):
         raise HTTPException(status_code=exc.status, detail=str(exc)) from exc
 
 
+def _dpr_read(body, url):
+    row = _extract_row(
+        url, body.max_chars, public_only=True, allow_render=body.render == "auto",
+        cache_mode=body.cache_mode, max_age=body.max_age,
+        evidence_namespace=body.evidence_namespace,
+    )
+    result = dpr.evidence(url, row)
+    if body.index_public:
+        _queue_corpus([row], namespace=body.evidence_namespace)
+        result["corpus_indexing"] = row.get("corpus_indexing")
+    return result
+
+
+def _dpr_error(exc):
+    return HTTPException(status_code=exc.status, detail=str(exc),
+                         headers={"Retry-After": "2"} if exc.status == 429 else None)
+
+
+def _dpr_index_scope(enabled):
+    claims = CLAIMS.get()
+    if enabled and claims and "corpus" not in claims["scopes"]:
+        raise JobError("insufficient_corpus_scope", 403)
+
+
+def _dpr_page(namespace, job_id, cursor=0, limit=10):
+    store = dpr_jobs()
+    payload = store.payload(namespace, job_id)
+    return dpr.batch_page(store.get(namespace, job_id, cursor, limit), payload)
+
+
+@app.post("/v1/dpr/jobs", status_code=202)
+def submit_dpr_job(body: dpr.BatchBody):
+    try:
+        _dpr_index_scope(body.index_public)
+        job_id = dpr_jobs().submit(
+            body.evidence_namespace, body.model_dump(exclude={"operation_id"}), body.operation_id,
+            lambda url: _dpr_read(body, url), _DPR_POOL)
+        return _dpr_page(body.evidence_namespace, job_id)
+    except JobError as exc:
+        raise _dpr_error(exc) from exc
+
+
+@app.post("/v1/dpr/jobs/read")
+def read_dpr_job(body: dpr.BatchReadBody):
+    try:
+        return _dpr_page(body.evidence_namespace, body.job_id, body.cursor, body.limit)
+    except JobError as exc:
+        raise _dpr_error(exc) from exc
+
+
+@app.post("/v1/dpr/jobs/cancel")
+def cancel_dpr_job(body: dpr.BatchReadBody):
+    try:
+        dpr_jobs().cancel(body.evidence_namespace, body.job_id)
+        return _dpr_page(body.evidence_namespace, body.job_id)
+    except JobError as exc:
+        raise _dpr_error(exc) from exc
+
+
+@app.post("/v1/dpr/jobs/resume")
+def resume_dpr_job(body: dpr.BatchReadBody):
+    def reader(payload):
+        saved = dpr.BatchBody(**payload)
+        _dpr_index_scope(saved.index_public)
+        return lambda url: _dpr_read(saved, url)
+
+    try:
+        dpr_jobs().resume(body.evidence_namespace, body.job_id, reader, _DPR_POOL)
+        return _dpr_page(body.evidence_namespace, body.job_id)
+    except JobError as exc:
+        raise _dpr_error(exc) from exc
+
+
+@app.post("/v1/dpr/jobs/retry", status_code=202)
+def retry_dpr_job(body: dpr.BatchRetryBody):
+    try:
+        store = dpr_jobs()
+        payload = store.payload(body.evidence_namespace, body.job_id)
+        previous = store.get(body.evidence_namespace, body.job_id, 0, dpr.MAX_ITEMS)
+        if previous["status"] != "completed":
+            raise JobError("complete_or_resume_original_job_first", 409)
+        rows = dpr.batch_page(previous, payload)["results"]
+        failed = sorted((row for row in rows if row["outcome"] == "failed"),
+                        key=lambda row: row["source_index"])
+        if not failed:
+            raise JobError("no_failed_items_to_retry", 409)
+        return submit_dpr_job(dpr.BatchBody(**(payload | {
+            "urls": [row["requested_url"] for row in failed],
+            "item_keys": [row["item_key"] for row in failed],
+            "operation_id": body.operation_id,
+        })))
+    except JobError as exc:
+        raise _dpr_error(exc) from exc
+
+
+@app.post("/v1/dpr/resolve")
+def resolve_dpr_query(body: dpr.ResolveQueryBody):
+    try:
+        _dpr_index_scope(body.index_public)
+    except JobError as exc:
+        raise _dpr_error(exc) from exc
+    search = body.search.model_copy(update={
+        "limit": min(body.search.limit or body.search.max_items or body.search.num_results, 5),
+        "corpus": 0,
+        "evidence_namespace": body.evidence_namespace,
+    })
+    candidates, meta, _ = _ranked(search)
+    selected = None
+    inspected = []
+    for index, candidate in enumerate(candidates[:3]):
+        read = _dpr_read(body, candidate["url"])
+        inspected.append({"rank": index + 1, "url": candidate["url"], "outcome": read["outcome"]})
+        if read["outcome"] == "usable":
+            selected = {**read, "search_candidate": _search_row(candidate, meta, index)}
+            break
+    others = [row for index, candidate in enumerate(candidates)
+              if (row := _search_row(candidate, meta, index))["url"] !=
+              (selected or {}).get("requested_url")]
+    return {"schema_version": dpr.SCHEMA, "selected": selected, "inspected": inspected,
+            "outcome": "selected" if selected else "no_usable_source",
+            "selection_policy": "first_usable_in_search_order",
+            "alternatives": others[:body.alternatives],
+            "ranking": meta.get("ranking", []), "discovery": meta.get("discovery", {})}
+
+
 @app.post("/site/crawl")
 def crawl_site(body: SiteBody):
     from .site import crawl, map_site
@@ -1251,6 +1399,27 @@ def read_document(body: DocumentReadBody):
                    truncated=end < len(text), next_offset=end if end < len(text) else None)
     row["workflow"] = guidance(row, offset=body.offset, focused=bool(body.focus))
     return present_row(row, body.response_format)
+
+
+@app.post("/documents/status")
+def document_status(body: DocumentStatusBody):
+    claims = CLAIMS.get()
+    namespace = claims["namespace"] if claims else body.evidence_namespace
+    store = documents()
+    current = store.status(namespace, url=body.url, identifier=body.document_id)
+    baseline = store.status(namespace, identifier=body.compare_to) if body.compare_to else None
+    comparison = None
+    if body.compare_to:
+        if not current or not baseline:
+            comparison = "unavailable"
+        elif current["url"] != baseline["url"]:
+            comparison = "different_urls"
+        elif current["version_key"] == baseline["version_key"]:
+            comparison = "same_retained_version"
+        else:
+            comparison = "different_retained_version"
+    return {"state": "retained" if current else "unknown",
+            "document": current, "comparison": comparison, "origin_checked": False}
 
 
 @app.post("/documents/image")

@@ -20,6 +20,8 @@ GUIDES = {
     "SKILL-dethrottled.md",
     "docs/AGENT-PLAYBOOK.md",
     "docs/QUICKSTART.md",
+    "docs/DPR.md",
+    "docs/GUIDED-SETUP.md",
     "docs/DOCUMENTATION-MAINTENANCE.md",
     "docs/README.md",
     "docs/API.md",

@@ -6,5 +6,8 @@ def main():
     if sys.argv[1:2] == ['stack']:
         from .stack import main as stack_main
         raise SystemExit(stack_main(sys.argv[2:]))
+    if sys.argv[1:2] == ['dpr']:
+        from .dpr_cli import main as dpr_main
+        raise SystemExit(dpr_main(sys.argv[2:]))
     from .server import main as serve
     return serve()

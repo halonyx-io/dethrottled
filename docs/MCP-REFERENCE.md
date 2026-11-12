@@ -6,7 +6,7 @@ controls are additionally bounded/clamped by adapter/backend code.
 Unknown tool arguments are rejected. Caller identity and public-target policy
 are injected by the adapter; they are not caller-selectable tool arguments.
 
-This adapter registers **20 tools**. See [agent integration](AGENT-UPGRADES.md)
+This adapter registers **21 tools**. See [agent integration](AGENT-UPGRADES.md)
 for the autonomous workflow and [public access](PUBLIC-ACCESS.md) for setup.
 
 ## search
@@ -152,6 +152,15 @@ Reopen retained source evidence without another origin request.
 | `document_mode` | Literal['auto', 'native', 'layout'] | 'auto' |
 | `ocr_mode` | Literal['auto', 'always', 'never'] | 'auto' |
 | `ocr_language` | str | '' |
+## document_status
+
+Look up your retained evidence by exact URL or document ID without a network read.
+
+| Argument | Type/choices | Required/default |
+|---|---|---|
+| `url` | str \| None | None |
+| `document_id` | str \| None | None |
+| `compare_to` | str \| None | None |
 ## view_document_image
 
 Inspect retained PDF/image pixels to verify OCR, charts and numeric tables.
