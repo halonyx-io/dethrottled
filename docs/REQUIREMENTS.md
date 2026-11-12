@@ -6,8 +6,8 @@ supply Docker workers, Chromium, Tesseract or legacy system converters.
 
 | Route | Prerequisites | Capabilities |
 |---|---|---|
-| `pip install dethrottled` then `dethrottled stack up` | Python 3.10+, running Linux Docker Engine and Compose plugin v2+; native AMD64 or ARM64 | Five default services, matching sources bundled in the distribution |
-| GitHub clone then `docker compose up -d --build` | Git, Linux Docker Engine and Compose | Same five default services; checkout supplies deployment sources |
+| `pip install dethrottled` then `dethrottled stack up` | Python 3.10+, running Linux Docker Engine and Compose plugin v2+; native AMD64 or ARM64 | Four default services, matching sources bundled in the distribution |
+| GitHub clone then `docker compose up -d --build` | Git, Linux Docker Engine and Compose | Same four default services; checkout supplies deployment sources |
 | Standalone `dethrottled` or direct library calls | Python 3.10+; optional libraries/system tools/workers as needed | Available features depend on what is installed and configured |
 
 Docker Desktop must use Linux containers. Native Linux AMD64/ARM64 stacks were
@@ -22,7 +22,7 @@ Network access and free disk space are required for these steps. The CLI checks
 Docker, Compose, platform and the requested port, reports host CPU/RAM, and never
 installs system packages, elevates privileges or changes firewall settings.
 
-## What the measurements establish
+## Historical 1.4.0 measurements
 
 | Recorded default-stack workload | ARM64 edge device | x86_64 mini PC |
 |---|---:|---:|
@@ -56,7 +56,7 @@ A named volume surviving shutdown is expected; `stack down` does not reclaim it.
 
 | Profile | Adds | Resource policy |
 |---|---|---|
-| Default | API, headed browser, SearXNG, Crawl4AI, format worker | API/browser have no total Compose RAM cap; format worker capped at 2 GiB |
+| Default | API, DNB, SearXNG, format worker | DNB capped at 4 GiB and four CPUs; format worker capped at 2 GiB |
 | `media` | CPU speech recognition | Faster-Whisper `small`, int8; 3 GiB container cap; persistent model cache |
 | `layout` | PDF layout, OCR/table inference | Docling/CPU PyTorch; 8 GiB container cap, four CPUs; persistent model cache |
 | `full` | Both optional inference workers | Combined workload and model/cache costs; not required for default readers |

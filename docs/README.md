@@ -37,7 +37,7 @@ support for its answer.
 
 The raw API is local and unauthenticated. REST/MCP adapters add public identity,
 policy and shared admission; they are optional services, not built-in API
-routes. Base Compose includes five services, including broad-format parsing. Speech and
+routes. Base Compose includes the API, DNB, SearXNG and the format reader. Speech and
 PDF layout use automatically connected profiles; public adapters use an overlay.
 
 The [current two-device evaluation](BENCHMARKS.md) records installation and workload measurements.

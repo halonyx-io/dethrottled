@@ -11,10 +11,9 @@ DETHROTTLED_ADBLOCK=0  # no filtering and no list-update activity
 ```
 
 For managed installations, set the variable before `dethrottled stack up`, or in
-the checkout's `.env` before recreating the stack. Rebuild updated images and
-recreate the API, browser-search, SearXNG and Crawl4AI when upgrading to this
-feature. The number of services and public ports is unchanged. Existing data and
-model volumes are retained. `stack down` also preserves the list-cache volume.
+the checkout's `.env` before recreating the stack. Rebuild and recreate the API,
+DNB and SearXNG to update all three services. Named volumes retain the filter
+snapshot across `stack down`.
 Standalone Python uses the same switch and its normal data directory.
 
 For example, disable it for a managed-stack startup with:
