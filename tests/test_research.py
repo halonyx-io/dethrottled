@@ -170,7 +170,10 @@ def test_research_replaces_duplicate_source(monkeypatch):
     assert [row["url"] for row in body["sources"]] == [urls[0], urls[2]]
     assert body["summary"]["attempted"] == 3
     assert body["skipped"] == [{"url": urls[1], "reason": "duplicate_content",
-                                "duplicate_of": urls[0]}]
+                                "duplicate_of": urls[0], "duplicate_reason": "same_text"}]
+    assert body["sources"][0]["duplicates"] == [
+        {"url": urls[1], "provider": "", "reason": "same_text"}]
+    assert body["summary"]["deduplication"] == {"same_text": 1}
 
 
 def test_research_searches_are_bounded_and_ordered(monkeypatch):

@@ -12,25 +12,13 @@ import re
 import socket
 from urllib.parse import urlsplit
 
-from .urls import canonical_url
+from .dedupe import NEAR_DUPLICATE_JACCARD, merge_into, url_key
+from .dedupe import content_shingles as content_shingles  # re-exported for callers
 
 _WORDS = re.compile(r"[\w-]+", re.UNICODE)
 _STOP = frozenset(
     "a an and are as at be by can did do does for from how in into is it "
     "of on or the to was were what when where which who why with".split())
-
-
-def content_shingles(text: str) -> set[tuple[str, ...]]:
-    """A bounded fingerprint for near-identical extracted articles.
-
-    Require enough body text to avoid declaring short shared boilerplate to
-    be a duplicate. Capping the input also bounds CPU for long documents.
-    """
-    words = _WORDS.findall(text.casefold())[:700]
-    if len(words) < 80:
-        return set()
-    return {tuple(words[index:index + 5])
-            for index in range(len(words) - 4)}
 
 
 def duplicate_source(fingerprint: set[tuple[str, ...]],
@@ -42,7 +30,7 @@ def duplicate_source(fingerprint: set[tuple[str, ...]],
         if not prior:
             continue
         overlap = len(fingerprint & prior)
-        if overlap / len(fingerprint | prior) >= 0.65:
+        if overlap / len(fingerprint | prior) >= NEAR_DUPLICATE_JACCARD:
             return url
     return None
 
@@ -64,11 +52,11 @@ def queries_for(question: str, supplied: list[str] | None = None) -> list[str]:
 
 def coverage_ledger(queries, searches, sources, skipped):
     """Account for retrieval, never certify that lexical matches answer a question."""
-    read = {canonical_url(s.get("requested_url") or s["url"]): s for s in sources}
-    failed = {canonical_url(s.get("requested_url") or s["url"]): s for s in skipped}
+    read = {url_key(s.get("requested_url") or s["url"]): s for s in sources}
+    failed = {url_key(s.get("requested_url") or s["url"]): s for s in skipped}
     facets = []
     for index, query in enumerate(queries):
-        candidates = {canonical_url(r["url"]): r["url"] for r in searches[index]}
+        candidates = {url_key(r["url"]): r["url"] for r in searches[index]}
         terms = {w.casefold() for w in _WORDS.findall(query) if len(w) > 2} - _STOP
         evidence = []
         for key, row in read.items():
@@ -169,10 +157,11 @@ def select_sources(searches: list[list[dict]], limit: int,
             url = row.get("url") or ""
             if not public_url(url):
                 continue
-            key = canonical_url(url)
+            key = url_key(url)
             if key in by_url:
                 if query_index not in by_url[key]["query_indexes"]:
                     by_url[key]["query_indexes"].append(query_index)
+                merge_into(by_url[key], row, provenance=False)
                 continue
             host = urlsplit(url).hostname or ""
             item = {"url": url, "title": row.get("title") or "",

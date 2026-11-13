@@ -338,17 +338,7 @@
       "review": "Documentation maintainer: check source data, labels, units and embedding."
     },
     {
-      "path": "docs/assets/hardware.svg",
-      "lifecycle": "visual",
-      "review": "Documentation maintainer: check source data, labels, units and embedding."
-    },
-    {
       "path": "docs/assets/hero.svg",
-      "lifecycle": "visual",
-      "review": "Documentation maintainer: check source data, labels, units and embedding."
-    },
-    {
-      "path": "docs/assets/latency.svg",
       "lifecycle": "visual",
       "review": "Documentation maintainer: check source data, labels, units and embedding."
     },
@@ -1808,6 +1798,11 @@
       "review": "Change author: audit docs impact, advertised defaults and generated contracts."
     },
     {
+      "path": "scripts/build_readme_art.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
       "path": "scripts/build_showcase.py",
       "lifecycle": "source-contract",
       "review": "Change author: audit docs impact, advertised defaults and generated contracts."
@@ -2064,6 +2059,11 @@
     },
     {
       "path": "src/dethrottled/corpus_vectors.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/dedupe.py",
       "lifecycle": "source-contract",
       "review": "Change author: audit docs impact, advertised defaults and generated contracts."
     },

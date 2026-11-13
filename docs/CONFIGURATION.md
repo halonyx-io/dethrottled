@@ -57,8 +57,11 @@ application settings need an `environment` entry in a local override. Inspect
 | `DETHROTTLED_CRAWL4AI_BUDGET` | `-1` | No hourly renderer quota; 0 disables; positive values cap/window |
 | `DETHROTTLED_RENDER_CONCURRENCY` | `2` | Active render work at the API and DNB. Base Compose passes the same setting to both. |
 | `DETHROTTLED_HEADED_SETTLE` | `1` | API: after a headed read's first capture, take a second, settled look (network quiet, scroll until stable) and keep it only when it reads more; `0` disables it |
-| `DNB_NETWORK_SETTLE_SECONDS` | `3` | DNB render: wait at most this long for the page's requests to go quiet (500 ms without requests) before capture, within the render budget. `0` disables it. Set on the DNB service. |
-| `DNB_SCROLL_MAX_ADDED_CHARS` | `200000` | DNB render and `settle`: stop scrolling once this much text has been added (endless feeds). Pages whose single `<article>` holds most of the text are not scrolled. |
+| `DNB_NETWORK_SETTLE_SECONDS` | `3` | DNB render: wait at most this long for the page to settle (network idle, or stable visible text) before capture, within the render budget. `0` disables it. Set on the DNB service. |
+| `DNB_SCROLL_MAX_ADDED_CHARS` | `50000` | DNB render and `settle`: stop scrolling once this much text has been added (endless feeds). A round that adds height but less than `DNB_SCROLL_MIN_TEXT_GROWTH` characters (lazy images) also ends scrolling. Pages whose single `<article>` holds most of the text are not scrolled. |
+| `DNB_SCROLL_MIN_TEXT_GROWTH` | `100` | Characters of new visible text a scroll round must add for scrolling to continue. |
+| `DNB_SETTLE_STABLE_SECONDS` | `0.6` | DNB render and `settle`: readiness ends at network idle, or once visible text of at least `DNB_SETTLE_MIN_TEXT` characters has not changed for this long, whichever comes first (still bounded by `DNB_NETWORK_SETTLE_SECONDS`). |
+| `DNB_SETTLE_MIN_TEXT` | `500` | Visible characters below which a page is treated as still loading and keeps waiting for network idle. |
 | `DNB_SCROLL_ROUNDS`, `DNB_SCROLL_PAUSE_SECONDS` | `10`, `0.6` | DNB render: scroll to the end until the document stops growing, within the render budget, so infinite-scroll pages load later items. A page that does not grow costs one pause; endless feeds return larger text. `0` rounds disables it. Set on the DNB service. |
 | `DETHROTTLED_DRIVE_SESSION_TTL`, `DETHROTTLED_DRIVE_MAX_SESSIONS` | `1800`, `8` | Browser session expiry and capacity |
 | `DETHROTTLED_BROWSER_GRAPHICS` | `auto` in Compose | Verify exposed hardware through GL EGL, fall back to software; `mesa` retains GL, `default` retains original args |

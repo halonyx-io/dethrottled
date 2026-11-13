@@ -101,9 +101,13 @@ No automatic DDG pagination fills that menu. Fewer usable results is normal.
 Search rows also carry `source_type` (`docs`, `paper`, `repo`, `forum`,
 `reference`, `news`, `blog`, `other`), `fetch_relevance` (`high`, `medium`,
 `low`), `snippet_tokens`, `date_source` (`structured`, `snippet`, `none`) and
-`published_age_days`. They also expose `engines_consensus` and
+`published_age_days`. A relative snippet date carries `date_hint.resolved`,
+`precision` and `observed_at`; an impossible or contradicted date appears under
+`date_hint_rejected`. A row merged from copies of the same page at other
+addresses lists them under `duplicates`. They also expose `engines_consensus` and
 `consensus_score`; `DETHROTTLED_SEARCH_FANOUT=1` adds `fanout_queries`.
-The first row and `/v2/search` carry `dated_results`, `freshness_note`,
+The first row and `/v2/search` carry `dated_results`, `date_coverage`,
+`deduplication`, `freshness_note`,
 `decoy_buckets` and, when enabled, `semantic_cache` hit provenance. `date_source="snippet"` means the date was
 parsed from result text, not supplied by the engine; treat it as a lead. A
 nonempty `decoy_buckets` report means a low-coherence source was dropped only

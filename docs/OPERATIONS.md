@@ -157,6 +157,15 @@ stay capped; an operator `.env` that pins `DETHROTTLED_EXTRACT_CACHE_CHARS` keep
 the old limit until it is raised. Cached extractions are not rewritten, so use
 `cache_mode="refresh"` to reassess a page read by an earlier release.
 
+For 1.8.5, rebuild the API, DNB and authenticated adapter images with the
+existing Compose project and enabled profiles, and update any operator override
+that pins an adapter image tag. Keep all volumes; no corpus migration is needed.
+Search rows gain `duplicates`, `date_coverage` and `deduplication`, and fetched
+pages report publisher-declared dates with `date_source: "page"`. Browser
+settling now ends once visible text is stable, endless feeds stop at 50,000
+added characters (`DNB_SCROLL_MAX_ADDED_CHARS`), and a target site's 403 or
+timeout no longer rests the renderer for other sites.
+
 ## Guided Setup and DPR
 
 [Guided Setup](GUIDED-SETUP.md) saves an override without starting services.

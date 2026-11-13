@@ -67,7 +67,7 @@ from fastapi import BackgroundTasks, FastAPI, HTTPException
 #
 # Three places claiming a version is two too many.
 from . import __version__ as VERSION
-from . import consensus, dpr, providers, rerank, semantic_cache, signals, workers
+from . import consensus, dedupe, dpr, providers, rerank, semantic_cache, signals, workers
 from . import domains as domain_health
 from . import extract as fx
 from . import fetch as fetcher
@@ -304,12 +304,15 @@ def _search_row(row: dict, meta: dict, index: int) -> dict:
         "ranking": meta.get("ranking", []) if index == 0 else [],
         "fanout_queries": meta.get("fanout_queries") if index == 0 else None,
         "dated_results": meta.get("dated_results") if index == 0 else None,
+        "date_coverage": meta.get("date_coverage") if index == 0 else None,
+        "deduplication": meta.get("deduplication") if index == 0 else None,
         "freshness_note": meta.get("freshness_note") if index == 0 else None,
         "decoy_buckets": meta.get("decoy_buckets") if index == 0 else None,
         "semantic_cache": meta.get("semantic_cache") if index == 0 else None,
         "from_corpus": bool(row.get("from_corpus")),
         **({"constraints": meta["constraints"]} if index == 0 and "constraints" in meta else {}),
         **({"corpus_evidence": row["corpus_evidence"]} if row.get("corpus_evidence") else {}),
+        **({"duplicates": row["duplicates"]} if row.get("duplicates") else {}),
     }
 
 
@@ -463,7 +466,14 @@ def _extract_once(url: str, max_chars: int, allow_ocr: bool = True,
     }
     row["source_type"] = signals.source_type(url)
     row["page_type"] = signals.page_type(row)
-    row["date_source"] = "structured" if row.get("published") else "none"
+    # A fetched page's date is what the page itself declares (meta, JSON-LD,
+    # microdata, or the extractor's reading of the page), not a provider's.
+    if row.get("published") and (reason := signals.date_rejection(row["published"])):
+        row["date_hint_rejected"] = {"value": row["published"], "reason": reason}
+        row["published"] = ""
+    elif not row.get("published") and (row.get("page_metadata") or {}).get("date_rejected"):
+        row["date_hint_rejected"] = row["page_metadata"]["date_rejected"]
+    row["date_source"] = "page" if row.get("published") else "none"
     row["published_age_days"] = signals.age_days(row.get("published", ""))
     # Only stateless, public-only acquisitions are automatically shareable.
     # Interactive/cookie-backed reads keep their caller namespace and are not
@@ -977,6 +987,7 @@ def _ranked(body) -> tuple:
             "Most results are undated; dates are leads, not verified publication dates."
         )
     meta = dict(meta, ranking=stages, dated_results=dated,
+                date_coverage=signals.date_coverage(rows),
                 freshness_note=freshness_note)
     return rows, meta, limit
 
@@ -997,6 +1008,8 @@ def search_envelope(body: SearchBody):
             "degraded": meta.get("discovery", {}).get("degraded", True),
             "discovery": meta.get("discovery", {}),
             "dated_results": meta.get("dated_results"),
+            "date_coverage": meta.get("date_coverage"),
+            "deduplication": meta.get("deduplication"),
             "freshness_note": meta.get("freshness_note"),
             "decoy_buckets": meta.get("decoy_buckets"),
             "fanout_queries": meta.get("fanout_queries"),
@@ -1706,12 +1719,12 @@ def research(body: ResearchBody, background: BackgroundTasks):
         # without discarding later facets solely for using the same provider.
         admitted = set()
         for row in interleaved:
-            key = fetcher.canonical_url(row["url"])
+            key = dedupe.url_key(row["url"])
             if key:
                 admitted.add(key)
             if len(admitted) >= RESEARCH_CANDIDATE_LIMIT:
                 break
-        searches = [[r for r in rows if fetcher.canonical_url(r["url"]) in admitted]
+        searches = [[r for r in rows if dedupe.url_key(r["url"]) in admitted]
                     for rows in searches]
 
         selected = research_engine.select_sources(
@@ -1760,6 +1773,7 @@ def research(body: ResearchBody, background: BackgroundTasks):
                     "evidence": evidence}
 
         sources, skipped, fingerprints, partial_sources = [], [], [], []
+        dedupe_counts = {}
         with ThreadPoolExecutor(max_workers=3) as pool:
             pending = selected[:body.max_sources]
             offset = len(pending)
@@ -1768,19 +1782,34 @@ def research(body: ResearchBody, background: BackgroundTasks):
                     if (item.get("quality") == "ok" and item.get("content")
                             and item.get("content_status") not in {
                                 "image_content", "navigation_only"}):
-                        fingerprint = research_engine.content_shingles(item["content"])
-                        duplicate_of = research_engine.duplicate_source(
-                            fingerprint, fingerprints)
-                        if duplicate_of:
+                        # Same page under another address (final URL or a
+                        # same-site declared canonical), then the same or
+                        # nearly the same extracted text. The kept source
+                        # lists what was collapsed into it.
+                        fingerprint = dedupe.text_fingerprint(item["content"])
+                        keys = {dedupe.url_key(item["url"]), dedupe.declared_key(item)} - {None, ""}
+                        reason, kept = None, None
+                        for prior_keys, prior_print, prior in fingerprints:
+                            if keys & prior_keys:
+                                reason, kept = "same_url", prior
+                            else:
+                                reason = dedupe.content_match(fingerprint, prior_print)
+                                kept = prior if reason else None
+                            if kept is not None:
+                                break
+                        if kept is not None:
+                            dedupe.merge_into(kept, item, reason, provenance=False)
+                            dedupe_counts[reason] = dedupe_counts.get(reason, 0) + 1
                             skipped.append({"url": item["url"],
                                             **({"requested_url": item["requested_url"]}
                                                if item.get("requested_url", item["url"])
                                                != item["url"] else {}),
                                             "reason": "duplicate_content",
-                                            "duplicate_of": duplicate_of})
+                                            "duplicate_of": kept["url"],
+                                            "duplicate_reason": reason})
                         else:
                             sources.append(item)
-                            fingerprints.append((item["url"], fingerprint))
+                            fingerprints.append((keys, fingerprint, item))
                     else:
                         suspect = item.get("quality") == "suspect"
                         if suspect:
@@ -1817,6 +1846,7 @@ def research(body: ResearchBody, background: BackgroundTasks):
                             "read": len(sources),
                             "partial": len(partial_sources),
                             "attempted": len(sources) + len(skipped),
+                            "deduplication": dedupe_counts,
                             "elapsed_ms": int((time.monotonic() - started) * 1000),
                             "model_used": False}}
     finally:

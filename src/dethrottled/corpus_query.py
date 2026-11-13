@@ -8,6 +8,10 @@ from urllib.parse import urlsplit
 
 from .corpus_config import integer
 from .corpus_jobs import inference
+from .dedupe import content_match, merge_into, text_fingerprint, url_key
+
+# Passages are ~900 characters; a dozen words is enough to tell copy from coincidence.
+PASSAGE_MIN_WORDS = 12
 
 
 class Matches(list):
@@ -115,10 +119,21 @@ def search(store, query, *, limit=10, per_url=2, floor=None, domains=None, mode=
         row = records.get(identifier)
         if row is not None:
             source_models.setdefault(row["url"], set()).update(individual)
-    out, seen = [], {}
+    # One page under several addresses counts once towards per_url, and the
+    # same passage text from another page (a mirror) is listed under the kept
+    # hit rather than returned again. Within one page, per_url already bounds it.
+    out, seen, prints = [], {}, []
     for identifier in sorted(scores, key=lambda key: (-scores[key], key)):
         row = records.get(identifier)
-        if row is None or seen.get(row["url"], 0) >= per_url:
+        if row is None or seen.get(url_key(row["url"]), 0) >= per_url:
+            continue
+        fingerprint = text_fingerprint(row["text"], min_words=PASSAGE_MIN_WORDS)
+        here = url_key(row["url"])
+        kept = next((hit for prior, hit in prints
+                     if url_key(hit["url"]) != here and content_match(fingerprint, prior)), None)
+        if kept is not None:
+            merge_into(kept, {"url": row["url"]}, content_match(fingerprint, kept["_print"]),
+                       provenance=False)
             continue
         if excluded and any(
             re.search(r"\b" + re.escape(word) + r"\b", row["text"], re.I) for word in excluded
@@ -127,7 +142,9 @@ def search(store, query, *, limit=10, per_url=2, floor=None, domains=None, mode=
         support_status = assess(clean, row, source_models[row["url"]])
         if support == "standard" and support_status == "unconfirmed":
             continue
-        seen[row["url"]] = seen.get(row["url"], 0) + 1
+        seen[url_key(row["url"])] = seen.get(url_key(row["url"]), 0) + 1
+        row["_print"] = fingerprint
+        prints.append((fingerprint, row))
         individual = details[identifier]
         score = next(iter(individual.values()))["score"] if len(lists) == 1 else scores[identifier]
         row["document_available"] = store.document_available(row["document_id"])
@@ -149,4 +166,6 @@ def search(store, query, *, limit=10, per_url=2, floor=None, domains=None, mode=
         out.append(row)
         if len(out) >= limit:
             break
+    for row in out:
+        row.pop("_print", None)
     return Matches(out, warnings)

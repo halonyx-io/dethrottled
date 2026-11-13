@@ -104,25 +104,21 @@ def rank_rows(rows: list, want: str, *, recency: float = 0.0,
 def age_days(row: dict):
     """Age of a result in days, or None when it does not say.
 
-    Two formats because search results arrive in both: RSS gives RFC 2822 and
-    everything modern gives ISO 8601. A row whose date cannot be parsed is
-    undated, not ancient -- guessing old would bury it under `recency`.
+    Uses the same parser as the response date fields (`signals.parse_date`):
+    RFC 2822, ISO 8601 and the written forms search engines send. A row whose
+    date cannot be parsed is undated, not ancient -- guessing old would bury
+    it under `recency`.
     """
     raw = (row.get("published") or row.get("publishedDate") or "").strip()
     if not raw:
         return None
     from datetime import datetime, timezone
-    from email.utils import parsedate_to_datetime
-    for parse in (parsedate_to_datetime,
-                  lambda s: datetime.fromisoformat(s.replace("Z", "+00:00"))):
-        try:
-            when = parse(raw)
-            if when.tzinfo is None:
-                when = when.replace(tzinfo=timezone.utc)
-            return max(0.0, (datetime.now(timezone.utc) - when).days)
-        except (ValueError, TypeError):
-            continue
-    return None
+
+    from .signals import parse_date
+    when = parse_date(raw)
+    if when is None:
+        return None
+    return max(0.0, (datetime.now(timezone.utc) - when).days)
 
 
 def fuse_rows(rows: list, want: str, *, recency: float = 0.0) -> list:

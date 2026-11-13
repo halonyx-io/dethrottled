@@ -190,6 +190,60 @@ def test_network_settle_is_bounded_and_tolerates_timeouts(monkeypatch):
     assert waited == []
 
 
+class _SettlePage:
+    """networkidle never arrives; visible text follows a scripted timeline."""
+
+    def __init__(self, lengths):
+        self.lengths, self.polls = list(lengths), 0
+
+    async def wait_for_load_state(self, state, timeout):
+        await asyncio.sleep(timeout / 1000)
+        raise TimeoutError("analytics never go quiet")
+
+    async def evaluate(self, script):
+        self.polls += 1
+        return self.lengths[min(self.polls - 1, len(self.lengths) - 1)]
+
+
+def test_settle_ends_once_substantial_text_stops_changing(monkeypatch):
+    import time as _time
+
+    import service
+    monkeypatch.setattr(service, "SETTLE_POLL_SECONDS", 0.01)
+    monkeypatch.setattr(service, "SETTLE_STABLE_SECONDS", 0.03)
+    page = _SettlePage([0, 0, 1706, 1887] + [1887] * 200)
+    started = _time.monotonic()
+    assert asyncio.run(service.settle_quiet(page, 3)) == "text_stable"
+    assert _time.monotonic() - started < 1
+
+
+def test_settle_keeps_waiting_while_text_is_below_the_floor(monkeypatch):
+    import service
+    monkeypatch.setattr(service, "SETTLE_POLL_SECONDS", 0.01)
+    monkeypatch.setattr(service, "SETTLE_STABLE_SECONDS", 0.03)
+    page = _SettlePage([106] * 1000)                 # a loading shell: stable but tiny
+    assert asyncio.run(service.settle_quiet(page, 0.3)) == "budget"
+    assert page.polls > 5
+
+
+def test_settle_reports_network_idle_when_it_arrives_first():
+    import service
+
+    class Quiet(_SettlePage):
+        async def wait_for_load_state(self, state, timeout):
+            return None
+
+    assert asyncio.run(service.settle_quiet(Quiet([0]), 3)) == "network_idle"
+
+
+def test_scrolling_stops_when_a_round_adds_height_but_no_text(monkeypatch):
+    import time as _time
+    monkeypatch.setattr(dnb, "SCROLL_PAUSE", 0)
+    page = _ScrollPage([_state(1000, 2000), _state(3000, 2050), _state(5000, 9000)])
+    asyncio.run(dnb._settle_infinite_scroll(page, _time.monotonic() + 60))
+    assert page.scrolls == 1      # lazy images grew the page, not the text
+
+
 def test_intraword_emphasis_is_unwrapped_but_word_emphasis_kept():
     import html_extract
     fix = html_extract._unwrap_intraword_emphasis

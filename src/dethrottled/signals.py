@@ -8,7 +8,7 @@ a date was labelled `snippet`, and a wrong label is cheap to correct.
 from __future__ import annotations
 
 import re
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from email.utils import parsedate_to_datetime
 from urllib.parse import urlparse
 
@@ -168,7 +168,8 @@ def date_provenance(row: dict) -> tuple[str, str]:
     """Return (date, source). A snippet date is a lead, never a publication proof."""
     raw = (row.get("publishedDate") or row.get("published") or "").strip()
     if raw:
-        return raw, "snippet" if row.get("date_source") == "snippet" else "structured"
+        declared = row.get("date_source")
+        return raw, declared if declared in {"snippet", "page"} else "structured"
     snippet = (row.get("snippet") or "").strip()
     if snippet:
         for pattern in _DATE_PATTERNS:
@@ -178,20 +179,77 @@ def date_provenance(row: dict) -> tuple[str, str]:
     return "", "none"
 
 
+# A date more than this far ahead of the clock is a parse or provider error.
+FUTURE_TOLERANCE = timedelta(days=1)
+_RELATIVE = re.compile(
+    r"^\s*(\d+|an?|one)\s+(minute|hour|day|week|month|year)s?\s+ago\b", re.IGNORECASE)
+_RELATIVE_STEP = {"minute": (timedelta(minutes=1), "day"), "hour": (timedelta(hours=1), "day"),
+                  "day": (timedelta(days=1), "day"), "week": (timedelta(days=7), "week"),
+                  "month": (timedelta(days=30), "month"), "year": (timedelta(days=365), "year")}
+
+
+def resolve_relative_date(row: dict, now: datetime | None = None) -> dict:
+    """Turn a leading "3 days ago" into a dated snippet lead at capture time.
+
+    The label is only meaningful relative to when it was seen, so the date is
+    fixed when the row is captured (and cached), with the original label, its
+    precision and the observation time kept beside it. Rows that already carry
+    a provider date are left alone.
+    """
+    if row.get("publishedDate") or row.get("published") or row.get("date_relative"):
+        return row
+    match = _RELATIVE.match(row.get("snippet") or "")
+    if not match:
+        return row
+    count = 1 if match[1].lower() in {"a", "an", "one"} else int(match[1])
+    step, precision = _RELATIVE_STEP[match[2].lower()]
+    now = now or datetime.now(timezone.utc)
+    row.update(publishedDate=(now - count * step).date().isoformat(), date_source="snippet",
+               date_relative=match[0].strip(), date_precision=precision,
+               observed_at=now.isoformat(timespec="seconds"))
+    return row
+
+
+def date_rejection(value: str, now: datetime | None = None) -> str | None:
+    """Why a date cannot be a publication date, or None when it can."""
+    when = parse_date(value)
+    if when is not None and when > (now or datetime.now(timezone.utc)) + FUTURE_TOLERANCE:
+        return "future"
+    return None
+
+
+def _snippet_hint(row: dict, value: str) -> dict:
+    hint = {"value": value, "source": "snippet", "verified": False}
+    if row.get("date_relative"):
+        hint.update(value=row["date_relative"], resolved=value,
+                    precision=row.get("date_precision"), observed_at=row.get("observed_at"))
+    return hint
+
+
 def search_date_fields(row):
-    """Expose provider-reported publication days separately from snippet leads."""
+    """Expose provider-reported publication days separately from snippet leads.
+
+    A snippet date is a lead, never `published_at`. Impossible dates are not
+    silently dropped: they are reported under `date_hint_rejected`.
+    """
     value, source = date_provenance(row)
-    if source == "structured" and (parsed := parse_date(value)):
+    rejected = row.get("date_hint_rejected")
+    if value and (reason := date_rejection(value)):
+        rejected = {"value": value, "reason": reason}
+        value, source = "", "none"
+    extra = {"date_hint_rejected": rejected} if rejected else {}
+    if source in {"structured", "page"} and (parsed := parse_date(value)):
         return {"published_at": parsed.date().isoformat(),
-                "date_hint": {"value": value, "source": "provider", "verified": False}}
+                "date_hint": {"value": value,
+                              "source": "page" if source == "page" else "provider",
+                              "verified": False}, **extra}
     if not value:
         match = re.match(r"^\s*(\d+\s+(?:hours?|days?|weeks?|months?|years?)\s+ago)\b",
                          row.get("snippet") or "", re.IGNORECASE)
         if match:
             value, source = match[1], "snippet"
     return {"published_at": None, "date_hint": (
-        {"value": value, "source": "snippet", "verified": False}
-        if source == "snippet" else None)}
+        _snippet_hint(row, value) if source == "snippet" else None), **extra}
 
 
 def annotate_dates(rows: list) -> tuple[list, int]:
@@ -199,9 +257,25 @@ def annotate_dates(rows: list) -> tuple[list, int]:
     dated = 0
     for row in rows:
         value, source = date_provenance(row)
+        if value and (reason := date_rejection(value)):
+            row["date_hint_rejected"] = {"value": value, "reason": reason}
+            row.pop("publishedDate", None)
+            row.pop("published", None)
+            value, source = "", "none"
         row["date_source"] = source
         row["published_age_days"] = age_days(value) if value else None
         if value and source != "none":
             row["publishedDate"] = value
             dated += 1
     return rows, dated
+
+
+def date_coverage(rows: list) -> dict:
+    """How the returned rows are dated: provider, page, snippet lead or none."""
+    counts = {"provider": 0, "page": 0, "snippet": 0, "none": 0, "rejected": 0}
+    for row in rows:
+        source = row.get("date_source") or "none"
+        counts["provider" if source == "structured" else
+               source if source in counts else "none"] += 1
+        counts["rejected"] += bool(row.get("date_hint_rejected"))
+    return counts

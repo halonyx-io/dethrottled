@@ -15,9 +15,9 @@ must be classified; unknown paths fail generation/checking.
 | harness-guide | 20 |
 | historical-evidence | 215 |
 | planned-work | 1 |
-| source-contract | 170 |
+| source-contract | 172 |
 | third-party-notice | 4 |
-| visual | 8 |
+| visual | 6 |
 
 ## current-guide
 
@@ -417,6 +417,7 @@ Change author: audit docs impact, advertised defaults and generated contracts.
 | [scripts/benchmark_local.py](https://github.com/halonyx-io/dethrottled/blob/main/scripts/benchmark_local.py) |
 | [scripts/benchmark_parallel.py](https://github.com/halonyx-io/dethrottled/blob/main/scripts/benchmark_parallel.py) |
 | [scripts/benchmark_pdf.py](https://github.com/halonyx-io/dethrottled/blob/main/scripts/benchmark_pdf.py) |
+| [scripts/build_readme_art.py](https://github.com/halonyx-io/dethrottled/blob/main/scripts/build_readme_art.py) |
 | [scripts/build_showcase.py](https://github.com/halonyx-io/dethrottled/blob/main/scripts/build_showcase.py) |
 | [scripts/check_agent_docs.py](https://github.com/halonyx-io/dethrottled/blob/main/scripts/check_agent_docs.py) |
 | [scripts/check_docs.py](https://github.com/halonyx-io/dethrottled/blob/main/scripts/check_docs.py) |
@@ -469,6 +470,7 @@ Change author: audit docs impact, advertised defaults and generated contracts.
 | [src/dethrottled/corpus_support.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/corpus_support.py) |
 | [src/dethrottled/corpus_v2.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/corpus_v2.py) |
 | [src/dethrottled/corpus_vectors.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/corpus_vectors.py) |
+| [src/dethrottled/dedupe.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/dedupe.py) |
 | [src/dethrottled/delegation.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/delegation.py) |
 | [src/dethrottled/discovery.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/discovery.py) |
 | [src/dethrottled/documents.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/documents.py) |
@@ -529,9 +531,7 @@ Documentation maintainer: check source data, labels, units and embedding.
 |---|
 | [docs/assets/architecture.svg](https://github.com/halonyx-io/dethrottled/blob/main/docs/assets/architecture.svg) |
 | [docs/assets/escalation.svg](https://github.com/halonyx-io/dethrottled/blob/main/docs/assets/escalation.svg) |
-| [docs/assets/hardware.svg](https://github.com/halonyx-io/dethrottled/blob/main/docs/assets/hardware.svg) |
 | [docs/assets/hero.svg](https://github.com/halonyx-io/dethrottled/blob/main/docs/assets/hero.svg) |
-| [docs/assets/latency.svg](https://github.com/halonyx-io/dethrottled/blob/main/docs/assets/latency.svg) |
 | [docs/assets/live-outcomes.svg](https://github.com/halonyx-io/dethrottled/blob/main/docs/assets/live-outcomes.svg) |
 | [docs/assets/profiles.svg](https://github.com/halonyx-io/dethrottled/blob/main/docs/assets/profiles.svg) |
 | [docs/assets/resources.svg](https://github.com/halonyx-io/dethrottled/blob/main/docs/assets/resources.svg) |

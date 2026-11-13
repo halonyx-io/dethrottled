@@ -513,7 +513,61 @@ DOWNLOAD_DIR = Path("/tmp/dethrottled-downloads")
 DOWNLOAD_LIMIT = 32 * 1024 * 1024
 DOWNLOAD_LOCK = asyncio.Lock()
 
-SETTLE_MAX_ADDED_CHARS = int(os.getenv("DNB_SCROLL_MAX_ADDED_CHARS", "200000"))
+SETTLE_MAX_ADDED_CHARS = int(os.getenv("DNB_SCROLL_MAX_ADDED_CHARS", "50000"))
+# Readiness: "networkidle" (500 ms with no requests) arrives late or never on
+# pages with analytics, polling or sockets -- measured 2.4-3.1 s on five of
+# eight application pages -- while their visible text had stopped changing
+# 1-2 s earlier. Settling ends at whichever comes first: network idle, or
+# SETTLE_MIN_TEXT characters of visible text unchanged for SETTLE_STABLE_SECONDS.
+# Text below the floor (a loading shell) keeps waiting for the network.
+SETTLE_POLL_SECONDS = 0.2
+SETTLE_STABLE_SECONDS = float(os.getenv("DNB_SETTLE_STABLE_SECONDS", "0.6"))
+SETTLE_MIN_TEXT = int(os.getenv("DNB_SETTLE_MIN_TEXT", "500"))
+# A scroll round that adds height but less text than this (lazy images) ends scrolling.
+SCROLL_MIN_TEXT_GROWTH = int(os.getenv("DNB_SCROLL_MIN_TEXT_GROWTH", "100"))
+_TEXT_LENGTH = "() => ((document.body && document.body.innerText) || '').length"
+
+
+async def settle_quiet(scope, budget_seconds: float) -> str:
+    """Wait, bounded, until the page's content has arrived.
+
+    Returns how the wait ended: `network_idle`, `text_stable`, `budget` or
+    `skipped`. Never raises: a page that cannot be probed is captured as is.
+    """
+    if budget_seconds <= 0:
+        return "skipped"
+    end = time.monotonic() + budget_seconds
+    idle = asyncio.ensure_future(
+        scope.wait_for_load_state("networkidle", timeout=budget_seconds * 1000))
+    idle.add_done_callback(lambda f: f.cancelled() or f.exception())
+    last, since, outcome = None, time.monotonic(), "budget"
+    try:
+        while (remaining := end - time.monotonic()) > 0:
+            await asyncio.wait({idle}, timeout=min(SETTLE_POLL_SECONDS, remaining))
+            if idle.done():
+                if not idle.cancelled() and idle.exception() is None:
+                    outcome = "network_idle"
+                break
+            try:
+                length = await scope.evaluate(_TEXT_LENGTH)
+            except Exception:
+                break
+            now = time.monotonic()
+            if length != last:
+                last, since = length, now
+            elif length >= SETTLE_MIN_TEXT and now - since >= SETTLE_STABLE_SECONDS:
+                outcome = "text_stable"
+                break
+    finally:
+        if not idle.done():
+            idle.cancel()
+    return outcome
+
+
+def scroll_grew(before: dict, after: dict) -> bool:
+    """A scroll round loaded more content: taller and with more text."""
+    return (after.get("height", 0) > before.get("height", 0)
+            and after.get("text", 0) - before.get("text", 0) >= SCROLL_MIN_TEXT_GROWTH)
 DRIVE_ACTIONS = (
     "goto", "click", "fill", "type", "press", "select", "check", "uncheck", "hover",
     "wait", "wait_for", "text", "html", "attr", "count", "snapshot", "url", "title",
@@ -1425,21 +1479,17 @@ async def _drive(state: dict, body: DriveRequest) -> dict:
                 }""")
         elif action == "settle":
             async def call(scope=scope, s=s):
-                # Bounded readiness for application pages: wait for the page's
-                # own requests to go quiet (500 ms without traffic, at most
-                # `ms`), then scroll to the end until the document stops
-                # growing (at most `limit` rounds). A Bluesky profile arrives
+                # Bounded readiness for application pages: wait until the
+                # page's requests go quiet or its text stops changing (at most
+                # `ms`, see settle_quiet), then scroll to the end until a round
+                # adds no text (at most `limit` rounds). A Bluesky profile arrives
                 # after first paint; an infinite list loads one batch per scroll.
                 # Budgeted against the run deadline: settling must never turn
                 # a readable page into run_deadline_exceeded. Keep 2 s for the
                 # steps that follow (the capture itself).
                 started = time.monotonic()
                 quiet = min(max(1, s.ms), (deadline - started - 2) * 1000)
-                if quiet > 0:
-                    try:
-                        await scope.wait_for_load_state("networkidle", timeout=quiet)
-                    except Exception:
-                        pass
+                settled = await settle_quiet(scope, quiet / 1000)
                 rounds = 0
                 probe = """() => {
                   const body = (document.body && document.body.innerText) || '';
@@ -1460,12 +1510,12 @@ async def _drive(state: dict, body: DriveRequest) -> dict:
                     await asyncio.sleep(0.6)
                     after = await scope.evaluate(probe)
                     rounds += 1
-                    if after.get("height", 0) <= before.get("height", 0):
+                    if not scroll_grew(before, after):
                         break
                     if after.get("text", 0) - start.get("text", 0) >= SETTLE_MAX_ADDED_CHARS:
                         break
                     before = after
-                return {"scroll_rounds": rounds,
+                return {"scroll_rounds": rounds, "settled": settled,
                         "elapsed_ms": round((time.monotonic() - started) * 1000)}
         elif action == "scroll":
             async def call(scope=scope, s=s):
