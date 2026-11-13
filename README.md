@@ -1,30 +1,48 @@
-# Dethrottled
+<p align="center">
+  <img src="https://raw.githubusercontent.com/halonyx-io/dethrottled/main/docs/assets/hero.svg" alt="dethrottled: self-hosted web access for AI agents. Search, read, drive a browser and keep the evidence, with no API keys." width="100%">
+</p>
 
-<picture>
-  <img src="https://raw.githubusercontent.com/halonyx-io/dethrottled/main/docs/assets/hero.svg" alt="Dethrottled: discover, read, drive and retain web evidence">
-</picture>
+<p align="center">
+  <a href="https://pypi.org/project/dethrottled/"><img src="https://img.shields.io/pypi/v/dethrottled?color=22d3ee&amp;label=PyPI" alt="PyPI version"></a>
+  <a href="https://github.com/halonyx-io/dethrottled/actions/workflows/ci.yml"><img src="https://github.com/halonyx-io/dethrottled/actions/workflows/ci.yml/badge.svg" alt="CI status"></a>
+  <img src="https://img.shields.io/badge/API%20keys-none-22d3ee" alt="No API keys required">
+  <img src="https://img.shields.io/badge/runs%20on-AMD64%20%7C%20ARM64-334155" alt="Runs on AMD64 and ARM64">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-334155" alt="MIT license"></a>
+</p>
 
-**Dethrottled is an open source, self-hosted web retrieval and evidence engine
-for AI agents, applications and automation.** It discovers sources, reads pages
-and files, operates a real browser, and retains evidence for follow-up.
-It returns source references, warnings and concrete continuation steps. Your agent
-or application decides what the evidence supports.
+# dethrottled
 
-The default stack needs **no API key, paid search subscription or model API**.
-It runs on native AMD64 and ARM64 Docker hosts. Public sites can still block
-requests; retries, queues and storage have limits. Optional paid discovery
-integrations remain opt-in and are not required by the default workflow.
+**Self-hosted web access for AI agents. No API keys, no quotas, no per-call bill.**
 
-For a first installation or ordinary script/HTTP use, start with the
-[quick start](https://github.com/halonyx-io/dethrottled/blob/main/docs/QUICKSTART.md).
+Your agent needs the web. dethrottled searches it, reads what it finds (pages,
+PDFs, spreadsheets, slide decks, scanned images, audio and video), drives a
+real browser when a site insists on one, and keeps the evidence so the next
+question starts where the last one stopped. It runs in Docker on your own
+hardware.
 
-Native [HaGeZi ad/tracker filtering](docs/ADBLOCK.md) is enabled by default in this
-release, with one switch to disable it. Coverage and measured resource costs
-are described in that guide.
+It is also honest about what it got. Every result carries its quality, its
+warnings, how complete it is and where it came from, plus the concrete next step
+when something is missing. Your agent can tell a full article from a cookie wall.
 
-## Start locally
+## Why dethrottled
 
-With Docker Engine and Compose installed, run from a checkout:
+- **Keyless by default.** Search, rendering, OCR, speech, embeddings and
+  reranking all run locally. Paid providers exist only as explicit opt-ins.
+- **Reads the pages simple scrapers can't.** Each read starts with a plain request
+  and climbs to TLS impersonation, a JavaScript renderer and finally a real
+  browser, only as far as the page needs.
+- **Results you can trust to be honest.** `quality`, `warnings`, partial and
+  truncated flags, attempt history and source hashes travel with the text. A
+  failed or thin read is reported as one, never dressed up as a success.
+- **Built for agents.** An MCP server and REST gateway with per-client tokens and
+  scopes, an installable agent skill, and responses sized for context windows:
+  focused excerpts, token estimates and continuation handles.
+- **It remembers.** Long documents are retained for follow-up reads, and public
+  evidence goes into a local searchable corpus for 90 days.
+
+## Quick start
+
+You need Docker Engine with Compose.
 
 ```sh
 git clone https://github.com/halonyx-io/dethrottled.git
@@ -33,223 +51,187 @@ docker compose up -d --build --wait
 curl -fsS http://127.0.0.1:8787/health
 ```
 
-Try a search after startup:
+The first build downloads browser, OCR and model assets, so it takes a while.
+After that, search:
 
 ```sh
-curl -fsS http://127.0.0.1:8787/v2/search \
+curl -sS http://127.0.0.1:8787/v2/search \
   -H 'Content-Type: application/json' \
-  -d '{"query":"Python sqlite3 backup documentation","limit":5}'
+  -d '{"query":"sqlite write-ahead logging","limit":5}'
 ```
 
-This starts search, browser rendering and interaction, document reading, corpus
-and the local reranker. The first build downloads images, dependencies and model
-weights. See [requirements](docs/REQUIREMENTS.md) for tested hardware and storage.
-
-### Install without a checkout
-
-With Python 3.10+ and Docker Compose available:
+and read a page, keeping only the passages about one topic:
 
 ```sh
-python3 -m venv .venv
-. .venv/bin/activate
+curl -sS http://127.0.0.1:8787/fetch \
+  -H 'Content-Type: application/json' \
+  -d '{"urls":["https://sqlite.org/wal.html"],"focus":"checkpoint","max_chars":600}'
+```
+
+Prefer not to clone? With Python 3.10+ and Docker:
+
+```sh
+python3 -m venv .venv && . .venv/bin/activate
 python -m pip install dethrottled
 dethrottled stack up
 dethrottled stack status
 ```
 
-Choose [Guided Setup](docs/GUIDED-SETUP.md) for recommendations based on the
-machine and expected workload. It saves a Compose override you can review
-before applying. Speech and advanced PDF layout are selectable worker profiles.
-For a script processing a list of sources, start with [DPR](docs/DPR.md).
-For an AI client, start with the [agent skill](SKILL-dethrottled.md).
+> [!IMPORTANT]
+> The raw API on `127.0.0.1:8787` has no authentication and is meant for the
+> same machine. To serve other devices or a hosted agent, put the
+> [authenticated REST and MCP adapters](docs/PUBLIC-ACCESS.md) in front of it.
 
-The raw API listens on **`127.0.0.1:8787`** and has no caller authentication.
-For clients on other devices, set up [authenticated REST or MCP](docs/PUBLIC-ACCESS.md).
+## What it does
 
-## Follow the evidence
+### Search
 
-| Capability | What the agent receives |
+One query fans out to DuckDuckGo plus supplementary engines through a bundled
+SearXNG, and comes back as a compact menu of at most fifteen unique sources.
+Profiles cover `web`, `news`, `academic` (Crossref, OpenAlex, arXiv) and a
+`thorough` mode. The same page reached under different addresses is merged into
+one result that keeps everyone's dates and provenance. A local Ettin reranker
+refines the order, and you can restrict, exclude or prefer domains.
+
+### Read almost anything
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/halonyx-io/dethrottled/main/docs/assets/escalation.svg" alt="A read climbs from plain HTTP to TLS impersonation, a JavaScript renderer and a real browser, assessing the result after every step and returning evidence with its quality, warnings and next steps." width="100%">
+</p>
+
+After every attempt the result is assessed. Is there readable text? Is this an
+app shell waiting for JavaScript, a challenge page, an error banner or a teaser?
+The read only climbs when it has to. When a page needs more than rendering, a
+read planner tries the fix it observed: scrolling a feed, expanding collapsed
+sections, waiting out a loading state, or following the publisher's own
+alternative format.
+
+The same `fetch` call reads:
+
+| Source | What you get |
 |---|---|
-| Search | Compact source choices: up to ten DDG results, at most three per supplementary engine, fifteen unique URLs total |
-| Read | Extracted pages, documents, tables, archives, captions and media; quality and provenance remain attached |
-| Recover | Observed publisher alternatives, TLS acquisition, JavaScript rendering and scoped headed-browser interaction |
-| Drive | Native controls, frames, tabs, application responses, downloads, screenshots and checkpointed sessions |
-| Retain | Document IDs with text, page and table ranges; focused follow-up without fetching the source again |
-| Remember | Public Corpus v2 with bounded lexical coverage, sampled semantic retrieval and explicit support/coverage metadata |
-| Research | A bounded evidence bundle with explicit coverage gaps; ten sources by default, twenty on request |
+| Web pages | Main text with title, publisher-declared dates and identifiers (DOI, ISBN, package versions) |
+| PDF | Text layer, detected tables, page ranges and Tesseract OCR for scans; optional Docling layout analysis |
+| Office and OpenDocument | DOCX, PPTX, XLSX, XLS, ODT, ODS, ODP, EPUB, RTF, legacy DOC/PPT, MSG and XLSB |
+| Data and text | CSV and TSV row windows, JSON, XML, Markdown, plain text |
+| Archives and email | ZIP, TAR and GZIP members; EML messages and attachments |
+| Media | Captions and subtitles, image OCR, and speech-to-text for audio and video with the optional speech worker |
 
-<picture>
-  <img src="https://raw.githubusercontent.com/halonyx-io/dethrottled/main/docs/assets/escalation.svg" alt="Automatic acquisition, assessment, recovery and agent continuation">
-</picture>
+### Drive a real browser
 
-A normal fetch runs the recovery policy automatically. When content remains
-incomplete, `read_plan` and `workflow.next_actions` expose useful continuations,
-including reuse of the same browser session. Agents can also operate `/drive`
-directly. Read the [agent client playbook](https://github.com/halonyx-io/dethrottled/blob/main/docs/AGENT-PLAYBOOK.md)
-for tool selection and response contracts. The repository [agent skill](SKILL-dethrottled.md)
-provides an installable client workflow covering discovery, extraction, documents,
-site mapping, browser control and diagnostics.
+When reading isn't enough, `/drive` hands your agent a real Chromium session:
+snapshot the page's controls, click, fill and submit forms, switch tabs and
+frames, capture network responses, download files and take screenshots. Sessions
+persist across calls, survive worker restarts through checkpoints, and stay
+inside the hosts you allow.
 
 ```sh
-curl -sS http://127.0.0.1:8787/fetch \
+curl -sS http://127.0.0.1:8787/drive \
   -H 'Content-Type: application/json' \
-  -d '{"urls":["https://docs.python.org/3/library/sqlite3.html"],"focus":"in-memory database"}'
+  -d '{"url":"https://example.com/","session":"demo","allowed_hosts":["example.com"],"steps":[{"action":"snapshot","limit":10}]}'
 ```
 
-Preserve `quality`, `warnings`, `source_partial`, `truncated`, `document_id` and
-continuation metadata. A successful HTTP response is not proof of a complete,
-relevant or correct read. OCR and speech may need checking against source pixels
-or audio. Interactive challenges can remain unresolved.
+### Research in one call
 
-## Reuse evidence across tasks
+`/research` takes a question, searches several angles, reads the most promising
+sources in parallel and returns an evidence bundle: source excerpts matched to
+your question, with the gaps it could not cover. Mirrors and duplicate copies are
+collapsed so the bundle contains distinct sources. No model writes an answer;
+your agent does that with the evidence in hand.
 
-Corpus v2 retains eligible public passages for 90 days, with bounded SQLite
-lexical indexing and representative MiniLM/E5 embeddings. Indexing runs in the
-background; public document handles can be reopened across agent identities.
-Private/authenticated reads are excluded from automatic sharing.
+```sh
+curl -sS http://127.0.0.1:8787/research \
+  -H 'Content-Type: application/json' \
+  -d '{"question":"How does Python sqlite3 create an in-memory database?","max_sources":4}'
+```
 
-Standard retrieval checks source/model corroboration or meaningful query terms.
-When evidence is missing, `support="broad"` exposes additional warned candidates,
-including cross-language matches. Neither mode verifies an answer. The
-[controlled evaluation](https://github.com/halonyx-io/dethrottled/blob/main/evaluations/corpus-v2/results/2026-11-05/REPORT.md)
-records recovered facts and the precision/coverage tradeoff. See
-[Corpus operation](https://github.com/halonyx-io/dethrottled/blob/main/docs/CORPUS.md)
-for budgets, retention, migration and rollback.
+### Keep and reuse evidence
 
-## Measured on two machines
+- **Retained documents.** Every read gets a `document_id`. Page through a long
+  PDF, jump to a table's rows or, where supported, view the source page as an
+  image, all without fetching it again.
+- **A shared corpus.** Public reads are indexed in the background, lexically and
+  with local MiniLM/E5 embeddings, and kept for 90 days. `corpus_search` finds
+  passages across everything read before, in any language the models cover.
 
-The [current installation and benchmark report](https://github.com/halonyx-io/dethrottled/blob/main/evaluations/install-showcase/results/2026-11-04/REPORT.md)
-compares an ARM64 edge device with an x86_64 mini PC. It preserves
-installation failures and fixes, controlled browser/document checks, 50 live
-search questions, 30 fixed fetch targets and six research tasks per device.
-Fresh acquisition, cache-enabled repeats and optional workers are reported
-separately. Every plotted value is generated from retained case data.
+### And more
 
-<picture>
-  <img src="https://raw.githubusercontent.com/halonyx-io/dethrottled/main/docs/assets/hardware.svg" alt="ARM64 edge device: eight Cortex-A55/A78 cores and 11.29 GiB OS-visible RAM. x86_64 mini PC: Ryzen 7 5800U, eight cores and sixteen threads, 30.76 GiB OS-visible RAM.">
-</picture>
+- **Bulk jobs.** [DPR](docs/DPR.md) takes up to 500 URLs per job from a CSV or
+  text file, survives restarts and exports JSONL, CSV or extracted files.
+- **Site mapping and crawling.** Read a sitemap or follow links within one
+  site, with explicit page and path bounds.
+- **Field extraction.** Named CSS selectors pull exact values out of a page
+  without a model.
+- **Ad and tracker blocking.** [HaGeZi Multi PRO](docs/ADBLOCK.md) filtering is
+  on by default across every fetcher and browser.
+- **Guided Setup.** [Guided Setup](docs/GUIDED-SETUP.md) recommends settings for your machine and
+  workload, and saves a plan you can review before applying it.
 
-| Recorded check | ARM64 edge device | x86_64 mini PC |
-|---|---:|---:|
-| Browser/document contracts, three runs | 63/63 | 63/63 |
-| Controlled format fact retained, eleven fixtures × three runs | 33/33 | 33/33 |
-| Worker-restart storage restoration | 3/3 | 3/3 |
-| Nonempty live search menus | 50/50 | 50/50 |
-| Fresh public fetches assessed `ok` | 26/30 | 27/30 |
+## What a result looks like
 
-The live `ok` label is the engine's assessment, not verified answer correctness.
-The report separately records topic-marker retention, thin results and failures.
+A real `fetch` response, trimmed:
 
-<picture>
-  <img src="https://raw.githubusercontent.com/halonyx-io/dethrottled/main/docs/assets/latency.svg" alt="Measured latency on ARM64 edge device and x86_64 mini PC, including failed requests">
-</picture>
+```json
+{
+  "url": "https://sqlite.org/wal.html",
+  "quality": "ok",
+  "tier": "direct/trafilatura",
+  "content_status": "complete",
+  "page_type": "article",
+  "published": "2026-08-25",
+  "date_source": "page",
+  "content": "In its default configuration, SQLite will checkpoint the WAL file at the conclusion of any transaction when the WAL file is more than 1000 pages long...",
+  "content_chars": 30118,
+  "truncated": true,
+  "document_id": "doc_8a903f5c0b48492fb6fcf21d236245fc",
+  "warnings": [],
+  "tokens_estimated": 150
+}
+```
 
-These are observed workloads, not universal minimum requirements or a paid-service
-superiority claim. Earlier evaluations proved native Reddit interaction and
-recovery on specific pages; Crunchbase and G2 remained blocked. Current live
-outcomes, historical reports and limits are linked in the
-[evidence index](https://github.com/halonyx-io/dethrottled/blob/main/docs/EVIDENCE.md).
-Compose enables the local Ettin reranker by default. Standalone Python can opt in.
+`truncated` is true because `focus` returned only the matching passages; the full
+30,118-character text is retained under `document_id`. When a read is incomplete,
+`workflow.next_actions` names the exact tool call to make next.
 
-## Current stack
+## Connect your agent
 
-GitHub Compose and the PyPI managed stack both build DNB from bundled source.
-DNB provides browser discovery, rendering and interaction. Compose generates
-a signing key in the API data volume and gives DNB the public verifier.
-DNB launches Chromium through Patchright and runs Crawl4AI extraction in bounded
-worker processes.
-
-## Historical 1.8.0 validation
-
-The release candidate was frozen at commit `735d420` (tag
-`phase5-candidate-20261109`) and then extended with the OCR fixes and the opt-in
-Ettin reranker. Candidate images are
-`dethrottled-dnb:1.8.0-candidate-20261109` (`sha256:c6633da3…`) and
-`dethrottled-dnb-api:1.8.0-candidate-20261109` (`sha256:bb859007…`). The
-test-bed API with the OCR improvements is
-`dethrottled-dnb-api:1.8.0-dev-20261109`; the frozen images were not overwritten.
-
-| Layer | 1.8.0 result against the frozen 1.7.1 reference |
+| You use | Connect with |
 |---|---|
-| Browser parity | Both sides passed 27 facts, 27 drive actions, exact download, network fact, concurrency and checkpoint restore |
-| PDF concise | Same 213 content characters, `direct/direct-native`, quality `ok`; reference kept one raw table array, candidate reported `native_pdf_table_count=1` and omitted the raw array |
-| Office / OCR | PDF, DOCX, XLSX and PPTX facts, quality and tier matched; the frozen baseline OCR returned the same text and warning on both sides, misreading `hotel-905` as `hote-005` (the test-bed fix below now reads it correctly) |
-| Layout / mixed batch | `parser=docling`, 158 characters and the same two inference warnings; a four-file mixed batch matched |
-| Media / speech | Same language `en`, duration 3.812875 s, transcript and speech-uncertainty warning; one-byte response-length difference |
-| HTML ceiling | A 13.7 MB page returned HTTP 200 with `html_capture_limit`, 300 characters and no post-limit fact on both sides |
-| Live / hostile | Two paced passes over the frozen five-URL protocol; controlled hostile routes matched exactly. CarGurus and Expedia remained failed on the repeated pass; no new hostile-source success is claimed |
-| Neural rerank | Opt-in Ettin 68M fp32: 0.7930 nDCG@10 / 0.7699 MRR@10 over 100 SciFact queries versus 0.7222/0.6913 for source order; no default change |
-| ARM64 | Native build on `q6a` (aarch64, Docker 29.9.3), reference `sha256:b9e0fe2a…`, candidate `sha256:9fb7c41b…`; llvmpipe WebGL, real crawl fact retained, 29/29 focused tests |
-| Packaging / install | Wheel and sdist built, `twine check` and `scripts/verify_stack_package.py` passed (979 context files, 56 copy sources); the 1.8.0 wheel installed in a clean venv and both CLI entry points ran, while the 1.7.1 PyPI/GitHub routes remain available for rollback |
-| Mixed load | 3-minute run: reference 859 requests / 0 failures / 20 ms median; candidate 829 / 0 / 20 ms |
-| Soak / crash | 10-minute API memory flat at ~238 MiB, browser 495-619 MiB without restart; injected browser kill caused 33/333 drive requests to fail explicitly while 999/999 fetches succeeded, API stayed healthy, recovery took 4.3 s |
-| Rollback | Marker and legacy databases survived reference → candidate → reference; candidate read the reference cache, schema 2 created `corpus-v2.sqlite` alongside `corpus.sqlite`, and 1.7.1 read it after rollback |
-| Offline suite | 915 passed, 139 skipped, 2 deselected on the host; 1,066 passed, 15 skipped, 2 deselected in the candidate API image |
+| An MCP client (Claude, Codex, Cursor and others) | The [MCP adapter](docs/PUBLIC-ACCESS.md): Streamable HTTP at `/mcp` with a bearer token |
+| Your own code | The [HTTP API](docs/API.md), or the [Python package](docs/PYTHON.md) |
+| A coding agent that reads skills | The [agent skill](SKILL-dethrottled.md) and the [client playbook](docs/AGENT-PLAYBOOK.md) |
+| A shell script | The `dethrottled` CLI and [DPR](docs/DPR.md) for batches |
 
-Known differences and limits: the concise PDF table change is an intentional
-presentation change, not a capability loss. On the first live pass the candidate
-returned a readable Crunchbase/Expedia result where 1.7.1 returned a partial or
-failed result; the reversed second pass matched, so this is recorded as
-upstream/order variability rather than a claimed improvement. The frozen baseline OCR was identical but wrong on one generated token; the
-test-bed fix now reads it, and the warning remains. ARM64
-used software rendering, not verified hardware acceleration. Package metadata
-and the Compose user agent are 1.8.0.
+## Honest limits
 
-The candidate uses roughly 6.8-7.2 CPU-seconds per 10 renders versus 2.4-2.8 for
-1.7.1 at similar latency; this is a measured target for improvement, not a
-speedup claim. Controlled direct extraction is within 3% (0.803 versus 0.780
-CPU-seconds per request) and the extraction worker itself is about 0.019
-CPU-seconds per request, so the renderer, not the reader, owns that gap. A
-separate headed non-GL crawl browser cut render CPU from 0.706 to 0.370
-CPU-seconds per request at the same latency, while drive keeps verified WebGL and
-Crunchbase still reads; browser memory rises from about 0.52 to 1.0 GiB.
+- Some sites block automated access whatever the client. Those reads fail, and
+  say so.
+- Search quality depends on upstream engines, which rate-limit and change.
+- "Readable" is not "correct". OCR and speech can misread, and a page can be
+  wrong. dethrottled reports evidence; it does not verify claims.
+- The fetch ladder does not consult `robots.txt`. You are responsible for how you
+  use it. Use the [authenticated adapters](docs/PUBLIC-ACCESS.md) and network
+  isolation when anyone else can reach it.
 
-Test-bed improvements after the freeze are tracked in
-[CANDIDATE-CHANGES.md](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/CANDIDATE-CHANGES.md).
-The first one recovers low-resolution OCR digits (`hotel-905`, reference read
-`hote-005`) with a bounded 2x upscale for standalone images; PDF page rasters
-keep their existing OCR-DPI resolution. The frozen images were not overwritten.
-P0 test-bed hardening now also enforces cache expiry/size, closes the idle crawl
-browser, adds CID-corrupted PDF OCR, warns on long login/paywall/access-denied
-pages, and offers a six-tool MCP profile. P1 adds date/source/page signals,
-fetch relevance, decoy-bucket filtering, normalized search cache identity, token
-estimates and boundary-aware truncation. See
-[P0-BUGS-EFFICIENCY.md](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/P0-BUGS-EFFICIENCY.md)
-and [P1-AGENT-SIGNALS.md](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/P1-AGENT-SIGNALS.md).
-P2 keeps search fan-out, neural rerank, semantic cache, persistent search
-profiles and provider key/proxy rotation opt-in. The 1.8.0 prototype supports one
-neural reranker, Ettin 68M fp32, at 512 tokens, title+text up to 3,000
-characters and the top 30 candidates. On 100 SciFact queries it reached 0.7930
-nDCG@10 and 0.7699 MRR@10 versus 0.7222/0.6913 for source order, but it remains
-opt-in. Results are in
-[P2-EXPLORATORY.md](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/P2-EXPLORATORY.md).
-The full record is in [PHASE-6.md](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/PHASE-6.md),
-and the next layer-by-layer comparison is in
-[CANDIDATE-BENCHMARK-PLAN.md](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/results/2026-11-09/CANDIDATE-BENCHMARK-PLAN.md).
-No release or deployment happens without fresh approval.
+## Documentation
 
-## Explore the engine
-
-| Guide | Purpose |
+| Start here | For |
 |---|---|
-| [Documentation home](https://github.com/halonyx-io/dethrottled/blob/main/docs/README.md) | Find the right integration or operations guide |
-| [Architecture](https://github.com/halonyx-io/dethrottled/blob/main/docs/PIPELINE.md) | Service boundaries, search, reading, research and corpus |
-| [HTTP API](https://github.com/halonyx-io/dethrottled/blob/main/docs/API.md) | Routes, examples and generated request reference |
-| [Browser operation](https://github.com/halonyx-io/dethrottled/blob/main/docs/DRIVE.md) | Actions, scope, sessions, checkpoints and downloads |
-| [Requirements and measurements](https://github.com/halonyx-io/dethrottled/blob/main/docs/REQUIREMENTS.md) | Tested hardware, memory, disk and optional-profile costs |
-| [Configuration](https://github.com/halonyx-io/dethrottled/blob/main/docs/CONFIGURATION.md) | Workers, models, profiles and workload controls |
-| [Operations](https://github.com/halonyx-io/dethrottled/blob/main/docs/OPERATIONS.md) | Updates, backups, verification and remote deployment |
+| [Quick start](docs/QUICKSTART.md) | Install, first requests, everyday use |
+| [Client playbook](docs/AGENT-PLAYBOOK.md) | How agents should call each tool and read each field |
+| [HTTP API](docs/API.md) | Routes, examples and the [request reference](docs/HTTP-REFERENCE.md) |
+| [Browser operation](docs/DRIVE.md) | Actions, sessions, scope, checkpoints and downloads |
+| [Reading and evidence](docs/DEPENDABLE-WORKFLOWS.md) | Formats, OCR, layout, spreadsheets and continuation |
+| [Configuration](docs/CONFIGURATION.md) | Workers, profiles, models and tuning |
+| [Requirements](docs/REQUIREMENTS.md) | Hardware, memory and disk |
+| [Operations](docs/OPERATIONS.md) | Upgrades, backups and releases |
+| [All documentation](docs/README.md) | Everything else |
 
-The default API image includes native document readers, Tesseract and MiniLM/E5
-corpus models. Mutable evidence, jobs, cache and corpus use a named data volume;
-browser checkpoints and optional model caches have their own volumes. GPU access
-is optional. No `.env` file or worker URL is required for the default stack.
+## Contributing
 
-The fetch ladder does not consult `robots.txt`. Raw API access to trusted LAN
-targets requires care; public adapters enforce narrower policies, alongside
-operator-provided network isolation. See [operations](https://github.com/halonyx-io/dethrottled/blob/main/docs/OPERATIONS.md).
+Read [AGENTS.md](AGENTS.md) before changing code. It sets out the rules
+contributors (human or AI) follow here, and the checks a change must pass.
 
-This checkout is **1.8.4**. Check `/health` and `/v2/capabilities` on the service you
-actually use; deployed services and remote plugins can differ from a checkout.
+This checkout is **1.8.4**. A running service reports its own version at `/health`.
 
-[MIT license](https://github.com/halonyx-io/dethrottled/blob/main/LICENSE) · Maintained by [Halonyx](https://github.com/halonyx-io)
+[MIT license](LICENSE) · Maintained by [Halonyx](https://github.com/halonyx-io)

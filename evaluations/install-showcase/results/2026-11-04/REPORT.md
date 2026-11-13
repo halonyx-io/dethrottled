@@ -35,9 +35,9 @@ Client wall time, including failures; p95 is nearest-rank. “Warm” means cach
 | Cache-enabled fetch | 30 | 0.959 / 16.112 s | 0.646 / 7.932 s |
 | Research | 6 | 14.480 / 92.106 s | 7.961 / 59.452 s |
 
-<picture>
-  <img src="../../../../docs/assets/latency.svg" alt="Latency, including failure counts">
-</picture>
+The latency chart that accompanied this report was retired from the
+repository on 13 November 2026. The table above, `metrics.json` and the
+retained per-case data hold the same measurements.
 
 | Outcome | ARM64 edge device | x86_64 mini PC |
 |---|---:|---:|

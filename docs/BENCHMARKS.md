@@ -6,14 +6,6 @@ It includes fresh Python/wheel installation, worker lifecycle, controlled facts,
 live search/fetch/research, resource use and separate optional inference tests.
 
 <picture>
-  <img src="assets/hardware.svg" alt="Tested ARM64 edge device and x86_64 mini PC, with CPU, RAM and operating-system specifications">
-</picture>
-
-<picture>
-  <img src="assets/latency.svg" alt="Measured latency">
-</picture>
-
-<picture>
   <img src="assets/live-outcomes.svg" alt="Live read outcomes">
 </picture>
 

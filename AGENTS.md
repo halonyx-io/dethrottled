@@ -1,75 +1,135 @@
-# Working on Dethrottled
+# Working on dethrottled
 
-These instructions are for agents changing this repository. For using the engine
-as a client, start with [SKILL-dethrottled.md](SKILL-dethrottled.md) and
-[the client playbook](docs/AGENT-PLAYBOOK.md). The user's
-current instructions determine task scope; this file supplies repository defaults.
+This file is for anyone changing this repository, human or AI. To *use* the
+engine from an agent, read [SKILL-dethrottled.md](SKILL-dethrottled.md) and the
+[client playbook](docs/AGENT-PLAYBOOK.md) instead. The person you are working
+for sets the task; this file sets the house rules.
 
-## Establish the actual state
+## What lives where
 
-- Read `git status`, applicable local instructions and the relevant implementation
-  before editing. Preserve unrelated/untracked user work.
-- Distinguish checkout/package version, running API version, adapter application
-  version and MCP SDK version. Check live capabilities/readiness when working on
-  a deployment; matching version labels alone do not prove matching source.
-- Use `docs/HTTP-REFERENCE.md` and `docs/MCP-REFERENCE.md` for static contracts;
-  connected OpenAPI and MCP `tools/list` are authoritative for a running instance.
-- For a question about configuration, inspect source, Compose interpolation and
-  the selected deployment. Do not assume a documented default overrides an operator.
+| Path | What it is |
+|---|---|
+| `src/dethrottled/server.py` | The FastAPI app: every route, request shaping and response assembly |
+| `src/dethrottled/fetch.py` | The acquisition ladder (direct, TLS, render, headed), tier resting and caching |
+| `src/dethrottled/extract.py` | HTML extraction: extractor choice, completeness checks, page metadata and dates |
+| `src/dethrottled/readplan.py` | Automatic browser recovery for incomplete reads |
+| `src/dethrottled/search.py`, `discovery.py`, `rank.py`, `rerank.py` | Discovery: providers, merging, ranking and the local reranker |
+| `src/dethrottled/dedupe.py`, `urls.py` | Shared URL and content identity, and duplicate merging |
+| `src/dethrottled/signals.py` | Dates, source and page types, fetch relevance |
+| `src/dethrottled/research.py` | Bounded evidence bundles |
+| `src/dethrottled/corpus*.py` | Corpus v2: storage, indexing, retrieval and support checks |
+| `src/dethrottled/dpr*.py`, `jobs.py` | Durable batch reads and fetch jobs |
+| `browser-search/service.py` | Browser worker: search, `/drive` actions and settling |
+| `experiments/dnb/` | DNB: the production browser service (rendering, scope, delegation) |
+| `adapters/` | Authenticated MCP server and REST gateway |
+| `docker-compose*.yml` | The default stack and optional overlays |
+| `evaluations/` | Dated measurements, release gates and their fixtures |
+| `docs/` | Current guides, generated references and the documentation inventory |
 
-## Preserve the engine's operating policy
+## Ground rules
 
-- Default content acquisition stays self-hosted and keyless. Optional integrations
-  must remain explicit. Do not introduce a compulsory account, model API or paid
-  dependency, or reintroduce a removed hosted-reader fallback.
-- Discovery is a compact source menu: ten DDG-family choices, up to three per
-  supplementary engine, six supplements total, fifteen unique URLs overall.
-  DDG acquisition alternatives are one family, not independent agreement votes.
-- Research uses the same search policy and its own shared candidate/source bounds.
-  Prefer useful coverage and evidence accuracy over speculative efficiency gains.
-  Changing ceilings or ranking policy requires an explicit rationale and evaluation.
-- HTTP success, a completed browser step and readable text are separate outcomes.
-  Preserve failed/thin/suspect results, warnings, provenance, partial/truncated state,
-  retained-document handles and continuation instructions.
-- Keep request and transport differences deliberate. New REST fields do not
-  automatically become MCP arguments. Update adapter validation, namespaces and
-  contracts when exposing a capability remotely.
-- Corpus v2 shares only explicitly eligible public evidence. Keep its 90-day
-  passage/vector lifetime separate from search, extraction and document caches.
-  Standard support checks are not answer verification; preserve the warned broad
-  path for additional multilingual/paraphrase candidates and report its tradeoffs.
-- DPR shares the read pipeline. Keep job cursors, item keys, caller ownership,
-  origin timestamps and extraction outcomes stable. Verify restart and capacity
-  recovery with controlled fixtures. Guided Setup saves a plan for explicit application.
-- Browser interaction may have side effects. Respect caller scope, public-target
-  checks, explicit render/OCR restrictions and operation-id retry semantics.
+- **Find out what is actually there first.** Read `git status`, local
+  instructions and the code you will touch. Leave unrelated and untracked work
+  alone. A checkout, an installed package, a running API and an adapter can each
+  be a different version; check `/health` and `/v2/capabilities` on a running
+  service before reasoning about it.
+- **Keyless stays keyless.** The default stack must work with no account, API
+  key, model API or paid service. Optional providers stay explicit opt-ins. Do
+  not reintroduce a hosted-reader fallback.
+- **Search is a compact menu.** Ten DDG-family choices, at most three per
+  supplementary engine and six supplements in total, fifteen unique URLs. DDG
+  transports are one provider family, not independent votes. Changing these
+  bounds or the ranking policy needs a stated reason and a measurement.
+- **Never turn a failure into a success.** HTTP 200, a completed browser step
+  and readable text are three different things. Keep failed, thin and suspect
+  outcomes, warnings, provenance, partial and truncated flags, document handles
+  and continuation steps intact.
+- **Per-host problems stay per-host.** One site's 403, challenge or timeout must
+  not disable a tier for other sites. Only a shared service that is itself busy
+  or unreachable may be rested (see `_RESTABLE_TIERS` and `_service_refusal` in
+  `fetch.py`).
+- **Transports differ on purpose.** A new REST field is not automatically an MCP
+  argument. When exposing something remotely, update adapter validation,
+  namespaces and contracts together.
+- **Corpus sharing is narrow.** Only explicitly eligible public evidence enters
+  Corpus v2, for 90 days, separate from search, extraction and document caches.
+  Its support checks are not answer verification.
+- **Browser actions have side effects.** Respect caller scope, public-target
+  checks, render and OCR restrictions and operation-ID retry semantics.
+- **No private infrastructure in the tree.** No credentials, browser storage,
+  private hostnames or private addresses in code, tests, fixtures or docs. CI
+  rejects private IPv4 addresses anywhere in the tree, tests included (see the
+  `no-secrets` job); use a name such as `intranet.lan` instead. Describe hardware by architecture and measured specification.
 
-## Change and verify
+## Verify a change
 
-- Read [documentation maintenance](docs/DOCUMENTATION-MAINTENANCE.md). Use its
-  change-impact matrix rather than editing only the page nearest the changed code.
-- Regenerate generated references after contract changes; do not hand-edit them.
-- Keep helpers/state ownership coherent. Preserve supported imports and existing
-  callers unless the requested change intentionally removes a capability.
-- Use meaningful focused tests, then required checks. Run neither live-provider
-  stress tests nor repeated broad suites without a reason. Retain original failures
-  and negative results; do not rewrite evidence to make a change look successful.
-- Distinguish a code cleanup, measured helper improvement, end-to-end latency gain
-  and retrieval-quality gain. Claim only what the retained measurements establish.
-- Keep credentials, browser storage, private hostnames and private infrastructure
-  out of committed docs, fixtures and published artifacts. Use architecture/device
-  descriptions and measured specifications for public hardware comparisons.
+Run focused tests while you work, then the full set before you call it done.
+
+```sh
+python -m pytest -q -m "not network"
+ruff check .
+python scripts/docs_reference.py --check
+python scripts/documentation_inventory.py --check
+python scripts/check_agent_docs.py
+python scripts/check_docs.py
+python evaluations/corpus-v2/verify.py
+python evaluations/search-policy/verify.py
+```
+
+The DNB and browser-worker tests need the DNB image's dependencies:
+
+```sh
+docker build -f browser-search/Dockerfile --target dnb -t dethrottled-dnb:dev .
+docker run --rm -v "$PWD:/repo:ro" --entrypoint sh dethrottled-dnb:dev -c \
+  'cp -r /app /tmp/w && cp /repo/experiments/dnb/*.py /repo/browser-search/*.py /tmp/w/ &&
+   cd /tmp/w && pip install -q --target /tmp/p pytest &&
+   PYTHONPATH=/tmp/p:/tmp/w:/repo/src python -m pytest -q test_*.py'
+```
+
+Changes to fetching, rendering, recovery or the browser should also pass the
+release gates, which CI runs on AMD64 and ARM64. They start a throwaway stack
+under a random project name and remove it afterwards:
+
+```sh
+python3 evaluations/release/compose-check.py --out /tmp/release-gates
+```
+
+Things that catch people out:
+
+- `check_docs.py` validates every `curl` body in the guides against the real
+  request models, and requires the README's `This checkout is **X**` line to match
+  the package version.
+- The documentation inventory is generated from Git's tracked files. `git add` a
+  new file, then run `python scripts/documentation_inventory.py` to regenerate it.
+- Generated references (`docs/HTTP-REFERENCE.md`, `docs/MCP-REFERENCE.md`) come
+  from `scripts/docs_reference.py`; never edit them by hand.
+- Release-gate fixtures encode assumptions about what the renderer can and
+  cannot do. If you make the renderer more capable, a gate may need a fixture
+  the renderer still cannot solve, not a weaker assertion.
+- The README images are built by `scripts/build_readme_art.py` from the Halonyx
+  style kit fonts; `scripts/build_showcase.py` builds the architecture and
+  profile diagrams.
+
+## Measure honestly
+
+- Separate a code cleanup, a faster helper, an end-to-end latency gain and a
+  retrieval-quality gain. Claim only what a retained measurement shows.
+- Live sites vary from minute to minute. Compare against a control run in the
+  same window, and recheck a regression before believing it.
+- Keep failures and negative results. Never rewrite evidence to make a change
+  look better; a measured "this did not help" is worth recording.
 
 ## Documentation and delivery
 
-- Every tracked documentation file must appear in the inventory with a lifecycle.
-  Current guides describe present behaviour; dated evidence records an observation.
-  Do not replace historical version numbers with today's version indiscriminately.
-- Update README/navigation, client instructions, configuration, public access,
-  generated references and module/CLI descriptions when the change affects them.
-- Publishing/deploying requires the user's authorization; do not ask again when it
-  is already provided. Prepare and verify the concrete result before approval gates.
-- Never overwrite a published package version or retag an existing release. Follow
-  `docs/OPERATIONS.md` for exact-version CI, publication, artifact hashes and rollout.
-- After an authorized rollout, verify actual PyPI artifacts and the live API/MCP
-  backend identity; preserve volumes and retain rollback material.
+- Read [documentation maintenance](docs/DOCUMENTATION-MAINTENANCE.md) and use its
+  change-impact matrix, not just the page nearest the code you changed.
+- Current guides describe present behaviour. Dated reports record what was
+  observed at the time; do not update their version numbers.
+- Update the README, client instructions, configuration, public access and
+  generated references whenever a change affects them.
+- Publishing and deploying need the maintainer's explicit go-ahead. Prepare and
+  verify everything first, so the approval is the last step.
+- Never overwrite a published version or move an existing tag. Follow
+  [operations](docs/OPERATIONS.md) for CI, publication, artifact hashes and
+  rollout, then verify the published artifacts and the running service's
+  identity.
