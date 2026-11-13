@@ -28,6 +28,8 @@ assets and public adapters may differ.
 Read [repository instructions](../AGENTS.md), [documentation maintenance](DOCUMENTATION-MAINTENANCE.md)
 and the [tracked inventory](DOCUMENTATION-INVENTORY.md) before changing behaviour or published claims.
 The [integration details](AGENT-UPGRADES.md) complement the client playbook.
+[Third-party notices](../THIRD-PARTY-NOTICES.md) list the copyleft components, their
+obligations and the required attributions.
 
 ## Understand the result
 

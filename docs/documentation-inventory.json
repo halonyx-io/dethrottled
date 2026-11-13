@@ -58,6 +58,11 @@
       "review": "Change author: reconcile current behaviour, examples and navigation."
     },
     {
+      "path": "THIRD-PARTY-NOTICES.md",
+      "lifecycle": "current-guide",
+      "review": "Change author: reconcile current behaviour, examples and navigation."
+    },
+    {
       "path": "adapters/Dockerfile",
       "lifecycle": "source-contract",
       "review": "Change author: audit docs impact, advertised defaults and generated contracts."
@@ -1844,6 +1849,11 @@
     },
     {
       "path": "scripts/fetch-rerank-model.sh",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "scripts/license_inventory.py",
       "lifecycle": "source-contract",
       "review": "Change author: audit docs impact, advertised defaults and generated contracts."
     },

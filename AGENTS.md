@@ -56,6 +56,11 @@ for sets the task; this file sets the house rules.
   Its support checks are not answer verification.
 - **Browser actions have side effects.** Respect caller scope, public-target
   checks, render and OCR restrictions and operation-ID retry semantics.
+- **Check a dependency's licence before adding it.** The package's required
+  dependencies stay permissive. Anything copyleft, or anything with an
+  attribution clause, goes into [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md)
+  in the same change; `scripts/license_inventory.py` lists what the built
+  images actually contain.
 - **No private infrastructure in the tree.** No credentials, browser storage,
   private hostnames or private addresses in code, tests, fixtures or docs. CI
   rejects private IPv4 addresses anywhere in the tree, tests included (see the

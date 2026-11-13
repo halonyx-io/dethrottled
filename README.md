@@ -232,6 +232,18 @@ A real `fetch` response, trimmed:
 Read [AGENTS.md](AGENTS.md) before changing code. It sets out the rules
 contributors (human or AI) follow here, and the checks a change must pass.
 
-This checkout is **1.8.5**. A running service reports its own version at `/health`.
+This checkout is **1.8.6**. A running service reports its own version at `/health`.
 
-[MIT license](LICENSE) · Maintained by [Halonyx](https://github.com/halonyx-io)
+## License
+
+dethrottled's own code is [MIT](LICENSE). The default Docker stack also runs
+third-party software under its own licences, including two AGPL-3.0 libraries
+in the API image (PyMuPDF for PDFs, EbookLib for EPUB) and SearXNG in its own
+container. Running it for yourself adds no obligations. If you modify it and
+let other people use it over a network, or redistribute the images, read
+[third-party notices](THIRD-PARTY-NOTICES.md) first.
+
+This product includes software developed by UncleCode (https://x.com/unclecode)
+as part of the Crawl4AI project (https://github.com/unclecode/crawl4ai).
+
+Maintained by [Halonyx](https://github.com/halonyx-io)

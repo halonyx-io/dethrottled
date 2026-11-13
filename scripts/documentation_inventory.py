@@ -16,6 +16,7 @@ CURRENT = {
     "README.md",
     "AGENTS.md",
     "SKILL-dethrottled.md",
+    "THIRD-PARTY-NOTICES.md",
     ".github/pull_request_template.md",
     *(
         "docs/" + name + ".md"
