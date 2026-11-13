@@ -77,6 +77,7 @@ See the [read planner](READ-PLANNER.md) for selection and retention rules.
 | `history` | Read bounded action outcomes without replaying actions |
 | `read_state` | Inspect ready state, a main-content selector, closed details, loading and scroll range |
 | `scroll` | Scroll 650 pixels; `value="down"` or `"up"` |
+| `settle` | Wait up to `ms` for the page's requests to go quiet, then scroll to the end until the document stops growing, up to `limit` rounds. Automatic headed reads use it before capture |
 | `expand_details` | Open up to two visible standard details summaries; `limit` can reduce this; nested interactive controls are skipped |
 
 Set `frame` to an iframe's CSS selector for supported locator actions. Its target

@@ -96,6 +96,8 @@ def test_normal_prose_does_not_acquire_browser(tiers):
 
 
 def test_headed_waits_and_checkpoints_with_scoped_identity(monkeypatch):
+    # Exact call sequence under test; the settled second look has its own test.
+    monkeypatch.setenv("DETHROTTLED_HEADED_SETTLE", "0")
     calls = []
     reads = iter([CHALLENGE, ARTICLE, ARTICLE, ARTICLE])
 
@@ -343,6 +345,8 @@ def test_headed_waiters_keep_their_chance_to_read(monkeypatch):
 
 
 def test_header_challenge_and_loading_are_polled_separately(monkeypatch):
+    # Exact call sequence under test; the settled second look has its own test.
+    monkeypatch.setenv("DETHROTTLED_HEADED_SETTLE", "0")
     calls = []
     replies = iter(
         [

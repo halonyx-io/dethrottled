@@ -147,6 +147,16 @@ highlighted terms to their neighbours. Search and semantic caches written by
 earlier releases can still hold joined snippets until they expire, so use
 `cache_mode="refresh"` where that matters.
 
+For 1.8.4, rebuild the API, DNB, browser and authenticated adapter images with
+the existing Compose project and enabled profiles, and update any operator
+override that pins an adapter image tag. Keep all volumes. Browser reads of
+public targets now load subresources from any public host, rendered reads can
+take a second settled capture, and DNB crawls scroll bounded infinite feeds.
+The retained extraction budget defaults to 4,000,000 characters while responses
+stay capped; an operator `.env` that pins `DETHROTTLED_EXTRACT_CACHE_CHARS` keeps
+the old limit until it is raised. Cached extractions are not rewritten, so use
+`cache_mode="refresh"` to reassess a page read by an earlier release.
+
 ## Guided Setup and DPR
 
 [Guided Setup](GUIDED-SETUP.md) saves an override without starting services.

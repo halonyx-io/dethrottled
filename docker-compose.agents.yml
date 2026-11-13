@@ -19,7 +19,7 @@ services:
     build:
       context: .
       dockerfile: adapters/Dockerfile
-    image: dethrottled-adapters:${DETHROTTLED_VERSION:-1.8.3}
+    image: dethrottled-adapters:${DETHROTTLED_VERSION:-1.8.4}
     restart: unless-stopped
     ports: ["127.0.0.1:${DETHROTTLED_MCP_PORT:-18184}:18184"]
     environment:
@@ -37,7 +37,7 @@ services:
   rest:
     profiles: [public]
     group_add: ["${DETHROTTLED_REGISTRY_GID:-10001}"]
-    image: dethrottled-adapters:${DETHROTTLED_VERSION:-1.8.3}
+    image: dethrottled-adapters:${DETHROTTLED_VERSION:-1.8.4}
     restart: unless-stopped
     command: [uvicorn, public_gateway:app, --host, 0.0.0.0, --port, "18186"]
     ports: ["127.0.0.1:${DETHROTTLED_REST_PORT:-18186}:18186"]

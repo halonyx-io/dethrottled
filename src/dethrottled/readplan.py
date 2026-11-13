@@ -192,10 +192,12 @@ def run(url, initial, *, read, drive, options, browser_available, allow_assets=T
                     for a in initial.get("acquisition_attempts", []))
     if (gap(best) and gap(best) != "image_content" and available() and browser_available
             and options.get("allow_render", True) and not hard_wall):
-        alias = read_session_alias(url, options.get("public_only", False))
+        from .research import browser_public
+        public = browser_public(url, options.get("public_only", False))
+        alias = read_session_alias(url, public)
         session = automatic_session(str(options.get("evidence_namespace", "local")), alias)
         body = dict(session=session, allowed_hosts=[urlsplit(url).hostname],
-                    public_only=options.get("public_only", False), screenshot="never",
+                    public_only=public, screenshot="never",
                     navigation_wait="commit")
         state = {}
 
@@ -349,8 +351,9 @@ def run(url, initial, *, read, drive, options, browser_available, allow_assets=T
         elapsed_ms=round((time.monotonic() - started) * 1000, 2), budget_seconds=budget)
     if (any(d["action"] == "browser_inspect" for d in decisions)
             or any(a.get("tier") == "headed" for a in initial.get("acquisition_attempts", []))):
+        from .research import browser_public
         best["read_plan"]["browser_session"] = {
-            "id": read_session_alias(url, options.get("public_only", False)),
+            "id": read_session_alias(url, browser_public(url, options.get("public_only", False))),
             "allowed_hosts": [urlsplit(url).hostname], "url": url}
     if decisions:
         best["recovery_attempts"] = decisions

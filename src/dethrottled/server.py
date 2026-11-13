@@ -449,6 +449,7 @@ def _extract_once(url: str, max_chars: int, allow_ocr: bool = True,
         "warnings": result.get("warnings", []),
         "source_alternatives": result.get("source_alternatives", []),
         "source_canonical": result.get("source_canonical", result.get("url", url)),
+        "page_metadata": result.get("page_metadata", {}),
         "content_assessment": result.get("content_assessment", {}),
         "_index_text": result.get("_index_text", result.get("text", "")),
         "acquisition": result.get("acquisition", {}),
@@ -1541,8 +1542,29 @@ def drive(body: DriveBody):
             )
 
     payload = body.model_dump(exclude={"evidence_namespace", "ocr_language"})
+    scope_defaulted = "public_only" not in body.model_fields_set
+    if scope_defaulted:
+        # Unless the caller chose, a public target gets the public browser scope
+        # (see research.browser_public). Explicit allowed hosts that resolve
+        # privately keep the internal scope.
+        from .research import browser_public, public_url
+        target = body.url or next((step.url for step in body.steps
+                                   if step.action.lower() == "goto" and step.url), "")
+        private_host = any(not host.startswith("*.") and not public_url("https://" + host)
+                           for host in body.allowed_hosts)
+        if target and not private_host:
+            payload["public_only"] = browser_public(target)
     try:
-        result = fs.browser_drive(payload)
+        try:
+            result = fs.browser_drive(payload)
+        except fs.BrowserWorkerError as exc:
+            # A session keeps the scope it was created with. A follow-up request
+            # without a URL cannot infer it, so retry once with the other scope.
+            if not (scope_defaulted and exc.status == 409
+                    and "session_scope_changed" in str(exc.detail)):
+                raise
+            payload = dict(payload, public_only=not payload.get("public_only", False))
+            result = fs.browser_drive(payload)
         if shared_session and result.get("session", {}).get("id") == shared_session:
             result["session"]["id"] = logical_session
         for step in result.get("steps", []):

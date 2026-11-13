@@ -21,10 +21,10 @@ The Docker connection/context is preserved. Port 19087 must be available; select
 CI or a local build has already prepared them. No production services are changed.
 
 The fixture adds deterministic sources to the otherwise default stack. Checks
-cover automatic primary representations, loading/scroll/details/network recovery,
-visitor state, scoped browser handoff, negative cases, retained late table rows,
-real MSG/XLSB reads, frame actions, popups, captured downloads and four storage
-types across a worker restart. Exceptions and failures are recorded immediately.
+cover automatic primary representations, rendered scrolling, loading, details
+and network recovery, visitor state, scoped browser handoff, negative cases,
+retained late table rows, real MSG/XLSB reads, frame actions, popups, captured
+downloads and four storage types across a worker restart. Exceptions and failures are recorded immediately.
 The runner returns nonzero if any contract fails. Native AMD64 and ARM64 CI jobs
 run the same deployment checks and upload their observations even on failure.
 

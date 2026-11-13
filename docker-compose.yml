@@ -24,7 +24,7 @@ name: dethrottled
 services:
   dethrottled:
     build: .
-    image: dethrottled-api:${DETHROTTLED_VERSION:-1.8.3}
+    image: dethrottled-api:${DETHROTTLED_VERSION:-1.8.4}
     ulimits:
       core: 0
     restart: unless-stopped
@@ -86,8 +86,8 @@ services:
       DETHROTTLED_CRAWL4AI_BUDGET: "${DETHROTTLED_CRAWL4AI_BUDGET:--1}"
       DETHROTTLED_RENDER_CONCURRENCY: "${DETHROTTLED_RENDER_CONCURRENCY:-2}"
       DETHROTTLED_MEDIA_WORKER_URL: "${DETHROTTLED_MEDIA_WORKER_URL:-}"
-      DETHROTTLED_USER_AGENT: "${DETHROTTLED_USER_AGENT:-dethrottled/1.8.3 (automated fetcher)}"
-      DETHROTTLED_EXTRACT_CACHE_CHARS: "${DETHROTTLED_EXTRACT_CACHE_CHARS:-1000000}"
+      DETHROTTLED_USER_AGENT: "${DETHROTTLED_USER_AGENT:-dethrottled/1.8.4 (automated fetcher)}"
+      DETHROTTLED_EXTRACT_CACHE_CHARS: "${DETHROTTLED_EXTRACT_CACHE_CHARS:-4000000}"
       # MODEL_DIR is deliberately NOT set here. The image bakes the weights
       # into /opt/dethrottled/models, and pointing this at /data/models would
       # aim it at the volume instead -- where there are no models, so the
@@ -116,7 +116,7 @@ services:
       context: .
       dockerfile: browser-search/Dockerfile
       target: dnb
-    image: dethrottled-dnb:${DETHROTTLED_VERSION:-1.8.3}
+    image: dethrottled-dnb:${DETHROTTLED_VERSION:-1.8.4}
     group_add: ["10001"]
     init: true
     restart: unless-stopped
@@ -152,7 +152,7 @@ services:
     build:
       context: .
       dockerfile: browser-search/Dockerfile
-    image: dethrottled-browser-search:${DETHROTTLED_VERSION:-1.8.3}
+    image: dethrottled-browser-search:${DETHROTTLED_VERSION:-1.8.4}
     restart: unless-stopped
     environment:
       DETHROTTLED_BROWSER_STATE_DIR: /state
@@ -244,7 +244,7 @@ services:
     build:
       context: .
       dockerfile: docling-worker/Dockerfile
-    image: dethrottled-docling:${DETHROTTLED_VERSION:-1.8.3}
+    image: dethrottled-docling:${DETHROTTLED_VERSION:-1.8.4}
     ulimits:
       core: 0
     init: true
@@ -260,7 +260,7 @@ services:
     build:
       context: .
       dockerfile: format-worker/Dockerfile
-    image: dethrottled-formats:${DETHROTTLED_VERSION:-1.8.3}
+    image: dethrottled-formats:${DETHROTTLED_VERSION:-1.8.4}
     ulimits:
       core: 0
     init: true
@@ -274,7 +274,7 @@ services:
     build:
       context: .
       dockerfile: media-worker/Dockerfile
-    image: dethrottled-media:${DETHROTTLED_VERSION:-1.8.3}
+    image: dethrottled-media:${DETHROTTLED_VERSION:-1.8.4}
     ulimits:
       core: 0
     init: true
