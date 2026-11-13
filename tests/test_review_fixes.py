@@ -75,3 +75,17 @@ def test_the_user_agent_is_actually_contactable():
     assert "DETHROTTLED_GITHUB_USER" not in f.PROJECT_URL
     assert f.PROJECT_URL.startswith("https://github.com/")
     assert __version__ in f.USER_AGENT
+
+
+def test_an_empty_user_agent_setting_uses_the_default():
+    """Compose passes DETHROTTLED_USER_AGENT="" when the operator sets nothing.
+    That must mean the versioned default, not an anonymous request; a
+    hard-coded Compose default went stale on every release."""
+    import os
+    import subprocess
+    import sys
+    env = {**os.environ, "DETHROTTLED_USER_AGENT": ""}
+    agent = subprocess.run(
+        [sys.executable, "-c", "from dethrottled import fetch; print(fetch.USER_AGENT)"],
+        env=env, capture_output=True, text=True, check=True).stdout.strip()
+    assert agent.startswith(f"dethrottled/{__version__} (+https://")

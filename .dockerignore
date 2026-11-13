@@ -47,6 +47,7 @@ examples/
 !README.md
 !AGENTS.md
 !SKILL-dethrottled.md
+!THIRD-PARTY-NOTICES.md
 !docs/*.md
 !docs/**/*.md
 !evaluations/**/*.md

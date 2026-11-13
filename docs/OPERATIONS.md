@@ -166,6 +166,14 @@ settling now ends once visible text is stable, endless feeds stop at 50,000
 added characters (`DNB_SCROLL_MAX_ADDED_CHARS`), and a target site's 403 or
 timeout no longer rests the renderer for other sites.
 
+For 1.8.6, rebuild the API, DNB and authenticated adapter images with the
+existing Compose project and enabled profiles, and update any operator override
+that pins an adapter image tag. Keep all volumes. The rewritten agent skill and
+[third-party notices](../THIRD-PARTY-NOTICES.md) ship in the package and image.
+Compose no longer pins an old version in the default user agent: leave
+`DETHROTTLED_USER_AGENT` unset or empty to send the current version and project
+URL.
+
 ## Guided Setup and DPR
 
 [Guided Setup](GUIDED-SETUP.md) saves an override without starting services.

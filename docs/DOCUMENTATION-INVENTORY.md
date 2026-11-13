@@ -9,13 +9,13 @@ must be classified; unknown paths fail generation/checking.
 
 | Lifecycle | Files |
 |---|---:|
-| current-guide | 28 |
+| current-guide | 29 |
 | dependency-input | 4 |
 | generated | 4 |
 | harness-guide | 20 |
 | historical-evidence | 215 |
 | planned-work | 1 |
-| source-contract | 172 |
+| source-contract | 173 |
 | third-party-notice | 4 |
 | visual | 6 |
 
@@ -29,6 +29,7 @@ Change author: reconcile current behaviour, examples and navigation.
 | [AGENTS.md](../AGENTS.md) |
 | [README.md](../README.md) |
 | [SKILL-dethrottled.md](../SKILL-dethrottled.md) |
+| [THIRD-PARTY-NOTICES.md](../THIRD-PARTY-NOTICES.md) |
 | [docs/ADBLOCK.md](ADBLOCK.md) |
 | [docs/AGENT-PLAYBOOK.md](AGENT-PLAYBOOK.md) |
 | [docs/AGENT-UPGRADES.md](AGENT-UPGRADES.md) |
@@ -427,6 +428,7 @@ Change author: audit docs impact, advertised defaults and generated contracts.
 | [scripts/evaluate_content.py](https://github.com/halonyx-io/dethrottled/blob/main/scripts/evaluate_content.py) |
 | [scripts/fetch-models.sh](https://github.com/halonyx-io/dethrottled/blob/main/scripts/fetch-models.sh) |
 | [scripts/fetch-rerank-model.sh](https://github.com/halonyx-io/dethrottled/blob/main/scripts/fetch-rerank-model.sh) |
+| [scripts/license_inventory.py](https://github.com/halonyx-io/dethrottled/blob/main/scripts/license_inventory.py) |
 | [scripts/probe_blocked.py](https://github.com/halonyx-io/dethrottled/blob/main/scripts/probe_blocked.py) |
 | [scripts/probe_embed.py](https://github.com/halonyx-io/dethrottled/blob/main/scripts/probe_embed.py) |
 | [scripts/probe_extract.py](https://github.com/halonyx-io/dethrottled/blob/main/scripts/probe_extract.py) |

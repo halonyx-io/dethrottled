@@ -74,10 +74,11 @@ PROJECT_URL = "https://github.com/halonyx-io/dethrottled"
 # that 404s -- an unreachable contact is not a contact. And the version was
 # frozen at "0.1" by hand, which is how server.py ended up two releases stale.
 # The version is stated in exactly one place, __init__.py, and read from there.
-USER_AGENT = os.environ.get(
-    "DETHROTTLED_USER_AGENT",
-    "dethrottled/%s (+%s; automated fetcher)"
-    % (__version__, PROJECT_URL))
+# Compose passes an empty value when the operator sets nothing, so empty means
+# "use the default" rather than "send no identity".
+USER_AGENT = (os.environ.get("DETHROTTLED_USER_AGENT", "").strip()
+              or "dethrottled/%s (+%s; automated fetcher)"
+              % (__version__, PROJECT_URL))
 # 10MB, not 3. A truncated HTML download is worse than a failed one: the parser
 # still succeeds, on a document missing its tail, and reports a short article
 # rather than an error. Real pages are already close to the old ceiling --

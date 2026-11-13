@@ -16,6 +16,7 @@ DIRECTORIES = ('src', 'requirements', 'browser-search', 'workers', 'format-worke
 LOCAL_SCRIPTS = {'bootstrap', 'ensure-dnb-keys', 'seed-model-cache',
                  'worker-idle-stop', 'worker-wake-proxy'}
 FILES = ('Dockerfile', 'README.md', 'AGENTS.md', 'SKILL-dethrottled.md', 'LICENSE',
+         'THIRD-PARTY-NOTICES.md',
          'pyproject.toml', 'setup.py', 'MANIFEST.in', '.dockerignore')
 
 
