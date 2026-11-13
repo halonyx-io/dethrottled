@@ -622,22 +622,18 @@ async def _settle_network(page, deadline):
 
     Applications fetch their content after DOMContentLoaded (a Bluesky profile
     arrives from its API host); capturing at first paint returned the trending
-    sidebar instead. Playwright's "networkidle" is 500 ms without requests.
+    sidebar instead. Ends at network idle or once the visible text has
+    stopped changing (browser.settle_quiet), whichever comes first.
     """
     budget = min(NETWORK_SETTLE_SECONDS, deadline - time.monotonic() - 1)
-    if budget <= 0:
-        return
-    try:
-        await page.wait_for_load_state("networkidle", timeout=budget * 1000)
-    except Exception:
-        return
+    return await browser.settle_quiet(page, budget)
 
 
 SCROLL_ROUNDS = max(0, int(os.getenv("DNB_SCROLL_ROUNDS", "10")))
 SCROLL_PAUSE = float(os.getenv("DNB_SCROLL_PAUSE_SECONDS", "0.6"))
 # Endless feeds keep growing: stop once this much text has been added, so a
 # profile page does not return a quarter-megabyte timeline.
-SCROLL_MAX_ADDED_CHARS = int(os.getenv("DNB_SCROLL_MAX_ADDED_CHARS", "200000"))
+SCROLL_MAX_ADDED_CHARS = int(os.getenv("DNB_SCROLL_MAX_ADDED_CHARS", "50000"))
 # A page whose single <article> holds most of the text is a document, not a
 # feed; scrolling it only triggers lazy images.
 SCROLL_PROBE = """() => {
@@ -672,7 +668,7 @@ async def _settle_infinite_scroll(page, deadline):
             after = await page.evaluate(SCROLL_PROBE)
         except Exception:
             return
-        if not isinstance(after, dict) or after.get("height", 0) <= before.get("height", 0):
+        if not isinstance(after, dict) or not browser.scroll_grew(before, after):
             return
         if after.get("text", 0) - start.get("text", 0) >= SCROLL_MAX_ADDED_CHARS:
             return

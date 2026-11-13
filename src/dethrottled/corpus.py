@@ -30,6 +30,7 @@ import time
 from pathlib import Path
 
 from . import paths as _paths
+from .dedupe import normalized_digest, url_key
 
 MODELS = _paths.model_dir()
 
@@ -422,9 +423,9 @@ class Corpus:
                 host = (urlsplit(url).hostname or "").lower()
                 if domains and not any(host == d or host.endswith("." + d) for d in domains):
                     continue
-                if seen.get(url, 0) >= per_url:
+                if seen.get(url_key(url), 0) >= per_url:
                     continue
-                seen[url] = seen.get(url, 0) + 1
+                seen[url_key(url)] = seen.get(url_key(url), 0) + 1
                 out.append({"url": url, "title": title, "text": text,
                             "score": -float(score), "retrieval": "lexical"})
                 if len(out) >= limit:
@@ -447,9 +448,9 @@ class Corpus:
             row = meta[i]
             if wanted and not any(d in row["url"].lower() for d in wanted):
                 continue
-            if seen.get(row["url"], 0) >= per_url:
+            if seen.get(url_key(row["url"]), 0) >= per_url:
                 continue
-            seen[row["url"]] = seen.get(row["url"], 0) + 1
+            seen[url_key(row["url"])] = seen.get(url_key(row["url"]), 0) + 1
             out.append(dict(row, score=float(scores[i])))
             if len(out) >= limit:
                 break
@@ -500,14 +501,14 @@ class DualCorpus:
         merged = {}
         for model, rows in [(self.multilingual.model_name, multilingual), ("minilm", primary)]:
             for index, row in enumerate(rows):
-                key = (row["url"], row["text"])
+                key = (url_key(row["url"]), normalized_digest(row["text"]) or row["text"])
                 record = merged.setdefault(key, {**row, "embedding_model": model,
                                                 "fusion_score": 0.0})
                 record["fusion_score"] += 1 / (60 + index + 1)
         ranked = sorted(merged.values(), key=lambda row: -row["fusion_score"])
         selected, counts = [], {}
         for row in ranked:
-            url = row["url"]
+            url = url_key(row["url"])
             if counts.get(url, 0) >= kwargs.get("per_url", 2):
                 continue
             counts[url] = counts.get(url, 0) + 1

@@ -42,11 +42,23 @@ Search rows carry additive `source_type`, `fetch_relevance`, `snippet_tokens`,
 `date_source` (`structured`, `snippet`, `none`), `published_age_days`,
 `engines_consensus` and `consensus_score`.
 Use `published_at` for a parseable provider-reported calendar date. `date_hint`
-separately labels provider or snippet text, including relative snippet dates.
-Both are unverified. Fetch the source when the publication date is material.
+separately labels provider or snippet text. A relative snippet date ("3 days
+ago") is resolved when the result is captured: the hint keeps the original text
+as `value` and adds `resolved`, `precision` and `observed_at`. Both are
+unverified. Fetch the source when the publication date is material.
+A date more than a day in the future, or a snippet date that contradicts a
+provider date for the same page, is reported under `date_hint_rejected` instead
+of being used.
 `/v2/search`, and the first row of `/search`, also expose `dated_results`,
-`freshness_note` and `decoy_buckets`. A snippet date is a lead, not a verified
-publication date. A decoy bucket is dropped only when another provider proves the
+`date_coverage` (`provider`, `page`, `snippet`, `none`, `rejected` counts for the
+returned rows), `deduplication`, `freshness_note` and `decoy_buckets`. A snippet
+date is a lead, not a verified publication date.
+
+One page reached under several addresses (scheme, `www`/`m`/`amp` host,
+tracking parameters, index page, query order) is one result. The first copy
+keeps its place and absorbs what the others carried: a missing date or snippet
+and their provenance. A copy at a different address is listed under the row's
+`duplicates` (`url`, `provider`, `reason`); `deduplication` counts the merges. A decoy bucket is dropped only when another provider proves the
 query can be echoed.
 
 `profile="fast"` uses DDG alone. `balanced` uses the normal web combination;
@@ -127,7 +139,8 @@ not verify an answer. Retain `acquisition_url` and publisher-alternative provena
 | `browser_recovery` | Queue/poll timing, ready state, checkpoint restoration and initial navigation |
 | `content_assessment` | Non-destructive error-banner and gate-page signals, exact full-extraction spans and text hash; not an answer verifier |
 | `source_type`, `page_type` | URL-shape source class and extraction shape (article/list/document/unreadable) |
-| `date_source`, `published_age_days` | Whether the date was structured or parsed from text, and its age |
+| `date_source`, `published_age_days` | `page` when the page declares a date (meta, JSON-LD, microdata or the extractor's reading), otherwise `none`; and its age. A future date, or an extractor's guess whose year appears nowhere in the page, is reported under `date_hint_rejected` |
+| `page_metadata.published`, `page_metadata.modified` | Publisher-declared publication and modification dates, as written |
 | `tokens_estimated` | Character-based approximate LLM token cost, not a tokenizer count |
 | `gate_page:*` warning | Login, paywall, access-denied or maintenance wall; content may be partial even when long |
 
@@ -208,7 +221,12 @@ curl -sS http://127.0.0.1:8787/research \
 
 Research defaults to web-only discovery. Supply up to ten facet queries in
 addition to the question. It returns source IDs, evidence windows, query
-attempts, skipped sources and `coverage.facets`. Term matches are not semantic
+attempts, skipped sources and `coverage.facets`. A read that is the same page
+as an accepted source (same address, or a same-site declared canonical) or has
+the same or nearly the same text is skipped as `duplicate_content` with
+`duplicate_of` and `duplicate_reason` (`same_url`, `same_text`, `near_text`);
+the kept source lists it under `duplicates`, and `summary.deduplication` counts
+them. Texts under 80 words are never treated as copies. Term matches are not semantic
 verification; no model writes the answer. Two research requests can run at once;
 excess work returns a typed 429 with a retry hint.
 

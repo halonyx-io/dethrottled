@@ -9,7 +9,8 @@ lead than one found once. Nothing here changes the default path.
 from __future__ import annotations
 
 import re
-from urllib.parse import urlsplit
+
+from .dedupe import merge_into, url_key
 
 _TOKEN = re.compile(r"[^\W_]+", re.UNICODE)
 _STOP = {
@@ -61,15 +62,8 @@ def expand_queries(query: str) -> list:
 
 
 def _key(url: str) -> str:
-    try:
-        parts = urlsplit((url or "").strip())
-    except ValueError:
-        return url or ""
-    host = (parts.netloc or "").lower()
-    for prefix in ("www.", "m.", "amp."):
-        if host.startswith(prefix):
-            host = host[len(prefix):]
-    return host + (parts.path or "/").rstrip("/")
+    """Kept for callers; identity is the shared `dedupe.url_key`."""
+    return url_key(url)
 
 
 def merge_variants(groups: list) -> list:
@@ -93,9 +87,7 @@ def merge_variants(groups: list) -> list:
                 seen[key] = item
                 out.append(item)
             else:
-                for entry in row.get("discovery", []):
-                    if entry not in item["discovery"]:
-                        item["discovery"].append(dict(entry))
+                merge_into(item, row)
                 if group_index not in item["query_variants"]:
                     item["query_variants"].append(group_index)
     annotate_consensus(out)

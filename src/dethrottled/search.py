@@ -25,14 +25,14 @@ from urllib.parse import parse_qs, quote_plus, urlparse
 
 import feedparser
 
-from . import adblock, providers, search_diagnostics
+from . import adblock, providers, search_diagnostics, signals
 from . import netfilter as requests
 from . import paths as _paths
 from .concurrency import ContextExecutor as ThreadPoolExecutor
 from .content import constrained
+from .dedupe import merge_into, url_key
 from .discovery import SOURCE_PROFILES, tls_search
 from .fetch import USER_AGENT
-from .urls import canonical_url
 from .workflow import PRIMARY_SEARCH_LIMIT, SEARCH_MENU_LIMIT, SUPPLEMENT_SEARCH_LIMIT
 
 # Standalone Python has no SearXNG URL unless configured. Compose supplies its
@@ -122,15 +122,19 @@ def drop_decoy_buckets(rows: list, query: str) -> tuple:
 
 def bounded_results(rows, limit=SEARCH_MENU_LIMIT, *, primary_limit=PRIMARY_SEARCH_LIMIT):
     """One DDG-family budget; small supplements, canonical deduplication."""
-    out, counts, seen, supplements = [], {}, set(), 0
+    out, counts, seen, supplements = [], {}, {}, 0
     for row in rows:
-        key = canonical_url(row.get("url", ""))
+        key = url_key(row.get("url", ""))
         family = result_family(row)
         cap = primary_limit if family == "ddg" else SUPPLEMENT_SEARCH_LIMIT
-        if (not key or key in seen or counts.get(family, 0) >= cap
+        if key and key in seen:
+            merge_into(seen[key], row)
+            continue
+        if (not key or counts.get(family, 0) >= cap
                 or (family != "ddg" and supplements >= 6)):
             continue
-        seen.add(key)
+        row = dict(row)
+        seen[key] = row
         counts[family] = counts.get(family, 0) + 1
         supplements += family != "ddg"
         out.append(row)
@@ -839,12 +843,14 @@ def _acquire_web(query: str, *, max_items: int = 8, cache=None,
             return []
         if not found and any(_ddg_retry_after(a) for a in browser_report.get("attempts", [])):
             return []
-        merged, seen = [], set()
+        merged, seen = [], {}
         for row in [*cheap, *found]:
-            key = canonical_url(row.get("url", ""))
-            if key and key not in seen:
-                seen.add(key)
-                merged.append(row)
+            key = url_key(row.get("url", ""))
+            if key and key in seen:
+                merge_into(seen[key], row)
+            elif key:
+                seen[key] = dict(row)
+                merged.append(seen[key])
         if merged:
             return bounded_results(merged, max_items)
     try:
@@ -997,7 +1003,7 @@ def search(query: str, *, max_items: int = SEARCH_MENU_LIMIT, categories: str = 
     started = time.time()
     sources = set(x.strip() for x in engines.split(",") if x.strip()) if engines else set(
         SOURCE_PROFILES.get(categories or profile, SOURCE_PROFILES["balanced"]))
-    seen, merged, per_source = {}, [], {}
+    seen, merged, per_source, dedupe_counts = {}, [], {}, {}
 
     def add(rows, tag):
         added = 0
@@ -1007,10 +1013,11 @@ def search(query: str, *, max_items: int = SEARCH_MENU_LIMIT, categories: str = 
                 continue
             # Canonical, so one article is one row whatever query string or
             # mobile host it arrived under.
-            key = canonical_url(url)
+            key = url_key(url)
             if not key:
                 continue
             row = dict(row)
+            signals.resolve_relative_date(row)
             provenance = [dict(entry) for entry in row.get(
                 "discovery", [{"provider": tag, "query": query}])]
             if tag == "web":
@@ -1021,9 +1028,11 @@ def search(query: str, *, max_items: int = SEARCH_MENU_LIMIT, categories: str = 
                 (entry["rank"] for entry in provenance if entry.get("rank")), position))
             row["discovery"] = provenance
             if key in seen:
-                for entry in provenance:
-                    if entry not in seen[key]["discovery"]:
-                        seen[key]["discovery"].append(entry)
+                # Keep the first row's place, but not at the cost of what the
+                # duplicate carries: a SearXNG copy often has the date the DDG
+                # copy lacks.
+                merge_into(seen[key], row)
+                dedupe_counts["same_url"] = dedupe_counts.get("same_url", 0) + 1
                 continue
             # Titles alone cannot prove syndication. Preserve independent URLs;
             # research deduplicates mirrors using the actual extracted content.
@@ -1141,8 +1150,11 @@ def search(query: str, *, max_items: int = SEARCH_MENU_LIMIT, categories: str = 
             offset = abs(hash(query)) % len(prefer)
             rotated = prefer[offset:] + prefer[:offset]
             for row in reputable_sweep(query, rotated, cache=cache):
-                key = row.get("url", "").split("?")[0].rstrip("/")
-                if key and key not in seen:
+                key = url_key(row.get("url", ""))
+                if key and key in seen:
+                    merge_into(seen[key], row)
+                    dedupe_counts["same_url"] = dedupe_counts.get("same_url", 0) + 1
+                elif key:
                     seen[key] = row
                     merged.append(row)
                     swept += 1
@@ -1158,6 +1170,7 @@ def search(query: str, *, max_items: int = SEARCH_MENU_LIMIT, categories: str = 
         "ok": bool(menu),
         "count": len(menu),
         "candidate_pool_count": len(merged),
+        "deduplication": dedupe_counts,
         "policy": {"ranking": "source", "primary_limit": PRIMARY_SEARCH_LIMIT,
                    "per_supplement_limit": SUPPLEMENT_SEARCH_LIMIT,
                    "menu_limit": SEARCH_MENU_LIMIT, "automatic_pagination": False},

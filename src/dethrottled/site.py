@@ -10,6 +10,8 @@ from defusedxml import ElementTree
 from defusedxml.common import DefusedXmlException
 from selectolax.lexbor import LexborHTMLParser
 
+from .dedupe import url_key
+
 
 def canonical(url):
     p = urlsplit(urldefrag(url)[0])
@@ -36,7 +38,7 @@ def crawl(seeds, read, *, max_pages=20, max_depth=2, path_prefix="/", budget_sec
     origin = urlsplit(seeds[0])
     scope = (origin.scheme, origin.netloc)
     queue = deque((u, 0, None) for u in seeds)
-    seen, rows, outside = set(seeds), [], set()
+    seen, rows, outside = {url_key(u) for u in seeds}, [], set()
     duplicates, dropped = 0, 0
     deadline = time.monotonic() + budget_seconds
     while queue and len(rows) < max_pages and time.monotonic() < deadline:
@@ -75,13 +77,13 @@ def crawl(seeds, read, *, max_pages=20, max_depth=2, path_prefix="/", budget_sec
                 if len(outside) < 5000:
                     outside.add(target)
                 continue
-            if target in seen:
+            if url_key(target) in seen:
                 duplicates += 1
                 continue
             if len(seen) >= 5000:
                 dropped += 1
                 continue
-            seen.add(target)
+            seen.add(url_key(target))
             if depth < max_depth:
                 queue.append((target, depth + 1, url))
             else:
@@ -132,9 +134,9 @@ def map_site(seeds, read, *, max_pages=20, max_depth=2, path_prefix="/",
         if (parts.scheme, parts.netloc) != scope or not parts.path.startswith(path_prefix):
             outside += 1
             return
-        if url in seen:
+        if url_key(url) in seen:
             return
-        seen.add(url)
+        seen.add(url_key(url))
         if len(sources) >= max_pages:
             dropped += 1
         else:

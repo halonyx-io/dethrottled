@@ -93,3 +93,31 @@ def test_page_level_failures_are_not_refusals(reason):
     """A 404 is about the page. Resting a tier because one URL does not exist
     would take the tier down for reasons that have nothing to do with it."""
     assert f._is_refusal(reason) is False
+
+
+def test_a_target_sites_failure_does_not_rest_the_renderer():
+    """One site's 403 or slow page says nothing about the next site."""
+    from dethrottled import fetch as f
+    for reason in ("crawl4ai_target_http_403", "crawl4ai_target_http_429",
+                   "crawl4ai_Page.goto: Timeout 20000ms exceeded.", "crawl4ai_http_504",
+                   "crawl4ai_http_403"):
+        assert f._service_refusal("crawl4ai", reason) is False, reason
+    for reason in ("crawl4ai_http_429", "crawl4ai_http_503", "crawl4ai_ConnectionError",
+                   "crawl4ai_ReadTimeout"):
+        assert f._service_refusal("crawl4ai", reason) is True, reason
+    assert f._service_refusal("direct", "http_429") is True
+
+
+def test_dnb_target_status_is_named_as_the_targets(monkeypatch):
+    from dethrottled import fetch as f
+
+    class Response:
+        status_code = 200
+
+        def json(self):
+            return {"results": [{"success": False, "error_message": "http_403"}]}
+
+    monkeypatch.setattr(f.requests, "post", lambda *a, **k: Response())
+    monkeypatch.setattr(f, "CRAWL4AI_URL", "http://dnb")
+    monkeypatch.setenv("DETHROTTLED_DNB", "0")
+    assert f._crawl4ai_via_crawl("https://example.org/")[1] == "crawl4ai_target_http_403"

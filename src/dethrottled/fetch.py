@@ -672,6 +672,11 @@ def _crawl4ai_via_crawl(url: str) -> tuple:
         reason = reason[:240]
         if "Structural:" in reason:
             reason = "incomplete_render: " + reason
+        # The DNB reports the target's HTTP failure as "http_NNN"; name it as
+        # the target's, like _crawl4ai_target_error does, so it is never
+        # mistaken for the rendering service refusing.
+        if re.fullmatch(r"http_\d{3}", reason):
+            return {}, "crawl4ai_target_" + reason, url
         return {}, "crawl4ai_" + reason, url
     target_error = _crawl4ai_target_error(payload)
     if target_error:
@@ -793,6 +798,23 @@ def tier_rest_state() -> dict:
         return {name: {"resting_for": max(0, int(e["until"] - now)),
                        "strikes": e["strikes"], "reason": e.get("reason", "")}
                 for name, e in _tier_rest.items() if now < e["until"]}
+
+
+# The renderer is one local service: rest it only when the SERVICE is busy
+# or unreachable. A target page's 403, timeout or failed navigation says
+# nothing about the next site -- measured: one Stack Overflow 403 or a NOAA
+# timeout rested rendering for every later page, and EUR-Lex (p05) then failed
+# with "crawl4ai:resting" on both 1.8.4 and the test build.
+_RENDERER_REFUSAL = re.compile(
+    r"crawl4ai_http_(?:429|503)"
+    r"|crawl4ai_(?:ConnectionError|ConnectTimeout|ReadTimeout|Timeout|ChunkedEncodingError)")
+
+
+def _service_refusal(name: str, reason: str) -> bool:
+    """Should this failure rest the tier (see _RESTABLE_TIERS)?"""
+    if name == "crawl4ai":
+        return bool(reason and _RENDERER_REFUSAL.fullmatch(reason))
+    return _is_refusal(reason)
 
 
 def _is_refusal(reason: str) -> bool:
@@ -1172,6 +1194,17 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
         if tier_resting(name):
             reasons.append("%s:resting" % name)
             continue
+        # A static shell, or a page served without prose, is HTML the server
+        # gave freely, not a block: TLS impersonation got the same result in
+        # every recorded case (shell 21/21, no prose 56/56), so go straight to
+        # rendering. Challenges and failed fetches still try TLS, which does
+        # rescue those (12 and 28 recorded reads).
+        if (name == "tls" and attempts and attempts[-1]["tier"] == "direct"
+                and attempts[-1]["outcome"] in {"shell", "response"}
+                and any(other == "crawl4ai" and not tier_resting(other)
+                        for other, _ in tiers)):
+            reasons.append("tls:skipped_after_static_shell")
+            continue
         # Checked before each tier rather than enforced during one: a tier
         # already running is allowed to finish, because killing a fetch that is
         # about to succeed wastes everything spent on it. This stops the NEXT
@@ -1219,7 +1252,7 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
                 attempt["reason"] = reason or "challenge_detected:" + detected
                 reasons.append(name + ":" + attempt["reason"])
                 continue
-        if _is_refusal(reason):
+        if _service_refusal(name, reason):
             tier_refused(name, reason)
         elif payload:
             # Answered with something. Whether it extracted is a separate
@@ -1252,7 +1285,8 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
             candidate = {**source,
                          "ok": True, "text": text, "tier": name,
                          "extractor": "%s-native" % name, "title": "",
-                         "published": "", "chars": len(text), "url": final,
+                         "published": (payload.get("page_metadata") or {}).get("published", ""),
+                         "chars": len(text), "url": final,
                          "reason": "", "cached": False,
                          "content_type": payload.get("content_type", ""),
                          "extraction": payload.get("extraction", {}),

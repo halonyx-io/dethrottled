@@ -64,17 +64,24 @@ def test_http_200_with_no_prose_escalates(monkeypatch):
     and zero article text; the run must NOT stop there."""
     monkeypatch.setattr(f, "_tier_direct", tier(html=SHELL))
     monkeypatch.setattr(f, "_tier_tls", tier(html=ARTICLE))
+    monkeypatch.setattr(f, "_tier_crawl4ai", tier(html=ARTICLE))
     result = f.fetch_and_extract("https://example.com/a", max_chars=5000)
     assert result["ok"]
-    assert result["tier"] == "tls", "must have escalated past the empty shell"
+    # Served without prose is not a block, so TLS is skipped for the renderer.
+    assert result["tier"] == "crawl4ai", "must have escalated past the empty shell"
+    monkeypatch.setattr(f, "CRAWL4AI_URL", "")
+    assert f.fetch_and_extract("https://example.com/b", max_chars=5000)["tier"] == "tls"
 
 
 def test_thin_prose_also_escalates(monkeypatch):
     """Technically prose, too little to be worth stopping on."""
     monkeypatch.setattr(f, "_tier_direct", tier(html=THIN))
     monkeypatch.setattr(f, "_tier_tls", tier(html=ARTICLE))
+    monkeypatch.setattr(f, "_tier_crawl4ai", tier(html=ARTICLE))
     result = f.fetch_and_extract("https://example.com/a", max_chars=5000)
-    assert result["tier"] == "tls"
+    assert result["tier"] == "crawl4ai"
+    monkeypatch.setattr(f, "CRAWL4AI_URL", "")
+    assert f.fetch_and_extract("https://example.com/b", max_chars=5000)["tier"] == "tls"
 
 
 def test_a_good_first_tier_stops_the_ladder(monkeypatch):
@@ -213,3 +220,24 @@ def test_clip_ends_at_a_natural_boundary_and_never_exceeds_the_cap(monkeypatch):
     assert len(result["text"]) <= 55
     assert result["text"].endswith("…")
     assert not result["text"].endswith("sou…")
+
+
+def test_static_shell_skips_tls_and_renders(monkeypatch):
+    """A shell is served HTML, not a block: TLS would fetch the same shell."""
+    shell_html = "<html>" + "<script>var x=1;</script>" * 4000 + "<p>Live market data</p></html>"
+    called = []
+    monkeypatch.setattr(f, "_tier_direct", tier(html=shell_html))
+    monkeypatch.setattr(f, "_tier_tls",
+                        lambda url, *a, **k: (called.append("tls"), ({}, "x", url))[1])
+    monkeypatch.setattr(f, "_tier_crawl4ai", tier(html=ARTICLE))
+    result = f.fetch_and_extract("https://example.com/app", max_chars=5000)
+    assert result["tier"] == "crawl4ai" and called == []
+    assert [a["tier"] for a in result["acquisition_attempts"]] == ["direct", "crawl4ai"]
+
+
+def test_static_shell_still_tries_tls_without_a_renderer(monkeypatch):
+    shell_html = "<html>" + "<script>var x=1;</script>" * 4000 + "<p>Live market data</p></html>"
+    monkeypatch.setattr(f, "CRAWL4AI_URL", "")
+    monkeypatch.setattr(f, "_tier_direct", tier(html=shell_html))
+    monkeypatch.setattr(f, "_tier_tls", tier(html=ARTICLE))
+    assert f.fetch_and_extract("https://example.com/app", max_chars=5000)["tier"] == "tls"

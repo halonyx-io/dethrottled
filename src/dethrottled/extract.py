@@ -131,7 +131,12 @@ def _via_trafilatura(html: str, url: str) -> dict:
             return {}
         meta = {}
         try:
-            doc = trafilatura.extract_metadata(html, default_url=url)
+            # extensive=False: the extensive htmldate search took 40% of all
+            # extraction time on the 35 reference pages and mostly invented
+            # dates (year-only 1 January guesses on 4 of the 7 pages where it
+            # differed); titles, authors and site names are identical.
+            # Declared dates come from page_metadata regardless.
+            doc = trafilatura.extract_metadata(html, default_url=url, extensive=False)
             if doc:
                 meta = {
                     "title": doc.title or "",
@@ -360,9 +365,40 @@ def _ld_items(data):
             stack.extend(item)
 
 
+# Publisher-declared dates, strongest first. JSON-LD datePublished/dateModified
+# are read alongside these; the first declared value wins.
+_DATE_META = {
+    "published": ('meta[property="article:published_time"]',
+                  'meta[name="citation_publication_date"]', 'meta[name="citation_date"]',
+                  'meta[itemprop="datePublished"]', '[itemprop="datePublished"]',
+                  'meta[name="dc.date"]', 'meta[name="DC.date"]', 'meta[name="date"]',
+                  'meta[property="og:published_time"]'),
+    "modified": ('meta[property="article:modified_time"]', 'meta[itemprop="dateModified"]',
+                 '[itemprop="dateModified"]', 'meta[property="og:updated_time"]'),
+}
+
+
+def _page_date(metadata: dict, guessed: str, html: str) -> str:
+    """The page's date: declared metadata first, then the extractor's guess.
+
+    The guess (htmldate via trafilatura) also parses free text, and reads
+    "the 3.14 series ... 3" on python.org as 2010-03-14. A guessed date whose
+    year appears nowhere in the page is rejected and recorded in
+    `metadata["date_rejected"]` rather than reported as the publication date.
+    """
+    if metadata.get("published"):
+        return metadata["published"]
+    year = re.match(r"\s*(\d{4})-\d{2}-\d{2}", guessed or "")
+    if year and year[1] not in (html or ""):
+        metadata["date_rejected"] = {"value": guessed, "reason": "year_not_in_page"}
+        return ""
+    return guessed or ""
+
+
 def page_metadata(html: str) -> dict:
     """Publisher-declared page identity: descriptions, types, canonical URL,
-    identifiers. Read from meta tags, JSON-LD and microdata, never inferred.
+    identifiers and publication/modification dates. Read from meta tags,
+    JSON-LD and microdata, never inferred.
 
     Returned on every read so an agent gets a page's declared identity (a
     package URL, DOI, ISBN, version) even when extraction keeps only prose.
@@ -404,6 +440,27 @@ def page_metadata(html: str) -> dict:
         og = tree.css_first('meta[property="og:type"]')
         if og and og.attributes.get("content") and og.attributes["content"] not in types:
             types.append(og.attributes["content"])
+        dates = {}
+        for key, selectors in _DATE_META.items():
+            for selector in selectors:
+                node = tree.css_first(selector)
+                value = node and (node.attributes.get("content")
+                                  or node.attributes.get("datetime")
+                                  or " ".join(node.text().split()))
+                if value:
+                    dates.setdefault(key, value.strip()[:64])
+                    break
+        for node in tree.css('script[type="application/ld+json"]'):
+            try:
+                data = json.loads(node.text() or "")
+            except ValueError:
+                continue
+            for item in _ld_items(data):
+                for key, field in (("published", "datePublished"), ("modified", "dateModified")):
+                    value = item.get(field)
+                    if isinstance(value, str) and value.strip():
+                        dates.setdefault(key, value.strip()[:64])
+        out.update(dates)
         canonical = tree.css_first('link[rel="canonical"]')
         if canonical and canonical.attributes.get("href"):
             out["canonical"] = canonical.attributes["href"][:2048]
@@ -537,7 +594,7 @@ def extract(html: str, url: str = "", *, max_chars: int = 3500) -> dict:
             "text": text,
             "tier": result["tier"],
             "title": result.get("title", ""),
-            "published": result.get("published", ""),
+            "published": _page_date(metadata, result.get("published", ""), html),
             "author": result.get("author", ""),
             "chars": len(text),
             "reason": "",

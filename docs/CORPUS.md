@@ -278,7 +278,10 @@ it does not change passage ranking, model floors or public eligibility.
 ## Candidates are not answer coverage
 
 `/corpus/search` labels its result kind as `retrieval_candidates`. `count` counts
-returned passages, not supported facts. `support_status=model_agreement` means
+returned passages, not supported facts. `per_url` counts one page once
+whatever address it was indexed under, and a passage whose text matches one
+already returned from another page (a mirror) is listed under that hit's
+`duplicates` instead of being returned again. Nothing is removed from storage. `support_status=model_agreement` means
 retrievers selected the same source; it is not corroboration by independent
 sources and does not establish that an answer is present. Both standard and broad
 support retain `answer_support=unverified`.
