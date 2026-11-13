@@ -60,7 +60,12 @@ def fact_read(path):
     assert "7341 tonnes" in row.get("content", ""), row.get("quality")
     assert row["document_id"] and row["read_plan"]
     result = dict(quality=row["quality"], document_retained=True, read_plan=row["read_plan"])
-    if path == "lazy":
+    # Since 1.8.4 the renderer scrolls bounded lazy pages itself, so /lazy may
+    # be read without browser recovery. /details still needs a click, so it
+    # carries the same-browser handoff contract.
+    if path == "lazy" and "browser_session" not in row["read_plan"]:
+        result["rendered_without_recovery"] = True
+    elif path in ("lazy", "details"):
         session = row["read_plan"]["browser_session"]
         continuation = call(
             "/drive",
@@ -151,8 +156,10 @@ if a.phase == "contracts":
             namespace = "other-" + uuid.uuid4().hex[:12]
             row = fetch("/cookie-gated")
         else:
+            # Manual recovery must not perform the click that /details needs.
+            # /lazy no longer fits: the renderer scrolls it without recovery.
             row = fetch(
-                "/lazy" if mode != "poison" else "/poison",
+                "/poison" if mode == "poison" else "/details" if mode == "manual" else "/lazy",
                 **(
                     {"render": "never"}
                     if mode == "render-never"
