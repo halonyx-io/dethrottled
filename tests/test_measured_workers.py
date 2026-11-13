@@ -103,23 +103,33 @@ class Request:
 def test_child_is_killed_before_worker_slot_is_released(runtime, tmp_path, failure):
     pidfile = tmp_path / "pid"
     child = tmp_path / "child.py"
+    # Write the PID atomically: the test acts as soon as the file exists, and
+    # a plain open() makes it exist, empty, before the PID is written.
     child.write_text(
-        "import os,time\nopen("
+        "import os,time\npath = "
         + repr(str(pidfile))
-        + ", 'w').write(str(os.getpid()))\ntime.sleep(10)\nprint('{}')\n"
+        + "\nopen(path + '.tmp', 'w').write(str(os.getpid()))\n"
+        "os.replace(path + '.tmp', path)\ntime.sleep(10)\nprint('{}')\n"
     )
-    runner = runtime.Runner(str(child), timeout=0.3 if failure == "timeout" else 5)
+    runner = runtime.Runner(str(child), timeout=30)
 
     async def run():
-        request = Request(disconnect_after=0.3 if failure == "disconnect" else None)
+        request = Request()
         task = asyncio.create_task(runner.execute(request))
-        if failure == "cancel":
-            deadline = time.monotonic() + 3
-            while not pidfile.exists() and not task.done() and time.monotonic() < deadline:
-                await asyncio.sleep(0.01)
-            if task.done():
-                await task  # Surface startup failures rather than waiting forever for a PID.
-            assert pidfile.exists(), "worker child did not start within three seconds"
+        # Trigger the failure only once the child is running. A fixed 0.3 s
+        # deadline raced interpreter startup on slow CI runners (macos-15-intel)
+        # and killed the child before it wrote its PID.
+        deadline = time.monotonic() + 10
+        while not pidfile.exists() and not task.done() and time.monotonic() < deadline:
+            await asyncio.sleep(0.01)
+        if task.done():
+            await task  # Surface startup failures rather than waiting forever for a PID.
+        assert pidfile.exists(), "worker child did not start within ten seconds"
+        if failure == "timeout":
+            runner.timeout = 0  # The runner rechecks its deadline while waiting.
+        elif failure == "disconnect":
+            request.disconnect_after = 0
+        else:
             task.cancel()
         with pytest.raises((HTTPException, asyncio.CancelledError)):
             await task
@@ -130,6 +140,7 @@ def test_child_is_killed_before_worker_slot_is_released(runtime, tmp_path, failu
     with pytest.raises(ProcessLookupError):
         os.kill(int(pidfile.read_text()), 0)
     assert runner.counts["timed_out" if failure == "timeout" else "cancelled"] == 1
+    runner.timeout = 30
     child.write_text('print(\'{"text":"recovered"}\')\n')
     assert asyncio.run(runner.execute(Request()))["text"] == "recovered"
 
