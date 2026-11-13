@@ -232,6 +232,6 @@ A real `fetch` response, trimmed:
 Read [AGENTS.md](AGENTS.md) before changing code. It sets out the rules
 contributors (human or AI) follow here, and the checks a change must pass.
 
-This checkout is **1.8.4**. A running service reports its own version at `/health`.
+This checkout is **1.8.5**. A running service reports its own version at `/health`.
 
 [MIT license](LICENSE) · Maintained by [Halonyx](https://github.com/halonyx-io)
