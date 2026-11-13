@@ -122,6 +122,19 @@ def public_url(url: str) -> bool:
         return False
 
 
+def browser_public(url: str, requested: bool = False) -> bool:
+    """Browser scope for a target: public unless the target is private.
+
+    A public-only browser session pins navigation to the requested host but
+    lets page subresources (CDN files, API hosts, challenge scripts) reach any
+    public destination, never a private address. An internal session pins ALL
+    egress to its allowed hosts, which blocked crates.io READMEs, Bluesky
+    profiles and AWS WAF challenges. Every browser caller uses this rule so a
+    recovery step or /drive session never re-imposes the narrower scope.
+    """
+    return bool(requested) or public_url(url)
+
+
 def _deferred_hosts() -> tuple[str, ...]:
     raw = os.getenv("DETHROTTLED_RESEARCH_DEFER_HOSTS", "")
     return tuple(item.strip().lower() for item in raw.split(",") if item.strip())

@@ -284,6 +284,53 @@ def valid_url(url: str) -> bool:
 # fetch worked, the page is still not readable, and those are different facts.
 THIN_CHARS = int(os.environ.get("DETHROTTLED_THIN_CHARS", "600"))
 
+# An application shell: plenty of HTML but little readable text, served before
+# client-side rendering. A static tier stopping on it reports success while
+# the content (NSE's index data, a Mastodon profile) has not been read. Below
+# SHELL_MAX_TEXT characters with at least SHELL_HTML_RATIO bytes of HTML per
+# character of text, the result is kept only as a floor and rendering tiers
+# are tried. Thresholds follow web-researcher-mcp's measured shell heuristic.
+SHELL_MAX_TEXT = int(os.environ.get("DETHROTTLED_SHELL_MAX_TEXT", "2048"))
+SHELL_HTML_RATIO = int(os.environ.get("DETHROTTLED_SHELL_HTML_RATIO", "20"))
+# Tiers a shell can escalate FROM. Static reads go on to rendering; a thin
+# crawl render goes on to the headed browser. Headed is last: nothing follows.
+SHELL_TIERS = {"direct", "tls", "crawl4ai"}
+
+
+def _looks_like_shell(name: str, candidate: dict, html) -> bool:
+    """`html` is the page source, or its byte count when only that was kept."""
+    # Judge the page's own text: an added metadata description must not lift a
+    # shell over the threshold (NSE: 1,941 body chars became 2,576).
+    chars = int(candidate.get("extraction", {}).get("pre_supplement_chars")
+                or candidate.get("chars") or 0)
+    size = html if isinstance(html, int) else len(html or "")
+    rendered = name == "crawl4ai"
+    return (name in SHELL_TIERS
+            and (rendered or candidate.get("content_type") == "html")
+            and 0 < chars < SHELL_MAX_TEXT and size >= SHELL_HTML_RATIO * chars)
+
+
+def _supplement_thin(candidate: dict, html: str, descriptions=None) -> None:
+    """Prefix page-supplied descriptions to a short HTML read that lacks them."""
+    if (candidate.get("chars") or 0) >= SHELL_MAX_TEXT or not (html or descriptions):
+        return
+    if candidate.get("content_type") not in {"html", "", None}:
+        return
+    text = candidate.get("text") or ""
+    folded = " ".join(text.split()).casefold()
+    from . import extract as _fx
+    found = _fx.meta_descriptions(html) if html else list(descriptions or [])
+    extra = [d for d in found if d.casefold() not in folded]
+    if not extra:
+        return
+    text_chars = int(candidate.get("chars") or len(text))
+    candidate["text"] = "\n\n".join([*extra, text]).strip()
+    candidate["chars"] = len(candidate["text"])
+    candidate["extraction"] = {**candidate.get("extraction", {}),
+                               "metadata_supplement": len(extra),
+                               "pre_supplement_chars": text_chars}
+    candidate["warnings"] = [*candidate.get("warnings", []), "page_metadata_description_added"]
+
 
 def _tidy_text(value: str, limit: int | None = None) -> str:
     """Collapse whitespace on text a tier already extracted for us."""
@@ -526,8 +573,19 @@ def _crawl4ai_payload(payload: dict, url: str) -> tuple:
         if isinstance(value, str) and (len(value) > 8 if keep_html else _usable(value)):
             html = value
             break
+    source = next((payload[f] for f in ("html", "raw_html") if isinstance(payload.get(f), str)), "")
+    # Kept even when the HTML is not: rendered output gets the same shell test
+    # and page-description supplement as a static read.
+    rendered = {"source_html_bytes": len(source)} if source else {}
+    if source:
+        from . import extract as _fx
+        metadata = _fx.page_metadata(source)
+        if metadata:
+            rendered["page_metadata"] = metadata
+        if metadata.get("descriptions"):
+            rendered["page_descriptions"] = metadata["descriptions"]
     if isinstance(markdown, str) and len(markdown.strip()) > 220:
-        result = {"text": markdown}
+        result = {"text": markdown, **rendered}
         # Markdown wins for prose, but selectors/raw callers still need the
         # source DOM. Only retain it when the request asked for HTML.
         if html and _READ_OPTIONS.get().get("keep_html"):
@@ -535,7 +593,7 @@ def _crawl4ai_payload(payload: dict, url: str) -> tuple:
         return result, "", final
 
     if html:
-        return {"html": html}, "", final
+        return {"html": html, **rendered}, "", final
     return {}, "crawl4ai_empty", url
 
 
@@ -582,7 +640,8 @@ def _crawl4ai_via_crawl(url: str) -> tuple:
         from .access import CLAIMS, read_session_alias
         from .delegation import sign
         claims = CLAIMS.get()
-        public = bool(claims) or _READ_OPTIONS.get().get("public_only",False)
+        from .research import browser_public
+        public = bool(claims) or browser_public(url, _READ_OPTIONS.get().get("public_only", False))
         headers["X-DNB-Delegation"] = sign(payload,
             owner=claims["namespace"] if claims else None,
             session=read_session_alias(url,public),
@@ -876,7 +935,7 @@ def _crawl4ai_admitted(url):
 # Retain a generous extraction independently of the requested response size.
 # Focused reads and document continuations can reach later sections without
 # requiring the agent to ingest the entire source. Provenance marks bounded reads.
-CACHE_CHARS = int(os.environ.get("DETHROTTLED_EXTRACT_CACHE_CHARS", "1000000"))
+CACHE_CHARS = int(os.environ.get("DETHROTTLED_EXTRACT_CACHE_CHARS", "4000000"))
 
 
 def _clip(out: dict, max_chars: int) -> dict:
@@ -1183,9 +1242,12 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
             # spreadsheets, OCR pages and slides keep their line breaks.
             if payload.get("structured"):
                 from . import documents as _docs
+                whole = _docs.tidy_structured(supplied)
                 text = _docs.tidy_structured(supplied, limit=CACHE_CHARS)
             else:
+                whole = _tidy_text(supplied)
                 text = _tidy_text(supplied, limit=CACHE_CHARS)
+            supplied_clipped = len(whole) > len(text)
             source = {"html": payload.get("html") or ""} if keep_html else {}
             candidate = {**source,
                          "ok": True, "text": text, "tier": name,
@@ -1195,9 +1257,16 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
                          "content_type": payload.get("content_type", ""),
                          "extraction": payload.get("extraction", {}),
                          "warnings": payload.get("warnings", []),
+                         "page_metadata": payload.get("page_metadata", {}),
                          "content_status": payload.get("content_status", "complete")}
             candidate.update({k: details[k] for k in ("source_alternatives", "source_canonical")
                               if k in details})
+            if supplied_clipped:
+                # Same rule as the HTML path: a cut at the retained extraction
+                # budget is reported, never presented as a complete read.
+                candidate["extraction"] = {**candidate["extraction"], "partial": True,
+                                           "partial_reason": "extraction_cache_limit"}
+                candidate["warnings"] = [*candidate["warnings"], "extraction_cache_limit"]
         else:
             html = payload.get("html") or ""
             if not html or _challenge_document(html):
@@ -1219,6 +1288,7 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
                              "ok": True, "text": result["text"], "tier": name,
                              "extractor": result["tier"],
                              "extraction": {"completeness": result.get("completeness", {})},
+                             "page_metadata": result.get("page_metadata", {}),
                              "title": result.get("title", ""),
                              "published": result.get("published", ""),
                              "chars": result["chars"], "url": final,
@@ -1228,11 +1298,16 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
                              **details}
                 candidate["warnings"] = [*candidate.get("warnings", []),
                                          *result.get("warnings", [])]
+                if result.get("clipped"):
+                    candidate["extraction"] = {**candidate["extraction"], "partial": True,
+                                               "partial_reason": "extraction_cache_limit"}
             else:
                 # Fetched fine, but no prose -- almost always a JS shell.
                 reasons.append("%s:fetched_but_%s" % (name, result["reason"]))
                 continue
 
+        _supplement_thin(candidate, payload.get("html") or "",
+                         payload.get("page_descriptions"))
         if payload.get("browser_recovery"):
             candidate["browser_recovery"] = payload["browser_recovery"]
         if payload.get("origin_response"):
@@ -1263,6 +1338,16 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
         # gave up only a teaser, which is a question about HTML -- no later
         # tier is going to read a spreadsheet or a scan better than the parser
         # that already read it, so trying them only burns the page budget.
+        if (_looks_like_shell(name, candidate,
+                              payload.get("html") or payload.get("source_html_bytes") or "")
+                and not payload.get("structured")
+                and _READ_OPTIONS.get().get("format") not in {"html", "links"}):
+            attempt["outcome"] = "shell"
+            reasons.append("%s:shell/%d" % (name, candidate["chars"]))
+            if (best is None or candidate["content_assessment"]["unflagged_chars"]
+                    > best["content_assessment"]["unflagged_chars"]):
+                best = candidate
+            continue
         if (candidate["chars"] >= THIN_CHARS or payload.get("structured")
                 or _READ_OPTIONS.get().get("format") in {"html", "links"}
                 or candidate.get("content_status") == "image_content"):
@@ -1331,12 +1416,14 @@ def _headed_read(url: str, backend: str) -> tuple:
     options = _READ_OPTIONS.get()
     host = urlparse(url).hostname
     from .access import automatic_session, read_session_alias
-    alias = read_session_alias(url, options.get("public_only", False))
+    from .research import browser_public
+    public = browser_public(url, options.get("public_only", False))
+    alias = read_session_alias(url, public)
     session = automatic_session(str(options.get("admission_key", "local")), alias)
     started = time.monotonic()
     deadline = started + float(os.getenv("DETHROTTLED_CHALLENGE_WAIT_SECONDS", "15"))
     body = {"session": session, "screenshot": "never", "allowed_hosts": [host],
-            "public_only": options.get("public_only", False), "timeout_ms": 12000,
+            "public_only": public, "timeout_ms": 12000,
             "navigation_wait": "commit"}
     read = {"action": "html", "selector": "html", "max_chars": 120000}
 
@@ -1396,6 +1483,23 @@ def _headed_read(url: str, backend: str) -> tuple:
                           read])
             polls += 1
             loading_polls += int(loading and not vendor)
+        if (not wait_for and deadline - time.monotonic() > 4
+                and os.getenv("DETHROTTLED_HEADED_SETTLE", "1") != "0"):
+            # Second look after settling: bounded network-quiet wait plus
+            # scroll-until-stable, as the crawl path does, so application pages
+            # are not captured at first paint. It only ever adds: a page that
+            # navigates away, times out or reads no better keeps the first
+            # capture (Indeed redirected during settling and failed the read).
+            try:
+                settled = drive([{"action": "settle", "ms": 3000, "limit": 10}, read])
+                later = settled["steps"][-1].get("data") or ""
+                if isinstance(later, dict):
+                    later = later.get("html", "")
+                if (not challenge_kind(later)
+                        and len(short_text(later)) > len(short_text(html))):
+                    data, html = settled, later
+            except (_HeadedReadFailure, requests.RequestException, ValueError, KeyError):
+                pass
         visible = {}
         visible_error = None
         if data['steps'][-1].get('truncated'):

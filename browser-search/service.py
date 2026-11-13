@@ -513,11 +513,12 @@ DOWNLOAD_DIR = Path("/tmp/dethrottled-downloads")
 DOWNLOAD_LIMIT = 32 * 1024 * 1024
 DOWNLOAD_LOCK = asyncio.Lock()
 
+SETTLE_MAX_ADDED_CHARS = int(os.getenv("DNB_SCROLL_MAX_ADDED_CHARS", "200000"))
 DRIVE_ACTIONS = (
     "goto", "click", "fill", "type", "press", "select", "check", "uncheck", "hover",
     "wait", "wait_for", "text", "html", "attr", "count", "snapshot", "url", "title",
     "download", "network", "checkpoint", "tabs", "switch_tab", "history",
-    "read_state", "scroll", "expand_details",
+    "read_state", "scroll", "expand_details", "settle",
 )
 SCREENSHOT_MODES = ("never", "failure", "canary", "always")
 INTERACTIVE_SELECTOR = (
@@ -1422,6 +1423,50 @@ async def _drive(state: dict, body: DriveRequest) -> dict:
                     loading:!!document.querySelector('[aria-busy="true"]'),
                     scroll_remaining:root ? Math.max(0, root.scrollHeight-innerHeight-scrollY) : 0};
                 }""")
+        elif action == "settle":
+            async def call(scope=scope, s=s):
+                # Bounded readiness for application pages: wait for the page's
+                # own requests to go quiet (500 ms without traffic, at most
+                # `ms`), then scroll to the end until the document stops
+                # growing (at most `limit` rounds). A Bluesky profile arrives
+                # after first paint; an infinite list loads one batch per scroll.
+                # Budgeted against the run deadline: settling must never turn
+                # a readable page into run_deadline_exceeded. Keep 2 s for the
+                # steps that follow (the capture itself).
+                started = time.monotonic()
+                quiet = min(max(1, s.ms), (deadline - started - 2) * 1000)
+                if quiet > 0:
+                    try:
+                        await scope.wait_for_load_state("networkidle", timeout=quiet)
+                    except Exception:
+                        pass
+                rounds = 0
+                probe = """() => {
+                  const body = (document.body && document.body.innerText) || '';
+                  const articles = document.querySelectorAll('article');
+                  const main = articles.length === 1 ? (articles[0].innerText || '').length : 0;
+                  return {height: document.documentElement.scrollHeight, text: body.length,
+                          article_share: body.length ? main / body.length : 0};
+                }"""
+                start = await scope.evaluate(probe)
+                before = start
+                # A single dominant <article> is a document, not a feed; and an
+                # endless feed stops after SETTLE_MAX_ADDED_CHARS of new text.
+                for _ in range(s.limit if start.get("article_share", 0) < 0.6 else 0):
+                    if time.monotonic() + 0.6 + 2 > deadline:
+                        break
+                    await scope.evaluate(
+                        "window.scrollTo(0, document.documentElement.scrollHeight)")
+                    await asyncio.sleep(0.6)
+                    after = await scope.evaluate(probe)
+                    rounds += 1
+                    if after.get("height", 0) <= before.get("height", 0):
+                        break
+                    if after.get("text", 0) - start.get("text", 0) >= SETTLE_MAX_ADDED_CHARS:
+                        break
+                    before = after
+                return {"scroll_rounds": rounds,
+                        "elapsed_ms": round((time.monotonic() - started) * 1000)}
         elif action == "scroll":
             async def call(scope=scope, s=s):
                 if s.value not in {"", "down", "up"}:

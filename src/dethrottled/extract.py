@@ -36,6 +36,7 @@ producing mush.
 
 from __future__ import annotations
 
+import json
 import re
 from urllib.parse import urljoin
 
@@ -110,9 +111,13 @@ def _via_trafilatura(html: str, url: str) -> dict:
         # sentence-length lines was identical either way, so what it dropped
         # was article rather than furniture.
         #
-        # favor_recall is not set either: it returned byte-identical output to
-        # the default on every page, so it buys nothing and only adds a way for
-        # a future trafilatura to behave differently.
+        # favor_recall IS set. On the original article sample it returned
+        # byte-identical output, but on list- and definition-heavy pages the
+        # default drops whole <ul>/<dd> blocks: SQLite's WAL page lost both
+        # advantage/disadvantage lists and the WHATWG parsing spec lost its
+        # tokenizer-state text (12 Nov 2026 acquisition benchmark). Across the
+        # 35 captured benchmark pages recall was never worse, fixed exactly
+        # those two, and made no page shorter.
         #
         # include_tables stays on because tables are where the numbers are, and
         # a ledger of cited figures cannot afford to drop them. include_comments
@@ -120,7 +125,7 @@ def _via_trafilatura(html: str, url: str) -> dict:
         # off-topic text on the pages this fetches.
         text = trafilatura.extract(
             html, url=url, include_comments=False, include_tables=True,
-            config=_TRAF_CONFIG,
+            favor_recall=True, config=_TRAF_CONFIG,
         )
         if not text or len(text) < MIN_USEFUL_CHARS:
             return {}
@@ -190,6 +195,10 @@ def _via_selectolax(html: str, url: str) -> dict:
         if body is None:
             return {}
         text = body.text(separator="\n", strip=True)
+        # The separator also lands between inline nodes, so a linked term ends
+        # up as "abort a parser , it must" -- re-attach closing punctuation.
+        text = re.sub(r"[ \t\n]+([,.;:!?)\]])", r"\1", text)
+        text = re.sub(r"([(\[])[ \t\n]+", r"\1", text)
         if not text or len(text) < MIN_USEFUL_CHARS:
             return {}
         title = tree.css_first("title")
@@ -227,7 +236,18 @@ def _structural_samples(html):
         explicit = tree.css("main,article")
         if not explicit and len(tree.css("section")) < 12 and len(tree.css("pre")) < 12:
             return []  # Unstructured page furniture is not evidence of missing article prose.
-        nodes = tree.css("main p,article p,main pre,article pre") if explicit else tree.css("p,pre")
+        # List items and definition descriptions carry the substance of
+        # reference pages (feature lists, spec algorithms); sampling only <p>
+        # left such pages permanently "not_checked".
+        nodes = (tree.css("main p,article p,main pre,article pre,main li,article li,"
+                          "main dd,article dd,main td,article td")
+                 if explicit else tree.css("p,pre,li,dd,td"))
+        # Text-heavy leaf <div>s: app-style pages put prose in bare divs.
+        leaves = []
+        for node in tree.css("main div,article div" if explicit else "div")[:3000]:
+            if node.css_first("div,p,li,section,article,table,pre,ul,ol,dl") is None:
+                leaves.append(node)
+        nodes = [*nodes, *leaves]
         for node in nodes:
             text = node.text(separator=" ", strip=True)
             if len(text) >= 180:
@@ -284,6 +304,196 @@ def _compare_coverage(html, url, result):
                     "selection_changed": result["tier"] != original_tier}
 
 
+def meta_descriptions(html: str) -> list:
+    """Page-supplied summaries: OpenGraph/Twitter/meta description and JSON-LD.
+
+    App-style pages (Mastodon and Bluesky profiles, many dashboards) render
+    their body client-side; the server still writes the profile bio or page
+    summary into these tags, so a thin read can carry it instead of nothing.
+    """
+    if not html:
+        return []
+    found = []
+    try:
+        from selectolax.lexbor import LexborHTMLParser
+        tree = LexborHTMLParser(html[:2_000_000])
+        for selector in ('meta[property="og:description"]', 'meta[name="description"]',
+                         'meta[name="twitter:description"]'):
+            for node in tree.css(selector):
+                found.append(node.attributes.get("content") or "")
+        for node in tree.css('script[type="application/ld+json"]'):
+            try:
+                data = json.loads(node.text() or "")
+            except ValueError:
+                continue
+            for item in (data if isinstance(data, list) else [data]):
+                if isinstance(item, dict) and isinstance(item.get("description"), str):
+                    found.append(item["description"])
+    except Exception:
+        return []
+    out = []
+    for value in found:
+        value = " ".join(value.split())
+        if len(value) >= 20 and value.casefold() not in (o.casefold() for o in out):
+            out.append(value[:2000])
+    return out[:4]
+
+
+TITLE_BLOCK_MAX_CHARS = 600
+
+_ID_KEYS = ("identifier", "sku", "gtin", "gtin13", "gtin12", "mpn", "isbn", "issn",
+            "doi", "version", "softwareVersion", "productID", "serialNumber")
+_ID_META = {"citation_doi": "doi", "citation_isbn": "isbn", "citation_issn": "issn",
+            "dc.identifier": "identifier", "prism.doi": "doi"}
+
+
+def _ld_items(data):
+    stack = data if isinstance(data, list) else [data]
+    while stack:
+        item = stack.pop(0)
+        if isinstance(item, dict):
+            yield item
+            graph = item.get("@graph")
+            if isinstance(graph, list):
+                stack.extend(graph)
+        elif isinstance(item, list):
+            stack.extend(item)
+
+
+def page_metadata(html: str) -> dict:
+    """Publisher-declared page identity: descriptions, types, canonical URL,
+    identifiers. Read from meta tags, JSON-LD and microdata, never inferred.
+
+    Returned on every read so an agent gets a page's declared identity (a
+    package URL, DOI, ISBN, version) even when extraction keeps only prose.
+    """
+    if not html:
+        return {}
+    out = {"descriptions": meta_descriptions(html)}
+    try:
+        from selectolax.lexbor import LexborHTMLParser
+        tree = LexborHTMLParser(html[:2_000_000])
+        identifiers, types = {}, []
+        for node in tree.css("meta[name]"):
+            key = _ID_META.get((node.attributes.get("name") or "").lower())
+            value = " ".join((node.attributes.get("content") or "").split())
+            if key and value:
+                identifiers.setdefault(key, value[:300])
+        for node in tree.css("[itemprop]"):
+            prop = node.attributes.get("itemprop") or ""
+            if prop in _ID_KEYS:
+                value = node.attributes.get("content") or " ".join(node.text().split())
+                if value:
+                    identifiers.setdefault(prop, value[:300])
+        for node in tree.css('script[type="application/ld+json"]'):
+            try:
+                data = json.loads(node.text() or "")
+            except ValueError:
+                continue
+            for item in _ld_items(data):
+                kind = item.get("@type")
+                for t in (kind if isinstance(kind, list) else [kind]):
+                    if isinstance(t, str) and t not in types:
+                        types.append(t)
+                for key in _ID_KEYS:
+                    value = item.get(key)
+                    if isinstance(value, dict):
+                        value = value.get("value") or value.get("@id")
+                    if isinstance(value, (str, int, float)) and str(value).strip():
+                        identifiers.setdefault(key, str(value).strip()[:300])
+        og = tree.css_first('meta[property="og:type"]')
+        if og and og.attributes.get("content") and og.attributes["content"] not in types:
+            types.append(og.attributes["content"])
+        canonical = tree.css_first('link[rel="canonical"]')
+        if canonical and canonical.attributes.get("href"):
+            out["canonical"] = canonical.attributes["href"][:2048]
+        if identifiers:
+            out["identifiers"] = dict(list(identifiers.items())[:12])
+        if types:
+            out["types"] = types[:8]
+    except Exception:
+        pass
+    return {k: v for k, v in out.items() if v}
+
+
+def _title_block(html: str) -> str:
+    """The compact block around the page's <h1>, if it is compact.
+
+    Registry and product pages keep identifiers beside the heading -- Maven
+    Central's package URL, a crate's version, a project's tags -- in labels
+    and spans that article extractors classify as furniture.
+    """
+    try:
+        from selectolax.lexbor import LexborHTMLParser
+        tree = LexborHTMLParser(html)
+        for node in tree.css("script,style,svg,noscript,template,button"):
+            node.decompose()
+        heading = tree.css_first("h1")
+        parent = heading.parent if heading else None
+        if parent is None or parent.tag in {"body", "html"}:
+            return ""
+        text = " ".join(parent.text(separator=" ", strip=True).split())
+        text = re.sub(r" ([,.;:!?)\]])", r"\1", text)
+        return text if 0 < len(text) <= TITLE_BLOCK_MAX_CHARS else ""
+    except Exception:
+        return ""
+
+
+# A main-content pick this small, beside a second extractor finding several
+# times more text, usually means the first locked onto one block of an
+# app-style page (Crunchbase: trafilatura 664 chars of 130K visible text,
+# resiliparse 7.4K including the location and founding facts).
+THIN_PICK_CHARS = 2000
+THIN_PICK_RATIO = 3
+
+
+# Coverage form of the same guard: whatever its size, a trafilatura pick that
+# holds under THIN_PICK_COVERAGE of the page's visible text (furniture removed)
+# on a page with at least THIN_PICK_VISIBLE characters is compared too.
+THIN_PICK_COVERAGE = 0.10
+THIN_PICK_VISIBLE = 5000
+
+
+def _visible_chars(html):
+    """Visible text size with furniture removed; a measurement, not an extraction."""
+    try:
+        from selectolax.lexbor import LexborHTMLParser
+        tree = LexborHTMLParser(html)
+        for node in tree.css("script,style,nav,header,footer,aside,form,noscript,svg,"
+                             "iframe,template"):
+            node.decompose()
+        return len(" ".join((tree.body.text(separator=" ") if tree.body else "").split()))
+    except Exception:
+        return 0
+
+
+def _guard_thin_choice(html, url, result, completeness):
+    if result.get("tier") != "trafilatura":
+        return result, completeness
+    chosen = len(result.get("text", ""))
+    small = chosen < THIN_PICK_CHARS
+    if not small:
+        # Visible text never exceeds the HTML, so a pick holding a tenth of the
+        # raw markup cannot fall under the coverage floor: skip the measurement.
+        if chosen >= len(html) * THIN_PICK_COVERAGE:
+            return result, completeness
+        visible = _visible_chars(html)
+        if visible < THIN_PICK_VISIBLE or chosen >= visible * THIN_PICK_COVERAGE:
+            return result, completeness
+    try:
+        alternative = _via_resiliparse(html, url)
+    except Exception:
+        alternative = {}
+    if not alternative or len(alternative.get("text", "")) < max(MIN_USEFUL_CHARS,
+                                                                 chosen * THIN_PICK_RATIO):
+        return result, completeness
+    merged = dict(result, text=alternative["text"], tier=alternative["tier"])
+    return merged, dict(completeness, assessment="thin_primary_compared",
+                        compared_extractors=["trafilatura", "resiliparse"],
+                        selection_changed=True, primary_chars=chosen,
+                        selected_chars=len(alternative["text"]))
+
+
 def extract(html: str, url: str = "", *, max_chars: int = 3500) -> dict:
     """Return {ok, text, tier, title, published, chars, reason}."""
     if not html or len(html) < 200:
@@ -301,7 +511,25 @@ def extract(html: str, url: str = "", *, max_chars: int = 3500) -> dict:
         if not result:
             continue
         result, completeness = _compare_coverage(html, url, result)
-        text = _tidy(result["text"], limit=max_chars)
+        result, completeness = _guard_thin_choice(html, url, result, completeness)
+        text = _tidy(result["text"])
+        block = _title_block(html)
+        if block and _coverage_key(block) not in _coverage_key(text):
+            text = block + " " + text
+            completeness = dict(completeness, title_block_added=True)
+        metadata = page_metadata(html)
+        # Declared identifiers missing from the text are kept with it as well,
+        # wherever the page placed them (JSON-LD, microdata, citation meta).
+        missing = {k: v for k, v in (metadata.get("identifiers") or {}).items()
+                   if _coverage_key(v) and _coverage_key(v) not in _coverage_key(text)}
+        if missing:
+            text = "Identifiers: " + "; ".join(f"{k} {v}" for k, v in missing.items()) + ". " + text
+            completeness = dict(completeness, identifiers_added=sorted(missing))
+        # Clipping to the cache limit must be visible: Moby-Dick (1.21M chars)
+        # was cut at 1M and still reported complete, losing its last 18%.
+        clipped = bool(max_chars) and len(text) > max_chars
+        if clipped:
+            text = text[:max_chars].rsplit(" ", 1)[0].strip()
         if len(text) < MIN_USEFUL_CHARS:
             continue
         return {
@@ -314,8 +542,11 @@ def extract(html: str, url: str = "", *, max_chars: int = 3500) -> dict:
             "chars": len(text),
             "reason": "",
             "completeness": completeness,
-            "warnings": (["extraction_missing_structural_samples"]
-                         if completeness["status"] == "suspected_incomplete" else []),
+            "page_metadata": metadata,
+            "clipped": clipped,
+            "warnings": ((["extraction_missing_structural_samples"]
+                          if completeness["status"] == "suspected_incomplete" else [])
+                         + (["extraction_cache_limit"] if clipped else [])),
         }
 
     return {"ok": False, "text": "", "tier": None, "reason": "no_extractor_succeeded",

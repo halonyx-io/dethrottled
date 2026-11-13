@@ -125,3 +125,76 @@ def test_malformed_drive_url_leaves_no_admission_or_journal_entry(monkeypatch, p
         asyncio.run(dnb.bounded_drive(body, None))
     assert error.value.status_code == 422
     assert dnb.DRIVE_INFLIGHT == 0
+
+
+class _ScrollPage:
+    def __init__(self, states):
+        self.states, self.scrolls = iter(states), 0
+
+    async def evaluate(self, script):
+        if script.startswith("window."):
+            self.scrolls += 1
+            return None
+        return next(self.states)
+
+
+def _state(height, text=1000, share=0.0):
+    return {"height": height, "text": text, "article_share": share}
+
+
+def test_infinite_scroll_settles_until_the_page_stops_growing(monkeypatch):
+    import time as _time
+    monkeypatch.setattr(dnb, "SCROLL_PAUSE", 0)
+    page = _ScrollPage([_state(1000), _state(2000, 2000), _state(3000, 3000), _state(3000, 3000)])
+    asyncio.run(dnb._settle_infinite_scroll(page, _time.monotonic() + 60))
+    assert page.scrolls == 3   # grew, grew, stopped
+
+
+def test_infinite_scroll_respects_the_render_deadline(monkeypatch):
+    import time as _time
+    page = _ScrollPage([_state(1000)] * 5)
+    asyncio.run(dnb._settle_infinite_scroll(page, _time.monotonic()))
+    assert page.scrolls == 0
+
+
+def test_single_article_pages_are_not_scrolled(monkeypatch):
+    import time as _time
+    monkeypatch.setattr(dnb, "SCROLL_PAUSE", 0)
+    page = _ScrollPage([_state(5000, 40000, 0.9)] + [_state(9000, 50000)] * 5)
+    asyncio.run(dnb._settle_infinite_scroll(page, _time.monotonic() + 60))
+    assert page.scrolls == 0
+
+
+def test_endless_feeds_stop_at_the_added_text_cap(monkeypatch):
+    import time as _time
+    monkeypatch.setattr(dnb, "SCROLL_PAUSE", 0)
+    monkeypatch.setattr(dnb, "SCROLL_MAX_ADDED_CHARS", 1000)
+    page = _ScrollPage([_state(1000 * i, 600 * i) for i in range(1, 20)])
+    asyncio.run(dnb._settle_infinite_scroll(page, _time.monotonic() + 60))
+    assert page.scrolls == 2   # 600 -> 1200 -> 1800 chars: cap of 1000 added reached
+
+
+def test_network_settle_is_bounded_and_tolerates_timeouts(monkeypatch):
+    import time as _time
+    waited = []
+
+    class Page:
+        async def wait_for_load_state(self, state, timeout):
+            waited.append((state, timeout))
+            raise TimeoutError("still busy")
+
+    asyncio.run(dnb._settle_network(Page(), _time.monotonic() + 60))
+    assert waited == [("networkidle", dnb.NETWORK_SETTLE_SECONDS * 1000)]
+    waited.clear()
+    asyncio.run(dnb._settle_network(Page(), _time.monotonic()))
+    assert waited == []
+
+
+def test_intraword_emphasis_is_unwrapped_but_word_emphasis_kept():
+    import html_extract
+    fix = html_extract._unwrap_intraword_emphasis
+    assert fix("<p>for <em>ser</em>ializing and <em>de</em>serializing</p>") == (
+        "<p>for serializing and deserializing</p>")
+    assert fix('<p>a <em class="x">un</em>wrap</p>') == "<p>a unwrap</p>"
+    kept = "<p>This is <em>very</em> important, <strong>really</strong>.</p>"
+    assert fix(kept) == kept

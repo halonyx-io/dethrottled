@@ -522,6 +522,9 @@ async def _crawl(body: CrawlRequest, request: Request = None):
                     )
                 if config["delay"]:
                     await asyncio.sleep(config["delay"])
+                deadline = started + config["timeout"] / 1000 + config["delay"]
+                await _settle_network(page, deadline)
+                await _settle_infinite_scroll(page, deadline)
                 final_url = page.url
                 status = navigation["status"]
                 headers = await response.all_headers() if response else {}
@@ -609,6 +612,71 @@ def retry_error(code, status, retryable):
         {"code": code, "retryable": retryable, "retry_after_seconds": 1 if retryable else None},
         headers={"Retry-After": "1"} if retryable else None,
     )
+
+
+NETWORK_SETTLE_SECONDS = float(os.getenv("DNB_NETWORK_SETTLE_SECONDS", "3"))
+
+
+async def _settle_network(page, deadline):
+    """Wait, bounded, for the page's own requests to go quiet.
+
+    Applications fetch their content after DOMContentLoaded (a Bluesky profile
+    arrives from its API host); capturing at first paint returned the trending
+    sidebar instead. Playwright's "networkidle" is 500 ms without requests.
+    """
+    budget = min(NETWORK_SETTLE_SECONDS, deadline - time.monotonic() - 1)
+    if budget <= 0:
+        return
+    try:
+        await page.wait_for_load_state("networkidle", timeout=budget * 1000)
+    except Exception:
+        return
+
+
+SCROLL_ROUNDS = max(0, int(os.getenv("DNB_SCROLL_ROUNDS", "10")))
+SCROLL_PAUSE = float(os.getenv("DNB_SCROLL_PAUSE_SECONDS", "0.6"))
+# Endless feeds keep growing: stop once this much text has been added, so a
+# profile page does not return a quarter-megabyte timeline.
+SCROLL_MAX_ADDED_CHARS = int(os.getenv("DNB_SCROLL_MAX_ADDED_CHARS", "200000"))
+# A page whose single <article> holds most of the text is a document, not a
+# feed; scrolling it only triggers lazy images.
+SCROLL_PROBE = """() => {
+  const body = (document.body && document.body.innerText) || '';
+  const articles = document.querySelectorAll('article');
+  const main = articles.length === 1 ? (articles[0].innerText || '').length : 0;
+  return {height: document.documentElement.scrollHeight, text: body.length,
+          article_share: body.length ? main / body.length : 0};
+}"""
+
+
+async def _settle_infinite_scroll(page, deadline):
+    """Scroll until the document stops growing, within the render budget.
+
+    Infinite-scroll pages (quotes.toscrape.com/scroll, social timelines) load
+    their later items only on scroll; a capture at first paint holds one batch.
+    A page that does not grow after one scroll costs a single pause.
+    """
+    try:
+        start = await page.evaluate(SCROLL_PROBE)
+    except Exception:
+        return
+    if not isinstance(start, dict) or start.get("article_share", 0) >= 0.6:
+        return
+    before = start
+    for _ in range(SCROLL_ROUNDS):
+        if time.monotonic() + SCROLL_PAUSE + 1 > deadline:
+            return
+        try:
+            await page.evaluate("window.scrollTo(0, document.documentElement.scrollHeight)")
+            await asyncio.sleep(SCROLL_PAUSE)
+            after = await page.evaluate(SCROLL_PROBE)
+        except Exception:
+            return
+        if not isinstance(after, dict) or after.get("height", 0) <= before.get("height", 0):
+            return
+        if after.get("text", 0) - start.get("text", 0) >= SCROLL_MAX_ADDED_CHARS:
+            return
+        before = after
 
 
 @app.post("/crawl")

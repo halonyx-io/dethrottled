@@ -218,7 +218,7 @@ walls. A successful click does not establish that the desired page data loaded.
 | Navigation/context | `goto`, `url`, `title`, `tabs`, `switch_tab` |
 | Observe | `snapshot`, `read_state`, `text`, `html`, `attr`, `count`, `network`, `history` |
 | Interact | `click`, `fill`, `type`, `press`, `select`, `check`, `uncheck`, `hover` |
-| Readiness/expansion | `wait_for`, `wait`, `scroll`, `expand_details` |
+| Readiness/expansion | `wait_for`, `wait`, `settle`, `scroll`, `expand_details` |
 | Retain/export | `download`, `checkpoint` |
 
 Step controls include `selector`, `frame`, `value`, `url`, `ms`, `delay_ms`,
@@ -310,6 +310,19 @@ current evidence is needed. Cached results and timer expiry do not prove recover
 completeness. Missing samples request inspection; they do not justify blindly
 repeating browser actions. Preserve warnings and inspect relevant source HTML or
 another representation when the missing evidence matters.
+`assessment="thin_primary_compared"` means a small main-content pick was replaced
+by a fuller extractor. `extraction_cache_limit` means text stopped at the
+retained extraction budget; continue with the retained document rather than
+treating the read as complete. `page_metadata_description_added` means a short
+read was prefixed with the page's own description (OpenGraph, meta or JSON-LD).
+That description is publisher-supplied summary text, not the rendered body.
+`title_block_added` means the compact block around the page heading (package
+identifiers, versions, tags) was kept in front of the extracted text, and
+`identifiers_added` lists declared identifiers (JSON-LD, microdata, citation
+meta) that extraction had dropped and were kept with the text. Every read also
+returns `page_metadata`: the page's own descriptions, schema types, canonical
+URL and identifiers such as a DOI, ISBN, SKU or version. It is what the
+publisher declared, not verified content.
 
 ## Domain-filter refusals
 

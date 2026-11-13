@@ -551,7 +551,8 @@ class BrowserStep(BaseModel):
     action: Literal["goto", "click", "fill", "type", "press", "select", "check", "uncheck",
                     "hover", "wait", "wait_for", "text", "html", "attr", "count", "snapshot",
                     "url", "title", "download", "network", "checkpoint",
-                    "tabs", "switch_tab", "history", "read_state", "scroll", "expand_details"]
+                    "tabs", "switch_tab", "history", "read_state", "scroll", "expand_details",
+                    "settle"]
     frame: str = Field(default="", max_length=1000,
                        description="CSS selector for an allowed iframe")
     selector: str = Field(default="", max_length=1000)
@@ -585,7 +586,8 @@ async def drive(
     """Operate a stateful browser using bounded steps and structured evidence.
 
     read_state inspects loading/details/scroll state; scroll moves up/down;
-    expand_details opens up to two visible standard HTML details sections.
+    expand_details opens up to two visible standard HTML details sections;
+    settle waits for network quiet, then scrolls until the page stops growing.
     Ordinary fetch uses these automatically for observed gaps; use drive for
     deliberate application-specific operations.
 

@@ -86,7 +86,7 @@ stop_reason before choosing another action; success remains extraction, not answ
 Reuse read_plan.browser_session.id in drive to continue the same scoped browser state.
 evidence_variants links retained earlier extractions when recovery selects another view;
 read those if the selected view lacks material needed for the question.
-read_state, scroll and expand_details are also available through drive. Custom controls
+read_state, scroll, expand_details and settle are also available through drive. Custom controls
 remain deliberate agent actions. HTTP/TLS cookie jars are scoped to caller, origin and
 transport/profile; they are process-local, bounded and expire after inactivity.
 quality=suspect retains possible error-banner pollution after available recovery.

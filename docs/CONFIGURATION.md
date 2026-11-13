@@ -53,9 +53,13 @@ application settings need an `environment` entry in a local override. Inspect
 | `CRAWL4AI_ALLOW_INTERNAL_URLS` | `false` | Renderer access to private addresses |
 | `DETHROTTLED_CHEAP_DISCOVERY` | `1` in Compose | Static DDG Lite probe before browser fallback; standalone default 0 |
 | `DETHROTTLED_MULTILINGUAL_CORPUS` | `1` in Compose | Enable E5 alongside MiniLM; standalone opt-in |
-| `DETHROTTLED_EXTRACT_CACHE_CHARS` | `1000000` | Retained extraction budget |
+| `DETHROTTLED_EXTRACT_CACHE_CHARS` | `4000000` | Retained extraction budget. It exceeds the 1,000,000-character response limit so a long source (a whole book, a large specification) stays retained: continue with `read_document` at `next_offset`. Text clipped at this budget is reported as partial (`partial_reason: extraction_cache_limit`). |
 | `DETHROTTLED_CRAWL4AI_BUDGET` | `-1` | No hourly renderer quota; 0 disables; positive values cap/window |
 | `DETHROTTLED_RENDER_CONCURRENCY` | `2` | Active render work at the API and DNB. Base Compose passes the same setting to both. |
+| `DETHROTTLED_HEADED_SETTLE` | `1` | API: after a headed read's first capture, take a second, settled look (network quiet, scroll until stable) and keep it only when it reads more; `0` disables it |
+| `DNB_NETWORK_SETTLE_SECONDS` | `3` | DNB render: wait at most this long for the page's requests to go quiet (500 ms without requests) before capture, within the render budget. `0` disables it. Set on the DNB service. |
+| `DNB_SCROLL_MAX_ADDED_CHARS` | `200000` | DNB render and `settle`: stop scrolling once this much text has been added (endless feeds). Pages whose single `<article>` holds most of the text are not scrolled. |
+| `DNB_SCROLL_ROUNDS`, `DNB_SCROLL_PAUSE_SECONDS` | `10`, `0.6` | DNB render: scroll to the end until the document stops growing, within the render budget, so infinite-scroll pages load later items. A page that does not grow costs one pause; endless feeds return larger text. `0` rounds disables it. Set on the DNB service. |
 | `DETHROTTLED_DRIVE_SESSION_TTL`, `DETHROTTLED_DRIVE_MAX_SESSIONS` | `1800`, `8` | Browser session expiry and capacity |
 | `DETHROTTLED_BROWSER_GRAPHICS` | `auto` in Compose | Verify exposed hardware through GL EGL, fall back to software; `mesa` retains GL, `default` retains original args |
 | `DETHROTTLED_READ_PLAN_SECONDS` | `30` | Additional recovery admission budget, clamped to 0–120; in-flight operations retain their transport timeout |
@@ -152,6 +156,7 @@ mapped. Change them against recorded coverage and failure cases, not just latenc
 |---|---|---|
 | `DETHROTTLED_BROWSER_RECOVERY` | `auto` | Browser worker: observed host-scoped navigation recipes and bounded readiness; `off` disables them. Forwarded by base Compose. |
 | `DETHROTTLED_THIN_CHARS` | `600` | HTML threshold; structured short documents differ |
+| `DETHROTTLED_SHELL_MAX_TEXT`, `DETHROTTLED_SHELL_HTML_RATIO` | `2048`, `20` | A direct/TLS HTML read with less text than this and at least this many HTML bytes per text character is an application shell: it is kept only as a fallback and rendering tiers are tried |
 | `DETHROTTLED_PAGE_BUDGET`, `DETHROTTLED_PAGE_BUDGET_BULK` | `60`, `25` seconds | Soft ladder budgets; a known recovery case can receive a bounded headed attempt afterward |
 | `DETHROTTLED_CONNECT_TIMEOUT` | `2` seconds | Direct/TLS connection establishment per attempt/address; does not shorten direct response reads. Resolver time and multiple addresses can exceed this; workers retain their own deadlines. |
 | `DETHROTTLED_TLS_TIMEOUT` | `8` seconds | TLS streaming low-speed allowance; its connect allowance is bounded by `DETHROTTLED_CONNECT_TIMEOUT`. |
