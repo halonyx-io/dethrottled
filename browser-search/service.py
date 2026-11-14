@@ -505,6 +505,19 @@ DRIVE_QUEUE_TIMEOUT = 10.0
 MAX_STEPS = 40
 MAX_DRIVE_SESSIONS = int(os.environ.get("DETHROTTLED_DRIVE_MAX_SESSIONS", "8"))
 DRIVE_SESSION_TTL = int(os.environ.get("DETHROTTLED_DRIVE_SESSION_TTL", "1800"))
+# Automatic read sessions ("auto-reader-…") are opened by the API's browser
+# reads, one per site. Each keeps its page open, still running the site's
+# JavaScript, and a shop or app page holds 0.5-0.6 GB. Measured on 14 Nov:
+# six such pages idle for up to 30 minutes put the browser worker at 94% of
+# its 4 GiB limit, and the renderer then refused reads for every site. A
+# successful read saves a checkpoint (cookies and storage) before it returns,
+# so closing the idle page loses nothing the next read of that site needs.
+# Named /drive sessions keep the full TTL: their live page is the caller's state.
+READ_SESSION_PREFIX = "auto-reader-"
+# Five minutes, not less: read recovery hands its live page to the caller as
+# read_plan.browser_session, and an agent can easily think for a minute or two
+# before continuing it. Reads that finish normally park their page at once.
+READ_SESSION_IDLE = int(os.environ.get("DETHROTTLED_READ_SESSION_IDLE_SECONDS", "300"))
 DRIVE_SESSIONS: dict[str, dict] = {}
 DRIVE_SESSIONS_LOCK = asyncio.Lock()
 
@@ -621,6 +634,10 @@ class DriveRequest(BaseModel):
     session: str = Field(default="", max_length=64, pattern=r"^[A-Za-z0-9._-]*$")
     operation_id: str = Field(default="", max_length=100, pattern=r"^[A-Za-z0-9._-]*$")
     close_session: bool = False
+    # Close the live page after this request but keep the saved checkpoint; the
+    # next call to the session restores cookies and storage from it. Used by
+    # automatic reads, which need the site's cookies again but not its tab.
+    park_session: bool = False
     allowed_hosts: list[str] = Field(default_factory=list, max_length=32)
     public_only: bool = False
     canaries: list[str] = Field(default_factory=list, max_length=20)
@@ -899,18 +916,42 @@ async def _close_all_drive_sessions() -> None:
     await asyncio.gather(*(_close_drive_state(s) for s in states), return_exceptions=True)
 
 
+def _session_idle_limit(session_id: str) -> float:
+    if session_id.startswith(READ_SESSION_PREFIX) and READ_SESSION_IDLE > 0:
+        return min(READ_SESSION_IDLE, DRIVE_SESSION_TTL)
+    return DRIVE_SESSION_TTL
+
+
+async def _close_idle_sessions(select) -> int:
+    """Close every unlocked session for which select(session_id, idle_seconds)."""
+    now = time.monotonic()
+    async with DRIVE_SESSIONS_LOCK:
+        closing = [(sid, state) for sid, state in DRIVE_SESSIONS.items()
+                   if not state["lock"].locked() and select(sid, now - state["last_used"])]
+        for sid, _ in closing:
+            DRIVE_SESSIONS.pop(sid, None)
+    await asyncio.gather(*(_close_drive_state(s) for _, s in closing),
+                         return_exceptions=True)
+    return len(closing)
+
+
+async def reclaim_idle_read_sessions(min_idle: float = 5.0) -> int:
+    """Close idle automatic read sessions now, to relieve memory pressure.
+
+    Only automatic read sessions qualify: their checkpoint holds what the next
+    read needs. Named sessions are never closed early.
+    """
+    return await _close_idle_sessions(
+        lambda sid, idle: sid.startswith(READ_SESSION_PREFIX) and idle >= min_idle)
+
+
 async def _reap_drive_sessions() -> None:
+    interval = min(60, max(10, DRIVE_SESSION_TTL // 4))
+    if READ_SESSION_IDLE > 0:
+        interval = min(interval, max(5, READ_SESSION_IDLE // 6))
     while True:
-        await asyncio.sleep(min(60, max(10, DRIVE_SESSION_TTL // 4)))
-        now = time.monotonic()
-        async with DRIVE_SESSIONS_LOCK:
-            expired = [(sid, state) for sid, state in DRIVE_SESSIONS.items()
-                       if now - state["last_used"] > DRIVE_SESSION_TTL
-                       and not state["lock"].locked()]
-            for sid, _ in expired:
-                DRIVE_SESSIONS.pop(sid, None)
-        await asyncio.gather(*(_close_drive_state(s) for _, s in expired),
-                             return_exceptions=True)
+        await asyncio.sleep(interval)
+        await _close_idle_sessions(lambda sid, idle: idle > _session_idle_limit(sid))
 
 
 async def _get_drive_state(browser, body: DriveRequest) -> tuple[dict, bool]:
@@ -1882,6 +1923,9 @@ async def drive(body: DriveRequest):
                     await _drop_drive_session(body.session, expected=state)
                     result["session"]["closed"] = True
                     _checkpoint_path(body.session).unlink(missing_ok=True)
+                elif body.park_session and body.session:
+                    result["session"]["parked"] = await _drop_drive_session(
+                        body.session, expected=state)
                 if body.operation_id:
                     result.update(operation_id=body.operation_id, operation_replayed=False)
                     if len(json.dumps(result)) > 1_000_000:

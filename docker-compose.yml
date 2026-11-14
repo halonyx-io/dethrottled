@@ -24,7 +24,7 @@ name: dethrottled
 services:
   dethrottled:
     build: .
-    image: dethrottled-api:${DETHROTTLED_VERSION:-1.8.6}
+    image: dethrottled-api:${DETHROTTLED_VERSION:-1.8.7}
     ulimits:
       core: 0
     restart: unless-stopped
@@ -59,9 +59,10 @@ services:
       DETHROTTLED_CHEAP_DISCOVERY: "${DETHROTTLED_CHEAP_DISCOVERY:-1}"
       DETHROTTLED_DRIVE_SESSION_TTL: "${DETHROTTLED_DRIVE_SESSION_TTL:-1800}"
       DETHROTTLED_DRIVE_MAX_SESSIONS: "${DETHROTTLED_DRIVE_MAX_SESSIONS:-8}"
-      # DDG and Bing News answered the frozen news pool; Google News and
-      # Reuters were repeatedly suspended/erroring in the 2026-10-03 probe.
-      DETHROTTLED_SEARXNG_ENGINES: "duckduckgo news,bing news"
+      # News engines asked through SearXNG. 14 Nov 2026 on SearXNG 2026.11.6:
+      # DuckDuckGo News and Qwant News return dated, current results; Google
+      # News, Reuters and Brave News stay off (refused, failing or undated).
+      DETHROTTLED_SEARXNG_ENGINES: "${DETHROTTLED_SEARXNG_ENGINES:-duckduckgo news,qwant news,bing news}"
       DETHROTTLED_CRAWL4AI_URL: http://dnb:19888
       DETHROTTLED_CRAWL4AI_API: crawl
       DETHROTTLED_AUTO_WORKERS: "${DETHROTTLED_AUTO_WORKERS:-1}"
@@ -116,7 +117,7 @@ services:
       context: .
       dockerfile: browser-search/Dockerfile
       target: dnb
-    image: dethrottled-dnb:${DETHROTTLED_VERSION:-1.8.6}
+    image: dethrottled-dnb:${DETHROTTLED_VERSION:-1.8.7}
     group_add: ["10001"]
     init: true
     restart: unless-stopped
@@ -152,7 +153,7 @@ services:
     build:
       context: .
       dockerfile: browser-search/Dockerfile
-    image: dethrottled-browser-search:${DETHROTTLED_VERSION:-1.8.6}
+    image: dethrottled-browser-search:${DETHROTTLED_VERSION:-1.8.7}
     restart: unless-stopped
     environment:
       DETHROTTLED_BROWSER_STATE_DIR: /state
@@ -173,8 +174,9 @@ services:
 
   searxng:
     group_add: ["10001"]
-    # Pinned. 2026.10.2, verified with the current two-engine news config.
-    image: searxng/searxng:2026.10.2-19ffbcd30@sha256:c642712fcedcdaa78fac44f71eada86aff510745826ba1bd1a368211fea2ce7f
+    # Pinned. 2026.11.6: Qwant News works on it (access denied on 2026.10.2) and
+    # Brave News no longer crashes; see evaluations/news-profile.
+    image: searxng/searxng:2026.11.6-a3013ef11@sha256:db2fb02636f8e3d15f9b59a3f9ed924afdfbcecb3768bdcf461cb878c50f9e57
     restart: unless-stopped
     volumes:
       - adblock-state:/filters
@@ -244,7 +246,7 @@ services:
     build:
       context: .
       dockerfile: docling-worker/Dockerfile
-    image: dethrottled-docling:${DETHROTTLED_VERSION:-1.8.6}
+    image: dethrottled-docling:${DETHROTTLED_VERSION:-1.8.7}
     ulimits:
       core: 0
     init: true
@@ -260,7 +262,7 @@ services:
     build:
       context: .
       dockerfile: format-worker/Dockerfile
-    image: dethrottled-formats:${DETHROTTLED_VERSION:-1.8.6}
+    image: dethrottled-formats:${DETHROTTLED_VERSION:-1.8.7}
     ulimits:
       core: 0
     init: true
@@ -274,7 +276,7 @@ services:
     build:
       context: .
       dockerfile: media-worker/Dockerfile
-    image: dethrottled-media:${DETHROTTLED_VERSION:-1.8.6}
+    image: dethrottled-media:${DETHROTTLED_VERSION:-1.8.7}
     ulimits:
       core: 0
     init: true

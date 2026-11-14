@@ -139,6 +139,22 @@ if a.phase == "contracts":
         return {"late_fact_retained": True, "content_chars": len(step["data"])}
 
     check("long-browser-read", long_browser_read)
+
+    def concurrent_same_site():
+        # One caller rendering three pages of one site at once: the browser
+        # worker lends tabs from the busy context instead of refusing two of
+        # them (409), which silently fell back to unrendered HTTP before 1.8.7.
+        rows = call("/fetch", dict(
+            urls=[a.fixture + "/js?copy=%d" % index for index in range(3)],
+            cache_mode="bypass", max_chars=2000, render="always",
+            evidence_namespace=namespace))
+        for row in rows:
+            attempts = row.get("acquisition_attempts", [])
+            assert "7341 tonnes" in row.get("content", ""), row.get("quality")
+            assert not any("409" in str(at.get("reason")) for at in attempts), attempts
+        return {"rendered": len(rows), "tiers": sorted({row.get("tier") for row in rows})}
+
+    check("concurrent-same-site", concurrent_same_site)
     for name in [
         "alternate",
         "lazy",

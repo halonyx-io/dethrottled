@@ -60,7 +60,9 @@ Review `coverage`, omissions, offsets, freshness and `document_available`.
 Reopen a valid `document_id` with `read_document`; if the handle has expired,
 the indexed passage can still be useful or the original URL can be fetched again.
 Corpus passages/vectors last 90 days; this does not extend the independent
-six-hour search cache, 21-day extraction cache or retained-document expiry.
+six-hour search cache, the extraction cache (21 days for articles; minutes for
+front pages, live blogs and feeds; one hour for thin, suspect or gated reads) or
+retained-document expiry.
 `categories="news"` and `profile="news"` use a 30-minute search-cache ceiling;
 a tighter caller `max_age` still wins.
 Public handles may be reused across callers; private/authenticated/interactive
@@ -82,7 +84,7 @@ No automatic DDG pagination fills that menu. Fewer usable results is normal.
 | `profile="fast"` | DDG-family route only |
 | `profile="web"` or `"balanced"` | DDG plus Yahoo/Yandex supplements |
 | `profile="thorough"` | Also requests Mwmbl; the same compact display and supplement budgets apply |
-| `profile="news"` | Web plus news discovery/resolution paths |
+| `profile="news"` | Dated news engines first (DuckDuckGo News, Qwant News, Bing News), then web; undated front and topic pages last |
 | `profile="academic"` | Web plus Crossref/OpenAlex/arXiv specialist discovery |
 | `engines` | Explicit comma-separated selection: web/news/mwmbl/crossref/openalex/arxiv/yahoo/yandex; optional exa/tavily/parallel require operator configuration |
 | `engines="web"` | Request the primary family without default supplementary providers |
@@ -197,6 +199,17 @@ not a request to fill every budget. See [limits](LIMITS.md).
   retains possible mixed-content pollution; `failed` records an unsuccessful read.
   A `gate_page:login|paywall|access_denied|maintenance` warning means the page is
   a wall rather than the requested content, even when it contains long prose.
+  A `renderer_unavailable:…` warning means the page needed the JavaScript
+  renderer and this server could not provide it at that moment (busy, low on
+  memory or resting). The result is not cached; fetch again shortly rather
+  than treating the page as empty.
+  An acquisition attempt with `outcome: "skipped"` and a `waymark:…` reason is
+  a step this server has learned the site refuses (for example `waymark:timeout x3`);
+  a `waymark_known_wall:…` failure means the site's browser challenge has not
+  cleared on recent reads, so it was not tried again. Both are retried
+  automatically later; use another source meanwhile. A `direct` attempt with
+  `no_response_in_3s; tls answered first` means plain HTTP was silent and TLS
+  impersonation read the page instead.
 - Preserve `warnings`, `source_partial`, `truncated`, `extraction`, acquisition
   attempts/URLs, source dates, `date_source`, `source_type`, `page_type`,
   `fetch_relevance`, `tokens_estimated`, hashes and `read_plan`. `tokens_estimated`

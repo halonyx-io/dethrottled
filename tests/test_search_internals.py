@@ -260,11 +260,16 @@ def test_discovery_sources_overlap_but_keep_web_news_order(monkeypatch):
         rows, _ = fs.search("current story", max_items=3, profile="news")
     finally:
         release.set()
+    # News profile: news engines lead in policy order (engine_policy.py).
     assert [r["engine"] for r in rows] == [
-        "web-browser", "bing-news", "duckduckgo news"]
+        "duckduckgo news", "bing-news", "web-browser"]
 
 
-def test_news_remains_supplementary_to_primary_order(monkeypatch):
+def test_news_profile_leads_with_news_engines_within_family_caps(monkeypatch):
+    """Was: news stays after DDG web. Measured 14 Nov 2026 that left 7 dated
+    results in 158 over 20 news queries, so the news profile now leads with
+    news engines, interleaved. DuckDuckGo News still shares the one DDG-family
+    budget and Bing stays capped like any supplement; other profiles unchanged."""
     def result(engine, index):
         word = ("alpha", "bravo", "charlie", "delta", "echo")[index]
         return {"title": f"Unique article from {engine} number {word}",
@@ -280,12 +285,14 @@ def test_news_remains_supplementary_to_primary_order(monkeypatch):
 
     news, _ = fs.search("a current event", categories="news", max_items=4)
     assert [row["engine"] for row in news[:4]] == [
-        "web-browser-ddg-lite"] * 4
+        "duckduckgo news", "bing-news", "duckduckgo news", "bing-news"]
     assert len({row["url"] for row in news}) == len(news)
     full, _ = fs.search("a current event", categories="news", max_items=16)
-    assert [row["engine"] for row in full[:5]] == ["web-browser-ddg-lite"] * 5
     assert sum(row["engine"] == "bing-news" for row in full) == 3
-    assert sum(row["engine"] == "duckduckgo news" for row in full) == 3
+    assert sum(row["engine"] == "duckduckgo news" for row in full) == 5
+    ddg_family = sum(row["engine"] in {"duckduckgo news", "web-browser-ddg-lite"}
+                     for row in full)
+    assert ddg_family <= fs.PRIMARY_SEARCH_LIMIT
 
 
     default, _ = fs.search("a current event", max_items=4, profile="web")
@@ -400,3 +407,17 @@ def test_decoy_bucket_without_witness_is_preserved():
               "snippet": "the game rust", "engine": "web-bing"} for n in range(4)]
     kept, reports = fs.drop_decoy_buckets(decoy, "rust ownership borrowing")
     assert kept == decoy and reports == []
+
+
+def test_news_profile_puts_undated_landing_pages_last(monkeypatch):
+    monkeypatch.setattr(fs, "web_search", lambda *a, **k: [
+        {"title": "World news front page", "url": "https://news.example/world",
+         "engine": "web-browser-ddg-lite"}])
+    monkeypatch.setattr(fs, "bing_news", lambda *a, **k: [])
+    monkeypatch.setattr(fs, "searxng", lambda *a, **k: [
+        {"title": "Quake strikes coast", "url": "https://wire.example/2026/11/quake",
+         "engine": "duckduckgo news", "publishedDate": "2026-11-14T02:00:00Z"}])
+    monkeypatch.setattr(fs, "google_news_headlines", lambda *a, **k: [])
+    rows, meta = fs.search("quake news front", categories="news", max_items=4)
+    assert [r["url"] for r in rows][-1] == "https://news.example/world"
+    assert meta["policy"]["engine_order"]["profile"] == "news"

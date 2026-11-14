@@ -1,6 +1,7 @@
 """Prototype boundaries and deterministic extraction; run inside its image."""
 
 import asyncio
+import time
 from types import SimpleNamespace
 from unittest.mock import AsyncMock
 
@@ -252,3 +253,69 @@ def test_intraword_emphasis_is_unwrapped_but_word_emphasis_kept():
     assert fix('<p>a <em class="x">un</em>wrap</p>') == "<p>a unwrap</p>"
     kept = "<p>This is <em>very</em> important, <strong>really</strong>.</p>"
     assert fix(kept) == kept
+
+
+# ── automatic read sessions do not keep pages open ──────────────────────────
+# 14 Nov: six idle shop pages from automatic reads held 0.5-0.6 GB each for up
+# to 30 minutes, the worker reached 94% of its limit and refused renders.
+
+def _session(service, idle, locked=False):
+    lock = asyncio.Lock()
+    closed = []
+    context = SimpleNamespace(close=AsyncMock(side_effect=lambda: closed.append(True)))
+    state = {"context": context, "lock": lock, "last_used": time.monotonic() - idle}
+    return state, closed, lock if locked else None
+
+
+def test_idle_read_sessions_close_early_and_named_ones_keep_their_ttl(monkeypatch):
+    import service
+    monkeypatch.setattr(service, "READ_SESSION_IDLE", 300)
+    monkeypatch.setattr(service, "DRIVE_SESSION_TTL", 1800)
+    read, read_closed, _ = _session(service, idle=400)
+    fresh, fresh_closed, _ = _session(service, idle=10)
+    named, named_closed, _ = _session(service, idle=600)
+    monkeypatch.setattr(service, "DRIVE_SESSIONS", {
+        "auto-reader-" + "a" * 32: read, "auto-reader-" + "b" * 32: fresh, "workflow": named})
+
+    closed = asyncio.run(service._close_idle_sessions(
+        lambda sid, idle: idle > service._session_idle_limit(sid)))
+
+    assert closed == 1 and read_closed and not fresh_closed and not named_closed
+    assert set(service.DRIVE_SESSIONS) == {"auto-reader-" + "b" * 32, "workflow"}
+
+
+def test_memory_reclaim_takes_only_idle_unlocked_read_sessions(monkeypatch):
+    import service
+    idle, idle_closed, _ = _session(service, idle=30)
+    busy, busy_closed, busy_lock = _session(service, idle=30, locked=True)
+    named, named_closed, _ = _session(service, idle=3000)
+    monkeypatch.setattr(service, "DRIVE_SESSIONS", {
+        "auto-reader-" + "a" * 32: idle, "auto-reader-" + "b" * 32: busy, "workflow": named})
+
+    async def run():
+        await busy_lock.acquire()
+        return await service.reclaim_idle_read_sessions()
+
+    assert asyncio.run(run()) == 1
+    assert idle_closed and not busy_closed and not named_closed
+
+
+def test_render_admission_reclaims_before_refusing(monkeypatch):
+    pressure = iter([True, False])
+    monkeypatch.setattr(dnb, "memory_pressure", lambda: next(pressure))
+    monkeypatch.setattr(dnb.browser, "reclaim_idle_read_sessions", AsyncMock(return_value=2))
+    assert asyncio.run(dnb.reclaim_for_render()) is True
+    assert dnb.COUNTS["reclaimed_read_sessions"] >= 2
+
+
+def test_render_admission_refuses_when_nothing_can_be_reclaimed(monkeypatch):
+    monkeypatch.setattr(dnb, "memory_pressure", lambda: True)
+    monkeypatch.setattr(dnb.browser, "reclaim_idle_read_sessions", AsyncMock(return_value=0))
+    assert asyncio.run(dnb.reclaim_for_render()) is False
+
+
+def test_parking_is_a_separate_flag_from_closing():
+    import service
+    request = service.DriveRequest(session="auto-reader-" + "a" * 32, park_session=True,
+                                   steps=[{"action": "checkpoint"}])
+    assert request.park_session and not request.close_session

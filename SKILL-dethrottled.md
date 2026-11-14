@@ -73,6 +73,11 @@ Names are the MCP tools; the HTTP route does the same job on the raw API
   with content, and `failed` is a failed read with its reason.
 - A `gate_page:…` warning (login, paywall, access denied, maintenance) means you
   read a wall, not the content, even if the text is long.
+- A `renderer_unavailable:…` warning means the server's renderer was busy, so
+  the page may be incomplete. It is not cached: fetch again shortly.
+- A `waymark_known_wall:…` failure means the site's challenge page has beaten
+  the browser on recent reads. It is retried automatically later; find another
+  source rather than retrying now.
 - `content_status` `partial`, `source_partial` or `truncated` mean there is more.
   Continue with `read_document` from `next_offset`; do not fetch again.
 - Keep `url`, `document_id` and the date with anything you quote. Cite the source,
@@ -91,6 +96,11 @@ Names are the MCP tools; the HTTP route does the same job on the raw API
 
 ## Search details
 
+- For current events use `profile` `news`: dated news results come first. For a
+  site's latest items, fetch its RSS or Atom feed (listed under
+  `source_alternatives` on its front page); feeds come back as a dated list,
+  newest first. Front pages, live blogs and feeds are cached for minutes, not
+  weeks.
 - One page reached under several addresses comes back once; the other addresses
   are listed under `duplicates`.
 - `domains` and `exclude_domains` restrict hosts; `prefer_domains` only nudges

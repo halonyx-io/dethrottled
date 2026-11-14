@@ -93,7 +93,9 @@ and attempts to checkpoint supported state when time remains. Reuse
 `read_plan.browser_session.id` with its `allowed_hosts` in `drive` to continue that state.
 These reserved `auto-read-…` handles are caller-scoped and work across REST and MCP.
 Ordinary explicitly named sessions retain their transport-private isolation. Browser
-state remains subject to idle expiry and checkpoint rules. Upgrading to this handle
+state remains subject to idle expiry and checkpoint rules: an automatic read's page is
+closed after five minutes unused (`DETHROTTLED_READ_SESSION_IDLE_SECONDS`), after
+which the handle restores cookies and storage from its checkpoint but not the live page. Upgrading to this handle
 scheme starts fresh automatic sessions; old checkpoints expire normally.
 
 Recovered text is retained with its own document hash. `requested_url`, `acquisition_url`,

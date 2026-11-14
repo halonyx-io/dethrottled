@@ -447,6 +447,58 @@ def _binary_payload(blob, url, ctype, allow_ocr, filename=""):
         return ({}, "document_parse_failed:" + str(exc)[:120], url)
 
 
+# ── racing a silent plain request ───────────────────────────────────────────
+#
+# Some sites accept the plain connection and then never answer it, so the read
+# sits out the whole timeout before TLS gets its turn: 18.7 s per read on
+# nseindia.com, npr.org and pogo.org (14 Nov 2026), which TLS then read in
+# about a second. Shortening the timeout is not an option: 31 of 952 recorded
+# plain-HTTP successes took over 5 s, mostly large PDFs and slow government
+# sites. So when plain HTTP has had no response at all for TLS_HEDGE_SECONDS,
+# TLS starts alongside it and the first usable answer wins. A response that
+# has begun (a download in progress) is never raced, and when plain HTTP does
+# answer first the TLS result is reused by the TLS step, not fetched twice.
+TLS_HEDGE_SECONDS = float(os.environ.get("DETHROTTLED_TLS_HEDGE_SECONDS", "3"))
+_DIRECT_RESPONDED = ContextVar("direct_responded", default=None)
+_HEDGE_POOL = None
+
+
+def _hedge_pool():
+    global _HEDGE_POOL
+    if _HEDGE_POOL is None:
+        from .concurrency import ContextExecutor
+        _HEDGE_POOL = ContextExecutor(max_workers=16, thread_name_prefix="tls-hedge")
+    return _HEDGE_POOL
+
+
+def _race_direct(direct, tls):
+    """Run direct; start tls if direct is silent. Returns (direct_result or None,
+    tls_future or None, tls_won_result or None, direct_elapsed_ms)."""
+    from concurrent.futures import FIRST_COMPLETED, wait
+    from concurrent.futures import TimeoutError as FutureTimeout  # not builtin on 3.10
+    started = time.monotonic()
+    responded = threading.Event()
+    token = _DIRECT_RESPONDED.set(responded)
+    try:
+        direct_future = _hedge_pool().submit(direct)
+    finally:
+        _DIRECT_RESPONDED.reset(token)
+    try:
+        return direct_future.result(timeout=TLS_HEDGE_SECONDS), None, None, None
+    except FutureTimeout:
+        pass
+    if responded.is_set():
+        return direct_future.result(), None, None, None
+    tls_future = _hedge_pool().submit(tls)
+    done, _ = wait({direct_future, tls_future}, return_when=FIRST_COMPLETED)
+    if tls_future in done and direct_future not in done:
+        payload, reason, final = tls_future.result()
+        if payload and "challenge" not in reason:
+            return None, None, (payload, reason, final), round(
+                (time.monotonic() - started) * 1000, 2)
+    return direct_future.result(), tls_future, None, None
+
+
 def _tier_direct(url: str, timeout: int, allow_ocr: bool = False) -> tuple:
     from .identity import POOL
     options = _READ_OPTIONS.get()
@@ -473,6 +525,9 @@ def _tier_direct_once(url: str, timeout: int, allow_ocr: bool = False, *, get=No
                 "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
                 "Accept-Language": "en-US,en;q=0.9",
             })
+        responded = _DIRECT_RESPONDED.get()
+        if responded is not None:
+            responded.set()  # the response has begun: never race a download
         if response.status_code != 200:
             # The response is streamed specifically to bound memory use. Do
             # not read ``response.content`` here: an error page can itself be
@@ -651,6 +706,22 @@ def _crawl4ai_via_crawl(url: str) -> tuple:
                              headers=headers, timeout=max(CRAWL4AI_TIMEOUT,
             CRAWL4AI_RENDER_MS/1000 + _READ_OPTIONS.get().get("render_delay",.5) + 25)
             if os.getenv("DETHROTTLED_DNB", "0")=="1" else CRAWL4AI_TIMEOUT)
+    if response.status_code in (429, 503):
+        busy, wait = _renderer_busy(response)
+        if busy and wait <= RENDER_BUSY_RETRY_MAX:
+            # A momentary admission refusal (memory, queue, slots) usually
+            # clears within a second or two; one retry beats failing the page.
+            time.sleep(wait)
+            response = requests.post(CRAWL4AI_URL + "/crawl", json=payload, headers=headers,
+                                     timeout=max(CRAWL4AI_TIMEOUT, CRAWL4AI_RENDER_MS / 1000
+                                                 + _READ_OPTIONS.get().get("render_delay", .5)
+                                                 + 25)
+                                     if os.getenv("DETHROTTLED_DNB", "0") == "1"
+                                     else CRAWL4AI_TIMEOUT)
+            busy = (_renderer_busy(response)[0]
+                    if response.status_code in (429, 503) else "")
+        if busy:
+            return {}, "crawl4ai_busy:" + busy, url
     if response.status_code != 200:
         return {}, "crawl4ai_http_%d" % response.status_code, url
     body = response.json()
@@ -806,6 +877,44 @@ def tier_rest_state() -> dict:
 # nothing about the next site -- measured: one Stack Overflow 403 or a NOAA
 # timeout rested rendering for every later page, and EUR-Lex (p05) then failed
 # with "crawl4ai:resting" on both 1.8.4 and the test build.
+# A DNB admission refusal names itself (render_memory_pressure, render_queue_full,
+# render_capacity_busy, ...) and asks for a retry after a second. That is "busy
+# right now", not "down": it gets one retry inside the read and, if refused
+# again, a short pause (RENDER_BUSY_REST) instead of the escalating cooldown.
+# Two such refusals on 14 Nov switched rendering off for 10 minutes for every
+# site. Unnamed 429/503 and connection failures keep the full cooldown.
+RENDER_BUSY_REST = float(os.environ.get("DETHROTTLED_RENDER_BUSY_REST", "15"))
+RENDER_BUSY_RETRY_MAX = float(os.environ.get("DETHROTTLED_RENDER_BUSY_RETRY_MAX", "2"))
+
+
+def _renderer_busy(response) -> tuple[str, float]:
+    """(code, retry_after) for a DNB admission refusal, else ("", 0)."""
+    try:
+        detail = response.json().get("detail")
+    except (ValueError, AttributeError):
+        return "", 0.0
+    if not (isinstance(detail, dict) and detail.get("retryable")
+            and re.fullmatch(r"render_[a-z_]{1,40}", str(detail.get("code", "")))):
+        return "", 0.0
+    try:
+        wait = float(response.headers.get("Retry-After")
+                     or detail.get("retry_after_seconds") or 1)
+    except (TypeError, ValueError):
+        wait = 1.0
+    return detail["code"], max(0.0, min(wait, 60.0))
+
+
+def tier_busy(name: str, reason: str = "") -> None:
+    """Pause a restable tier briefly without adding a strike."""
+    if name not in _RESTABLE_TIERS or RENDER_BUSY_REST <= 0:
+        return
+    with _tier_rest_lock:
+        entry = _tier_rest.get(name) or {"strikes": 0}
+        entry["until"] = max(entry.get("until", 0), time.time() + RENDER_BUSY_REST)
+        entry["reason"] = reason[:60]
+        _tier_rest[name] = entry
+
+
 _RENDERER_REFUSAL = re.compile(
     r"crawl4ai_http_(?:429|503)"
     r"|crawl4ai_(?:ConnectionError|ConnectTimeout|ReadTimeout|Timeout|ChunkedEncodingError)")
@@ -961,6 +1070,47 @@ def _crawl4ai_admitted(url):
 CACHE_CHARS = int(os.environ.get("DETHROTTLED_EXTRACT_CACHE_CHARS", "4000000"))
 
 
+# ── how long a read may be served from cache ────────────────────────────────
+#
+# Every read with text used to be cached for 21 days. Right for an article,
+# wrong for a page that changes: the Hacker News front page was served 2.5
+# days old on 14 Nov 2026. And a login wall, a teaser or a suspected error
+# banner was replayed to every caller for three weeks although its own label
+# said it was not the page. So the lifetime follows what the read is.
+CACHE_HUB_SECONDS = float(os.environ.get("DETHROTTLED_CACHE_HUB_SECONDS", "900"))
+CACHE_LIVE_SECONDS = float(os.environ.get("DETHROTTLED_CACHE_LIVE_SECONDS", "300"))
+CACHE_FEED_SECONDS = float(os.environ.get("DETHROTTLED_CACHE_FEED_SECONDS", "600"))
+CACHE_LIMITED_SECONDS = float(os.environ.get("DETHROTTLED_CACHE_LIMITED_SECONDS", "3600"))
+_LIVE_PATH = re.compile(r"(?:^|[/_-])live(?:[/_-]|$)|live-?(?:updates|blog|news)", re.I)
+
+
+def volatility(out: dict, url: str) -> str:
+    """'live', 'feed', 'hub' or 'stable': how fast this page changes."""
+    metadata = out.get("page_metadata") or {}
+    path = urlparse(out.get("url") or url).path or "/"
+    if "LiveBlogPosting" in (metadata.get("types") or []) or _LIVE_PATH.search(path):
+        return "live"
+    if (out.get("extraction") or {}).get("feed") or out.get("content_type") in {
+            "application/rss+xml", "application/atom+xml"}:
+        return "feed"
+    segments = [part for part in path.split("/") if part]
+    dated = bool(out.get("published") or metadata.get("published"))
+    if (out.get("content_type") in {"", "html", "text/html", None} and not dated
+            and (len(segments) == 0 or (len(segments) == 1 and len(segments[0]) <= 24))):
+        return "hub"  # a front or section page: no publish date, no article slug
+    return "stable"
+
+
+def cache_lifetime(out: dict, url: str) -> float:
+    from .cache import DEFAULT_TTL
+    limited = (out.get("quality") in {"thin", "suspect"}
+               or (out.get("content_assessment") or {}).get("gate"))
+    kind = volatility(out, url)
+    lifetime = {"live": CACHE_LIVE_SECONDS, "feed": CACHE_FEED_SECONDS,
+                "hub": CACHE_HUB_SECONDS}.get(kind, DEFAULT_TTL["extract"])
+    return min(lifetime, CACHE_LIMITED_SECONDS) if limited else lifetime
+
+
 def _clip(out: dict, max_chars: int) -> dict:
     """A copy of a cached extraction, cut to what this caller asked for."""
     text = out.get("text") or ""
@@ -1016,7 +1166,11 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
         # counting it as a hit: a valid-JSON wrong-shape row is a miss.
         from .cache import valid_extract
 
-        hit = cache.get("extract", url, validator=valid_extract)
+        hit = cache.get("extract", url, validator=lambda value: valid_extract(value) and (
+            float(value.get("cache_until") or float("inf")) > time.time()))
+        if hit is not None and hit.get("cache_until"):
+            hit["cache_expires_at"] = datetime.fromtimestamp(
+                hit["cache_until"], timezone.utc).isoformat()
         acquisition = (hit or {}).get("acquisition", {})
         compatible = not render_first or acquisition.get("rendered", False)
         if hit is not None and (challenge_kind(hit.get("text", "")) or
@@ -1103,8 +1257,38 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
     budget_started = time.time()
 
     attempts = []
+    # Waymarks: steps this site has repeatedly failed while a later one worked,
+    # and sites whose browser challenge never clears. See waymarks.py.
+    from . import waymarks as _waymarks
+    learned = _waymarks.plan(url, _READ_OPTIONS.get().get("admission_key", "local"))
+    if learned["wall"] and not _READ_OPTIONS.get().get("headed_fallback"):
+        wall = learned["wall"]
+        reason = ("waymark_known_wall:%s; the real browser failed this site's challenge "
+                  "on the last %d reads; retried automatically after %d s"
+                  % (wall["kind"], wall["streak"], wall["retry_after_seconds"]))
+        _tier_stats["failed"] += 1
+        return {"ok": False, "text": "", "tier": "headed", "extractor": None,
+                "title": "", "published": "", "chars": 0, "url": url,
+                "reason": reason, "cached": False, "waymark_wall": True,
+                "acquisition_attempts": [{"tier": "headed", "outcome": "skipped",
+                                          "reason": "waymark:known_wall:" + wall["kind"],
+                                          "elapsed_ms": 0, "waymark": wall}],
+                "source_alternatives": []}
+
+    # Set when this read needed the renderer and could not have it. Such a read
+    # is degraded by our own capacity, not by the page: say so, and do not
+    # cache it, or the thin copy outlives the outage.
+    renderer_unavailable = []
+
+    def renderer_warning():
+        return ("renderer_unavailable:" + renderer_unavailable[0]
+                + "; this read could not use the JavaScript renderer and may be "
+                "incomplete. Retry shortly.")
 
     def finish(out):
+        if renderer_unavailable and out.get("tier") not in {"crawl4ai", "headed"}:
+            out["warnings"] = [*out.get("warnings", []), renderer_warning()]
+            out["renderer_unavailable"] = renderer_unavailable[0]
         # Recheck old cached interstitials on the read path as well.
         out["acquisition_attempts"] = [dict(a) for a in attempts]
         out["schema_version"] = 3
@@ -1141,7 +1325,9 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
         # caching it would trade the whole point of a page cache -- many pages
         # cheaply -- for a few pages expensively.
         source = out.pop("html", None)
-        if cache is not None and out.get("text"):
+        if cache is not None and out.get("text") and not out.get("renderer_unavailable"):
+            out["volatility"] = volatility(out, url)
+            out["cache_until"] = time.time() + cache_lifetime(out, url)
             cache.put("extract", url, value=out)
         out = _clip(out, max_chars)
         if source is not None:
@@ -1184,16 +1370,34 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
     alternatives = []
     script_shell = False
     last_attempted = None
+    tls_run = dict(tiers).get("tls")
+    tls_running = None   # a TLS request the race started, reused by the TLS step
+    raced = set()        # steps already answered by the race
     for name, run in tiers:
+        if name in raced:
+            continue
         if name == "headed" and not (
                 challenged or script_shell or polluted
                 or _READ_OPTIONS.get().get("headed_fallback")):
+            continue
+        if name in learned["skip"]:
+            why = learned["skip"][name]
+            attempts.append({"tier": name, "outcome": "skipped", "elapsed_ms": 0,
+                             "reason": "waymark:%s x%d" % (why["kind"], why["streak"]),
+                             "waymark": why})
+            reasons.append("%s:skipped_by_waymark" % name)
+            # A step skipped for its challenges still means this site
+            # challenges: keep the real-browser rung available.
+            challenged = challenged or why["kind"] in {"challenge", "blocked"}
             continue
         # A resting tier is skipped without being asked. This is the smooth
         # transition: the ladder simply gets shorter for a while and the rungs
         # that still work carry the load.
         if tier_resting(name):
             reasons.append("%s:resting" % name)
+            if name == "crawl4ai":
+                renderer_unavailable.append("resting:" + tier_rest_state().get(
+                    name, {}).get("reason", ""))
             continue
         # A static shell, or a page served without prose, is HTML the server
         # gave freely, not a block: TLS impersonation got the same result in
@@ -1217,7 +1421,23 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
             continue
         last_attempted = name
         attempt_started = time.monotonic()
-        payload, reason, final = run()
+        if name == "tls" and tls_running is not None:
+            payload, reason, final = tls_running.result()  # started by the race
+            tls_running = None
+        elif (name == "direct" and TLS_HEDGE_SECONDS > 0 and tls_run is not None
+                and "tls" not in learned["skip"] and not tier_resting("tls")):
+            result, tls_running, tls_won, silent_ms = _race_direct(run, tls_run)
+            if tls_won is not None:
+                attempts.append({"tier": "direct", "outcome": "failed", "elapsed_ms": silent_ms,
+                                 "reason": "no_response_in_%gs; tls answered first"
+                                 % TLS_HEDGE_SECONDS})
+                reasons.append("direct:silent")
+                name = last_attempted = "tls"
+                raced.add("tls")
+                result = tls_won
+            payload, reason, final = result
+        else:
+            payload, reason, final = run()
         attempt = {"tier": name, "reason": reason, "outcome": "response" if payload else "failed",
                    "elapsed_ms": round((time.monotonic() - attempt_started) * 1000, 2)}
         status = re.fullmatch(r"(?:tls_)?http_(\d{3})", reason)
@@ -1253,8 +1473,13 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
                 attempt["reason"] = reason or "challenge_detected:" + detected
                 reasons.append(name + ":" + attempt["reason"])
                 continue
-        if _service_refusal(name, reason):
+        if name == "crawl4ai" and reason.startswith("crawl4ai_busy:"):
+            tier_busy(name, reason)
+            renderer_unavailable.append(reason.split(":", 1)[1])
+        elif _service_refusal(name, reason):
             tier_refused(name, reason)
+            if name == "crawl4ai":
+                renderer_unavailable.append(reason)
         elif payload:
             # Answered with something. Whether it extracted is a separate
             # question -- an empty shell is the page's fault, not the tier's,
@@ -1415,10 +1640,14 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
     # branch above already returned). `name` is the last tier the loop tried
     # before giving up -- the same "how far did it get" fact `tier` reports on
     # success, so a caller checking only `tier` is not left with nothing.
-    return {"ok": False, "text": "", "tier": last_attempted, "extractor": None,
-            "title": "", "published": "", "chars": 0, "url": url,
-            "reason": " | ".join(reasons), "cached": False,
-            "acquisition_attempts": attempts, "source_alternatives": alternatives}
+    failed = {"ok": False, "text": "", "tier": last_attempted, "extractor": None,
+              "title": "", "published": "", "chars": 0, "url": url,
+              "reason": " | ".join(reasons), "cached": False,
+              "acquisition_attempts": attempts, "source_alternatives": alternatives}
+    if renderer_unavailable:
+        failed.update(warnings=[renderer_warning()],
+                      renderer_unavailable=renderer_unavailable[0])
+    return failed
 
 
 def _challenge_document(html: str) -> bool:
@@ -1462,8 +1691,9 @@ def _headed_read(url: str, backend: str) -> tuple:
             "navigation_wait": "commit"}
     read = {"action": "html", "selector": "html", "max_chars": 120000}
 
-    def drive(steps, navigate=False):
-        payload = {**body, **({"url": url} if navigate else {}), "steps": steps}
+    def drive(steps, navigate=False, park=False):
+        payload = {**body, **({"url": url} if navigate else {}), "steps": steps,
+                   **({"park_session": True} if park else {})}
         headers = {}
         if os.getenv("DETHROTTLED_DNB", "0") == "1":
             from . import delegation
@@ -1559,9 +1789,12 @@ def _headed_read(url: str, backend: str) -> tuple:
                                         'Source completeness remains unverified.']}
         # Checkpoints retain same-browser state across worker restarts. A failed
         # checkpoint must not discard acquired evidence or export credentials.
+        # The tab is closed with it ("parked"): a read needs the site's cookies
+        # next time, not its page still running scripts. Idle shop pages held
+        # 0.5-0.6 GB each for up to 30 minutes before this.
         checkpointed = True
         try:
-            drive([{"action": "checkpoint"}])
+            drive([{"action": "checkpoint"}], park=True)
         except (requests.RequestException, ValueError):
             checkpointed = False
         return {**visible, "html": html,
@@ -1615,6 +1848,9 @@ def fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAULT
             if not public_url(result["url"]):
                 return {"ok": False, "text": "", "reason": "redirect_target_not_public",
                         "cached": False, "tier": None}
+        if not result.get("cached") and not result.get("renderer_unavailable"):
+            from . import waymarks
+            waymarks.observe(url, result.get("acquisition_attempts") or [], admission_key)
         return result
     finally:
         _READ_OPTIONS.reset(token)

@@ -188,7 +188,8 @@ def run(url, initial, *, read, drive, options, browser_available, allow_assets=T
             if not gap(best):
                 break
 
-    hard_wall = any(a.get("tier") == "headed" and a.get("outcome") in {"challenge", "failed"}
+    hard_wall = any(a.get("tier") == "headed" and (a.get("outcome") in {"challenge", "failed"}
+                                                   or a.get("waymark"))
                     for a in initial.get("acquisition_attempts", []))
     if (gap(best) and gap(best) != "image_content" and available() and browser_available
             and options.get("allow_render", True) and not hard_wall):
@@ -328,6 +329,8 @@ def run(url, initial, *, read, drive, options, browser_available, allow_assets=T
         # Checkpoint is not a content strategy and does not replay mutations.
         if available() and state and not state.get("challenge"):
             try:
+                # Not parked: recovery hands this live page to the caller as
+                # read_plan.browser_session (e.g. with a section it expanded).
                 drive(dict(body, steps=[{"action": "checkpoint"}], timeout_ms=2000), timeout=3)
             except Exception:
                 pass

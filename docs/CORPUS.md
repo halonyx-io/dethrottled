@@ -62,7 +62,7 @@ changed diagnostics can therefore require an ordinary reindex.
 | Component | Default lifetime |
 | --- | --- |
 | Search-result cache | Six hours, unchanged |
-| Extracted-content/fetch cache | 21 days, unchanged |
+| Extracted-content/fetch cache | 21 days for articles; 15 minutes for front and section pages, 5 for live blogs, 10 for feeds; one hour for thin, suspect or gated reads |
 | Corpus passages and embeddings | **90 days** since their source was last admitted |
 | Retained document handles | Existing seven-day expiry and 200 MB shared-store policy |
 

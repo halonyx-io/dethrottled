@@ -67,7 +67,18 @@ from fastapi import BackgroundTasks, FastAPI, HTTPException
 #
 # Three places claiming a version is two too many.
 from . import __version__ as VERSION
-from . import consensus, dedupe, dpr, providers, rerank, semantic_cache, signals, workers
+from . import (
+    consensus,
+    dedupe,
+    dpr,
+    engine_policy,
+    providers,
+    rerank,
+    semantic_cache,
+    signals,
+    waymarks,
+    workers,
+)
 from . import domains as domain_health
 from . import extract as fx
 from . import fetch as fetcher
@@ -409,7 +420,9 @@ def _extract_once(url: str, max_chars: int, allow_ocr: bool = True,
     # Record what happened, per domain. A cache hit is not evidence about the
     # site -- it says the cache worked, which is a different fact -- so only
     # live attempts count.
-    if not result.get("cached"):
+    # Nor is a read our own renderer could not serve: that outage is ours.
+    if (not result.get("cached") and not result.get("renderer_unavailable")
+            and not result.get("waymark_wall")):
         domain_health.record(url, result["ok"])
 
     if not result["ok"]:
@@ -426,7 +439,8 @@ def _extract_once(url: str, max_chars: int, allow_ocr: bool = True,
                 "date_source": "none",
                 "published_age_days": None,
                 **({"policy_blocked": result["policy_blocked"]}
-                   if result.get("policy_blocked") else {})}
+                   if result.get("policy_blocked") else {}),
+                **({"warnings": result["warnings"]} if result.get("warnings") else {})}
     row = {
         "url": url,
         "content": result["text"],
@@ -588,6 +602,10 @@ def stop_multilingual_backfill():
     from . import corpus
     if hasattr(corpus._SHARED_CORPUS, "stop"):
         corpus._SHARED_CORPUS.stop()
+    # Learned records are saved at most once a minute; keep the last minute.
+    domain_health.flush()
+    waymarks.flush()
+    engine_policy.flush()
 
 
 @app.get("/health")
@@ -1774,59 +1792,89 @@ def research(body: ResearchBody, background: BackgroundTasks):
 
         sources, skipped, fingerprints, partial_sources = [], [], [], []
         dedupe_counts = {}
-        with ThreadPoolExecutor(max_workers=3) as pool:
-            pending = selected[:body.max_sources]
-            offset = len(pending)
-            while pending:
-                for item in pool.map(read, pending):
-                    if (item.get("quality") == "ok" and item.get("content")
-                            and item.get("content_status") not in {
-                                "image_content", "navigation_only"}):
-                        # Same page under another address (final URL or a
-                        # same-site declared canonical), then the same or
-                        # nearly the same extracted text. The kept source
-                        # lists what was collapsed into it.
-                        fingerprint = dedupe.text_fingerprint(item["content"])
-                        keys = {dedupe.url_key(item["url"]), dedupe.declared_key(item)} - {None, ""}
-                        reason, kept = None, None
-                        for prior_keys, prior_print, prior in fingerprints:
-                            if keys & prior_keys:
-                                reason, kept = "same_url", prior
-                            else:
-                                reason = dedupe.content_match(fingerprint, prior_print)
-                                kept = prior if reason else None
-                            if kept is not None:
-                                break
-                        if kept is not None:
-                            dedupe.merge_into(kept, item, reason, provenance=False)
-                            dedupe_counts[reason] = dedupe_counts.get(reason, 0) + 1
-                            skipped.append({"url": item["url"],
-                                            **({"requested_url": item["requested_url"]}
-                                               if item.get("requested_url", item["url"])
-                                               != item["url"] else {}),
-                                            "reason": "duplicate_content",
-                                            "duplicate_of": kept["url"],
-                                            "duplicate_reason": reason})
-                        else:
-                            sources.append(item)
-                            fingerprints.append((keys, fingerprint, item))
+
+        def readable(item):
+            return (item.get("quality") == "ok" and item.get("content")
+                    and item.get("content_status") not in {"image_content", "navigation_only"})
+
+        def accept(item):
+            if (item.get("quality") == "ok" and item.get("content")
+                    and item.get("content_status") not in {
+                        "image_content", "navigation_only"}):
+                # Same page under another address (final URL or a
+                # same-site declared canonical), then the same or
+                # nearly the same extracted text. The kept source
+                # lists what was collapsed into it.
+                fingerprint = dedupe.text_fingerprint(item["content"])
+                keys = {dedupe.url_key(item["url"]), dedupe.declared_key(item)} - {None, ""}
+                reason, kept = None, None
+                for prior_keys, prior_print, prior in fingerprints:
+                    if keys & prior_keys:
+                        reason, kept = "same_url", prior
                     else:
-                        suspect = item.get("quality") == "suspect"
-                        if suspect:
-                            partial_sources.append(item)
-                        skipped.append({"url": item["url"],
-                                            **({"requested_url": item["requested_url"]}
-                                               if item.get("requested_url", item["url"])
-                                               != item["url"] else {}),
-                                        "reason": ("suspected_pollution" if suspect else
-                                                   item.get("failure_reason"))
-                                        or (item.get("content_status") if item.get("content_status")
-                                            in {"image_content", "navigation_only"}
-                                            else "empty_content")})
-                if len(sources) >= body.max_sources or offset >= len(selected):
+                        reason = dedupe.content_match(fingerprint, prior_print)
+                        kept = prior if reason else None
+                    if kept is not None:
+                        break
+                if kept is not None:
+                    dedupe.merge_into(kept, item, reason, provenance=False)
+                    dedupe_counts[reason] = dedupe_counts.get(reason, 0) + 1
+                    skipped.append({"url": item["url"],
+                                    **({"requested_url": item["requested_url"]}
+                                       if item.get("requested_url", item["url"])
+                                       != item["url"] else {}),
+                                    "reason": "duplicate_content",
+                                    "duplicate_of": kept["url"],
+                                    "duplicate_reason": reason})
+                else:
+                    sources.append(item)
+                    fingerprints.append((keys, fingerprint, item))
+            else:
+                suspect = item.get("quality") == "suspect"
+                if suspect:
+                    partial_sources.append(item)
+                skipped.append({"url": item["url"],
+                                    **({"requested_url": item["requested_url"]}
+                                       if item.get("requested_url", item["url"])
+                                       != item["url"] else {}),
+                                "reason": ("suspected_pollution" if suspect else
+                                           item.get("failure_reason"))
+                                or (item.get("content_status") if item.get("content_status")
+                                    in {"image_content", "navigation_only"}
+                                    else "empty_content")})
+
+        # Reads are refilled as soon as one fails, not once a whole batch has
+        # finished: one Cloudflare wall held a batch for 15 s before its
+        # replacement could even start. Results are still accepted in
+        # selection order, so which copy of a duplicate is kept stays the same.
+        pool = ThreadPoolExecutor(max_workers=3)
+        try:
+            running, finished, offset, cursor = {}, {}, 0, 0
+
+            def top_up():
+                nonlocal offset
+                expected = (len(sources) + len(running)
+                            + sum(1 for i, item in finished.items() if readable(item)))
+                while expected < body.max_sources and offset < len(selected):
+                    running[pool.submit(read, selected[offset])] = offset
+                    offset += 1
+                    expected += 1
+
+            top_up()
+            while running:
+                done, _ = wait(running, return_when=FIRST_COMPLETED)
+                for future in done:
+                    finished[running.pop(future)] = future.result()
+                while cursor in finished and len(sources) < body.max_sources:
+                    accept(finished.pop(cursor))
+                    cursor += 1
+                if len(sources) >= body.max_sources:
                     break
-                pending = selected[offset:offset + body.max_sources - len(sources)]
-                offset += len(pending)
+                top_up()
+        finally:
+            # Enough sources: do not hold the answer for a spare read still in
+            # flight. It finishes in the background (and warms the cache).
+            pool.shutdown(wait=False, cancel_futures=True)
         sources = sources[:body.max_sources]
         for index, item in enumerate(sources, 1):
             item["id"] = "S%d" % index
@@ -1917,6 +1965,13 @@ def corpus_stats():
         return {"ok": False, "reason": str(exc)[:200], "models": {}}
 
 
+def _counts_only(health: dict) -> dict:
+    domains = health.get("domains", {})
+    return {key: value for key, value in health.items() if key != "domains"} | {
+        "deprioritised": sum(1 for row in domains.values() if row.get("deprioritised")),
+        "domains_hidden": "domain names are shown only to the local operator"}
+
+
 @app.get("/stats")
 def stats():
     # Surface renderer admission, rolling budgets and cooldown state.
@@ -1925,7 +1980,12 @@ def stats():
             "headed_admission": fetcher._HEADED_QUEUE.stats(),
             "cache": cache().stats(), "version": VERSION,
             "tiers_resting": fetcher.tier_rest_state(),
-            "domain_health": domain_health.stats(),
+            # Domain names are what callers read. Remote callers (adapter
+            # tokens) get counts only; the operator on this host sees names.
+            "domain_health": (domain_health.stats() if CLAIMS.get() is None
+                              else _counts_only(domain_health.stats())),
+            "waymarks": waymarks.stats(),
+            "engine_policy": engine_policy.stats(),
             "uptime_seconds": int(time.time() - STARTED),
             "tiers": fetcher.tier_stats(),
             "tier_budget_used": fetcher.budget_state(),

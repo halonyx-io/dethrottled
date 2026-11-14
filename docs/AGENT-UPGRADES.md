@@ -51,7 +51,8 @@ When useful evidence is missing, read the promising choices, rewrite around the
 missing fact or choose the appropriate specialist profile. DDG is hard capped at
 ten across its acquisition routes; each supplementary engine gets three, with six
 supplements and fifteen unique choices total. Yahoo/Yandex supplement DDG by
-default; fast is DDG-only. Research admits 24 unique candidates across facets and
+default; fast is DDG-only; the news profile leads with dated news engines inside
+the same caps. Research admits 24 unique candidates across facets and
 reads ten sources by default, up to twenty when requested. Drive snapshots/network lists are capped at ten; narrow selectors for more
 specific inspection. More providers do not guarantee
 better choices: the [recorded source-menu study](../evaluations/agent-search/results/2026-11-03/REPORT.md)

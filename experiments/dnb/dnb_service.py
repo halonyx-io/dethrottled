@@ -164,7 +164,23 @@ async def close_state(state):
     await cleanup(dispose())
 
 
-POOL = ContextPool(create_state, close_state, pressure=memory_pressure)
+@asynccontextmanager
+async def open_tab(state):
+    """A per-request view on a new tab of a context that is already rendering."""
+    page = await state["context"].new_page()
+    tabs = state.setdefault("_tab_pages", set())
+    tabs.add(page)
+    try:
+        yield {**state, "page": page, "events": browser._new_event_store(),
+               "responses": [], "_dnb_cdp": None, "_lent_tab": True}
+    finally:
+        tabs.discard(page)
+        await cleanup(page.close())
+
+
+RENDER_TABS = max(1, int(os.getenv("DETHROTTLED_RENDER_TABS_PER_CONTEXT", "3")))
+POOL = ContextPool(create_state, close_state, pressure=memory_pressure,
+                   fork=open_tab, max_tabs=RENDER_TABS)
 ORIGINAL_LIFESPAN = app.router.lifespan_context
 
 
@@ -322,10 +338,11 @@ async def render_state(key):
             await ephemeral.shutdown()
         return
     async with POOL.lease(key) as (state, reused):
-        if reused and key[-1] == "fresh":
+        if reused and key[-1] == "fresh" and not state.get("_lent_tab"):
             # Keep the same owner's storage, but discard the previous DOM and
             # all popups. A fresh context is never reassigned to another owner.
-            old_pages = list(state["context"].pages)
+            old_pages = [page for page in state["context"].pages
+                         if page not in state.get("_tab_pages", ())]
             state["page"] = await state["context"].new_page()
             for page in old_pages:
                 await page.close()
@@ -337,8 +354,10 @@ async def render_state(key):
         except BaseException:
             raise  # Pool discards the context; do not mask the original failure.
         else:
+            if state.get("_lent_tab"):
+                return  # open_tab closes the lent tab
             for page in list(state["context"].pages):
-                if page != state["page"]:
+                if page != state["page"] and page not in state.get("_tab_pages", ()):
                     await page.close()
             # Release the source DOM and its timers after capture. Keep the
             # same owner's tab/context/storage warm, not a live website running.
@@ -448,6 +467,9 @@ async def dnb_status():
         "active": RENDER_CAPACITY - RENDER_SLOTS._value,
         "drive_inflight": DRIVE_INFLIGHT,
         "drive_sessions": len(browser.DRIVE_SESSIONS),
+        "read_sessions": sum(sid.startswith(browser.READ_SESSION_PREFIX)
+                             for sid in list(browser.DRIVE_SESSIONS)),
+        "read_session_idle_seconds": browser.READ_SESSION_IDLE,
         "session_owners": owner_count,
         "operations": operation_count,
         "extraction": {
@@ -478,7 +500,7 @@ async def _crawl(body: CrawlRequest, request: Request = None):
     started = time.monotonic()
     global WAITING, LAST_CRAWL_USE
     LAST_CRAWL_USE = started
-    if memory_pressure():
+    if memory_pressure() and not await reclaim_for_render():
         raise retry_error("render_memory_pressure", 503, True)
     if WAITING >= 4:
         raise retry_error("render_queue_full", 503, True)
@@ -604,6 +626,24 @@ async def _crawl(body: CrawlRequest, request: Request = None):
         LAST_CRAWL_USE = time.monotonic()
         CURRENT_POLICY.reset(policy_token)
         RENDER_SLOTS.release()
+
+
+async def reclaim_for_render() -> bool:
+    """Free memory held by idle automatic read sessions; True once below the line.
+
+    Refusing a render while idle read pages hold the memory made the API stop
+    rendering for every site for minutes (14 Nov: six idle shop pages, 94% of
+    the limit). Their checkpoints keep what the next read needs.
+    """
+    closed = await browser.reclaim_idle_read_sessions()
+    if closed:
+        COUNTS["reclaimed_read_sessions"] += closed
+        deadline = time.monotonic() + 2
+        while time.monotonic() < deadline:
+            if not memory_pressure():
+                return True
+            await asyncio.sleep(0.2)
+    return not memory_pressure()
 
 
 def retry_error(code, status, retryable):
