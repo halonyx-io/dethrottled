@@ -651,6 +651,22 @@ def _crawl4ai_via_crawl(url: str) -> tuple:
                              headers=headers, timeout=max(CRAWL4AI_TIMEOUT,
             CRAWL4AI_RENDER_MS/1000 + _READ_OPTIONS.get().get("render_delay",.5) + 25)
             if os.getenv("DETHROTTLED_DNB", "0")=="1" else CRAWL4AI_TIMEOUT)
+    if response.status_code in (429, 503):
+        busy, wait = _renderer_busy(response)
+        if busy and wait <= RENDER_BUSY_RETRY_MAX:
+            # A momentary admission refusal (memory, queue, slots) usually
+            # clears within a second or two; one retry beats failing the page.
+            time.sleep(wait)
+            response = requests.post(CRAWL4AI_URL + "/crawl", json=payload, headers=headers,
+                                     timeout=max(CRAWL4AI_TIMEOUT, CRAWL4AI_RENDER_MS / 1000
+                                                 + _READ_OPTIONS.get().get("render_delay", .5)
+                                                 + 25)
+                                     if os.getenv("DETHROTTLED_DNB", "0") == "1"
+                                     else CRAWL4AI_TIMEOUT)
+            busy = (_renderer_busy(response)[0]
+                    if response.status_code in (429, 503) else "")
+        if busy:
+            return {}, "crawl4ai_busy:" + busy, url
     if response.status_code != 200:
         return {}, "crawl4ai_http_%d" % response.status_code, url
     body = response.json()
@@ -806,6 +822,44 @@ def tier_rest_state() -> dict:
 # nothing about the next site -- measured: one Stack Overflow 403 or a NOAA
 # timeout rested rendering for every later page, and EUR-Lex (p05) then failed
 # with "crawl4ai:resting" on both 1.8.4 and the test build.
+# A DNB admission refusal names itself (render_memory_pressure, render_queue_full,
+# render_capacity_busy, ...) and asks for a retry after a second. That is "busy
+# right now", not "down": it gets one retry inside the read and, if refused
+# again, a short pause (RENDER_BUSY_REST) instead of the escalating cooldown.
+# Two such refusals on 14 Nov switched rendering off for 10 minutes for every
+# site. Unnamed 429/503 and connection failures keep the full cooldown.
+RENDER_BUSY_REST = float(os.environ.get("DETHROTTLED_RENDER_BUSY_REST", "15"))
+RENDER_BUSY_RETRY_MAX = float(os.environ.get("DETHROTTLED_RENDER_BUSY_RETRY_MAX", "2"))
+
+
+def _renderer_busy(response) -> tuple[str, float]:
+    """(code, retry_after) for a DNB admission refusal, else ("", 0)."""
+    try:
+        detail = response.json().get("detail")
+    except (ValueError, AttributeError):
+        return "", 0.0
+    if not (isinstance(detail, dict) and detail.get("retryable")
+            and re.fullmatch(r"render_[a-z_]{1,40}", str(detail.get("code", "")))):
+        return "", 0.0
+    try:
+        wait = float(response.headers.get("Retry-After")
+                     or detail.get("retry_after_seconds") or 1)
+    except (TypeError, ValueError):
+        wait = 1.0
+    return detail["code"], max(0.0, min(wait, 60.0))
+
+
+def tier_busy(name: str, reason: str = "") -> None:
+    """Pause a restable tier briefly without adding a strike."""
+    if name not in _RESTABLE_TIERS or RENDER_BUSY_REST <= 0:
+        return
+    with _tier_rest_lock:
+        entry = _tier_rest.get(name) or {"strikes": 0}
+        entry["until"] = max(entry.get("until", 0), time.time() + RENDER_BUSY_REST)
+        entry["reason"] = reason[:60]
+        _tier_rest[name] = entry
+
+
 _RENDERER_REFUSAL = re.compile(
     r"crawl4ai_http_(?:429|503)"
     r"|crawl4ai_(?:ConnectionError|ConnectTimeout|ReadTimeout|Timeout|ChunkedEncodingError)")
@@ -1103,8 +1157,20 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
     budget_started = time.time()
 
     attempts = []
+    # Set when this read needed the renderer and could not have it. Such a read
+    # is degraded by our own capacity, not by the page: say so, and do not
+    # cache it, or the thin copy outlives the outage.
+    renderer_unavailable = []
+
+    def renderer_warning():
+        return ("renderer_unavailable:" + renderer_unavailable[0]
+                + "; this read could not use the JavaScript renderer and may be "
+                "incomplete. Retry shortly.")
 
     def finish(out):
+        if renderer_unavailable and out.get("tier") not in {"crawl4ai", "headed"}:
+            out["warnings"] = [*out.get("warnings", []), renderer_warning()]
+            out["renderer_unavailable"] = renderer_unavailable[0]
         # Recheck old cached interstitials on the read path as well.
         out["acquisition_attempts"] = [dict(a) for a in attempts]
         out["schema_version"] = 3
@@ -1141,7 +1207,7 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
         # caching it would trade the whole point of a page cache -- many pages
         # cheaply -- for a few pages expensively.
         source = out.pop("html", None)
-        if cache is not None and out.get("text"):
+        if cache is not None and out.get("text") and not out.get("renderer_unavailable"):
             cache.put("extract", url, value=out)
         out = _clip(out, max_chars)
         if source is not None:
@@ -1194,6 +1260,9 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
         # that still work carry the load.
         if tier_resting(name):
             reasons.append("%s:resting" % name)
+            if name == "crawl4ai":
+                renderer_unavailable.append("resting:" + tier_rest_state().get(
+                    name, {}).get("reason", ""))
             continue
         # A static shell, or a page served without prose, is HTML the server
         # gave freely, not a block: TLS impersonation got the same result in
@@ -1253,8 +1322,13 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
                 attempt["reason"] = reason or "challenge_detected:" + detected
                 reasons.append(name + ":" + attempt["reason"])
                 continue
-        if _service_refusal(name, reason):
+        if name == "crawl4ai" and reason.startswith("crawl4ai_busy:"):
+            tier_busy(name, reason)
+            renderer_unavailable.append(reason.split(":", 1)[1])
+        elif _service_refusal(name, reason):
             tier_refused(name, reason)
+            if name == "crawl4ai":
+                renderer_unavailable.append(reason)
         elif payload:
             # Answered with something. Whether it extracted is a separate
             # question -- an empty shell is the page's fault, not the tier's,
@@ -1415,10 +1489,14 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
     # branch above already returned). `name` is the last tier the loop tried
     # before giving up -- the same "how far did it get" fact `tier` reports on
     # success, so a caller checking only `tier` is not left with nothing.
-    return {"ok": False, "text": "", "tier": last_attempted, "extractor": None,
-            "title": "", "published": "", "chars": 0, "url": url,
-            "reason": " | ".join(reasons), "cached": False,
-            "acquisition_attempts": attempts, "source_alternatives": alternatives}
+    failed = {"ok": False, "text": "", "tier": last_attempted, "extractor": None,
+              "title": "", "published": "", "chars": 0, "url": url,
+              "reason": " | ".join(reasons), "cached": False,
+              "acquisition_attempts": attempts, "source_alternatives": alternatives}
+    if renderer_unavailable:
+        failed.update(warnings=[renderer_warning()],
+                      renderer_unavailable=renderer_unavailable[0])
+    return failed
 
 
 def _challenge_document(html: str) -> bool:
@@ -1462,8 +1540,9 @@ def _headed_read(url: str, backend: str) -> tuple:
             "navigation_wait": "commit"}
     read = {"action": "html", "selector": "html", "max_chars": 120000}
 
-    def drive(steps, navigate=False):
-        payload = {**body, **({"url": url} if navigate else {}), "steps": steps}
+    def drive(steps, navigate=False, park=False):
+        payload = {**body, **({"url": url} if navigate else {}), "steps": steps,
+                   **({"park_session": True} if park else {})}
         headers = {}
         if os.getenv("DETHROTTLED_DNB", "0") == "1":
             from . import delegation
@@ -1559,9 +1638,12 @@ def _headed_read(url: str, backend: str) -> tuple:
                                         'Source completeness remains unverified.']}
         # Checkpoints retain same-browser state across worker restarts. A failed
         # checkpoint must not discard acquired evidence or export credentials.
+        # The tab is closed with it ("parked"): a read needs the site's cookies
+        # next time, not its page still running scripts. Idle shop pages held
+        # 0.5-0.6 GB each for up to 30 minutes before this.
         checkpointed = True
         try:
-            drive([{"action": "checkpoint"}])
+            drive([{"action": "checkpoint"}], park=True)
         except (requests.RequestException, ValueError):
             checkpointed = False
         return {**visible, "html": html,

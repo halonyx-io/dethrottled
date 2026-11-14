@@ -448,6 +448,9 @@ async def dnb_status():
         "active": RENDER_CAPACITY - RENDER_SLOTS._value,
         "drive_inflight": DRIVE_INFLIGHT,
         "drive_sessions": len(browser.DRIVE_SESSIONS),
+        "read_sessions": sum(sid.startswith(browser.READ_SESSION_PREFIX)
+                             for sid in list(browser.DRIVE_SESSIONS)),
+        "read_session_idle_seconds": browser.READ_SESSION_IDLE,
         "session_owners": owner_count,
         "operations": operation_count,
         "extraction": {
@@ -478,7 +481,7 @@ async def _crawl(body: CrawlRequest, request: Request = None):
     started = time.monotonic()
     global WAITING, LAST_CRAWL_USE
     LAST_CRAWL_USE = started
-    if memory_pressure():
+    if memory_pressure() and not await reclaim_for_render():
         raise retry_error("render_memory_pressure", 503, True)
     if WAITING >= 4:
         raise retry_error("render_queue_full", 503, True)
@@ -604,6 +607,24 @@ async def _crawl(body: CrawlRequest, request: Request = None):
         LAST_CRAWL_USE = time.monotonic()
         CURRENT_POLICY.reset(policy_token)
         RENDER_SLOTS.release()
+
+
+async def reclaim_for_render() -> bool:
+    """Free memory held by idle automatic read sessions; True once below the line.
+
+    Refusing a render while idle read pages hold the memory made the API stop
+    rendering for every site for minutes (14 Nov: six idle shop pages, 94% of
+    the limit). Their checkpoints keep what the next read needs.
+    """
+    closed = await browser.reclaim_idle_read_sessions()
+    if closed:
+        COUNTS["reclaimed_read_sessions"] += closed
+        deadline = time.monotonic() + 2
+        while time.monotonic() < deadline:
+            if not memory_pressure():
+                return True
+            await asyncio.sleep(0.2)
+    return not memory_pressure()
 
 
 def retry_error(code, status, retryable):

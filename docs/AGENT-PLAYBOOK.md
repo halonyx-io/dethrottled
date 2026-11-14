@@ -197,6 +197,10 @@ not a request to fill every budget. See [limits](LIMITS.md).
   retains possible mixed-content pollution; `failed` records an unsuccessful read.
   A `gate_page:login|paywall|access_denied|maintenance` warning means the page is
   a wall rather than the requested content, even when it contains long prose.
+  A `renderer_unavailable:…` warning means the page needed the JavaScript
+  renderer and this server could not provide it at that moment (busy, low on
+  memory or resting). The result is not cached; fetch again shortly rather
+  than treating the page as empty.
 - Preserve `warnings`, `source_partial`, `truncated`, `extraction`, acquisition
   attempts/URLs, source dates, `date_source`, `source_type`, `page_type`,
   `fetch_relevance`, `tokens_estimated`, hashes and `read_plan`. `tokens_estimated`

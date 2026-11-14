@@ -328,6 +328,8 @@ def run(url, initial, *, read, drive, options, browser_available, allow_assets=T
         # Checkpoint is not a content strategy and does not replay mutations.
         if available() and state and not state.get("challenge"):
             try:
+                # Not parked: recovery hands this live page to the caller as
+                # read_plan.browser_session (e.g. with a section it expanded).
                 drive(dict(body, steps=[{"action": "checkpoint"}], timeout_ms=2000), timeout=3)
             except Exception:
                 pass

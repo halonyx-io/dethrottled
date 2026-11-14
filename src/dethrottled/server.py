@@ -409,7 +409,8 @@ def _extract_once(url: str, max_chars: int, allow_ocr: bool = True,
     # Record what happened, per domain. A cache hit is not evidence about the
     # site -- it says the cache worked, which is a different fact -- so only
     # live attempts count.
-    if not result.get("cached"):
+    # Nor is a read our own renderer could not serve: that outage is ours.
+    if not result.get("cached") and not result.get("renderer_unavailable"):
         domain_health.record(url, result["ok"])
 
     if not result["ok"]:
@@ -426,7 +427,8 @@ def _extract_once(url: str, max_chars: int, allow_ocr: bool = True,
                 "date_source": "none",
                 "published_age_days": None,
                 **({"policy_blocked": result["policy_blocked"]}
-                   if result.get("policy_blocked") else {})}
+                   if result.get("policy_blocked") else {}),
+                **({"warnings": result["warnings"]} if result.get("warnings") else {})}
     row = {
         "url": url,
         "content": result["text"],
