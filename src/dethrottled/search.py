@@ -49,7 +49,8 @@ _DEAD_ENGINES = {}
 
 def result_family(row):
     engine = str(row.get("engine") or "unknown").lower()
-    if (engine in {"duckduckgo", "ddg-lite", "ddg-html", "tls-ddg-lite"}
+    # DuckDuckGo News is the same provider: one family, one budget.
+    if (engine in {"duckduckgo", "ddg-lite", "ddg-html", "tls-ddg-lite", "duckduckgo news"}
             or (engine.startswith("web-") and any(name in engine for name in (
                 "ddg", "duckduckgo")))):
         return "ddg"
@@ -288,7 +289,7 @@ def _ddg_finish(rows, report, recovering):
 
 DEFAULT_ENGINES = os.environ.get(
     "DETHROTTLED_SEARXNG_ENGINES",
-    "duckduckgo news,bing news")
+    "duckduckgo news,qwant news,bing news")
 
 # Engine families, for a bundle that wants more than the default web and news.
 # A scientific or technical subject gets far more from crossref and openalex
@@ -1091,6 +1092,21 @@ def search(query: str, *, max_items: int = SEARCH_MENU_LIMIT, categories: str = 
                 report = source_reports["providers"].get(name)
             if report is not None:
                 report.update(status="failed", reason=adblock.error_reason(exc))
+    # News first for the news profile, in engine-policy order (see
+    # engine_policy.py): DuckDuckGo News, Qwant News and Bing's RSS carry dates,
+    # and entering after DuckDuckGo web they were cut by the limit (7 dated
+    # results in 158 over 20 news queries, 14 Nov 2026).
+    news_policy = None
+    if "news" in sources:
+        from . import engine_policy
+        tagged = {id(row): name for name in ("searxng", "bing-news")
+                  for row in completed.get(name, [])}
+        news_rows = [row for name in ("searxng", "bing-news") for row in completed.get(name, [])]
+        engine_policy.observe("news", news_rows)
+        ordered, news_policy = engine_policy.order("news", news_rows)
+        for row in ([r for r in ordered if not engine_policy.is_landing(r)]
+                    + [r for r in ordered if engine_policy.is_landing(r)]):
+            add([row], tagged[id(row)])
     if "web" in completed:
         add(completed["web"], "web")
     # Primary order stays intact. Alternate small supplements rather than
@@ -1100,7 +1116,8 @@ def search(query: str, *, max_items: int = SEARCH_MENU_LIMIT, categories: str = 
             if engine in completed:
                 add(completed[engine][index:index + 1], engine)
     for name, rows in completed.items():
-        if name not in {"web", "yandex", "yahoo"}:
+        if name not in {"web", "yandex", "yahoo"} and not (
+                news_policy and name in {"searxng", "bing-news"}):
             add(rows, name)
     if source_reports["supplements"] and "searxng" not in completed:
         per_source["searxng"] = sum(v for e in ("yandex", "yahoo")
@@ -1161,6 +1178,11 @@ def search(query: str, *, max_items: int = SEARCH_MENU_LIMIT, categories: str = 
             per_source["reputable-sweep"] = swept
 
     merged = rank(merged, prefer_domains)
+    if news_policy:
+        # News answers "what happened": undated front and topic pages last.
+        from . import engine_policy
+        merged = ([r for r in merged if not engine_policy.is_landing(r)]
+                  + [r for r in merged if engine_policy.is_landing(r)])
     # Supplements append to the primary engine order. Merely selecting a profile
     # must not promote a weak supplementary index into the first trusted choices.
     dropped = 0
@@ -1173,7 +1195,8 @@ def search(query: str, *, max_items: int = SEARCH_MENU_LIMIT, categories: str = 
         "deduplication": dedupe_counts,
         "policy": {"ranking": "source", "primary_limit": PRIMARY_SEARCH_LIMIT,
                    "per_supplement_limit": SUPPLEMENT_SEARCH_LIMIT,
-                   "menu_limit": SEARCH_MENU_LIMIT, "automatic_pagination": False},
+                   "menu_limit": SEARCH_MENU_LIMIT, "automatic_pagination": False,
+                   **({"engine_order": news_policy} if news_policy else {})},
         # Recorded rather than omitted. A source that is switched off and a
         # source that answered with nothing are identical in a count of zero,
         # and a caller reading this to decide whether an empty result is

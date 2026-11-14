@@ -82,7 +82,7 @@ No automatic DDG pagination fills that menu. Fewer usable results is normal.
 | `profile="fast"` | DDG-family route only |
 | `profile="web"` or `"balanced"` | DDG plus Yahoo/Yandex supplements |
 | `profile="thorough"` | Also requests Mwmbl; the same compact display and supplement budgets apply |
-| `profile="news"` | Web plus news discovery/resolution paths |
+| `profile="news"` | Dated news engines first (DuckDuckGo News, Qwant News, Bing News), then web; undated front and topic pages last |
 | `profile="academic"` | Web plus Crossref/OpenAlex/arXiv specialist discovery |
 | `engines` | Explicit comma-separated selection: web/news/mwmbl/crossref/openalex/arxiv/yahoo/yandex; optional exa/tavily/parallel require operator configuration |
 | `engines="web"` | Request the primary family without default supplementary providers |

@@ -64,3 +64,10 @@ engines:
     disabled: false
   - name: arxiv
     disabled: false
+  # News. 14 Nov 2026, five current-events queries on 2026.11.6: DuckDuckGo
+  # News 107 results, all dated, 80 within 48 h; Qwant News 47, all dated, 31
+  # within 48 h, an independent second source. Brave News returned 228 rows
+  # but 2 dated, Bing News via SearXNG none (its direct RSS keeps dates), and
+  # Google News is refused, so those stay as they were.
+  - name: qwant news
+    disabled: false

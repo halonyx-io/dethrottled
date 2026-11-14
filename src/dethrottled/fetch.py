@@ -1070,6 +1070,47 @@ def _crawl4ai_admitted(url):
 CACHE_CHARS = int(os.environ.get("DETHROTTLED_EXTRACT_CACHE_CHARS", "4000000"))
 
 
+# ── how long a read may be served from cache ────────────────────────────────
+#
+# Every read with text used to be cached for 21 days. Right for an article,
+# wrong for a page that changes: the Hacker News front page was served 2.5
+# days old on 14 Nov 2026. And a login wall, a teaser or a suspected error
+# banner was replayed to every caller for three weeks although its own label
+# said it was not the page. So the lifetime follows what the read is.
+CACHE_HUB_SECONDS = float(os.environ.get("DETHROTTLED_CACHE_HUB_SECONDS", "900"))
+CACHE_LIVE_SECONDS = float(os.environ.get("DETHROTTLED_CACHE_LIVE_SECONDS", "300"))
+CACHE_FEED_SECONDS = float(os.environ.get("DETHROTTLED_CACHE_FEED_SECONDS", "600"))
+CACHE_LIMITED_SECONDS = float(os.environ.get("DETHROTTLED_CACHE_LIMITED_SECONDS", "3600"))
+_LIVE_PATH = re.compile(r"(?:^|[/_-])live(?:[/_-]|$)|live-?(?:updates|blog|news)", re.I)
+
+
+def volatility(out: dict, url: str) -> str:
+    """'live', 'feed', 'hub' or 'stable': how fast this page changes."""
+    metadata = out.get("page_metadata") or {}
+    path = urlparse(out.get("url") or url).path or "/"
+    if "LiveBlogPosting" in (metadata.get("types") or []) or _LIVE_PATH.search(path):
+        return "live"
+    if (out.get("extraction") or {}).get("feed") or out.get("content_type") in {
+            "application/rss+xml", "application/atom+xml"}:
+        return "feed"
+    segments = [part for part in path.split("/") if part]
+    dated = bool(out.get("published") or metadata.get("published"))
+    if (out.get("content_type") in {"", "html", "text/html", None} and not dated
+            and (len(segments) == 0 or (len(segments) == 1 and len(segments[0]) <= 24))):
+        return "hub"  # a front or section page: no publish date, no article slug
+    return "stable"
+
+
+def cache_lifetime(out: dict, url: str) -> float:
+    from .cache import DEFAULT_TTL
+    limited = (out.get("quality") in {"thin", "suspect"}
+               or (out.get("content_assessment") or {}).get("gate"))
+    kind = volatility(out, url)
+    lifetime = {"live": CACHE_LIVE_SECONDS, "feed": CACHE_FEED_SECONDS,
+                "hub": CACHE_HUB_SECONDS}.get(kind, DEFAULT_TTL["extract"])
+    return min(lifetime, CACHE_LIMITED_SECONDS) if limited else lifetime
+
+
 def _clip(out: dict, max_chars: int) -> dict:
     """A copy of a cached extraction, cut to what this caller asked for."""
     text = out.get("text") or ""
@@ -1125,7 +1166,11 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
         # counting it as a hit: a valid-JSON wrong-shape row is a miss.
         from .cache import valid_extract
 
-        hit = cache.get("extract", url, validator=valid_extract)
+        hit = cache.get("extract", url, validator=lambda value: valid_extract(value) and (
+            float(value.get("cache_until") or float("inf")) > time.time()))
+        if hit is not None and hit.get("cache_until"):
+            hit["cache_expires_at"] = datetime.fromtimestamp(
+                hit["cache_until"], timezone.utc).isoformat()
         acquisition = (hit or {}).get("acquisition", {})
         compatible = not render_first or acquisition.get("rendered", False)
         if hit is not None and (challenge_kind(hit.get("text", "")) or
@@ -1281,6 +1326,8 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
         # cheaply -- for a few pages expensively.
         source = out.pop("html", None)
         if cache is not None and out.get("text") and not out.get("renderer_unavailable"):
+            out["volatility"] = volatility(out, url)
+            out["cache_until"] = time.time() + cache_lifetime(out, url)
             cache.put("extract", url, value=out)
         out = _clip(out, max_chars)
         if source is not None:

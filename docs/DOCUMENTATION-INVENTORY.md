@@ -13,9 +13,9 @@ must be classified; unknown paths fail generation/checking.
 | dependency-input | 4 |
 | generated | 4 |
 | harness-guide | 20 |
-| historical-evidence | 215 |
+| historical-evidence | 216 |
 | planned-work | 1 |
-| source-contract | 174 |
+| source-contract | 175 |
 | third-party-notice | 4 |
 | visual | 6 |
 
@@ -140,6 +140,7 @@ Evidence maintainer: preserve observations; append explicit corrections.
 | [evaluations/install-showcase/results/2026-11-04/failures/pypi-index-propagation.txt](../evaluations/install-showcase/results/2026-11-04/failures/pypi-index-propagation.txt) |
 | [evaluations/mcp-maintenance/2026-11-02/REPORT.md](../evaluations/mcp-maintenance/2026-11-02/REPORT.md) |
 | [evaluations/module-refactor/README.md](../evaluations/module-refactor/README.md) |
+| [evaluations/news-profile/results/2026-11-14/REPORT.md](../evaluations/news-profile/results/2026-11-14/REPORT.md) |
 | [evaluations/post160-review/results/2026-11-06/REPORT.md](../evaluations/post160-review/results/2026-11-06/REPORT.md) |
 | [evaluations/post160-review/results/2026-11-06/combined-tests.txt](../evaluations/post160-review/results/2026-11-06/combined-tests.txt) |
 | [evaluations/post160-review/results/2026-11-06/final-affected-tests.txt](../evaluations/post160-review/results/2026-11-06/final-affected-tests.txt) |
@@ -479,6 +480,7 @@ Change author: audit docs impact, advertised defaults and generated contracts.
 | [src/dethrottled/domains.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/domains.py) |
 | [src/dethrottled/dpr.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/dpr.py) |
 | [src/dethrottled/dpr_cli.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/dpr_cli.py) |
+| [src/dethrottled/engine_policy.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/engine_policy.py) |
 | [src/dethrottled/evidence.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/evidence.py) |
 | [src/dethrottled/extract.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/extract.py) |
 | [src/dethrottled/fallback.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/fallback.py) |

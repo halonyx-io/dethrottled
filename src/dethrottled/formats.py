@@ -315,6 +315,59 @@ def pdf_text(data, limit, allow_ocr, options):
         }
 
 
+FEED_ITEMS = 60
+
+
+def _feed_text(data: bytes, limit: int, metadata: dict) -> tuple[str, dict]:
+    """An RSS/Atom feed as a dated list, newest first, not its XML source.
+
+    Feeds are the best news source an agent has: keyless, dated, small and
+    rarely behind a challenge. Returned as XML they cost several times the
+    tokens and hide the dates in markup (Techmeme's feed, 14 Nov 2026).
+    """
+    import calendar
+    from datetime import datetime, timezone
+
+    import feedparser
+
+    parsed = feedparser.parse(data)
+    feed = parsed.feed
+
+    def when(entry):
+        stamp = entry.get("published_parsed") or entry.get("updated_parsed")
+        return (datetime.fromtimestamp(calendar.timegm(stamp), timezone.utc)
+                if stamp else None)
+
+    entries = [(when(entry), entry) for entry in parsed.entries]
+    entries.sort(key=lambda pair: pair[0] or datetime.min.replace(tzinfo=timezone.utc),
+                 reverse=True)
+    lines = [("Feed: %s %s" % (feed.get("title", "").strip(), feed.get("link", ""))).rstrip()]
+    items = []
+    for stamp, entry in entries[:FEED_ITEMS]:
+        summary = short_text(entry.get("summary", "") or "").strip()
+        lines += ["", "%s - %s" % (stamp.strftime("%Y-%m-%d %H:%M UTC") if stamp else "undated",
+                                   entry.get("title", "").strip() or "(untitled)"),
+                  entry.get("link", "")]
+        if summary:
+            lines.append(summary[:400])
+        items.append({"title": entry.get("title", "")[:300], "url": entry.get("link", ""),
+                      "published": stamp.isoformat() if stamp else None})
+    dated = [stamp for stamp, _ in entries if stamp]
+    metadata["feed"] = {
+        "title": feed.get("title", "")[:300], "link": feed.get("link", ""),
+        "items": len(entries), "listed": len(items), "items_detail": items,
+        "newest": max(dated).isoformat() if dated else None,
+        "oldest": min(dated).isoformat() if dated else None}
+    if len(entries) > FEED_ITEMS:
+        metadata["warnings"].append(
+            "Feed lists %d items; the newest %d are shown." % (len(entries), FEED_ITEMS))
+    if not entries:
+        metadata["warnings"].append("Feed has no items.")
+    text = "\n".join(lines)
+    metadata["partial"] = len(text) > limit
+    return text[:limit], metadata
+
+
 def read_blob(data, kind, limit, *, allow_ocr=True, options=None, depth=0):
     """Return parser text and provenance. Unsupported content never becomes HTML."""
     from . import documents
@@ -462,7 +515,10 @@ def read_blob(data, kind, limit, *, allow_ocr=True, options=None, depth=0):
     elif kind == "xml":
         from defusedxml import ElementTree
 
-        root = ElementTree.fromstring(text)
+        root = ElementTree.fromstring(text)  # also refuses entity tricks first
+        local = root.tag.rsplit("}", 1)[-1].lower()
+        if local in {"rss", "feed", "rdf"}:
+            return _feed_text(data, limit, metadata)
         # Preserve attributes and data relationships, not just flattened text.
         text = ElementTree.tostring(root, encoding="unicode")
         if root.tag.endswith("svg"):

@@ -67,7 +67,18 @@ from fastapi import BackgroundTasks, FastAPI, HTTPException
 #
 # Three places claiming a version is two too many.
 from . import __version__ as VERSION
-from . import consensus, dedupe, dpr, providers, rerank, semantic_cache, signals, waymarks, workers
+from . import (
+    consensus,
+    dedupe,
+    dpr,
+    engine_policy,
+    providers,
+    rerank,
+    semantic_cache,
+    signals,
+    waymarks,
+    workers,
+)
 from . import domains as domain_health
 from . import extract as fx
 from . import fetch as fetcher
@@ -594,6 +605,7 @@ def stop_multilingual_backfill():
     # Learned records are saved at most once a minute; keep the last minute.
     domain_health.flush()
     waymarks.flush()
+    engine_policy.flush()
 
 
 @app.get("/health")
@@ -1973,6 +1985,7 @@ def stats():
             "domain_health": (domain_health.stats() if CLAIMS.get() is None
                               else _counts_only(domain_health.stats())),
             "waymarks": waymarks.stats(),
+            "engine_policy": engine_policy.stats(),
             "uptime_seconds": int(time.time() - STARTED),
             "tiers": fetcher.tier_stats(),
             "tier_budget_used": fetcher.budget_state(),

@@ -96,6 +96,12 @@ Names are the MCP tools; the HTTP route does the same job on the raw API
 
 ## Search details
 
+- For current events use `profile` `news`: dated news results come first. For a
+  site's latest items, fetch its RSS or Atom feed (listed under
+  `source_alternatives` on its front page); feeds come back as a dated list,
+  newest first. Front pages, live blogs and feeds are cached for minutes, not
+  weeks.
+
 - One page reached under several addresses comes back once; the other addresses
   are listed under `duplicates`.
 - `domains` and `exclude_domains` restrict hosts; `prefer_domains` only nudges
