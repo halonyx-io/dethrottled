@@ -15,6 +15,7 @@ the [HTTP](HTTP-REFERENCE.md) and [MCP](MCP-REFERENCE.md) references.
 | DOCX, PPTX, ODT, ODS, ODP, EPUB, RTF | Local document readers; preserve warnings and bounded embedded-image OCR provenance |
 | Legacy DOC/PPT | Local antiword/catppt converters included in the API image; source installs need those tools |
 | Plain text/Markdown, JSON/JSONL, XML/SVG | Text/data extraction; SVG text does not reconstruct visual chart relationships |
+| RSS and Atom feeds | Dated items, newest first (title, link, date, summary), at most 60; cached for ten minutes |
 | EML | Message text and bounded attachment handling; inspect archive/attachment completeness |
 | ZIP, TAR, GZIP | Bounded member/nesting/expansion handling without extracting paths to disk; encrypted/unsupported members can fail |
 | Raster images | Tesseract OCR when enabled; layout and chart relationships need pixel inspection |

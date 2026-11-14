@@ -10,16 +10,18 @@ for sets the task; this file sets the house rules.
 | Path | What it is |
 |---|---|
 | `src/dethrottled/server.py` | The FastAPI app: every route, request shaping and response assembly |
-| `src/dethrottled/fetch.py` | The acquisition ladder (direct, TLS, render, headed), tier resting and caching |
+| `src/dethrottled/fetch.py` | The acquisition ladder (direct, TLS, render, headed), the TLS race, tier resting and cache lifetimes |
+| `src/dethrottled/waymarks.py` | Learned per-site skips and known walls (public hosts only, keyed hashes) |
 | `src/dethrottled/extract.py` | HTML extraction: extractor choice, completeness checks, page metadata and dates |
 | `src/dethrottled/readplan.py` | Automatic browser recovery for incomplete reads |
 | `src/dethrottled/search.py`, `discovery.py`, `rank.py`, `rerank.py` | Discovery: providers, merging, ranking and the local reranker |
+| `src/dethrottled/engine_policy.py` | Per-profile engine order with evidence-based demotion (news) |
 | `src/dethrottled/dedupe.py`, `urls.py` | Shared URL and content identity, and duplicate merging |
 | `src/dethrottled/signals.py` | Dates, source and page types, fetch relevance |
 | `src/dethrottled/research.py` | Bounded evidence bundles |
 | `src/dethrottled/corpus*.py` | Corpus v2: storage, indexing, retrieval and support checks |
 | `src/dethrottled/dpr*.py`, `jobs.py` | Durable batch reads and fetch jobs |
-| `browser-search/service.py` | Browser worker: search, `/drive` actions and settling |
+| `browser-search/service.py` | Browser worker: search, `/drive` actions, settling and read-session lifetimes |
 | `experiments/dnb/` | DNB: the production browser service (rendering, scope, delegation) |
 | `adapters/` | Authenticated MCP server and REST gateway |
 | `docker-compose*.yml` | The default stack and optional overlays |
@@ -39,7 +41,9 @@ for sets the task; this file sets the house rules.
 - **Search is a compact menu.** Ten DDG-family choices, at most three per
   supplementary engine and six supplements in total, fifteen unique URLs. DDG
   transports are one provider family, not independent votes. Changing these
-  bounds or the ranking policy needs a stated reason and a measurement.
+  bounds or the ranking policy needs a stated reason and a measurement. The news
+  profile's news-first order is one such measured exception
+  (`evaluations/news-profile`).
 - **Never turn a failure into a success.** HTTP 200, a completed browser step
   and readable text are three different things. Keep failed, thin and suspect
   outcomes, warnings, provenance, partial and truncated flags, document handles
@@ -56,6 +60,11 @@ for sets the task; this file sets the house rules.
   Its support checks are not answer verification.
 - **Browser actions have side effects.** Respect caller scope, public-target
   checks, render and OCR restrictions and operation-ID retry semantics.
+- **What the server learns stays private.** Learned records (waymarks, domain
+  health, engine policy) hold public hosts or engine names only, never paths,
+  content or callers; hosts on disk are keyed hashes. Remote callers see counts,
+  not domains. A waymark built by one caller must not change another caller's
+  reads until a second caller corroborates it.
 - **Check a dependency's licence before adding it.** The package's required
   dependencies stay permissive. Anything copyleft, or anything with an
   attribution clause, goes into [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md)

@@ -8,12 +8,14 @@ web access, answer correctness or superiority over paid services.
 Current source-menu policy follows the [expanded ranking evaluation](../evaluations/search-policy/results/2026-11-03/REPORT.md):
 ten DDG choices, Yahoo/Yandex supplements of at most three each and fifteen unique
 choices total. Research has a separate 24-candidate/20-source ceiling. Earlier
-larger-pool measurements remain historical evidence.
+larger-pool measurements remain historical evidence. The news profile's order
+follows the [news-profile evaluation](../evaluations/news-profile/results/2026-11-14/REPORT.md).
 
 ## Recorded evaluations
 
 | Scope | Report and raw data | Interpretation |
 |---|---|---|
+| News profile and SearXNG 2026.11.6 (1.8.7) | [14 November report](../evaluations/news-profile/results/2026-11-14/REPORT.md), [runner](../evaluations/news-profile/run.py) | 20 current-events queries, live against candidate in two alternating rounds; dated, recent and landing-page shares, no gold labels |
 | Fetch edge cases and scheduling (1.7.1) | [6 November investigation](../evaluations/fetch-edge-cases/results/2026-11-06/REPORT.md), [reproduction](../evaluations/fetch-edge-cases/README.md) | Connection waits, selector DOMs, response warnings, redirect links, malformed caches and controlled batch timings; no additional hostile-source read demonstrated |
 | Public Corpus v2 and retrieval support | [Controlled comparison](../evaluations/corpus-v2/results/2026-11-05/REPORT.md), [reproduction](../evaluations/corpus-v2/README.md) | Deep facts, multilingual/model ablation, standard versus broad retrieval and native package/lifecycle gates; preserves false positives and misses |
 | Complete installation and two-device performance | [1.4.0 validation](../evaluations/install-showcase/results/2026-11-04/REPORT.md), [reproduction](../evaluations/install-showcase/README.md) | PyPI-managed workers, native software rendering, retained controlled facts and live outcomes; original failures preserved |

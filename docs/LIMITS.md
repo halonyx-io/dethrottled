@@ -53,7 +53,8 @@ The current search API caps the DDG provider family at ten choices before callin
 its TLS/browser acquisition paths. It does not automatically paginate DDG to fill
 a fifteen-result menu: the remaining choices come from the bounded supplementary
 providers. Lite, HTML, TLS and browser fallbacks are acquisition alternatives
-within that same DDG budget.
+within that same DDG budget. In the news profile, DuckDuckGo News results share
+that budget and are placed before DuckDuckGo web results.
 
 The private browser worker retains a broader collection path for direct requests
 above twelve results, including bounded same-origin pagination. This is an
@@ -69,7 +70,8 @@ follow an observed site frontier or deliberately operate the browser.
 passages per ordinary/long source, a 256 MiB combined matrix budget and a 512 MiB
 soft corpus SQLite target. These are separate from full-document retention and
 model-process memory. Corpus passage/vector retention is 90 days; the search
-cache remains six hours and extraction cache 21 days. HTTP/MCP corpus menus
+cache remains six hours; the extraction cache keeps articles 21 days, front
+pages 15 minutes, live blogs 5, feeds 10, and thin, suspect or gated reads one hour. HTTP/MCP corpus menus
 remain at most ten results, including explicit broad support.
 
 

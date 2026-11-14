@@ -37,8 +37,9 @@ when something is missing. Your agent can tell a full article from a cookie wall
 - **Built for agents.** An MCP server and REST gateway with per-client tokens and
   scopes, an installable agent skill, and responses sized for context windows:
   focused excerpts, token estimates and continuation handles.
-- **It remembers.** Long documents are retained for follow-up reads, and public
-  evidence goes into a local searchable corpus for 90 days.
+- **It remembers.** Long documents are retained for follow-up reads, public
+  evidence goes into a local searchable corpus for 90 days, and it learns which
+  read steps each site refuses so repeat reads skip straight past them.
 
 ## Quick start
 
@@ -88,8 +89,8 @@ dethrottled stack status
 
 One query fans out to DuckDuckGo plus supplementary engines through a bundled
 SearXNG, and comes back as a compact menu of at most fifteen unique sources.
-Profiles cover `web`, `news`, `academic` (Crossref, OpenAlex, arXiv) and a
-`thorough` mode. The same page reached under different addresses is merged into
+Profiles cover `web`, `news` (dated stories first), `academic` (Crossref,
+OpenAlex, arXiv) and a `thorough` mode. The same page reached under different addresses is merged into
 one result that keeps everyone's dates and provenance. A local Ettin reranker
 refines the order, and you can restrict, exclude or prefer domains.
 
@@ -114,6 +115,7 @@ The same `fetch` call reads:
 | PDF | Text layer, detected tables, page ranges and Tesseract OCR for scans; optional Docling layout analysis |
 | Office and OpenDocument | DOCX, PPTX, XLSX, XLS, ODT, ODS, ODP, EPUB, RTF, legacy DOC/PPT, MSG and XLSB |
 | Data and text | CSV and TSV row windows, JSON, XML, Markdown, plain text |
+| Feeds | RSS and Atom as dated items, newest first |
 | Archives and email | ZIP, TAR and GZIP members; EML messages and attachments |
 | Media | Captions and subtitles, image OCR, and speech-to-text for audio and video with the optional speech worker |
 
@@ -232,7 +234,7 @@ A real `fetch` response, trimmed:
 Read [AGENTS.md](AGENTS.md) before changing code. It sets out the rules
 contributors (human or AI) follow here, and the checks a change must pass.
 
-This checkout is **1.8.6**. A running service reports its own version at `/health`.
+This checkout is **1.8.7**. A running service reports its own version at `/health`.
 
 ## License
 

@@ -54,7 +54,9 @@ is distinct from keeping a live page. Close a session explicitly when finished:
 For automatic fetch recovery, reuse `read_plan.browser_session.id` and its
 `allowed_hosts` to continue the same browser state. These reserved handles are
 caller-scoped across REST and MCP; ordinary named sessions remain transport-private.
-See the [read planner](READ-PLANNER.md) for selection and retention rules.
+An automatic read's live page closes after five minutes unused; the handle then
+restores cookies and storage from its checkpoint, not the page itself. See the
+[read planner](READ-PLANNER.md) for selection and retention rules.
 
 ## Actions
 

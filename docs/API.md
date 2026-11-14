@@ -38,6 +38,11 @@ supplements do not displace primary choices in the candidate menu. Before
 reranking, novel Yandex/Yahoo choices alternate after DDG. Partial provider failures leave
 healthy sources available; fewer than fifteen results is normal.
 
+`profile="news"` is the exception to primary-first order: dated news engines
+(DuckDuckGo News, Qwant News, Bing News) lead, interleaved, inside the same caps,
+and undated front and topic pages go last. `policy.engine_order` in the search
+metadata shows the order used and any engine demoted for low dated yield.
+
 Search rows carry additive `source_type`, `fetch_relevance`, `snippet_tokens`,
 `date_source` (`structured`, `snippet`, `none`), `published_age_days`,
 `engines_consensus` and `consensus_score`.
@@ -259,7 +264,8 @@ Use one normal search to obtain current evidence, rather than polling readiness.
 establish recovery. Worker liveness is reported separately;
 `/v2/status` probes configured workers and backfill; `/v2/capabilities` publishes
 formats, providers and the agent contract. `/stats` includes cache/tier health,
-renderer and headed admission. No single green health route proves web coverage.
+renderer and headed admission, waymark and engine-policy counts. Domain names in
+`domain_health` are shown only to the local operator; adapter callers get counts. No single green health route proves web coverage.
 Record request IDs, exact controls, timing and returned warnings for a failed task.
 
 [Documentation home](README.md) · [Agent guide](AGENT-UPGRADES.md) · [API](API.md) · [Evidence](EVIDENCE.md)

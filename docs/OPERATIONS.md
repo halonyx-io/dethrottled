@@ -174,6 +174,16 @@ Compose no longer pins an old version in the default user agent: leave
 `DETHROTTLED_USER_AGENT` unset or empty to send the current version and project
 URL.
 
+For 1.8.7, rebuild the API, DNB, layout (Docling) and authenticated adapter
+images with the existing Compose project and enabled profiles, update any
+override that pins an adapter image tag, and pull the new SearXNG pin
+(2026.11.6). Keep all volumes. The API data volume gains `waymarks.json`,
+`waymarks.key` (owner-only) and `engine-policy.json`; deleting them only resets
+what was learned. Cached reads keep their old 21-day lifetime until they expire
+or are refreshed; new front pages, feeds, live blogs and limited reads use the
+shorter lifetimes. `/stats` no longer shows domain names to adapter callers.
+The layout worker moves to torch 2.14.1 for a published torch advisory.
+
 ## Guided Setup and DPR
 
 [Guided Setup](GUIDED-SETUP.md) saves an override without starting services.

@@ -60,7 +60,9 @@ Review `coverage`, omissions, offsets, freshness and `document_available`.
 Reopen a valid `document_id` with `read_document`; if the handle has expired,
 the indexed passage can still be useful or the original URL can be fetched again.
 Corpus passages/vectors last 90 days; this does not extend the independent
-six-hour search cache, 21-day extraction cache or retained-document expiry.
+six-hour search cache, the extraction cache (21 days for articles; minutes for
+front pages, live blogs and feeds; one hour for thin, suspect or gated reads) or
+retained-document expiry.
 `categories="news"` and `profile="news"` use a 30-minute search-cache ceiling;
 a tighter caller `max_age` still wins.
 Public handles may be reused across callers; private/authenticated/interactive
