@@ -97,7 +97,7 @@ Licences change between releases. To list the Python packages in your own
 images and flag anything that is not plainly permissive:
 
 ```sh
-python3 scripts/license_inventory.py dethrottled-api:1.8.7 dethrottled-dnb:1.8.7
+python3 scripts/license_inventory.py dethrottled-api:1.8.8 dethrottled-dnb:1.8.8
 ```
 
 It does not cover system packages, browsers or model weights; those are

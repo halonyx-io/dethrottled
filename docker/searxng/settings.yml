@@ -68,6 +68,8 @@ engines:
   # News 107 results, all dated, 80 within 48 h; Qwant News 47, all dated, 31
   # within 48 h, an independent second source. Brave News returned 228 rows
   # but 2 dated, Bing News via SearXNG none (its direct RSS keeps dates), and
-  # Google News is refused, so those stay as they were.
+  # Google News is refused, so those stay as they were. Google News and Reuters
+  # are queried by the API itself through Google News RSS (search.google_news),
+  # and the API names its engines, so SearXNG's own scrapers for them are unused.
   - name: qwant news
     disabled: false

@@ -392,7 +392,10 @@ def searxng(query: str, *, max_items: int = 8, categories: str = "",
 
     params = {"q": query, "format": "json", "engines": engines,
               "pageno": 1, "language": language or "all", "safesearch": 0}
-    if categories:
+    # Never alongside named engines: SearXNG then adds every engine in the
+    # category, which on 14 Nov 2026 put 50 undated Brave rows, Wikinews and
+    # the failing Google News/Reuters scrapers into every news search.
+    if categories and not engines:
         params["categories"] = categories
     # Worth as much as translating the query. A French query without it returns
     # 66 rows and 28 useful; with it, 108 and 57, and twice as many of them on
@@ -492,6 +495,120 @@ def bing_news(query: str, *, max_items: int = 8, timeout: int = 25, cache=None,
             diagnostics.update(status="failed", reason=adblock.error_reason(exc))
     if cache is not None and rows:
         cache.put("search", "bnews", query, max_items, value=rows)
+    if diagnostics is not None:
+        diagnostics["count"] = len(rows)
+    return rows
+
+
+# ── Google News as a real engine, and Reuters through it ─────────────────────
+#
+# SearXNG's Google News engine scrapes google.com/wml/search, which answers 403
+# from here, and its Reuters engine calls an API behind DataDome (401 to plain
+# and impersonated clients alike, 14 Nov 2026). Google News RSS answers 200
+# with dated items and publisher names; its links are encoded
+# news.google.com/rss/articles/<id> tokens, which Google's own page decodes
+# through one batchexecute call (about 0.1 s). `site:reuters.com` through the
+# same feed returns Reuters-only stories: 100 items on each of three queries.
+GNEWS_DECODE = int(os.environ.get("DETHROTTLED_GNEWS_DECODE", "6"))
+# Which of these run for the news profile; empty turns both off.
+NEWS_FEEDS = {name: site for name, site in (("google-news", ""), ("reuters", "reuters.com"))
+              if name in {x.strip() for x in os.environ.get(
+                  "DETHROTTLED_NEWS_FEEDS", "google-news,reuters").split(",")}}
+_GN_ARTICLE = "https://news.google.com/rss/articles/"
+_GN_BATCH = "https://news.google.com/_/DotsSplashUi/data/batchexecute"
+_GN_ATTRS = re.compile(r'data-n-a-sg="([^"]+)"[^>]*?data-n-a-ts="([^"]+)"'
+                       r'|data-n-a-ts="([^"]+)"[^>]*?data-n-a-sg="([^"]+)"')
+_GN_RESULT = re.compile(r'\\?"garturlres\\?",\\?"([^"\\]+)')
+
+
+def _gnews_decode_one(link: str, timeout: float, cache=None) -> str:
+    """news.google.com/rss/articles/<id> -> publisher URL, or "" if it fails."""
+    article = urlparse(link).path.rsplit("/", 1)[-1]
+    if not article:
+        return ""
+    if cache is not None:
+        hit = cache.get("search", "gnews-url", article, ttl=30 * 86400)
+        if hit:
+            return hit[0].get("url", "")
+    try:
+        page = requests.get(_GN_ARTICLE + article, timeout=timeout,
+                            headers={"User-Agent": RSS_UA})
+        found = _GN_ATTRS.search(page.text) if page.status_code == 200 else None
+        if not found:
+            return ""
+        signature = found.group(1) or found.group(4)
+        stamp = found.group(2) or found.group(3)
+        request = [["Fbv4je", json.dumps([
+            "garturlreq", [["X", "X", ["X", "X"], None, None, 1, 1, "US:en", None, 1,
+                            None, None, None, None, None, 0, 1],
+                           "X", "X", 1, [1, 1, 1], 1, 1, None, 0, 0, None, 0],
+            article, int(stamp), signature])]]
+        response = requests.post(
+            _GN_BATCH, data={"f.req": json.dumps([request])}, timeout=timeout,
+            headers={"User-Agent": RSS_UA,
+                     "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"})
+        match = _GN_RESULT.search(response.text) if response.status_code == 200 else None
+        url = match.group(1) if match and match.group(1).startswith("http") else ""
+    except Exception:
+        return ""
+    if cache is not None and url:
+        cache.put("search", "gnews-url", article, value=[{"url": url}])
+    return url
+
+
+def google_news(query: str, *, max_items: int = 8, site: str = "", engine: str = "google-news",
+                timeout: int = 15, cache=None, diagnostics=None) -> list:
+    """Google News search with publisher URLs, dates and publisher names.
+
+    `site` limits it to one publisher: Reuters is `site="reuters.com"`.
+    """
+    max_items = max(1, min(max_items, GNEWS_DECODE))
+    feed_query = query + (" site:" + site if site else "")
+    if cache is not None:
+        hit = cache.get("search", engine, query, max_items)
+        if hit is not None:
+            if diagnostics is not None:
+                diagnostics.update(status="cached", count=len(hit))
+            return hit[:max_items]
+    rows, started = [], time.monotonic()
+    try:
+        response = requests.get(GOOGLE_NEWS.format(q=quote_plus(feed_query)),
+                                timeout=timeout, headers={"User-Agent": RSS_UA})
+        if diagnostics is not None:
+            diagnostics.update(status="ok" if response.status_code == 200 else
+                               "http_" + str(response.status_code),
+                               http_status=response.status_code)
+        entries = (feedparser.parse(response.content).entries[:max_items * 2]
+                   if response.status_code == 200 else [])
+        from concurrent.futures import ThreadPoolExecutor
+        with ThreadPoolExecutor(max_workers=min(8, max(1, len(entries)))) as pool:
+            urls = list(pool.map(lambda e: _gnews_decode_one(e.get("link", ""), 8, cache),
+                                 entries))
+        undecoded = 0
+        for entry, url in zip(entries, urls):
+            publisher = (entry.get("source", {}) or {}).get("title", "")
+            title = _GN_SUFFIX.sub("", entry.get("title", "")).strip()
+            if not url:
+                undecoded += 1
+                continue
+            if not title or not constrained(query, {"url": url}):
+                continue
+            row = _norm(title=title, url=url, published=entry.get("published", ""),
+                        snippet=_TAGS.sub(" ", entry.get("summary", ""))[:600], engine=engine)
+            if publisher:
+                row["publisher"] = publisher
+            rows.append(row)
+            if len(rows) >= max_items:
+                break
+        if diagnostics is not None:
+            diagnostics.update(undecoded=undecoded,
+                               elapsed_ms=round((time.monotonic() - started) * 1000))
+    except Exception as exc:
+        rows = []
+        if diagnostics is not None:
+            diagnostics.update(status="failed", reason=adblock.error_reason(exc))
+    if cache is not None and rows:
+        cache.put("search", engine, query, max_items, value=rows)
     if diagnostics is not None:
         diagnostics["count"] = len(rows)
     return rows
@@ -1067,6 +1184,11 @@ def search(query: str, *, max_items: int = SEARCH_MENU_LIMIT, categories: str = 
         tasks["searxng"] = _SOURCE_POOL.submit(
             searxng, query, max_items=SEARCH_MENU_LIMIT, categories="news",
             cache=cache, language=language, timeout=8, diagnostics=source_reports["searxng"])
+        for name, site in NEWS_FEEDS.items():
+            source_reports[name] = {}
+            tasks[name] = _SOURCE_POOL.submit(
+                google_news, query, max_items=SUPPLEMENT_SEARCH_LIMIT, site=site, engine=name,
+                cache=cache, diagnostics=source_reports[name])
     specialists = [e for e in ("mwmbl", "crossref", "openalex", "arxiv") if e in sources]
     if specialists:
         tasks["specialist"] = _SOURCE_POOL.submit(
@@ -1099,9 +1221,9 @@ def search(query: str, *, max_items: int = SEARCH_MENU_LIMIT, categories: str = 
     news_policy = None
     if "news" in sources:
         from . import engine_policy
-        tagged = {id(row): name for name in ("searxng", "bing-news")
-                  for row in completed.get(name, [])}
-        news_rows = [row for name in ("searxng", "bing-news") for row in completed.get(name, [])]
+        news_sources = ("searxng", "bing-news", "google-news", "reuters")
+        tagged = {id(row): name for name in news_sources for row in completed.get(name, [])}
+        news_rows = [row for name in news_sources for row in completed.get(name, [])]
         engine_policy.observe("news", news_rows)
         ordered, news_policy = engine_policy.order("news", news_rows)
         for row in ([r for r in ordered if not engine_policy.is_landing(r)]
@@ -1117,12 +1239,12 @@ def search(query: str, *, max_items: int = SEARCH_MENU_LIMIT, categories: str = 
                 add(completed[engine][index:index + 1], engine)
     for name, rows in completed.items():
         if name not in {"web", "yandex", "yahoo"} and not (
-                news_policy and name in {"searxng", "bing-news"}):
+                news_policy and name in {"searxng", "bing-news", "google-news", "reuters"}):
             add(rows, name)
     if source_reports["supplements"] and "searxng" not in completed:
         per_source["searxng"] = sum(v for e in ("yandex", "yahoo")
                                            if isinstance(v := per_source.get(e, 0), int))
-    for name in ("web", "bing-news", "searxng"):
+    for name in ("web", "bing-news", "searxng", "google-news", "reuters"):
         per_source.setdefault(name, "not_requested")
 
     # Google News is discovery only: resolve a bounded number of headlines it
@@ -1134,6 +1256,8 @@ def search(query: str, *, max_items: int = SEARCH_MENU_LIMIT, categories: str = 
     if "news" not in sources or (usable_count >= max_items and not prefer_domains):
         per_source["gnews-resolved"] = ("not_requested" if "news" not in sources
                                         else "skipped_full_pool")
+    elif completed.get("google-news"):
+        per_source["gnews-resolved"] = "skipped_google_news_decoded"
     else:
         resolved, looked_up = 0, 0
         known = {_title_key(r.get("title", "")) for r in merged}

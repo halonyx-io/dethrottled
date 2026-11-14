@@ -14,6 +14,26 @@ on SearXNG 2026.11.6 with Qwant News) ran alternately, twice, in the same window
 
 "Dated" counts provider- or page-declared dates only, never snippet hints.
 
+## Round 3: Google News and Reuters engines (after the 1.8.7 deploy)
+
+| Run | Results | Dated | Dated within 48 h | Landing pages | Distinct sites | Reuters links | Median |
+|---|---|---|---|---|---|---|---|
+| Live 1.8.7 | 160 | 125 | 68 | 0 | 135 | 1 | 1.25 s |
+| Candidate | 160 | 153 | 98 | 0 | 143 | 27 | 1.43 s |
+
+Files: `round3-live.json`, `round3-cand.json`. SearXNG's own Google News engine
+scrapes `google.com/wml/search` (403 here) and its Reuters engine calls an API
+behind DataDome (401 to plain and impersonated clients). The candidate queries
+Google News RSS (200, every item dated, publisher named) and decodes each link
+to the publisher's URL through Google's own article page and batchexecute call
+(about 0.1 s each, in parallel). Reuters is the same engine with
+`site:reuters.com`. It also stops sending SearXNG the `news` category alongside
+named engines: SearXNG then added every news engine, which in 1.8.7 brought 50
+undated Brave rows, Wikinews and the two failing scrapers into each search.
+
+Reading Reuters articles remains blocked by DataDome on every tier, so Reuters
+results are citable links whose reads fail honestly.
+
 ## Why live news was undated
 
 The news profile already asked DuckDuckGo News through SearXNG, and every one of

@@ -24,7 +24,7 @@ name: dethrottled
 services:
   dethrottled:
     build: .
-    image: dethrottled-api:${DETHROTTLED_VERSION:-1.8.7}
+    image: dethrottled-api:${DETHROTTLED_VERSION:-1.8.8}
     ulimits:
       core: 0
     restart: unless-stopped
@@ -60,8 +60,9 @@ services:
       DETHROTTLED_DRIVE_SESSION_TTL: "${DETHROTTLED_DRIVE_SESSION_TTL:-1800}"
       DETHROTTLED_DRIVE_MAX_SESSIONS: "${DETHROTTLED_DRIVE_MAX_SESSIONS:-8}"
       # News engines asked through SearXNG. 14 Nov 2026 on SearXNG 2026.11.6:
-      # DuckDuckGo News and Qwant News return dated, current results; Google
-      # News, Reuters and Brave News stay off (refused, failing or undated).
+      # DuckDuckGo News and Qwant News return dated, current results. Google
+      # News and Reuters come from the API's own Google News RSS engine
+      # (DETHROTTLED_NEWS_FEEDS); Brave News stays off (undated).
       DETHROTTLED_SEARXNG_ENGINES: "${DETHROTTLED_SEARXNG_ENGINES:-duckduckgo news,qwant news,bing news}"
       DETHROTTLED_CRAWL4AI_URL: http://dnb:19888
       DETHROTTLED_CRAWL4AI_API: crawl
@@ -117,7 +118,7 @@ services:
       context: .
       dockerfile: browser-search/Dockerfile
       target: dnb
-    image: dethrottled-dnb:${DETHROTTLED_VERSION:-1.8.7}
+    image: dethrottled-dnb:${DETHROTTLED_VERSION:-1.8.8}
     group_add: ["10001"]
     init: true
     restart: unless-stopped
@@ -153,7 +154,7 @@ services:
     build:
       context: .
       dockerfile: browser-search/Dockerfile
-    image: dethrottled-browser-search:${DETHROTTLED_VERSION:-1.8.7}
+    image: dethrottled-browser-search:${DETHROTTLED_VERSION:-1.8.8}
     restart: unless-stopped
     environment:
       DETHROTTLED_BROWSER_STATE_DIR: /state
@@ -246,7 +247,7 @@ services:
     build:
       context: .
       dockerfile: docling-worker/Dockerfile
-    image: dethrottled-docling:${DETHROTTLED_VERSION:-1.8.7}
+    image: dethrottled-docling:${DETHROTTLED_VERSION:-1.8.8}
     ulimits:
       core: 0
     init: true
@@ -262,7 +263,7 @@ services:
     build:
       context: .
       dockerfile: format-worker/Dockerfile
-    image: dethrottled-formats:${DETHROTTLED_VERSION:-1.8.7}
+    image: dethrottled-formats:${DETHROTTLED_VERSION:-1.8.8}
     ulimits:
       core: 0
     init: true
@@ -276,7 +277,7 @@ services:
     build:
       context: .
       dockerfile: media-worker/Dockerfile
-    image: dethrottled-media:${DETHROTTLED_VERSION:-1.8.7}
+    image: dethrottled-media:${DETHROTTLED_VERSION:-1.8.8}
     ulimits:
       core: 0
     init: true
