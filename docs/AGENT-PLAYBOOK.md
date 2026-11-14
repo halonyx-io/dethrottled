@@ -205,7 +205,9 @@ not a request to fill every budget. See [limits](LIMITS.md).
   a step this server has learned the site refuses (for example `waymark:timeout x3`);
   a `waymark_known_wall:…` failure means the site's browser challenge has not
   cleared on recent reads, so it was not tried again. Both are retried
-  automatically later; use another source meanwhile.
+  automatically later; use another source meanwhile. A `direct` attempt with
+  `no_response_in_3s; tls answered first` means plain HTTP was silent and TLS
+  impersonation read the page instead.
 - Preserve `warnings`, `source_partial`, `truncated`, `extraction`, acquisition
   attempts/URLs, source dates, `date_source`, `source_type`, `page_type`,
   `fetch_relevance`, `tokens_estimated`, hashes and `read_plan`. `tokens_estimated`

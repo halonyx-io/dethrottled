@@ -447,6 +447,58 @@ def _binary_payload(blob, url, ctype, allow_ocr, filename=""):
         return ({}, "document_parse_failed:" + str(exc)[:120], url)
 
 
+# ── racing a silent plain request ───────────────────────────────────────────
+#
+# Some sites accept the plain connection and then never answer it, so the read
+# sits out the whole timeout before TLS gets its turn: 18.7 s per read on
+# nseindia.com, npr.org and pogo.org (14 Nov 2026), which TLS then read in
+# about a second. Shortening the timeout is not an option: 31 of 952 recorded
+# plain-HTTP successes took over 5 s, mostly large PDFs and slow government
+# sites. So when plain HTTP has had no response at all for TLS_HEDGE_SECONDS,
+# TLS starts alongside it and the first usable answer wins. A response that
+# has begun (a download in progress) is never raced, and when plain HTTP does
+# answer first the TLS result is reused by the TLS step, not fetched twice.
+TLS_HEDGE_SECONDS = float(os.environ.get("DETHROTTLED_TLS_HEDGE_SECONDS", "3"))
+_DIRECT_RESPONDED = ContextVar("direct_responded", default=None)
+_HEDGE_POOL = None
+
+
+def _hedge_pool():
+    global _HEDGE_POOL
+    if _HEDGE_POOL is None:
+        from .concurrency import ContextExecutor
+        _HEDGE_POOL = ContextExecutor(max_workers=16, thread_name_prefix="tls-hedge")
+    return _HEDGE_POOL
+
+
+def _race_direct(direct, tls):
+    """Run direct; start tls if direct is silent. Returns (direct_result or None,
+    tls_future or None, tls_won_result or None, direct_elapsed_ms)."""
+    from concurrent.futures import FIRST_COMPLETED, wait
+    from concurrent.futures import TimeoutError as FutureTimeout  # not builtin on 3.10
+    started = time.monotonic()
+    responded = threading.Event()
+    token = _DIRECT_RESPONDED.set(responded)
+    try:
+        direct_future = _hedge_pool().submit(direct)
+    finally:
+        _DIRECT_RESPONDED.reset(token)
+    try:
+        return direct_future.result(timeout=TLS_HEDGE_SECONDS), None, None, None
+    except FutureTimeout:
+        pass
+    if responded.is_set():
+        return direct_future.result(), None, None, None
+    tls_future = _hedge_pool().submit(tls)
+    done, _ = wait({direct_future, tls_future}, return_when=FIRST_COMPLETED)
+    if tls_future in done and direct_future not in done:
+        payload, reason, final = tls_future.result()
+        if payload and "challenge" not in reason:
+            return None, None, (payload, reason, final), round(
+                (time.monotonic() - started) * 1000, 2)
+    return direct_future.result(), tls_future, None, None
+
+
 def _tier_direct(url: str, timeout: int, allow_ocr: bool = False) -> tuple:
     from .identity import POOL
     options = _READ_OPTIONS.get()
@@ -473,6 +525,9 @@ def _tier_direct_once(url: str, timeout: int, allow_ocr: bool = False, *, get=No
                 "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
                 "Accept-Language": "en-US,en;q=0.9",
             })
+        responded = _DIRECT_RESPONDED.get()
+        if responded is not None:
+            responded.set()  # the response has begun: never race a download
         if response.status_code != 200:
             # The response is streamed specifically to bound memory use. Do
             # not read ``response.content`` here: an error page can itself be
@@ -1268,7 +1323,12 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
     alternatives = []
     script_shell = False
     last_attempted = None
+    tls_run = dict(tiers).get("tls")
+    tls_running = None   # a TLS request the race started, reused by the TLS step
+    raced = set()        # steps already answered by the race
     for name, run in tiers:
+        if name in raced:
+            continue
         if name == "headed" and not (
                 challenged or script_shell or polluted
                 or _READ_OPTIONS.get().get("headed_fallback")):
@@ -1314,7 +1374,23 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
             continue
         last_attempted = name
         attempt_started = time.monotonic()
-        payload, reason, final = run()
+        if name == "tls" and tls_running is not None:
+            payload, reason, final = tls_running.result()  # started by the race
+            tls_running = None
+        elif (name == "direct" and TLS_HEDGE_SECONDS > 0 and tls_run is not None
+                and "tls" not in learned["skip"] and not tier_resting("tls")):
+            result, tls_running, tls_won, silent_ms = _race_direct(run, tls_run)
+            if tls_won is not None:
+                attempts.append({"tier": "direct", "outcome": "failed", "elapsed_ms": silent_ms,
+                                 "reason": "no_response_in_%gs; tls answered first"
+                                 % TLS_HEDGE_SECONDS})
+                reasons.append("direct:silent")
+                name = last_attempted = "tls"
+                raced.add("tls")
+                result = tls_won
+            payload, reason, final = result
+        else:
+            payload, reason, final = run()
         attempt = {"tier": name, "reason": reason, "outcome": "response" if payload else "failed",
                    "elapsed_ms": round((time.monotonic() - attempt_started) * 1000, 2)}
         status = re.fullmatch(r"(?:tls_)?http_(\d{3})", reason)

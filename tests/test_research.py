@@ -220,3 +220,38 @@ def test_research_preserves_authoritative_discovery_outcome(monkeypatch):
     assert first["attempts"][0]["status"] == "http_429"
     assert second["outcome"] == "indeterminate" and second["degraded"]
     assert second["error"] == "RuntimeError"
+
+
+def test_research_refills_while_a_slow_source_is_still_running(monkeypatch):
+    """A failed read's replacement starts at once instead of after its batch.
+
+    Old batches: [wall 0.6 s, quick-fail] then [slow-a 0.5 s, b] = about 1.1 s.
+    Continuous refill overlaps them: about 0.65 s. Order is still selection order.
+    """
+    import time as _time
+    monkeypatch.setattr(engine, "public_url", lambda url: True)
+    monkeypatch.setattr(server, "index_fetched", lambda rows: 0)
+    delays = {"wall": 0.6, "quick-fail": 0.0, "slow-a": 0.5, "b": 0.05}
+
+    def ranked(body):
+        return ([{"url": "https://%s.example/r" % name, "title": name} for name in delays],
+                {"elapsed_ms": 1}, 8)
+
+    def extracted(url, max_chars, **kwargs):
+        name = url.split("//")[1].split(".")[0]
+        _time.sleep(delays[name])
+        if name in {"wall", "quick-fail"}:
+            return {"url": url, "quality": "failed", "content": "", "failure_reason": name}
+        return {"url": url, "quality": "ok", "title": "",
+                "content": "Unique report text for %s about solar capacity." % url}
+
+    monkeypatch.setattr(server, "_ranked", ranked)
+    monkeypatch.setattr(server, "_extract_row", extracted)
+    started = _time.monotonic()
+    body = TestClient(server.app).post(
+        "/research", json={"question": "solar capacity?", "max_sources": 2,
+                           "queries": ["a facet"]}).json()
+    elapsed = _time.monotonic() - started
+    assert [row["url"] for row in body["sources"]] == [
+        "https://slow-a.example/r", "https://b.example/r"]
+    assert elapsed < 0.95, elapsed

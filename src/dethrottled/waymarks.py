@@ -132,6 +132,8 @@ def _failure_kind(attempt: dict) -> str | None:
         return "wall:" + reason.rsplit(":", 1)[-1]
     if outcome == "challenge" or "challenge" in reason:
         return "challenge"
+    if reason.startswith("no_response_in_"):
+        return "silent"  # TLS answered while plain HTTP had not (fetch._race_direct)
     if any(word in reason for word in ("Timeout", "ConnectionError", "SSLError")):
         return "timeout"
     if any(reason.endswith(code) for code in ("_403", "_429", "_401", "_451")):
