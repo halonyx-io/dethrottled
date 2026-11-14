@@ -3,6 +3,7 @@
 Measured cases behind each rule are in src/dethrottled/waymarks.py.
 """
 import json
+import os
 
 import pytest
 from test_fetch_internals import ARTICLE, tier
@@ -95,7 +96,8 @@ def test_the_file_holds_no_hosts_paths_or_callers(tmp_path):
     for secret in ("example", "news", "story", "agent-a"):
         assert secret not in text
     assert json.loads(text)
-    assert oct((tmp_path / "waymarks.key").stat().st_mode & 0o777) == "0o600"
+    if os.name == "posix":  # Windows has no POSIX permission bits
+        assert oct((tmp_path / "waymarks.key").stat().st_mode & 0o777) == "0o600"
 
 
 def test_skipped_steps_are_probed_again_after_the_probe_interval(monkeypatch):
