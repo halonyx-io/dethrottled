@@ -219,3 +219,137 @@ def test_failed_navigation_is_not_masked_by_parking(monkeypatch):
         close.assert_awaited_once()
 
     run(check())
+
+
+# ── concurrent same-owner, same-site renders share the context as tabs ──────
+# 14 Nov: research reading three react.dev pages at once got 409 for two of
+# them, which then fell back to unrendered HTTP without saying why.
+
+def _tab_pool(max_tabs=3, **kwargs):
+    from contextlib import asynccontextmanager
+    opened, closed_tabs = [], []
+
+    @asynccontextmanager
+    async def fork(state):
+        view = {**state, "tab": len(opened) + 1}
+        opened.append(view)
+        try:
+            yield view
+        finally:
+            closed_tabs.append(view)
+
+    close = AsyncMock()
+    pool = ContextPool(AsyncMock(return_value={"id": "ctx"}), close, fork=fork,
+                       max_tabs=max_tabs, **kwargs)
+    return pool, opened, closed_tabs, close
+
+
+def test_a_busy_context_lends_tabs_up_to_the_limit():
+    async def check():
+        pool, _opened, closed_tabs, close = _tab_pool(max_tabs=3)
+        async with pool.lease("alice"):
+            async with pool.lease("alice") as (one, reused):
+                assert reused and one["id"] == "ctx" and one["tab"] == 1
+                async with pool.lease("alice") as (two, _):
+                    assert two["tab"] == 2
+                    with pytest.raises(HTTPException) as error:
+                        async with pool.lease("alice"):
+                            pass
+                    assert error.value.status_code == 409
+        assert len(closed_tabs) == 2 and pool.entries["alice"].tabs == 0
+        close.assert_not_awaited()
+        await pool.shutdown()
+
+    run(check())
+
+
+def test_a_tab_outliving_the_main_lease_keeps_the_context_alive():
+    async def check():
+        pool, _, _, close = _tab_pool(ttl=0)
+        main_done, tab_go = asyncio.Event(), asyncio.Event()
+
+        async def main():
+            async with pool.lease("alice"):
+                tab_go.set()
+                await asyncio.sleep(0)
+            main_done.set()
+
+        async def tab():
+            await tab_go.wait()
+            async with pool.lease("alice"):
+                await main_done.wait()
+                await pool.reap()  # ttl 0: would close an idle context
+                close.assert_not_awaited()
+                assert "alice" in pool.entries
+
+        await asyncio.gather(main(), tab())
+        await pool.reap()
+        close.assert_awaited_once()
+
+    run(check())
+
+
+def test_a_failing_tab_does_not_close_the_shared_context():
+    async def check():
+        pool, _, closed_tabs, close = _tab_pool()
+        async with pool.lease("alice"):
+            with pytest.raises(RuntimeError):
+                async with pool.lease("alice"):
+                    raise RuntimeError("page crashed")
+            assert closed_tabs and "alice" in pool.entries
+        close.assert_not_awaited()
+        await pool.shutdown()
+
+    run(check())
+
+
+def test_without_a_fork_busy_still_means_409():
+    async def check():
+        pool = ContextPool(AsyncMock(return_value={}), AsyncMock())
+        async with pool.lease("alice"):
+            with pytest.raises(HTTPException) as error:
+                async with pool.lease("alice"):
+                    pass
+            assert error.value.status_code == 409
+        await pool.shutdown()
+
+    run(check())
+
+
+def test_a_tab_request_waits_for_a_context_still_being_created():
+    """Concurrent requests arrive together: the release gate saw two of three
+    refused in 8 ms because the first was still creating the context."""
+    async def check():
+        from contextlib import asynccontextmanager
+        created = asyncio.Event()
+
+        async def create():
+            await created.wait()
+            return {"id": "ctx"}
+
+        @asynccontextmanager
+        async def fork(state):
+            yield {**state, "tab": True}
+
+        pool = ContextPool(create, AsyncMock(), fork=fork, max_tabs=3)
+        results = []
+
+        async def main():
+            async with pool.lease("alice") as (state, _):
+                results.append(state)
+                await asyncio.sleep(0.05)
+
+        async def tab():
+            await asyncio.sleep(0.01)  # main has the entry, context not ready
+            async with pool.lease("alice") as (view, _reused):
+                results.append(view)
+
+        async def release():
+            await asyncio.sleep(0.02)
+            created.set()
+
+        await asyncio.gather(main(), tab(), release())
+        assert any(r.get("tab") for r in results) and len(results) == 2
+        await pool.shutdown()
+
+    run(check())

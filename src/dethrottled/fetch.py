@@ -1157,6 +1157,24 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
     budget_started = time.time()
 
     attempts = []
+    # Waymarks: steps this site has repeatedly failed while a later one worked,
+    # and sites whose browser challenge never clears. See waymarks.py.
+    from . import waymarks as _waymarks
+    learned = _waymarks.plan(url, _READ_OPTIONS.get().get("admission_key", "local"))
+    if learned["wall"] and not _READ_OPTIONS.get().get("headed_fallback"):
+        wall = learned["wall"]
+        reason = ("waymark_known_wall:%s; the real browser failed this site's challenge "
+                  "on the last %d reads; retried automatically after %d s"
+                  % (wall["kind"], wall["streak"], wall["retry_after_seconds"]))
+        _tier_stats["failed"] += 1
+        return {"ok": False, "text": "", "tier": "headed", "extractor": None,
+                "title": "", "published": "", "chars": 0, "url": url,
+                "reason": reason, "cached": False, "waymark_wall": True,
+                "acquisition_attempts": [{"tier": "headed", "outcome": "skipped",
+                                          "reason": "waymark:known_wall:" + wall["kind"],
+                                          "elapsed_ms": 0, "waymark": wall}],
+                "source_alternatives": []}
+
     # Set when this read needed the renderer and could not have it. Such a read
     # is degraded by our own capacity, not by the page: say so, and do not
     # cache it, or the thin copy outlives the outage.
@@ -1254,6 +1272,16 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
         if name == "headed" and not (
                 challenged or script_shell or polluted
                 or _READ_OPTIONS.get().get("headed_fallback")):
+            continue
+        if name in learned["skip"]:
+            why = learned["skip"][name]
+            attempts.append({"tier": name, "outcome": "skipped", "elapsed_ms": 0,
+                             "reason": "waymark:%s x%d" % (why["kind"], why["streak"]),
+                             "waymark": why})
+            reasons.append("%s:skipped_by_waymark" % name)
+            # A step skipped for its challenges still means this site
+            # challenges: keep the real-browser rung available.
+            challenged = challenged or why["kind"] in {"challenge", "blocked"}
             continue
         # A resting tier is skipped without being asked. This is the smooth
         # transition: the ladder simply gets shorter for a while and the rungs
@@ -1697,6 +1725,9 @@ def fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAULT
             if not public_url(result["url"]):
                 return {"ok": False, "text": "", "reason": "redirect_target_not_public",
                         "cached": False, "tier": None}
+        if not result.get("cached") and not result.get("renderer_unavailable"):
+            from . import waymarks
+            waymarks.observe(url, result.get("acquisition_attempts") or [], admission_key)
         return result
     finally:
         _READ_OPTIONS.reset(token)

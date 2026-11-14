@@ -67,7 +67,7 @@ from fastapi import BackgroundTasks, FastAPI, HTTPException
 #
 # Three places claiming a version is two too many.
 from . import __version__ as VERSION
-from . import consensus, dedupe, dpr, providers, rerank, semantic_cache, signals, workers
+from . import consensus, dedupe, dpr, providers, rerank, semantic_cache, signals, waymarks, workers
 from . import domains as domain_health
 from . import extract as fx
 from . import fetch as fetcher
@@ -410,7 +410,8 @@ def _extract_once(url: str, max_chars: int, allow_ocr: bool = True,
     # site -- it says the cache worked, which is a different fact -- so only
     # live attempts count.
     # Nor is a read our own renderer could not serve: that outage is ours.
-    if not result.get("cached") and not result.get("renderer_unavailable"):
+    if (not result.get("cached") and not result.get("renderer_unavailable")
+            and not result.get("waymark_wall")):
         domain_health.record(url, result["ok"])
 
     if not result["ok"]:
@@ -590,6 +591,9 @@ def stop_multilingual_backfill():
     from . import corpus
     if hasattr(corpus._SHARED_CORPUS, "stop"):
         corpus._SHARED_CORPUS.stop()
+    # Learned records are saved at most once a minute; keep the last minute.
+    domain_health.flush()
+    waymarks.flush()
 
 
 @app.get("/health")
@@ -1919,6 +1923,13 @@ def corpus_stats():
         return {"ok": False, "reason": str(exc)[:200], "models": {}}
 
 
+def _counts_only(health: dict) -> dict:
+    domains = health.get("domains", {})
+    return {key: value for key, value in health.items() if key != "domains"} | {
+        "deprioritised": sum(1 for row in domains.values() if row.get("deprioritised")),
+        "domains_hidden": "domain names are shown only to the local operator"}
+
+
 @app.get("/stats")
 def stats():
     # Surface renderer admission, rolling budgets and cooldown state.
@@ -1927,7 +1938,11 @@ def stats():
             "headed_admission": fetcher._HEADED_QUEUE.stats(),
             "cache": cache().stats(), "version": VERSION,
             "tiers_resting": fetcher.tier_rest_state(),
-            "domain_health": domain_health.stats(),
+            # Domain names are what callers read. Remote callers (adapter
+            # tokens) get counts only; the operator on this host sees names.
+            "domain_health": (domain_health.stats() if CLAIMS.get() is None
+                              else _counts_only(domain_health.stats())),
+            "waymarks": waymarks.stats(),
             "uptime_seconds": int(time.time() - STARTED),
             "tiers": fetcher.tier_stats(),
             "tier_budget_used": fetcher.budget_state(),

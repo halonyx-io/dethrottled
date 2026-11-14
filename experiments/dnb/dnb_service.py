@@ -164,7 +164,23 @@ async def close_state(state):
     await cleanup(dispose())
 
 
-POOL = ContextPool(create_state, close_state, pressure=memory_pressure)
+@asynccontextmanager
+async def open_tab(state):
+    """A per-request view on a new tab of a context that is already rendering."""
+    page = await state["context"].new_page()
+    tabs = state.setdefault("_tab_pages", set())
+    tabs.add(page)
+    try:
+        yield {**state, "page": page, "events": browser._new_event_store(),
+               "responses": [], "_dnb_cdp": None, "_lent_tab": True}
+    finally:
+        tabs.discard(page)
+        await cleanup(page.close())
+
+
+RENDER_TABS = max(1, int(os.getenv("DETHROTTLED_RENDER_TABS_PER_CONTEXT", "3")))
+POOL = ContextPool(create_state, close_state, pressure=memory_pressure,
+                   fork=open_tab, max_tabs=RENDER_TABS)
 ORIGINAL_LIFESPAN = app.router.lifespan_context
 
 
@@ -322,10 +338,11 @@ async def render_state(key):
             await ephemeral.shutdown()
         return
     async with POOL.lease(key) as (state, reused):
-        if reused and key[-1] == "fresh":
+        if reused and key[-1] == "fresh" and not state.get("_lent_tab"):
             # Keep the same owner's storage, but discard the previous DOM and
             # all popups. A fresh context is never reassigned to another owner.
-            old_pages = list(state["context"].pages)
+            old_pages = [page for page in state["context"].pages
+                         if page not in state.get("_tab_pages", ())]
             state["page"] = await state["context"].new_page()
             for page in old_pages:
                 await page.close()
@@ -337,8 +354,10 @@ async def render_state(key):
         except BaseException:
             raise  # Pool discards the context; do not mask the original failure.
         else:
+            if state.get("_lent_tab"):
+                return  # open_tab closes the lent tab
             for page in list(state["context"].pages):
-                if page != state["page"]:
+                if page != state["page"] and page not in state.get("_tab_pages", ()):
                     await page.close()
             # Release the source DOM and its timers after capture. Keep the
             # same owner's tab/context/storage warm, not a live website running.

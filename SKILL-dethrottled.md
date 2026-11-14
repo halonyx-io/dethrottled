@@ -75,6 +75,9 @@ Names are the MCP tools; the HTTP route does the same job on the raw API
   read a wall, not the content, even if the text is long.
 - A `renderer_unavailable:…` warning means the server's renderer was busy, so
   the page may be incomplete. It is not cached: fetch again shortly.
+- A `waymark_known_wall:…` failure means the site's challenge page has beaten
+  the browser on recent reads. It is retried automatically later; find another
+  source rather than retrying now.
 - `content_status` `partial`, `source_partial` or `truncated` mean there is more.
   Continue with `read_document` from `next_offset`; do not fetch again.
 - Keep `url`, `document_id` and the date with anything you quote. Cite the source,

@@ -201,6 +201,11 @@ not a request to fill every budget. See [limits](LIMITS.md).
   renderer and this server could not provide it at that moment (busy, low on
   memory or resting). The result is not cached; fetch again shortly rather
   than treating the page as empty.
+  An acquisition attempt with `outcome: "skipped"` and a `waymark:…` reason is
+  a step this server has learned the site refuses (for example `waymark:timeout x3`);
+  a `waymark_known_wall:…` failure means the site's browser challenge has not
+  cleared on recent reads, so it was not tried again. Both are retried
+  automatically later; use another source meanwhile.
 - Preserve `warnings`, `source_partial`, `truncated`, `extraction`, acquisition
   attempts/URLs, source dates, `date_source`, `source_type`, `page_type`,
   `fetch_relevance`, `tokens_estimated`, hashes and `read_plan`. `tokens_estimated`
