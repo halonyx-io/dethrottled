@@ -1,0 +1,466 @@
+{
+ "endpoint": "candidate",
+ "at": "2026-11-14T04:55:56.984708+00:00",
+ "queries": {
+  "FAA ground stop": {
+   "results": 8,
+   "dated": 8,
+   "recent_48h": 8,
+   "hub": 0,
+   "landing_dated": 0,
+   "stale_top4": 0,
+   "social": 0,
+   "domains": 7,
+   "elapsed": 2.49,
+   "urls": [
+    "https://www.msn.com/en-us/news/news/faa-lifts-hourslong-ground-stop-that-halted-flights-nationwide-but-delays-continue/ar-AA2hoOsu",
+    "https://6abc.com/post/faa-ground-stop-sends-stranded-travelers-philadelphias-30th-street-station/20039465/",
+    "https://apnews.com/live/ground-stop-aviation-flights-news-updates-11-13-2026",
+    "https://www.reuters.com/business/aerospace-defense/us-flight-shutdown-exposes-deepening-air-traffic-network-crisis-2026-11-14/",
+    "https://www.msn.com/en-us/news/other/faa-ground-stop-lifted-why-were-us-flights-grounded-and-what-s-next/ar-AA2hoYTN",
+    "https://www.nbcnews.com/news/us-news/live-blog/live-updates-flights-grounded-faa-communications-outage-rcna609268",
+    "https://www.kcra.com/article/faa-ground-stop-raises-questions-after-rollout-of-new-ai-air-traffic-system/74428995",
+    "https://nypost.com/2026/11/13/sports/cornell-game-postponed-as-historic-faa-ground-stop-hits-college-basketball/"
+   ]
+  },
+  "Trump Xi meeting": {
+   "results": 8,
+   "dated": 8,
+   "recent_48h": 8,
+   "hub": 0,
+   "landing_dated": 0,
+   "stale_top4": 0,
+   "social": 0,
+   "domains": 8,
+   "elapsed": 1.0,
+   "urls": [
+    "https://www.msn.com/en-us/news/other/trump-putin-and-xi-plan-historic-joint-meeting-in-china-next-week-white-house-says/ar-AA2hpb9O",
+    "https://www.washingtonpost.com/politics/2026/11/13/trump-meet-with-putin-xi-jinping/",
+    "https://www.bbc.com/news/articles/ckz74jzpy18do",
+    "https://www.reuters.com/world/china/trump-hold-summit-with-xi-putin-shenzhen-thursday-ny-post-reports-2026-11-13/",
+    "https://www.nytimes.com/2026/11/13/us/politics/trump-putin-xi-china-nuclear-proliferation.html",
+    "https://nypost.com/2026/11/13/us-news/trump-will-have-historic-meeting-with-xi-putin-in-china/",
+    "https://timesofindia.indiatimes.com/world/us/nvidia-in-chaos-trump-unlikely-to-raise-alice-huang-allegations-with-xi-jinping-during-china-meeting/articleshow/135820399.cms",
+    "https://wtop.com/national/2026/11/trump-xi-and-putin-to-hold-unprecedented-talks-in-china-next-week-that-could-cover-nuclear-stockpiles-white-house-says/"
+   ]
+  },
+  "Nvidia news": {
+   "results": 8,
+   "dated": 8,
+   "recent_48h": 7,
+   "hub": 0,
+   "landing_dated": 0,
+   "stale_top4": 0,
+   "social": 0,
+   "domains": 8,
+   "elapsed": 1.45,
+   "urls": [
+    "https://www.inc.com/victoria-salves/jensen-huang-said-people-dont-quit-from-nvidia-less-than-6-months-later-he-did/91435954",
+    "https://www.nationalreview.com/corner/china-wins-twice",
+    "https://www.bloomberg.com/news/articles/2026-11-13/inside-jensen-huang-s-final-hours-as-the-ceo-of-nvidia",
+    "https://www.reuters.com/world/china/ex-nvidia-ceo-misled-top-lawyer-affair-with-chinese-businesswoman-sources-say-2026-11-14/",
+    "https://www.msn.com/en-my/news/other/jensen-huang-faces-third-workplace-relationship-allegation-after-nvidia-resignation/ar-AA2hkrtw",
+    "https://gizmodo.com/nvidia-employees-are-pushing-for-a-sam-altman-2-0-2000839719",
+    "https://finance.yahoo.com/markets/stocks/articles/nvidia-director-sold-nearly-1b-160000846.html",
+    "https://foreignpolicy.com/2026/11/13/foreign-policy-news-quiz-nvidia-huang-resignation-pope-leo-cop31/"
+   ]
+  },
+  "OpenAI news": {
+   "results": 8,
+   "dated": 8,
+   "recent_48h": 8,
+   "hub": 0,
+   "landing_dated": 0,
+   "stale_top4": 0,
+   "social": 0,
+   "domains": 8,
+   "elapsed": 0.91,
+   "urls": [
+    "https://www.cnbc.com/2026/11/13/openai-chatgpt-wallet-dot-purchases.html",
+    "https://seekingalpha.com/news/4672622-openai-dissolves-stand-alone-robotics-team-report",
+    "https://openai.com/index/introducing-chatgpt-wallet/",
+    "https://www.reuters.com/technology/openai-launches-chatgpt-wallet-letting-ai-agents-pay-purchases-2026-11-13/",
+    "https://note.com/lisalisa7/n/n7fef7fd3e86a?hl=en",
+    "https://mashable.com/tech/openai-launches-chatgpt-wallet",
+    "https://fortune.com/2026/11/13/openai-disbands-robotics-team-as-its-general-models-start-running-robots/",
+    "https://www.nytimes.com/2026/11/13/technology/anthropic-dario-amodei-ai-openai.html"
+   ]
+  },
+  "Anthropic IPO": {
+   "results": 8,
+   "dated": 8,
+   "recent_48h": 7,
+   "hub": 0,
+   "landing_dated": 0,
+   "stale_top4": 0,
+   "social": 0,
+   "domains": 6,
+   "elapsed": 1.12,
+   "urls": [
+    "https://finance.yahoo.com/markets/stocks/articles/anthropic-ipo-buy-day-one-121251355.html",
+    "https://www.nytimes.com/2026/11/13/business/anthropic-ipo-roadshow.html",
+    "https://www.ft.com/content/0ef40ac9-6d01-428f-98c8-a52bf5b9a787?syn-25a6b1a6",
+    "https://www.reuters.com/business/finance/investors-flock-anthropic-ipo-question-durability-ai-lead-2026-11-13/",
+    "https://www.msn.com/en-us/news/other/exclusive-investors-flock-to-anthropic-ipo-but-question-durability-of-ai-lead/ar-AA2hoI8x",
+    "https://www.msn.com/en-us/money/investment/anthropic-set-its-ipo-share-price-range-at-70-to-78-valuing-it-at-up-to-1-4-trillion/ar-AA2hnO5L",
+    "https://finance.yahoo.com/markets/stocks/articles/anthropic-ipo-six-times-oversubscribed-210014195.html",
+    "https://www.techmeme.com/261113/p18"
+   ]
+  },
+  "stock market today": {
+   "results": 8,
+   "dated": 8,
+   "recent_48h": 4,
+   "hub": 0,
+   "landing_dated": 0,
+   "stale_top4": 0,
+   "social": 0,
+   "domains": 6,
+   "elapsed": 1.2,
+   "urls": [
+    "https://finance.yahoo.com/markets/stocks/articles/stock-market-today-nov-13-222002466.html",
+    "https://www.barrons.com/livecoverage/stock-market-news-today-111126/card/u-s-inflation-makes-further-fed-rate-rise-in-december-inevitable-mnbdGVbpOlUrG7nKjBTd",
+    "https://www.cnbc.com/2026/11/12/stock-market-today-live-updates.html",
+    "https://www.reuters.com/business/nasdaq-futures-fall-nvidia-turmoil-rattles-ai-stocks-2026-11-12/",
+    "https://seekingalpha.com/article/4967571-brookfield-q3-the-market-is-sleeping-on-a-high-quality-stock",
+    "https://www.reuters.com/business/finance/after-us-market-shake-out-signs-suggest-too-soon-say-worst-is-over-2026-11-11/",
+    "https://www.msn.com/en-us/news/other/stock-market-today-s-p-500-nasdaq-slide-as-nvidia-shares-drop-further-tech-stocks-sink-major-indexes-remain-on-track-to-post-weekly-gains/ar-AA2hnkgh",
+    "https://seekingalpha.com/article/4966554-stock-market-is-at-record-valuation-but-that-isnt-recession-signal"
+   ]
+  },
+  "Federal Reserve interest rates": {
+   "results": 8,
+   "dated": 7,
+   "recent_48h": 3,
+   "hub": 0,
+   "landing_dated": 0,
+   "stale_top4": 0,
+   "social": 0,
+   "domains": 7,
+   "elapsed": 1.49,
+   "urls": [
+    "https://www.forbes.com/sites/simonmoore/2026/11/13/waller-floats-prospect-of-larger-december-interest-rate-hike/",
+    "https://reason.com/2026/11/11/rate-hike/",
+    "https://www.wsj.com/economy/central-banking/federal-reserve-to-forgo-rate-decision-at-october-2027-meeting-99c5523f",
+    "https://www.reuters.com/business/feds-williams-says-central-bank-has-work-do-get-inflation-back-target-2026-11-13/",
+    "https://www.msn.com/en-us/news/other/feds-paulson-calls-for-gradual-rate-hikes-amid-ongoing-high-inflation/ar-AA2hb6A1",
+    "https://www.cbsnews.com/news/interest-rates-federal-reserve-inflation/",
+    "https://www.reuters.com/business/fed-has-time-calibrate-rate-hikes-daly-says-2026-11-12/",
+    "https://www.federalreserve.gov/releases/h15/"
+   ]
+  },
+  "Bitcoin price news": {
+   "results": 8,
+   "dated": 8,
+   "recent_48h": 3,
+   "hub": 0,
+   "landing_dated": 0,
+   "stale_top4": 0,
+   "social": 0,
+   "domains": 7,
+   "elapsed": 1.03,
+   "urls": [
+    "https://finance.yahoo.com/markets/crypto/articles/bitcoin-never-set-another-time-040000538.html",
+    "https://www.coindesk.com/markets/2026/11/13/bitcoin-dips-below-usd70-000-as-selloff-gathers-pace",
+    "https://www.sportsmole.co.uk/football/barcelona/transfer-talk/news/barca-learn-asking-price-for-ajax-star-baas-ahead-of-january-transfer-window_608915.html",
+    "https://www.reuters.com/business/cryptocurrencies-slide-two-month-lows-after-us-midterms-2026-11-08/",
+    "https://www.msn.com/en-us/money/top-stocks/why-is-bitcoin-down-today-bitcoin-price-hits-12-week-low-as-msci-drops-strategy/ar-AA2hjwbt",
+    "https://www.fxstreet.com/cryptocurrencies/news/top-3-price-predictions-bitcoin-ethereum-ripple-btc-eth-and-xrp-extend-losses-as-downside-momentum-dominates-202611130342",
+    "https://www.jalopnik.com/2312631/average-new-car-price-hits-record-high-october-2026/",
+    "https://www.reuters.com/legal/government/trump-administrations-embrace-perp-futures-sets-off-risk-alarms-wall-street-2026-11-09/"
+   ]
+  },
+  "Ukraine war latest": {
+   "results": 8,
+   "dated": 8,
+   "recent_48h": 7,
+   "hub": 0,
+   "landing_dated": 0,
+   "stale_top4": 0,
+   "social": 0,
+   "domains": 7,
+   "elapsed": 0.84,
+   "urls": [
+    "https://www.yahoo.com/news/world/articles/ukraine-war-latest-ex-pm-194151381.html",
+    "https://www.the-independent.com/news/world/europe/ukraine-russia-war-live-second-car-bomb-zavorotniy-b3084409.html",
+    "https://www.courant.com/2026/11/13/godzilla-minus-zero/",
+    "https://www.reuters.com/world/europes-security-cannot-be-part-ukraine-peace-talks-eu-leaders-say-2026-11-13/",
+    "https://www.theguardian.com/world/2026/nov/14/ukraine-war-briefing-zelenskyy-says-starshield-restrictions-continue-on-entire-front-line",
+    "https://www.bbc.com/news/articles/cq39glwprknjo",
+    "https://www.washingtonpost.com/world/2026/11/12/after-meeting-putin-us-envoys-say-europe-join-talks-ending-ukraine-war/",
+    "https://www.reuters.com/world/europe/russia-says-europeans-can-join-ukraine-peace-talks-if-they-show-readiness-2026-11-13/"
+   ]
+  },
+  "Gaza ceasefire": {
+   "results": 8,
+   "dated": 7,
+   "recent_48h": 3,
+   "hub": 0,
+   "landing_dated": 0,
+   "stale_top4": 0,
+   "social": 0,
+   "domains": 8,
+   "elapsed": 1.44,
+   "urls": [
+    "https://www.afp.com/en/israeli-strike-gaza-hospital-deadliest-election",
+    "https://www.themarysue.com/israel-says-strikes-targeted-a-hamas-commander-at-nasser-hospital-in-gaza-during-a-ceasefire-then-hospital-staff-reports-who-actually-died/",
+    "https://www.reuters.com/world/middle-east/israeli-strike-southern-gaza-hospital-kills-four-gaza-civil-defence-says-2026-11-11/",
+    "https://www.channelnewsasia.com/world/israel-gaza-strike-nasser-hospital-11-killed-6547556",
+    "https://www.yahoo.com/news/world/articles/israeli-strike-gaza-hospital-kills-130428908.html",
+    "https://aa.com.tr/en/middle-east/israeli-attacks-kill-6-palestinians-injure-around-20-in-gaza-despite-ceasefire/4124535",
+    "https://www.middleeastmonitor.com/20261113-israeli-attacks-kill-6-palestinians-injure-around-20-in-gaza-despite-ceasefire/",
+    "https://en.wikipedia.org/wiki/Timeline_of_the_Gaza_war_(3_October_2025_\u2013_present)"
+   ]
+  },
+  "earthquake today": {
+   "results": 8,
+   "dated": 7,
+   "recent_48h": 4,
+   "hub": 0,
+   "landing_dated": 0,
+   "stale_top4": 0,
+   "social": 0,
+   "domains": 7,
+   "elapsed": 0.85,
+   "urls": [
+    "https://www.msn.com/en-us/weather/general/lane-county-faces-billions-in-damage-from-a-cascadia-earthquake/ar-AA2hi0gL",
+    "https://www.yahoo.com/news/science/articles/research-modeling-major-earthquake-socal-192655567.html",
+    "https://www.androidpolice.com/android-earthquake-alerts-explained/",
+    "https://www.reuters.com/commentary/reuters-open-interest/global-markets-trading-day-graphic-2026-11-12/",
+    "https://www.msn.com/en-my/news/other/rapid-fire-earthquakes-hit-nevada-where-the-ground-is-slowly-ripping-apart/ar-AA2hn3K2",
+    "https://japantoday.com/category/national/m5.7-quake-strikes-central-japan-over-20-injured",
+    "https://bigislandnow.com/2026/11/13/volcano-watch-beneath-the-boardwalk-the-scientific-legacy-of-ha\u02bbakulamanu/",
+    "https://earthquake.usgs.gov/earthquakes/map/"
+   ]
+  },
+  "hurricane warning": {
+   "results": 8,
+   "dated": 7,
+   "recent_48h": 3,
+   "hub": 0,
+   "landing_dated": 0,
+   "stale_top4": 0,
+   "social": 0,
+   "domains": 7,
+   "elapsed": 1.06,
+   "urls": [
+    "https://www.newsweek.com/senate-moves-to-strengthen-noaa-forecasting-with-2-9-billion-proposal-12712048",
+    "https://www.msn.com/en-us/news/other/buchanan-co-sponsors-bill-to-improve-hurricane-warnings-for-older-adults-people-with-disabilities/ar-AA2ha5yt",
+    "https://www.reuters.com/technology/us-national-weather-service-reports-nationwide-internet-communications-issues-2026-11-13/",
+    "https://www.nytimes.com/2026/11/13/opinion/florida-republicans-democrats.html",
+    "https://www.reuters.com/world/middle-east/two-oil-tankers-disabled-by-explosions-strait-hormuz-irgc-says-2026-11-12/",
+    "https://beinsure.com/news/alaska-winter-storm-warning-up-to-12inches-of-snow/",
+    "https://www.staradvertiser.com/2026/11/11/breaking-news/gale-warning-wind-and-high-surf-advisories-in-effect-for-parts-of-hawaii/",
+    "https://www.accuweather.com/en/hurricane"
+   ]
+  },
+  "SpaceX launch": {
+   "results": 8,
+   "dated": 8,
+   "recent_48h": 6,
+   "hub": 0,
+   "landing_dated": 0,
+   "stale_top4": 0,
+   "social": 0,
+   "domains": 7,
+   "elapsed": 0.87,
+   "urls": [
+    "https://www.usatoday.com/story/tech/space/2026/11/13/starship-flight-15-launch-today-how-watch-spacex-dual-catch/92687643007/",
+    "https://bigislandnow.com/2026/11/13/all-west-coast-us-flights-also-now-halted-because-of-debris-from-spacex-launch/",
+    "https://www.space.com/news/live/spacex-starship-flight-15-live-updates-nov-13-2026-starship-first-double-landing-attempt",
+    "https://www.reuters.com/science/spacex-attempt-first-starship-spacecraft-recovery-land-15th-flight-2026-11-13/",
+    "https://www.msn.com/en-us/technology/space-exploration/spacex-launches-15th-starship-flight-with-hopes-of-achieving-first-round-trip/ar-AA2hoOZk",
+    "https://abc7chicago.com/story/spacex-looks-make-history-starship-15-launch-south-texas/20038355/",
+    "https://www.bakersfield.com/tbc_blox_images/spacex-starship-launch/image_9a3d1ed9-84c4-5401-b9d1-1527216c3bd9.html",
+    "https://www.space.com/space-exploration/launches-spacecraft/spacex-starship-flight-15-1st-booster-ship-double-catch-full-recovery-what-time"
+   ]
+  },
+  "Apple announcement": {
+   "results": 8,
+   "dated": 6,
+   "recent_48h": 3,
+   "hub": 0,
+   "landing_dated": 0,
+   "stale_top4": 0,
+   "social": 0,
+   "domains": 7,
+   "elapsed": 0.98,
+   "urls": [
+    "https://www.apple.com/tv-pr/news/2026/11/apple-tv-unveils-first-look-at-shes-fine-new-comedy-starring-and-executive-produced-by-emmy-award-nominee-elizabeth-banks-created-by-emmy-award-nominee-liz-heldens-and-matt-ward-premiering-globally-wednesday-january-27/",
+    "https://www.gadgetreview.com/apple-home-gets-new-video-doorbell-and-smart-cameras-now-available-for-preorder",
+    "https://www.reuters.com/world/india/three-workers-die-tata-electronics-iphone-parts-plant-new-indian-express-reports-2026-11-10/",
+    "https://nypost.com/2026/11/13/us-news/faa-lifts-nationwide-ground-stop-4-hours-after-air-traffic-chaos-began/",
+    "https://www.reuters.com/legal/transactional/whos-next-ceo-nvidia-top-engineer-cfo-favored-candidates-2026-11-12/",
+    "https://comicbook.com/gaming/news/nintendo-switch-2-annoucement-account/",
+    "https://www.macrumors.com/guide/apple-event/",
+    "https://www.wired.com/story/everything-apple-announced-september-2026/"
+   ]
+  },
+  "Microsoft layoffs": {
+   "results": 8,
+   "dated": 7,
+   "recent_48h": 4,
+   "hub": 0,
+   "landing_dated": 0,
+   "stale_top4": 0,
+   "social": 0,
+   "domains": 7,
+   "elapsed": 0.8,
+   "urls": [
+    "https://www.bloomberg.com/opinion/articles/2026-11-13/microsoft-outlook-outage-is-a-bad-look-for-a-ai-layoffs",
+    "https://www.pcgamer.com/gaming-industry/former-id-software-developers-form-their-own-employee-owned-shooter-studio-in-the-wake-of-microsofts-mass-layoffs/",
+    "https://www.entrepreneur.com/business-news/how-microsoft-employees-responded-to-the-companys-biggest-buyout-offer-to-date",
+    "https://www.fastcompany.com/91642223/microsofts-massive-outage-puts-its-ai-driven-layoffs-under-scrutiny",
+    "https://www.newsweek.com/trump-admin-questions-microsoft-h1b-applications-after-outage-12712791",
+    "https://www.reuters.com/business/polymarket-cuts-jobs-contracts-prediction-market-competition-heats-up-2026-11-11/",
+    "https://www.fastcompany.com/91641977/microsoft-outlook-outage-bad-optics-with-layoffs-buyouts-updates",
+    "https://www.elitebrains.com/blog/microsoft-layoffs-2026-full-list-statistics-what-is-behind-job-cuts"
+   ]
+  },
+  "climate summit": {
+   "results": 8,
+   "dated": 8,
+   "recent_48h": 5,
+   "hub": 0,
+   "landing_dated": 0,
+   "stale_top4": 0,
+   "social": 0,
+   "domains": 7,
+   "elapsed": 0.84,
+   "urls": [
+    "https://www.msn.com/en-us/news/other/leaders-of-countries-already-hit-hard-by-climate-change-tell-un-summit-that-urgent-action-is-needed/ar-AA2hoCOp",
+    "https://www.theguardian.com/environment/2026/nov/12/greta-thunberg-cop31-climate-summit",
+    "https://triblive.com/news/world/turkeys-president-calls-the-war-in-gaza-an-ecocide-at-the-un-climate-summit/",
+    "https://www.reuters.com/sustainability/cop/cop31-host-turkey-push-global-electrification-goal-will-it-be-green-2026-11-10/",
+    "https://www.thestar.com.my/news/nation/2026/11/14/call-for-more-climate-funding-for-growing-cities",
+    "https://www.theguardian.com/environment/2026/nov/12/china-rules-out-hosting-cop33-climate-summit-in-2028",
+    "https://www.forbes.com/sites/monicasanders/2026/11/12/the-climate-summit-wants-electrification-the-ai-boom-wants-every-electron-it-can-get/",
+    "https://wtop.com/national/2026/11/un-climate-summit-pushes-electrification-goal-as-groups-call-for-mining-safeguards/"
+   ]
+  },
+  "election results": {
+   "results": 8,
+   "dated": 8,
+   "recent_48h": 5,
+   "hub": 0,
+   "landing_dated": 0,
+   "stale_top4": 0,
+   "social": 0,
+   "domains": 8,
+   "elapsed": 0.74,
+   "urls": [
+    "https://www.newsweek.com/israel-election-results-trump-netanyahu-eisenkot-us-12712897",
+    "https://lasvegassun.com/news/2026/nov/12/election-results-speak-to-voters-yearning-for-dece/",
+    "https://alaskabeacon.com/2026/11/13/jkt-tops-50-of-first-choice-votes-for-alaska-governor-republican-opponents-concede/",
+    "https://www.reuters.com/world/us/trump-has-cost-us-after-midterm-losses-maga-asks-if-its-over-2026-11-08/",
+    "https://www.malaymail.com/news/malaysia/2026/11/14/melaka-votes-today-79-candidates-seek-mandate-from-675166-electors/243169",
+    "https://www.msn.com/en-us/news/other/california-candidate-who-died-months-ago-leads-election-race/ar-AA2hnVUM",
+    "https://coloradosun.com/2026/11/13/lauren-boebert-unseated-eileen-laubacher-results-colorado/",
+    "https://www.breitbart.com/radio/2026/11/12/exclusive-rep-elect-mark-lamb-election-results-are-not-a-mandate-for-democrats/"
+   ]
+  },
+  "tech news today": {
+   "results": 8,
+   "dated": 8,
+   "recent_48h": 7,
+   "hub": 0,
+   "landing_dated": 0,
+   "stale_top4": 0,
+   "social": 0,
+   "domains": 6,
+   "elapsed": 1.07,
+   "urls": [
+    "https://www.wsj.com/livecoverage/stock-market-today-dow-sp-500-nasdaq-11-13-2026/card/VqreNYbh4xTWid0GFWFX",
+    "https://www.nytimes.com/2026/11/11/technology/jensen-huang-nvidia-affair.html",
+    "https://wtop.com/national/2026/11/savannah-guthrie-popular-and-enduring-face-of-morning-tv-renews-nbc-contract-after-15-years/",
+    "https://www.reuters.com/legal/transactional/nvidias-huang-turns-paul-weiss-law-firm-that-inked-deal-with-trump-2026-11-13/",
+    "https://www.usatoday.com/story/money/money-management/investing/2026/11/13/apple-stock-big-tech-market/92708432007/",
+    "https://www.wsj.com/finance/stocks/tech-stocks-fall-as-next-week-brings-big-tests-for-the-ai-trade-6a346b49",
+    "https://www.thewrap.com/media-platforms/tv/savannah-guthrie-nbc-news-today-contract-extension/",
+    "https://www.reuters.com/business/media-telecom/arms-haas-approached-by-nvidia-board-part-ceo-search-ft-reports-2026-11-13/"
+   ]
+  },
+  "world news today": {
+   "results": 8,
+   "dated": 8,
+   "recent_48h": 7,
+   "hub": 0,
+   "landing_dated": 0,
+   "stale_top4": 0,
+   "social": 0,
+   "domains": 6,
+   "elapsed": 0.93,
+   "urls": [
+    "https://www.cnn.com/2026/11/12/tech/microsoft-outage-cripples-office-workers-nationwide",
+    "https://www.mediaite.com/media/tv/abc-world-news-tonight-shows-that-its-no-fun-reporting-on-an-illegal-alien/",
+    "https://www.cnn.com/2026/11/13/us/live-news/flights-ground-stop-faa",
+    "https://www.reuters.com/world/us/rubio-assails-international-court-speech-conservative-legal-group-2026-11-14/",
+    "https://www.economist.com/the-world-in-brief/2026/11/13/f2098b21-380b-4ddf-b574-be60051069a6",
+    "https://www.bbc.com/news/articles/cqx2wyvyr3zzo",
+    "https://www.thewrap.com/media-platforms/tv/savannah-guthrie-nbc-news-today-contract-extension/",
+    "https://www.reuters.com/world/china/trump-meet-putin-xi-china-white-house-says-2026-11-14/"
+   ]
+  },
+  "AI regulation news": {
+   "results": 8,
+   "dated": 8,
+   "recent_48h": 4,
+   "hub": 0,
+   "landing_dated": 0,
+   "stale_top4": 0,
+   "social": 0,
+   "domains": 7,
+   "elapsed": 0.98,
+   "urls": [
+    "https://www.msn.com/en-us/news/other/enterprises-say-ai-regulation-won-t-stop-corporate-innovation/ar-AA2h5bJX",
+    "https://www.digitimes.com/news/a20261113VL224/nvidia-china-ai-chip-regulation-security.html",
+    "https://www.azfamily.com/video/2026/11/13/could-ai-regulation-change-after-nationwide-airport-ground-stop/",
+    "https://www.reuters.com/business/openai-google-anthropic-hit-with-lawsuit-seeking-halt-frontier-ai-development-2026-11-12/",
+    "https://shattered.io/asean-49th-summit-ai-regulation-digital-economy-framework-agreement-defa/",
+    "https://triblive.com/news/world/fallout-from-the-nvidia-scandal-may-dampen-the-exuberance-around-the-ai-boom/",
+    "https://www.reuters.com/legal/transactional/ai-debt-faces-pressure-democrats-prepare-take-over-congress-2026-11-10/",
+    "https://www.yahoo.com/news/politics/articles/congresswoman-calls-artificial-superintelligence-ban-133016001.html"
+   ]
+  },
+  "news headlines today": {
+   "results": 6,
+   "dated": 6,
+   "recent_48h": 5,
+   "hub": 0,
+   "landing_dated": 0,
+   "stale_top4": 0,
+   "social": 0,
+   "domains": 6,
+   "elapsed": 1.52,
+   "urls": [
+    "https://abcnews.com/US/nationwide-ground-stop-ordered-airports-faa/story?id",
+    "https://www.msn.com/en-in/news/other/school-assembly-news-headlines-today-nov-14-top-national-international-sports-updates-thought-of-the-day/ar-AA2hmLFo",
+    "https://www.thewrap.com/media-platforms/tv/savannah-guthrie-nbc-news-today-contract-extension/",
+    "https://deadline.com/2026/11/savannah-guthrie-today-contract-1237222260/",
+    "https://www.reuters.com/world/americas/mexicos-headline-inflation-accelerates-more-than-expected-october-2026-11-09/",
+    "https://bestcolleges.indiatoday.in/latest-news/school-assembly-news-headlines-today-november-14-top-national-sports-and-world-news-curated-for-you-12553"
+   ]
+  },
+  "breaking news": {
+   "results": 8,
+   "dated": 8,
+   "recent_48h": 6,
+   "hub": 0,
+   "landing_dated": 0,
+   "stale_top4": 0,
+   "social": 0,
+   "domains": 7,
+   "elapsed": 1.24,
+   "urls": [
+    "https://www.msn.com/en-us/news/other/faa-lifts-nationwide-ground-stop-but-chaos-will-continue-after-10000-flights-were-delayed-and-4700-canceled/ar-AA2ho9ec",
+    "https://www.washingtonblade.com/2026/11/12/breaking-news-one-dead-four-injured-in-shooting-at-vida-fitness-in-logan-circle/",
+    "https://www.nbcnews.com/news/us-news/faa-orders-nationwide-ground-stop-departing-flights-reasons-safety-rcna609247",
+    "https://www.reuters.com/world/us/democrat-scott-colom-defeats-incumbent-cindy-hyde-smith-cnn-projects-2026-11-11/",
+    "https://thesun.my/news/world-news/",
+    "https://www.msn.com/en-us/news/other/32-injured-all-accounted-for-after-mississippi-riverboat-collision/vi-AA2hnYT3",
+    "https://www.wdsu.com/article/mississippi-river-boat-crash-new-orleans/74426309",
+    "https://www.walesonline.co.uk/news/wales-news/wales-breaking-news-plus-weather-34905019"
+   ]
+  }
+ }
+}

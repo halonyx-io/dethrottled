@@ -287,9 +287,14 @@ def _ddg_finish(rows, report, recovering):
             _save_health(health)
 
 
+# Bing News comes from its own RSS (bing_news), which keeps dates; SearXNG's
+# Bing News engine returned none dated in any probe and logs parsing errors.
 DEFAULT_ENGINES = os.environ.get(
     "DETHROTTLED_SEARXNG_ENGINES",
-    "duckduckgo news,qwant news,bing news")
+    "duckduckgo news,qwant news")
+# Qwant News answers in about 0.8 s; 15 timings of DDG+Qwant were 0.3-0.7 s
+# with one 2 s spike (14 Nov 2026).
+NEWS_SEARXNG_SECONDS = float(os.environ.get("DETHROTTLED_NEWS_SEARXNG_SECONDS", "1.5"))
 
 # Engine families, for a bundle that wants more than the default web and news.
 # A scientific or technical subject gets far more from crossref and openalex
@@ -353,7 +358,7 @@ def _unwrap_bing(link: str) -> str:
 
 def searxng(query: str, *, max_items: int = 8, categories: str = "",
             engines: str = "", timeout: int = 40, cache=None,
-            language=None, diagnostics=None) -> list:
+            language=None, diagnostics=None, time_limit: float | None = None) -> list:
     started = time.monotonic()
     if not SEARXNG_URL:
         if diagnostics is not None:
@@ -392,6 +397,10 @@ def searxng(query: str, *, max_items: int = 8, categories: str = "",
 
     params = {"q": query, "format": "json", "engines": engines,
               "pageno": 1, "language": language or "all", "safesearch": 0}
+    if time_limit:
+        # SearXNG drops engines that answer later than this, so one slow
+        # engine cannot set the whole search's time.
+        params["timeout_limit"] = time_limit
     # Never alongside named engines: SearXNG then adds every engine in the
     # category, which on 14 Nov 2026 put 50 undated Brave rows, Wikinews and
     # the failing Google News/Reuters scrapers into every news search.
@@ -409,17 +418,27 @@ def searxng(query: str, *, max_items: int = 8, categories: str = "",
                                 timeout=timeout, headers={"User-Agent": USER_AGENT})
         if response.status_code == 200:
             payload = response.json()
+            errors = payload.get("unresponsive_engines") or []
+            # An engine that missed the time cap WE set is slow this once, not
+            # refusing us: report it as capped, never rest it. Resting it would
+            # have switched DuckDuckGo News and Qwant off for 30 minutes after
+            # a single slow answer (found in review, 14 Nov 2026).
+            capped = sorted({entry[0] for entry in errors if time_limit and len(entry) > 1
+                             and str(entry[1]).lower() == "timeout"})
             if diagnostics is not None:
-                errors = payload.get("unresponsive_engines") or []
                 diagnostics.update(status="degraded" if errors else "ok", unresponsive=errors)
+                if time_limit:
+                    diagnostics.update(time_limit_seconds=time_limit, capped=capped)
             # Free engines block self-hosted instances routinely, and SearXNG
             # answers 200 with fewer results rather than failing. That is how
             # DuckDuckGo went from half this pool to nothing without anybody
             # noticing. Reported once per engine per process, because it is a
             # standing condition rather than an event.
-            for entry in (payload.get("unresponsive_engines") or []):
+            for entry in errors:
                 name = entry[0] if entry else "?"
                 reason = entry[1] if len(entry) > 1 else "unresponsive"
+                if name in capped:
+                    continue
                 _record_failure(name, reason, namespace="searxng")
                 if name not in _DEAD_ENGINES:
                     _DEAD_ENGINES[name] = reason
@@ -477,11 +496,15 @@ def bing_news(query: str, *, max_items: int = 8, timeout: int = 25, cache=None,
             parsed_feed = feedparser.parse(response.content)
             if diagnostics is not None and not parsed_feed.version:
                 diagnostics["status"] = "invalid_feed"
+            if diagnostics is not None:
+                diagnostics.update(feed_items=len(parsed_feed.entries), filtered=0)
             for entry in parsed_feed.entries:
                 url = _unwrap_bing(entry.get("link", ""))
                 title = entry.get("title", "")
                 if (not url or not title or "bing.com" in _domain(url)
                         or not constrained(query, {"url": url})):
+                    if diagnostics is not None:
+                        diagnostics["filtered"] += 1
                     continue
                 rows.append(_norm(
                     title=title, url=url,
@@ -584,7 +607,7 @@ def google_news(query: str, *, max_items: int = 8, site: str = "", engine: str =
         with ThreadPoolExecutor(max_workers=min(8, max(1, len(entries)))) as pool:
             urls = list(pool.map(lambda e: _gnews_decode_one(e.get("link", ""), 8, cache),
                                  entries))
-        undecoded = 0
+        undecoded = landing = 0
         for entry, url in zip(entries, urls):
             publisher = (entry.get("source", {}) or {}).get("title", "")
             title = _GN_SUFFIX.sub("", entry.get("title", "")).strip()
@@ -592,6 +615,10 @@ def google_news(query: str, *, max_items: int = 8, site: str = "", engine: str =
                 undecoded += 1
                 continue
             if not title or not constrained(query, {"url": url}):
+                continue
+            from .engine_policy import landing_path
+            if landing_path(url):
+                landing += 1  # a front page is not a story, whatever its date
                 continue
             row = _norm(title=title, url=url, published=entry.get("published", ""),
                         snippet=_TAGS.sub(" ", entry.get("summary", ""))[:600], engine=engine)
@@ -601,7 +628,7 @@ def google_news(query: str, *, max_items: int = 8, site: str = "", engine: str =
             if len(rows) >= max_items:
                 break
         if diagnostics is not None:
-            diagnostics.update(undecoded=undecoded,
+            diagnostics.update(undecoded=undecoded, landing_pages=landing,
                                elapsed_ms=round((time.monotonic() - started) * 1000))
     except Exception as exc:
         rows = []
@@ -1183,7 +1210,8 @@ def search(query: str, *, max_items: int = SEARCH_MENU_LIMIT, categories: str = 
             diagnostics=source_reports["bing-news"])
         tasks["searxng"] = _SOURCE_POOL.submit(
             searxng, query, max_items=SEARCH_MENU_LIMIT, categories="news",
-            cache=cache, language=language, timeout=8, diagnostics=source_reports["searxng"])
+            cache=cache, language=language, timeout=8, diagnostics=source_reports["searxng"],
+            time_limit=NEWS_SEARXNG_SECONDS)
         for name, site in NEWS_FEEDS.items():
             source_reports[name] = {}
             tasks[name] = _SOURCE_POOL.submit(
@@ -1226,8 +1254,7 @@ def search(query: str, *, max_items: int = SEARCH_MENU_LIMIT, categories: str = 
         news_rows = [row for name in news_sources for row in completed.get(name, [])]
         engine_policy.observe("news", news_rows)
         ordered, news_policy = engine_policy.order("news", news_rows)
-        for row in ([r for r in ordered if not engine_policy.is_landing(r)]
-                    + [r for r in ordered if engine_policy.is_landing(r)]):
+        for row in engine_policy.news_order(ordered):
             add([row], tagged[id(row)])
     if "web" in completed:
         add(completed["web"], "web")
@@ -1303,10 +1330,11 @@ def search(query: str, *, max_items: int = SEARCH_MENU_LIMIT, categories: str = 
 
     merged = rank(merged, prefer_domains)
     if news_policy:
-        # News answers "what happened": undated front and topic pages last.
+        # News answers "what happened": fresh stories, then undated ones, then
+        # stale ones, then front pages and social posts, at most two per site in
+        # the lead (engine_policy.news_order).
         from . import engine_policy
-        merged = ([r for r in merged if not engine_policy.is_landing(r)]
-                  + [r for r in merged if engine_policy.is_landing(r)])
+        merged, news_policy["ordering"] = engine_policy.news_order_report(merged)
     # Supplements append to the primary engine order. Merely selecting a profile
     # must not promote a weak supplementary index into the first trusted choices.
     dropped = 0

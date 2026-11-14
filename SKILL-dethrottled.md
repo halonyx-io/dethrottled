@@ -96,7 +96,9 @@ Names are the MCP tools; the HTTP route does the same job on the raw API
 
 ## Search details
 
-- For current events use `profile` `news`: dated news results come first,
+- For current events use `profile` `news`: fresh dated stories come first
+  (older ones, front pages, social posts and headline roundups last; at most
+  two per site lead),
   from DuckDuckGo News, Google News, Qwant News, Reuters and Bing News. Reuters
   pages usually refuse automated reads; cite them or read another outlet. For a
   site's latest items, fetch its RSS or Atom feed (listed under

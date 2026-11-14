@@ -14,6 +14,51 @@ on SearXNG 2026.11.6 with Qwant News) ran alternately, twice, in the same window
 
 "Dated" counts provider- or page-declared dates only, never snippet hints.
 
+## Round 4: news order and engine hygiene (after the 1.8.8 deploy)
+
+An external review of 1.8.8 found reuters.com/ dated 2005-09-10 at #3 for
+"news headlines today", a Facebook post in the menu, and SearXNG setting the
+search's time. Twenty-two queries (the twenty above plus "news headlines today"
+and "breaking news"):
+
+| Run | Results | Dated | Within 48 h | Sites | Dated front pages | Stale in top 4 | Social | Median | p90 |
+|---|---|---|---|---|---|---|---|---|---|
+| Live 1.8.8 | 176 | 173 | 115 | 159 | 2 | 6 | 1 | 1.60 s | 2.47 s |
+| Candidate A | 176 | 162 | 110 | 135 | 0 | 0 | 0 | 1.22 s | 1.62 s |
+| Candidate B | 174 | 167 | 117 | 154 | 0 | 0 | 0 | 1.03 s | 1.49 s |
+
+Candidate A ordered news fresh, undated, stale, then front pages and social
+posts; dropped front pages from the Google News and Reuters engines; capped
+SearXNG at 1.5 s (`timeout_limit`); and stopped asking SearXNG's Bing News
+(no dated rows in any probe; Bing comes from its own RSS). Its site variety
+fell because reuters.com took 47 places (27 before): negative result kept.
+Candidate B adds at most two leading places per site (Reuters 31). The six
+fewer dated results are the intended trade: an undated story now ranks above a
+stale dated one. Candidate B ran a few minutes after the live round rather than
+alternating with it, to stay under DuckDuckGo's rate limit.
+
+### Round 5: final 1.8.9 against a refreshed 1.8.8 baseline
+
+A second review of the plan asked whether a tripped SearXNG cap is visible,
+whether headline roundups survive, and why round 4 reused an older live
+baseline. Forcing the cap showed it was reported (`degraded`, engines listed as
+`timeout`) but also that our code then rested the engine for 30 minutes, so one
+slow answer would have switched DuckDuckGo News and Qwant off. Fixed: a missed
+cap is reported as `capped` and never rests the engine. Roundup titles
+("school assembly news headlines today", "top 10 stories") join front pages and
+social posts in the last tier, and `policy.engine_order.ordering` reports how
+many rows each rule moved. Both builds ran in the same window:
+
+| Run | Results | Dated | Within 48 h | Sites | Dated front pages | Stale in top 4 | Social | Median | p90 |
+|---|---|---|---|---|---|---|---|---|---|
+| Live 1.8.8 | 176 | 166 | 97 | 142 | 2 | 12 | 1 | 1.69 s | 2.61 s |
+| 1.8.9 | 176 | 159 | 109 | 142 | 0 | 0 | 1 | 1.29 s | 1.53 s |
+
+Files: `round5-live.json`, `round5-cand.json`. Reuters supplied 45 and 43 of the
+176 results across the 22 queries; per response its engine gives at most three
+and the per-site limit lets two lead. The remaining social row is placed last,
+not removed.
+
 ## Round 3: Google News and Reuters engines (after the 1.8.7 deploy)
 
 | Run | Results | Dated | Dated within 48 h | Landing pages | Distinct sites | Reuters links | Median |
