@@ -1,2 +1,2 @@
 """Zero-API web search, fetch and extraction."""
-__version__ = "1.8.9"
+__version__ = "1.8.10"

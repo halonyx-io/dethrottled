@@ -1033,6 +1033,10 @@ def search_envelope(body: SearchBody):
             "fanout_queries": meta.get("fanout_queries"),
             "semantic_cache": meta.get("semantic_cache"),
             **({"constraints": meta["constraints"]} if "constraints" in meta else {}),
+            # News order and what each rule moved; documented since 1.8.7 but not
+            # returned until 1.8.10 (found checking live 1.8.9).
+            **({"engine_order": (meta.get("policy") or {})["engine_order"]}
+               if (meta.get("policy") or {}).get("engine_order") else {}),
             "attempts": _attempts(meta), "elapsed_ms": meta.get("elapsed_ms"),
             "ranking": meta.get("ranking", []), "profile": body.profile}
 

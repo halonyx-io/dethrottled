@@ -43,7 +43,7 @@ healthy sources available; fewer than fifteen results is normal.
 inside the same caps, fresh stories (dated within a week) first, then undated,
 then older, with front pages, social posts and headline roundups last and at
 most two leading places per site; `ordering` in that metadata counts each,
-and undated front and topic pages go last. `policy.engine_order` in the search
+and undated front and topic pages go last. `engine_order` in the search
 metadata shows the order used and any engine demoted for low dated yield.
 
 Search rows carry additive `source_type`, `fetch_relevance`, `snippet_tokens`,

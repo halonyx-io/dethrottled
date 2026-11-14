@@ -24,7 +24,7 @@ name: dethrottled
 services:
   dethrottled:
     build: .
-    image: dethrottled-api:${DETHROTTLED_VERSION:-1.8.9}
+    image: dethrottled-api:${DETHROTTLED_VERSION:-1.8.10}
     ulimits:
       core: 0
     restart: unless-stopped
@@ -119,7 +119,7 @@ services:
       context: .
       dockerfile: browser-search/Dockerfile
       target: dnb
-    image: dethrottled-dnb:${DETHROTTLED_VERSION:-1.8.9}
+    image: dethrottled-dnb:${DETHROTTLED_VERSION:-1.8.10}
     group_add: ["10001"]
     init: true
     restart: unless-stopped
@@ -155,7 +155,7 @@ services:
     build:
       context: .
       dockerfile: browser-search/Dockerfile
-    image: dethrottled-browser-search:${DETHROTTLED_VERSION:-1.8.9}
+    image: dethrottled-browser-search:${DETHROTTLED_VERSION:-1.8.10}
     restart: unless-stopped
     environment:
       DETHROTTLED_BROWSER_STATE_DIR: /state
@@ -248,7 +248,7 @@ services:
     build:
       context: .
       dockerfile: docling-worker/Dockerfile
-    image: dethrottled-docling:${DETHROTTLED_VERSION:-1.8.9}
+    image: dethrottled-docling:${DETHROTTLED_VERSION:-1.8.10}
     ulimits:
       core: 0
     init: true
@@ -264,7 +264,7 @@ services:
     build:
       context: .
       dockerfile: format-worker/Dockerfile
-    image: dethrottled-formats:${DETHROTTLED_VERSION:-1.8.9}
+    image: dethrottled-formats:${DETHROTTLED_VERSION:-1.8.10}
     ulimits:
       core: 0
     init: true
@@ -278,7 +278,7 @@ services:
     build:
       context: .
       dockerfile: media-worker/Dockerfile
-    image: dethrottled-media:${DETHROTTLED_VERSION:-1.8.9}
+    image: dethrottled-media:${DETHROTTLED_VERSION:-1.8.10}
     ulimits:
       core: 0
     init: true
