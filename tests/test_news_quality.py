@@ -140,3 +140,37 @@ def test_headline_roundups_go_last_but_real_stories_stay():
     for title in ("Mexico's headline inflation accelerates", "Fed signals rate pause",
                   "Briefing: A nationwide ground stop"):
         assert ep.news_tier(titled(title)) == 0, title
+
+
+def test_searxngs_own_timeout_suspension_is_not_a_refusal(monkeypatch):
+    """After a timeout SearXNG suspends the engine for a few seconds and
+    reports "Suspended: timeout"; on live 1.8.9 that rested Qwant 30 min."""
+    payload = {"results": [], "unresponsive_engines": [["qwant news", "Suspended: timeout"]]}
+    monkeypatch.setattr(fs.requests, "get", lambda url, params=None, **k: SimpleNamespace(
+        status_code=200, json=lambda: payload, headers={}))
+    monkeypatch.setattr(fs, "SEARXNG_URL", "http://searxng.invalid")
+    failures = []
+    monkeypatch.setattr(fs, "_record_failure",
+                        lambda name, reason, namespace="": failures.append(name))
+    report = {}
+    fs.searxng("suspended", engines="qwant news", time_limit=1.5, diagnostics=report)
+    assert report["capped"] == ["qwant news"] and failures == []
+
+
+def test_v2_search_returns_the_engine_order(monkeypatch):
+    from fastapi.testclient import TestClient
+
+    from dethrottled import server
+    monkeypatch.setattr(fs, "web_search", lambda *a, **k: [])
+    monkeypatch.setattr(fs, "bing_news", lambda *a, **k: [])
+    monkeypatch.setattr(fs, "google_news_headlines", lambda *a, **k: [])
+    monkeypatch.setattr(fs, "searxng", lambda *a, **k: [
+        {"title": "Fresh market story", "url": "https://wire.example/2026/11/market-story",
+         "engine": "duckduckgo news", "publishedDate": days_ago(0)}])
+    body = TestClient(server.app).post("/v2/search", json={
+        "query": "market story", "profile": "news", "limit": 3, "cache_mode": "bypass"}).json()
+    order = body["engine_order"]
+    assert order["profile"] == "news" and order["ordering"]["fresh"] == 1
+    web = TestClient(server.app).post("/v2/search", json={
+        "query": "market story", "profile": "web", "limit": 3, "cache_mode": "bypass"}).json()
+    assert "engine_order" not in web

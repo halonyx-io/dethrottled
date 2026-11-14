@@ -196,6 +196,13 @@ pages, social posts and headline roundups, with at most two leading places per
 site; SearXNG's news call is capped at 1.5 s (a missed cap is reported as
 `capped` and never rests the engine) and no longer asks its own Bing News engine.
 
+For 1.8.10, rebuild the API and adapter images; keep all volumes. A SearXNG
+engine that SearXNG itself briefly suspends after a missed time cap
+(`Suspended: timeout`) is no longer rested for 30 minutes, and news searches
+return `engine_order` (order, demotions and `ordering` counts) in the
+`/v2/search` response. An engine rested by 1.8.9 recovers on its own within 30
+minutes; removing its `searxng:` entry from `engine-health.json` clears it at once.
+
 ## Guided Setup and DPR
 
 [Guided Setup](GUIDED-SETUP.md) saves an override without starting services.

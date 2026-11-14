@@ -46,7 +46,7 @@ baseline. Forcing the cap showed it was reported (`degraded`, engines listed as
 slow answer would have switched DuckDuckGo News and Qwant off. Fixed: a missed
 cap is reported as `capped` and never rests the engine. Roundup titles
 ("school assembly news headlines today", "top 10 stories") join front pages and
-social posts in the last tier, and `policy.engine_order.ordering` reports how
+social posts in the last tier, and `engine_order.ordering` (returned from 1.8.10) reports how
 many rows each rule moved. Both builds ran in the same window:
 
 | Run | Results | Dated | Within 48 h | Sites | Dated front pages | Stale in top 4 | Social | Median | p90 |

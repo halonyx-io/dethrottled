@@ -423,8 +423,12 @@ def searxng(query: str, *, max_items: int = 8, categories: str = "",
             # refusing us: report it as capped, never rest it. Resting it would
             # have switched DuckDuckGo News and Qwant off for 30 minutes after
             # a single slow answer (found in review, 14 Nov 2026).
+            # SearXNG then suspends a timed-out engine for its ban_time_on_fail
+            # (5 s) and reports "Suspended: timeout" meanwhile: the same event,
+            # and it rested Qwant for 30 minutes on live 1.8.9.
             capped = sorted({entry[0] for entry in errors if time_limit and len(entry) > 1
-                             and str(entry[1]).lower() == "timeout"})
+                             and str(entry[1]).lower().removeprefix("suspended: ").strip()
+                             == "timeout"})
             if diagnostics is not None:
                 diagnostics.update(status="degraded" if errors else "ok", unresponsive=errors)
                 if time_limit:
