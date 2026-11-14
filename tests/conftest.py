@@ -10,3 +10,5 @@ os.environ.setdefault('DETHROTTLED_ADBLOCK', '0')
 os.environ.setdefault('DETHROTTLED_WAYMARKS', '0')
 # Same for engine yields: stub searches must not demote engines in later tests.
 os.environ.setdefault('DETHROTTLED_ENGINE_POLICY', '0')
+# The Google News and Reuters feed engines call Google; offline tests must not.
+os.environ.setdefault('DETHROTTLED_NEWS_FEEDS', '')

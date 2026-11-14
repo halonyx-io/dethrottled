@@ -184,6 +184,12 @@ or are refreshed; new front pages, feeds, live blogs and limited reads use the
 shorter lifetimes. `/stats` no longer shows domain names to adapter callers.
 The layout worker moves to torch 2.14.1 for a published torch advisory.
 
+For 1.8.8, rebuild the API image (and the adapters with it, to keep versions
+matched) with the existing Compose project; keep all volumes. News searches add
+Google News and Reuters through Google News RSS and stop asking SearXNG for its
+whole news category, which in 1.8.7 added undated Brave rows. Set
+`DETHROTTLED_NEWS_FEEDS=` to turn the two new engines off.
+
 ## Guided Setup and DPR
 
 [Guided Setup](GUIDED-SETUP.md) saves an override without starting services.

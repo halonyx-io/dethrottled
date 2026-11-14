@@ -39,7 +39,8 @@ reranking, novel Yandex/Yahoo choices alternate after DDG. Partial provider fail
 healthy sources available; fewer than fifteen results is normal.
 
 `profile="news"` is the exception to primary-first order: dated news engines
-(DuckDuckGo News, Qwant News, Bing News) lead, interleaved, inside the same caps,
+(DuckDuckGo News, Google News, Qwant News, Reuters, Bing News) lead, interleaved,
+inside the same caps,
 and undated front and topic pages go last. `policy.engine_order` in the search
 metadata shows the order used and any engine demoted for low dated yield.
 

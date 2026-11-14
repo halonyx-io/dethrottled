@@ -84,7 +84,7 @@ def readiness(*, configured):
     """
     with _LOCK:
         components = {}
-        for name in ("web", "yandex", "yahoo", "bing-news"):
+        for name in ("web", "yandex", "yahoo", "bing-news", "google-news", "reuters"):
             row = dict(_OBSERVATIONS.get(name, {}))
             age = max(0, time.time() - row.get("observed_at", 0)) if row else None
             stale = age is None or age >= OBSERVATION_TTL
@@ -114,6 +114,8 @@ def readiness(*, configured):
                                       family=("ddg" if primary.get("families") == ["ddg"]
                                               else "web")),
             "supplementary": supplementary, "news": components["bing-news"],
+            "news_engines": {name: components[name]
+                             for name in ("bing-news", "google-news", "reuters")},
             "initializing": initializing,
             "degraded": not primary_ready or (configured and not all(
                 row["availability"] in {"available", "empty"} for row in supplementary.values())),

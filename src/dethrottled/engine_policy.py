@@ -34,7 +34,8 @@ SAVE_EVERY = 60.0
 
 # Default order per profile; engines not listed keep their arrival order after.
 DEFAULT_ORDER = {
-    "news": ["duckduckgo-news", "qwant-news", "bing-news", "gnews-resolved", "wikinews"],
+    "news": ["duckduckgo-news", "google-news", "qwant-news", "reuters", "bing-news",
+             "gnews-resolved"],
 }
 
 _lock = threading.Lock()
