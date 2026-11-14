@@ -190,6 +190,12 @@ Google News and Reuters through Google News RSS and stop asking SearXNG for its
 whole news category, which in 1.8.7 added undated Brave rows. Set
 `DETHROTTLED_NEWS_FEEDS=` to turn the two new engines off.
 
+For 1.8.9, rebuild the API and adapter images with the existing Compose project;
+keep all volumes. News results are ordered fresh, undated, stale, then front
+pages, social posts and headline roundups, with at most two leading places per
+site; SearXNG's news call is capped at 1.5 s (a missed cap is reported as
+`capped` and never rests the engine) and no longer asks its own Bing News engine.
+
 ## Guided Setup and DPR
 
 [Guided Setup](GUIDED-SETUP.md) saves an override without starting services.

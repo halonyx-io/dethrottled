@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import threading
 import time
 from datetime import datetime, timezone
@@ -135,14 +136,97 @@ def order(profile: str, rows: list) -> tuple[list, dict]:
     return out, {"profile": profile, "order": names, "demoted": sorted(back)}
 
 
-def is_landing(row: dict) -> bool:
-    """An undated front, section or topic page."""
+FRESH_DAYS = float(os.environ.get("DETHROTTLED_NEWS_FRESH_DAYS", "7"))
+SOCIAL = ("facebook.com", "x.com", "twitter.com", "instagram.com", "tiktok.com",
+          "threads.net", "threads.com", "linkedin.com", "pinterest.com", "reddit.com")
+
+
+def landing_path(url: str) -> bool:
+    """A front, section or topic page: no article slug in the path."""
     from urllib.parse import urlsplit
-    if _dated(row):
-        return False
-    parsed = urlsplit(row.get("url", ""))
+    parsed = urlsplit(url or "")
     segments = [part for part in parsed.path.split("/") if part]
-    return len(segments) <= 1 or "/topics/" in parsed.path
+    return (len(segments) == 0 or (len(segments) == 1 and len(segments[0]) <= 24)
+            or "/topics/" in parsed.path)
+
+
+def is_landing(row: dict) -> bool:
+    """A front, section or topic page, dated or not.
+
+    Dated ones count too: Google News lists reuters.com/ itself, dated
+    2005-09-10, and it ranked #3 for "news headlines today" (14 Nov 2026).
+    """
+    return landing_path(row.get("url", ""))
+
+
+# Headline roundups list other stories: "School assembly news headlines today",
+# "Top 10 news stories". They ranked #1 and #2 for vague headline queries on
+# 14 Nov 2026 (found in review). Title-only, narrow, and they are moved back,
+# never removed.
+ROUNDUP = re.compile(
+    r"\bschool assembly\b|\bnews headlines (?:today|for)\b|\bheadlines (?:today|of the day)\b"
+    r"|\btoday'?s (?:top )?headlines\b|\btop \d+ (?:news|headlines|stories)\b"
+    r"|\bnews (?:roundup|round-up|digest|wrap)\b", re.I)
+
+
+def _roundup(row: dict) -> bool:
+    return bool(ROUNDUP.search(str(row.get("title") or "")))
+
+
+def _social(row: dict) -> bool:
+    from urllib.parse import urlsplit
+    host = (urlsplit(row.get("url", "")).hostname or "").lower()
+    return any(host == domain or host.endswith("." + domain) for domain in SOCIAL)
+
+
+PER_SITE = int(os.environ.get("DETHROTTLED_NEWS_PER_SITE", "2"))
+
+
+def news_order(rows: list, now: float | None = None) -> list:
+    """Fresh, undated, stale, then front pages and social posts; at most
+    PER_SITE rows per site lead, the rest follow in the same order.
+
+    Measured 14 Nov 2026: ordering by freshness alone let reuters.com take 47
+    of 176 places (27 before), with 41 rows repeating a site in their menu.
+    """
+    return news_order_report(rows, now)[0]
+
+
+TIER_NAMES = ("fresh", "undated", "stale", "front_page_social_or_roundup")
+
+
+def news_order_report(rows: list, now: float | None = None) -> tuple[list, dict]:
+    """news_order plus what it did, for the response: rows are moved, never
+    dropped, and a caller should be able to see how many and why."""
+    from urllib.parse import urlsplit
+    tiers = [news_tier(row, now) for row in rows]
+    ordered = [row for _, row in sorted(zip(tiers, rows), key=lambda pair: pair[0])]
+    report = {name: tiers.count(index) for index, name in enumerate(TIER_NAMES)}
+    report.update(per_site_limit=PER_SITE, moved_by_site_limit=0)
+    if PER_SITE <= 0:
+        return ordered, report
+    lead, rest, seen = [], [], {}
+    for row in ordered:
+        host = (urlsplit(row.get("url", "")).hostname or "").lower().removeprefix("www.")
+        seen[host] = seen.get(host, 0) + 1
+        (lead if seen[host] <= PER_SITE else rest).append(row)
+    report["moved_by_site_limit"] = len(rest)
+    return lead + rest, report
+
+
+def news_tier(row: dict, now: float | None = None) -> int:
+    """0 fresh, 1 undated, 2 stale, 3 front page, social post or roundup."""
+    if is_landing(row) or _social(row) or _roundup(row):
+        return 3
+    value = row.get("published") or row.get("publishedDate") or ""
+    if not str(value).strip():
+        return 1
+    from .signals import parse_date
+    when = parse_date(str(value))
+    if when is None:
+        return 1
+    now = time.time() if now is None else now
+    return 0 if now - when.timestamp() <= FRESH_DAYS * 86400 else 2
 
 
 def _maybe_save() -> None:

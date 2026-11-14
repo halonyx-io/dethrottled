@@ -40,7 +40,9 @@ healthy sources available; fewer than fifteen results is normal.
 
 `profile="news"` is the exception to primary-first order: dated news engines
 (DuckDuckGo News, Google News, Qwant News, Reuters, Bing News) lead, interleaved,
-inside the same caps,
+inside the same caps, fresh stories (dated within a week) first, then undated,
+then older, with front pages, social posts and headline roundups last and at
+most two leading places per site; `ordering` in that metadata counts each,
 and undated front and topic pages go last. `policy.engine_order` in the search
 metadata shows the order used and any engine demoted for low dated yield.
 
