@@ -237,7 +237,7 @@ def test_thin_google_search_also_carries_advice(monkeypatch):
     ("https://quotes.toscrape.com/js/", ["quotes.toscrape.com"]),
     ("https://bbc.co.uk/news", ["bbc.co.uk", "www.bbc.co.uk"]),
     ("https://www.bbc.co.uk/news", ["www.bbc.co.uk", "bbc.co.uk"]),
-    ("http://10.0.0.1/x".replace("10.0.0.1", "192.0.2.10"), ["192.0.2.10"]),
+    ("http://192.0.2.10/x", ["192.0.2.10"]),
 ])
 def test_host_family(url, family):
     assert host_family(url) == family
