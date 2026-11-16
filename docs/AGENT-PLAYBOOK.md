@@ -207,7 +207,11 @@ not a request to fill every budget. See [limits](LIMITS.md).
   a step this server has learned the site refuses (for example `waymark:timeout x3`);
   a `waymark_known_wall:…` failure means the site's browser challenge has not
   cleared on recent reads, so it was not tried again. Both are retried
-  automatically later; use another source meanwhile. A `direct` attempt with
+  automatically later; use another source meanwhile. An attempt named
+  `api:stackexchange`, `api:pubmed`, `api:github`, `api:npm`, `api:crossref` or
+  `api:openalex` is an official keyless API used in place of the page. Paper
+  records from Crossref or OpenAlex are metadata and abstract only
+  (`content_status: partial`); follow the DOI or open-access link for full text. A `direct` attempt with
   `no_response_in_3s; tls answered first` means plain HTTP was silent and TLS
   impersonation read the page instead.
 - Preserve `warnings`, `source_partial`, `truncated`, `extraction`, acquisition

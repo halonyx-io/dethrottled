@@ -30,7 +30,8 @@ when something is missing. Your agent can tell a full article from a cookie wall
   reranking all run locally. Paid providers exist only as explicit opt-ins.
 - **Reads the pages simple scrapers can't.** Each read starts with a plain request
   and climbs to TLS impersonation, a JavaScript renderer and finally a real
-  browser, only as far as the page needs.
+  browser, only as far as the page needs. Where a site offers an official API
+  (Stack Exchange, PubMed, GitHub, npm), it reads that instead.
 - **Results you can trust to be honest.** `quality`, `warnings`, partial and
   truncated flags, attempt history and source hashes travel with the text. A
   failed or thin read is reported as one, never dressed up as a success.

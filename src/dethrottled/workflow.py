@@ -1,7 +1,5 @@
 """Agent-visible evidence policy and executable, prerequisite-aware follow-ups."""
 
-from urllib.parse import urlsplit
-
 PRIMARY_SEARCH_LIMIT = 10
 SUPPLEMENT_SEARCH_LIMIT = 3
 SEARCH_MENU_LIMIT = 15
@@ -179,7 +177,8 @@ def guidance(row, *, offset=0, focused=False, rendered_allowed=True):
 
     def action(tool, reason, **arguments):
         if tool == "drive" and arguments.get("url"):
-            arguments["allowed_hosts"] = [urlsplit(arguments["url"]).hostname]
+            from .urls import host_family
+            arguments["allowed_hosts"] = host_family(arguments["url"])
             handoff = row.get("read_plan", {}).get("browser_session", {})
             if handoff.get("id"):
                 arguments.setdefault("session", handoff["id"])

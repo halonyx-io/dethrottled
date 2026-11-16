@@ -11,6 +11,7 @@ for sets the task; this file sets the house rules.
 |---|---|
 | `src/dethrottled/server.py` | The FastAPI app: every route, request shaping and response assembly |
 | `src/dethrottled/fetch.py` | The acquisition ladder (direct, TLS, render, headed), the TLS race, tier resting and cache lifetimes |
+| `src/dethrottled/sites.py` | The one place for per-site choices: measured starting steps and official keyless API readers (Stack Exchange, PubMed, GitHub, npm, Crossref, OpenAlex) |
 | `src/dethrottled/waymarks.py` | Learned per-site skips and known walls (public hosts only, keyed hashes) |
 | `src/dethrottled/extract.py` | HTML extraction: extractor choice, completeness checks, page metadata and dates |
 | `src/dethrottled/readplan.py` | Automatic browser recovery for incomplete reads |
@@ -65,6 +66,10 @@ for sets the task; this file sets the house rules.
   content or callers; hosts on disk are keyed hashes. Remote callers see counts,
   not domains. A waymark built by one caller must not change another caller's
   reads until a second caller corroborates it.
+- **Site-specific code lives in `sites.py`, nowhere else.** A pin or API reader
+  needs a measurement behind it, must fall back to the full ladder, and must
+  use an official or public endpoint. Nothing that defeats a site's bot
+  protection (challenges, CAPTCHAs, paywalls) belongs in this repository.
 - **Check a dependency's licence before adding it.** The package's required
   dependencies stay permissive. Anything copyleft, or anything with an
   attribution clause, goes into [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md)

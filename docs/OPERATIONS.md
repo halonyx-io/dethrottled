@@ -208,6 +208,11 @@ engine that misses the news time cap three searches running is rested for half
 an hour (`rested_after_caps`) instead of being asked, and waited for, on every
 search; a single miss still never rests it. The package description on PyPI now
 uses absolute links, and `scripts/check_docs.py` rejects relative README links.
+Reads of 50 heavily used sites start at their measured step and use official
+keyless APIs where they exist (`sites.py`); Google's "unusual traffic" page and
+similar block pages, including script-only verification pages such as
+Google Scholar's, are reported as blocks instead of content; automatic
+browser reads of a bare domain may follow its redirect to the `www.` host.
 
 ## Guided Setup and DPR
 

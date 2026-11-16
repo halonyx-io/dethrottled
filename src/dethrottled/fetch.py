@@ -1251,6 +1251,16 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
     # through instead of failing outright.
     if render_first:
         tiers.sort(key=lambda pair: pair[0] != "crawl4ai")
+    # Site routes (sites.py): a measured starting step for 50 heavily used
+    # sites, and official keyless APIs for walled or slow ones. Everything
+    # else in the ladder still follows, in its usual order.
+    from . import sites as _sites
+    pinned = None if render_first else _sites.pinned_step(url)
+    if pinned and any(name == pinned for name, _ in tiers):
+        tiers.sort(key=lambda pair: pair[0] != pinned)
+    reader = _sites.reader_for(url)
+    if reader is not None:
+        tiers.insert(0, ("api:" + reader[0], reader[1]))
 
     reasons, best = [], None
     budget = PAGE_BUDGET if page_budget is None else page_budget
@@ -1377,7 +1387,7 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
         if name in raced:
             continue
         if name == "headed" and not (
-                challenged or script_shell or polluted
+                challenged or script_shell or polluted or pinned == "headed"
                 or _READ_OPTIONS.get().get("headed_fallback")):
             continue
         if name in learned["skip"]:
@@ -1510,7 +1520,8 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
             source = {"html": payload.get("html") or ""} if keep_html else {}
             candidate = {**source,
                          "ok": True, "text": text, "tier": name,
-                         "extractor": "%s-native" % name, "title": "",
+                         "extractor": payload.get("extractor") or "%s-native" % name,
+                         "title": payload.get("title", ""),
                          "published": (payload.get("page_metadata") or {}).get("published", ""),
                          "chars": len(text), "url": final,
                          "reason": "", "cached": False,
@@ -1519,6 +1530,8 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
                          "warnings": payload.get("warnings", []),
                          "page_metadata": payload.get("page_metadata", {}),
                          "content_status": payload.get("content_status", "complete")}
+            if payload.get("source_partial"):
+                candidate["source_partial"] = True
             candidate.update({k: details[k] for k in ("source_alternatives", "source_canonical")
                               if k in details})
             if supplied_clipped:
@@ -1566,6 +1579,16 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
                 reasons.append("%s:fetched_but_%s" % (name, result["reason"]))
                 continue
 
+        # Script-only interstitials (Google Scholar) show nothing to the HTML
+        # check; their extracted text is the prompt itself.
+        late = (challenge_kind(candidate.get("text") or "")
+                if not payload.get("structured") else "")
+        if late:
+            challenged = True
+            attempt.update(outcome="challenge", provider=late,
+                           reason="challenge_detected:" + late)
+            reasons.append(name + ":challenge_detected:" + late)
+            continue
         _supplement_thin(candidate, payload.get("html") or "",
                          payload.get("page_descriptions"))
         if payload.get("browser_recovery"):
@@ -1632,6 +1655,9 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
         _tier_stats[best["tier"] + "-thin"] += 1
         best["quality"] = "thin"
         best["warnings"] = [*best.get("warnings", []), "thin_content; coverage_not_verified"]
+        hint = _sites.advice(url)
+        if hint:
+            best["warnings"].append(hint)
         best["reason"] = "thin, best available: " + ", ".join(reasons)
         return finish(best)
 
@@ -1647,6 +1673,9 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
     if renderer_unavailable:
         failed.update(warnings=[renderer_warning()],
                       renderer_unavailable=renderer_unavailable[0])
+    hint = _sites.advice(url)
+    if hint:
+        failed["warnings"] = [*failed.get("warnings", []), hint]
     return failed
 
 
@@ -1678,7 +1707,6 @@ def _headed_read(url: str, backend: str) -> tuple:
     # Exact-host, caller-scoped browser identity. Never export cookies to another
     # transport or share clearance state across public clients.
     options = _READ_OPTIONS.get()
-    host = urlparse(url).hostname
     from .access import automatic_session, read_session_alias
     from .research import browser_public
     public = browser_public(url, options.get("public_only", False))
@@ -1686,7 +1714,8 @@ def _headed_read(url: str, backend: str) -> tuple:
     session = automatic_session(str(options.get("admission_key", "local")), alias)
     started = time.monotonic()
     deadline = started + float(os.getenv("DETHROTTLED_CHALLENGE_WAIT_SECONDS", "15"))
-    body = {"session": session, "screenshot": "never", "allowed_hosts": [host],
+    from .urls import host_family
+    body = {"session": session, "screenshot": "never", "allowed_hosts": host_family(url),
             "public_only": public, "timeout_ms": 12000,
             "navigation_wait": "commit"}
     read = {"action": "html", "selector": "html", "max_chars": 120000}

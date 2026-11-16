@@ -75,6 +75,11 @@ Names are the MCP tools; the HTTP route does the same job on the raw API
   read a wall, not the content, even if the text is long.
 - A `renderer_unavailable:…` warning means the server's renderer was busy, so
   the page may be incomplete. It is not cached: fetch again shortly.
+- Stack Overflow and other Stack Exchange questions, PubMed abstracts, GitHub
+  repositories and files, and npm packages are read through their official
+  APIs. ScienceDirect and ResearchGate links return open metadata and the
+  abstract, marked partial. For Google searches use the search tool, not a
+  fetch of google.com.
 - A `waymark_known_wall:…` failure means the site's challenge page has beaten
   the browser on recent reads. It is retried automatically later; find another
   source rather than retrying now.

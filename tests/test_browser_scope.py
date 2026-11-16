@@ -36,7 +36,9 @@ def test_read_plan_recovery_uses_public_scope(monkeypatch):
             "content_status": "short"}
     run(URL, thin, read=lambda *a, **k: {}, drive=drive, options={}, browser_available=True)
     assert sent and all(p["public_only"] is True for p in sent)
-    assert all(p["allowed_hosts"] == ["fixture.example"] for p in sent)
+    # A bare domain also allows its www twin (urls.host_family): a redirect
+    # from example.com to www.example.com is the same site.
+    assert all(p["allowed_hosts"] == ["fixture.example", "www.fixture.example"] for p in sent)
 
 
 def _drive_client(monkeypatch, responder):

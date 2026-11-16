@@ -25,6 +25,15 @@ PROMPTS = (
     "we must verify your session before you can proceed",
     "access to this page has been denied",
     "press & hold",
+    "verifying your request",
+)
+# Distinctive block pages that do not start with a prompt (16 Nov 2026, site
+# probes): Google's "unusual traffic" page came back as quality ok, Bloomberg's
+# robot check and Amazon's continue-shopping gate as content. Short pages only.
+BLOCK_PHRASES = (
+    "our systems have detected unusual traffic from your computer network",
+    "detected unusual activity from your computer network",
+    "click the button below to continue shopping",
 )
 
 
@@ -76,6 +85,14 @@ def classify(body, headers=None):
         ):
             return vendor
     if brief and (titled or visible.startswith(PROMPTS)):
+        return "generic"
+    # Judged on text without link targets: Google's page carries long tracking
+    # URLs that push it past the 1,000-character brief limit (1,395 observed).
+    if len(plain) < 2000 and any(phrase in visible for phrase in BLOCK_PHRASES):
+        return "generic"
+    # eBay's block page reads like an ordinary error; only with its signature.
+    if (brief and "something went wrong on our end" in visible
+            and "please go back and try again" in visible and "ebay" in visible):
         return "generic"
     if brief and ("anomaly.js" in lower or 'id="px-captcha"' in lower):
         return "generic"
