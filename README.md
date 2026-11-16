@@ -7,7 +7,7 @@
   <a href="https://github.com/halonyx-io/dethrottled/actions/workflows/ci.yml"><img src="https://github.com/halonyx-io/dethrottled/actions/workflows/ci.yml/badge.svg" alt="CI status"></a>
   <img src="https://img.shields.io/badge/API%20keys-none-22d3ee" alt="No API keys required">
   <img src="https://img.shields.io/badge/runs%20on-AMD64%20%7C%20ARM64-334155" alt="Runs on AMD64 and ARM64">
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-334155" alt="MIT license"></a>
+  <a href="https://github.com/halonyx-io/dethrottled/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-334155" alt="MIT license"></a>
 </p>
 
 # dethrottled
@@ -30,7 +30,8 @@ when something is missing. Your agent can tell a full article from a cookie wall
   reranking all run locally. Paid providers exist only as explicit opt-ins.
 - **Reads the pages simple scrapers can't.** Each read starts with a plain request
   and climbs to TLS impersonation, a JavaScript renderer and finally a real
-  browser, only as far as the page needs.
+  browser, only as far as the page needs. Where a site offers an official API
+  (Stack Exchange, PubMed, GitHub, npm), it reads that instead.
 - **Results you can trust to be honest.** `quality`, `warnings`, partial and
   truncated flags, attempt history and source hashes travel with the text. A
   failed or thin read is reported as one, never dressed up as a success.
@@ -81,7 +82,7 @@ dethrottled stack status
 > [!IMPORTANT]
 > The raw API on `127.0.0.1:8787` has no authentication and is meant for the
 > same machine. To serve other devices or a hosted agent, put the
-> [authenticated REST and MCP adapters](docs/PUBLIC-ACCESS.md) in front of it.
+> [authenticated REST and MCP adapters](https://github.com/halonyx-io/dethrottled/blob/main/docs/PUBLIC-ACCESS.md) in front of it.
 
 ## What it does
 
@@ -158,15 +159,15 @@ curl -sS http://127.0.0.1:8787/research \
 
 ### And more
 
-- **Bulk jobs.** [DPR](docs/DPR.md) takes up to 500 URLs per job from a CSV or
+- **Bulk jobs.** [DPR](https://github.com/halonyx-io/dethrottled/blob/main/docs/DPR.md) takes up to 500 URLs per job from a CSV or
   text file, survives restarts and exports JSONL, CSV or extracted files.
 - **Site mapping and crawling.** Read a sitemap or follow links within one
   site, with explicit page and path bounds.
 - **Field extraction.** Named CSS selectors pull exact values out of a page
   without a model.
-- **Ad and tracker blocking.** [HaGeZi Multi PRO](docs/ADBLOCK.md) filtering is
+- **Ad and tracker blocking.** [HaGeZi Multi PRO](https://github.com/halonyx-io/dethrottled/blob/main/docs/ADBLOCK.md) filtering is
   on by default across every fetcher and browser.
-- **Guided Setup.** [Guided Setup](docs/GUIDED-SETUP.md) recommends settings for your machine and
+- **Guided Setup.** [Guided Setup](https://github.com/halonyx-io/dethrottled/blob/main/docs/GUIDED-SETUP.md) recommends settings for your machine and
   workload, and saves a plan you can review before applying it.
 
 ## What a result looks like
@@ -199,10 +200,10 @@ A real `fetch` response, trimmed:
 
 | You use | Connect with |
 |---|---|
-| An MCP client (Claude, Codex, Cursor and others) | The [MCP adapter](docs/PUBLIC-ACCESS.md): Streamable HTTP at `/mcp` with a bearer token |
-| Your own code | The [HTTP API](docs/API.md), or the [Python package](docs/PYTHON.md) |
-| A coding agent that reads skills | The [agent skill](SKILL-dethrottled.md) and the [client playbook](docs/AGENT-PLAYBOOK.md) |
-| A shell script | The `dethrottled` CLI and [DPR](docs/DPR.md) for batches |
+| An MCP client (Claude, Codex, Cursor and others) | The [MCP adapter](https://github.com/halonyx-io/dethrottled/blob/main/docs/PUBLIC-ACCESS.md): Streamable HTTP at `/mcp` with a bearer token |
+| Your own code | The [HTTP API](https://github.com/halonyx-io/dethrottled/blob/main/docs/API.md), or the [Python package](https://github.com/halonyx-io/dethrottled/blob/main/docs/PYTHON.md) |
+| A coding agent that reads skills | The [agent skill](https://github.com/halonyx-io/dethrottled/blob/main/SKILL-dethrottled.md) and the [client playbook](https://github.com/halonyx-io/dethrottled/blob/main/docs/AGENT-PLAYBOOK.md) |
+| A shell script | The `dethrottled` CLI and [DPR](https://github.com/halonyx-io/dethrottled/blob/main/docs/DPR.md) for batches |
 
 ## Honest limits
 
@@ -212,38 +213,38 @@ A real `fetch` response, trimmed:
 - "Readable" is not "correct". OCR and speech can misread, and a page can be
   wrong. dethrottled reports evidence; it does not verify claims.
 - The fetch ladder does not consult `robots.txt`. You are responsible for how you
-  use it. Use the [authenticated adapters](docs/PUBLIC-ACCESS.md) and network
+  use it. Use the [authenticated adapters](https://github.com/halonyx-io/dethrottled/blob/main/docs/PUBLIC-ACCESS.md) and network
   isolation when anyone else can reach it.
 
 ## Documentation
 
 | Start here | For |
 |---|---|
-| [Quick start](docs/QUICKSTART.md) | Install, first requests, everyday use |
-| [Client playbook](docs/AGENT-PLAYBOOK.md) | How agents should call each tool and read each field |
-| [HTTP API](docs/API.md) | Routes, examples and the [request reference](docs/HTTP-REFERENCE.md) |
-| [Browser operation](docs/DRIVE.md) | Actions, sessions, scope, checkpoints and downloads |
-| [Reading and evidence](docs/DEPENDABLE-WORKFLOWS.md) | Formats, OCR, layout, spreadsheets and continuation |
-| [Configuration](docs/CONFIGURATION.md) | Workers, profiles, models and tuning |
-| [Requirements](docs/REQUIREMENTS.md) | Hardware, memory and disk |
-| [Operations](docs/OPERATIONS.md) | Upgrades, backups and releases |
-| [All documentation](docs/README.md) | Everything else |
+| [Quick start](https://github.com/halonyx-io/dethrottled/blob/main/docs/QUICKSTART.md) | Install, first requests, everyday use |
+| [Client playbook](https://github.com/halonyx-io/dethrottled/blob/main/docs/AGENT-PLAYBOOK.md) | How agents should call each tool and read each field |
+| [HTTP API](https://github.com/halonyx-io/dethrottled/blob/main/docs/API.md) | Routes, examples and the [request reference](https://github.com/halonyx-io/dethrottled/blob/main/docs/HTTP-REFERENCE.md) |
+| [Browser operation](https://github.com/halonyx-io/dethrottled/blob/main/docs/DRIVE.md) | Actions, sessions, scope, checkpoints and downloads |
+| [Reading and evidence](https://github.com/halonyx-io/dethrottled/blob/main/docs/DEPENDABLE-WORKFLOWS.md) | Formats, OCR, layout, spreadsheets and continuation |
+| [Configuration](https://github.com/halonyx-io/dethrottled/blob/main/docs/CONFIGURATION.md) | Workers, profiles, models and tuning |
+| [Requirements](https://github.com/halonyx-io/dethrottled/blob/main/docs/REQUIREMENTS.md) | Hardware, memory and disk |
+| [Operations](https://github.com/halonyx-io/dethrottled/blob/main/docs/OPERATIONS.md) | Upgrades, backups and releases |
+| [All documentation](https://github.com/halonyx-io/dethrottled/blob/main/docs/README.md) | Everything else |
 
 ## Contributing
 
-Read [AGENTS.md](AGENTS.md) before changing code. It sets out the rules
+Read [AGENTS.md](https://github.com/halonyx-io/dethrottled/blob/main/AGENTS.md) before changing code. It sets out the rules
 contributors (human or AI) follow here, and the checks a change must pass.
 
-This checkout is **1.8.10**. A running service reports its own version at `/health`.
+This checkout is **1.8.11**. A running service reports its own version at `/health`.
 
 ## License
 
-dethrottled's own code is [MIT](LICENSE). The default Docker stack also runs
+dethrottled's own code is [MIT](https://github.com/halonyx-io/dethrottled/blob/main/LICENSE). The default Docker stack also runs
 third-party software under its own licences, including two AGPL-3.0 libraries
 in the API image (PyMuPDF for PDFs, EbookLib for EPUB) and SearXNG in its own
 container. Running it for yourself adds no obligations. If you modify it and
 let other people use it over a network, or redistribute the images, read
-[third-party notices](THIRD-PARTY-NOTICES.md) first.
+[third-party notices](https://github.com/halonyx-io/dethrottled/blob/main/THIRD-PARTY-NOTICES.md) first.
 
 This product includes software developed by UncleCode (https://x.com/unclecode)
 as part of the Crawl4AI project (https://github.com/unclecode/crawl4ai).

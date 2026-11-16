@@ -15,7 +15,7 @@ must be classified; unknown paths fail generation/checking.
 | harness-guide | 20 |
 | historical-evidence | 216 |
 | planned-work | 1 |
-| source-contract | 175 |
+| source-contract | 176 |
 | third-party-notice | 4 |
 | visual | 6 |
 
@@ -508,6 +508,7 @@ Change author: audit docs impact, advertised defaults and generated contracts.
 | [src/dethrottled/server.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/server.py) |
 | [src/dethrottled/signals.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/signals.py) |
 | [src/dethrottled/site.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/site.py) |
+| [src/dethrottled/sites.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/sites.py) |
 | [src/dethrottled/stack.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/stack.py) |
 | [src/dethrottled/structure.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/structure.py) |
 | [src/dethrottled/timed.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/timed.py) |

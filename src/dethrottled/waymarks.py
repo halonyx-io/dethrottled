@@ -57,7 +57,6 @@ WON_SECONDS = 7 * 86400          # a later step must have worked this recently
 PROBE_SECONDS = float(os.environ.get("DETHROTTLED_WAYMARK_PROBE_HOURS", "6")) * 3600
 WALL_PROBE_SECONDS = float(os.environ.get("DETHROTTLED_WAYMARK_WALL_PROBE_MINUTES",
                                           "30")) * 60
-PROBE_EVERY = 10                 # also retry one in ten skip-eligible reads
 MAX_ENTRIES = int(os.environ.get("DETHROTTLED_WAYMARK_MAX_ENTRIES", "20000"))
 SAVE_EVERY = 60.0
 LADDER = ("direct", "tls", "crawl4ai", "headed")
@@ -136,7 +135,8 @@ def _failure_kind(attempt: dict) -> str | None:
         return "silent"  # TLS answered while plain HTTP had not (fetch._race_direct)
     if any(word in reason for word in ("Timeout", "ConnectionError", "SSLError")):
         return "timeout"
-    if any(reason.endswith(code) for code in ("_403", "_429", "_401", "_451")):
+    # 202 with an empty body is how WAFs (AWS, Booking, IMDb) refuse a client.
+    if any(reason.endswith(code) for code in ("_403", "_429", "_401", "_451", "_202")):
         return "blocked"
     return None
 

@@ -10,6 +10,7 @@ from .access import automatic_session, read_session_alias
 from .challenges import classify
 from .content import annotate_content, page_details, passage_excerpt, short_text
 from .identity import origin
+from .urls import host_family
 
 
 def gap(row):
@@ -197,7 +198,7 @@ def run(url, initial, *, read, drive, options, browser_available, allow_assets=T
         public = browser_public(url, options.get("public_only", False))
         alias = read_session_alias(url, public)
         session = automatic_session(str(options.get("evidence_namespace", "local")), alias)
-        body = dict(session=session, allowed_hosts=[urlsplit(url).hostname],
+        body = dict(session=session, allowed_hosts=host_family(url),
                     public_only=public, screenshot="never",
                     navigation_wait="commit")
         state = {}
@@ -357,7 +358,8 @@ def run(url, initial, *, read, drive, options, browser_available, allow_assets=T
         from .research import browser_public
         best["read_plan"]["browser_session"] = {
             "id": read_session_alias(url, browser_public(url, options.get("public_only", False))),
-            "allowed_hosts": [urlsplit(url).hostname], "url": url}
+            "allowed_hosts": host_family(url),
+            "url": url}
     if decisions:
         best["recovery_attempts"] = decisions
     return best

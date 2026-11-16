@@ -203,6 +203,18 @@ return `engine_order` (order, demotions and `ordering` counts) in the
 `/v2/search` response. An engine rested by 1.8.9 recovers on its own within 30
 minutes; removing its `searxng:` entry from `engine-health.json` clears it at once.
 
+For 1.8.11, rebuild the API and adapter images; keep all volumes. A SearXNG
+engine that misses the news time cap three searches running is rested for half
+an hour (`rested_after_caps`) instead of being asked, and waited for, on every
+search; a single miss still never rests it. The package description on PyPI now
+uses absolute links, and `scripts/check_docs.py` rejects relative README links.
+Reads of 50 heavily used sites start at their measured step and use official
+keyless APIs where they exist (`sites.py`); Google's "unusual traffic" page and
+similar block pages, including script-only verification pages such as
+Google Scholar's, are reported as blocks instead of content (`/drive` reports
+Google's `/sorry/` page as `access.status: challenge`); automatic
+browser reads of a bare domain may follow its redirect to the `www.` host.
+
 ## Guided Setup and DPR
 
 [Guided Setup](GUIDED-SETUP.md) saves an override without starting services.

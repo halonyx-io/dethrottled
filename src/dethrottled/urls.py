@@ -33,3 +33,30 @@ def canonical_url(url: str) -> str:
     path = parts.path.rstrip("/") or "/"
     return urlunsplit((parts.scheme or "https", host, path,
                        urlencode(kept), ""))
+
+
+def host_family(url: str) -> list:
+    """The page's host and its www./bare twin, for automatic browser reads.
+
+    A browser session only navigates to its allowed hosts, matched exactly, so
+    reading reddit.com/... failed with ERR_BLOCKED_BY_CLIENT when the site
+    redirected to www.reddit.com (found 16 Nov 2026). The twin is the same
+    site; nothing wider is allowed. Callers that pass their own allowed_hosts
+    to /drive are unaffected.
+    """
+    from urllib.parse import urlsplit
+    host = (urlsplit(url or "").hostname or "").lower().rstrip(".")
+    if not host:
+        return []
+    labels = host.split(".")
+    if host.replace(".", "").isdigit() or len(labels) < 2:
+        return [host]
+    if labels[0] == "www":
+        return [host, host[4:]] if len(labels) >= 3 else [host]
+    # Only a bare domain gets a www twin (reddit.com, bbc.co.uk), never a
+    # subdomain: www.quotes.toscrape.com is not the same site.
+    second_level = len(labels) == 3 and len(labels[-1]) == 2 and labels[-2] in {
+        "co", "com", "org", "net", "gov", "ac", "edu", "or", "ne", "go"}
+    if len(labels) == 2 or second_level:
+        return [host, "www." + host]
+    return [host]

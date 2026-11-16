@@ -85,9 +85,20 @@ def main():
             body = FENCE.sub("", text)
             targets = LINK.findall(body)
             targets += re.findall(r'<img\b[^>]*\bsrc=["\']([^"\']+)', body)
+            if relative == "README.md":
+                targets += re.findall(r'<a\b[^>]*\bhref=["\']([^"\']+)', body)
             for target in targets:
                 target = target.strip("<>")
                 parts = urlsplit(target)
+                if relative == "README.md":
+                    repo_prefix = "/halonyx-io/dethrottled/blob/main/"
+                    if not parts.scheme and not parts.netloc and parts.path:
+                        errors.append(f"{relative}: PyPI requires an absolute URL for {target}")
+                    if parts.netloc == "github.com" and parts.path.startswith(repo_prefix):
+                        target = parts.path.removeprefix(repo_prefix)
+                        if parts.fragment:
+                            target += "#" + parts.fragment
+                        parts = urlsplit(target)
                 if parts.netloc == "raw.githubusercontent.com" and parts.path.startswith(
                     "/halonyx-io/dethrottled/main/"
                 ):

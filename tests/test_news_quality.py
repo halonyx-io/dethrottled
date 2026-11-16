@@ -8,8 +8,17 @@ import time
 from email.utils import formatdate
 from types import SimpleNamespace
 
+import pytest
+
 from dethrottled import engine_policy as ep
 from dethrottled import search as fs
+
+
+@pytest.fixture(autouse=True)
+def fresh_cap_runs():
+    fs._CAP_RUNS.clear()
+    yield
+    fs._CAP_RUNS.clear()
 
 
 def days_ago(days):
@@ -174,3 +183,40 @@ def test_v2_search_returns_the_engine_order(monkeypatch):
     web = TestClient(server.app).post("/v2/search", json={
         "query": "market story", "profile": "web", "limit": 3, "cache_mode": "bypass"}).json()
     assert "engine_order" not in web
+
+
+def _searxng_answers(monkeypatch, payloads):
+    queue = list(payloads)
+    monkeypatch.setattr(fs.requests, "get", lambda url, params=None, **k: SimpleNamespace(
+        status_code=200, json=lambda: queue.pop(0), headers={}))
+    monkeypatch.setattr(fs, "SEARXNG_URL", "http://searxng.invalid")
+    failures = []
+    monkeypatch.setattr(fs, "_record_failure",
+                        lambda name, reason, namespace="": failures.append((name, reason)))
+    return failures
+
+
+def test_an_engine_missing_the_cap_three_times_running_is_rested(monkeypatch):
+    """16 Nov 2026: Qwant refused this server after ~4 s on every news search,
+    and each search waited the full cap for it."""
+    capped = {"results": [], "unresponsive_engines": [["qwant news", "timeout"]]}
+    failures = _searxng_answers(monkeypatch, [capped] * 3)
+    reports = []
+    for index in range(3):
+        report = {}
+        fs.searxng("q%d" % index, engines="qwant news", time_limit=1.5, diagnostics=report)
+        reports.append(report)
+    assert failures and failures[0][0] == "qwant news" and len(failures) == 1
+    assert "3 times running" in failures[0][1]
+    assert "rested_after_caps" not in reports[1]
+    assert reports[2]["rested_after_caps"] == ["qwant news"]
+
+
+def test_an_answer_resets_the_count(monkeypatch):
+    capped = {"results": [], "unresponsive_engines": [["qwant news", "timeout"]]}
+    answered = {"results": [{"url": "https://wire.example/2026/11/a", "title": "A",
+                             "engine": "qwant news"}], "unresponsive_engines": []}
+    failures = _searxng_answers(monkeypatch, [capped, capped, answered, capped, capped])
+    for index in range(5):
+        fs.searxng("r%d" % index, engines="qwant news", time_limit=1.5, diagnostics={})
+    assert failures == []
