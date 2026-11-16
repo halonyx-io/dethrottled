@@ -17,16 +17,32 @@ def navigation_recipe(url):
             'settle_ms': 5000}
 
 
+# Block pages that do not open with a prompt; mirrors BLOCK_PHRASES in
+# src/dethrottled/challenges.py. Google's /sorry/ page reached /drive as
+# content_observed on 16 Nov 2026.
+BLOCK_PHRASES = (
+    'our systems have detected unusual traffic from your computer network',
+    'detected unusual activity from your computer network',
+    'click the button below to continue shopping',
+)
+
+
 def assess_access(text, title='', url=''):
     visible = ' '.join(text.split()).lower()
     title = title.lower().strip()
     status, reason = 'unknown', 'no_clear_content_signal'
-    if (len(visible) < 3000 and (
+    parsed = urlsplit(url)
+    if ((parsed.hostname or '').endswith('google.com') and parsed.path.startswith('/sorry/')) or (
+            len(visible) < 3000 and any(phrase in visible for phrase in BLOCK_PHRASES)):
+        status, reason = 'challenge', 'observed_block_page'
+    elif (len(visible) < 3000 and (
             title.startswith(('just a moment', 'reddit - prove your humanity',
                               'verification required', 'security check')) or
             visible.startswith(('prove your humanity', 'verify you are human',
                                 'verifying you are human', 'checking your browser',
-                                'show us your human side', 'access denied')))):
+                                'show us your human side', 'access denied',
+                                'verifying your request',
+                                'please wait while we verify')))):
         status, reason = 'challenge', 'observed_verification_interstitial'
     elif ('log in to use old reddit' in visible[:300]
           and 'accounts are required to access old reddit' in visible[:700]

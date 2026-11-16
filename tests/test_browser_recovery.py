@@ -69,6 +69,16 @@ def test_challenge_and_login_are_not_readable_content():
     assert access['status'] == 'login_required'
 
 
+def test_google_sorry_page_is_a_challenge_in_drive():
+    text = ("About this page Our systems have detected unusual traffic from your computer "
+            "network. This page checks to see if it's really you sending the requests.")
+    sorry = 'https://www.google.com/sorry/index?continue=https://www.google.com/search'
+    assert recovery.assess_access(text, '', sorry)['status'] == 'challenge'
+    assert recovery.assess_access(text, '', 'https://example.com/')['status'] == 'challenge'
+    scholar = 'Verifying your request... Please wait while we verify your session.'
+    assert recovery.assess_access(scholar)['status'] == 'challenge'
+
+
 def test_mentions_in_real_content_are_not_interstitials():
     article = ('An investigation of the phrase "Prove your humanity" and the message '
                '"Log in to use old Reddit". ' * 20)
