@@ -295,6 +295,14 @@ DEFAULT_ENGINES = os.environ.get(
 # Qwant News answers in about 0.8 s; 15 timings of DDG+Qwant were 0.3-0.7 s
 # with one 2 s spike (14 Nov 2026).
 NEWS_SEARXNG_SECONDS = float(os.environ.get("DETHROTTLED_NEWS_SEARXNG_SECONDS", "1.5"))
+# One missed cap never rests an engine, but one that misses it this many times
+# running is not answering: on 16 Nov 2026 Qwant refused this server (403,
+# error_code 50) after about 4 s, every news search waited the full cap for it,
+# and news searches went from about 0.9 s to 1.6-2.5 s. It is then rested like
+# any refusing engine and retried after the usual half hour.
+CAP_STRIKES = max(2, int(os.environ.get("DETHROTTLED_SEARXNG_CAP_STRIKES", "3")))
+_CAP_RUNS: dict = {}
+_CAP_LOCK = threading.Lock()
 
 # Engine families, for a bundle that wants more than the default web and news.
 # A scientific or technical subject gets far more from crossref and openalex
@@ -438,11 +446,26 @@ def searxng(query: str, *, max_items: int = 8, categories: str = "",
             # DuckDuckGo went from half this pool to nothing without anybody
             # noticing. Reported once per engine per process, because it is a
             # standing condition rather than an event.
+            rested_after_caps = []
+            if time_limit:
+                with _CAP_LOCK:
+                    for name in [e.strip() for e in engines.split(",") if e.strip()]:
+                        if name not in capped:
+                            _CAP_RUNS.pop(name, None)  # it answered (or refused outright)
+                            continue
+                        _CAP_RUNS[name] = _CAP_RUNS.get(name, 0) + 1
+                        if _CAP_RUNS[name] >= CAP_STRIKES:
+                            _CAP_RUNS.pop(name, None)
+                            rested_after_caps.append(name)
+                if diagnostics is not None and rested_after_caps:
+                    diagnostics["rested_after_caps"] = rested_after_caps
             for entry in errors:
                 name = entry[0] if entry else "?"
                 reason = entry[1] if len(entry) > 1 else "unresponsive"
-                if name in capped:
+                if name in capped and name not in rested_after_caps:
                     continue
+                if name in rested_after_caps:
+                    reason = "missed the %gs cap %d times running" % (time_limit, CAP_STRIKES)
                 _record_failure(name, reason, namespace="searxng")
                 if name not in _DEAD_ENGINES:
                     _DEAD_ENGINES[name] = reason
