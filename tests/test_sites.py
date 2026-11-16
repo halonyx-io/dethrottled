@@ -1,6 +1,6 @@
 """Site routes (sites.py), block recognition and the www twin for browser reads.
 
-Measured on live 1.8.10, 16 Nov 2026; see ~/web-bench/results/site-routes.
+Measured on live 1.8.10, 16 Nov 2026.
 """
 import json
 from types import SimpleNamespace

@@ -1,7 +1,7 @@
 """Per-site routes for 50 of the sites agents use most: where to start, and
 official keyless APIs that read better than the page.
 
-Measured on live 1.8.10, 16 Nov 2026 (`~/web-bench/results/site-routes`), one
+Measured on live 1.8.10, 16 Nov 2026, one
 representative page per site through the full ladder, every result checked by
 hand. Two things live here, and only here, so every site-specific choice is in
 one reviewable table:
