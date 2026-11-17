@@ -89,10 +89,29 @@ def test_chain_asks_bing_then_yahoo_and_rests_a_decoy(monkeypatch):
                                 "yahoo": Response(yahoo_page(GOOD))})
     monkeypatch.setattr(fs, "INDEX_DOORS", ("bing", "yahoo"))
     report = {}
-    rows = fs._beyond_ddg(QUERY, max_items=8, cache=None, report=report)
+    rows = fs._beyond_ddg(QUERY, max_items=8, cache=None, report=report, google=False)
     assert calls == ["bing", "yahoo"] and rows[0]["engine"] == "web-tls-yahoo"
     assert report["doors"][0]["status"] == "decoy" and discovery.door_resting("bing") > 0
     assert report["door"] == "yahoo"
+
+
+def test_google_is_only_the_last_resort(monkeypatch):
+    serve(monkeypatch, {"bing": Response("", 503), "yahoo": Response("", 503)})
+    monkeypatch.setattr(fs, "INDEX_DOORS", ("bing", "yahoo"))
+    monkeypatch.setattr(fs, "GOOGLE_LAST_RESORT", True)
+    monkeypatch.setattr(fs, "BROWSER_SEARCH_URL", "http://worker")
+    asked = []
+
+    def browser(query, *, engines=None, diagnostics=None, **kwargs):
+        asked.append(engines)
+        diagnostics["status"] = "ok"
+        return [{"url": "https://example.org/g", "title": "Google result for autovacuum",
+                 "engine": "web-browser-google"}]
+    monkeypatch.setattr(fs, "browser_search", browser)
+    report = {}
+    rows = fs._beyond_ddg(QUERY, max_items=8, cache=None, report=report)
+    assert asked == [["google"]] and rows[0]["engine"] == "web-browser-google"
+    assert [d["engine"] for d in report["doors"]] == ["tls-bing", "tls-yahoo", "browser-google"]
 
 
 def test_ddg_success_never_reaches_the_other_doors(monkeypatch):
@@ -143,3 +162,85 @@ def test_engines_lists_every_provider_and_drives_fetch_relevance():
     lone = {"url": "https://example.org/b", "engine": "web-tls-ddg-lite", "score": 1.0}
     assert signals.fetch_relevance(dict(row, score=1.0), max_score=10.0) != "low"
     assert signals.fetch_relevance(lone, max_score=10.0) == "low"
+
+
+# --- Destination recovery for results listed without a usable link ----------
+
+from dethrottled import dedupe  # noqa: E402
+
+ITEM = {"rank": 5, "title": "PostgreSQL Logical Replication Setup: A Step-by-Step …",
+        "snippet": "Set up logical replication.", "domain": "learnomate.org",
+        "engine": "google", "reason": "google_goto_throttled"}
+SAME = {"url": "https://www.learnomate.org/postgresql-logical-replication/",
+        "title": "PostgreSQL Logical Replication Setup: A Step-by-Step Guide - Learnomate",
+        "engine": "yandex"}
+
+
+def test_match_needs_same_host_and_title_prefix():
+    assert dedupe.match_destination(ITEM, [SAME]) is SAME
+    other_host = dict(SAME, url="https://mirror.example/postgresql-logical-replication/")
+    assert dedupe.match_destination(ITEM, [other_host]) is None
+    other_title = dict(SAME, title="Learnomate courses and pricing")
+    assert dedupe.match_destination(ITEM, [other_title]) is None
+
+
+def test_two_different_urls_are_ambiguous_and_not_guessed():
+    twin = dict(SAME, url="https://learnomate.org/blog/postgresql-logical-replication-v2/")
+    assert dedupe.match_destination(ITEM, [SAME, twin]) is None
+    copy = dict(SAME, url="https://learnomate.org/postgresql-logical-replication/")
+    assert dedupe.match_destination(ITEM, [SAME, copy]) is SAME  # one page, two spellings
+
+
+def test_recovery_joins_an_existing_row_and_labels_new_ones_as_inferred():
+    merged = [dict(SAME, discovery=[{"provider": "yandex"}])]
+    door_row = {"url": "https://kb.example.org/logical-replication-checklist",
+                "title": "Logical replication checklist for PostgreSQL 18",
+                "engine": "web-tls-bing"}
+    report = {"unresolved": [ITEM, dict(ITEM, rank=6, title=door_row["title"],
+                                        domain="kb.example.org"),
+                             dict(ITEM, rank=7, title="Nothing else lists this page",
+                                  domain="nowhere.example")],
+              "doors": [{"engine": "tls-bing", "status": "no_matching_candidates",
+                         "candidates": [door_row]}]}
+    left = fs._recover_destinations(merged, report)
+    assert merged[0]["discovery"][-1]["destination"] == {
+        "method": "cross_engine_match", "inferred": True, "matched_from": "yandex"}
+    added = merged[1]
+    assert added["url"] == door_row["url"] and added["destination"]["inferred"]
+    assert added["destination"]["matched_from"] == "web-tls-bing"
+    assert [i["rank"] for i in left] == [7] and left[0]["reason"] == "google_goto_throttled"
+
+
+def test_a_decoy_doors_urls_are_never_used():
+    door_row = {"url": "https://kb.example.org/x", "title": ITEM["title"],
+                "engine": "web-tls-bing"}
+    report = {"unresolved": [dict(ITEM, domain="kb.example.org")],
+              "doors": [{"engine": "tls-bing", "status": "decoy", "candidates": [door_row]}]}
+    merged = []
+    assert len(fs._recover_destinations(merged, report)) == 1 and merged == []
+
+
+def test_a_door_keeps_off_topic_rows_only_as_candidates(monkeypatch):
+    off = [("https://example.org/pricing", "Unrelated pricing page for widgets",
+            "Prices and plans for the widget product line.")]
+    serve(monkeypatch, {"bing": Response(bing_page(off))})
+    monkeypatch.setattr(discovery, "constrained", lambda query, row: False)  # e.g. domain filter
+    report = {}
+    assert discovery.door_search("bing", QUERY, diagnostics=report) == []
+    assert report["status"] == "no_matching_candidates"
+    assert report["candidates"][0]["url"] == "https://example.org/pricing"
+
+
+def test_worker_reads_the_breadcrumb_domain():
+    import ast
+    from pathlib import Path
+    from urllib.parse import urlparse
+    source = Path(__file__).resolve().parents[1] / "browser-search/service.py"
+    tree = ast.parse(source.read_text())
+    function = next(n for n in tree.body
+                    if isinstance(n, ast.FunctionDef) and n.name == "_cite_host")
+    scope = {"urlparse": urlparse}
+    exec(compile(ast.Module(body=[function], type_ignores=[]), "<worker>", "exec"), scope)
+    assert scope["_cite_host"]("https://www.learnomate.org \u203a PostgreSQL") == "learnomate.org"
+    assert scope["_cite_host"]("2 years ago") == ""
+    assert scope["_cite_host"]("") == ""

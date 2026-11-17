@@ -126,8 +126,25 @@ ENGINES = {
     "ddg-lite": ("https://lite.duckduckgo.com/lite/?q=", "a.result-link", ".result-snippet"),
     "ddg-html": ("https://html.duckduckgo.com/html/?q=", "a.result__a", ".result__snippet"),
     "bing": ("https://www.bing.com/search?q=", "li.b_algo h2 a", "li.b_algo .b_caption p"),
+    # The last resort, when every plain-HTTP door to Bing's index has refused:
+    # Google answers only a real browser (plain HTTP gets its JavaScript-only
+    # page), and the headed Chrome here reads it. Rows come from _google_rows.
+    "google": ("https://www.google.com/search?hl=en&q=", "#search a h3", "#search a h3"),
 }
 ORDER = ("ddg-lite", "ddg-html")
+WIDE_ENGINES = {"ddg-lite", "ddg-html", "google"}
+_GOOGLE_REFRESH = re.compile(r'content="(\d+);url=(/goto\?url=[^"]+)"')
+_GOOGLE_ROWS = """() => [...document.querySelectorAll('#search a h3')].map(h => {
+  const a = h.closest('a'); let box = a;
+  for (let i = 0; i < 8 && box.parentElement; i++) {
+    box = box.parentElement;
+    if (box.matches('.MjjYud, .g, [data-hveid]')) break;
+  }
+  const s = box.querySelector('[data-sncf], .VwiC3b, [style*="line-clamp"]');
+  const c = box.querySelector('cite');
+  return {url: a.href, title: h.innerText, snippet: s ? s.innerText : '',
+          cite: c ? c.innerText : ''};
+})"""
 SEMAPHORE = asyncio.Semaphore(3)
 STATE_LOCK = asyncio.Lock()
 DDG_LOCK = asyncio.Lock()
@@ -154,6 +171,9 @@ def _destination(href: str) -> str | None:
     parts = urlparse(href)
     if parts.hostname in {"duckduckgo.com", "www.duckduckgo.com"} and parts.path == "/l/":
         href = unquote(parse_qs(parts.query).get("uddg", [""])[0])
+        parts = urlparse(href)
+    if (parts.hostname or "").endswith("google.com") and parts.path == "/url":
+        href = (parse_qs(parts.query).get("q") or [""])[0]
         parts = urlparse(href)
     if parts.hostname == "www.bing.com" and parts.path.startswith("/ck/"):
         token = parse_qs(parts.query).get("u", [""])[0]
@@ -206,7 +226,9 @@ async def _pace_ddg():
 
 async def _extract(page, engine: str, query: str, limit: int = 10,
                    diagnostics=None) -> list[dict]:
-    limit = min(limit, 10 if engine.startswith("ddg") else 3)
+    limit = min(limit, 10 if engine in WIDE_ENGINES else 3)
+    if engine == "google":
+        return await _google_rows(page, query, limit, diagnostics)
     _, selector, snippet_selector = ENGINES[engine]
     links = page.locator(selector)
     snippets = page.locator(snippet_selector)
@@ -234,6 +256,124 @@ async def _extract(page, engine: str, query: str, limit: int = 10,
     return rows
 
 
+async def _google_resolve(page, href: str) -> dict:
+    """One opaque /goto link: read its 302 Location, never follow it.
+
+    Since 30 Oct 2026 Google throttles destination lookups per results page:
+    the first few answer 302 at once, later ones get an interstitial asking to
+    wait 3, 4, 7, 12, 21 s and more (measured 18 Nov 2026; providers report up
+    to 120 s). That is an explicit request to slow down, so it is not waited out.
+    """
+    started = time.monotonic()
+    record = {"class": "error", "target": ""}
+    try:
+        response = await page.context.request.get(
+            urljoin("https://www.google.com/", href), max_redirects=0,
+            timeout=4000, fail_on_status_code=False)
+        record["status"] = response.status
+        if response.headers.get("location"):
+            record.update({"class": "redirect", "target": response.headers["location"]})
+        else:
+            body = (await response.text())[:3000] if response.status == 200 else ""
+            match = _GOOGLE_REFRESH.search(body)
+            if match:
+                record.update({"class": "throttled", "wait_s": int(match.group(1))})
+            elif "/sorry/" in body or "unusual traffic" in body.lower():
+                record["class"] = "challenge"
+            else:
+                record["class"] = "other"
+    except Exception as exc:
+        record["error"] = type(exc).__name__
+    record["elapsed_ms"] = int((time.monotonic() - started) * 1000)
+    return record
+
+
+def _cite_host(cite: str) -> str:
+    first = (cite or "").split("\u203a")[0].strip().split()
+    host = (urlparse(first[0] if "://" in first[0] else "https://" + first[0]).hostname
+            if first else "") or ""
+    return host.lower().removeprefix("www.") if "." in host else ""
+
+
+async def _google_rows(page, query: str, limit: int, diagnostics=None) -> list[dict]:
+    """Google organic results. Extraction and destination resolution are
+    separate stages, each counted in diagnostics["google"].
+
+    Links are resolved one at a time and resolution stops at Google's first
+    throttle page. Results whose destination is unknown are not dropped and
+    not guessed: they go to diagnostics["unresolved"] with their title,
+    snippet and breadcrumb domain, for the API to match or report.
+    """
+    trace = {"serp": {"url_class": "challenge" if "/sorry/" in page.url else "results"}}
+    items = await page.evaluate(_GOOGLE_ROWS)
+    trace["organic"] = {"identified": len(items)}
+    items = items[:limit + 4]
+    trace["extraction"] = {
+        "considered": len(items),
+        "titles": sum(len((i.get("title") or "").strip()) >= 10 for i in items),
+        "snippets": sum(len((i.get("snippet") or "").strip()) >= 25 for i in items)}
+    hrefs = [i.get("url") or "" for i in items]
+    opaque = [urlparse(h).path == "/goto" for h in hrefs]
+    trace["opaque"] = {"goto": sum(opaque),
+                       "direct": sum(bool(h) and not o for h, o in zip(hrefs, opaque)),
+                       "missing": sum(not h for h in hrefs)}
+    started, records, stopped = time.monotonic(), [], None
+    for href, is_opaque in zip(hrefs, opaque):
+        if not is_opaque:
+            records.append({"class": "direct", "target": href})
+        elif stopped:
+            records.append({"class": "not_attempted", "target": ""})
+        else:
+            record = await _google_resolve(page, href)
+            records.append(record)
+            if record["class"] in {"throttled", "challenge"}:
+                stopped = record["class"]
+    classes = {}
+    for record in records:
+        classes[record["class"]] = classes.get(record["class"], 0) + 1
+    trace["resolution"] = {
+        "classes": classes, "stopped_at": stopped,
+        "elapsed_ms": int((time.monotonic() - started) * 1000),
+        "links": [{"rank": n + 1, **{k: v for k, v in r.items() if k != "target"}}
+                  for n, r in enumerate(records)]}
+    rows, unresolved, invalid, irrelevant, duplicate = [], [], 0, 0, 0
+    for rank, (item, record) in enumerate(zip(items, records), 1):
+        title = " ".join((item.get("title") or "").split())
+        snippet = " ".join((item.get("snippet") or "").split())
+        if len(title) < 10:
+            invalid += 1
+            continue
+        if not record.get("target"):
+            unresolved.append({"rank": rank, "title": title[:300], "snippet": snippet[:600],
+                               "domain": _cite_host(item.get("cite") or ""),
+                               "engine": "google", "reason": "google_goto_" + (
+                                   stopped if record["class"] == "not_attempted"
+                                   else record["class"])})
+            continue
+        url = _destination(record["target"])
+        if not url:
+            invalid += 1
+            continue
+        if any(r["url"] == url for r in rows):
+            duplicate += 1
+            continue
+        if diagnostics is not None and len(snippet) >= 25:
+            diagnostics["unfiltered_usable"] = diagnostics.get("unfiltered_usable", 0) + 1
+        if not _valid_for_query(url, query):
+            irrelevant += 1
+            continue
+        rows.append({"title": title[:300], "url": url, "snippet": snippet[:600],
+                     "engine": "google", "rank": rank,
+                     "destination": "redirect" if record["class"] == "redirect" else "direct"})
+    trace.update(validation={"rejected": invalid}, relevance={"rejected": irrelevant},
+                 dedupe={"dropped": duplicate}, delivered=len(rows[:limit]),
+                 unresolved=len(unresolved))
+    if diagnostics is not None:
+        diagnostics["google"] = trace
+        diagnostics["unresolved"] = unresolved
+    return rows[:limit]
+
+
 def _usable(rows: list[dict]) -> bool:
     # Narrow queries legitimately return fewer than three choices. Only rows
     # with substantive snippets count; empty/challenge pages remain failures.
@@ -252,7 +392,7 @@ def _retry_after(value):
 
 
 async def _engine(context, engine: str, query: str, delay: float, limit: int = 10) -> dict:
-    limit = min(10 if engine.startswith("ddg") else 3, max(3, limit))
+    limit = min(10 if engine in WIDE_ENGINES else 3, max(3, limit))
     if delay:
         await asyncio.sleep(delay)
     if engine.startswith("ddg"):
@@ -286,15 +426,22 @@ async def _engine(context, engine: str, query: str, delay: float, limit: int = 1
             if "/sorry/" in page.url or "/captcha" in page.url:
                 attempt["reason"] = "challenge_page"
                 break
-            if await page.locator(selector).count() >= 1:
+            found = await page.locator(selector).count()
+            # Google streams its results in; reading at the first heading
+            # returned two of ten. DDG's static pages are complete at once.
+            if found >= 1 and (engine != "google" or found >= 6
+                               or time.monotonic() - started > 2.5):
                 rows = await asyncio.wait_for(
-                    _extract(page, engine, query, limit, diagnostics=attempt), timeout=2.0)
+                    _extract(page, engine, query, limit, diagnostics=attempt),
+                    timeout=5.0 if engine == "google" else 2.0)
                 added = [row for row in rows if row["url"] not in seen]
                 seen.update(row["url"] for row in added)
                 attempt["results"].extend(added)
                 attempt["results"] = attempt["results"][:limit]
                 attempt["pages"] += 1
-                if _usable(attempt["results"]):
+                # Google is read once: re-reading would re-spend its per-page
+                # destination budget. Unresolved rows travel in the attempt.
+                if _usable(attempt["results"]) or engine == "google":
                     return attempt
                 if not rows and attempt.get("unfiltered_usable"):
                     attempt["reason"] = "no_matching_candidates"
@@ -360,7 +507,7 @@ def _save_search_profile(state) -> None:
         pass
 
 
-async def _race(browser, query: str, limit: int = 10) -> dict:
+async def _race(browser, query: str, limit: int = 10, engines=None) -> dict:
     limit = max(1, min(limit, 10))
     started = time.monotonic()
     profile = _load_search_profile()
@@ -371,7 +518,7 @@ async def _race(browser, query: str, limit: int = 10) -> dict:
     except Exception:
         context = await browser.new_context(_dethrottled_lane="native")
     pending = {asyncio.create_task(_engine(context, engine, query, i * STAGGER, limit)): engine
-               for i, engine in enumerate(ORDER)}
+               for i, engine in enumerate(engines or ORDER)}
     attempts, winner, backoff = [], None, False
     try:
         while pending and time.monotonic() - started < ENGINE_TIMEOUT + 2:
@@ -567,6 +714,9 @@ app = FastAPI(title="Dethrottled browser search worker", lifespan=lifespan)
 class SearchRequest(BaseModel):
     query: str = Field(min_length=2, max_length=4096)
     limit: int = Field(default=10, ge=1, le=10)
+    # Default: the DDG race. ["google"] is the caller's last resort.
+    engines: list[Literal["ddg-lite", "ddg-html", "google"]] | None = Field(
+        default=None, max_length=3)
 
 
 # ---------------------------------------------------------------------------
@@ -1344,7 +1494,7 @@ async def search(body: SearchRequest):
     async with STATE_LOCK:
         ACTIVE += 1
     try:
-        result = await _race(app.state.browser, query, body.limit)
+        result = await _race(app.state.browser, query, body.limit, body.engines)
         result["queue_s"] = round(time.monotonic() - queued - result["service_s"], 3)
         STATS["requests"] += 1
         if result["ok"]:

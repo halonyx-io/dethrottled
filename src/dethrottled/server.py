@@ -317,6 +317,10 @@ def _search_row(row: dict, meta: dict, index: int) -> dict:
         "freshness_note": meta.get("freshness_note") if index == 0 else None,
         "decoy_buckets": meta.get("decoy_buckets") if index == 0 else None,
         "semantic_cache": meta.get("semantic_cache") if index == 0 else None,
+        # How the URL was obtained, when an engine hid it (Google's /goto):
+        # its own redirect, or matched from another engine's row (inferred).
+        **({"destination": row["destination"]} if row.get("destination") else {}),
+        **({"unresolved": meta["unresolved"]} if index == 0 and "unresolved" in meta else {}),
         "from_corpus": bool(row.get("from_corpus")),
         **({"constraints": meta["constraints"]} if index == 0 and "constraints" in meta else {}),
         **({"corpus_evidence": row["corpus_evidence"]} if row.get("corpus_evidence") else {}),
@@ -1025,6 +1029,7 @@ def search_envelope(body: SearchBody):
             "deduplication": meta.get("deduplication"),
             "freshness_note": meta.get("freshness_note"),
             "decoy_buckets": meta.get("decoy_buckets"),
+            **({"unresolved": meta["unresolved"]} if "unresolved" in meta else {}),
             "fanout_queries": meta.get("fanout_queries"),
             "semantic_cache": meta.get("semantic_cache"),
             **({"constraints": meta["constraints"]} if "constraints" in meta else {}),

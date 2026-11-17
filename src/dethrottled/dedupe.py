@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import hashlib
 import re
+import unicodedata
 from urllib.parse import parse_qsl, urlencode, urljoin, urlsplit, urlunsplit
 
 from . import signals
@@ -239,3 +240,48 @@ def collapse(rows, *, by: str = "url", text_field: str = "content",
         if by == "content":
             prints.append((fingerprint or text_fingerprint(row.get(text_field) or ""), kept))
     return out
+
+
+def _title_words(title: str) -> str:
+    text = unicodedata.normalize("NFKC", title or "").casefold()
+    text = re.sub(r"\s*(\.\.\.|…)\s*$", "", text)
+    return " ".join(re.findall(r"[^\W_]+", text))
+
+
+def _bare_host(url: str) -> str:
+    host = (urlsplit(url).hostname or "").lower()
+    return host.removeprefix("www.")
+
+
+def match_destination(item: dict, pool: list) -> dict | None:
+    """The one URL in `pool` that is plainly the same result as `item`.
+
+    For a result an engine listed without a usable destination (Google's
+    throttled /goto links). `item` needs a title and the bare `domain` the
+    engine displayed. A candidate qualifies when its host is that domain and
+    the normalised titles are equal, or one is a visible prefix of at least
+    four words of the other (engines truncate titles, or add " - Site"). Two
+    or more distinct qualifying URLs are ambiguous and return None: a missed
+    recovery is better than a wrong destination.
+
+    Measured 18 Nov 2026 (8 queries, 65 Google results): 13 of 15 matches were
+    the exact URL Google redirected to, one the canonical page behind Google's
+    redirect stub, one a regional edition. It is an inference, not a
+    verification, and is labelled as such by the caller.
+    """
+    domain = (item.get("domain") or "").lower().removeprefix("www.")
+    wanted = _title_words(item.get("title", ""))
+    if not domain or not wanted:
+        return None
+    found = {}
+    for row in pool:
+        url = row.get("url") or ""
+        if _bare_host(url) != domain:
+            continue
+        other = _title_words(row.get("title", ""))
+        if not other:
+            continue
+        short, long = sorted((wanted, other), key=len)
+        if other == wanted or (len(short.split()) >= 4 and long.startswith(short)):
+            found.setdefault(url_key(url), row)
+    return next(iter(found.values())) if len(found) == 1 else None

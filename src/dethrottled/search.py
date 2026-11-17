@@ -30,7 +30,7 @@ from . import netfilter as requests
 from . import paths as _paths
 from .concurrency import ContextExecutor as ThreadPoolExecutor
 from .content import constrained
-from .dedupe import merge_into, url_key
+from .dedupe import match_destination, merge_into, url_key
 from .discovery import SOURCE_PROFILES, tls_search
 from .fetch import USER_AGENT
 from .workflow import PRIMARY_SEARCH_LIMIT, SEARCH_MENU_LIMIT, SUPPLEMENT_SEARCH_LIMIT
@@ -830,7 +830,7 @@ _SOURCE_POOL = ThreadPoolExecutor(max_workers=12, thread_name_prefix="search-sou
 
 
 def browser_search(query: str, *, max_items: int = 8, cache=None,
-                   diagnostics: dict | None = None) -> list:
+                   diagnostics: dict | None = None, engines=None) -> list:
     """Use the private Compose browser worker for validated web discovery.
 
     A failed, overloaded, or absent worker returns no rows; SearXNG and the
@@ -844,7 +844,8 @@ def browser_search(query: str, *, max_items: int = 8, cache=None,
         return []
     if diagnostics is not None:
         diagnostics["browser_count"] = 0
-    cache_namespace = "browser-compact-v1"
+    cache_namespace = ("browser-compact-v1" if not engines
+                       else "browser-%s-v1" % "-".join(engines))
     if cache is not None:
         hit = cache.get("search", cache_namespace, query, max_items)
         if hit is not None:
@@ -856,7 +857,8 @@ def browser_search(query: str, *, max_items: int = 8, cache=None,
     started = time.monotonic()
     try:
         response = requests.post(BROWSER_SEARCH_URL + "/search",
-                                 json={"query": query, "limit": max_items},
+                                 json={"query": query, "limit": max_items,
+                                       **({"engines": list(engines)} if engines else {})},
                                  timeout=18)
         payload = response.json()
         if not isinstance(payload, dict):
@@ -878,22 +880,34 @@ def browser_search(query: str, *, max_items: int = 8, cache=None,
             if diagnostics is not None:
                 diagnostics.update(status="no_matching_candidates", count=0, browser_count=0)
             return []
-        rows = []
+        rows, dropped = [], {"invalid_url": 0, "short_title_or_snippet": 0}
         for item in payload.get("results", []):
             url = str(item.get("url") or "")
             parsed = urlparse(url)
             title = str(item.get("title") or "").strip()
             snippet = str(item.get("snippet") or "").strip()
             if parsed.scheme not in ("http", "https") or not parsed.hostname:
+                dropped["invalid_url"] += 1
                 continue
             if len(title) < 10 or len(snippet) < 25:
+                dropped["short_title_or_snippet"] += 1
                 continue
-            rows.append(_norm(title=title, url=url, snippet=snippet,
-                              engine="web-browser-" + str(item.get("engine")
-                                  or payload.get("engine") or "unknown")))
-        found = bounded_results([r for r in rows if constrained(query, r)], max_items)
+            row = _norm(title=title, url=url, snippet=snippet,
+                        engine="web-browser-" + str(item.get("engine")
+                            or payload.get("engine") or "unknown"))
+            if item.get("destination") in {"redirect", "direct"}:
+                row["destination"] = {"method": item["destination"], "inferred": False}
+            rows.append(row)
+        kept = [r for r in rows if constrained(query, r)]
+        found = bounded_results(kept, max_items)
         if diagnostics is not None:
             diagnostics.update(count=len(found), browser_count=len(found))
+            if engines:
+                # Stage counts after the worker: what the API dropped and why.
+                diagnostics["api_stages"] = {
+                    "received": len(payload.get("results", [])), **dropped,
+                    "constrained_out": len(rows) - len(kept),
+                    "bounded_out": len(kept) - len(found), "delivered": len(found)}
         if cache is not None and rows:
             cache.put("search", cache_namespace, query, max_items, value=rows)
         return found
@@ -958,10 +972,11 @@ def browser_drive(payload: dict, *, timeout: int | None = None) -> dict:
 # directly with its own pacing and rest (discovery.door_search).
 INDEX_DOORS = tuple(d.strip() for d in os.environ.get(
     "DETHROTTLED_INDEX_DOORS", "bing,yahoo").split(",") if d.strip() in {"bing", "yahoo"})
+GOOGLE_LAST_RESORT = os.environ.get("DETHROTTLED_GOOGLE_LAST_RESORT", "1") == "1"
 
 
-def _beyond_ddg(query, *, max_items, cache, report) -> list:
-    """Bing, then Yahoo, read directly.
+def _beyond_ddg(query, *, max_items, cache, report, doors=True, google=True) -> list:
+    """Bing, then Yahoo, then (sparingly) Google in the real browser.
 
     Reached only when DuckDuckGo gave nothing usable. A door whose page only
     echoes the first query word is Bing's decoy answer to a suspected bot: it
@@ -969,18 +984,35 @@ def _beyond_ddg(query, *, max_items, cache, report) -> list:
     """
     from .discovery import door_search, rest_door
     tried = report.setdefault("doors", [])
-    for name in INDEX_DOORS:
+    for name in INDEX_DOORS if doors else ():
         attempt = {}
         rows = door_search(name, query, max_items=max_items, cache=cache, diagnostics=attempt)
         if (rows and len(rows) >= _DECOY_MIN_RESULTS
                 and bucket_coherence(rows, query) < _DECOY_LOW):
             attempt.update(status="decoy", count=0, refusal=True)
+            attempt.pop("candidates", None)  # a decoy page's URLs are not trusted
             rest_door(name)
             rows = []
         tried.append(attempt)
         if rows:
             report.update(status="ok", count=len(rows), door=name)
             return rows[:max_items]
+    if google and GOOGLE_LAST_RESORT and BROWSER_SEARCH_URL:
+        google = {}
+        rows = browser_search(query, max_items=max_items, cache=cache,
+                              diagnostics=google, engines=["google"])
+        google_attempt = next((a for a in google.get("attempts", [])
+                               if isinstance(a, dict) and a.get("engine") == "google"), {})
+        stages = google_attempt.get("google")
+        if google_attempt.get("unresolved"):
+            report["unresolved"] = google_attempt["unresolved"]
+        tried.append({"engine": "browser-google", "status": google.get("status"),
+                      "count": len(rows), "elapsed_ms": google.get("elapsed_ms"),
+                      **({"stages": stages} if stages else {}),
+                      **({"api_stages": google["api_stages"]} if google.get("api_stages") else {})})
+        if rows:
+            report.update(status="ok", count=len(rows), door="google")
+            return rows
     return []
 
 
@@ -1019,18 +1051,25 @@ def _acquire_web(query: str, *, max_items: int = 8, cache=None,
             # DuckDuckGo refused or answered thinly: the other doors to the
             # same index before the (slow) browser.
             report = diagnostics if diagnostics is not None else {}
-            others = _beyond_ddg(query, max_items=max_items, cache=cache, report=report)
+            others = _beyond_ddg(query, max_items=max_items, cache=cache, report=report,
+                                 google=False)
             if others:
                 report["attempts"] = []
                 return others
             if _ddg_retry_after(direct):
                 report.update(status="retry_after", attempts=[])
-                return []
+                return _beyond_ddg(query, max_items=max_items, cache=cache, report=report,
+                                   doors=False)
         browser_report = diagnostics if diagnostics is not None else {}
         found = browser_search(query, max_items=max_items, cache=cache,
                                diagnostics=browser_report)
         if browser_report.get("status") == "no_matching_candidates":
             return []
+        if not found and not cheap:
+            others = _beyond_ddg(query, max_items=max_items, cache=cache, report=browser_report,
+                                 doors=not browser_report.get("doors"))
+            if others:
+                return others
         if not found and any(_ddg_retry_after(a) for a in browser_report.get("attempts", [])):
             return []
         merged, seen = [], {}
@@ -1107,6 +1146,47 @@ def web_search(query: str, *, max_items: int = 8, cache=None,
     report["count"] = len(rows)
     report["families"] = sorted({result_family(r) for r in rows})
     return rows
+
+
+def _recover_destinations(merged: list, report: dict) -> list:
+    """Destinations for results an engine listed without one, from rows in hand.
+
+    `report["unresolved"]` holds them (Google's throttled /goto links). The
+    pool is only what this search already collected and trusts: rows that
+    survived decoy filtering, plus rows a direct door rejected as off-topic
+    (never a decoy door's). No extra request is made. A match joins an
+    existing row as another discovery, or becomes a row labelled as an
+    inferred destination; the rest are returned for meta["unresolved"].
+    """
+    items = report.get("unresolved") or []
+    if not items:
+        return []
+    candidates = [row for attempt in report.get("doors", [])
+                  if isinstance(attempt, dict) and attempt.get("status") != "decoy"
+                  for row in attempt.get("candidates", [])]
+    by_key = {url_key(row.get("url", "")): row for row in merged}
+    left = []
+    for item in items:
+        match = match_destination(item, merged + candidates)
+        if match is None:
+            left.append({key: item.get(key) for key in
+                         ("rank", "title", "snippet", "domain", "engine", "reason")})
+            continue
+        source = match.get("engine") or "unknown"
+        entry = {"provider": item.get("engine", "google"), "rank": item.get("rank"),
+                 "destination": {"method": "cross_engine_match", "inferred": True,
+                                 "matched_from": source}}
+        existing = by_key.get(url_key(match["url"]))
+        if existing is not None:
+            existing.setdefault("discovery", []).append(entry)
+            continue
+        row = _norm(title=item.get("title", ""), url=match["url"],
+                    snippet=item.get("snippet", ""), engine="web-browser-google")
+        row.update(discovery=[entry], destination=entry["destination"],
+                   upstream_rank=item.get("rank"))
+        by_key[url_key(match["url"])] = row
+        merged.append(row)
+    return left
 
 
 def _blend_news(rows: list) -> list:
@@ -1312,6 +1392,7 @@ def search(query: str, *, max_items: int = SEARCH_MENU_LIMIT, categories: str = 
     merged = [r for r in merged if _domain(r.get("url", "")) not in JUNK_DOMAINS]
     merged, decoy_reports = drop_decoy_buckets(merged, query)
     decoy_dropped = sum(report["results"] for report in decoy_reports)
+    unresolved = _recover_destinations(merged, browser_diagnostics)
 
     # Self-tuning: only sweep when the pool is actually short of trusted
     # publishers, so a healthy query costs nothing extra and a thin one gets
@@ -1370,6 +1451,8 @@ def search(query: str, *, max_items: int = SEARCH_MENU_LIMIT, categories: str = 
         "junk_dropped": dropped,
         "decoy_dropped": decoy_dropped,
         "decoy_buckets": decoy_reports,
+        **({"unresolved": unresolved} if unresolved or browser_diagnostics.get("unresolved")
+           else {}),
         "swept": swept,
         "elapsed_ms": int((time.time() - started) * 1000),
         "cost": "potentially_metered" if sources.intersection(providers.NAMES) else "free",

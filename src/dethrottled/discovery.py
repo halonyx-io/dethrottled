@@ -250,7 +250,7 @@ def door_search(name, query, *, max_items=8, cache=None, diagnostics=None):
             attempt.update(status="challenge_or_http_error", refusal=True)
             rest_door(name)
             return []
-        rows, seen = [], set()
+        rows, seen, rejected = [], set(), []
         for target, title, snippet in found:
             parsed = urlsplit(target)
             title, snippet = " ".join(title.split()), " ".join(snippet.split())
@@ -259,12 +259,17 @@ def door_search(name, query, *, max_items=8, cache=None, diagnostics=None):
                 continue
             row = {"title": title[:300], "url": target, "snippet": snippet[:600],
                    "engine": "web-" + engine, "publishedDate": "", "cached": False}
-            if not constrained(query, row):
-                continue
             seen.add(target)
+            if not constrained(query, row):
+                # Off-topic for this query, but a real URL from a page that was
+                # not refused: kept only as a destination-matching candidate.
+                rejected.append(row)
+                continue
             rows.append(row)
             if len(rows) >= max_items:
                 break
+        if rejected:
+            attempt["candidates"] = rejected[:20]
         if not rows:
             attempt["status"] = "no_results" if not found else "no_matching_candidates"
             return []
