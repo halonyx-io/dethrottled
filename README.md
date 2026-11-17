@@ -242,7 +242,8 @@ This checkout is **1.9.0**. A running service reports its own version at `/healt
 dethrottled's own code is [MIT](https://github.com/halonyx-io/dethrottled/blob/main/LICENSE). The default Docker stack also runs
 third-party software under its own licences, including two AGPL-3.0 libraries
 in the API image (PyMuPDF for PDFs, EbookLib for EPUB) and SearXNG in its own
-container. Running it for yourself adds no obligations. If you modify it and
+container, and on amd64 the browser worker runs Google Chrome,
+which is proprietary and downloaded from Google when the image is built. Running it for yourself adds no obligations. If you modify it and
 let other people use it over a network, or redistribute the images, read
 [third-party notices](https://github.com/halonyx-io/dethrottled/blob/main/THIRD-PARTY-NOTICES.md) first.
 

@@ -66,7 +66,7 @@ def main():
 
     check('Python dependency closure', dependency_closure)
     print("PYTHON DEPENDENCIES")
-    for module in ("requests", "feedparser", "ddgs", "trafilatura",
+    for module in ("requests", "feedparser", "trafilatura",
                    "resiliparse", "selectolax", "fastapi", "uvicorn",
                    "pymupdf", "openpyxl", "docx", "pptx", "xlrd",
                    "odf", "ebooklib", "striprtf", "youtube_transcript_api",

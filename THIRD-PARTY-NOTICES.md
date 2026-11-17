@@ -24,11 +24,21 @@ redistributes Chrome, which those terms govern; build the image where it runs
 instead, or build it with Chromium (`--build-arg DNB_BROWSER=chromium`). The
 arm64 image uses Chromium.
 
+Chrome's Debian package brings its own system dependencies into that image (GTK,
+systemd and D-Bus libraries, Perl and others), each under its Debian licence and
+installed unmodified.
+
+Crawl4AI is no longer used. Until 1.8.11 the browser worker ran its markdown
+generator (Apache-2.0, with an attribution requirement) and the optional PDF
+worker ran on its image; both are gone, along with 73 Python packages that came
+with it.
+
 ## How dethrottled is distributed
 
 - **The Python package** on PyPI contains only dethrottled's own MIT code. Its
-  required dependencies are all permissive (MIT, BSD, Apache-2.0 or PSF, plus
-  MPL-2.0 for certifi and tld).
+  required dependencies are all permissive (MIT, BSD, Apache-2.0 or PSF), plus
+  certifi (MPL-2.0) and tld (MPL-1.1, GPL-2.0-only or LGPL-2.1-or-later, at your
+  choice).
   Optional extras add the packages listed below.
 - **The Docker images are not published.** `docker compose` builds them on your
   machine from upstream packages, and each component inside keeps its own
@@ -46,7 +56,9 @@ arm64 image uses Chromium.
 | OpenJDK runtime | GPL-2.0 with the Classpath Exception | Format worker | Runs [Apache Tika](https://tika.apache.org/) (Apache-2.0) |
 | FFmpeg, bundled with [PyAV](https://github.com/PyAV-Org/PyAV) | LGPL-3.0-or-later; the bundled x264 and x265 codecs are GPL-2.0-or-later | Media worker | Decoding audio and video for speech-to-text |
 | HaGeZi Multi PRO list | GPL-3.0 | Downloaded at runtime, not bundled | Ad and tracker blocking |
-| certifi, tqdm, tld | MPL-2.0 (tld offers MPL, GPL or LGPL) | Several images | CA bundle, progress bars, domain parsing |
+| nftables, libnftables, libnftnl; libmnl | GPL-2.0-or-later; LGPL-2.1 | Browser worker, run as a separate program and its system libraries, unmodified | The egress firewall (1.9.0) |
+| certifi, tqdm | MPL-2.0 (tqdm also MIT) | Several images | CA bundle, progress bars |
+| tld | MPL-1.1, GPL-2.0-only or LGPL-2.1-or-later, at your choice | API image | Domain parsing |
 
 odfpy is offered under Apache-2.0, GPL or LGPL; dethrottled uses it under
 Apache-2.0.
@@ -74,15 +86,17 @@ modify SearXNG itself.
 
 ## Everything else
 
-The remaining Python packages in every image (about 220 distinct packages,
-audited on 13 November 2026) use permissive licences: MIT, BSD, Apache-2.0, ISC,
-PSF or similar. Notable ones:
+The remaining Python packages in every image (162 distinct packages across the
+1.9.0 API, browser, format, adapter, speech and layout images, audited on 18
+November 2026 with `scripts/license_inventory.py`) use permissive licences: MIT,
+BSD, Apache-2.0, ISC, PSF or similar. Notable ones:
 
 | Component | Licence | Used for |
 |---|---|---|
-| Playwright, Patchright and Chromium | Apache-2.0; Chromium is BSD-3-Clause with bundled third-party licences | Browser rendering and `/drive` on arm64 |
+| Patchright | Apache-2.0 | Drives the browser (Chrome on amd64) |
+| Chromium | BSD-3-Clause with bundled third-party licences | The browser on arm64 |
 | dnspython | ISC | The browser worker's DNS filter |
-| nftables (Debian package) | GPL-2.0 | The browser worker's egress firewall; run as a separate program, unmodified |
+| aiohttp | Apache-2.0 and MIT | The browser worker's navigation guard |
 | trafilatura, htmldate, courlan, Resiliparse, selectolax | Apache-2.0 or MIT | HTML extraction |
 | curl_cffi | MIT | Search and TLS impersonation |
 | Docling, PyTorch, Transformers, RapidOCR | MIT, BSD-3-Clause, Apache-2.0 | Optional layout analysis |
