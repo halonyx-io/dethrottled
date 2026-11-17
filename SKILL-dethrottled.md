@@ -23,7 +23,7 @@ Names are the MCP tools; the HTTP route does the same job on the raw API
 |---|---|---|---|
 | Sources for a question | `search` | `POST /v2/search` | Start with `limit` 5–10; at most 15 come back. Use `profile` `news` or `academic` when it fits |
 | The contents of a known URL | `fetch` | `POST /fetch` | Add `focus` to get only the relevant passages |
-| Several angles, with citations | `research` | `POST /research` | Returns an evidence bundle and its gaps, not an answer |
+| Several angles, with citations | `research` | `POST /research` | Returns an evidence bundle and its gaps, not an answer; typically 10–20 s |
 | Search and read in one step | `search_and_fetch` | `POST /search-and-fetch` | A quick look; `research` is better for real questions |
 | A page's text plus its outbound links | `extract_with_links` | `POST /extract-with-links` | |
 | Exact values from HTML | `fetch` with `selectors` | `POST /fetch` | CSS `selector`, optional `attribute` and `all` |
@@ -112,10 +112,21 @@ Names are the MCP tools; the HTTP route does the same job on the raw API
   weeks.
 - One page reached under several addresses comes back once; the other addresses
   are listed under `duplicates`.
+- `engines` lists every search engine that found a result. Several engines agreeing
+  is a stronger lead than one, but DuckDuckGo, Bing and Yahoo largely share one
+  index, so their agreement is weaker than agreement with Yandex or Mwmbl.
+- Search keeps working when one engine blocks the server: it moves on to the next
+  route by itself. You do not need to pick engines; leave `engines` unset.
+- A row with `destination.inferred: true` has a URL matched from another engine,
+  not one the original engine confirmed; check the page before relying on it.
+  `unresolved` lists results the engine showed without a usable link (title,
+  snippet and domain only). Never invent a URL for them.
 - `domains` and `exclude_domains` restrict hosts; `prefer_domains` only nudges
   ranking.
 - With diagnostics on (see above), check `outcome` and `degraded`: an empty
-  result during an upstream outage is not "nothing exists".
+  result during an upstream outage is not "nothing exists". `status` reports
+  `degraded` only when an engine was seen failing recently, not when the server
+  has merely been idle.
 - Respect cooldowns and `Retry-After`. Use `fresh` or `cache_mode` only when you
   need a new read; a cache hit says nothing about whether the source changed.
 

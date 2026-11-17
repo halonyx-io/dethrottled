@@ -215,6 +215,21 @@ Google Scholar's, are reported as blocks instead of content (`/drive` reports
 Google's `/sorry/` page as `access.status: challenge`); automatic
 browser reads of a bare domain may follow its redirect to the `www.` host.
 
+For 1.9.1, rebuild the API and DNB images; keep all volumes. Search: after DDG
+Lite, Bing's and Yahoo's result pages are read directly (SearXNG's Yahoo engine
+returned nothing on every live search, 17 Nov 2026) and Google in the browser is
+the last resort. Google's `/goto` links are resolved one at a time and resolution
+stops at Google's first throttle page (never waited out); the rest are matched to
+rows already collected where the domain and title agree (`destination.inferred`)
+or listed under `unresolved`. Measured 18 Nov 2026 on 8 queries: 35 of 65 Google
+results resolved before the throttle; of the 30 throttled, 1 was recovered from
+Yandex/Mwmbl alone (5 with every engine's rows). Mwmbl's keyless API replaces
+SearXNG Yahoo as a supplement.
+`engines` lists every provider that found a URL. Research resolves its candidates'
+DNS concurrently (3-10 s saved per call) and keeps one spare read queued. `/status`
+no longer turns degraded when the server has merely been idle for a minute. A site
+with an official API reader is no longer skipped by its browser-wall record.
+
 For 1.9.0, rebuild the API, DNB, format and adapter images; keep all volumes.
 Measured in web-bench `browser-settings-ab` (rounds 1-6, 17 Nov 2026):
 
@@ -378,7 +393,7 @@ honoured up to one day. Pacing intervals are unchanged. The state is persisted i
 the existing engine-health file. After expiry, one default-family recovery is in
 flight per API process; only a fresh successful DDG acquisition clears the state.
 Cached choices remain readable and do not prove upstream recovery. Independent
-Yahoo/Yandex and explicitly configured non-DDG fallbacks remain eligible.
+The Bing and Yahoo doors (rested separately), Yandex, Mwmbl and explicitly configured non-DDG fallbacks remain eligible.
 
 API-coordinated rest applies to its DDG acquisition chain and active-rest filtering
 of explicitly requested SearXNG `duckduckgo` web. News engines are not automatically

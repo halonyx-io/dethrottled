@@ -362,9 +362,10 @@ async def search(
 ) -> Any:
     """Find pages. Returns ranked results with url, title and snippet.
 
-    Use web for general discovery, news for reporting, academic for papers,
-    or thorough for web plus Mwmbl. Prefer search then selected fetches when
-    source authority matters; search_and_fetch combines discovery and reading.
+    Use web for general discovery, news for reporting, academic for papers.
+    Leave engines unset: search falls back across engines by itself, and each
+    result's engines field lists every engine that found it. Prefer search then
+    selected fetches when source authority matters; search_and_fetch combines discovery and reading.
     Set diagnostics=true to distinguish partial results, genuine zero results and
     unavailable discovery. Inspect outcome/degraded and attempts; legacy status=ok
     only means nonempty results, not healthy providers.

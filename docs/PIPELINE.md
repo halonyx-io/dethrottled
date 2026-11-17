@@ -35,9 +35,9 @@ DuckDuckGo is the default direct fallback. All DDG acquisition paths share ten
 choices, with no automatic pagination; deliberate supplementary sources have
 three choices each, six total, and the complete unique menu defaults to and is capped at fifteen.
 
-Normal web/balanced profiles acquire DDG and separate first-page Yahoo/Yandex
-supplements concurrently; source order is preserved and novel supplements alternate.
-Fast is DDG-only. Thorough adds Mwmbl; academic adds specialist sources. News uses RSS and the
+Normal web/balanced/thorough profiles run the web chain (DDG Lite first; if it refuses or answers thinly, Bing's and then Yahoo's own result pages are read directly (each paced and rested on its own, a decoy page rested like a refusal), then the browser's DDG race, and Google in the real browser only as the last resort) and separate
+Yandex/Mwmbl supplements concurrently; source order is preserved and novel supplements alternate.
+Fast is the web chain only; academic adds specialist sources. News uses RSS and the
 configured SearXNG news engines; academic can add Crossref, OpenAlex and arXiv.
 Explicit engines can select optional metered providers only when configured.
 URL deduplication merges provenance; identical titles alone do not remove

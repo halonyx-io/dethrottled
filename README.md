@@ -88,8 +88,11 @@ dethrottled stack status
 
 ### Search
 
-One query fans out to DuckDuckGo plus supplementary engines through a bundled
-SearXNG, and comes back as a compact menu of at most fifteen unique sources.
+One query goes to DuckDuckGo first; when it refuses, Bing's and then Yahoo's own
+result pages are read directly, with Google in the real browser as the last
+resort. Yandex (through a bundled SearXNG) and Mwmbl add sources from indexes of
+their own, and everything comes back as a compact menu of at most fifteen unique
+sources, each listing every engine that found it.
 Profiles cover `web`, `news` (dated stories first), `academic` (Crossref,
 OpenAlex, arXiv) and a `thorough` mode. The same page reached under different addresses is merged into
 one result that keeps everyone's dates and provenance. A local Ettin reranker
@@ -235,7 +238,7 @@ A real `fetch` response, trimmed:
 Read [AGENTS.md](https://github.com/halonyx-io/dethrottled/blob/main/AGENTS.md) before changing code. It sets out the rules
 contributors (human or AI) follow here, and the checks a change must pass.
 
-This checkout is **1.9.0**. A running service reports its own version at `/health`.
+This checkout is **1.9.1**. A running service reports its own version at `/health`.
 
 ## License
 
