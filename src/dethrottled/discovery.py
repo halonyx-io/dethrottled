@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import math
+import os
 import threading
 import time
 from email.utils import parsedate_to_datetime
@@ -12,11 +13,15 @@ from . import adblock
 from . import netfilter as requests
 from .content import constrained
 
+# Supplements beside the web chain (DDG Lite, then Bing and Yahoo directly):
+# Yandex through SearXNG and Mwmbl's keyless API, both independent of Bing's
+# index. SearXNG's Yahoo engine returned nothing on every live search (17 Nov
+# 2026) while Yahoo's own page answered, so Yahoo is now a direct door.
 SOURCE_PROFILES = {
     "fast": ("web",),
-    "web": ("web", "yandex", "yahoo"),
-    "balanced": ("web", "yandex", "yahoo"),
-    "thorough": ("web", "yandex", "yahoo", "mwmbl"),
+    "web": ("web", "yandex", "mwmbl"),
+    "balanced": ("web", "yandex", "mwmbl"),
+    "thorough": ("web", "yandex", "mwmbl"),
     "news": ("web", "news"),
     "academic": ("web", "crossref", "openalex", "arxiv"),
 }
@@ -119,6 +124,205 @@ def tls_search(query, *, max_items=8, cache=None, diagnostics=None, worker=""):
         return []
     except Exception as exc:
         # curl_cffi transport errors are not requests.RequestException.
+        attempt.update(status="transport_error", reason=adblock.error_reason(exc))
+        return []
+    finally:
+        attempt["elapsed_ms"] = int((time.monotonic() - started) * 1000)
+        diagnostics.update(attempt)
+
+
+# Other front doors to (mostly) Bing's index, read directly like DDG Lite.
+# Each has its own pacing and its own rest, so one refusing does not end the
+# search. Probed 17 Nov 2026 from a residential IP: Bing's HTML page and
+# Yahoo's both answered with relevant results; Bing's RSS answered with decoys
+# (unrelated stock-icon pages), so it is not used for web results.
+_DOOR_LOCK = threading.Lock()
+_DOOR_NEXT: dict = {}
+_DOOR_REST: dict = {}
+DOOR_REST_SECONDS = 1800
+
+
+def door_resting(name: str) -> float:
+    """Seconds left on a door's rest, 0 when it may be asked."""
+    with _DOOR_LOCK:
+        return max(0.0, _DOOR_REST.get(name, 0) - time.monotonic())
+
+
+def rest_door(name: str, seconds: float = DOOR_REST_SECONDS) -> None:
+    with _DOOR_LOCK:
+        _DOOR_REST[name] = time.monotonic() + seconds
+
+
+def _door_get(name: str, url: str, timeout: float = 4.0):
+    from curl_cffi import requests as tls_requests
+
+    from .fetch import TLS_IMPERSONATE
+    with _DOOR_LOCK:
+        delay = _DOOR_NEXT.get(name, 0) - time.monotonic()
+        _DOOR_NEXT[name] = max(time.monotonic(), _DOOR_NEXT.get(name, 0)) + 1.0
+    if delay > 0:
+        time.sleep(delay)
+    return requests.get_using(tls_requests.get, url, impersonate=TLS_IMPERSONATE,
+                              timeout=timeout)
+
+
+def _bing_target(href: str) -> str:
+    """Bing wraps results as bing.com/ck/a?...&u=a1<base64url>."""
+    parsed = urlsplit(href)
+    if parsed.hostname not in {"www.bing.com", "bing.com"}:
+        return href
+    wrapped = parse_qs(parsed.query).get("u", [""])[0]
+    if not wrapped.startswith("a1"):
+        return ""
+    import base64
+    raw = wrapped[2:]
+    try:
+        return base64.urlsafe_b64decode(raw + "=" * (-len(raw) % 4)).decode("utf-8")
+    except (ValueError, UnicodeDecodeError):
+        return ""
+
+
+def _yahoo_target(href: str) -> str:
+    """Yahoo wraps results as r.search.yahoo.com/.../RU=<quoted>/RK=..."""
+    if "/RU=" not in href:
+        return href
+    return unquote(href.split("/RU=", 1)[1].split("/R", 1)[0])
+
+
+def _bing_rows(html: str) -> list:
+    from selectolax.lexbor import LexborHTMLParser
+    out = []
+    for item in LexborHTMLParser(html).css("li.b_algo"):
+        link = item.css_first("h2 a")
+        if link is None:
+            continue
+        snippet = item.css_first(".b_caption p") or item.css_first("p")
+        out.append((_bing_target(link.attributes.get("href") or ""), link.text(),
+                    snippet.text() if snippet else ""))
+    return out
+
+
+def _yahoo_rows(html: str) -> list:
+    from selectolax.lexbor import LexborHTMLParser
+    out = []
+    for item in LexborHTMLParser(html).css("div.algo-sr"):
+        link, title = item.css_first(".compTitle a"), item.css_first("h3")
+        if link is None or title is None:
+            continue
+        snippet = item.css_first(".compText")
+        out.append((_yahoo_target(link.attributes.get("href") or ""), title.text(),
+                    snippet.text() if snippet else ""))
+    return out
+
+
+_DOORS = {
+    "bing": ("https://www.bing.com/search?q={q}&setlang=en", _bing_rows,
+             ("b_captcha", "/challenge/verify", "captcha")),
+    "yahoo": ("https://search.yahoo.com/search?p={q}", _yahoo_rows,
+              ("captcha", "unusual traffic", "/sorry/")),
+}
+
+
+def door_search(name, query, *, max_items=8, cache=None, diagnostics=None):
+    """One direct front door (bing, yahoo). Refusals rest it for half an hour."""
+    max_items = max(1, min(max_items, 10))
+    diagnostics = diagnostics if diagnostics is not None else {}
+    engine = "tls-" + name
+    attempt = {"engine": engine, "status": "unavailable", "count": 0}
+    started = time.monotonic()
+    try:
+        if cache is not None:
+            hit = cache.get("search", engine, query, max_items)
+            if hit is not None:
+                attempt.update(status="cached", count=len(hit))
+                return hit[:max_items]
+        resting = door_resting(name)
+        if resting:
+            attempt.update(status="resting", retry_in_seconds=int(resting))
+            return []
+        template, parse, refusals = _DOORS[name]
+        response = _door_get(name, template.format(q=quote_plus(query)))
+        html = response.text or ""
+        attempt["http_status"] = response.status_code
+        found = parse(html) if response.status_code == 200 else []
+        if response.status_code != 200 or (not found and any(
+                marker in html[:40000].lower() for marker in refusals)):
+            attempt.update(status="challenge_or_http_error", refusal=True)
+            rest_door(name)
+            return []
+        rows, seen = [], set()
+        for target, title, snippet in found:
+            parsed = urlsplit(target)
+            title, snippet = " ".join(title.split()), " ".join(snippet.split())
+            if (parsed.scheme not in {"http", "https"} or not parsed.hostname
+                    or target in seen or len(title) < 10):
+                continue
+            row = {"title": title[:300], "url": target, "snippet": snippet[:600],
+                   "engine": "web-" + engine, "publishedDate": "", "cached": False}
+            if not constrained(query, row):
+                continue
+            seen.add(target)
+            rows.append(row)
+            if len(rows) >= max_items:
+                break
+        if not rows:
+            attempt["status"] = "no_results" if not found else "no_matching_candidates"
+            return []
+        attempt.update(status="ok", count=len(rows))
+        if cache is not None:
+            cache.put("search", engine, query, max_items, value=rows)
+        return rows
+    except Exception as exc:
+        attempt.update(status="transport_error", reason=adblock.error_reason(exc))
+        return []
+    finally:
+        attempt["elapsed_ms"] = int((time.monotonic() - started) * 1000)
+        diagnostics.update(attempt)
+
+
+def mwmbl_search(query, *, max_items=5, cache=None, diagnostics=None):
+    """Mwmbl's keyless JSON API: a small independent index, strong on tech."""
+    diagnostics = diagnostics if diagnostics is not None else {}
+    attempt = {"engine": "mwmbl", "status": "unavailable", "count": 0}
+    started = time.monotonic()
+    try:
+        if cache is not None:
+            hit = cache.get("search", "mwmbl-api", query, max_items)
+            if hit is not None:
+                attempt.update(status="cached", count=len(hit))
+                return hit[:max_items]
+        if os.environ.get("DETHROTTLED_MWMBL", "1") == "0":
+            attempt["status"] = "not_configured"
+            return []
+        resting = door_resting("mwmbl")
+        if resting:
+            attempt.update(status="resting", retry_in_seconds=int(resting))
+            return []
+        response = _door_get("mwmbl", "https://api.mwmbl.org/api/v1/search/?s="
+                             + quote_plus(query), timeout=4.0)
+        attempt["http_status"] = response.status_code
+        if response.status_code != 200:
+            attempt.update(status="challenge_or_http_error", refusal=True)
+            rest_door("mwmbl")
+            return []
+        rows = []
+        for item in response.json() if isinstance(response.json(), list) else []:
+            def text(parts):
+                return "".join(p.get("value", "") for p in parts or [] if isinstance(p, dict))
+            row = {"title": " ".join(text(item.get("title")).split())[:300],
+                   "url": item.get("url") or "", "snippet": " ".join(
+                       text(item.get("extract")).split())[:600],
+                   "engine": "mwmbl", "publishedDate": "", "cached": False}
+            if (urlsplit(row["url"]).scheme in {"http", "https"} and len(row["title"]) >= 10
+                    and constrained(query, row)):
+                rows.append(row)
+            if len(rows) >= max_items:
+                break
+        attempt.update(status="ok" if rows else "no_results", count=len(rows))
+        if cache is not None and rows:
+            cache.put("search", "mwmbl-api", query, max_items, value=rows)
+        return rows
+    except Exception as exc:
         attempt.update(status="transport_error", reason=adblock.error_reason(exc))
         return []
     finally:

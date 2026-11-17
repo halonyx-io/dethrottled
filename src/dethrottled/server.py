@@ -295,7 +295,7 @@ def _search_row(row: dict, meta: dict, index: int) -> dict:
         "source_type": row.get("source_type") or signals.source_type(row.get("url", "")),
         "fetch_relevance": row.get("fetch_relevance") or signals.fetch_relevance(row),
         "engine": row.get("engine", "dethrottled"),
-        "engines": [row.get("engine", "dethrottled")],
+        "engines": row.get("engines") or [row.get("engine", "dethrottled")],
         "engines_consensus": row.get("engines_consensus", 1),
         "consensus_score": row.get("consensus_score", 1.0),
         "discovery": row.get("discovery", []),

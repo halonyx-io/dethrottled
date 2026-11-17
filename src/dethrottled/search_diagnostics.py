@@ -10,6 +10,10 @@ _SKIPPED = {"not_requested", "not_configured"}
 _LOCK = threading.Lock()
 _OBSERVATIONS = {}
 OBSERVATION_TTL = 60.0
+# A quiet server is not a broken one: past the TTL the last real observation
+# still stands for this long, marked stale, instead of turning into "unknown"
+# (which made /status flip degraded <-> ok between idle and busy minutes).
+OBSERVATION_RECENT = 1800.0
 
 
 def outcome(count, report):
@@ -84,11 +88,12 @@ def readiness(*, configured):
     """
     with _LOCK:
         components = {}
-        for name in ("web", "yandex", "yahoo", "bing-news", "google-news", "reuters"):
+        for name in ("web", "yandex", "mwmbl", "bing-news", "google-news", "reuters"):
             row = dict(_OBSERVATIONS.get(name, {}))
             age = max(0, time.time() - row.get("observed_at", 0)) if row else None
             stale = age is None or age >= OBSERVATION_TTL
-            availability = row.get("availability", "unknown") if not stale else "unknown"
+            availability = (row.get("availability", "unknown")
+                            if age is not None and age < OBSERVATION_RECENT else "unknown")
             components[name] = dict(
                 row, availability=availability, stale=stale,
                 observation_state="unobserved" if age is None else "stale" if stale else "current",
@@ -98,7 +103,7 @@ def readiness(*, configured):
     primary = components["web"]
     primary_ready = (primary["availability"] in {"available", "empty", "degraded"}
                      and primary.get("upstream_status") not in {"cooldown", "recovery_in_progress"})
-    supplementary = {name: components[name] for name in ("yandex", "yahoo")}
+    supplementary = {name: components[name] for name in ("yandex", "mwmbl")}
     sx = any(row["availability"] in {"available", "empty", "degraded"}
              for row in supplementary.values())
     sx_status = ("not_configured" if not configured else
@@ -117,8 +122,10 @@ def readiness(*, configured):
             "news_engines": {name: components[name]
                              for name in ("bing-news", "google-news", "reuters")},
             "initializing": initializing,
-            "degraded": not primary_ready or (configured and not all(
-                row["availability"] in {"available", "empty"} for row in supplementary.values())),
+            # Degraded means something was seen failing, not merely unobserved.
+            "degraded": not primary_ready or any(
+                row["availability"] in {"unavailable", "degraded"}
+                for row in supplementary.values()),
             "observation_ttl_seconds": OBSERVATION_TTL,
             "detail": "Primary discovery is distinct from supplementary/news availability; "
                       "readiness observations are cached, not an availability guarantee."}

@@ -306,7 +306,7 @@ _CAP_LOCK = threading.Lock()
 # A scientific or technical subject gets far more from crossref and openalex
 # than from another news aggregator; a market question gets nothing from either.
 ENGINE_GROUPS = {
-    "web": "yandex,yahoo",
+    "web": "yandex",
     "news": "google news,bing news,duckduckgo news,reuters",
     "academic": "arxiv,crossref,openalex,semantic scholar",
 }
@@ -954,6 +954,36 @@ def browser_drive(payload: dict, *, timeout: int | None = None) -> dict:
     return out
 
 
+# Front doors to the same (mostly Bing) index after DuckDuckGo, each called
+# directly with its own pacing and rest (discovery.door_search).
+INDEX_DOORS = tuple(d.strip() for d in os.environ.get(
+    "DETHROTTLED_INDEX_DOORS", "bing,yahoo").split(",") if d.strip() in {"bing", "yahoo"})
+
+
+def _beyond_ddg(query, *, max_items, cache, report) -> list:
+    """Bing, then Yahoo, read directly.
+
+    Reached only when DuckDuckGo gave nothing usable. A door whose page only
+    echoes the first query word is Bing's decoy answer to a suspected bot: it
+    is rested like a refusal and the next door is asked.
+    """
+    from .discovery import door_search, rest_door
+    tried = report.setdefault("doors", [])
+    for name in INDEX_DOORS:
+        attempt = {}
+        rows = door_search(name, query, max_items=max_items, cache=cache, diagnostics=attempt)
+        if (rows and len(rows) >= _DECOY_MIN_RESULTS
+                and bucket_coherence(rows, query) < _DECOY_LOW):
+            attempt.update(status="decoy", count=0, refusal=True)
+            rest_door(name)
+            rows = []
+        tried.append(attempt)
+        if rows:
+            report.update(status="ok", count=len(rows), door=name)
+            return rows[:max_items]
+    return []
+
+
 def _acquire_web(query: str, *, max_items: int = 8, cache=None,
                engines=None, diagnostics: dict | None = None) -> list:
     """General web results, keyless, via whichever engines still answer.
@@ -986,9 +1016,15 @@ def _acquire_web(query: str, *, max_items: int = 8, cache=None,
                 if diagnostics is not None:
                     diagnostics.update(status="no_matching_candidates", attempts=[])
                 return []
+            # DuckDuckGo refused or answered thinly: the other doors to the
+            # same index before the (slow) browser.
+            report = diagnostics if diagnostics is not None else {}
+            others = _beyond_ddg(query, max_items=max_items, cache=cache, report=report)
+            if others:
+                report["attempts"] = []
+                return others
             if _ddg_retry_after(direct):
-                if diagnostics is not None:
-                    diagnostics.update(status="retry_after", attempts=[])
+                report.update(status="retry_after", attempts=[])
                 return []
         browser_report = diagnostics if diagnostics is not None else {}
         found = browser_search(query, max_items=max_items, cache=cache,
@@ -1033,6 +1069,13 @@ def web_search(query: str, *, max_items: int = 8, cache=None,
                         found = bounded_results([r for r in hit if constrained(query, r)], maximum)
                         report.update(status="cached", upstream_status=status, count=len(found))
                         return found
+            if engines is None:
+                # DuckDuckGo is cooling down; the other doors are not.
+                others = _beyond_ddg(query, max_items=max(1, min(max_items, PRIMARY_SEARCH_LIMIT)),
+                                     cache=cache, report=report)
+                if others:
+                    report["families"] = sorted({result_family(r) for r in others})
+                    return others
             return []
     rows = []
     try:
@@ -1148,12 +1191,25 @@ def search(query: str, *, max_items: int = SEARCH_MENU_LIMIT, categories: str = 
             diagnostics=browser_diagnostics)
     # Separate engine calls preserve each provider's original order/rank.
     # Exactly one first page; SearXNG engines do not accept a result-count hint.
-    for engine in ("yandex", "yahoo"):
-        if engine in sources:
-            report = source_reports["supplements"].setdefault(engine, {})
-            tasks[engine] = _SOURCE_POOL.submit(
-                searxng, query, max_items=SUPPLEMENT_SEARCH_LIMIT, engines=engine,
-                cache=cache, language=language, timeout=8, diagnostics=report)
+    if "yandex" in sources:
+        report = source_reports["supplements"].setdefault("yandex", {})
+        tasks["yandex"] = _SOURCE_POOL.submit(
+            searxng, query, max_items=SUPPLEMENT_SEARCH_LIMIT, engines="yandex",
+            cache=cache, language=language, timeout=8, diagnostics=report)
+    # Keyless direct supplements: Mwmbl's API, and Bing or Yahoo when asked for
+    # by name (otherwise they are the web chain's fallback doors).
+    from .discovery import door_search, mwmbl_search
+    if "mwmbl" in sources:
+        report = source_reports["supplements"].setdefault("mwmbl", {})
+        tasks["mwmbl"] = _SOURCE_POOL.submit(
+            mwmbl_search, query, max_items=SUPPLEMENT_SEARCH_LIMIT, cache=cache,
+            diagnostics=report)
+    for door in ("bing", "yahoo"):
+        if door in sources:
+            report = source_reports["supplements"].setdefault(door, {})
+            tasks[door] = _SOURCE_POOL.submit(
+                door_search, door, query, max_items=SUPPLEMENT_SEARCH_LIMIT, cache=cache,
+                diagnostics=report)
     if "news" in sources:
         source_reports["bing-news"] = {}
         tasks["bing-news"] = _SOURCE_POOL.submit(
@@ -1168,7 +1224,7 @@ def search(query: str, *, max_items: int = SEARCH_MENU_LIMIT, categories: str = 
             tasks[name] = _SOURCE_POOL.submit(
                 google_news, query, max_items=SUPPLEMENT_SEARCH_LIMIT, site=site, engine=name,
                 cache=cache, diagnostics=source_reports[name])
-    specialists = [e for e in ("mwmbl", "crossref", "openalex", "arxiv") if e in sources]
+    specialists = [e for e in ("crossref", "openalex", "arxiv") if e in sources]
     if specialists:
         tasks["specialist"] = _SOURCE_POOL.submit(
             searxng, query, max_items=SEARCH_MENU_LIMIT, engines=",".join(specialists),
@@ -1211,16 +1267,17 @@ def search(query: str, *, max_items: int = SEARCH_MENU_LIMIT, categories: str = 
         add(completed["web"], "web")
     # Primary order stays intact. Alternate small supplements rather than
     # letting one engine occupy all remaining slots of the 15-choice menu.
+    supplements = ("yandex", "mwmbl", "bing", "yahoo")
     for index in range(SUPPLEMENT_SEARCH_LIMIT):
-        for engine in ("yandex", "yahoo"):
+        for engine in supplements:
             if engine in completed:
                 add(completed[engine][index:index + 1], engine)
     for name, rows in completed.items():
-        if name not in {"web", "yandex", "yahoo"} and not (
+        if name not in {"web", *supplements} and not (
                 news_policy and name in {"searxng", "bing-news", "google-news", "reuters"}):
             add(rows, name)
     if source_reports["supplements"] and "searxng" not in completed:
-        per_source["searxng"] = sum(v for e in ("yandex", "yahoo")
+        per_source["searxng"] = sum(v for e in ("yandex",)
                                            if isinstance(v := per_source.get(e, 0), int))
     for name in ("web", "bing-news", "searxng", "google-news", "reuters"):
         per_source.setdefault(name, "not_requested")

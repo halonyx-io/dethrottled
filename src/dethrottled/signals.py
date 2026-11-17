@@ -110,7 +110,10 @@ def page_type(row: dict) -> str:
 
 def fetch_relevance(row: dict, max_score: float | None = None) -> str:
     """High/medium/low fetch priority from rank, consensus and source type."""
-    engines = len(set(row.get("engines") or [row.get("engine") or ""]))
+    # engines_consensus counts distinct providers that found the URL (merged
+    # duplicates included); the old engines list only ever held one name.
+    engines = max(int(row.get("engines_consensus") or 0),
+                  len(set(row.get("engines") or [row.get("engine") or ""])))
     score = row.get("score")
     if max_score and isinstance(score, (int, float)):
         ratio = score / max_score

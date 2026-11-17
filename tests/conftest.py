@@ -12,3 +12,8 @@ os.environ.setdefault('DETHROTTLED_WAYMARKS', '0')
 os.environ.setdefault('DETHROTTLED_ENGINE_POLICY', '0')
 # The Google News and Reuters feed engines call Google; offline tests must not.
 os.environ.setdefault('DETHROTTLED_NEWS_FEEDS', '')
+# The direct Bing/Yahoo doors, Google last resort and Mwmbl call the internet;
+# their own tests turn them back on with stubs.
+os.environ.setdefault('DETHROTTLED_INDEX_DOORS', '')
+os.environ.setdefault('DETHROTTLED_GOOGLE_LAST_RESORT', '0')
+os.environ.setdefault('DETHROTTLED_MWMBL', '0')
