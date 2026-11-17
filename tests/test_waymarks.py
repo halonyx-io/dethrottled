@@ -173,3 +173,19 @@ def test_remote_callers_see_counts_not_domain_names(monkeypatch):
     assert "secret-site.example" not in json.dumps(remote)
     assert remote["domain_health"]["deprioritised"] == 1
     assert "sites" in remote["waymarks"]
+
+
+def test_a_known_wall_still_tries_the_sites_official_api(monkeypatch):
+    from dethrottled import sites
+    url = "https://www.researchgate.net/publication/123_Some_Paper"
+    for _ in range(3):
+        w.observe(url, wall(), "local")
+    for name in ("_tier_direct", "_tier_tls", "_tier_render", "_tier_headed"):
+        monkeypatch.setattr(f, name, lambda *a, **k: pytest.fail("wall was fetched"))
+    payload = {"text": "Abstract. " + "Open metadata from OpenAlex. " * 40, "title": "Some Paper",
+               "html": "", "source": "openalex", "method": "api"}
+    monkeypatch.setattr(sites, "reader_for",
+                        lambda u: ("openalex", lambda: (payload, "", u)) if u == url else None)
+    result = f.fetch_and_extract(url, max_chars=5000)
+    assert result["acquisition_attempts"][0]["tier"] == "api:openalex"
+    assert not result["reason"].startswith("waymark_known_wall")

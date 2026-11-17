@@ -1211,7 +1211,9 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
     # and sites whose browser challenge never clears. See waymarks.py.
     from . import waymarks as _waymarks
     learned = _waymarks.plan(url, _READ_OPTIONS.get().get("admission_key", "local"))
-    if learned["wall"] and not _READ_OPTIONS.get().get("headed_fallback"):
+    # A site with an official API reader is never short-circuited by its
+    # browser wall: the API does not go through the wall at all.
+    if learned["wall"] and reader is None and not _READ_OPTIONS.get().get("headed_fallback"):
         wall = learned["wall"]
         reason = ("waymark_known_wall:%s; the real browser failed this site's challenge "
                   "on the last %d reads; retried automatically after %d s"

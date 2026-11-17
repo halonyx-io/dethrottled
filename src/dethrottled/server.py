@@ -1691,6 +1691,9 @@ def search_and_fetch(body: SearchFetchBody, background: BackgroundTasks):
 _RESEARCH_REQUESTS = threading.BoundedSemaphore(2)
 
 
+RESEARCH_SPARE_READS = max(0, int(os.environ.get("DETHROTTLED_RESEARCH_SPARE_READS", "1")))
+
+
 @app.post("/research")
 def research(body: ResearchBody, background: BackgroundTasks):
     """Collect a cited, diverse evidence bundle without a language model."""
@@ -1854,7 +1857,10 @@ def research(body: ResearchBody, background: BackgroundTasks):
                 nonlocal offset
                 expected = (len(sources) + len(running)
                             + sum(1 for i, item in finished.items() if readable(item)))
-                while expected < body.max_sources and offset < len(selected):
+                # One spare read queued from the start: a page that fails
+                # after 4-5 s in the renderer is then already covered instead
+                # of starting its replacement only once it has failed.
+                while expected < body.max_sources + RESEARCH_SPARE_READS and offset < len(selected):
                     running[pool.submit(read, selected[offset])] = offset
                     offset += 1
                     expected += 1

@@ -110,6 +110,16 @@ def public_url(url: str) -> bool:
         return False
 
 
+def public_verdicts(urls) -> dict:
+    """public_url for many URLs, resolved concurrently."""
+    from concurrent.futures import ThreadPoolExecutor
+    unique = list(dict.fromkeys(u for u in urls if u))
+    if not unique:
+        return {}
+    with ThreadPoolExecutor(max_workers=min(16, len(unique))) as pool:
+        return dict(zip(unique, pool.map(public_url, unique)))
+
+
 def browser_public(url: str, requested: bool = False) -> bool:
     """Browser scope for a target: public unless the target is private.
 
@@ -144,6 +154,9 @@ def select_sources(searches: list[list[dict]], limit: int,
     or local news. Caller-supplied facets keep their given order.
     """
     selected, by_url, per_host, deferred = [], {}, {}, []
+    # One DNS lookup per candidate, all at once: done one by one they took
+    # 3-10 s of a 17-19 s research call on live 1.9.0 (cold lookups 0.1-0.6 s).
+    public = public_verdicts(row.get("url") or "" for rows in searches for row in rows)
     width = max((len(rows) for rows in searches), default=0)
     query_order = list(range(len(searches)))
     if official_first and len(query_order) > 1:
@@ -155,7 +168,7 @@ def select_sources(searches: list[list[dict]], limit: int,
                 continue
             row = rows[rank]
             url = row.get("url") or ""
-            if not public_url(url):
+            if not public.get(url):
                 continue
             key = url_key(url)
             if key in by_url:
