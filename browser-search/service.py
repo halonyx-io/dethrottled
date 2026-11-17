@@ -37,6 +37,91 @@ import patchright.async_api as browser_api
 
 browser_filter.install(browser_api)
 
+CHROME_PATH = Path("/opt/google/chrome/chrome")
+# WebRTC may not send UDP outside a proxy. On the native lane there is no
+# proxy, so this closes the one browser path that could reach an address
+# without DNS or a request the guard sees (a STUN/TURN server at a private
+# address). Applied on both lanes.
+NETWORK_ARGS = ["--force-webrtc-ip-handling-policy=disable_non_proxied_udp"]
+# The machine's language for the UI and Accept-Language (en_GB.UTF-8 -> en-GB).
+_LANG = os.environ.get("DETHROTTLED_BROWSER_LANG", "").split(".")[0].replace("_", "-")
+if _LANG:
+    NETWORK_ARGS.append("--lang=" + _LANG)
+
+# Chrome features turned off (comma separated). JXLImageFormat: Chrome 157
+# advertises JPEG XL in Accept, and DataDome on forbes.com refused that
+# combination with an en-US Accept-Language (403); with it off the page reads,
+# and no other measured site changed (web-bench browser-settings-ab, round 11).
+DISABLE_FEATURES = [f.strip() for f in os.environ.get(
+    "DETHROTTLED_BROWSER_DISABLE_FEATURES", "JXLImageFormat").split(",") if f.strip()]
+def _playwright_disabled_features():
+    """Patchright's own --disable-features list, read from its pinned driver.
+
+    Chrome keeps only one --disable-features switch, so ours must be merged into
+    Patchright's rather than added beside it. None if it cannot be read: the
+    extra features are then left on rather than risk dropping Patchright's.
+    """
+    try:
+        import patchright
+        bundle = (Path(patchright.__file__).parent / "driver" / "package" / "lib"
+                  / "coreBundle.js").read_text(encoding="utf-8")
+        start = bundle.index("disabledFeatures = [")
+        block = bundle[start:bundle.index("].filter(Boolean)", start)]
+        return re.findall(r'^\s*"([A-Za-z0-9]+)",?\s*$', block, re.M)
+    except (ImportError, OSError, ValueError):
+        return None
+
+
+def feature_options():
+    """Launch options merging DISABLE_FEATURES into Patchright's own list."""
+    defaults = _playwright_disabled_features()
+    if not DISABLE_FEATURES or not defaults:
+        return {}
+    original = "--disable-features=" + ",".join(defaults)
+    merged = "--disable-features=" + ",".join(dict.fromkeys([*defaults, *DISABLE_FEATURES]))
+    return {"ignore_default_args": [original], "args": [merged]}
+
+
+# Browser identities (1.9.0). With an endpoint set, Chrome is launched by an
+# unprivileged Playwright server running as that identity's UID (started by the
+# worker's start script), over pipes; the worker controls it from here. The
+# kernel firewall (egress_firewall) confines each UID: "public" to public
+# addresses and the DNS filter, "scoped" to the CONNECT gate. Unset: launched
+# locally, as before.
+BROWSER_SERVERS = {"public": "DETHROTTLED_BROWSER_SERVER_PUBLIC",
+                   "scoped": "DETHROTTLED_BROWSER_SERVER_SCOPED"}
+
+
+async def start_browser(playwright, options, identity="public"):
+    endpoint = os.environ.get(BROWSER_SERVERS[identity], "")
+    if not endpoint:
+        return await playwright.chromium.launch(**options)
+    remote = {key: value for key, value in options.items()
+              if key not in {"downloads_path", "ignore_default_args"}}
+    if options.get("ignore_default_args"):
+        remote["ignoreDefaultArgs"] = options["ignore_default_args"]
+    browser = await playwright.chromium.connect(
+        endpoint, timeout=60000,
+        headers={"x-playwright-launch-options": json.dumps(remote)})
+    browser._dethrottled_identity = identity
+    return browser
+
+
+def browser_channel():
+    """Google Chrome when the image has it, else Patchright's bundled Chromium.
+
+    DETHROTTLED_BROWSER_CHANNEL: auto (default), chrome or chromium. Chrome
+    read Google search 8 times in 8 where Chromium got 1 in 15, with the same
+    accuracy and latency elsewhere (web-bench browser-settings-ab, rounds 3-4).
+    The arm64 image ships Chromium where Google ships no Chrome build.
+    """
+    wanted = os.environ.get("DETHROTTLED_BROWSER_CHANNEL", "auto").strip().lower()
+    if wanted not in {"auto", "chrome", "chromium"}:
+        raise ValueError("DETHROTTLED_BROWSER_CHANNEL must be auto, chrome or chromium")
+    if wanted == "chromium" or not CHROME_PATH.exists():
+        return None
+    return "chrome"
+
 ENGINES = {
     "ddg-lite": ("https://lite.duckduckgo.com/lite/?q=", "a.result-link", ".result-snippet"),
     "ddg-html": ("https://html.duckduckgo.com/html/?q=", "a.result__a", ".result__snippet"),
@@ -281,10 +366,10 @@ async def _race(browser, query: str, limit: int = 10) -> dict:
     profile = _load_search_profile()
     try:
         context = await browser.new_context(
-            **({"storage_state": profile} if profile else {})
+            _dethrottled_lane="native", **({"storage_state": profile} if profile else {})
         )
     except Exception:
-        context = await browser.new_context()
+        context = await browser.new_context(_dethrottled_lane="native")
     pending = {asyncio.create_task(_engine(context, engine, query, i * STAGGER, limit)): engine
                for i, engine in enumerate(ORDER)}
     attempts, winner, backoff = [], None, False
@@ -341,9 +426,10 @@ async def _watch_browser(app):
     while True:
         await asyncio.sleep(3)
         browsers = [app.state.browser]
-        crawl = getattr(app.state, "crawl_browser", None)
-        if crawl is not None:
-            browsers.append(crawl)
+        for extra in ("crawl_browser", "scoped_browser"):
+            other = getattr(app.state, extra, None)
+            if other is not None:
+                browsers.append(other)
         if not all(browser.is_connected() for browser in browsers):
             os._exit(1)  # Compose restart policy restores the worker.
 
@@ -358,58 +444,55 @@ async def lifespan(app):
             raise ValueError("DETHROTTLED_BROWSER_GRAPHICS must be default, mesa or auto")
         graphics_args = (["--use-gl=angle", "--use-angle=gl", "--ignore-gpu-blocklist"]
                          if graphics in {"mesa", "auto"} else [])
-        headless = os.environ.get("DETHROTTLED_BROWSER_HEADLESS", "0") == "1"
         hardware_candidate = graphics == "auto" and bool(list(Path('/dev/dri').glob('renderD*')))
         if hardware_candidate:
             graphics_args[1] = "--use-angle=gl-egl"
             graphics_args += ["--enable-gpu-rasterization", "--enable-zero-copy"]
+        channel = browser_channel()
+
         def launch_options(args):
-            options = {"headless": headless, "downloads_path": str(DOWNLOAD_DIR),
-                       "args": args}
-            if headless:
-                # The image ships full Chromium, not chrome-headless-shell.
-                options["channel"] = "chromium"
+            # Always headed. Headless Chrome read 0 of 10 bot-protected pages
+            # that headed Chrome read 4 of, to save ~8% CPU (web-bench
+            # browser-settings-ab, round 5); 1.9.0 removed the option.
+            features = feature_options()
+            options = {"headless": False, "downloads_path": str(DOWNLOAD_DIR),
+                       "args": [*args, *NETWORK_ARGS, *features.get("args", [])]}
+            if features:
+                options["ignore_default_args"] = features["ignore_default_args"]
+            if channel:
+                options["channel"] = channel
             return options
 
         launch_fallback = False
         try:
-            app.state.browser = await playwright.chromium.launch(
-                **launch_options(graphics_args))
+            app.state.browser = await start_browser(playwright, launch_options(graphics_args))
         except Exception:
             if not hardware_candidate:
                 raise
             launch_fallback = True
             graphics_args[1] = '--use-angle=gl'
-            app.state.browser = await playwright.chromium.launch(
-                **launch_options(graphics_args))
-        # Bulk crawl and headed drive have different costs and different needs.
-        # The drive browser stays headed for interaction and challenge recovery;
-        # crawl can use a separate headless browser with software WebGL, which
-        # measured roughly half the CPU of the headed Mesa path. Keep this opt-in
-        # so standalone search workers do not pay for a second browser.
+            app.state.browser = await start_browser(playwright, launch_options(graphics_args))
+        # Render and drive have different costs. Drive keeps the Mesa graphics
+        # browser for interaction and challenge recovery. Render gets its own
+        # headed browser with default graphics: half the CPU per page (0.98 s
+        # against 1.92 s p50) with the same latency and the same hostile-site
+        # reads (web-bench browser-settings-ab, round 6). Started on demand and
+        # closed when idle (dnb_service). Standalone search workers skip it.
         app.state.crawl_browser = None
         app.state.crawl_factory = None
-        app.state.crawl_browser_headless = False
+        # Scoped work (private targets, host allowlists) runs in its own
+        # browser and identity when a scoped server is configured; it is
+        # started on first use (dnb_service.scoped_browser).
+        app.state.scoped_browser = None
+        app.state.scoped_factory = (
+            (lambda: start_browser(playwright, launch_options(graphics_args), "scoped"))
+            if os.environ.get(BROWSER_SERVERS["scoped"]) else None)
         if os.getenv("DETHROTTLED_CRAWL_SEPARATE", "0") == "1":
-            crawl_headless = os.getenv("DETHROTTLED_CRAWL_HEADLESS", "0") == "1"
-            crawl_graphics = os.getenv("DETHROTTLED_CRAWL_GRAPHICS", "default")
-            crawl_args = (
-                ["--use-gl=angle", "--use-angle=swiftshader", "--ignore-gpu-blocklist"]
-                if crawl_graphics == "swiftshader"
-                else []
-            )
-
             async def launch_crawl():
-                return await playwright.chromium.launch(
-                    headless=crawl_headless,
-                    channel="chromium",
-                    args=crawl_args,
-                    downloads_path=str(DOWNLOAD_DIR),
-                )
+                return await start_browser(playwright, launch_options([]))
 
             app.state.crawl_factory = launch_crawl
             app.state.crawl_browser = await launch_crawl()
-            app.state.crawl_browser_headless = crawl_headless
 
         async def probe_graphics():
             context = await app.state.browser.new_context()
@@ -448,9 +531,8 @@ async def lifespan(app):
                                    info.get('pixel') != [64, 128, 191, 255] or
                                    software(info.get('renderer', ''))):
             await app.state.browser.close()
-            app.state.browser = await playwright.chromium.launch(
-                **launch_options(['--use-gl=angle', '--use-angle=gl',
-                                  '--ignore-gpu-blocklist']))
+            graphics_args = ['--use-gl=angle', '--use-angle=gl', '--ignore-gpu-blocklist']
+            app.state.browser = await start_browser(playwright, launch_options(graphics_args))
             info = await probe_graphics()
             info['fallback_reason'] = 'hardware_not_verified'
         if launch_fallback:
@@ -459,7 +541,9 @@ async def lifespan(app):
             info.get('pixel') == [64, 128, 191, 255] and
             not software(info.get('renderer', 'software')))
         info['requested_mode'] = graphics
-        info['effective_headless'] = headless
+        info['effective_headless'] = False
+        info['channel'] = channel or 'chromium'
+        info['network_lane'] = 'native' if browser_filter.native_lane() else 'gate'
         info['feature_status'] = await probe_features()
         app.state.graphics = info
         watcher = asyncio.create_task(_watch_browser(app))
@@ -1317,15 +1401,33 @@ async def _checkpoint_snapshot(context, page, allowed_hosts):
             await asyncio.sleep(.1)
 
 
+async def _download_file(download):
+    """Local file of a finished download.
+
+    A browser launched by an identity server (1.9.0) keeps downloads in that
+    server's artifacts folder under DOWNLOAD_DIR (shared by group, so the
+    size limit above still sees them grow); save_as copies the result here.
+    """
+    try:
+        return await download.path()
+    except Exception as exc:
+        if "remote" not in str(exc).lower():
+            raise
+    local = DOWNLOAD_DIR / ("dl-" + secrets.token_hex(8))
+    await download.save_as(local)
+    return local
+
+
 async def _download(page, target, timeout):
     async with DOWNLOAD_LOCK:
         async with page.expect_download(timeout=timeout) as event:
             await target.click(timeout=timeout)
         download = await event.value
-        pending = asyncio.create_task(download.path())
+        pending = asyncio.create_task(_download_file(download))
         try:
             while not pending.done():
-                size = sum(path.stat().st_size for path in DOWNLOAD_DIR.iterdir() if path.is_file())
+                size = sum(path.stat().st_size for path in DOWNLOAD_DIR.rglob("*")
+                           if path.is_file())
                 if size > DOWNLOAD_LIMIT:
                     raise ValueError("download_too_large")
                 await asyncio.wait({pending}, timeout=0.05)
@@ -1333,6 +1435,8 @@ async def _download(page, target, timeout):
             if path.stat().st_size > DOWNLOAD_LIMIT:
                 raise ValueError("download_too_large")
             blob = await asyncio.to_thread(path.read_bytes)
+            if path.parent == DOWNLOAD_DIR and path.name.startswith("dl-"):
+                path.unlink(missing_ok=True)  # our copy of a server-side download
             return {"filename": download.suggested_filename, "source_url": download.url,
                     "download_b64": base64.b64encode(blob).decode(), "size_bytes": len(blob)}
         finally:

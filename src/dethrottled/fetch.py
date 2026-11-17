@@ -2,7 +2,7 @@
 """Content-driven fetching through configured acquisition and recovery tiers.
 
 The normal ladder tries direct HTTP, optional browser-like TLS through
-curl_cffi, a configured Crawl4AI renderer, and conditional headed-browser
+curl_cffi, the browser worker's render tier, and conditional headed-browser
 recovery. Rendering restrictions and local budgets control which tiers run.
 All acquisition tiers run through the configured local transports and workers.
 No hosted-reader fallback is provided.
@@ -130,45 +130,23 @@ TLS_TIMEOUT = int(os.environ.get("DETHROTTLED_TLS_TIMEOUT", "8"))
 ENABLE_TLS = os.environ.get("DETHROTTLED_ENABLE_TLS", "1").strip() not in (
     "0", "false", "no", "off", "")
 
-# Empty by default. The render tier needs a Crawl4AI service you run; with no
-# URL configured the tier is skipped entirely and the ladder is one rung
-# shorter. `docker compose up` sets this for you.
-CRAWL4AI_URL = os.environ.get("DETHROTTLED_CRAWL4AI_URL", "").rstrip("/")
+def _setting(name: str, legacy: str, default: str) -> str:
+    """DETHROTTLED_RENDER_* setting; 1.8 names (DETHROTTLED_CRAWL4AI_*) still accepted."""
+    value = os.environ.get(name)
+    if value is None:
+        value = os.environ.get(legacy)
+    return default if value is None else value
 
-# Which dialect the renderer speaks.
-#
-#   "auto"   probe once, remember the answer  (default)
-#   "crawl"  upstream Crawl4AI: POST /crawl, port 11235
-#   "render" a service exposing POST /render {url, timeout_ms}
-#
-# Two dialects because the upstream Docker image and a hand-rolled render
-# worker are both perfectly reasonable things to point this at, and guessing
-# wrong costs a silent dead tier rather than a loud error -- the failure this
-# option exists to prevent. "auto" tries /crawl and falls back to /render, then
-# caches which one answered so the cost is one extra request per process.
-CRAWL4AI_API = os.environ.get("DETHROTTLED_CRAWL4AI_API", "auto").strip().lower()
 
-# Remembered across calls within a process. None = not yet probed.
-_crawl4ai_dialect = None if CRAWL4AI_API == "auto" else CRAWL4AI_API
+# The browser worker's render endpoint (POST /crawl). Empty means no render
+# tier: the ladder is one rung shorter, a smaller stack rather than a broken
+# one. `docker compose up` sets this to the DNB worker. Until 1.9.0 this was
+# DETHROTTLED_RENDER_URL, and the tier itself was called "render".
+RENDER_URL = _setting("DETHROTTLED_RENDER_URL", "DETHROTTLED_RENDER_URL", "").rstrip("/")
 # 25 rather than 90. Measured: this tier solved 1 page in 75 across two
 # profiles. A ninety-second licence for a one-in-seventy-five tier means one
 # page can cost more than the other forty-nine together.
-CRAWL4AI_TIMEOUT = int(os.environ.get("DETHROTTLED_CRAWL4AI_TIMEOUT", "25"))
-
-# The renderer's credential, when it has one.
-#
-# Upstream Crawl4AI refuses to listen on anything but loopback unless
-# CRAWL4AI_API_TOKEN is set -- gunicorn's bind address is chosen from whether a
-# credential exists. That is a sound default: a renderer reachable on a network
-# with no auth is an open proxy that also runs a browser.
-#
-# So a containerised renderer necessarily has a token, and this must send it.
-# Empty is normal for a loopback renderer that never needed one.
-CRAWL4AI_TOKEN = os.environ.get("DETHROTTLED_CRAWL4AI_TOKEN", "").strip()
-
-
-def _crawl4ai_headers() -> dict:
-    return {"Authorization": "Bearer %s" % CRAWL4AI_TOKEN} if CRAWL4AI_TOKEN else {}
+RENDER_TIMEOUT = int(_setting("DETHROTTLED_RENDER_TIMEOUT", "DETHROTTLED_RENDER_TIMEOUT", "25"))
 
 # Whole-page admission budget, checked before each tier. Configured renderers
 # and headed recovery may need more time than direct HTTP; this bounds their
@@ -179,11 +157,11 @@ PAGE_BUDGET = float(os.environ.get("DETHROTTLED_PAGE_BUDGET", "60"))
 # generous per-page ceiling multiplies: six results at 60s each is six minutes
 # for one search. Same one-versus-many split that governs OCR and the caps.
 PAGE_BUDGET_BULK = float(os.environ.get("DETHROTTLED_PAGE_BUDGET_BULK", "25"))
-# Must stay UNDER CRAWL4AI_TIMEOUT. It was 45000 against a 25s HTTP timeout,
+# Must stay UNDER RENDER_TIMEOUT. It was 45000 against a 25s HTTP timeout,
 # so we hung up at 25s on a renderer we had just asked to work for 45 -- paying
 # the full wait, discarding the result, and leaving it rendering a page nobody
 # would collect. 20s of render inside a 25s wait leaves slack for transport.
-CRAWL4AI_RENDER_MS = int(os.environ.get("DETHROTTLED_CRAWL4AI_RENDER_MS", "20000"))
+RENDER_PAGE_MS = int(_setting("DETHROTTLED_RENDER_PAGE_MS", "DETHROTTLED_RENDER_PAGE_MS", "20000"))
 # Re-enabled 2026-08-26 after the worker was repaired.
 #
 # It was previously disabled because /render never returned: the service was
@@ -200,7 +178,7 @@ CRAWL4AI_RENDER_MS = int(os.environ.get("DETHROTTLED_CRAWL4AI_RENDER_MS", "20000
 # Worker and 21,896 through the renderer.
 # Local rendering is bounded by concurrent work and a fair queue. A positive
 # legacy budget remains an explicit operator ceiling; zero disables rendering.
-CRAWL4AI_BUDGET = int(os.environ.get("DETHROTTLED_CRAWL4AI_BUDGET", "-1"))
+RENDER_BUDGET = int(_setting("DETHROTTLED_RENDER_BUDGET", "DETHROTTLED_RENDER_BUDGET", "-1"))
 from .admission import AdmissionError, FairQueue  # noqa: E402
 
 _RENDER_QUEUE = FairQueue(
@@ -293,9 +271,17 @@ THIN_CHARS = int(os.environ.get("DETHROTTLED_THIN_CHARS", "600"))
 # are tried. Thresholds follow web-researcher-mcp's measured shell heuristic.
 SHELL_MAX_TEXT = int(os.environ.get("DETHROTTLED_SHELL_MAX_TEXT", "2048"))
 SHELL_HTML_RATIO = int(os.environ.get("DETHROTTLED_SHELL_HTML_RATIO", "20"))
+# Rendered pages are judged on their whole-page text (extract.rendered_text),
+# which carries no link URLs and is about a third of the length of the
+# Crawl4AI markdown the 2,048 floor was set against. On 40 rendered pages
+# (web-bench browser-settings-ab, round 6) the real shells were 0-942 chars
+# (empty renders, Reddit's verify page, Glassdoor's block) and Facebook's
+# login-walled profile 427, which the headed browser reads better; Instagram's
+# profile, 1,721 chars of real text, is content. 2,048 would call it a shell.
+SHELL_RENDER_TEXT = int(os.environ.get("DETHROTTLED_SHELL_RENDER_TEXT", "1200"))
 # Tiers a shell can escalate FROM. Static reads go on to rendering; a thin
 # crawl render goes on to the headed browser. Headed is last: nothing follows.
-SHELL_TIERS = {"direct", "tls", "crawl4ai"}
+SHELL_TIERS = {"direct", "tls", "render"}
 
 
 def _looks_like_shell(name: str, candidate: dict, html) -> bool:
@@ -305,10 +291,11 @@ def _looks_like_shell(name: str, candidate: dict, html) -> bool:
     chars = int(candidate.get("extraction", {}).get("pre_supplement_chars")
                 or candidate.get("chars") or 0)
     size = html if isinstance(html, int) else len(html or "")
-    rendered = name == "crawl4ai"
+    rendered = name == "render"
+    floor = SHELL_RENDER_TEXT if rendered else SHELL_MAX_TEXT
     return (name in SHELL_TIERS
             and (rendered or candidate.get("content_type") == "html")
-            and 0 < chars < SHELL_MAX_TEXT and size >= SHELL_HTML_RATIO * chars)
+            and 0 < chars < floor and size >= SHELL_HTML_RATIO * chars)
 
 
 def _supplement_thin(candidate: dict, html: str, descriptions=None) -> None:
@@ -593,28 +580,16 @@ def _tier_direct_once(url: str, timeout: int, allow_ocr: bool = False, *, get=No
             response.close()
 
 
-def _crawl4ai_payload(payload: dict, url: str) -> tuple:
+def _render_payload(payload: dict, url: str) -> tuple:
     """Pull usable content out of whatever shape the renderer returned.
 
-    Crawl4AI ALREADY EXTRACTS, and its extraction is better than re-extracting
-    from its HTML. Measured on a JavaScript-heavy article: the cleaned HTML was
-    6,586 characters that trafilatura could not read at all, while the markdown
-    held 2,339 characters of clean prose. Running a local extractor over
-    somebody else's good extraction threw the good extraction away.
-
-    So markdown wins when there is enough of it, and the HTML fields are the
-    fallback for a renderer that does not produce markdown.
+    The worker returns the rendered page's HTML. Its text is taken whole-page
+    (extract.rendered_text), which matched Crawl4AI's markdown fact for fact on
+    rendered pages at under a third of the size; see that function. Until
+    1.9.0 the worker ran Crawl4AI's markdown generator itself.
     """
     final = payload.get("url") or url
 
-    markdown = payload.get("markdown")
-    # Upstream returns either a string or {raw_markdown, fit_markdown, ...}.
-    # fit_markdown is the filtered one and is preferred when present, because
-    # unfiltered markdown of a news page is mostly navigation.
-    if isinstance(markdown, dict):
-        markdown = (markdown.get("fit_markdown")
-                    or markdown.get("raw_markdown")
-                    or markdown.get("markdown"))
     html = ""
     # Selectors and raw callers need the source DOM, not the extractor's
     # cleaned article fragment. Prefer the full page HTML when requested.
@@ -640,8 +615,10 @@ def _crawl4ai_payload(payload: dict, url: str) -> tuple:
             rendered["page_metadata"] = metadata
         if metadata.get("descriptions"):
             rendered["page_descriptions"] = metadata["descriptions"]
-    if isinstance(markdown, str) and len(markdown.strip()) > 220:
-        result = {"text": markdown, **rendered}
+    from .extract import rendered_text
+    text = rendered_text(source or html)
+    if len(text) > 220:
+        result = {"text": text, **rendered}
         # Markdown wins for prose, but selectors/raw callers still need the
         # source DOM. Only retain it when the request asked for HTML.
         if html and _READ_OPTIONS.get().get("keep_html"):
@@ -650,13 +627,13 @@ def _crawl4ai_payload(payload: dict, url: str) -> tuple:
 
     if html:
         return {"html": html, **rendered}, "", final
-    return {}, "crawl4ai_empty", url
+    return {}, "render_empty", url
 
 
-def _crawl4ai_target_error(payload: dict) -> str:
+def _render_target_error(payload: dict) -> str:
     """Report the target page's HTTP failure, even when rendering succeeded.
 
-    Crawl4AI's ``success`` means it produced a page. A rendered 404 can still
+    The worker's ``success`` means it produced a page. A rendered 404 can still
     contain enough prose to pass our extraction threshold. On redirects, the
     final response status takes precedence over the original response status.
     """
@@ -670,14 +647,14 @@ def _crawl4ai_target_error(payload: dict) -> str:
         code = int(status)
     except (TypeError, ValueError):
         return ""
-    return "crawl4ai_target_http_%d" % code if code >= 400 else ""
+    return "render_target_http_%d" % code if code >= 400 else ""
 
 
-def _crawl4ai_via_crawl(url: str) -> tuple:
-    """Upstream Crawl4AI's Docker API: POST /crawl on :11235.
+def _render_request(url: str) -> tuple:
+    """The DNB worker's render endpoint: POST /crawl.
 
-    The response wraps results in a list, because the endpoint takes a list of
-    URLs. One URL in, one result out, but the envelope is still there.
+    The request keeps the shape the worker has always accepted (a list of URLs
+    and a browser/crawler config); the response wraps one result in a list.
     """
     payload = {"urls": [url],
               "browser_config": {"type": "BrowserConfig",
@@ -685,13 +662,13 @@ def _crawl4ai_via_crawl(url: str) -> tuple:
               "crawler_config": {"type": "CrawlerRunConfig",
                                  "params": {"cache_mode": "bypass",
                                             "check_robots_txt": False,
-                                            "page_timeout": CRAWL4AI_RENDER_MS,
+                                            "page_timeout": RENDER_PAGE_MS,
                                             "delay_before_return_html": _READ_OPTIONS.get().get(
                                                 "render_delay", 0.5),
                                             **({"wait_for": "css:" +
                                                 _READ_OPTIONS.get()["wait_for"]}
                                                if _READ_OPTIONS.get().get("wait_for") else {})}}}
-    headers = _crawl4ai_headers()
+    headers = {}
     if os.getenv("DETHROTTLED_DNB", "0") == "1":
         from .access import CLAIMS, read_session_alias
         from .delegation import sign
@@ -702,38 +679,38 @@ def _crawl4ai_via_crawl(url: str) -> tuple:
             owner=claims["namespace"] if claims else None,
             session=read_session_alias(url,public),
             scope="public-read" if public else "local-read",public_only=public)
-    response = requests.post(CRAWL4AI_URL + "/crawl", json=payload,
-                             headers=headers, timeout=max(CRAWL4AI_TIMEOUT,
-            CRAWL4AI_RENDER_MS/1000 + _READ_OPTIONS.get().get("render_delay",.5) + 25)
-            if os.getenv("DETHROTTLED_DNB", "0")=="1" else CRAWL4AI_TIMEOUT)
+    response = requests.post(RENDER_URL + "/crawl", json=payload,
+                             headers=headers, timeout=max(RENDER_TIMEOUT,
+            RENDER_PAGE_MS/1000 + _READ_OPTIONS.get().get("render_delay",.5) + 25)
+            if os.getenv("DETHROTTLED_DNB", "0")=="1" else RENDER_TIMEOUT)
     if response.status_code in (429, 503):
         busy, wait = _renderer_busy(response)
         if busy and wait <= RENDER_BUSY_RETRY_MAX:
             # A momentary admission refusal (memory, queue, slots) usually
             # clears within a second or two; one retry beats failing the page.
             time.sleep(wait)
-            response = requests.post(CRAWL4AI_URL + "/crawl", json=payload, headers=headers,
-                                     timeout=max(CRAWL4AI_TIMEOUT, CRAWL4AI_RENDER_MS / 1000
+            response = requests.post(RENDER_URL + "/crawl", json=payload, headers=headers,
+                                     timeout=max(RENDER_TIMEOUT, RENDER_PAGE_MS / 1000
                                                  + _READ_OPTIONS.get().get("render_delay", .5)
                                                  + 25)
                                      if os.getenv("DETHROTTLED_DNB", "0") == "1"
-                                     else CRAWL4AI_TIMEOUT)
+                                     else RENDER_TIMEOUT)
             busy = (_renderer_busy(response)[0]
                     if response.status_code in (429, 503) else "")
         if busy:
-            return {}, "crawl4ai_busy:" + busy, url
+            return {}, "render_busy:" + busy, url
     if response.status_code != 200:
-        return {}, "crawl4ai_http_%d" % response.status_code, url
+        return {}, "render_http_%d" % response.status_code, url
     body = response.json()
     if not isinstance(body, dict):
-        return {}, "crawl4ai_shape", url
+        return {}, "render_shape", url
     # `success: false` is a rendered failure, not a transport failure, and it
     # carries the reason. Reporting it beats reporting "empty".
     results = body.get("results")
     payload = (results[0] if isinstance(results, list) and results else body)
     if not isinstance(payload, dict):
-        return {}, "crawl4ai_shape", url
-    policy_error = _crawl4ai_target_error(payload)
+        return {}, "render_shape", url
+    policy_error = _render_target_error(payload)
     if policy_error.startswith("adblock_blocked:"):
         return {}, policy_error, payload.get("redirected_url") or url
     if payload.get("success") is False:
@@ -745,36 +722,15 @@ def _crawl4ai_via_crawl(url: str) -> tuple:
         if "Structural:" in reason:
             reason = "incomplete_render: " + reason
         # The DNB reports the target's HTTP failure as "http_NNN"; name it as
-        # the target's, like _crawl4ai_target_error does, so it is never
+        # the target's, like _render_target_error does, so it is never
         # mistaken for the rendering service refusing.
         if re.fullmatch(r"http_\d{3}", reason):
-            return {}, "crawl4ai_target_" + reason, url
-        return {}, "crawl4ai_" + reason, url
-    target_error = _crawl4ai_target_error(payload)
+            return {}, "render_target_" + reason, url
+        return {}, "render_" + reason, url
+    target_error = _render_target_error(payload)
     if target_error:
         return {}, target_error, payload.get("redirected_url") or url
-    return _crawl4ai_payload(payload, url)
-
-
-def _crawl4ai_via_render(url: str) -> tuple:
-    """A service exposing POST /render {url, timeout_ms}."""
-    response = requests.post(
-        CRAWL4AI_URL + "/render",
-        json={"url": url, "timeout_ms": CRAWL4AI_RENDER_MS},
-        headers=_crawl4ai_headers(),
-        timeout=CRAWL4AI_TIMEOUT)
-    if response.status_code != 200:
-        return {}, "crawl4ai_http_%d" % response.status_code, url
-    try:
-        payload = response.json()
-    except ValueError:
-        return {"html": response.text}, "", url
-    if not isinstance(payload, dict):
-        return {}, "crawl4ai_shape", url
-    target_error = _crawl4ai_target_error(payload)
-    if target_error:
-        return {}, target_error, payload.get("redirected_url") or url
-    return _crawl4ai_payload(payload, url)
+    return _render_payload(payload, url)
 
 
 # ── tier cooldown ────────────────────────────────────────────────────────────
@@ -814,8 +770,8 @@ _RATE_LIMIT_CODES = (401, 403, 407, 418, 429, 503)
 # A 403 from one host says nothing whatsoever about the next host. Per-host
 # per-host pacing is already handled by the per-domain request gap.
 _RESTABLE_TIERS = frozenset(
-    e.strip() for e in os.environ.get(
-        "DETHROTTLED_RESTABLE_TIERS", "crawl4ai").split(",")
+    ("render" if e.strip() == "crawl4ai" else e.strip()) for e in os.environ.get(
+        "DETHROTTLED_RESTABLE_TIERS", "render").split(",")
     if e.strip())
 
 _tier_rest = {}                      # tier -> {"until": ts, "strikes": n}
@@ -916,13 +872,13 @@ def tier_busy(name: str, reason: str = "") -> None:
 
 
 _RENDERER_REFUSAL = re.compile(
-    r"crawl4ai_http_(?:429|503)"
-    r"|crawl4ai_(?:ConnectionError|ConnectTimeout|ReadTimeout|Timeout|ChunkedEncodingError)")
+    r"render_http_(?:429|503)"
+    r"|render_(?:ConnectionError|ConnectTimeout|ReadTimeout|Timeout|ChunkedEncodingError)")
 
 
 def _service_refusal(name: str, reason: str) -> bool:
     """Should this failure rest the tier (see _RESTABLE_TIERS)?"""
-    if name == "crawl4ai":
+    if name == "render":
         return bool(reason and _RENDERER_REFUSAL.fullmatch(reason))
     return _is_refusal(reason)
 
@@ -1011,49 +967,33 @@ def _tier_tls_once(url: str, *, get=None) -> tuple:
         response.close()
 
 
-def _tier_crawl4ai(url: str) -> tuple:
+def _tier_render(url: str) -> tuple:
     """Headless Chromium you host. Renders JavaScript with bounded, fair admission.
 
-    Optional. With DETHROTTLED_CRAWL4AI_URL unset this never runs and the ladder
+    Optional. With DETHROTTLED_RENDER_URL unset this never runs and the ladder
     is one tier shorter, which is a smaller stack rather than a broken one.
 
     Executes JavaScript when a plain HTTP read produces only a page shell.
     The configured worker performs rendering rather than a hosted reader.
     """
-    if not CRAWL4AI_URL:
-        return {}, "crawl4ai_not_configured", url
-    if CRAWL4AI_BUDGET >= 0 and not _spend("crawl4ai", CRAWL4AI_BUDGET):
-        return {}, "crawl4ai_budget_spent", url
+    if not RENDER_URL:
+        return {}, "render_not_configured", url
+    if RENDER_BUDGET >= 0 and not _spend("render", RENDER_BUDGET):
+        return {}, "render_budget_spent", url
 
     try:
         with _RENDER_QUEUE.slot(_READ_OPTIONS.get().get("admission_key", "local"),
                                timeout=float(os.getenv("DETHROTTLED_RENDER_QUEUE_SECONDS", "60"))):
-            return _crawl4ai_admitted(url)
+            return _render_admitted(url)
     except AdmissionError as exc:
         return {}, str(exc), url
 
 
-def _crawl4ai_admitted(url):
-    global _crawl4ai_dialect
-    order = ([_crawl4ai_dialect] if _crawl4ai_dialect
-             else ["crawl", "render"])
-    last = "crawl4ai_empty"
-    for dialect in order:
-        run = _crawl4ai_via_crawl if dialect == "crawl" else _crawl4ai_via_render
-        try:
-            payload, reason, final = run(url)
-        except Exception as exc:
-            last = "crawl4ai_" + type(exc).__name__
-            continue
-        # A 404 means this endpoint is not the one this server speaks. Any
-        # other answer -- including an honest render failure -- means we found
-        # the right dialect and should stop probing for it.
-        if reason == "crawl4ai_http_404":
-            last = reason
-            continue
-        _crawl4ai_dialect = dialect
-        return payload, reason, final
-    return {}, last, url
+def _render_admitted(url):
+    try:
+        return _render_request(url)
+    except Exception as exc:
+        return {}, "render_" + type(exc).__name__, url
 
 
 # What gets EXTRACTED and CACHED, independent of what the caller asked for.
@@ -1229,8 +1169,8 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
     # failed -- faster than direct in measurement, and it needs no service.
     if ENABLE_TLS:
         tiers.append(("tls", lambda: _tier_tls(url)))
-    if allow_render and CRAWL4AI_URL and CRAWL4AI_BUDGET != 0:
-        tiers.append(("crawl4ai", lambda: _tier_crawl4ai(url)))
+    if allow_render and RENDER_URL and RENDER_BUDGET != 0:
+        tiers.append(("render", lambda: _tier_render(url)))
     if allow_render and os.getenv("DETHROTTLED_BROWSER_SEARCH_URL"):
         tiers.append(("headed", lambda: _tier_headed(url)))
     elif allow_render and _READ_OPTIONS.get().get("headed_fallback"):
@@ -1250,7 +1190,7 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
     # that is resting, over budget or simply beaten by the page still falls
     # through instead of failing outright.
     if render_first:
-        tiers.sort(key=lambda pair: pair[0] != "crawl4ai")
+        tiers.sort(key=lambda pair: pair[0] != "render")
     # Site routes (sites.py): a measured starting step for 50 heavily used
     # sites, and official keyless APIs for walled or slow ones. Everything
     # else in the ladder still follows, in its usual order.
@@ -1296,13 +1236,13 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
                 "incomplete. Retry shortly.")
 
     def finish(out):
-        if renderer_unavailable and out.get("tier") not in {"crawl4ai", "headed"}:
+        if renderer_unavailable and out.get("tier") not in {"render", "headed"}:
             out["warnings"] = [*out.get("warnings", []), renderer_warning()]
             out["renderer_unavailable"] = renderer_unavailable[0]
         # Recheck old cached interstitials on the read path as well.
         out["acquisition_attempts"] = [dict(a) for a in attempts]
         out["schema_version"] = 3
-        rendered = out.get("tier") in {"crawl4ai", "headed"}
+        rendered = out.get("tier") in {"render", "headed"}
         out["acquisition"] = {"rendered": rendered,
                               "wait_for": (_READ_OPTIONS.get().get("wait_for", "")
                                            if rendered else ""),
@@ -1405,7 +1345,7 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
         # that still work carry the load.
         if tier_resting(name):
             reasons.append("%s:resting" % name)
-            if name == "crawl4ai":
+            if name == "render":
                 renderer_unavailable.append("resting:" + tier_rest_state().get(
                     name, {}).get("reason", ""))
             continue
@@ -1416,7 +1356,7 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
         # rescue those (12 and 28 recorded reads).
         if (name == "tls" and attempts and attempts[-1]["tier"] == "direct"
                 and attempts[-1]["outcome"] in {"shell", "response"}
-                and any(other == "crawl4ai" and not tier_resting(other)
+                and any(other == "render" and not tier_resting(other)
                         for other, _ in tiers)):
             reasons.append("tls:skipped_after_static_shell")
             continue
@@ -1483,12 +1423,19 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
                 attempt["reason"] = reason or "challenge_detected:" + detected
                 reasons.append(name + ":" + attempt["reason"])
                 continue
-        if name == "crawl4ai" and reason.startswith("crawl4ai_busy:"):
+        # The rendered page itself refused us (401/403). The headed browser is a
+        # different, fuller visit and reads some of these: Bloomberg Markets
+        # got 403 from render and was read by live /drive (web-bench
+        # browser-settings-ab, round 3). Until 1.9.0 the ladder stopped here.
+        if name == "render" and reason in {"render_target_http_401", "render_target_http_403"}:
+            challenged = True
+            attempt.update(outcome="challenge", provider="http_refusal")
+        if name == "render" and reason.startswith("render_busy:"):
             tier_busy(name, reason)
             renderer_unavailable.append(reason.split(":", 1)[1])
         elif _service_refusal(name, reason):
             tier_refused(name, reason)
-            if name == "crawl4ai":
+            if name == "render":
                 renderer_unavailable.append(reason)
         elif payload:
             # Answered with something. Whether it extracted is a separate

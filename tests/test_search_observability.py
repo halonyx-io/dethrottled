@@ -1,9 +1,7 @@
 """Readiness and search outcome truth under controlled provider failures."""
 import json
-import sys
 import threading
 import time
-import types
 from concurrent.futures import ThreadPoolExecutor
 
 import pytest
@@ -106,17 +104,8 @@ def refusal_paths(monkeypatch, *, http_status=429, browser_ok=False, retry_after
                   for e in ["ddg-lite", "ddg-html"]])
         return [row("web-browser-ddg-lite")] if browser_ok else []
 
-    class DDGS:
-        def text(self, *a, **k):
-            calls.append("ddgs")
-            raise RuntimeError("controlled refusal")
-
     monkeypatch.setattr(fs, "tls_search", tls)
     monkeypatch.setattr(fs, "browser_search", browser)
-    monkeypatch.setitem(sys.modules, "ddgs", types.SimpleNamespace(DDGS=DDGS))
-    # This provider double has no ddgs.http_client; transport wrapping is tested
-    # independently and must not depend on another test having imported DDGS.
-    monkeypatch.setattr(fs.requests, "install_ddgs", lambda: None)
     return calls
 
 
@@ -124,7 +113,7 @@ def test_correlated_refusals_rest_all_paths_and_survive_reload(monkeypatch):
     calls = refusal_paths(monkeypatch)
     for _ in range(3):
         fs.web_search("controlled evidence", diagnostics={})
-    assert calls == ["tls", "browser-lite", "browser-html", "ddgs"]
+    assert calls == ["tls", "browser-lite", "browser-html"]
     persisted = json.loads(fs._health_path().read_text())
     assert persisted["family:ddg"]["until"] > time.time()
     # There is no in-memory success shortcut: a new caller reads persisted rest.
@@ -132,7 +121,7 @@ def test_correlated_refusals_rest_all_paths_and_survive_reload(monkeypatch):
     report = {}
     assert fs.web_search("another query", diagnostics=report) == []
     assert report["status"] == "cooldown"
-    assert len(calls) == 4
+    assert len(calls) == 3
 
 
 @pytest.mark.parametrize("http_status,browser_ok", [(429, True), (500, False)])
@@ -192,21 +181,7 @@ def test_cooldown_expiry_is_not_reported_as_recovery(monkeypatch):
     fs.web_search("recovery still refused", diagnostics={})
     state = fs._load_health()["family:ddg"]
     assert state["fails"] == 2 and state["until"] > time.time() + 59
-    assert len(calls) == 4
-
-
-def test_explicit_non_ddg_fallback_stays_available_during_family_rest(monkeypatch):
-    fs._save_health({"family:ddg": {"fails": 1, "until": time.time() + 60}})
-    monkeypatch.setattr(fs, "WEB_ENGINES", ["duckduckgo", "bing"])
-    observed = []
-
-    def acquire(*a, engines, **k):
-        observed.append(engines)
-        return [row("web-bing")]
-
-    monkeypatch.setattr(fs, "_acquire_web", acquire)
-    assert fs.web_search("other provider") == [row("web-bing")]
-    assert observed == [["bing"]]
+    assert len(calls) == 3
 
 
 def test_searx_ddg_rest_does_not_suppress_independent_engine(monkeypatch):
@@ -330,14 +305,8 @@ def test_browser_attempt_keeps_its_count_and_failure_after_ddgs_fallback(count, 
     assert attempt["reason"] == ("no_usable_engine" if not count else None)
 
 
-def test_empty_ddgs_fallback_cannot_erase_correlated_refusals(monkeypatch):
+def test_empty_ddg_paths_cannot_erase_correlated_refusals(monkeypatch):
     refusal_paths(monkeypatch, http_status=202)
-
-    class DDGS:
-        def text(self, *args, **kwargs):
-            return []
-
-    monkeypatch.setitem(sys.modules, "ddgs", types.SimpleNamespace(DDGS=DDGS))
     report = {}
     assert fs.web_search("controlled refusal", diagnostics=report) == []
     assert report["upstream_status"] == "cooldown"
@@ -358,23 +327,17 @@ def test_explicit_retry_after_prevents_more_ddg_attempts(monkeypatch, status):
     assert calls == ["tls"]
 
 
-def test_empty_ddgs_without_refusal_stays_genuinely_empty(monkeypatch):
+def test_an_answered_empty_search_without_refusal_stays_genuinely_empty(monkeypatch):
     monkeypatch.setenv("DETHROTTLED_CHEAP_DISCOVERY", "0")
 
     def browser(*args, diagnostics, **kwargs):
-        diagnostics.update(status="not_configured", attempts=[])
+        diagnostics.update(status="no_matching_candidates", attempts=[])
         return []
 
-    class DDGS:
-        def text(self, *args, **kwargs):
-            return []
-
     monkeypatch.setattr(fs, "browser_search", browser)
-    monkeypatch.setitem(sys.modules, "ddgs", types.SimpleNamespace(DDGS=DDGS))
-    monkeypatch.setattr(fs.requests, "install_ddgs", lambda: None)
     report = {}
     assert fs.web_search("genuinely empty", diagnostics=report) == []
-    assert report["status"] == "no_results"
+    assert report["status"] == "no_matching_candidates"
     assert diag.outcome(0, report) == "empty"
     assert "family:ddg" not in fs._load_health()
 

@@ -102,17 +102,20 @@ def test_drive_does_not_retry_an_explicit_scope(monkeypatch):
 
 
 def test_rendered_shell_escalates_using_source_size():
-    rendered = {"chars": 1500, "content_type": ""}
-    assert fetch._looks_like_shell("crawl4ai", rendered, 120_000)
-    assert not fetch._looks_like_shell("crawl4ai", rendered, 20_000)
+    rendered = {"chars": 900, "content_type": ""}
+    assert fetch._looks_like_shell("render", rendered, 120_000)
+    assert not fetch._looks_like_shell("render", rendered, 15_000)
     assert not fetch._looks_like_shell("headed", rendered, 120_000)
+    # Whole-page rendered text is leaner than Crawl4AI's markdown was (1.9.0):
+    # Instagram's profile, 1,721 chars on a 927 KB page, is content, not a shell.
+    assert not fetch._looks_like_shell("render", {"chars": 1721, "content_type": ""}, 927_159)
 
 
 def test_crawl_payload_keeps_source_size_and_descriptions():
     html = ('<html><head><meta property="og:description" content="Official account: '
             'bugs, feature requests, feedback."></head><body>' + "<div></div>" * 3000
             + "</body></html>")
-    payload, reason, _ = fetch._crawl4ai_payload(
+    payload, reason, _ = fetch._render_payload(
         {"markdown": "Trending topics and links. " * 20, "html": html}, URL)
     assert reason == ""
     assert payload["source_html_bytes"] == len(html)

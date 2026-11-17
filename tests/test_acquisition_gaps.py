@@ -150,11 +150,11 @@ def test_crawl_tier_renders_public_targets_in_a_public_scope(monkeypatch, tmp_pa
     monkeypatch.setattr(fetch.requests, "post",
                         lambda url, json=None, headers=None, timeout=None:
                         (sent.append((json, headers)), Response())[1])
-    monkeypatch.setattr(fetch, "CRAWL4AI_URL", "http://dnb")
+    monkeypatch.setattr(fetch, "RENDER_URL", "http://dnb")
     for public_target in (True, False):
         sent.clear()
         monkeypatch.setattr(research, "public_url", lambda url, p=public_target: p)
-        fetch._crawl4ai_via_crawl("https://crates.io/crates/serde")
+        fetch._render_request("https://crates.io/crates/serde")
         body, headers = sent[0]
         claims = delegation.verify(headers["X-DNB-Delegation"], body,
                                    str(tmp_path / "issuer.pub"), path="/crawl")

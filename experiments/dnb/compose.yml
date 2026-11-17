@@ -22,7 +22,6 @@ services:
       CRAWL4AI_ALLOW_INTERNAL_URLS: "true"
       CRAWL4AI_NO_CLOUD_NOTICE: "1"
       DETHROTTLED_ADBLOCK: "0"
-    volumes: ["../../docker/crawl4ai/config.yml:/app/config.yml:ro"]
     ports: ["127.0.0.1:19982:11235"]
   candidate:
     restart: unless-stopped

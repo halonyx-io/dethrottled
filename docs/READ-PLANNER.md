@@ -124,7 +124,7 @@ The worker's `auto` mode tries ANGLE GL EGL when a render device is exposed and 
 the reported renderer plus a rendered pixel. Failed hardware verification falls back to
 the established software path. `/v2/status` exposes the browser's active graphics result;
 the private worker also reports it in `/health`. `mesa` retains the explicit software-
-compatible GL configuration; `default` retains Chromium's original launch arguments.
+compatible GL configuration; `default` retains the browser's original launch arguments.
 
 This path was tested on AMD/Mesa and with no GPU devices. It is not a universal NVIDIA
 configuration or evidence of defeating a particular anti-bot vendor. Software WebGL is

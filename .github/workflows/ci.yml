@@ -180,7 +180,7 @@ jobs:
           done
           curl -fsS http://127.0.0.1:8787/health
           docker rm -f dethrottled-ci
-      - name: Browser image starts headed Chromium
+      - name: Browser image starts headed Chrome (Chromium on arm64)
         run: |
           docker run -d --shm-size=1g --name dethrottled-browser-ci dethrottled-browser-search:ci
           for i in $(seq 1 60); do

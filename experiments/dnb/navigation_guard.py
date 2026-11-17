@@ -2,8 +2,8 @@
 
 Public CDP over a private loopback endpoint; no TLS interception or driver internals.
 Patchright remains the browser controller. The IP gate denies browser access to
-this endpoint even in explicitly internal scopes. No new dependency: aiohttp is
-already part of the pinned Crawl4AI distribution.
+this endpoint even in explicitly internal scopes. aiohttp is pinned in
+browser-search/requirements.txt (until 1.9.0 it came with Crawl4AI).
 """
 
 import asyncio
@@ -40,8 +40,40 @@ def enable(browser_api):
         browser.on("disconnected", lambda *_: DEBUG_PORTS.discard(port))
         return browser
 
+    original_connect = browser_api.BrowserType.connect
+
+    async def connect(kind, *args, **kwargs):
+        # A browser launched by an identity's Playwright server (1.9.0): the
+        # same debugging port, carried in the launch options the server uses.
+        # Only the worker's UID can reach it; both browser UIDs are refused
+        # loopback by the egress firewall.
+        import json
+
+        headers = dict(kwargs.get("headers") or {})
+        options = headers.get("x-playwright-launch-options")
+        if not options:
+            return await original_connect(kind, *args, **kwargs)
+        with socket.socket() as reserve:
+            reserve.bind(("127.0.0.1", 0))
+            port = reserve.getsockname()[1]
+        options = json.loads(options)
+        options["args"] = [*options.get("args", []), f"--remote-debugging-port={port}",
+                           "--remote-debugging-address=127.0.0.1"]
+        headers["x-playwright-launch-options"] = json.dumps(options)
+        kwargs["headers"] = headers
+        DEBUG_PORTS.add(port)
+        try:
+            browser = await original_connect(kind, *args, **kwargs)
+        except BaseException:
+            DEBUG_PORTS.discard(port)
+            raise
+        browser._dnb_debug_port = port
+        browser.on("disconnected", lambda *_: DEBUG_PORTS.discard(port))
+        return browser
+
     launch._dnb_guard_launch = True
     browser_api.BrowserType.launch = launch
+    browser_api.BrowserType.connect = connect
     browser_api.BrowserType._dnb_guard_installed = True
     original_close = browser_api.Browser.close
 

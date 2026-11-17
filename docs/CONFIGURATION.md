@@ -49,12 +49,10 @@ application settings need an `environment` entry in a local override. Inspect
 |---|---|---|
 | `DETHROTTLED_AUTO_WORKERS` | `1` in Compose | Discover started local speech/layout/format workers; explicit URLs or `off` take precedence |
 | `DETHROTTLED_BIND`, `DETHROTTLED_PORT` | `127.0.0.1`, `8787` | Host API publication |
-| `CRAWL4AI_TOKEN` | `dethrottled-compose-local` | Private renderer credential, not caller authentication |
-| `CRAWL4AI_ALLOW_INTERNAL_URLS` | `false` | Renderer access to private addresses |
 | `DETHROTTLED_CHEAP_DISCOVERY` | `1` in Compose | Static DDG Lite probe before browser fallback; standalone default 0 |
 | `DETHROTTLED_MULTILINGUAL_CORPUS` | `1` in Compose | Enable E5 alongside MiniLM; standalone opt-in |
 | `DETHROTTLED_EXTRACT_CACHE_CHARS` | `4000000` | Retained extraction budget. It exceeds the 1,000,000-character response limit so a long source (a whole book, a large specification) stays retained: continue with `read_document` at `next_offset`. Text clipped at this budget is reported as partial (`partial_reason: extraction_cache_limit`). |
-| `DETHROTTLED_CRAWL4AI_BUDGET` | `-1` | No hourly renderer quota; 0 disables; positive values cap/window |
+| `DETHROTTLED_RENDER_BUDGET` | `-1` | No hourly renderer quota; 0 disables; positive values cap/window. 1.8 name `DETHROTTLED_CRAWL4AI_BUDGET` still accepted |
 | `DETHROTTLED_RENDER_CONCURRENCY` | `2` | Active render work at the API and DNB. Base Compose passes the same setting to both. |
 | `DETHROTTLED_HEADED_SETTLE` | `1` | API: after a headed read's first capture, take a second, settled look (network quiet, scroll until stable) and keep it only when it reads more; `0` disables it |
 | `DNB_NETWORK_SETTLE_SECONDS` | `3` | DNB render: wait at most this long for the page to settle (network idle, or stable visible text) before capture, within the render budget. `0` disables it. Set on the DNB service. |
@@ -75,7 +73,13 @@ application settings need an `environment` entry in a local override. Inspect
 | `DETHROTTLED_TLS_HEDGE_SECONDS` | `3` | If plain HTTP has had no response at all for this long, start TLS impersonation alongside it and use the first usable answer. A response that has begun (a download in progress) is never raced. `0` turns it off |
 | `DETHROTTLED_RENDER_TABS_PER_CONTEXT` | `3` | DNB: concurrent renders of one site for one caller share a browser context as tabs (up to this many) instead of being refused |
 | `DETHROTTLED_RENDER_BUSY_RETRY_MAX`, `DETHROTTLED_RENDER_BUSY_REST` | `2`, `15` | When the renderer refuses a read for capacity (memory, queue, slots) and asks to retry within this many seconds, retry once; if still refused, pause rendering this many seconds without the escalating cooldown. Unnamed 429/503 and connection failures keep `DETHROTTLED_TIER_COOLDOWN` |
-| `DETHROTTLED_BROWSER_GRAPHICS` | `auto` in Compose | Verify exposed hardware through GL EGL, fall back to software; `mesa` retains GL, `default` retains original args |
+| `DETHROTTLED_BROWSER_GRAPHICS` | `auto` in Compose | Drive browser: verify exposed hardware through GL EGL, fall back to software; `mesa` retains GL, `default` retains original args. The render browser always uses default graphics (half the CPU per page) |
+| `DETHROTTLED_BROWSER_CHANNEL` | `auto` | DNB: `auto` uses Google Chrome when the image has it (amd64) and Patchright's Chromium otherwise (arm64). The image holds one browser, chosen at build time with `--build-arg DNB_BROWSER=chromium`; `chromium` here is for such an image. Always headed |
+| `DETHROTTLED_BROWSER_NETWORK` | `native` in Compose | DNB: `native` lets public pages connect directly (HTTP/3 included). Their Chrome runs as its own UID, which an nftables egress firewall (loaded and verified at start; needs `cap_add: NET_ADMIN`) confines to public addresses and the worker's DNS filter; the filter applies the HaGeZi list and never returns a private address. Private-network reads and host allowlists run in a second Chrome whose UID can reach only the CONNECT gate. If the firewall cannot be loaded or verified, the worker refuses to start. `gate` is the 1.8 arrangement, chosen explicitly: every context through the gate, no firewall. `/health` reports `network_lane` |
+| `DETHROTTLED_BROWSER_TIMEZONE`, `DETHROTTLED_BROWSER_LANG` | empty (UTC); `scripts/compose-auto.sh` and Guided Setup fill them from the host | DNB: the browser's timezone (IANA name, e.g. `Asia/Kuala_Lumpur`) and language (e.g. `en_GB.UTF-8`), so it reports the machine's own settings instead of UTC. The language is also set as each browser context's locale, so the `Accept-Language` header and `navigator.language(s)` agree (`en-GB`) |
+| `DETHROTTLED_BROWSER_DISABLE_FEATURES` | `JXLImageFormat` | DNB: Chrome features turned off, comma separated, merged into Patchright's own `--disable-features` list (Chrome keeps only one such switch). JPEG XL is off because DataDome on forbes.com refuses Chrome 157 advertising it with an en-US language. Empty turns nothing off |
+| `DETHROTTLED_EGRESS_DENY` | empty | DNB native lane: extra CIDRs the public browser may never reach (comma separated), on top of private, reserved, link-local, multicast, CGNAT, documentation and translation ranges and every network the container has a route to. Add the host's public addresses or internal ranges that are routed via the default route |
+| `DETHROTTLED_GATE_PORTS` | `20000-20999` | DNB native lane: the loopback ports CONNECT gates listen on; the only destination the scoped browser's UID may reach |
 | `DETHROTTLED_READ_PLAN_SECONDS` | `30` | Additional recovery admission budget, clamped to 0–120; in-flight operations retain their transport timeout |
 | `DETHROTTLED_USER_AGENT` | `dethrottled/<version> (+project URL; automated fetcher)` | Article-fetch identity; empty or unset uses the default |
 
@@ -174,7 +178,7 @@ mapped. Change them against recorded coverage and failure cases, not just latenc
 | `DETHROTTLED_PAGE_BUDGET`, `DETHROTTLED_PAGE_BUDGET_BULK` | `60`, `25` seconds | Soft ladder budgets; a known recovery case can receive a bounded headed attempt afterward |
 | `DETHROTTLED_CONNECT_TIMEOUT` | `2` seconds | Direct/TLS connection establishment per attempt/address; does not shorten direct response reads. Resolver time and multiple addresses can exceed this; workers retain their own deadlines. |
 | `DETHROTTLED_TLS_TIMEOUT` | `8` seconds | TLS streaming low-speed allowance; its connect allowance is bounded by `DETHROTTLED_CONNECT_TIMEOUT`. |
-| `DETHROTTLED_CRAWL4AI_TIMEOUT`, `DETHROTTLED_CRAWL4AI_RENDER_MS` | `25` seconds, `20000` ms | Renderer transport/browser timing |
+| `DETHROTTLED_RENDER_TIMEOUT`, `DETHROTTLED_RENDER_PAGE_MS` | `25` seconds, `20000` ms | Renderer transport/browser timing. 1.8 names `DETHROTTLED_CRAWL4AI_TIMEOUT`, `DETHROTTLED_CRAWL4AI_RENDER_MS` still accepted |
 | `DETHROTTLED_RENDER_MAX_WAITING`, `DETHROTTLED_RENDER_PER_CLIENT` | `32`, `8` | Renderer waiting bounds |
 | `DETHROTTLED_RENDER_QUEUE_SECONDS` | `60` | Renderer admission wait |
 | `DETHROTTLED_HEADED_QUEUE_SECONDS` | `60` | Headed admission wait; one active, 32 total/eight per caller waiting |

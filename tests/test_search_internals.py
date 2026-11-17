@@ -207,20 +207,6 @@ def test_searxng_is_skipped_when_unconfigured(monkeypatch):
     assert fs.searxng("anything") == []
 
 
-def test_web_search_without_ddgs_is_empty_not_fatal(monkeypatch):
-    """ddgs is an optional dependency; absent, the RSS sources carry search."""
-    import builtins
-    real_import = builtins.__import__
-
-    def no_ddgs(name, *a, **k):
-        if name == "ddgs":
-            raise ImportError("no ddgs")
-        return real_import(name, *a, **k)
-
-    monkeypatch.setattr(builtins, "__import__", no_ddgs)
-    assert fs.web_search("anything") == []
-
-
 def test_explicit_news_keeps_news_sources(monkeypatch):
     monkeypatch.setattr(fs, "web_search", lambda *a, **k: [])
     calls = []

@@ -10,11 +10,19 @@ with each component is the one that applies.
 
 ## Attribution
 
-This product includes software developed by UncleCode (https://x.com/unclecode)
-as part of the Crawl4AI project (https://github.com/unclecode/crawl4ai).
-
 Ad and tracker blocking uses the [HaGeZi DNS blocklists](https://github.com/hagezi/dns-blocklists),
 published under GPL-3.0. See [ad blocking](docs/ADBLOCK.md#attribution-and-license).
+
+## Google Chrome
+
+Since 1.9.0 the amd64 browser worker image runs Google Chrome, which is
+proprietary software under the [Google Chrome Terms of Service](https://www.google.com/chrome/terms/).
+It is not part of this repository or the Python package: the image build
+downloads it from Google (`patchright install chrome`). Building and running the
+image for yourself is ordinary use of Chrome. Redistributing a built image
+redistributes Chrome, which those terms govern; build the image where it runs
+instead, or build it with Chromium (`--build-arg DNB_BROWSER=chromium`). The
+arm64 image uses Chromium.
 
 ## How dethrottled is distributed
 
@@ -72,10 +80,11 @@ PSF or similar. Notable ones:
 
 | Component | Licence | Used for |
 |---|---|---|
-| [Crawl4AI](https://github.com/unclecode/crawl4ai) | Apache-2.0 with the attribution requirement above | JavaScript rendering |
-| Playwright, Patchright and Chromium | Apache-2.0; Chromium is BSD-3-Clause with bundled third-party licences | Browser rendering and `/drive` |
+| Playwright, Patchright and Chromium | Apache-2.0; Chromium is BSD-3-Clause with bundled third-party licences | Browser rendering and `/drive` on arm64 |
+| dnspython | ISC | The browser worker's DNS filter |
+| nftables (Debian package) | GPL-2.0 | The browser worker's egress firewall; run as a separate program, unmodified |
 | trafilatura, htmldate, courlan, Resiliparse, selectolax | Apache-2.0 or MIT | HTML extraction |
-| ddgs, curl_cffi, primp | MIT | Search and TLS impersonation |
+| curl_cffi | MIT | Search and TLS impersonation |
 | Docling, PyTorch, Transformers, RapidOCR | MIT, BSD-3-Clause, Apache-2.0 | Optional layout analysis |
 | Tesseract and its trained data | Apache-2.0 | OCR |
 | faster-whisper, CTranslate2, ONNX Runtime | MIT | Speech-to-text and local models |
@@ -97,7 +106,7 @@ Licences change between releases. To list the Python packages in your own
 images and flag anything that is not plainly permissive:
 
 ```sh
-python3 scripts/license_inventory.py dethrottled-api:1.8.11 dethrottled-dnb:1.8.11
+python3 scripts/license_inventory.py dethrottled-api:1.9.0 dethrottled-dnb:1.9.0
 ```
 
 It does not cover system packages, browsers or model weights; those are

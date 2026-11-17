@@ -39,11 +39,11 @@ PINS = {
     "cloudflare.com": "tls", "openai.com": "tls", "medium.com": "tls",
     "www.microsoft.com": "tls", "sec.gov": "tls",
     # Renderer first: plain HTTP returned an app shell or a refusal.
-    "developers.cloudflare.com": "crawl4ai", "docs.docker.com": "crawl4ai",
-    "imdb.com": "crawl4ai", "commission.europa.eu": "crawl4ai", "crunchbase.com": "crawl4ai",
-    "instagram.com": "crawl4ai", "x.com": "crawl4ai", "reddit.com": "crawl4ai",
-    "learn.microsoft.com": "crawl4ai", "github.com": "crawl4ai",
-    "pubmed.ncbi.nlm.nih.gov": "crawl4ai",
+    "developers.cloudflare.com": "render", "docs.docker.com": "render",
+    "imdb.com": "render", "commission.europa.eu": "render", "crunchbase.com": "render",
+    "instagram.com": "render", "x.com": "render", "reddit.com": "render",
+    "learn.microsoft.com": "render", "github.com": "render",
+    "pubmed.ncbi.nlm.nih.gov": "render",
     # Real browser first: every cheaper step refused (HTTP 202) or came back empty.
     "booking.com": "headed",
 }

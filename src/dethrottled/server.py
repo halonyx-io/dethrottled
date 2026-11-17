@@ -252,9 +252,6 @@ def _attempts(meta: dict) -> list:
                      **(meta.get("source_reports") or {}).get(name, {}),
                      **(meta.get("source_reports") or {}).get("supplements", {}).get(name, {}),
                      **(meta.get("source_reports") or {}).get("providers", {}).get(name, {})})
-    for attempt in (meta.get("browser_search") or {}).get("ddgs_attempts", []):
-        rows.append({**attempt, "engine": "ddgs-" + attempt["engine"],
-                     "elapsed_ms": attempt.get("elapsed_ms", 0), "unresponsive": []})
     browser = meta.get("browser_search") or {}
     if browser.get("direct"):
         direct = browser["direct"]
@@ -714,10 +711,8 @@ def v2_capabilities():
         # that reports ok because a socket opened.
         "search": [name for name, on in (
             ("browser-search", bool(fs.BROWSER_SEARCH_URL)),
-            # General web, via whichever keyless engines still answer. Listed
-            # by the engines actually configured. Direct DDGS is a fallback
-            # when the private browser worker is configured and responsive.
-            *(("web-%s" % e, True) for e in fs.WEB_ENGINES),
+            # General web: DuckDuckGo, read over TLS and by the browser worker.
+            ("web-duckduckgo", True),
             ("searxng-multi-engine", bool(fs.SEARXNG_URL)),
             ("bing-news-rss", True),
             ("google-news-rss", True)) if on],
@@ -725,7 +720,7 @@ def v2_capabilities():
         "fetch_tiers": [name for name, on in (
             ("direct", True),
             ("tls", fetcher.ENABLE_TLS),
-            ("crawl4ai", bool(fetcher.CRAWL4AI_URL)),
+            ("render", bool(fetcher.RENDER_URL)),
             ("headed", bool(fs.BROWSER_SEARCH_URL)),
         ) if on],
         # Browser MANIPULATION, as distinct from the fetch ladder above. /fetch
@@ -1993,7 +1988,7 @@ def stats():
             "uptime_seconds": int(time.time() - STARTED),
             "tiers": fetcher.tier_stats(),
             "tier_budget_used": fetcher.budget_state(),
-            "tier_budgets": {"crawl4ai": fetcher.CRAWL4AI_BUDGET,
+            "tier_budgets": {"render": fetcher.RENDER_BUDGET,
                              "window_seconds": fetcher.BUDGET_WINDOW}}
 
 

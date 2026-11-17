@@ -53,17 +53,6 @@ def test_url_boundary(url):
     assert not dnb.valid_url(url)
 
 
-def test_crawl_uses_upstream_extraction_and_relative_link_resolution():
-    text = '<html><head><base href="https://example.org/papers/"></head><body><article>'
-    text += "<h1>Complete evidence</h1><p>First marker quartz-782</p>"
-    text += "<p>Substantial evidence about browsers and content.</p>" * 40
-    text += '<a href="appendix">Appendix</a><p>Final marker jade-382</p></article></body></html>'
-    result = dnb.extract("https://example.org", text)
-    md = result["markdown"]["raw_markdown"]
-    assert result["success"] and "quartz-782" in md and "jade-382" in md
-    assert "https://example.org/papers/appendix" in md
-
-
 def test_nonpublic_target_rejected_before_context_creation(monkeypatch):
     monkeypatch.setattr(dnb, "ALLOW_INTERNAL", False)
     monkeypatch.setattr(dnb.browser, "_public_network_target", AsyncMock(return_value=False))
@@ -95,11 +84,6 @@ def test_failed_navigation_closes_context_and_releases_admission(monkeypatch):
     assert error.value.detail["retryable"] is False
     context.close.assert_awaited_once()
     assert semaphore._value == 1
-
-
-def test_blank_render_is_not_usable_content():
-    result = dnb.extract("https://example.org", "<html><body><script>1+1</script></body></html>")
-    assert not result["success"]
 
 
 def test_unknown_browser_config_is_not_silently_ignored():
@@ -245,16 +229,6 @@ def test_scrolling_stops_when_a_round_adds_height_but_no_text(monkeypatch):
     assert page.scrolls == 1      # lazy images grew the page, not the text
 
 
-def test_intraword_emphasis_is_unwrapped_but_word_emphasis_kept():
-    import html_extract
-    fix = html_extract._unwrap_intraword_emphasis
-    assert fix("<p>for <em>ser</em>ializing and <em>de</em>serializing</p>") == (
-        "<p>for serializing and deserializing</p>")
-    assert fix('<p>a <em class="x">un</em>wrap</p>') == "<p>a unwrap</p>"
-    kept = "<p>This is <em>very</em> important, <strong>really</strong>.</p>"
-    assert fix(kept) == kept
-
-
 # ── automatic read sessions do not keep pages open ──────────────────────────
 # 14 Nov: six idle shop pages from automatic reads held 0.5-0.6 GB each for up
 # to 30 minutes, the worker reached 94% of its limit and refused renders.
@@ -319,3 +293,18 @@ def test_parking_is_a_separate_flag_from_closing():
     request = service.DriveRequest(session="auto-reader-" + "a" * 32, park_session=True,
                                    steps=[{"action": "checkpoint"}])
     assert request.park_session and not request.close_session
+
+
+def test_disabled_features_are_merged_into_one_switch(monkeypatch):
+    import service
+    defaults = service._playwright_disabled_features()
+    # Patchright's own list, read from its pinned driver
+    assert defaults and "HttpsUpgrades" in defaults
+    monkeypatch.setattr(service, "DISABLE_FEATURES", ["JXLImageFormat"])
+    options = service.feature_options()
+    assert options["ignore_default_args"] == ["--disable-features=" + ",".join(defaults)]
+    merged, = options["args"]
+    assert merged.startswith("--disable-features=") and merged.endswith(",JXLImageFormat")
+    assert all(name in merged for name in defaults)
+    monkeypatch.setattr(service, "DISABLE_FEATURES", [])
+    assert service.feature_options() == {}

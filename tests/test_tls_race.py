@@ -15,7 +15,7 @@ from dethrottled import fetch as f
 @pytest.fixture(autouse=True)
 def isolated(monkeypatch):
     monkeypatch.setattr(f, "_throttle", lambda domain: None)
-    monkeypatch.setattr(f, "CRAWL4AI_URL", "")
+    monkeypatch.setattr(f, "RENDER_URL", "")
     monkeypatch.setattr(f, "TLS_HEDGE_SECONDS", 0.2)
     f._tier_rest.clear()
     yield

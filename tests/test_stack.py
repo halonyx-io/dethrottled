@@ -192,7 +192,7 @@ def test_guided_setup_saves_portable_plan_without_starting(tmp_path, monkeypatch
     monkeypatch.setattr(stack, "check_port", lambda _: None)
     monkeypatch.setattr(guided, "inspect", lambda *a: edge)
     original = guided.run_guided
-    responses = iter(["3", "", "", "", "", "", "", "", "", "y"])
+    responses = iter(["3", "", "", "", "", "", "", "", "", "", "y"])
     monkeypatch.setattr(guided, "run_guided",
                         lambda *a: original(*a, ask=lambda _: next(responses)))
     output = tmp_path / "plan.json"
@@ -205,6 +205,7 @@ def test_guided_setup_saves_portable_plan_without_starting(tmp_path, monkeypatch
     api = plan["services"]["dethrottled"]["environment"]
     assert api["DETHROTTLED_RERANK_THREADS"] == api["DETHROTTLED_OCR_THREADS"] == "4"
     assert api["DETHROTTLED_EMBED_THREADS"] == "2"
+    assert plan["services"]["dnb"]["environment"]["DETHROTTLED_BROWSER_NETWORK"] == "native"
     assert "authenticated REST/MCP separately" in capsys.readouterr().out
 
     context = tmp_path / "state" / "guided-test" / stack.__version__
@@ -218,3 +219,58 @@ def test_guided_setup_saves_portable_plan_without_starting(tmp_path, monkeypatch
     assert applied["services"]["dnb"]["environment"] == plan["services"]["dnb"]["environment"]
     settings = json.loads((context.parent / "project.json").read_text())
     assert settings["port"] == 19096 and settings["guided"] == plan
+
+
+def test_guided_setup_detects_the_machines_timezone_and_language(monkeypatch):
+    from dethrottled import guided
+
+    monkeypatch.setenv("TZ", "Asia/Kuala_Lumpur")
+    monkeypatch.setenv("LANG", "en_GB.UTF-8")
+    monkeypatch.delenv("LC_ALL", raising=False)
+    monkeypatch.delenv("LC_MESSAGES", raising=False)
+    assert guided.host_timezone() == "Asia/Kuala_Lumpur"
+    assert guided.host_language() == "en_GB.UTF-8"
+    monkeypatch.setenv("LANG", "C.UTF-8")
+    assert guided.host_language() is None
+
+
+def test_a_guided_plan_carries_and_validates_browser_identity(tmp_path):
+    from dethrottled import guided
+
+    plan = guided.override("p", 8787, "default", 1, 2, True, True,
+                           {"path": "/dev/dri/renderD128", "gid": 991,
+                            "card": "/dev/dri/card0", "card_gid": 44}, rerank_threads=2,
+                           timezone="Asia/Kuala_Lumpur", lang="en_GB.UTF-8", network="gate")
+    path = tmp_path / "plan.json"
+    path.write_text(json.dumps(plan))
+    assert guided.load(path) == plan
+    env = plan["services"]["dnb"]["environment"]
+    assert env["DETHROTTLED_BROWSER_GRAPHICS"] == "auto"
+    assert env["DETHROTTLED_BROWSER_NETWORK"] == "gate"
+    assert plan["services"]["dnb"]["devices"] == ["/dev/dri/renderD128", "/dev/dri/card0"]
+    assert plan["services"]["dnb"]["group_add"] == ["991", "44"]
+    env["DETHROTTLED_BROWSER_TIMEZONE"] = "Asia/Kuala_Lumpur; rm -rf /"
+    path.write_text(json.dumps(plan))
+    with pytest.raises(ValueError):
+        guided.load(path)
+
+
+def test_stack_up_without_a_plan_applies_only_what_is_true_of_the_machine(monkeypatch):
+    from dethrottled import guided
+
+    machine = {"native": True, "timezone": "Europe/London", "lang": "en_GB.UTF-8",
+               "gpu_nodes": [{"path": "/dev/dri/renderD128", "gid": 991, "accessible": True,
+                              "card": "/dev/dri/card0", "card_gid": 44}]}
+    monkeypatch.setattr(guided, "inspect", lambda *a: machine)
+    monkeypatch.delenv("DETHROTTLED_GPU", raising=False)
+    dnb = guided.automatic({}, None)
+    assert dnb["devices"] == ["/dev/dri/renderD128", "/dev/dri/card0"]
+    assert dnb["group_add"] == ["991", "44"]
+    assert dnb["environment"] == {"DETHROTTLED_BROWSER_TIMEZONE": "Europe/London",
+                                  "DETHROTTLED_BROWSER_LANG": "en_GB.UTF-8",
+                                  "DETHROTTLED_BROWSER_GRAPHICS": "auto"}
+    monkeypatch.setenv("DETHROTTLED_GPU", "off")
+    assert "devices" not in guided.automatic({}, None)
+    machine.update(native=False, timezone=None, lang=None)
+    monkeypatch.delenv("DETHROTTLED_GPU")
+    assert guided.automatic({}, None) == {}

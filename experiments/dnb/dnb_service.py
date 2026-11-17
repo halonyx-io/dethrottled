@@ -1,7 +1,9 @@
-"""DNB browser worker with Patchright and Crawl4AI extraction.
+"""DNB browser worker: Patchright driving Google Chrome (Chromium on arm64).
 
-Serves Dethrottled discovery, drive and the supported subset of the Crawl4AI
-read API. Owns browser admission, policy and extraction lifecycle.
+Serves Dethrottled discovery, drive and rendering (POST /crawl). Owns browser
+admission, network policy and lifecycle. A render returns the page's HTML; the
+API extracts its text (extract.rendered_text). Until 1.9.0 this worker ran
+Crawl4AI's markdown generator in sandboxed extraction processes.
 """
 
 from __future__ import annotations
@@ -22,7 +24,6 @@ import service as browser
 from context_pool import ContextPool
 from dethrottled_adblock_proxy import Gate
 from dethrottled_delegation import verify as verify_delegation
-from extraction_pool import ExtractionFailure, ExtractionPool
 from fastapi import HTTPException, Request
 from lifecycle import cleanup, until_disconnect
 from navigation_guard import enable as enable_navigation
@@ -38,7 +39,8 @@ from session_owners import OwnerMismatch, SessionOwners, StoreUnavailable
 
 enable_navigation(browser.browser_api)
 DRIVE_POLICY = ContextVar("drive_asset_policy", default=(None, ""))
-install_drive_policy(browser, Gate, asset_policy=DRIVE_POLICY.get)
+install_drive_policy(browser, Gate, asset_policy=DRIVE_POLICY.get,
+                     scoped=lambda: scoped_browser())
 
 app = browser.app
 RENDER_CAPACITY = max(1, int(os.getenv("DETHROTTLED_RENDER_CONCURRENCY", "2")))
@@ -48,7 +50,6 @@ ALLOW_INTERNAL = os.getenv("DNB_ALLOW_INTERNAL_URLS", "false").lower() == "true"
 MAX_HTML = 8 * 1024 * 1024
 
 PUBLIC_KEY = os.getenv("DNB_TRUST_PUBLIC_KEY", "")
-EXTRACTORS = ExtractionPool()
 WAITING = 0
 DRIVE_INFLIGHT = 0
 OPERATIONS = {}
@@ -98,11 +99,32 @@ async def _crawl_browser_locked():
     return current
 
 
-async def new_crawl_context(proxy):
+SCOPED_BROWSER_LOCK = asyncio.Lock()
+
+
+async def scoped_browser():
+    """The browser for gate-lane (scoped) contexts, or None to use the default.
+
+    With identity servers configured (1.9.0) this is a separate Chrome under
+    its own UID, which the egress firewall lets reach only the gate. Started on
+    first use; a disconnect ends the worker (service._watch_browser).
+    """
+    factory = getattr(app.state, "scoped_factory", None)
+    if factory is None:
+        return None
+    async with SCOPED_BROWSER_LOCK:
+        current = getattr(app.state, "scoped_browser", None)
+        if current is None or not current.is_connected():
+            current = app.state.scoped_browser = await factory()
+        return current
+
+
+async def new_crawl_context(proxy, lane=None):
     """Open a context while holding the same lock as the idle reaper."""
     async with CRAWL_BROWSER_LOCK:
         render_browser = await _crawl_browser_locked()
-        return await render_browser.new_context(accept_downloads=True, proxy=proxy)
+        extra = {"_dethrottled_lane": lane} if lane else {}
+        return await render_browser.new_context(accept_downloads=True, proxy=proxy, **extra)
 
 
 async def relieve_memory(state):
@@ -123,8 +145,38 @@ async def relieve_memory(state):
         COUNTS["memory_pressure_failed"] += 1
 
 
+def native_scope(network) -> bool:
+    """Public, no asset allowlist, filtering resolver running: the native lane.
+
+    Anything else keeps the pinned CONNECT gate below, exactly as before 1.9.0.
+    """
+    return bool(network.public_only and network.asset_hosts is None
+                and browser.browser_filter.native_lane())
+
+
 async def create_state():
     network = CURRENT_POLICY.get()
+    if native_scope(network):
+        context = await new_crawl_context(None, lane="native")
+        try:
+            page = await context.new_page()
+            events = context._dethrottled_adblock_events
+            gate = None
+            await install_navigation(context, network, events)
+            return {
+                "context": context,
+                "page": page,
+                "allowed_hosts": list(network.navigation_hosts),
+                "public_only": network.public_only,
+                "events": browser._new_event_store(),
+                "responses": [],
+                "network_gate": gate,
+                "network_events": events,
+                "_dnb_cdp": None,
+            }
+        except BaseException:
+            await context.close()
+            raise
     gate = Gate(
         connector=partial(
             pinned_connect, public_only=network.public_only, allowed_hosts=network.egress
@@ -133,7 +185,9 @@ async def create_state():
     context = None
     try:
         proxy = await gate.start()
-        context = await new_crawl_context(proxy)
+        scoped = await scoped_browser()
+        context = (await scoped.new_context(accept_downloads=True, proxy=proxy) if scoped
+                   else await new_crawl_context(proxy))
         page = await context.new_page()
         await install_navigation(context, network, gate.events)
         return {
@@ -144,6 +198,7 @@ async def create_state():
             "events": browser._new_event_store(),
             "responses": [],
             "network_gate": gate,
+            "network_events": gate.events,
             "_dnb_cdp": None,
         }
     except BaseException:
@@ -228,14 +283,12 @@ async def lifespan(application):
         task = asyncio.create_task(reap())
         browser_task = asyncio.create_task(reap_browser())
         try:
-            await EXTRACTORS.warm()
             yield
         finally:
             browser_task.cancel()
             task.cancel()
             await asyncio.gather(browser_task, task, return_exceptions=True)
             await POOL.shutdown()
-            await EXTRACTORS.close()
 
 
 app.router.lifespan_context = lifespan
@@ -418,13 +471,6 @@ def options(body: CrawlRequest) -> dict:
     return {"timeout": timeout, "delay": delay, "wait": wait.removeprefix("css:")}
 
 
-def extract(url: str, html: str) -> dict:
-    # Direct imports remain available to extraction contract tests.
-    from html_extract import extract as implementation
-
-    return implementation(url, html)
-
-
 def valid_url(url: str) -> bool:
     try:
         parsed = urlparse(url)
@@ -455,12 +501,11 @@ async def dnb_status():
     return {
         "prototype": True,
         "reference": "1.7.1",
-        "browser": "shared-headed-patchright",
+        "browser": "headed-patchright",
+        "channel": getattr(app.state, "graphics", {}).get("channel"),
+        "network_lane": getattr(app.state, "graphics", {}).get("network_lane"),
         "crawl_browser_separate": bool(getattr(app.state, "crawl_browser", None)),
-        "crawl_browser_headless": bool(
-            getattr(app.state, "crawl_browser_headless", False)
-        ),
-        "extractor": "crawl4ai-0.9.5",
+        "extractor": "api",
         "counts": dict(COUNTS),
         "render_slots": RENDER_CAPACITY,
         "waiting": WAITING,
@@ -472,11 +517,6 @@ async def dnb_status():
         "read_session_idle_seconds": browser.READ_SESSION_IDLE,
         "session_owners": owner_count,
         "operations": operation_count,
-        "extraction": {
-            "workers": len(EXTRACTORS.processes),
-            "active": EXTRACTORS.size - EXTRACTORS.available.qsize(),
-            "counts": dict(EXTRACTORS.counts),
-        },
         "pool": {
             "enabled": bool(PUBLIC_KEY),
             "contexts": len(POOL.entries),
@@ -484,7 +524,6 @@ async def dnb_status():
             "ttl_seconds": POOL.ttl,
         },
         "internal_urls_allowed": ALLOW_INTERNAL,
-        "compatibility": "Dethrottled crawl subset; not full Crawl4AI API",
     }
 
 
@@ -553,7 +592,8 @@ async def _crawl(body: CrawlRequest, request: Request = None):
                 html = await page.content()
                 if len(html.encode("utf-8")) > MAX_HTML:
                     raise ValueError("render_html_too_large")
-            result = await EXTRACTORS.run(final_url, html)
+            # Text is extracted by the API (extract.rendered_text).
+            result = {"success": bool(html.strip())}
             result.update(
                 url=final_url,
                 html=html,
@@ -579,7 +619,7 @@ async def _crawl(body: CrawlRequest, request: Request = None):
             if navigation["access"]["status"] in {"challenge", "login_required"}:
                 result.update(success=False, error_message=navigation["access"]["reason"])
             if status and status >= 400:
-                events = state["network_gate"].events
+                events = state.get("network_events") or ()
                 reason = events[-1].get("reason") if events else None
                 result.update(success=False, error_message=reason or f"http_{status}")
             if not result["success"] and "error_message" not in result:
@@ -589,8 +629,6 @@ async def _crawl(body: CrawlRequest, request: Request = None):
             return {"success": result["success"], "results": [result]}
     except TimeoutError:
         raise retry_error("browser_timeout", 504, False) from None
-    except ExtractionFailure as exc:
-        raise retry_error(exc.code, exc.status, exc.retryable) from None
     except HTTPException as exc:
         if exc.status_code in {409, 429, 503} and isinstance(exc.detail, str):
             code = (
@@ -611,11 +649,10 @@ async def _crawl(body: CrawlRequest, request: Request = None):
                     "success": False,
                     "url": url,
                     "error_message": (
-                        str(state["network_gate"].events[-1]["reason"])
+                        str(state["network_events"][-1]["reason"])
                         if state
-                        and state.get("network_gate")
-                        and state["network_gate"].events
-                        and "reason" in state["network_gate"].events[-1]
+                        and state.get("network_events")
+                        and "reason" in state["network_events"][-1]
                         else str(exc)[:500] or type(exc).__name__
                     ),
                     "dnb": {"elapsed_ms": round((time.monotonic() - started) * 1000, 2)},
@@ -737,7 +774,7 @@ async def crawl(body: CrawlRequest, request: Request = None):
     async def run():
         # Includes context creation and queue wait, not only navigation.
         config = options(body)
-        budget = config["timeout"] / 1000 + config["delay"] + EXTRACTORS.timeout + 10
+        budget = config["timeout"] / 1000 + config["delay"] + 10
         try:
             async with asyncio.timeout(budget):
                 return await _crawl(body, request)

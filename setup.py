@@ -27,8 +27,8 @@ class BuildWithStack(build_py):
         files += [ROOT / name for name in ('docker-compose.yml', 'docker-compose.gpu.yml',
                   'docker-compose.agents.yml', 'docker-compose.pdf-worker.yml')]
         files += [ROOT / 'experiments/dnb' / name for name in (
-            'dnb_service.py', 'context_pool.py', 'network_policy.py', 'extraction_pool.py',
-            'extract_worker.py', 'html_extract.py', 'navigation_guard.py', 'lifecycle.py',
+            'dnb_service.py', 'context_pool.py', 'network_policy.py',
+            'navigation_guard.py', 'lifecycle.py',
             'session_owners.py', 'operation_store.py', 'start.sh')]
         for name in DIRECTORIES:
             files += [p for p in (ROOT / name).rglob('*') if p.is_file() and not p.is_symlink()

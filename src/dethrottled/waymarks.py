@@ -59,7 +59,7 @@ WALL_PROBE_SECONDS = float(os.environ.get("DETHROTTLED_WAYMARK_WALL_PROBE_MINUTE
                                           "30")) * 60
 MAX_ENTRIES = int(os.environ.get("DETHROTTLED_WAYMARK_MAX_ENTRIES", "20000"))
 SAVE_EVERY = 60.0
-LADDER = ("direct", "tls", "crawl4ai", "headed")
+LADDER = ("direct", "tls", "render", "headed")
 
 _lock = threading.Lock()
 _state: dict | None = None
@@ -109,7 +109,19 @@ def _load() -> dict:
             _state = json.loads(_path().read_text(encoding="utf-8"))
         except (OSError, ValueError):
             _state = {}
+        _rename_legacy_steps(_state)
     return _state
+
+
+def _rename_legacy_steps(state: dict) -> None:
+    """Waymarks saved before 1.9.0 name the render step "crawl4ai"."""
+    for entry in state.values():
+        if not isinstance(entry, dict):
+            continue
+        for field in ("tiers", "won"):
+            steps = entry.get(field)
+            if isinstance(steps, dict) and "crawl4ai" in steps:
+                steps.setdefault("render", steps.pop("crawl4ai"))
 
 
 def _failure_kind(attempt: dict) -> str | None:
@@ -123,9 +135,9 @@ def _failure_kind(attempt: dict) -> str | None:
     reason = str(attempt.get("reason") or "")
     if outcome in {"extracted", "thin", "shell", "response", "skipped"} or not tier:
         return None
-    if tier == "crawl4ai" and reason.startswith((
-            "crawl4ai_busy:", "crawl4ai_http_", "crawl4ai_Connection", "crawl4ai_Read",
-            "crawl4ai_Connect", "crawl4ai_Timeout")):
+    if tier == "render" and reason.startswith((
+            "render_busy:", "render_http_", "render_Connection", "render_Read",
+            "render_Connect", "render_Timeout")):
         return None  # our renderer's own state, not the site
     if tier == "headed" and "challenge_unresolved" in reason:
         return "wall:" + reason.rsplit(":", 1)[-1]

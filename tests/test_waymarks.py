@@ -22,7 +22,7 @@ def enabled(monkeypatch, tmp_path):
     monkeypatch.setattr(w, "_secret", None)
     monkeypatch.setattr(research, "public_url", lambda url: "intranet" not in url)
     monkeypatch.setattr(f, "_throttle", lambda domain: None)
-    monkeypatch.setattr(f, "CRAWL4AI_URL", "http://renderer.invalid")
+    monkeypatch.setattr(f, "RENDER_URL", "http://renderer.invalid")
     w.reset()
     f._tier_rest.clear()
     yield
@@ -67,8 +67,8 @@ def test_a_step_that_answers_again_is_forgotten():
 def test_page_level_results_and_our_own_capacity_never_build_a_streak():
     for _ in range(5):
         w.observe(URL, [{"tier": "direct", "outcome": "shell"},
-                        {"tier": "crawl4ai", "outcome": "failed",
-                         "reason": "crawl4ai_busy:render_memory_pressure"},
+                        {"tier": "render", "outcome": "failed",
+                         "reason": "render_busy:render_memory_pressure"},
                         won("headed")], "local")
     assert w.plan(URL, "local")["skip"] == {}
 
@@ -133,7 +133,7 @@ def test_the_ladder_skips_a_learned_step_and_says_so(monkeypatch):
 def test_the_ladder_fails_fast_on_a_known_wall(monkeypatch):
     for _ in range(3):
         w.observe(URL, wall(), "local")
-    for name in ("_tier_direct", "_tier_tls", "_tier_crawl4ai", "_tier_headed"):
+    for name in ("_tier_direct", "_tier_tls", "_tier_render", "_tier_headed"):
         monkeypatch.setattr(f, name, lambda *a, **k: pytest.fail("wall was fetched"))
     result = f.fetch_and_extract(URL, max_chars=5000)
     assert not result["ok"] and result["reason"].startswith("waymark_known_wall:cloudflare")

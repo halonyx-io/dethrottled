@@ -235,17 +235,6 @@ def test_native_tls_redirect(policy, origin):
     assert hits == ["/redirect"]
 
 
-def test_ddgs_native_redirect(policy, origin):
-    pytest.importorskip("ddgs.http_client")
-    from ddgs.http_client import HttpClient
-
-    netfilter.install_ddgs()
-    base, hits = origin
-    with pytest.raises(adblock.AdblockBlocked):
-        HttpClient().get(base + "/redirect")
-    assert hits == ["/redirect"]
-
-
 def test_fetch_policy_does_not_escalate(policy, monkeypatch):
     from dethrottled import fetch
 
@@ -291,7 +280,7 @@ def test_corrupt_metadata_is_reported_without_crashing(policy):
 
 
 def test_configured_rpc_origin_preserved_but_content_fetch_filtered(policy, monkeypatch):
-    monkeypatch.setenv("DETHROTTLED_CRAWL4AI_URL", "https://ads.example")
+    monkeypatch.setenv("DETHROTTLED_RENDER_URL", "https://ads.example")
     import requests
 
     calls = []
@@ -321,7 +310,7 @@ def test_agent_workflow_stops_on_policy_refusal(policy):
 
 
 def test_crawl_policy_reply_is_not_reported_as_antibot_failure():
-    from dethrottled.fetch import _crawl4ai_target_error
+    from dethrottled.fetch import _render_target_error
 
     payload = {
         "success": False,
@@ -329,7 +318,7 @@ def test_crawl_policy_reply_is_not_reported_as_antibot_failure():
         "status_code": 451,
         "response_headers": {"X-Dethrottled-Blocked": "adblock"},
     }
-    assert _crawl4ai_target_error(payload).startswith("adblock_blocked:")
+    assert _render_target_error(payload).startswith("adblock_blocked:")
 
 
 def test_cache_permissions_without_descriptor_chmod(tmp_path, monkeypatch):

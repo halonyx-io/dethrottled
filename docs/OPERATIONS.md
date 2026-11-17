@@ -215,6 +215,76 @@ Google Scholar's, are reported as blocks instead of content (`/drive` reports
 Google's `/sorry/` page as `access.status: challenge`); automatic
 browser reads of a bare domain may follow its redirect to the `www.` host.
 
+For 1.9.0, rebuild the API, DNB, format and adapter images; keep all volumes.
+Measured in web-bench `browser-settings-ab` (rounds 1-6, 17 Nov 2026):
+
+- **Chrome.** The browser worker runs Google Chrome on amd64 (Patchright's
+  Chromium on arm64), always headed. `DETHROTTLED_BROWSER_HEADLESS`,
+  `DETHROTTLED_CRAWL_HEADLESS` and `DETHROTTLED_CRAWL_GRAPHICS` are gone. The
+  render browser keeps default graphics, which uses half the CPU of the Mesa
+  drive browser.
+- **No Crawl4AI.** The worker returns the rendered HTML, and the API extracts
+  it whole-page (`extract.rendered_text`). On rendered pages this matched
+  Crawl4AI's markdown fact for fact, with a third of the text. The render step
+  is called `render` (it was `crawl4ai`) in `tier`, `acquisition_attempts`,
+  `/stats` and site pins. Settings are `DETHROTTLED_RENDER_URL`,
+  `_TIMEOUT`, `_PAGE_MS` and `_BUDGET`; the 1.8 `DETHROTTLED_CRAWL4AI_*`
+  names are still read, and saved waymarks are translated on load. The
+  `legacy-browser-search` and `legacy-crawl4ai` profiles and
+  `docker/crawl4ai/` are removed; the old `browser-state` volume is unused and
+  can be deleted by hand.
+- **Native lane.** Public pages connect directly (HTTP/3 included), and Indeed
+  reads again. The worker needs `cap_add: [NET_ADMIN]` (in the Compose file)
+  and starts as root only to:
+  - load an nftables egress firewall atomically and verify it from each identity;
+  - start the DNS filter on 127.0.0.1:53;
+  - start one unprivileged Playwright server per browser identity.
+
+  Every long-running process then has empty capability and bounding sets and
+  `no_new_privs`. The identities:
+  - **public Chrome** (UID 10005), for search, render and /drive of public
+    pages, may reach public addresses and the DNS filter only. It cannot reach
+    loopback, private, reserved, link-local, multicast, CGNAT or translation
+    ranges, cloud metadata, Docker peers, the host via the bridge, or any
+    network the container has a route to (`DETHROTTLED_EGRESS_DENY` adds more);
+  - **scoped Chrome** (UID 10006), for private-network reads and host
+    allowlists, may reach only the CONNECT gate's loopback ports
+    (`DETHROTTLED_GATE_PORTS`).
+
+  The rules match the socket's owner, so they hold for HTTP, QUIC, WebSockets
+  and WebRTC alike, whether adblocking is on or off. The DNS filter applies the
+  HaGeZi list and never returns a private address. Chrome policy turns secure
+  DNS off and stops WebRTC UDP outside a proxy, which also closes a STUN path to
+  private addresses that the 1.8 gate did not cover. A gate with nothing
+  chained behind it now refuses non-public destinations, which closes 1.8's
+  path from browser-search pages to private addresses. If the firewall cannot
+  be loaded or verified, the worker exits instead of starting.
+  `DETHROTTLED_BROWSER_NETWORK=gate` is the 1.8 arrangement, chosen
+  explicitly. Validation with destination-side listeners and packet captures
+  is in web-bench `browser-settings-ab/security-1.9.0`.
+- **GPU.** With `docker-compose.gpu.yml` (added automatically by
+  `scripts/compose-auto.sh` when the host has `/dev/dri`), each browser identity
+  gets the device groups. Chrome then reports the real GPU instead of llvmpipe,
+  and uses about a third of the CPU per page (0.58 s against 1.96 s). It changed
+  no site's blocking decision in a 56-load test (browser-settings-ab, round 9).
+  `DETHROTTLED_BROWSER_TIMEZONE` and `DETHROTTLED_BROWSER_LANG` give the browser
+  the machine's own timezone and language; compose-auto fills them from the host.
+- **Browser identity, measured per site** (browser-settings-ab rounds 10-11):
+  - Chrome 157's `Accept` header advertises JPEG XL. DataDome on forbes.com
+    refuses that combination together with an en-US `Accept-Language`, so
+    `DETHROTTLED_BROWSER_DISABLE_FEATURES` turns JPEG XL off by default.
+  - Each browser context now takes the machine's language as its locale.
+    With Chrome's own en-GB header, Reddit answered every read with a
+    verification page; with the locale it reads.
+  - Neither change cost any other measured site. A user-agent override that
+    claims an older Chrome was measured and rejected: eBay returned 403 and
+    LinkedIn 429.
+- **Ladder.** A render 401/403 now escalates to the headed browser, which
+  recovered Bloomberg Markets.
+- **Search.** The `ddgs` fallback and `DETHROTTLED_WEB_ENGINES` are removed.
+  DuckDuckGo is read over TLS, then by the browser worker, with SearXNG and
+  the news sources as before.
+
 ## Guided Setup and DPR
 
 [Guided Setup](GUIDED-SETUP.md) saves an override without starting services.
@@ -248,7 +318,7 @@ Check actual volume names rather than assuming a project prefix.
 ## Upgrade and rollback
 
 Rebuild and recreate only changed services. Retain rollback image tags and
-compatible data. Verify Crawl4AI/SearXNG pins when updating upstream images. The offline PDF
+compatible data. Verify SearXNG pins when updating upstream images. The offline PDF
 print utility retains its independently tested runtime; it does not run the
 renderer HTTP server. Browser restarts lose live DOM/tabs but saved
 checkpoints can restore selected state. Core restarts interrupt unfinished jobs;
@@ -283,7 +353,9 @@ stack on its target host. See [evidence](EVIDENCE.md).
 ## Network and diagnostics
 
 The API binds host loopback by default and has no caller authentication. The
-browser worker, SearXNG, renderer and optional parsing workers are private.
+browser worker, SearXNG and optional parsing workers are private. Since 1.9.0 the
+browser worker's public pages leave natively through its DNS filter (see Adblock
+operations); its `/health` reports `network_lane` (`native` or `gate`).
 The optional HTML-to-PDF overlay currently publishes 8788 on all host interfaces;
 review its mapping. Public adapters do not replace network egress isolation.
 
@@ -295,7 +367,7 @@ results; distinguish missing source evidence from a transport or limiter failure
 
 ## Search upstream cooldowns
 
-The core rests refused SearXNG/DDGS engines for
+The core rests refused SearXNG engines for
 `DETHROTTLED_ENGINE_REST_SECONDS` (default 1800 seconds). A sole selected engine
 and an entirely blocked selection stay rested too; neither bypasses the timer.
 The default DDG family additionally rests only after TLS Lite **and both** browser
@@ -354,7 +426,9 @@ file hashes and readability as its service user after promotion.
 ## Adblock operations
 
 The [native domain filter](ADBLOCK.md), introduced in 1.6.0, needs the updated API and browser
-images plus recreated SearXNG/Crawl4AI workers. Its `adblock-state` volume holds the
+images plus a recreated SearXNG worker. Since 1.9.0 the browser worker applies it
+in its DNS filter for public pages and in the CONNECT gate for scoped ones; its
+blocks still count in the worker's `/stats` observation. Its `adblock-state` volume holds the
 last working list and attribution; preserve it for offline restarts. Check each
 worker observation in `/stats` rather than inferring coverage from API readiness.
 
@@ -379,6 +453,6 @@ A headerless TLS-only DDG refusal can recover through Patchright automatically.
 A server-supplied `Retry-After` on a refused/unavailable direct or browser
 acquisition pauses further DDG-family acquisition; other providers and eligible cached results
 remain usable. Expiry permits one recovery probe, not a claim of upstream recovery.
-An empty DDGS fallback cannot turn earlier refusals into a genuine zero-result query.
+Empty DDG paths cannot turn earlier refusals into a genuine zero-result query.
 The [live refusal test](../evaluations/ddg-recovery/results/2026-11-06/REPORT.md)
 records the transport-ablation scope and remaining IP-wide blocking limit.

@@ -70,6 +70,15 @@ if [[ ${DETHROTTLED_GPU:-auto} != off && $(uname -s) == Linux &&
         task_gpu=(-f "$task_repo/docker-compose.gpu.yml")
     fi
 fi
+# The browser reports the host's own timezone and language rather than UTC.
+if [[ -z ${DETHROTTLED_BROWSER_TIMEZONE:-} ]]; then
+    task_tz=$(timedatectl show -p Timezone --value 2>/dev/null || true)
+    [[ -z $task_tz && -L /etc/localtime ]] && task_tz=$(readlink /etc/localtime | sed 's#.*/zoneinfo/##')
+    [[ -n $task_tz ]] && export DETHROTTLED_BROWSER_TIMEZONE=$task_tz
+fi
+if [[ -z ${DETHROTTLED_BROWSER_LANG:-} && -n ${LANG:-} && $LANG != C* && $LANG != POSIX ]]; then
+    export DETHROTTLED_BROWSER_LANG=$LANG
+fi
 # Let Compose interpret .env/interpolation itself; never source/eval a dotenv
 # file. Preserve configured overlays when adding the optional graphics file.
 task_environment=$(docker compose --project-directory "$task_repo" config --environment)

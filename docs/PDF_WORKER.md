@@ -1,8 +1,9 @@
 # Optional HTML-to-PDF worker
 
-This is a separate service that prints HTML you supply to a PDF. It uses the
-Chromium already present in the pinned Crawl4AI image; it is not a route on
-the Dethrottled API. The worker starts a browser for each request, prints with
+This is a separate service that prints HTML you supply to a PDF. It runs on
+the dethrottled browser image (Google Chrome on amd64, Chromium on arm64;
+until 1.9.0 it borrowed an upstream Crawl4AI image); it is not a route on the
+Dethrottled API. The worker starts a browser for each request, prints with
 CSS page size honored, and closes the browser afterward. Its browser context
 has JavaScript disabled and is offline; it cannot fetch referenced network
 resources while rendering.

@@ -122,7 +122,7 @@ The same `fetch` call reads:
 
 ### Drive a real browser
 
-When reading isn't enough, `/drive` hands your agent a real Chromium session:
+When reading isn't enough, `/drive` hands your agent a real Chrome session:
 snapshot the page's controls, click, fill and submit forms, switch tabs and
 frames, capture network responses, download files and take screenshots. Sessions
 persist across calls, survive worker restarts through checkpoints, and stay
@@ -235,7 +235,7 @@ A real `fetch` response, trimmed:
 Read [AGENTS.md](https://github.com/halonyx-io/dethrottled/blob/main/AGENTS.md) before changing code. It sets out the rules
 contributors (human or AI) follow here, and the checks a change must pass.
 
-This checkout is **1.8.11**. A running service reports its own version at `/health`.
+This checkout is **1.9.0**. A running service reports its own version at `/health`.
 
 ## License
 
@@ -245,8 +245,5 @@ in the API image (PyMuPDF for PDFs, EbookLib for EPUB) and SearXNG in its own
 container. Running it for yourself adds no obligations. If you modify it and
 let other people use it over a network, or redistribute the images, read
 [third-party notices](https://github.com/halonyx-io/dethrottled/blob/main/THIRD-PARTY-NOTICES.md) first.
-
-This product includes software developed by UncleCode (https://x.com/unclecode)
-as part of the Crawl4AI project (https://github.com/unclecode/crawl4ai).
 
 Maintained by [Halonyx](https://github.com/halonyx-io)
