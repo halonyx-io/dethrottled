@@ -49,11 +49,26 @@ def _count(key):
 
 
 def upstreams(path: str) -> list[str]:
+    """Nameservers from a resolv.conf, never the filter itself.
+
+    Parsed directly: dnspython's Resolver ignores `filename` on Windows and
+    reads the system's servers instead, which made this platform-dependent.
+    """
     try:
-        resolver = dns.resolver.Resolver(filename=path, configure=True)
-        return [ns for ns in resolver.nameservers if ns not in {"127.0.0.1", "::1"}]
-    except Exception:
+        lines = open(path, encoding="utf-8", errors="replace").read().splitlines()
+    except OSError:
         return []
+    servers = []
+    for line in lines:
+        fields = line.split("#", 1)[0].split()
+        if len(fields) >= 2 and fields[0] == "nameserver":
+            try:
+                address = str(ipaddress.ip_address(fields[1].split("%", 1)[0]))
+            except ValueError:
+                continue
+            if address not in {"127.0.0.1", "::1"} and address not in servers:
+                servers.append(address)
+    return servers
 
 
 def _public(address: str) -> bool:

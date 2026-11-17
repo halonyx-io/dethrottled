@@ -1,4 +1,6 @@
 """Native browser lane (1.9.0): the DNS filter and the browser guard."""
+import asyncio
+
 import dns.message
 import dns.rcode
 import dns.rrset
@@ -187,3 +189,49 @@ def test_the_machines_language_becomes_one_consistent_context_locale(monkeypatch
     assert adblock_browser.browser_locale() == ""
     monkeypatch.setenv("DETHROTTLED_BROWSER_LANG", "en_GB; rm -rf /")
     assert adblock_browser.browser_locale() == ""
+
+
+@pytest.mark.parametrize('message', [
+    'Path is not available when connecting remotely. Use saveAs() to save a local copy.',
+    'Path is not available when using browser_type.connect(). Use save_as() to save a local copy.',
+])
+def test_download_from_identity_server_is_copied_locally(tmp_path, message):
+    import ast
+    import secrets
+    from pathlib import Path
+    root = Path(__file__).resolve().parents[1]
+    tree = ast.parse((root / 'browser-search/service.py').read_text())
+    function = next(n for n in tree.body if isinstance(n, ast.AsyncFunctionDef)
+                    and n.name == '_download_file')
+    scope = {'DOWNLOAD_DIR': tmp_path, 'secrets': secrets}
+    exec(compile(ast.Module(body=[function], type_ignores=[]), '<worker>', 'exec'), scope)
+
+    class Download:
+        async def path(self):
+            raise RuntimeError(message)
+
+        async def save_as(self, target):
+            Path(target).write_bytes(b'pdf')
+
+    local = asyncio.run(scope['_download_file'](Download()))
+    assert local.parent == tmp_path and local.name.startswith('dl-')
+    assert local.read_bytes() == b'pdf'
+
+
+def test_other_download_errors_are_not_swallowed(tmp_path):
+    import ast
+    import secrets
+    from pathlib import Path
+    root = Path(__file__).resolve().parents[1]
+    tree = ast.parse((root / 'browser-search/service.py').read_text())
+    function = next(n for n in tree.body if isinstance(n, ast.AsyncFunctionDef)
+                    and n.name == '_download_file')
+    scope = {'DOWNLOAD_DIR': tmp_path, 'secrets': secrets}
+    exec(compile(ast.Module(body=[function], type_ignores=[]), '<worker>', 'exec'), scope)
+
+    class Download:
+        async def path(self):
+            raise RuntimeError('Download was canceled')
+
+    with pytest.raises(RuntimeError, match='canceled'):
+        asyncio.run(scope['_download_file'](Download()))

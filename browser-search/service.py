@@ -1411,7 +1411,9 @@ async def _download_file(download):
     try:
         return await download.path()
     except Exception as exc:
-        if "remote" not in str(exc).lower():
+        message = str(exc).lower()
+        # Wording varies by Playwright version: "remote" or "connect()"/"save_as".
+        if not any(word in message for word in ("remote", "connect()", "save_as")):
             raise
     local = DOWNLOAD_DIR / ("dl-" + secrets.token_hex(8))
     await download.save_as(local)

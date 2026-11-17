@@ -182,14 +182,20 @@ jobs:
           docker rm -f dethrottled-ci
       - name: Browser image starts headed Chrome (Chromium on arm64)
         run: |
-          docker run -d --shm-size=1g --name dethrottled-browser-ci dethrottled-browser-search:ci
+          # NET_ADMIN as in the Compose file: the worker loads its egress firewall
+          # at start and refuses to start without it (fail closed).
+          docker run -d --shm-size=1g --cap-add NET_ADMIN --name dethrottled-browser-ci dethrottled-browser-search:ci
           for i in $(seq 1 60); do
             if [ "$(docker inspect -f '{{.State.Health.Status}}' dethrottled-browser-ci)" = healthy ]; then
               break
             fi
             sleep 2
           done
-          test "$(docker inspect -f '{{.State.Health.Status}}' dethrottled-browser-ci)" = healthy
+          if [ "$(docker inspect -f '{{.State.Health.Status}}' dethrottled-browser-ci)" != healthy ]; then
+            docker logs dethrottled-browser-ci 2>&1 | tail -40
+            exit 1
+          fi
+          docker exec dethrottled-browser-ci python -c 'import json,urllib.request; g=json.load(urllib.request.urlopen("http://127.0.0.1:19888/health"))["graphics"]; print(g.get("channel"), g.get("network_lane")); assert g.get("network_lane") == "native"'
           docker exec dethrottled-browser-ci python /app/verify_search.py
           docker rm -f dethrottled-browser-ci
 
