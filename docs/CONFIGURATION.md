@@ -50,6 +50,10 @@ application settings need an `environment` entry in a local override. Inspect
 | `DETHROTTLED_AUTO_WORKERS` | `1` in Compose | Discover started local speech/layout/format workers; explicit URLs or `off` take precedence |
 | `DETHROTTLED_BIND`, `DETHROTTLED_PORT` | `127.0.0.1`, `8787` | Host API publication |
 | `DETHROTTLED_CHEAP_DISCOVERY` | `1` in Compose | Static DDG Lite probe before browser fallback; standalone default 0 |
+| `DETHROTTLED_INDEX_DOORS` | `bing,yahoo` | Result pages read directly, in order, when DDG Lite refuses or answers thinly; each is paced and rested on its own for half an hour after a refusal or decoy page. Empty turns them off |
+| `DETHROTTLED_GOOGLE_LAST_RESORT` | `1` | Ask Google through the headed browser only when every other web route gave nothing. `0` turns it off |
+| `DETHROTTLED_MWMBL` | `1` | Mwmbl's keyless API as a supplement for web/balanced/thorough. `0` turns it off |
+| `DETHROTTLED_RESEARCH_SPARE_READS` | `1` | Extra page reads research queues beyond `max_sources`, so a failing read is already covered; finished spares warm the cache |
 | `DETHROTTLED_MULTILINGUAL_CORPUS` | `1` in Compose | Enable E5 alongside MiniLM; standalone opt-in |
 | `DETHROTTLED_EXTRACT_CACHE_CHARS` | `4000000` | Retained extraction budget. It exceeds the 1,000,000-character response limit so a long source (a whole book, a large specification) stays retained: continue with `read_document` at `next_offset`. Text clipped at this budget is reported as partial (`partial_reason: extraction_cache_limit`). |
 | `DETHROTTLED_RENDER_BUDGET` | `-1` | No hourly renderer quota; 0 disables; positive values cap/window. 1.8 name `DETHROTTLED_CRAWL4AI_BUDGET` still accepted |

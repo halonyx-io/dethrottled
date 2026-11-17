@@ -108,6 +108,13 @@ def annotate_consensus(rows: list) -> list:
             engine = engine.removeprefix("web-browser-").removeprefix("web-")
             engines.add(engine)
         variants = len(row.get("query_variants") or [1])
+        # Every provider that found this URL, the kept row's engine first.
+        # Merged duplicates only lived in `discovery` before, so the public
+        # `engines` field named one engine and read as no fan-out at all.
+        named = [str(row.get("engine") or ""), *sorted(
+            str(entry.get("provider")) for entry in row.get("discovery", [])
+            if entry.get("provider") and entry.get("provider") not in generic)]
+        row["engines"] = [name for name in dict.fromkeys(named) if name]
         row["engines_consensus"] = len(engines)
         row["consensus_score"] = round(len(engines) + max(0, variants - 1) * 0.5, 3)
     return rows

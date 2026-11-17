@@ -6,7 +6,7 @@ and failures. Neither a health check nor a passing fixture establishes universal
 web access, answer correctness or superiority over paid services.
 
 Current source-menu policy follows the [expanded ranking evaluation](../evaluations/search-policy/results/2026-11-03/REPORT.md):
-ten DDG choices, Yahoo/Yandex supplements of at most three each and fifteen unique
+ten web-chain choices, Yandex/Mwmbl supplements of at most three each and fifteen unique
 choices total. Research has a separate 24-candidate/20-source ceiling. Earlier
 larger-pool measurements remain historical evidence. The news profile's order
 follows the [news-profile evaluation](../evaluations/news-profile/results/2026-11-14/REPORT.md).

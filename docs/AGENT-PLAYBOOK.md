@@ -72,8 +72,8 @@ for operator budgets, indexing jobs, repair and rollback.
 ## Search controls
 
 Normal discovery starts with `profile="web", limit=5, ranking="source"; request up to 15 only for a broader menu`.
-DDG Lite/HTML/TLS/browser are acquisition alternatives within one ten-choice
-provider-family budget. Yahoo and Yandex supply small supplements, at most three
+The web chain (DDG Lite, then Bing and Yahoo pages read directly, then the
+browser, Google last) shares one ten-choice budget. Yandex and Mwmbl supply small supplements, at most three
 URLs each, six total; the complete menu never exceeds fifteen unique URLs.
 No automatic DDG pagination fills that menu. Fewer usable results is normal.
 
@@ -81,13 +81,13 @@ No automatic DDG pagination fills that menu. Fewer usable results is normal.
 |---|---|
 | `query` | State the actual information need; refine around a missing fact instead of requesting a huge menu |
 | `limit` | 1–15 displayed choices; changing this is not a promise of more upstream searches |
-| `profile="fast"` | DDG-family route only |
-| `profile="web"` or `"balanced"` | DDG plus Yahoo/Yandex supplements |
-| `profile="thorough"` | Also requests Mwmbl; the same compact display and supplement budgets apply |
+| `profile="fast"` | Web chain only |
+| `profile="web"`, `"balanced"` or `"thorough"` | Web chain plus Yandex/Mwmbl supplements |
 | `profile="news"` | Dated news engines first (DuckDuckGo News, Google News, Qwant News, Reuters, Bing News), then web. Ordered fresh (within a week), undated, older, then front pages, social posts and headline roundups; at most two leading places per site. A SearXNG engine that missed the time cap is listed as `capped` in its attempt, with status `degraded`. Reuters articles usually cannot be read here (DataDome); cite them or read another outlet's report |
 | `profile="academic"` | Web plus Crossref/OpenAlex/arXiv specialist discovery |
-| `engines` | Explicit comma-separated selection: web/news/mwmbl/crossref/openalex/arxiv/yahoo/yandex; optional exa/tavily/parallel require operator configuration |
+| `engines` | Explicit comma-separated selection: web/news/mwmbl/crossref/openalex/arxiv/yahoo/yandex/bing; optional exa/tavily/parallel require operator configuration |
 | `engines="web"` | Request the primary family without default supplementary providers |
+| `destination`, `unresolved` | On Google rows: how the URL was obtained (`redirect`, `direct`, or `cross_engine_match` with `inferred: true`). `unresolved` in the metadata lists Google results whose link Google throttled and no other engine matched: title, snippet and domain only, no URL. Search for the title or read the domain's page instead of guessing a URL |
 | `categories` | Empty, `news` or `academic`; follow the transport schema, not a guessed singular `category` |
 | `language` | Provider hint; it does not uniformly constrain all primary discovery paths |
 | `ranking` | `source` default; `bm25` or `fusion` deliberately opt into alternate ordering |

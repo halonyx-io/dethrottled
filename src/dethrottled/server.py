@@ -295,7 +295,7 @@ def _search_row(row: dict, meta: dict, index: int) -> dict:
         "source_type": row.get("source_type") or signals.source_type(row.get("url", "")),
         "fetch_relevance": row.get("fetch_relevance") or signals.fetch_relevance(row),
         "engine": row.get("engine", "dethrottled"),
-        "engines": [row.get("engine", "dethrottled")],
+        "engines": row.get("engines") or [row.get("engine", "dethrottled")],
         "engines_consensus": row.get("engines_consensus", 1),
         "consensus_score": row.get("consensus_score", 1.0),
         "discovery": row.get("discovery", []),
@@ -317,6 +317,10 @@ def _search_row(row: dict, meta: dict, index: int) -> dict:
         "freshness_note": meta.get("freshness_note") if index == 0 else None,
         "decoy_buckets": meta.get("decoy_buckets") if index == 0 else None,
         "semantic_cache": meta.get("semantic_cache") if index == 0 else None,
+        # How the URL was obtained, when an engine hid it (Google's /goto):
+        # its own redirect, or matched from another engine's row (inferred).
+        **({"destination": row["destination"]} if row.get("destination") else {}),
+        **({"unresolved": meta["unresolved"]} if index == 0 and "unresolved" in meta else {}),
         "from_corpus": bool(row.get("from_corpus")),
         **({"constraints": meta["constraints"]} if index == 0 and "constraints" in meta else {}),
         **({"corpus_evidence": row["corpus_evidence"]} if row.get("corpus_evidence") else {}),
@@ -1025,6 +1029,7 @@ def search_envelope(body: SearchBody):
             "deduplication": meta.get("deduplication"),
             "freshness_note": meta.get("freshness_note"),
             "decoy_buckets": meta.get("decoy_buckets"),
+            **({"unresolved": meta["unresolved"]} if "unresolved" in meta else {}),
             "fanout_queries": meta.get("fanout_queries"),
             "semantic_cache": meta.get("semantic_cache"),
             **({"constraints": meta["constraints"]} if "constraints" in meta else {}),
@@ -1691,6 +1696,9 @@ def search_and_fetch(body: SearchFetchBody, background: BackgroundTasks):
 _RESEARCH_REQUESTS = threading.BoundedSemaphore(2)
 
 
+RESEARCH_SPARE_READS = max(0, int(os.environ.get("DETHROTTLED_RESEARCH_SPARE_READS", "1")))
+
+
 @app.post("/research")
 def research(body: ResearchBody, background: BackgroundTasks):
     """Collect a cited, diverse evidence bundle without a language model."""
@@ -1854,7 +1862,10 @@ def research(body: ResearchBody, background: BackgroundTasks):
                 nonlocal offset
                 expected = (len(sources) + len(running)
                             + sum(1 for i, item in finished.items() if readable(item)))
-                while expected < body.max_sources and offset < len(selected):
+                # One spare read queued from the start: a page that fails
+                # after 4-5 s in the renderer is then already covered instead
+                # of starting its replacement only once it has failed.
+                while expected < body.max_sources + RESEARCH_SPARE_READS and offset < len(selected):
                     running[pool.submit(read, selected[offset])] = offset
                     offset += 1
                     expected += 1

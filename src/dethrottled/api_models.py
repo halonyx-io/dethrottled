@@ -31,7 +31,7 @@ class SearchBody(BaseModel):
     @classmethod
     def validate_sources(cls, value):
         allowed = {"auto", "web", "news", "mwmbl", "crossref", "openalex", "arxiv",
-                   "yahoo", "yandex",
+                   "yahoo", "yandex", "bing",
                    "exa", "tavily", "parallel"}
         if any(x.strip() not in allowed for x in value.split(",") if x.strip()):
             raise ValueError("supported sources: " + ", ".join(sorted(allowed)))

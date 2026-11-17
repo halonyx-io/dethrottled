@@ -9,6 +9,7 @@ import time
 
 import pytest
 
+from dethrottled import discovery
 from dethrottled import search as fs
 
 
@@ -323,13 +324,15 @@ def test_default_menu_preserves_ddg_then_alternates_bounded_supplements(monkeypa
         calls.append((kwargs['engines'], kwargs['max_items']))
         return [result(kwargs['engines'], i) for i in range(3)]
     monkeypatch.setattr(fs, 'searxng', supplement)
+    monkeypatch.setattr(discovery, 'mwmbl_search', lambda query, **k: (
+        calls.append(('mwmbl', k['max_items'])) or [result('mwmbl', i) for i in range(3)]))
     monkeypatch.setattr(fs, 'bing_news', lambda *a, **k: pytest.fail('Not a news search'))
     menu, meta = fs.search('evidence')
     assert [r['engine'] for r in menu] == ['web-ddg-lite'] * 10 + [
-        'yandex', 'yahoo', 'yandex', 'yahoo', 'yandex']
-    assert sorted(calls) == [('yahoo', 3), ('yandex', 3)]
+        'yandex', 'mwmbl', 'yandex', 'mwmbl', 'yandex']
+    assert sorted(calls) == [('mwmbl', 3), ('yandex', 3)]
     assert meta['policy']['automatic_pagination'] is False
-    assert meta['per_source']['searxng'] == 6
+    assert meta['per_source']['searxng'] == 3
 
 
 def test_default_supplements_recover_an_empty_primary_without_raising_budget(monkeypatch):
@@ -337,23 +340,25 @@ def test_default_supplements_recover_an_empty_primary_without_raising_budget(mon
     monkeypatch.setattr(fs, 'searxng', lambda *a, **k: [
         {'url': f"https://example.org/{k['engines']}/{i}", 'engine': k['engines']}
         for i in range(50)])
+    monkeypatch.setattr(discovery, 'mwmbl_search', lambda query, **k: [
+        {'url': f'https://example.org/mwmbl/{i}', 'engine': 'mwmbl'} for i in range(50)])
     menu, _ = fs.search('evidence')
     assert len(menu) == 6
     assert sum(r['engine'] == 'yandex' for r in menu) == 3
-    assert sum(r['engine'] == 'yahoo' for r in menu) == 3
+    assert sum(r['engine'] == 'mwmbl' for r in menu) == 3
 
 
 def test_supplement_failure_does_not_drop_primary_or_healthy_engine(monkeypatch):
     monkeypatch.setattr(fs, 'web_search', lambda *a, **k: [
         {'url': 'https://example.org/primary', 'engine': 'web-ddg-lite'}])
-    def supplement(query, **kwargs):
-        if kwargs['engines'] == 'yahoo':
-            raise RuntimeError('worker failed')
-        return [{'url': 'https://example.org/backup', 'engine': 'yandex'}]
-    monkeypatch.setattr(fs, 'searxng', supplement)
+    monkeypatch.setattr(fs, 'searxng', lambda query, **kwargs: [
+        {'url': 'https://example.org/backup', 'engine': 'yandex'}])
+    def broken(query, **kwargs):
+        raise RuntimeError('worker failed')
+    monkeypatch.setattr(discovery, 'mwmbl_search', broken)
     menu, meta = fs.search('evidence')
     assert len(menu) == 2
-    assert meta['per_source']['yahoo'] == 'failed'
+    assert meta['per_source']['mwmbl'] == 'failed'
 
 
 def test_searxng_single_page_parameters_and_original_ranks(monkeypatch):

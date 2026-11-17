@@ -31,11 +31,12 @@ tool execution is distinct from discovery health. The legacy MCP search return
 can carry the envelope in a JSON text block rather than `structuredContent`.
 In 1.6.0, research `queries` also preserve `outcome` and
 `degraded` per query, including `indeterminate` for a local search exception.
-Search defaults to `profile="web"`: DDG Lite/HTML/TLS/browser acquire up to ten
-primary choices while SearXNG Yahoo and Yandex each contribute up to three.
+Search defaults to `profile="web"`: the web chain (DDG Lite first; if it refuses or answers thinly, Bing's and then Yahoo's own result pages are read directly (each paced and rested on its own, a decoy page rested like a refusal), then the browser's DDG race, and Google in the real browser only as the last resort) acquires up to ten
+primary choices while Yandex (through SearXNG) and Mwmbl (its keyless API) each
+contribute up to three.
 The normal menu defaults to and is capped at **15 unique URLs**. Duplicate
 supplements do not displace primary choices in the candidate menu. Before
-reranking, novel Yandex/Yahoo choices alternate after DDG. Partial provider failures leave
+reranking, novel Yandex/Mwmbl choices alternate after the primary ones. Partial provider failures leave
 healthy sources available; fewer than fifteen results is normal.
 
 `profile="news"` is the exception to primary-first order: dated news engines
@@ -48,7 +49,15 @@ metadata shows the order used and any engine demoted for low dated yield.
 
 Search rows carry additive `source_type`, `fetch_relevance`, `snippet_tokens`,
 `date_source` (`structured`, `snippet`, `none`), `published_age_days`,
-`engines_consensus` and `consensus_score`.
+`engines_consensus` and `consensus_score`. `engines` lists every provider that
+found the URL, the kept row's engine first (since 1.9.1; it named one engine before).
+A row from Google (the last-resort route) carries `destination`: `method` is
+`redirect` (Google's own 302) or `direct`, or `cross_engine_match` with
+`inferred: true` and `matched_from` when the URL was matched from another
+engine's row on the same domain and title. Google throttles its opaque `/goto`
+links per results page, so resolution stops at the first throttle page; results
+still without a URL are listed, not dropped and not guessed, in `unresolved`
+(`rank`, `title`, `snippet`, `domain`, `engine`, `reason`) in the search metadata.
 Use `published_at` for a parseable provider-reported calendar date. `date_hint`
 separately labels provider or snippet text. A relative snippet date ("3 days
 ago") is resolved when the result is captured: the hint keeps the original text
@@ -69,10 +78,11 @@ and their provenance. A copy at a different address is listed under the row's
 `duplicates` (`url`, `provider`, `reason`); `deduplication` counts the merges. A decoy bucket is dropped only when another provider proves the
 query can be echoed.
 
-`profile="fast"` uses DDG alone. `balanced` uses the normal web combination;
-`thorough` also requests Mwmbl. Explicit news and academic profiles retain their
+`profile="fast"` uses the web chain alone. `balanced` and `thorough` use the
+normal web combination. Explicit news and academic profiles retain their
 specialist sources. `engines="web"` deliberately requests only the primary route;
-`engines="web,yandex,yahoo"` explicitly requests the default combination.
+`engines="web,yandex,mwmbl"` explicitly requests the default combination;
+`bing` and `yahoo` name those direct doors as supplements.
 `categories="news"` and `language` remain supported controls. Unknown fields and
 requests above fifteen are rejected. Existing cached provider rows obey the caps.
 

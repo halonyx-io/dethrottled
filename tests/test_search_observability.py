@@ -41,7 +41,7 @@ def test_health_observes_primary_separately_and_never_probes(monkeypatch, primar
     rows, meta = fs.search("controlled evidence")
     expected = [row()] if primary else []
     if supplementary:
-        expected += [row("yandex"), row("yahoo")]
+        expected += [row("yandex")]
     assert [r["url"] for r in rows] == [r["url"] for r in expected]
     monkeypatch.setattr(fs.requests, "get", lambda *a, **k: pytest.fail("Status must not probe"))
     monkeypatch.setattr(fs, "search", lambda *a, **k: pytest.fail("Status must not search"))
@@ -62,8 +62,12 @@ def test_cold_and_stale_readiness_are_unknown_without_network(monkeypatch):
     diag.observe({"providers": {"web": {"status": "ok", "count": 1,
                                        "availability": "available"}}})
     diag._OBSERVATIONS["web"]["observed_at"] -= diag.OBSERVATION_TTL + 1
-    assert not fs.health()["ok"]
+    # A quiet minute does not make a working server degraded...
+    assert fs.health()["ok"] and not fs.health()["degraded"]
     assert fs.health()["primary_discovery"]["stale"]
+    # ...but an observation older than OBSERVATION_RECENT no longer counts.
+    diag._OBSERVATIONS["web"]["observed_at"] -= diag.OBSERVATION_RECENT
+    assert not fs.health()["ok"]
 
 
 @pytest.mark.parametrize("status,count,expected", [("ok", 0, "no_results"),
@@ -281,9 +285,12 @@ def test_readiness_distinguishes_stale_success_from_confirmed_failure():
     assert fs.health()["primary_discovery"]["observation_state"] == "current"
     diag._OBSERVATIONS["web"]["observed_at"] -= diag.OBSERVATION_TTL + 1
     report = fs.health()["primary_discovery"]
-    assert report["availability"] == "unknown" and report["observation_state"] == "stale"
+    assert report["availability"] == "available" and report["observation_state"] == "stale"
     assert report["last_observed_availability"] == "available"
-    assert not report["ready"]
+    assert report["ready"]
+    diag._OBSERVATIONS["web"]["observed_at"] -= diag.OBSERVATION_RECENT
+    report = fs.health()["primary_discovery"]
+    assert report["availability"] == "unknown" and not report["ready"]
     diag.observe({"providers": {"web": {"status": "http_503", "count": 0,
                                        "availability": "unavailable"}}})
     report = fs.health()["primary_discovery"]

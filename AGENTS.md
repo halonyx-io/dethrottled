@@ -15,7 +15,7 @@ for sets the task; this file sets the house rules.
 | `src/dethrottled/waymarks.py` | Learned per-site skips and known walls (public hosts only, keyed hashes) |
 | `src/dethrottled/extract.py` | HTML extraction: extractor choice, completeness checks, page metadata and dates |
 | `src/dethrottled/readplan.py` | Automatic browser recovery for incomplete reads |
-| `src/dethrottled/search.py`, `discovery.py`, `rank.py`, `rerank.py` | Discovery: providers, merging, ranking and the local reranker |
+| `src/dethrottled/search.py`, `discovery.py`, `rank.py`, `rerank.py` | Discovery: the web chain and its direct doors (`discovery.py`), supplements, merging, ranking and the local reranker |
 | `src/dethrottled/engine_policy.py` | Per-profile engine order with evidence-based demotion (news) |
 | `src/dethrottled/dedupe.py`, `urls.py` | Shared URL and content identity, and duplicate merging |
 | `src/dethrottled/signals.py` | Dates, source and page types, fetch relevance |
@@ -39,9 +39,11 @@ for sets the task; this file sets the house rules.
 - **Keyless stays keyless.** The default stack must work with no account, API
   key, model API or paid service. Optional providers stay explicit opt-ins. Do
   not reintroduce a hosted-reader fallback.
-- **Search is a compact menu.** Ten DDG-family choices, at most three per
-  supplementary engine and six supplements in total, fifteen unique URLs. DDG
-  transports are one provider family, not independent votes. Changing these
+- **Search is a compact menu.** Ten choices from the web chain (DDG Lite, then
+  Bing's and Yahoo's pages read directly, then the browser, Google last), at most
+  three per supplementary engine (Yandex, Mwmbl) and six supplements in total,
+  fifteen unique URLs. DDG, Bing and Yahoo share mostly one index: they are
+  alternative doors, not independent votes. No search route may need an API key. Changing these
   bounds or the ranking policy needs a stated reason and a measurement. The news
   profile's news-first order is one such measured exception
   (`evaluations/news-profile`).
