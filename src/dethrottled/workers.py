@@ -59,7 +59,8 @@ def _object_response(response):
 def status():
     urls = {
         "browser": (os.getenv("DETHROTTLED_BROWSER_SEARCH_URL"), "/health"),
-        "renderer": (os.getenv("DETHROTTLED_CRAWL4AI_URL"), "/health"),
+        "renderer": (os.getenv("DETHROTTLED_RENDER_URL")
+                     or os.getenv("DETHROTTLED_CRAWL4AI_URL"), "/health"),
         "layout": (endpoint("layout"), "/ready"),
         "speech": (endpoint("speech"), "/ready"),
         "formats": (endpoint("formats"), "/ready"),

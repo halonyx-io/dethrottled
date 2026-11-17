@@ -215,7 +215,7 @@ Use `POST /documents/status` or MCP `document_status` to inspect the caller's ow
 retained document metadata without fetching a URL.
 
 Direct/TLS redirects and headed subrequests receive public-target checks. This is
-not full DNS pinning or complete Crawl4AI egress containment; retain appropriate
+not full DNS pinning or complete browser egress containment; retain appropriate
 network isolation. Keep the raw API private. For latency investigations, record
 X-Request-ID, Server-Timing, arguments and application/backend versions. A proxy or
 edge WAF can reject requests before either adapter; investigate that separately

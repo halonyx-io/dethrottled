@@ -12,7 +12,6 @@ click==8.5.0
 courlan==1.4.0
 curl_cffi==0.17.0
 dateparser==1.4.3
-ddgs==9.16.1
 defusedxml==0.7.1
 EbookLib==0.21
 et_xmlfile==2.0.0
@@ -42,7 +41,6 @@ openpyxl==3.1.5
 opentelemetry-api==1.45.2
 packaging==26.3
 pillow==13.0.0
-primp==2.0.1
 protobuf==7.36.2
 psutil==7.2.2
 pycparser==3.12

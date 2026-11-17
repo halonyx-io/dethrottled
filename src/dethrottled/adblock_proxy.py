@@ -1,13 +1,17 @@
 """Private, per-context HTTP/CONNECT gate; TLS remains end-to-end.
 
 Runs on the browser's existing asyncio loop, not a service/process/container.
-Chaining keeps Crawl4AI's existing DNS-pinning/security proxy authoritative.
+Chaining keeps the worker's DNS-pinning/security proxy authoritative.
 """
 
 from __future__ import annotations
 
 import asyncio
 import base64
+import ipaddress
+import os
+import random
+import socket
 import time
 from collections import deque
 from contextlib import suppress
@@ -21,6 +25,28 @@ except ImportError:
 _connect = asyncio.open_connection
 
 
+async def _public_connect(host, port):
+    """Default for a gate with nothing chained behind it: public addresses only.
+
+    A context's own scope gate (the DNB's pinned connector) is chained as the
+    upstream whenever a browser may reach private hosts, so a gate standing
+    alone never needs to. Before 1.9.0 it connected anywhere, so a page in an
+    adblock-only context (browser search) could reach private addresses.
+    """
+    loop = asyncio.get_running_loop()
+    rows = await loop.getaddrinfo(host, port, type=socket.SOCK_STREAM)
+    addresses = list(dict.fromkeys(row[4][0] for row in rows))
+    if not addresses or any(not ipaddress.ip_address(a).is_global for a in addresses):
+        raise PermissionError("network_policy:non_public_destination")
+    error = None
+    for address in addresses:
+        try:
+            return await asyncio.open_connection(address, port)
+        except OSError as exc:
+            error = exc
+    raise error or OSError("network_policy:no_address")
+
+
 class Gate:
     def __init__(self, upstream=None, *, connector=None):
         self.connector = connector
@@ -29,13 +55,32 @@ class Gate:
         self.up = urlsplit(server if "://" in server else "http://" + server) if server else None
         if self.up and (self.up.scheme != "http" or not self.up.hostname):
             raise ValueError("adblock_upstream_proxy_requires_http")
+        if connector is None and self.up is None:
+            self.connector = _public_connect
         self.events = deque(maxlen=100)
         self.tasks, self.writers = set(), set()
         self.capacity = asyncio.Semaphore(128)
         self.server = None
 
     async def start(self):
-        self.server = await asyncio.start_server(self.handle, "127.0.0.1", 0, limit=65536)
+        # The scoped browser may connect only to this range (egress_firewall),
+        # so every gate it uses listens inside it. Unset: any free port.
+        span = os.getenv("DETHROTTLED_GATE_PORTS", "")
+        if span:
+            lo, hi = (int(p) for p in span.split("-"))
+            ports = list(range(lo, hi + 1))
+            random.shuffle(ports)
+            for port in ports:
+                try:
+                    self.server = await asyncio.start_server(
+                        self.handle, "127.0.0.1", port, limit=65536)
+                    break
+                except OSError:
+                    continue
+            else:
+                raise OSError("gate_port_range_exhausted")
+        else:
+            self.server = await asyncio.start_server(self.handle, "127.0.0.1", 0, limit=65536)
         self.url = "http://127.0.0.1:" + str(self.server.sockets[0].getsockname()[1])
         return {"server": self.url, "bypass": "<-loopback>"}
 

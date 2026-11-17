@@ -177,6 +177,39 @@ def _via_resiliparse(html: str, url: str) -> dict:
         return {}
 
 
+def rendered_text(html: str) -> str:
+    """Whole-page text of a browser-rendered page, for the render tier.
+
+    A rendered page is usually an app: the facts sit in tabs, cards, tables and
+    buttons around the article, not only in one main block. Main-content
+    extraction (the cascade above) drops them. Measured on 40 rendered pages,
+    29 with frozen facts (web-bench browser-settings-ab, round 6):
+
+        extractor on the rendered HTML       pages complete  facts   median chars
+        Crawl4AI 0.9.5 markdown (to 1.8.11)              24  62/72         23,107
+        this, full page with form fields                 24  62/72          6,959
+        extract() main content                           19  54/72          2,223
+
+    Form fields are on because Swagger's operations are <button>s and some
+    package registries put identifiers in controls. What Crawl4AI kept beyond
+    this was language pickers, icon labels and link URLs: tokens, not facts.
+    """
+    if not html:
+        return ""
+    try:
+        from resiliparse.extract.html2text import extract_plain_text
+    except ImportError:
+        return ""
+    try:
+        text = extract_plain_text(html, main_content=False, preserve_formatting=True,
+                                  list_bullets=True, alt_texts=False, links=False,
+                                  form_fields=True, noscript=False)
+    except Exception:
+        return ""
+    lines = [line.rstrip() for line in (text or "").splitlines()]
+    return re.sub(r"\n{3,}", "\n\n", "\n".join(lines)).strip()
+
+
 def _via_selectolax(html: str, url: str) -> dict:
     """The floor. A very fast HTML parser with the obvious furniture removed.
 

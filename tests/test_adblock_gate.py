@@ -18,6 +18,13 @@ def policy(tmp_path, monkeypatch):
     return manager
 
 
+
+# These fixtures are local servers. A standalone gate refuses non-public
+# destinations by default (1.9.0); a scope gate supplies its own connector, and
+# so do these tests.
+async def LOCAL_FIXTURE(host, port):
+    return await adblock_proxy._connect(host, port)
+
 async def connect(gate, host):
     port = gate.server.sockets[0].getsockname()[1]
     reader, writer = await asyncio.open_connection("127.0.0.1", port)
@@ -33,7 +40,7 @@ def test_blocked_connect_never_resolves_or_dials(monkeypatch):
             pytest.fail("blocked origin dialled")
 
         monkeypatch.setattr(adblock_proxy, "_connect", forbidden)
-        gate = Gate()
+        gate = Gate(connector=LOCAL_FIXTURE)  # fixtures listen on loopback
         await gate.start()
         try:
             reader, writer, response = await connect(gate, "sub.ads.example:443")
@@ -68,7 +75,7 @@ def test_tunnel_preserves_bytes_across_update_and_blocks_new_connect(policy, mon
             return await original("127.0.0.1", port)
 
         monkeypatch.setattr(adblock_proxy, "_connect", local)
-        gate = Gate()
+        gate = Gate(connector=LOCAL_FIXTURE)  # fixtures listen on loopback
         await gate.start()
         try:
             reader, writer, response = await connect(gate, "content.example:" + str(port))
@@ -131,7 +138,7 @@ def test_upstream_refusal_is_preserved_without_direct_retry(monkeypatch):
 
 def test_closing_context_gate_cancels_waiting_connections():
     async def run():
-        gate = Gate()
+        gate = Gate(connector=LOCAL_FIXTURE)  # fixtures listen on loopback
         await gate.start()
         reader, writer = await asyncio.open_connection(
             "127.0.0.1", gate.server.sockets[0].getsockname()[1]
@@ -163,7 +170,7 @@ def test_plain_http_post_preserves_body_and_rejects_invalid_target():
             writer.close()
 
         server = await asyncio.start_server(origin, "127.0.0.1", 0)
-        gate = Gate()
+        gate = Gate(connector=LOCAL_FIXTURE)  # fixtures listen on loopback
         await gate.start()
         try:
             reader, writer = await asyncio.open_connection(
@@ -225,7 +232,7 @@ def test_redirect_target_new_connection_observes_updated_rules(policy, monkeypat
             dials.append(host)
             return await original('127.0.0.1', port)
         monkeypatch.setattr(adblock_proxy, '_connect', local)
-        gate = Gate()
+        gate = Gate(connector=LOCAL_FIXTURE)  # fixtures listen on loopback
         await gate.start()
         try:
             reader, writer = await original('127.0.0.1', gate.server.sockets[0].getsockname()[1])
@@ -242,3 +249,23 @@ def test_redirect_target_new_connection_observes_updated_rules(policy, monkeypat
             server.close()
             await server.wait_closed()
     asyncio.run(run())
+
+
+def test_a_standalone_gate_refuses_private_destinations():
+    async def run():
+        gate = Gate()
+        url = await gate.start()
+        try:
+            host, port = url["server"].rsplit(":", 1)
+            reader, writer = await asyncio.open_connection(host.split("//")[1], int(port))
+            writer.write(b"CONNECT 127.0.0.1:9 HTTP/1.1\r\nHost: 127.0.0.1:9\r\n\r\n")
+            await writer.drain()
+            line = await asyncio.wait_for(reader.readline(), 5)
+            writer.close()
+            return line, list(gate.events)
+        finally:
+            await gate.close()
+
+    line, events = asyncio.run(run())
+    assert b"403" in line
+    assert events and events[-1]["reason"] == "network_policy:non_public_destination"

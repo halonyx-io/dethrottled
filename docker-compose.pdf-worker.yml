@@ -1,16 +1,17 @@
 # Optional overlay: an HTML-to-PDF worker. See docs/PDF_WORKER.md.
 # Enable with COMPOSE_FILE=docker-compose.yml:docker-compose.pdf-worker.yml in .env.
-# This offline print utility keeps its independently tested 0.9.4 runtime.
-# It does not run the Crawl4AI HTTP server; its pin can differ from the renderer.
+# Runs on the dethrottled browser image (1.9.0): Patchright with Google Chrome on
+# amd64, Chromium on arm64. Until 1.9.0 it borrowed an upstream Crawl4AI image.
 
 services:
   pdf-worker:
-    image: unclecode/crawl4ai:0.9.4@sha256:9021b3cb5c6f12570bbcd5395638495e0a06969b3148e377b953d174af2ebc9b
+    image: dethrottled-dnb:${DETHROTTLED_VERSION:-1.9.0}
+    user: "10002:10002"
     restart: unless-stopped
-    # PID 1 here is Python, which does not reap children. Without an init process every Chromium helper that
+    # PID 1 here is Python, which does not reap children. Without an init process every browser helper that
     # exits stays behind as a zombie, one set per PDF. `init: true` runs tini, which reaps them.
     init: true
-    # The image's built-in health check looks at crawl4ai's port (11235), which this service does not run.
+    # The image's built-in health check looks at the browser worker's port, which this service does not run.
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8788/health', timeout=3)"]
       interval: 30s
@@ -22,7 +23,7 @@ services:
     environment:
       PDF_WORKER_PORT: "8788"
       HOME: /tmp
-      PLAYWRIGHT_BROWSERS_PATH: /home/appuser/.cache/ms-playwright
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
     # Published on all interfaces: the worker cannot fetch anything, so a trusted LAN may use it freely.
     # Bind it to 127.0.0.1 here if yours is not.
     ports:

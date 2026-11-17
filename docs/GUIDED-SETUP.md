@@ -35,9 +35,24 @@ applied plan on subsequent starts.
   and whether to index eligible reads automatically. Pausing indexing preserves
   existing corpus data and its retention policy.
 - **Graphics.** A render device can be present without being accessible.
-  Software rendering is the recommendation. An accessible Linux DRM render
-  node can be selected explicitly, with hardware verification left to
-  Chromium at worker startup.
+  When one is accessible, the GPU is the recommendation (since 1.9.0): Chrome
+  then reports the real GPU instead of a software renderer and used about a
+  third of the CPU per page in testing. The plan passes the DRM render node and
+  its card node with both groups. Hardware use is verified when the browser
+  worker starts, with software rendering as the fallback.
+- **Browser network.** `Native` (recommended): public pages connect directly,
+  HTTP/3 included, and each browser runs as its own user confined by a kernel
+  firewall the worker loads at start. That needs Docker to grant the worker
+  `NET_ADMIN`; if it cannot, the worker refuses to start and `stack status`
+  says why. `Gate`: every page through the worker's proxy, as before 1.9.0.
+- **Browser identity.** The machine's timezone and language are detected and
+  passed to the browser, so it does not report UTC from another country.
+  Nothing is invented: these are the machine's own settings.
+
+`dethrottled stack up` without a saved plan applies the same truthful
+detections by itself: timezone, language and an accessible GPU on a native
+Linux engine (`DETHROTTLED_GPU=off` opts out of the GPU). Sizing choices stay
+with the wizard.
 
 On a local native Linux Docker Engine, the wizard checks the filesystem backing
 Docker, OS-visible RAM, available RAM, loopback port and render-node access.

@@ -27,7 +27,7 @@ SHELL = ("<html><head><title>Loading</title></head><body><div id='root'></div>"
 @pytest.fixture(autouse=True)
 def configured(monkeypatch):
     """Everything switched on unless a test says otherwise."""
-    monkeypatch.setattr(h.fetcher, "CRAWL4AI_URL", "http://renderer.invalid")
+    monkeypatch.setattr(h.fetcher, "RENDER_URL", "http://renderer.invalid")
     monkeypatch.setattr(h.fetcher, "ENABLE_TLS", True)
     yield
 
@@ -73,9 +73,9 @@ def test_an_exception_is_dead_not_a_crash(monkeypatch):
 
 
 def test_native_text_is_accepted_without_extraction(monkeypatch):
-    monkeypatch.setattr(h.fetcher, "_tier_crawl4ai",
+    monkeypatch.setattr(h.fetcher, "_tier_render",
                         lambda *a, **k: ({"text": "Clean prose. " * 60}, "", "https://x/"))
-    row = h.probe_tier("crawl4ai", "https://x/")
+    row = h.probe_tier("render", "https://x/")
     assert row["status"] == "OK"
     assert row["detail"] == "native extraction"
 
@@ -83,16 +83,16 @@ def test_native_text_is_accepted_without_extraction(monkeypatch):
 # ── OFF, and why it matters ──────────────────────────────────────────────────
 
 def test_unconfigured_renderer_is_off_not_dead(monkeypatch):
-    monkeypatch.setattr(h.fetcher, "CRAWL4AI_URL", "")
-    assert h.probe_tier("crawl4ai", "https://x/")["status"] == "OFF"
+    monkeypatch.setattr(h.fetcher, "RENDER_URL", "")
+    assert h.probe_tier("render", "https://x/")["status"] == "OFF"
 
 
 def test_a_tier_declining_politely_is_off(monkeypatch):
     """A resting or budget-exhausted tier is not a fault, and the detail should
     send the reader to the setting rather than to a debugger."""
-    monkeypatch.setattr(h.fetcher, "_tier_crawl4ai",
-                        lambda *a, **k: ({}, "crawl4ai_budget_spent", "https://x/"))
-    assert h.probe_tier("crawl4ai", "https://x/")["status"] == "OFF"
+    monkeypatch.setattr(h.fetcher, "_tier_render",
+                        lambda *a, **k: ({}, "render_budget_spent", "https://x/"))
+    assert h.probe_tier("render", "https://x/")["status"] == "OFF"
 
 
 # ── the verdict ──────────────────────────────────────────────────────────────
@@ -101,7 +101,7 @@ def ok_tier(name="direct"):
     return {"tier": name, "status": "OK", "chars": 5000, "detail": "", "ms": 1}
 
 
-def off_tier(name="crawl4ai"):
+def off_tier(name="render"):
     return {"tier": name, "status": "OFF", "chars": 0, "detail": "", "ms": 0}
 
 
@@ -167,4 +167,4 @@ def test_probes_are_generic():
 def test_every_ladder_tier_has_a_probe():
     """A tier the health check cannot see is a tier that can fail silently --
     which is the exact failure this module was written for."""
-    assert {"direct", "tls", "crawl4ai"} <= set(h.PROBES)
+    assert {"direct", "tls", "render"} <= set(h.PROBES)

@@ -56,6 +56,7 @@ def test_cold_model_readiness_explains_automatic_first_use_download(monkeypatch)
     workers._CACHED.clear()
     monkeypatch.delenv("DETHROTTLED_BROWSER_SEARCH_URL", raising=False)
     monkeypatch.delenv("DETHROTTLED_CRAWL4AI_URL", raising=False)
+    monkeypatch.delenv("DETHROTTLED_RENDER_URL", raising=False)
     monkeypatch.setattr(
         workers, "endpoint", lambda name: "http://speech" if name == "speech" else ""
     )
@@ -80,6 +81,7 @@ def test_metrics_failure_keeps_healthy_worker_ready(monkeypatch, metrics_body):
     workers._CACHED.clear()
     monkeypatch.delenv("DETHROTTLED_BROWSER_SEARCH_URL", raising=False)
     monkeypatch.delenv("DETHROTTLED_CRAWL4AI_URL", raising=False)
+    monkeypatch.delenv("DETHROTTLED_RENDER_URL", raising=False)
     monkeypatch.setattr(
         workers, "endpoint", lambda name: "http://formats" if name == "formats" else ""
     )
@@ -111,6 +113,7 @@ def test_non_object_browser_health_is_reported_without_breaking_status(monkeypat
     workers._CACHED.clear()
     monkeypatch.setenv("DETHROTTLED_BROWSER_SEARCH_URL", "http://browser")
     monkeypatch.delenv("DETHROTTLED_CRAWL4AI_URL", raising=False)
+    monkeypatch.delenv("DETHROTTLED_RENDER_URL", raising=False)
     monkeypatch.setattr(workers.requests, "get", lambda *a, **k: SimpleNamespace(
         status_code=200, json=lambda: ["unexpected"]))
     assert workers.status()["browser"]["status"] == "unready"

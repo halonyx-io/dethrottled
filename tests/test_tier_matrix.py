@@ -30,7 +30,7 @@ PAGES = {
     "books": "https://books.toscrape.com/",
 }
 
-TIERS = ["direct", "tls", "crawl4ai"]
+TIERS = ["direct", "tls", "render"]
 
 
 def run_tier(name, url):
@@ -41,8 +41,8 @@ def run_tier(name, url):
             payload, reason, final = f._tier_direct(url, 20)
         elif name == "tls":
             payload, reason, final = f._tier_tls(url)
-        elif name == "crawl4ai":
-            payload, reason, final = f._tier_crawl4ai(url)
+        elif name == "render":
+            payload, reason, final = f._tier_render(url)
         else:
             raise ValueError("unknown tier: " + name)
     except Exception as exc:

@@ -34,19 +34,25 @@ overrides. Disabling retains the cached list without loading or updating it.
 |---|---|
 | Direct HTTP, RSS, optional discovery-provider calls | Guarded requests sessions; redirects checked before sending |
 | curl_cffi fetch/discovery and scoped identity sessions | Domain check on every redirect hop, preserving native TLS |
-| DDGS native client | Guarded native HTTP boundary and redirects |
 | Managed SearXNG engines | Guarded pinned asynchronous curl_cffi client and redirects |
-| DNB search, rendering, `/drive` and headed recovery | Per-context HTTP/CONNECT gate with DNS pinning for rendering and drive |
-| Optional legacy Crawl4AI browser | Same gate, chained through its existing egress-pinning proxy |
-| Browser subresources, redirects, frames, popups, WebSockets and worker traffic | Browser connections pass through the context gate |
+| DNB search, rendering, `/drive` and headed recovery of public pages (native lane, 1.9.0) | The worker's DNS filter: HaGeZi domains get NXDOMAIN, and answers with a non-public address are refused, for every subresource, redirect, frame, popup, WebSocket and worker request. Network security does not depend on it: the public Chrome's UID is confined to public addresses by the worker's nftables egress firewall |
+| DNB private-network reads and host-allowlisted scopes (scoped lane) | Per-context HTTP/CONNECT gate with DNS pinning, as before 1.9.0 |
+| `DETHROTTLED_BROWSER_NETWORK=gate` | Every browser context through the CONNECT gate (1.8 behaviour) |
 | Documents, archives, images, audio and downloaded attachments | Acquisition uses the corresponding HTTP/TLS/browser transport; local parsing is unchanged |
 | Captions | Guarded transcript HTTP session |
 | Format, layout and speech conversion | Uploaded bytes are processed locally; no independent source acquisition |
 | Offline HTML-to-PDF worker | Already offline; all browser network access remains refused |
 
 The browser gate runs on the worker's existing event loop and binds to loopback
-only. It adds no separately managed service, process, container or dependency.
-TLS remains encrypted between Chromium and the destination. The implementation
+only. The DNS filter (1.9.0) is one small process in the same container, bound to
+127.0.0.1:53 and run as its own unprivileged user. Chrome policy turns secure DNS
+off, so it cannot route around the filter, and stops WebRTC UDP outside a proxy.
+Turning adblocking off leaves the filter's address checks and the egress firewall
+in force.
+Native connections keep HTTP/3, which a proxy cannot carry: Indeed read 6 times
+in 6 natively and 0 in 3 through the gate (web-bench browser-settings-ab,
+round 5), and the in-browser filter cost no page anything. TLS remains encrypted
+between the browser and the destination. The implementation
 preserves existing scope/public-target checks and never retries around an upstream
 proxy's refusal. It does not inject page JavaScript, disable service workers or
 install a cosmetic ad blocker.
@@ -89,7 +95,7 @@ state, rule count, source/hash, last check/update, errors, counters and recent
 managed-worker observations. Browser health and `/drive` also report their filter
 state. Missing/stale worker observations are not proof of filtering coverage.
 Counters are process observations rather than durable usage accounting; browser
-counts are refused connection attempts, including Chromium retries. Per-drive
+counts are refused connection attempts or name lookups, including browser retries. Per-drive
 blocked-domain events are bounded, omit URL paths/query strings and are not logged
 individually. Old process counter files are pruned.
 

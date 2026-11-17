@@ -1,10 +1,12 @@
 """Render-only network admission: resolve once, validate all IPs, dial numeric IP.
 
-Uses the existing adblock HTTP/CONNECT gate; no TLS interception or new service.
+Used by the CONNECT gate, which since 1.9.0 serves only scoped contexts (private
+targets and host allowlists); public contexts take the native lane (browser_guard).
 """
 
 import asyncio
 import ipaddress
+import os
 import socket
 from dataclasses import dataclass
 from pathlib import Path
@@ -41,8 +43,18 @@ async def pinned_connect(host, port, *, public_only=True, allowed_hosts=()):
     ):
         raise PermissionError("network_policy:allowed_host")
     loop = asyncio.get_running_loop()
-    rows = await loop.getaddrinfo(host, port, type=socket.SOCK_STREAM)
-    addresses = list(dict.fromkeys(row[4][0] for row in rows))
+    upstream = os.getenv("DETHROTTLED_DNS_UPSTREAM_FILE", "")
+    if upstream and Path(upstream).exists():
+        # With the DNS filter as the container's resolver, getaddrinfo never
+        # returns a private address; a scoped context may need one by design,
+        # and this function makes its own public/allowlist decision below.
+        from dethrottled_dns_filter import resolve_unfiltered
+
+        addresses = list(dict.fromkeys(
+            await loop.run_in_executor(None, resolve_unfiltered, host, port, upstream)))
+    else:
+        rows = await loop.getaddrinfo(host, port, type=socket.SOCK_STREAM)
+        addresses = list(dict.fromkeys(row[4][0] for row in rows))
     if not addresses or (
         public_only and any(not ipaddress.ip_address(ip).is_global for ip in addresses)
     ):
@@ -74,7 +86,7 @@ def memory_pressure():
         return False
 
 
-def install_drive_policy(service, gate_type, asset_policy=lambda: (None, "")):
+def install_drive_policy(service, gate_type, asset_policy=lambda: (None, ""), scoped=None):
     """Keep existing drive behavior, adding pinning at context creation only."""
     from contextvars import ContextVar
 
@@ -100,7 +112,9 @@ def install_drive_policy(service, gate_type, asset_policy=lambda: (None, "")):
             state["public_only"] = public_only
             from navigation_guard import install
 
-            await install(state["context"], network, state["context"]._dnb_drive_gate.events)
+            ctx = state["context"]
+            gate = getattr(ctx, "_dnb_drive_gate", None)
+            await install(ctx, network, gate.events if gate else ctx._dethrottled_adblock_events)
             state["dnb_scope"] = network
             return state
         except BaseException:
@@ -116,6 +130,14 @@ def install_drive_policy(service, gate_type, asset_policy=lambda: (None, "")):
         if selection is None:
             return await original_context(browser, *args, **kwargs)
         scope, created = selection
+        native = getattr(getattr(service, "browser_filter", None), "native_lane", None)
+        if scope.public_only and scope.asset_hosts is None and native and native():
+            # Public drive with the filtering resolver running: the native
+            # lane (browser_guard). Otherwise the pinned gate below.
+            result = await original_context(browser, *args, _dethrottled_lane="native", **kwargs)
+            result._dnb_drive_gate = None
+            created.append(result)
+            return result
         from functools import partial
 
         gate = gate_type(
@@ -124,7 +146,10 @@ def install_drive_policy(service, gate_type, asset_policy=lambda: (None, "")):
             )
         )
         kwargs["proxy"] = await gate.start()
-        creation = asyncio.create_task(original_context(browser, *args, **kwargs))
+        # Gate-lane drive contexts open in the scoped identity's browser when
+        # one is configured (1.9.0); its UID can reach only the gate.
+        target = (await scoped()) if scoped else None
+        creation = asyncio.create_task(original_context(target or browser, *args, **kwargs))
         try:
             result = await asyncio.shield(creation)
             result._dnb_drive_gate = gate

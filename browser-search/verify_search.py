@@ -58,8 +58,15 @@ class Handler(BaseHTTPRequestHandler):
 
 async def verify(base):
     os.environ.setdefault('DISPLAY', ':99')
+    # The fixture server is on loopback. Since 1.9.0 a standalone adblock gate
+    # refuses non-public destinations (the browser-search path that could reach
+    # private addresses before), so this extraction self-test runs without it;
+    # network policy has its own tests.
+    os.environ['DETHROTTLED_ADBLOCK'] = '0'
     async with async_playwright() as playwright:
-        browser = await playwright.chromium.launch(headless=False)
+        channel = service.browser_channel()  # Chrome on amd64 images (1.9.0)
+        browser = await playwright.chromium.launch(
+            headless=False, **({"channel": channel} if channel else {}))
         try:
             service.ENGINES = {name: (f'{base}/{name}?q=', 'a.result-link', '.result-snippet')
                                for name in service.ENGINES}

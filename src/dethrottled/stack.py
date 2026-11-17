@@ -148,6 +148,18 @@ def command(context, project):
             '-f', str(context / 'docker-compose.yml'), '-f', str(context / 'managed.json')]
 
 
+def browser_refusal(container_id):
+    """The browser worker's own reason for refusing to start, if it gave one."""
+    try:
+        logs = subprocess.run(['docker', 'logs', '--tail', '30', container_id],
+                              capture_output=True, text=True, timeout=10)
+    except (OSError, subprocess.SubprocessError):
+        return ''
+    lines = [line for line in (logs.stdout + logs.stderr).splitlines()
+             if 'refusing to start' in line or 'egress_firewall:' in line]
+    return ' | '.join(lines[-2:])[:300]
+
+
 def inspect_status(project, port, profile):
     active = containers(project)
     services = {}
@@ -199,6 +211,15 @@ def inspect_status(project, port, profile):
                                                 else 'unavailable')
         except (StackError, OSError, ValueError, urllib.error.URLError) as exc:
             services['dethrottled'].update(state='unavailable', reason=str(exc)[:250])
+    browser = next((c for c in active if c['Config']['Labels'][
+        'com.docker.compose.service'] == 'dnb'), None)
+    if browser and services.get('dnb', {}).get('state') != 'ready':
+        refusal = browser_refusal(browser['Id']) if browser.get('Id') else ''
+        if refusal:
+            services['dnb'].update(reason=refusal, hint=(
+                'The browser worker would not start without its egress firewall. Allow it '
+                'NET_ADMIN (the Compose file asks for it), or run `dethrottled stack configure` '
+                'and choose the Gate network lane.'))
     return {'project': project, 'package_version': __version__, 'profile': profile,
             'endpoint': f'http://127.0.0.1:{port}', 'services': services,
             'ready': all(services[n]['state'] == 'ready' for n in expected),
@@ -275,6 +296,10 @@ def main(argv=None):
             if plan:
                 for name, options in plan['services'].items():
                     override['services'][name].update(options)
+            else:
+                detected = guided.automatic(engine or {}, run)
+                if detected:
+                    override['services']['dnb'].update(detected)
             (context / 'managed.json').write_text(json.dumps(override, indent=2))
             settings.write_text(json.dumps({'port': port, 'profile': profile,
                                            'version': __version__,

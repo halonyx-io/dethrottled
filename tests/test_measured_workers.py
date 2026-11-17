@@ -16,11 +16,11 @@ from dethrottled.admission import AdmissionError, FairQueue
 
 
 def test_local_admission_has_no_forty_attempt_ceiling(monkeypatch):
-    monkeypatch.setattr(fetch, "CRAWL4AI_URL", "http://renderer")
-    monkeypatch.setattr(fetch, "CRAWL4AI_BUDGET", -1)
-    monkeypatch.setattr(fetch, "_crawl4ai_admitted", lambda u: ({"text": "read"}, "", u))
+    monkeypatch.setattr(fetch, "RENDER_URL", "http://renderer")
+    monkeypatch.setattr(fetch, "RENDER_BUDGET", -1)
+    monkeypatch.setattr(fetch, "_render_admitted", lambda u: ({"text": "read"}, "", u))
     monkeypatch.setattr(fetch, "_RENDER_QUEUE", FairQueue())
-    assert all(fetch._tier_crawl4ai("https://fixture.example")[0] for _ in range(48))
+    assert all(fetch._tier_render("https://fixture.example")[0] for _ in range(48))
     assert fetch._RENDER_QUEUE.stats()["completed"] == 48
 
 
@@ -182,7 +182,8 @@ def test_multilingual_model_never_reuses_minilm_vectors(tmp_path):
 
 def test_readiness_exposes_unreachable_and_unconfigured(monkeypatch):
     workers._CACHED.clear()
-    for name in ["BROWSER_SEARCH", "CRAWL4AI", "LAYOUT_WORKER", "MEDIA_WORKER", "FORMAT_WORKER"]:
+    for name in ["BROWSER_SEARCH", "RENDER", "CRAWL4AI", "LAYOUT_WORKER", "MEDIA_WORKER",
+                 "FORMAT_WORKER"]:
         monkeypatch.delenv("DETHROTTLED_" + name + "_URL", raising=False)
     monkeypatch.setenv("DETHROTTLED_LAYOUT_WORKER_URL", "http://missing")
 

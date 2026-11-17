@@ -3,8 +3,8 @@
 
 Default web/balanced profiles combine DDG-family choices with small SearXNG
 Yahoo/Yandex supplements, preserving source order. Fast uses DDG only.
-Compose enables a static DDG Lite probe before the private browser worker;
-DDGS provides a direct fallback. DDG acquisition alternatives share one budget.
+Compose enables a static DDG Lite probe before the private browser worker.
+DDG acquisition alternatives share one budget.
 News and academic profiles select their own sources. Google News headlines
 need resolution to publisher URLs before they enter a source menu.
 
@@ -265,9 +265,7 @@ def _ddg_finish(rows, report, recovering):
             report.get("direct", {}).get("status") == "ok"
             or report.get("direct", {}).get("status") == "no_matching_candidates"
             or report.get("status") == "no_matching_candidates"
-            or (report.get("status") == "ok" and report.get("count", 0) > 0)
-            or any(a.get("engine") == "duckduckgo" and a.get("status") == "ok"
-                   and a.get("count", 0) > 0 for a in report.get("ddgs_attempts", [])))
+            or (report.get("status") == "ok" and report.get("count", 0) > 0))
         retry_after = max([_ddg_retry_after(report.get("direct", {})),
                            *(_ddg_retry_after(a) for a in report.get("attempts", []))])
         if fresh_success and not retry_after and (
@@ -788,27 +786,12 @@ def reputable_sweep(query: str, domains: list, *, max_per_domain: int = 3,
 # returned whatever a news site happened to publish about the subject. A news
 # feed is a bad way to answer a question that is not news.
 #
-# `ddgs` bundles scrapers for a dozen engines behind one pure-Python dependency
-# (no wheels to build, so a Raspberry Pi installs it as fast as a laptop). Not
-# all of them work. Measured over 12 queries from one residential-class IP:
-#
-#     engine       results  median ms  unique domains  answered  failures
-#     bing              72       3057              20      9/12         3
-#     google            48        325              24      6/12         6
-#     duckduckgo        32         96              13      4/12         8
-#     brave             32        246               6      4/12         8
-#     startpage         16       1359               7      2/12        10
-#     mojeek/yahoo/wiki  0          -               0      0/12        12
-#
-# mojeek, yahoo and wikipedia failed EVERY query, and still failed with a four
-# second gap between requests -- so those are hard blocks, not rate limits, and
-# no amount of politeness recovers them. They are not in the default list.
-#
-# The figures above are historical availability observations, not current
-# relevance guarantees. Default fallback is DDG only; explicitly configured
-# other backends receive the supplementary three-choice budget.
-WEB_ENGINES = [e.strip() for e in os.environ.get(
-    "DETHROTTLED_WEB_ENGINES", "duckduckgo").split(",") if e.strip()]
+# DuckDuckGo is read two ways: a TLS request to DDG Lite (tls_search), then
+# the private browser worker (browser_search). Until 1.9.0 a third route, the
+# `ddgs` library, read the same DuckDuckGo through another impersonation stack
+# (primp); it was removed for lack of measured value (no ddgs result in live
+# 1.8.11 traffic; web-bench browser-settings-ab DESIGN-1.8.12), along with
+# DETHROTTLED_WEB_ENGINES, which selected its other scrapers.
 
 WEB_TIMEOUT = int(os.environ.get("DETHROTTLED_WEB_TIMEOUT", "20"))
 BROWSER_SEARCH_URL = os.environ.get("DETHROTTLED_BROWSER_SEARCH_URL", "").rstrip("/")
@@ -850,8 +833,8 @@ def browser_search(query: str, *, max_items: int = 8, cache=None,
                    diagnostics: dict | None = None) -> list:
     """Use the private Compose browser worker for validated web discovery.
 
-    A failed, overloaded, or absent worker returns no rows so the existing
-    keyless DDGS path can carry the request. Document reading remains in the
+    A failed, overloaded, or absent worker returns no rows; SearXNG and the
+    news sources still carry the request. Document reading remains in the
     normal Dethrottled fetch pipeline.
     """
     max_items = max(1, min(max_items, PRIMARY_SEARCH_LIMIT))
@@ -980,15 +963,14 @@ def _acquire_web(query: str, *, max_items: int = 8, cache=None,
     block costs one request per engine per half hour rather than one per
     search.
 
-    Try the configured DDG acquisition paths before direct DDGS fallback.
-    DDGS is a core package dependency; its import guard lets this source fail
-    softly in incomplete/custom environments. Profile orchestration can still
-    retain results from other sources.
+    DDG Lite over TLS first (when DETHROTTLED_CHEAP_DISCOVERY=1), then the
+    browser worker. Profile orchestration still retains results from other
+    sources when both come back empty.
     """
     max_items = max(1, min(max_items, PRIMARY_SEARCH_LIMIT))
-    # Explicit engine selections keep their old meaning for callers that
-    # benchmark or request particular DDGS backends.
-    if engines is None:
+    # Only DuckDuckGo is read here since 1.9.0 (see above); other engine
+    # names have no reader and return nothing.
+    if engines in (None, ["duckduckgo"]):
         cheap = []
         if os.environ.get("DETHROTTLED_CHEAP_DISCOVERY", "0") == "1":
             direct = {}
@@ -1025,58 +1007,7 @@ def _acquire_web(query: str, *, max_items: int = 8, cache=None,
                 merged.append(seen[key])
         if merged:
             return bounded_results(merged, max_items)
-    try:
-        from ddgs import DDGS
-        requests.install_ddgs()
-    except ImportError:
-        if diagnostics is not None:
-            diagnostics.update(status="unavailable", reason="DDGS_not_installed")
-        return []
-
-    wanted = engines or WEB_ENGINES
-    alive = [e for e in wanted if e in _rested(",".join(wanted), namespace="web").split(",")]
-    rows = []
-    ddgs_attempts = []
-    if diagnostics is not None:
-        diagnostics["ddgs_attempts"] = ddgs_attempts
-    for engine in wanted:
-        if engine not in alive:
-            ddgs_attempts.append({"engine": engine, "status": "cooldown", "count": 0})
-    for engine in alive:
-        if cache is not None:
-            hit = cache.get("search", "web", engine, query, max_items)
-            if hit is not None:
-                rows.extend(hit)
-                ddgs_attempts.append({"engine": engine, "status": "cached", "count": len(hit)})
-                continue
-        try:
-            found = DDGS().text(query, backend=engine,
-                                max_results=min(max_items, PRIMARY_SEARCH_LIMIT
-                                                if engine == "duckduckgo"
-                                                else SUPPLEMENT_SEARCH_LIMIT))
-        except Exception as exc:
-            _record_failure(engine, type(exc).__name__, namespace="web")
-            ddgs_attempts.append({"engine": engine, "status": "failed", "count": 0,
-                                  "reason": adblock.error_reason(exc)})
-            continue
-        got = []
-        for row in found or []:
-            url = row.get("href") or row.get("url") or ""
-            if not url:
-                continue
-            got.append({
-                "url": url,
-                "title": (row.get("title") or "").strip(),
-                "snippet": (row.get("body") or row.get("description") or "").strip(),
-                "publishedDate": row.get("date") or "",
-                "engine": "web-%s" % engine,
-            })
-        ddgs_attempts.append({"engine": engine, "status": "ok" if got else "no_results",
-                              "count": len(got)})
-        if cache is not None and got:
-            cache.put("search", "web", engine, query, max_items, value=got)
-        rows.extend(got)
-    return bounded_results([r for r in rows if constrained(query, r)], max_items)
+    return []
 
 
 def web_search(query: str, *, max_items: int = 8, cache=None,
@@ -1102,13 +1033,6 @@ def web_search(query: str, *, max_items: int = 8, cache=None,
                         found = bounded_results([r for r in hit if constrained(query, r)], maximum)
                         report.update(status="cached", upstream_status=status, count=len(found))
                         return found
-            other = [e for e in WEB_ENGINES if e != "duckduckgo"] if engines is None else []
-            if other:
-                rows = _acquire_web(query, max_items=max_items, cache=cache,
-                                    engines=other, diagnostics=report)
-                report.update(status="ok" if rows else status, upstream_status=status,
-                              count=len(rows), families=sorted({result_family(r) for r in rows}))
-                return rows
             return []
     rows = []
     try:
@@ -1131,8 +1055,8 @@ def web_search(query: str, *, max_items: int = 8, cache=None,
         if report.get("status") in {None, "ok", "cached", "no_results", "not_configured"}:
             report["status"] = "unavailable"
         report.setdefault("upstream_status", "unavailable")
-    elif any(r["status"] == "no_results" for r in report.get("ddgs_attempts", [])):
-        report["status"] = "no_results"
+    elif report.get("status") in {"no_results", "no_matching_candidates"}:
+        pass  # an engine answered and nothing matched: genuinely empty
     elif report.get("status") in {"ok", "cached"}:
         report["status"] = "indeterminate"
     else:

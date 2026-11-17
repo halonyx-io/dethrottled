@@ -27,14 +27,15 @@ from . import search as fs
 #
 #   direct    a plain static page any HTTP client should manage
 #   tls       a host that refuses an ordinary Python TLS fingerprint
-#   crawl4ai  a page whose content does not exist until JavaScript has run
+#   render    a page whose content does not exist until JavaScript has run
 PROBES = {
     "direct": os.environ.get(
         "DETHROTTLED_PROBE_DIRECT", "https://en.wikipedia.org/wiki/Web_scraping"),
     "tls": os.environ.get(
         "DETHROTTLED_PROBE_TLS", "https://www.indeed.com/"),
-    "crawl4ai": os.environ.get(
-        "DETHROTTLED_PROBE_CRAWL4AI", "https://quotes.toscrape.com/js/"),
+    "render": os.environ.get(
+        "DETHROTTLED_PROBE_RENDER", os.environ.get(
+            "DETHROTTLED_PROBE_CRAWL4AI", "https://quotes.toscrape.com/js/")),
 }
 
 
@@ -44,8 +45,8 @@ def _configured(name: str) -> bool:
     Kept separate from whether it WORKS, because conflating the two is how a
     health check ends up reporting a fault that is really a setting.
     """
-    if name == "crawl4ai":
-        return bool(fetcher.CRAWL4AI_URL)
+    if name == "render":
+        return bool(fetcher.RENDER_URL)
     if name == "tls":
         return bool(fetcher.ENABLE_TLS)
     return True
@@ -60,7 +61,7 @@ def probe_tier(name: str, url: str) -> dict:
     runners = {
         "direct": lambda: fetcher._tier_direct(url, 20),
         "tls": lambda: fetcher._tier_tls(url),
-        "crawl4ai": lambda: fetcher._tier_crawl4ai(url),
+        "render": lambda: fetcher._tier_render(url),
     }
     if name not in runners:
         return {"tier": name, "status": "OFF", "chars": 0,
@@ -114,7 +115,7 @@ def probe_search() -> list:
     """
     query = fs.PROBE_QUERY
     sources = [
-        ("web", lambda: fs.web_search(query, max_items=6), bool(fs.WEB_ENGINES)),
+        ("web", lambda: fs.web_search(query, max_items=6), True),
         ("searxng", lambda: fs.searxng(query, max_items=6), bool(fs.SEARXNG_URL)),
         ("bing-news", lambda: fs.bing_news(query, max_items=6), True),
         ("google-news", lambda: fs.google_news_headlines(query, max_items=6), True),

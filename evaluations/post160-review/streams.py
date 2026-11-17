@@ -41,7 +41,7 @@ async def download():
     port = server.sockets[0].getsockname()[1]
     direct = asyncio.open_connection
     adblock_proxy._connect = lambda host, ignored: direct("127.0.0.1", port)
-    gate = Gate()
+    gate = Gate(connector=lambda h, p: adblock_proxy._connect(h, p))  # local fixture origin
     await gate.start()
     started = time.perf_counter()
     try:
@@ -115,7 +115,7 @@ async def websocket():
     port = server.sockets[0].getsockname()[1]
     direct = asyncio.open_connection
     adblock_proxy._connect = lambda host, ignored: direct("127.0.0.1", port)
-    gate = Gate()
+    gate = Gate(connector=lambda h, p: adblock_proxy._connect(h, p))  # local fixture origin
     await gate.start()
     received = 0
     try:

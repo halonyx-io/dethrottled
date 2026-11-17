@@ -98,11 +98,6 @@
       "review": "Change author: audit docs impact, advertised defaults and generated contracts."
     },
     {
-      "path": "browser-search/start.sh",
-      "lifecycle": "source-contract",
-      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
-    },
-    {
       "path": "browser-search/verify_search.py",
       "lifecycle": "source-contract",
       "review": "Change author: audit docs impact, advertised defaults and generated contracts."
@@ -124,16 +119,6 @@
     },
     {
       "path": "docker-compose.yml",
-      "lifecycle": "source-contract",
-      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
-    },
-    {
-      "path": "docker/crawl4ai/config.yml",
-      "lifecycle": "source-contract",
-      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
-    },
-    {
-      "path": "docker/crawl4ai/sitecustomize.py",
       "lifecycle": "source-contract",
       "review": "Change author: audit docs impact, advertised defaults and generated contracts."
     },
@@ -733,22 +718,7 @@
       "review": "Change author: audit docs impact, advertised defaults and generated contracts."
     },
     {
-      "path": "experiments/dnb/extract_worker.py",
-      "lifecycle": "source-contract",
-      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
-    },
-    {
-      "path": "experiments/dnb/extraction_pool.py",
-      "lifecycle": "source-contract",
-      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
-    },
-    {
       "path": "experiments/dnb/fixture.py",
-      "lifecycle": "source-contract",
-      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
-    },
-    {
-      "path": "experiments/dnb/html_extract.py",
       "lifecycle": "source-contract",
       "review": "Change author: audit docs impact, advertised defaults and generated contracts."
     },
@@ -1678,11 +1648,6 @@
       "review": "Change author: audit docs impact, advertised defaults and generated contracts."
     },
     {
-      "path": "experiments/dnb/test_extraction_pool.py",
-      "lifecycle": "source-contract",
-      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
-    },
-    {
       "path": "experiments/dnb/test_lifecycle.py",
       "lifecycle": "source-contract",
       "review": "Change author: audit docs impact, advertised defaults and generated contracts."
@@ -1993,6 +1958,11 @@
       "review": "Change author: audit docs impact, advertised defaults and generated contracts."
     },
     {
+      "path": "src/dethrottled/browser_guard.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
       "path": "src/dethrottled/cache.py",
       "lifecycle": "source-contract",
       "review": "Change author: audit docs impact, advertised defaults and generated contracts."
@@ -2093,6 +2063,11 @@
       "review": "Change author: audit docs impact, advertised defaults and generated contracts."
     },
     {
+      "path": "src/dethrottled/dns_filter.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
       "path": "src/dethrottled/documents.py",
       "lifecycle": "source-contract",
       "review": "Change author: audit docs impact, advertised defaults and generated contracts."
@@ -2109,6 +2084,11 @@
     },
     {
       "path": "src/dethrottled/dpr_cli.py",
+      "lifecycle": "source-contract",
+      "review": "Change author: audit docs impact, advertised defaults and generated contracts."
+    },
+    {
+      "path": "src/dethrottled/egress_firewall.py",
       "lifecycle": "source-contract",
       "review": "Change author: audit docs impact, advertised defaults and generated contracts."
     },

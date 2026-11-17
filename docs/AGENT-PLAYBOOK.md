@@ -144,7 +144,7 @@ names actually mapped into its services.
 | Operator controls | Scope |
 |---|---|
 | `DETHROTTLED_CHEAP_DISCOVERY` | Enable the static DDG probe before browser fallback; deployment default differs from standalone |
-| `DETHROTTLED_SEARXNG_URL`, `DETHROTTLED_BROWSER_SEARCH_URL`, `DETHROTTLED_CRAWL4AI_URL` | Configured worker endpoints, not arbitrary per-request proxy choices |
+| `DETHROTTLED_SEARXNG_URL`, `DETHROTTLED_BROWSER_SEARCH_URL`, `DETHROTTLED_RENDER_URL` | Configured worker endpoints, not arbitrary per-request proxy choices |
 | `DETHROTTLED_READ_PLAN_SECONDS` | Extra recovery admission budget; in-flight transports retain their own deadlines |
 | `DETHROTTLED_RENDER_CONCURRENCY` | Shared renderer work capacity; more slots do not defeat upstream blocking |
 | `DETHROTTLED_DRIVE_SESSION_TTL`, `DETHROTTLED_DRIVE_MAX_SESSIONS` | Session expiry/capacity and resource pressure |

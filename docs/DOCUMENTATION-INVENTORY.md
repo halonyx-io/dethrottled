@@ -15,7 +15,7 @@ must be classified; unknown paths fail generation/checking.
 | harness-guide | 20 |
 | historical-evidence | 216 |
 | planned-work | 1 |
-| source-contract | 176 |
+| source-contract | 172 |
 | third-party-notice | 4 |
 | visual | 6 |
 
@@ -353,14 +353,11 @@ Change author: audit docs impact, advertised defaults and generated contracts.
 | [browser-search/Dockerfile](https://github.com/halonyx-io/dethrottled/blob/main/browser-search/Dockerfile) |
 | [browser-search/recovery.py](https://github.com/halonyx-io/dethrottled/blob/main/browser-search/recovery.py) |
 | [browser-search/service.py](https://github.com/halonyx-io/dethrottled/blob/main/browser-search/service.py) |
-| [browser-search/start.sh](https://github.com/halonyx-io/dethrottled/blob/main/browser-search/start.sh) |
 | [browser-search/verify_search.py](https://github.com/halonyx-io/dethrottled/blob/main/browser-search/verify_search.py) |
 | [docker-compose.agents.yml](https://github.com/halonyx-io/dethrottled/blob/main/docker-compose.agents.yml) |
 | [docker-compose.gpu.yml](https://github.com/halonyx-io/dethrottled/blob/main/docker-compose.gpu.yml) |
 | [docker-compose.pdf-worker.yml](https://github.com/halonyx-io/dethrottled/blob/main/docker-compose.pdf-worker.yml) |
 | [docker-compose.yml](https://github.com/halonyx-io/dethrottled/blob/main/docker-compose.yml) |
-| [docker/crawl4ai/config.yml](https://github.com/halonyx-io/dethrottled/blob/main/docker/crawl4ai/config.yml) |
-| [docker/crawl4ai/sitecustomize.py](https://github.com/halonyx-io/dethrottled/blob/main/docker/crawl4ai/sitecustomize.py) |
 | [docker/pdf-worker/worker.py](https://github.com/halonyx-io/dethrottled/blob/main/docker/pdf-worker/worker.py) |
 | [docker/searxng/dethrottled_guard.py](https://github.com/halonyx-io/dethrottled/blob/main/docker/searxng/dethrottled_guard.py) |
 | [docker/searxng/retry_after.py](https://github.com/halonyx-io/dethrottled/blob/main/docker/searxng/retry_after.py) |
@@ -375,10 +372,7 @@ Change author: audit docs impact, advertised defaults and generated contracts.
 | [experiments/dnb/context_ablation.py](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/context_ablation.py) |
 | [experiments/dnb/context_pool.py](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/context_pool.py) |
 | [experiments/dnb/dnb_service.py](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/dnb_service.py) |
-| [experiments/dnb/extract_worker.py](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/extract_worker.py) |
-| [experiments/dnb/extraction_pool.py](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/extraction_pool.py) |
 | [experiments/dnb/fixture.py](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/fixture.py) |
-| [experiments/dnb/html_extract.py](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/html_extract.py) |
 | [experiments/dnb/lifecycle.py](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/lifecycle.py) |
 | [experiments/dnb/measure.py](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/measure.py) |
 | [experiments/dnb/navigation_guard.py](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/navigation_guard.py) |
@@ -396,7 +390,6 @@ Change author: audit docs impact, advertised defaults and generated contracts.
 | [experiments/dnb/start.sh](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/start.sh) |
 | [experiments/dnb/summarize.py](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/summarize.py) |
 | [experiments/dnb/test_dnb.py](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/test_dnb.py) |
-| [experiments/dnb/test_extraction_pool.py](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/test_extraction_pool.py) |
 | [experiments/dnb/test_lifecycle.py](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/test_lifecycle.py) |
 | [experiments/dnb/test_navigation_scope.py](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/test_navigation_scope.py) |
 | [experiments/dnb/test_network_policy.py](https://github.com/halonyx-io/dethrottled/blob/main/experiments/dnb/test_network_policy.py) |
@@ -456,6 +449,7 @@ Change author: audit docs impact, advertised defaults and generated contracts.
 | [src/dethrottled/admission.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/admission.py) |
 | [src/dethrottled/api_models.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/api_models.py) |
 | [src/dethrottled/backfill.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/backfill.py) |
+| [src/dethrottled/browser_guard.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/browser_guard.py) |
 | [src/dethrottled/cache.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/cache.py) |
 | [src/dethrottled/challenges.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/challenges.py) |
 | [src/dethrottled/cli.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/cli.py) |
@@ -476,10 +470,12 @@ Change author: audit docs impact, advertised defaults and generated contracts.
 | [src/dethrottled/dedupe.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/dedupe.py) |
 | [src/dethrottled/delegation.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/delegation.py) |
 | [src/dethrottled/discovery.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/discovery.py) |
+| [src/dethrottled/dns_filter.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/dns_filter.py) |
 | [src/dethrottled/documents.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/documents.py) |
 | [src/dethrottled/domains.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/domains.py) |
 | [src/dethrottled/dpr.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/dpr.py) |
 | [src/dethrottled/dpr_cli.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/dpr_cli.py) |
+| [src/dethrottled/egress_firewall.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/egress_firewall.py) |
 | [src/dethrottled/engine_policy.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/engine_policy.py) |
 | [src/dethrottled/evidence.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/evidence.py) |
 | [src/dethrottled/extract.py](https://github.com/halonyx-io/dethrottled/blob/main/src/dethrottled/extract.py) |

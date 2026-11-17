@@ -138,7 +138,7 @@ def test_render_wait_is_request_local(monkeypatch):
 
     monkeypatch.setattr(fetch.requests, "post", lambda *a, **kw: (
         calls.append(kw["json"]) or Response()))
-    monkeypatch.setattr(fetch, "CRAWL4AI_URL", "https://renderer.invalid")
+    monkeypatch.setattr(fetch, "RENDER_URL", "https://renderer.invalid")
     monkeypatch.setattr(fetch, "_tier_direct", lambda *a: ({}, "missing", a[0]))
     monkeypatch.setattr(fetch, "ENABLE_TLS", False)
     monkeypatch.setattr(fetch, "tier_resting", lambda tier: False)

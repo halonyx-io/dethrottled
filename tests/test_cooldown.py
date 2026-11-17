@@ -33,7 +33,7 @@ def test_per_host_tiers_are_never_rested(tier):
     assert tier not in f.tier_rest_state()
 
 
-@pytest.mark.parametrize("tier", ["crawl4ai"])
+@pytest.mark.parametrize("tier", ["render"])
 def test_shared_service_tiers_do_rest(tier):
     """A shared renderer's refusal warrants a cooldown before another request."""
     f.tier_refused(tier, "%s_http_429" % tier)
@@ -44,10 +44,10 @@ def test_shared_service_tiers_do_rest(tier):
 # ── the mechanism ────────────────────────────────────────────────────────────
 
 def test_backoff_doubles_with_consecutive_refusals():
-    f.tier_refused("crawl4ai", "crawl4ai_http_429")
-    first = f.tier_rest_state()["crawl4ai"]["resting_for"]
-    f.tier_refused("crawl4ai", "crawl4ai_http_429")
-    second = f.tier_rest_state()["crawl4ai"]["resting_for"]
+    f.tier_refused("render", "render_http_429")
+    first = f.tier_rest_state()["render"]["resting_for"]
+    f.tier_refused("render", "render_http_429")
+    second = f.tier_rest_state()["render"]["resting_for"]
     assert second > first * 1.5
 
 
@@ -55,38 +55,38 @@ def test_backoff_is_capped():
     """A permanently dead tier settles at the cap rather than growing without
     bound and effectively never being retried again."""
     for _ in range(20):
-        f.tier_refused("crawl4ai", "crawl4ai_http_429")
-    assert f.tier_rest_state()["crawl4ai"]["resting_for"] <= f.TIER_COOLDOWN_MAX
+        f.tier_refused("render", "render_http_429")
+    assert f.tier_rest_state()["render"]["resting_for"] <= f.TIER_COOLDOWN_MAX
 
 
 def test_success_clears_the_record_entirely():
     """A brief wobble must cost one cooldown, not a permanent handicap."""
-    f.tier_refused("crawl4ai", "crawl4ai_http_429")
-    f.tier_answered("crawl4ai")
-    assert f.tier_resting("crawl4ai") is False
-    f.tier_refused("crawl4ai", "crawl4ai_http_429")
+    f.tier_refused("render", "render_http_429")
+    f.tier_answered("render")
+    assert f.tier_resting("render") is False
+    f.tier_refused("render", "render_http_429")
     # Back to a first-strike cooldown, not a third-strike one.
-    assert f.tier_rest_state()["crawl4ai"]["strikes"] == 1
+    assert f.tier_rest_state()["render"]["strikes"] == 1
 
 
 def test_rest_state_only_reports_what_is_still_resting():
-    f.tier_refused("crawl4ai", "crawl4ai_http_429")
-    f._tier_rest["crawl4ai"]["until"] = 0        # expire it
-    assert "crawl4ai" not in f.tier_rest_state()
+    f.tier_refused("render", "render_http_429")
+    f._tier_rest["render"]["until"] = 0        # expire it
+    assert "render" not in f.tier_rest_state()
 
 
 # ── what counts as a refusal ─────────────────────────────────────────────────
 
 @pytest.mark.parametrize("reason", [
-    "crawl4ai_http_429", "crawl4ai_http_403", "crawl4ai_http_503",
-    "crawl4ai_Timeout", "crawl4ai_ConnectionError",
+    "render_http_429", "render_http_403", "render_http_503",
+    "render_Timeout", "render_ConnectionError",
 ])
 def test_refusals_are_recognised(reason):
     assert f._is_refusal(reason) is True
 
 
 @pytest.mark.parametrize("reason", [
-    "", "crawl4ai_http_404", "crawl4ai_http_500", "crawl4ai_empty",
+    "", "render_http_404", "render_http_500", "render_empty",
     "robots_disallow", "pdf_no_text_layer",
 ])
 def test_page_level_failures_are_not_refusals(reason):
@@ -98,13 +98,13 @@ def test_page_level_failures_are_not_refusals(reason):
 def test_a_target_sites_failure_does_not_rest_the_renderer():
     """One site's 403 or slow page says nothing about the next site."""
     from dethrottled import fetch as f
-    for reason in ("crawl4ai_target_http_403", "crawl4ai_target_http_429",
-                   "crawl4ai_Page.goto: Timeout 20000ms exceeded.", "crawl4ai_http_504",
-                   "crawl4ai_http_403"):
-        assert f._service_refusal("crawl4ai", reason) is False, reason
-    for reason in ("crawl4ai_http_429", "crawl4ai_http_503", "crawl4ai_ConnectionError",
-                   "crawl4ai_ReadTimeout"):
-        assert f._service_refusal("crawl4ai", reason) is True, reason
+    for reason in ("render_target_http_403", "render_target_http_429",
+                   "render_Page.goto: Timeout 20000ms exceeded.", "render_http_504",
+                   "render_http_403"):
+        assert f._service_refusal("render", reason) is False, reason
+    for reason in ("render_http_429", "render_http_503", "render_ConnectionError",
+                   "render_ReadTimeout"):
+        assert f._service_refusal("render", reason) is True, reason
     assert f._service_refusal("direct", "http_429") is True
 
 
@@ -118,6 +118,6 @@ def test_dnb_target_status_is_named_as_the_targets(monkeypatch):
             return {"results": [{"success": False, "error_message": "http_403"}]}
 
     monkeypatch.setattr(f.requests, "post", lambda *a, **k: Response())
-    monkeypatch.setattr(f, "CRAWL4AI_URL", "http://dnb")
+    monkeypatch.setattr(f, "RENDER_URL", "http://dnb")
     monkeypatch.setenv("DETHROTTLED_DNB", "0")
-    assert f._crawl4ai_via_crawl("https://example.org/")[1] == "crawl4ai_target_http_403"
+    assert f._render_request("https://example.org/")[1] == "render_target_http_403"

@@ -39,7 +39,7 @@ def test_limited_reads_are_cached_briefly_whatever_the_page():
 
 def test_an_expired_front_page_is_fetched_again(monkeypatch, tmp_path):
     monkeypatch.setattr(f, "_throttle", lambda domain: None)
-    monkeypatch.setattr(f, "CRAWL4AI_URL", "")
+    monkeypatch.setattr(f, "RENDER_URL", "")
     calls = []
 
     def direct(url, *a, **k):

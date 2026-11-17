@@ -62,11 +62,11 @@ def test_structured_documents_are_not_classified_as_ui():
 @pytest.fixture
 def tiers(monkeypatch):
     monkeypatch.setattr(f, "ENABLE_TLS", False)
-    monkeypatch.setattr(f, "CRAWL4AI_URL", "http://renderer")
-    monkeypatch.setattr(f, "CRAWL4AI_BUDGET", -1)
+    monkeypatch.setattr(f, "RENDER_URL", "http://renderer")
+    monkeypatch.setattr(f, "RENDER_BUDGET", -1)
     monkeypatch.setenv("DETHROTTLED_BROWSER_SEARCH_URL", "http://browser")
     monkeypatch.setattr(f, "_tier_direct", lambda *a: ({"text": ERROR + " " + ARTICLE}, "", a[0]))
-    monkeypatch.setattr(f, "_tier_crawl4ai", lambda u: ({}, "unavailable", u))
+    monkeypatch.setattr(f, "_tier_render", lambda u: ({}, "unavailable", u))
     monkeypatch.setattr(f, "_tier_headed", lambda u: ({}, "unavailable", u))
     f._tier_rest.clear()
     return monkeypatch
@@ -95,7 +95,7 @@ def test_failed_recovery_retains_original_evidence_and_warns_agents(tiers):
 
 
 def test_thin_clean_fragment_does_not_discard_long_mixed_evidence(tiers):
-    tiers.setattr(f, "_tier_crawl4ai", lambda u: ({"text": FACT * 6}, "", u))
+    tiers.setattr(f, "_tier_render", lambda u: ({"text": FACT * 6}, "", u))
     assert f.fetch_and_extract("https://source.example/report")["quality"] == "suspect"
 
 

@@ -17,7 +17,7 @@ from dethrottled.urls import host_family
 @pytest.fixture(autouse=True)
 def quiet(monkeypatch):
     monkeypatch.setattr(f, "_throttle", lambda domain: None)
-    monkeypatch.setattr(f, "CRAWL4AI_URL", "http://renderer.invalid")
+    monkeypatch.setattr(f, "RENDER_URL", "http://renderer.invalid")
     monkeypatch.setattr(f, "TLS_HEDGE_SECONDS", 0)
     monkeypatch.setattr(sites, "_se_backoff_until", 0.0)
     monkeypatch.setattr(sites, "_gh_api_until", 0.0)
@@ -35,7 +35,7 @@ def reply(status=200, body=None, text=None, headers=None):
 @pytest.mark.parametrize("url, step", [
     ("https://www.booking.com/hotel/gb/x.html", "headed"),
     ("https://openai.com/index/x/", "tls"),
-    ("https://learn.microsoft.com/en-us/x", "crawl4ai"),
+    ("https://learn.microsoft.com/en-us/x", "render"),
     ("https://www.microsoft.com/en-us/x", "tls"),
     ("https://en.wikipedia.org/wiki/X", None),
 ])
@@ -198,7 +198,7 @@ def test_script_only_interstitial_is_caught_from_extracted_text(monkeypatch):
     # extracted text is the prompt.
     shell = "<html><body><script>%s</script></body></html>" % ("var a=1;" * 300)
     prompt = "Verifying your request... Please wait while we verify your session."
-    for name in ("_tier_direct", "_tier_tls", "_tier_crawl4ai"):
+    for name in ("_tier_direct", "_tier_tls", "_tier_render"):
         monkeypatch.setattr(f, name, tier(html=shell, text=prompt))
     monkeypatch.setattr(extract_module, "extract", lambda html, url=None, **k: {
         "ok": True, "text": prompt, "tier": "trafilatura", "title": "", "published": "",
@@ -210,7 +210,7 @@ def test_script_only_interstitial_is_caught_from_extracted_text(monkeypatch):
 
 def test_google_search_failure_carries_advice(monkeypatch):
     blocked = "Our systems have detected unusual traffic from your computer network."
-    for name in ("_tier_direct", "_tier_tls", "_tier_crawl4ai"):
+    for name in ("_tier_direct", "_tier_tls", "_tier_render"):
         monkeypatch.setattr(f, name, tier(text=blocked))
     result = f.fetch_and_extract("https://www.google.com/search?q=python", max_chars=5000)
     assert not result["ok"]
@@ -220,7 +220,7 @@ def test_google_search_failure_carries_advice(monkeypatch):
 def test_thin_google_search_also_carries_advice(monkeypatch):
     stub = ("<html><body><p>If you're having trouble accessing Google Search, please "
             "click here, or send feedback.</p></body></html>")
-    for name in ("_tier_direct", "_tier_tls", "_tier_crawl4ai"):
+    for name in ("_tier_direct", "_tier_tls", "_tier_render"):
         monkeypatch.setattr(f, name, tier(html=stub))
     result = f.fetch_and_extract("https://www.google.com/search?q=python", max_chars=5000)
     if result["ok"]:

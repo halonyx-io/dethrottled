@@ -7,7 +7,7 @@ structured inspection for planning and actual pixels when appearance is evidence
 
 ## Navigation recovery and access evidence
 
-The browser keeps Patchright, the existing Chromium and optional real GPU. For
+The browser keeps Patchright, headed Google Chrome (Chromium on arm64) and optional real GPU. For
 Reddit HTTP/S navigation, it seeds a host-scoped `cookiesEnabled=true` preference
 only when absent, then waits up to five seconds within the navigation budget for
 posts, and comments on thread URLs. Existing cookie values are preserved. Initial

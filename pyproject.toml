@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "dethrottled"
-version = "1.8.11"
+version = "1.9.0"
 description = "Zero-API web search, fetch and extraction. No keys, no quota, no metered pool."
 readme = "README.md"
 license = { text = "MIT" }
@@ -31,8 +31,6 @@ dependencies = [
     "requests>=2.31",
     "feedparser>=6.0",
     "defusedxml>=0.7",
-    # Search: one pure-Python dependency covering a dozen keyless engines.
-    "ddgs>=9.0",
     # Extraction cascade, in order. All three ship aarch64 wheels, so a
     # Raspberry Pi installs them rather than compiling them.
     "trafilatura>=1.8",
@@ -49,7 +47,7 @@ Issues = "https://github.com/halonyx-io/dethrottled/issues"
 Changelog = "https://github.com/halonyx-io/dethrottled/releases"
 
 [project.optional-dependencies]
-browser = ["PyJWT[crypto]>=2.15,<3"]
+browser = ["PyJWT[crypto]>=2.15,<3", "dnspython>=2.6"]
 # Documents as text: PDF, the Office formats, OpenDocument, EPUB and RTF.
 #
 # Every one of these is a direct parser. MarkItDown was measured as the
@@ -96,7 +94,7 @@ semantic = [
 # than plain requests, not slower. aarch64 wheels available.
 tls = ["curl_cffi>=0.7"]
 all = ["dethrottled[documents,media,semantic,tls]"]
-dev = ["pytest>=8.0", "httpx>=0.27", "ruff>=0.4", "PyJWT[crypto]>=2.15,<3"]
+dev = ["pytest>=8.0", "httpx>=0.27", "ruff>=0.4", "PyJWT[crypto]>=2.15,<3", "dnspython>=2.6"]
 
 [project.scripts]
 dethrottled = "dethrottled.cli:main"

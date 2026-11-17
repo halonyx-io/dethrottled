@@ -62,16 +62,16 @@ def hammer(fn, count=ROUNDS, workers=THREADS):
 
 def test_cooldown_backoff_does_not_overflow():
     """Sustained refusal must not build an unrepresentable number."""
-    errors = hammer(lambda i: f.tier_refused("crawl4ai", "crawl4ai_http_429"))
+    errors = hammer(lambda i: f.tier_refused("render", "render_http_429"))
     assert not errors, "raised %r" % errors[:1]
-    assert f.tier_resting("crawl4ai") is True
-    assert f.tier_rest_state()["crawl4ai"]["resting_for"] <= f.TIER_COOLDOWN_MAX
+    assert f.tier_resting("render") is True
+    assert f.tier_rest_state()["render"]["resting_for"] <= f.TIER_COOLDOWN_MAX
 
 
 def test_cooldown_backoff_stays_capped_after_many_strikes():
     for _ in range(5000):
-        f.tier_refused("crawl4ai", "x")
-    assert f.tier_rest_state()["crawl4ai"]["resting_for"] <= f.TIER_COOLDOWN_MAX
+        f.tier_refused("render", "x")
+    assert f.tier_rest_state()["render"]["resting_for"] <= f.TIER_COOLDOWN_MAX
 
 
 def test_engine_health_loses_no_updates_under_threads():
@@ -159,9 +159,9 @@ def test_cache_mixed_readers_and_writers(tmp_path):
 def test_tier_cooldown_state_is_consistent_under_readers():
     def mixed(i):
         if i % 3 == 0:
-            f.tier_refused("crawl4ai", "crawl4ai_http_429")
+            f.tier_refused("render", "render_http_429")
         elif i % 3 == 1:
-            f.tier_resting("crawl4ai")
+            f.tier_resting("render")
         else:
             f.tier_rest_state()
 

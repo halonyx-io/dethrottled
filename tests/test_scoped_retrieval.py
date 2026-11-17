@@ -491,7 +491,7 @@ def test_explicit_network_policy_refusal_does_not_escalate_tiers(monkeypatch):
 
     monkeypatch.setattr(fetch, "_tier_direct", lambda url, *a: ({}, "public_target_required", url))
     monkeypatch.setattr(fetch, "_tier_tls", lambda *a: pytest.fail("no policy bypass"))
-    monkeypatch.setattr(fetch, "_tier_crawl4ai", lambda *a: pytest.fail("no policy bypass"))
+    monkeypatch.setattr(fetch, "_tier_render", lambda *a: pytest.fail("no policy bypass"))
     row = fetch.fetch_and_extract("https://example.org/")
     assert row["policy_blocked"] == "network"
     assert [a["tier"] for a in row["acquisition_attempts"]] == ["direct"]

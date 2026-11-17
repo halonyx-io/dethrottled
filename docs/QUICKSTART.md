@@ -174,7 +174,7 @@ dethrottled --host 127.0.0.1 --port 8791
 ```
 
 The standalone command starts the Python server. Use `dethrottled stack up`
-to launch DNB with Chromium, SearXNG and the format worker.
+to launch DNB with Chrome, SearXNG and the format worker.
 Optional Python extras add libraries, not those services or system converters.
 Use the complete managed stack for the broad default engine. Direct library calls
 are also available; their return shape differs from HTTP (`text`/`ok` versus HTTP

@@ -104,7 +104,7 @@ def test_the_prefix_identifies_the_tier():
 def test_a_challenge_counts_as_a_refusal_for_cooldown():
     """A tier that got a challenge did not get the page, so for a shared
     service it is still worth standing back from."""
-    assert f._is_refusal("crawl4ai_http_403") is True
+    assert f._is_refusal("render_http_403") is True
 
 
 def test_a_challenge_does_not_rest_a_per_host_tier():

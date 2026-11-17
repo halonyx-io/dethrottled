@@ -2,7 +2,7 @@
 
 Use the **managed stack** for the complete default engine. A Python-only install
 is useful as a library or lightweight HTTP server, but Python extras cannot
-supply Docker workers, Chromium, Tesseract or legacy system converters.
+supply Docker workers, the browser, Tesseract or legacy system converters.
 
 | Route | Prerequisites | Capabilities |
 |---|---|---|
@@ -48,10 +48,15 @@ unique disk requirements. Shared layers, architecture, build cache, retained
 source data, corpus growth and optional model caches change actual disk use.
 A named volume surviving shutdown is expected; `stack down` does not reclaim it.
 
-The default DNB worker runs one Chromium installation through Patchright for
-search, rendering and browser interaction. It uses Crawl4AI's Python extractor
-inside the same worker and omits the unused Node executable bundled with
-Playwright's compatibility imports.
+The default DNB worker runs one browser installation through Patchright for
+search, rendering and browser interaction: Google Chrome on amd64, Chromium on
+arm64 (1.9.0). It runs two headed instances of it: the drive browser, and a
+render browser with default graphics that starts on demand and closes when idle.
+Rendered pages are extracted by the API; the worker carries no extraction
+library. The 1.9.0 worker image is 1.87 GB logical (amd64, Chrome; 1.8.11's
+Chromium-and-Crawl4AI image was 2.23 GB). Compose limits it to 4 GB of memory,
+4 CPUs and 2,048 tasks (threads count: a full benchmark load peaked at 1,124)
+and grants `NET_ADMIN` for its egress firewall at start.
 
 ## Optional workers
 

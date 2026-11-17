@@ -3,7 +3,9 @@
 Why this exists. crawl4ai's own /pdf endpoint takes only a URL and prints with
 Playwright's defaults (Letter paper, CSS @page rules ignored), which loses A4
 and the running page footers a briefing needs.
-This worker prints with the CSS page size honoured, using the Chromium already in this image.
+This worker prints with the CSS page size honoured. Since 1.9.0 it runs on the
+dethrottled browser image (Patchright with Google Chrome on amd64, Chromium on
+arm64); until then it borrowed the Chromium in an upstream Crawl4AI image.
 
 What it can and cannot do, so it is safe to leave open to the whole LAN:
   * it renders ONLY the HTML it is handed; it is never given a URL to fetch
@@ -20,7 +22,10 @@ import threading
 import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
-from playwright.sync_api import sync_playwright
+try:
+    from patchright.sync_api import sync_playwright
+except ImportError:  # any image with plain Playwright still works
+    from playwright.sync_api import sync_playwright
 
 PORT = int(os.environ.get("PDF_WORKER_PORT", "8788"))
 MAX_BODY = 20_000_000
@@ -31,7 +36,10 @@ LOCK = threading.Lock()
 def render(html: str, fmt: str) -> bytes:
     with sync_playwright() as p:
         browser = p.chromium.launch(
+            # Headless on purpose: Chrome prints PDFs only headless, and this
+            # worker never reads a site.
             headless=True,
+            **({"channel": "chrome"} if os.path.exists("/opt/google/chrome/chrome") else {}),
             args=["--no-sandbox", "--disable-gpu", "--disable-dev-shm-usage"],
         )
         try:

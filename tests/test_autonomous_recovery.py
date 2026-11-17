@@ -65,7 +65,7 @@ def tiers(monkeypatch, tmp_path):
     monkeypatch.setenv("DETHROTTLED_DATA_DIR", str(tmp_path))
     monkeypatch.setenv("DETHROTTLED_BROWSER_SEARCH_URL", "http://browser")
     monkeypatch.setattr(f, "ENABLE_TLS", True)
-    monkeypatch.setattr(f, "CRAWL4AI_URL", "")
+    monkeypatch.setattr(f, "RENDER_URL", "")
     monkeypatch.setattr(f, "_tier_direct", lambda *a: ({}, "challenge_detected", a[0]))
     monkeypatch.setattr(f, "_tier_tls", lambda u: ({"html": CHALLENGE}, "", u))
     f._tier_rest.clear()

@@ -15,6 +15,71 @@ PLAN_KEY = "x-dethrottled-guided"
 DISK_GIB = {"default": 12, "media": 15, "layout": 19, "full": 22}
 
 
+_TIMEZONE = re.compile(r"[A-Za-z][A-Za-z0-9_+\-]*(?:/[A-Za-z0-9_+\-]+){0,2}")
+_LANG = re.compile(r"[a-z]{2,3}(?:_[A-Z]{2})?(?:\.[A-Za-z0-9-]+)?")
+
+
+def host_timezone():
+    """The machine's IANA timezone, or None (the browser then reports UTC)."""
+    candidates = [os.getenv("TZ", "").lstrip(":")]
+    try:
+        candidates.append(Path("/etc/timezone").read_text().strip())
+    except OSError:
+        pass
+    try:
+        target = os.readlink("/etc/localtime")
+        candidates.append(target.split("zoneinfo/", 1)[1] if "zoneinfo/" in target else "")
+    except OSError:
+        pass
+    return next((c for c in candidates if c and c != "UTC" and _TIMEZONE.fullmatch(c)), None)
+
+
+def host_language():
+    """The machine's language (e.g. en_GB.UTF-8), or None for C/POSIX/unset."""
+    for name in ("LC_ALL", "LC_MESSAGES", "LANG"):
+        value = os.getenv(name, "")
+        if value and _LANG.fullmatch(value):
+            return value
+    return None
+
+
+def browser_identity(machine):
+    """What the browser should truthfully report about this machine (1.9.0)."""
+    return {"timezone": machine.get("timezone") or "", "lang": machine.get("lang") or ""}
+
+
+def gpu_devices(gpu):
+    """Compose devices and groups for a detected GPU: render node, plus its card."""
+    devices, groups = [gpu["path"]], [str(gpu["gid"])]
+    if gpu.get("card"):
+        devices.append(gpu["card"])
+        if str(gpu["card_gid"]) not in groups:
+            groups.append(str(gpu["card_gid"]))
+    return {"devices": devices, "group_add": groups}
+
+
+def automatic(engine, run):
+    """Browser settings `stack up` applies without a saved plan (1.9.0).
+
+    Only what is true of this machine and safe by default: its timezone and
+    language, and an accessible GPU render node on a native Linux engine
+    (DETHROTTLED_GPU=off opts out). Sizing choices stay with Guided Setup.
+    """
+    machine = inspect(engine, run)
+    env = {}
+    identity = browser_identity(machine)
+    if identity["timezone"]:
+        env["DETHROTTLED_BROWSER_TIMEZONE"] = identity["timezone"]
+    if identity["lang"]:
+        env["DETHROTTLED_BROWSER_LANG"] = identity["lang"]
+    dnb = {"environment": env} if env else {}
+    gpu = next((n for n in machine["gpu_nodes"] if n["accessible"]), None)
+    if gpu and machine["native"] and os.getenv("DETHROTTLED_GPU", "auto") != "off":
+        dnb.setdefault("environment", {})["DETHROTTLED_BROWSER_GRAPHICS"] = "auto"
+        dnb.update(**gpu_devices(gpu))
+    return dnb
+
+
 def cpu_capacities(root, allowed):
     try:
         values = [int((root / f"cpu{cpu}" / "cpu_capacity").read_text()) for cpu in allowed]
@@ -53,17 +118,30 @@ def inspect(engine, run):
                 disk = shutil.disk_usage(root).free
         except OSError:
             pass
+        # Mesa needs the primary (card) node as well as the render node to use
+        # the GPU under the browser's X display: with renderD128 alone Chrome
+        # fell back to llvmpipe (1.9.0 install test).
+        cards = []
+        for card in sorted(Path("/dev/dri").glob("card*")):
+            try:
+                if card.is_char_device():
+                    cards.append({"path": str(card), "gid": card.stat().st_gid})
+            except OSError:
+                continue
         for node in sorted(Path("/dev/dri").glob("renderD*")):
             try:
                 if not node.is_char_device():
                     continue
                 nodes.append({"path": str(node), "gid": node.stat().st_gid,
-                              "accessible": os.access(node, os.R_OK | os.W_OK)})
+                              "accessible": os.access(node, os.R_OK | os.W_OK),
+                              **({"card": cards[0]["path"], "card_gid": cards[0]["gid"]}
+                                 if cards else {})})
             except OSError:
                 continue
     return {"cpus": engine.get("NCPU"), "docker_ram": engine.get("MemTotal"),
             "host_ram": total, "available_ram": available, "disk_free": disk,
-            "native": native, "gpu_nodes": nodes, "cpu_capacities": capacities}
+            "native": native, "gpu_nodes": nodes, "cpu_capacities": capacities,
+            "timezone": host_timezone(), "lang": host_language()}
 
 
 def recommend(machine, usage, shared_host, profile):
@@ -87,7 +165,7 @@ def recommend(machine, usage, shared_host, profile):
 
 
 def override(project, port, profile, concurrency, threads, rerank, index, gpu, *,
-             rerank_threads, ocr_threads=None):
+             rerank_threads, ocr_threads=None, timezone="", lang="", network="native"):
     settings = {
         "DETHROTTLED_RENDER_CONCURRENCY": str(concurrency),
         "DETHROTTLED_RERANK": str(int(rerank)),
@@ -98,9 +176,14 @@ def override(project, port, profile, concurrency, threads, rerank, index, gpu, *
     if ocr_threads is not None:
         settings["DETHROTTLED_OCR_THREADS"] = str(ocr_threads)
     browser = {"environment": {"DETHROTTLED_RENDER_CONCURRENCY": str(concurrency),
-                               "DETHROTTLED_BROWSER_GRAPHICS": "auto" if gpu else "mesa"}}
+                               "DETHROTTLED_BROWSER_GRAPHICS": "auto" if gpu else "mesa",
+                               "DETHROTTLED_BROWSER_NETWORK": network}}
+    if timezone:
+        browser["environment"]["DETHROTTLED_BROWSER_TIMEZONE"] = timezone
+    if lang:
+        browser["environment"]["DETHROTTLED_BROWSER_LANG"] = lang
     if gpu:
-        browser.update(devices=[gpu["path"]], group_add=[str(gpu["gid"])])
+        browser.update(**gpu_devices(gpu))
     return {
         PLAN_KEY: {"version": 1, "project": project, "port": port, "profile": profile},
         "services": {
@@ -125,11 +208,22 @@ def load(path):
     ocr_threads = int(api["DETHROTTLED_OCR_THREADS"]) if "DETHROTTLED_OCR_THREADS" in api else None
     gpu = None
     if browser.get("devices"):
-        node, = browser["devices"]
-        gid, = browser["group_add"]
-        if not re.fullmatch(r"/dev/dri/renderD[0-9]+", node) or not str(gid).isdigit():
-            raise ValueError("Guided Setup can pass only an explicit DRM render node.")
-        gpu = {"path": node, "gid": int(gid)}
+        devices, groups = browser["devices"], browser["group_add"]
+        if (not 1 <= len(devices) <= 2 or not 1 <= len(groups) <= 2
+                or not re.fullmatch(r"/dev/dri/renderD[0-9]+", devices[0])
+                or (len(devices) == 2 and not re.fullmatch(r"/dev/dri/card[0-9]+", devices[1]))
+                or not all(str(g).isdigit() for g in groups)):
+            raise ValueError("Guided Setup can pass only an explicit DRM render node and card.")
+        gpu = {"path": devices[0], "gid": int(groups[0])}
+        if len(devices) == 2:
+            gpu.update(card=devices[1], card_gid=int(groups[-1]))
+    env = browser.get("environment", {})
+    timezone = env.get("DETHROTTLED_BROWSER_TIMEZONE", "")
+    lang = env.get("DETHROTTLED_BROWSER_LANG", "")
+    network = env.get("DETHROTTLED_BROWSER_NETWORK", "native")
+    if ((timezone and not _TIMEZONE.fullmatch(timezone)) or (lang and not _LANG.fullmatch(lang))
+            or network not in {"native", "gate"}):
+        raise ValueError("Guided Setup browser timezone, language or network lane is invalid.")
     if (type(port) is not int or not 1 <= port <= 65535 or profile not in DISK_GIB
             or not 1 <= concurrency <= 2 or not 1 <= threads <= 8 or rerank_threads < 1
             or (ocr_threads is not None and not 1 <= ocr_threads <= 8)):
@@ -137,7 +231,8 @@ def load(path):
     expected = override(meta["project"], port, profile, concurrency, threads,
                         api["DETHROTTLED_RERANK"] == "1",
                         api["DETHROTTLED_CORPUS_AUTOINDEX"] == "1", gpu,
-                        rerank_threads=rerank_threads, ocr_threads=ocr_threads)
+                        rerank_threads=rerank_threads, ocr_threads=ocr_threads,
+                        timezone=timezone, lang=lang, network=network)
     if plan != expected:
         raise ValueError("Expected a Guided Setup override with matching service limits.")
     return expected
@@ -173,9 +268,11 @@ def run_guided(args, engine, previous, existing, run, check_port, ask=input):
     print(f"Host: {gib(machine['host_ram'])} RAM visible to OS, "
           f"{gib(machine['available_ram'])} currently available")
     print(f"Free on Docker filesystem: {gib(machine['disk_free'])}")
+    print(f"Browser timezone: {machine.get('timezone') or 'UTC (none detected)'}; "
+          f"language: {machine.get('lang') or 'browser default'}")
     print(f"GPU render nodes detected: {len(machine['gpu_nodes'])}; "
           f"accessible: {sum(node['accessible'] for node in machine['gpu_nodes'])}. "
-          "Chromium rendering has not been probed.")
+          "Browser GPU use has not been probed.")
     if not machine["native"]:
         print("Host disk, RAM headroom and GPU access are unverified for this Docker endpoint.")
     if machine["available_ram"] is not None and machine["available_ram"] < 4 * GIB:
@@ -240,11 +337,20 @@ def run_guided(args, engine, previous, existing, run, check_port, ask=input):
                  "and its normal retention policy.",
                  {True: "Index eligible reads", False: "Pause automatic indexing"}, advice["index"])
     gpu = next((node for node in machine["gpu_nodes"] if node["accessible"]), None)
-    if gpu and pick("Try GPU rendering?",
-                    "Pass the detected render node to Chromium. Hardware use is verified only "
-                    "when DNB starts; software fallback remains available.",
-                    {"software": "Software", "gpu": f"Try {gpu['path']}"}, "software") != "gpu":
+    if gpu and pick("Use the GPU for the browser?",
+                    "Chrome reports the real GPU instead of a software renderer and used about a "
+                    "third of the CPU per page in testing. Hardware use is verified when the "
+                    "browser worker starts; software rendering remains the fallback.",
+                    {"gpu": f"Use {gpu['path']}", "software": "Software"}, "gpu") != "gpu":
         gpu = None
+    network = pick("How should the browser reach websites?",
+                   "Native: public pages connect directly (HTTP/3 included); each browser runs "
+                   "as its own user, confined by a kernel firewall the worker loads at start, "
+                   "which needs Docker to grant it NET_ADMIN. If that is refused the worker "
+                   "will not start. Gate: every page through the worker's proxy, as before "
+                   "1.9.0; no firewall and no extra permission.",
+                   {"native": "Native", "gate": "Gate"}, "native")
+    identity = browser_identity(machine)
     port = args.port or previous.get("port", 8787)
     if machine["native"]:
         while not any(binding.get("HostPort") == str(port)
@@ -260,7 +366,8 @@ def run_guided(args, engine, previous, existing, run, check_port, ask=input):
                 if value.isdecimal() and 1 <= int(value) <= 65535:
                     port = int(value)
     plan = override(args.project, port, profile, concurrency, threads, rerank, index, gpu,
-                    rerank_threads=rerank_threads, ocr_threads=ocr_threads)
+                    rerank_threads=rerank_threads, ocr_threads=ocr_threads,
+                    network=network, **identity)
     if previous.get("guided"):
         print("\nCurrent saved settings:")
         print(json.dumps(previous["guided"], indent=2))

@@ -3,7 +3,7 @@
 from dethrottled import fetch
 
 
-def test_crawl4ai_uses_final_target_status(monkeypatch):
+def test_render_uses_final_target_status(monkeypatch):
     class Response:
         status_code = 200
 
@@ -16,17 +16,17 @@ def test_crawl4ai_uses_final_target_status(monkeypatch):
     requests_sent = []
     monkeypatch.setattr(fetch.requests, "post",
                         lambda *a, **kw: (requests_sent.append(kw), Response())[1])
-    monkeypatch.setattr(fetch, "CRAWL4AI_URL", "http://renderer")
-    payload, reason, final = fetch._crawl4ai_via_crawl("https://example.org/old")
+    monkeypatch.setattr(fetch, "RENDER_URL", "http://renderer")
+    payload, reason, final = fetch._render_request("https://example.org/old")
     assert payload == {}
-    assert reason == "crawl4ai_target_http_404"
+    assert reason == "render_target_http_404"
     assert final == "https://example.org/missing"
     assert requests_sent[0]["json"]["crawler_config"]["params"]["check_robots_txt"] is False
 
 
-def test_crawl4ai_accepts_rendered_success():
-    assert fetch._crawl4ai_target_error({"status_code": 200}) == ""
-    assert fetch._crawl4ai_target_error({"status_code": 302,
+def test_render_accepts_rendered_success():
+    assert fetch._render_target_error({"status_code": 200}) == ""
+    assert fetch._render_target_error({"status_code": 302,
                                          "redirected_status_code": 200}) == ""
 
 
