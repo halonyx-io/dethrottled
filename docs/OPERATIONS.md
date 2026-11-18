@@ -215,6 +215,12 @@ Google Scholar's, are reported as blocks instead of content (`/drive` reports
 Google's `/sorry/` page as `access.status: challenge`); automatic
 browser reads of a bare domain may follow its redirect to the `www.` host.
 
+For 1.9.4, rebuild the API and adapter images; keep all volumes. `fetch` (MCP and
+HTTP) accepts `url` for one page as well as `urls`. `engines` names each engine once
+(a Yahoo answer standing in for DDG and Yahoo's parallel page were listed as two).
+Yahoo is asked before Bing when DDG refuses: its page is usually already in flight
+beside DDG, while Bing often answers with decoys.
+
 For 1.9.3, rebuild the API image; keep all volumes. A supplement that misses the
 search's 1 s budget (`capped`) no longer marks the search `degraded`; it says
 nothing about the engine's health.

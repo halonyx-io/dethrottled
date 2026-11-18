@@ -22,7 +22,7 @@ Names are the MCP tools; the HTTP route does the same job on the raw API
 | You need | MCP tool | HTTP route | Notes |
 |---|---|---|---|
 | Sources for a question | `search` | `POST /v2/search` | Start with `limit` 5–10; at most 15 come back. Use `profile` `news` or `academic` when it fits, `fast` when one quick round is enough |
-| The contents of a known URL | `fetch` | `POST /fetch` | Add `focus` to get only the relevant passages |
+| The contents of a known URL | `fetch` | `POST /fetch` | Takes `urls`, a list (up to 10); `url` works for one page. Add `focus` to get only the relevant passages |
 | Several angles, with citations | `research` | `POST /research` | Returns an evidence bundle and its gaps, not an answer; typically 10–20 s |
 | Search and read in one step | `search_and_fetch` | `POST /search-and-fetch` | A quick look; `research` is better for real questions |
 | A page's text plus its outbound links | `extract_with_links` | `POST /extract-with-links` | |

@@ -72,7 +72,7 @@ for operator budgets, indexing jobs, repair and rollback.
 ## Search controls
 
 Normal discovery starts with `profile="web", limit=5, ranking="source"; request up to 15 only for a broader menu`.
-The web chain (DDG Lite, then Bing and Yahoo pages read directly, then the
+The web chain (DDG Lite, then Yahoo and Bing pages read directly, then the
 browser, Google last) shares one ten-choice budget. Yandex and Mwmbl supply small supplements, at most three
 URLs each, six total; the complete menu never exceeds fifteen unique URLs.
 No automatic DDG pagination fills that menu. Fewer usable results is normal.

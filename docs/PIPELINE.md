@@ -35,7 +35,7 @@ DuckDuckGo is the default direct fallback. All DDG acquisition paths share ten
 choices, with no automatic pagination; deliberate supplementary sources have
 three choices each, six total, and the complete unique menu defaults to and is capped at fifteen.
 
-Normal web/balanced/thorough profiles run the web chain (DDG Lite first; if it refuses or answers thinly, Bing's and then Yahoo's own result pages are read directly (each paced and rested on its own, a decoy page rested like a refusal), then the browser's DDG race, and Google in the real browser only as the last resort) and separate
+Normal web/balanced/thorough profiles run the web chain (DDG Lite first; if it refuses or answers thinly, Yahoo's and then Bing's own result pages are read directly (each paced and rested on its own, a decoy page rested like a refusal), then the browser's DDG race, and Google in the real browser only as the last resort) and separate
 Yahoo's page (beside DDG, lending dates to DDG's rows) and Yandex/Mwmbl supplements
 concurrently, waiting at most 1 s for supplements; one novel supplement row follows
 every three primary rows. Fast is the web chain plus Yahoo only if already in, with no

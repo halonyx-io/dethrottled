@@ -94,6 +94,14 @@ def merge_variants(groups: list) -> list:
     return out
 
 
+def _engine_name(name: str) -> str:
+    """The engine behind a route name: web-tls-yahoo, tls-yahoo, yahoo -> yahoo."""
+    name = str(name).removeprefix("searxng:")
+    for prefix in ("web-browser-", "web-tls-", "web-", "tls-"):
+        name = name.removeprefix(prefix)
+    return name
+
+
 def annotate_consensus(rows: list) -> list:
     """Add engines_consensus/consensus_score without changing source order."""
     for row in rows:
@@ -114,7 +122,15 @@ def annotate_consensus(rows: list) -> list:
         named = [str(row.get("engine") or ""), *sorted(
             str(entry.get("provider")) for entry in row.get("discovery", [])
             if entry.get("provider") and entry.get("provider") not in generic)]
-        row["engines"] = [name for name in dict.fromkeys(named) if name]
+        # One name per engine: Yahoo answering for DDG ("web-tls-yahoo") and
+        # Yahoo's parallel page ("yahoo") are the same engine (1.9.2 listed
+        # both, inflating Yahoo's share and the consensus count).
+        first = {}
+        for name in named:
+            if name:
+                first.setdefault(_engine_name(name), name)
+        row["engines"] = list(first.values())
+        engines = {_engine_name(n) for n in engines}
         row["engines_consensus"] = len(engines)
         row["consensus_score"] = round(len(engines) + max(0, variants - 1) * 0.5, 3)
     return rows

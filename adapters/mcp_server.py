@@ -389,7 +389,7 @@ async def search(
 
 @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, openWorldHint=True))
 async def fetch(
-    urls: list[str],
+    urls: list[str] | None = None,
     max_chars: Annotated[int, Field(ge=1, le=MAX_CHARS)] = 12000,
     format: Literal["text", "links", "html"] = "text",
     render: Literal["auto", "always", "never"] = "auto",
@@ -412,8 +412,10 @@ async def fetch(
     sheet: str = "",
     max_cell_chars: Annotated[int | None, Field(ge=1, le=1000000)] = None,
     selectors: dict[str, dict[str, Any]] | None = None,
+    url: str = "",
 ) -> Any:
-    """Read pages you already have URLs for.
+    """Read pages you already have URLs for: urls=[...] (one or more); url="..."
+    is accepted for a single page.
 
     Concise is the default: no duplicate PDF text-layer blocks; detailed retains them.
     Known URLs can skip search. focus selects passages relevant to a question
@@ -437,6 +439,10 @@ async def fetch(
             always for a page you know needs JavaScript
             never  stay on the fast tiers when latency matters more than reach
     """
+    if not urls and url:
+        urls = [url]
+    if not urls:
+        raise ValueError("fetch needs urls=[...] (or url=... for one page)")
     return await _backend_post("/fetch", {
         "urls": _bounded_urls(urls),
         "max_chars": _bounded_int(max_chars, 1, MAX_CHARS),

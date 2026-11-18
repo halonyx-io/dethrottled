@@ -980,7 +980,7 @@ def browser_drive(payload: dict, *, timeout: int | None = None) -> dict:
 SUPPLEMENT_WAIT_SECONDS = float(os.environ.get("DETHROTTLED_SUPPLEMENT_WAIT", "1.0"))
 SUPPLEMENT_EVERY = int(os.environ.get("DETHROTTLED_SUPPLEMENT_EVERY", "3"))
 INDEX_DOORS = tuple(d.strip() for d in os.environ.get(
-    "DETHROTTLED_INDEX_DOORS", "bing,yahoo").split(",") if d.strip() in {"bing", "yahoo"})
+    "DETHROTTLED_INDEX_DOORS", "yahoo,bing").split(",") if d.strip() in {"bing", "yahoo"})
 GOOGLE_LAST_RESORT = os.environ.get("DETHROTTLED_GOOGLE_LAST_RESORT", "1") == "1"
 
 

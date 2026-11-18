@@ -31,7 +31,7 @@ tool execution is distinct from discovery health. The legacy MCP search return
 can carry the envelope in a JSON text block rather than `structuredContent`.
 In 1.6.0, research `queries` also preserve `outcome` and
 `degraded` per query, including `indeterminate` for a local search exception.
-Search defaults to `profile="web"`: the web chain (DDG Lite first; if it refuses or answers thinly, Bing's and then Yahoo's own result pages are read directly (each paced and rested on its own, a decoy page rested like a refusal), then the browser's DDG race, and Google in the real browser only as the last resort) acquires up to ten
+Search defaults to `profile="web"`: the web chain (DDG Lite first; if it refuses or answers thinly, Yahoo's and then Bing's own result pages are read directly (each paced and rested on its own, a decoy page rested like a refusal), then the browser's DDG race, and Google in the real browser only as the last resort) acquires up to ten
 primary choices while Yandex (through SearXNG) and Mwmbl (its keyless API) each
 contribute up to three.
 The normal menu defaults to and is capped at **15 unique URLs**. Duplicate

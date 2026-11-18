@@ -121,6 +121,15 @@ class FetchBody(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     urls: list[str] = Field(min_length=1, max_length=10)
+
+    @model_validator(mode="before")
+    @classmethod
+    def single_url(cls, data):
+        # {"url": "..."} for one page: the contract agents most often guess.
+        if isinstance(data, dict) and "url" in data and "urls" not in data:
+            data = {**data, "urls": [data["url"]]}
+            data.pop("url")
+        return data
     selectors: dict[str, SelectorField] = Field(default_factory=dict, max_length=32,
         description="Named CSS text/attribute fields from the acquired HTML; no model inference.")
     # What the ladder is ALLOWED to do, not what it must do. "never" keeps it
