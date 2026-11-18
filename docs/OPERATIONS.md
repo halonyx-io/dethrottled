@@ -215,6 +215,10 @@ Google Scholar's, are reported as blocks instead of content (`/drive` reports
 Google's `/sorry/` page as `access.status: challenge`); automatic
 browser reads of a bare domain may follow its redirect to the `www.` host.
 
+For 1.9.3, rebuild the API image; keep all volumes. A supplement that misses the
+search's 1 s budget (`capped`) no longer marks the search `degraded`; it says
+nothing about the engine's health.
+
 For 1.9.2, rebuild the API image; keep all volumes. Yahoo's result page now runs
 beside DuckDuckGo on `web`/`balanced`/`thorough`: DDG Lite snippets carry no dates
 (0 of 80 rows) and 39 of 80 DDG rows gain one from Yahoo's copy (18 Nov 2026).

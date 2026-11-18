@@ -6,7 +6,10 @@ import threading
 import time
 
 _SUCCESS = {"ok", "cached", "no_results", "no_matching_candidates"}
-_SKIPPED = {"not_requested", "not_configured"}
+# "capped": a supplement that missed this search's own time budget. That
+# says nothing about the engine, so it neither degrades the search nor counts
+# as a health observation (1.9.2 flagged such searches degraded).
+_SKIPPED = {"not_requested", "not_configured", "capped"}
 _LOCK = threading.Lock()
 _OBSERVATIONS = {}
 OBSERVATION_TTL = 60.0

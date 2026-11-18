@@ -287,3 +287,19 @@ def test_a_slow_supplement_is_capped_not_waited_for(monkeypatch):
     started = _time.monotonic()
     rows, meta = fs.search(QUERY, max_items=8, profile="web")
     assert _time.monotonic() - started < 1.0 and meta["per_source"]["yandex"] == "capped"
+
+
+def test_a_capped_supplement_does_not_degrade_the_search(monkeypatch):
+    import time as _time
+    monkeypatch.setattr(fs, "SUPPLEMENT_WAIT_SECONDS", 0.2)
+    monkeypatch.setattr(fs, "web_search", lambda *a, diagnostics=None, **k: (
+        diagnostics.update(status="ok") or [_ddg(i) for i in range(3)]))
+    monkeypatch.setattr(fs, "searxng", lambda *a, diagnostics=None, **k: (
+        diagnostics.update(status="ok") or [{"url": "https://example.org/y", "title":
+                                            "Yandex result about autovacuum", "engine": "yandex"}]))
+    monkeypatch.setattr(discovery, "mwmbl_search", lambda *a, diagnostics=None, **k: (
+        diagnostics.update(status="ok") or []))
+    monkeypatch.setattr(discovery, "door_search", lambda *a, **k: _time.sleep(1.0) or [])
+    rows, meta = fs.search(QUERY, max_items=8, profile="web")
+    assert meta["per_source"]["yahoo"] == "capped"
+    assert meta["discovery"]["degraded"] is False
