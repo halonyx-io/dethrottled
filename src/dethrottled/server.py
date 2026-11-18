@@ -955,7 +955,8 @@ def _ranked(body) -> tuple:
     if body.ranking == "fusion":
         rows = ranker.fuse_rows(rows, body.query, recency=body.recency)
         stages.append("rank_fusion")
-    if rows and neural_requested:
+    # fast is one round of requests and nothing else: no neural pass.
+    if rows and neural_requested and body.profile != "fast":
         if not neural_ready:
             stages.append("neural_rerank_unavailable")
         else:
