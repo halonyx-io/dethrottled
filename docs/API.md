@@ -78,10 +78,15 @@ and their provenance. A copy at a different address is listed under the row's
 `duplicates` (`url`, `provider`, `reason`); `deduplication` counts the merges. A decoy bucket is dropped only when another provider proves the
 query can be echoed.
 
-`profile="fast"` uses the web chain alone. `balanced` and `thorough` use the
-normal web combination. Explicit news and academic profiles retain their
+`profile="fast"` is one round of requests: the web chain, plus Yahoo's page only if
+it has already answered, with no supplement wait and no neural rerank. `web` (the
+default; `balanced` is the same) adds Yahoo's page beside DDG, whose copies of the
+same URLs lend DDG's rows their dates, and the Yandex and Mwmbl supplements, waited
+for at most `DETHROTTLED_SUPPLEMENT_WAIT` (1 s). `thorough` also reads Bing's page and
+waits for every supplement. One supplement row follows every three primary rows, so
+they are visible at small limits. Explicit news and academic profiles retain their
 specialist sources. `engines="web"` deliberately requests only the primary route;
-`engines="web,yandex,mwmbl"` explicitly requests the default combination;
+`engines="web,yahoo,yandex,mwmbl"` explicitly requests the default combination;
 `bing` and `yahoo` name those direct doors as supplements.
 `categories="news"` and `language` remain supported controls. Unknown fields and
 requests above fifteen are rejected. Existing cached provider rows obey the caps.

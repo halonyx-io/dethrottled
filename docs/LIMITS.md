@@ -7,7 +7,7 @@ will succeed. Inspect actual coverage, partial flags and continuation handles.
 
 | Operation | Default | Supported ceiling |
 |---|---|---|
-| Search choices | HTTP/MCP 15 | Web chain (DDG Lite, Bing, Yahoo, browser, Google) 10; each supplement 3; supplements 6 total; complete menu 15 |
+| Search choices | HTTP/MCP 15 | Web chain (DDG Lite, Bing, Yahoo, browser, Google) 10; each supplement 3, one after every three primary rows; supplements 6 total; complete menu 15. Supplements are waited for at most 1 s except on `thorough` |
 | Local corpus search | HTTP 10; MCP 5 | 10 matches |
 | Research sources | 10 | 20 readable sources; 24 unique candidates across facets; at most four replacement primary URLs |
 | Research additional facets | Automatic primary-source probe | 10 additional queries, plus the question |

@@ -215,6 +215,18 @@ Google Scholar's, are reported as blocks instead of content (`/drive` reports
 Google's `/sorry/` page as `access.status: challenge`); automatic
 browser reads of a bare domain may follow its redirect to the `www.` host.
 
+For 1.9.2, rebuild the API image; keep all volumes. Yahoo's result page now runs
+beside DuckDuckGo on `web`/`balanced`/`thorough`: DDG Lite snippets carry no dates
+(0 of 80 rows) and 39 of 80 DDG rows gain one from Yahoo's copy (18 Nov 2026).
+Supplements are waited for at most 1 s and one follows every three primary rows (they
+used to start at row eleven, invisible at limits up to ten). A Bing or Yahoo answer
+standing in for DDG is no longer capped at three rows. `fast` is one round with no
+neural rerank. A short page with no sign of JavaScript-built content is accepted from
+plain HTTP instead of going to the browser. Measured and left as they are: Ettin
+reranking only positions 2-3 (the full pool put the canonical source first on 8/50
+benchmark queries against 41/50), query fan-out off (larger pools gave no clear top-5
+gain, 3 Nov), and fetch latency (1.9.0 p50 3.6 s against 1.8.11's 3.7 s).
+
 For 1.9.1, rebuild the API and DNB images; keep all volumes. Search: after DDG
 Lite, Bing's and Yahoo's result pages are read directly (SearXNG's Yahoo engine
 returned nothing on every live search, 17 Nov 2026) and Google in the browser is
