@@ -24,7 +24,7 @@ for sets the task; this file sets the house rules.
 | `src/dethrottled/dpr*.py`, `jobs.py` | Durable batch reads and fetch jobs |
 | `browser-search/service.py` | Browser worker: search, `/drive` actions, settling and read-session lifetimes |
 | `experiments/dnb/` | DNB: the production browser service (rendering, scope, delegation) |
-| `adapters/` | Authenticated MCP server and REST gateway |
+| `adapters/` | Authenticated MCP server (`mcp_server.py`) and REST gateway (`rest_gateway.py`, shipped as `public_gateway`). Both validate requests themselves, separately from the API's models |
 | `docker-compose*.yml` | The default stack and optional overlays |
 | `evaluations/` | Dated measurements, release gates and their fixtures |
 | `docs/` | Current guides, generated references and the documentation inventory |
@@ -57,7 +57,11 @@ for sets the task; this file sets the house rules.
   `fetch.py`).
 - **Transports differ on purpose.** A new REST field is not automatically an MCP
   argument. When exposing something remotely, update adapter validation,
-  namespaces and contracts together.
+  namespaces and contracts together. The REST gateway checks bodies itself: a
+  field the API accepts can still be rejected there (1.9.4 added `url` to the API
+  and MCP, and the gateway kept refusing it). Extend `scripts/verify_adapter.py`,
+  which drives both adapters against a stand-in backend, whenever a contract
+  changes.
 - **Corpus sharing is narrow.** Only explicitly eligible public evidence enters
   Corpus v2, for 90 days, separate from search, extraction and document caches.
   Its support checks are not answer verification.
@@ -95,6 +99,14 @@ python scripts/check_agent_docs.py
 python scripts/check_docs.py
 python evaluations/corpus-v2/verify.py
 python evaluations/search-policy/verify.py
+```
+
+The adapter verifier runs inside the adapters image, with no network (use IP
+literals for public URLs in it):
+
+```sh
+docker run --rm --network none -v "$PWD/scripts/verify_adapter.py:/app/verify_adapter.py:ro" \
+  dethrottled-adapters:dev python /app/verify_adapter.py
 ```
 
 The DNB and browser-worker tests need the DNB image's dependencies:
@@ -137,6 +149,9 @@ Things that catch people out:
   retrieval-quality gain. Claim only what a retained measurement shows.
 - Live sites vary from minute to minute. Compare against a control run in the
   same window, and recheck a regression before believing it.
+- Measure cold. Repeating the queries or URLs of an earlier run measures warm
+  caches (DNS, search and extraction), not the change. Use new queries, and
+  alternate versions within one window.
 - Keep failures and negative results. Never rewrite evidence to make a change
   look better; a measured "this did not help" is worth recording.
 

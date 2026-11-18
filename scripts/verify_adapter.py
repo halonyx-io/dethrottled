@@ -68,9 +68,10 @@ class Backend(BaseHTTPRequestHandler):
                          'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jHHsAAAAASUVORK5CYII='})
         elif self.path == '/fetch':
             self.answer([{'content': 'X' * (payload['max_chars'] - 13) + '7341 tonnes!!',
-                          'echo_selectors': payload.get('selectors', {})}])
+                          'echo_selectors': payload.get('selectors', {}),
+                          'echo_urls': payload.get('urls')}])
         elif self.path == '/site/crawl':
-            self.answer({'mode': payload.get('mode'),
+            self.answer({'mode': payload.get('mode'), 'echo_urls': payload.get('urls'),
                          'max_discovery_requests': payload.get('max_discovery_requests')})
         elif self.path == '/jobs/fetch':
             self.answer({'selectors': payload.get('selectors'),
@@ -164,7 +165,15 @@ async def verify(url, rest_url, token, registry):
                     'urls': ['https://93.184.216.34/'], 'mode': 'map',
                     'max_discovery_requests': 2})
                 assert not mapped.isError and mapped.structuredContent == {
-                    'mode': 'map', 'max_discovery_requests': 2}
+                    'mode': 'map', 'max_discovery_requests': 2,
+                    'echo_urls': ['https://93.184.216.34/']}
+                single_map = await client.call_tool('crawl_site', {
+                    'url': 'https://93.184.216.34/', 'mode': 'map'})
+                assert not single_map.isError, single_map
+                assert single_map.structuredContent[
+                    'echo_urls'] == ['https://93.184.216.34/']
+                single_read = await client.call_tool('fetch', {'url': 'https://93.184.216.34/'})
+                assert not single_read.isError, single_read
                 queued = await client.call_tool('start_fetch_job', {
                     'urls': ['https://93.184.216.34/'],
                     'selectors': {'title': {'selector': 'h1'}}, 'response_format': 'concise'})
@@ -194,6 +203,17 @@ async def verify(url, rest_url, token, registry):
             assert too_many.status_code == 400
             private = await rest.post('/fetch', json={'urls': ['http://127.0.0.1/']})
             assert private.status_code == 400
+            # One page as {"url": ...}, as the API and MCP accept (1.9.4/1.9.5).
+            single = await rest.post('/fetch', json={'url': 'https://93.184.216.34/a',
+                                                     'max_chars': 1000})
+            assert single.status_code == 200, single.text
+            assert single.json()[0]['echo_urls'] == ['https://93.184.216.34/a']
+            crawl = await rest.post('/site/crawl', json={'url': 'https://93.184.216.34/',
+                                                         'mode': 'map'})
+            assert crawl.status_code == 200 and crawl.json()['echo_urls'] == [
+                'https://93.184.216.34/']
+            private_one = await rest.post('/fetch', json={'url': 'http://127.0.0.1/'})
+            assert private_one.status_code == 400
         # Catch a backend replacement without restarting the bridge.
         IDENTITY['version'] = __version__
         await asyncio.sleep(10.1)

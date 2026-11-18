@@ -45,8 +45,8 @@ routes. Base Compose includes the API, DNB, SearXNG and the format reader. Speec
 PDF layout use automatically connected profiles; public adapters use an overlay.
 
 The [current two-device evaluation](BENCHMARKS.md) records installation and workload measurements.
-The [1.0 release gates](ONE-ZERO.md) explain measured capabilities, portability
-checks and remaining limits.
+The [1.0 release gates](ONE-ZERO.md) record what 1.0 measured and shipped; they are
+history, not a description of the current stack.
 
 ## Current guides and historical evidence
 

@@ -614,10 +614,21 @@ def health():
     return {"status": "ok", "service": "dethrottled", "version": VERSION}
 
 
+def _health_word(report: dict) -> str:
+    """ok, degraded, or initializing: no search observed yet since start-up.
+
+    Read right after a deploy, "degraded" looked like an outage when the server
+    had simply not searched yet (seen by agents checking 1.9.x deploys).
+    """
+    if report["ok"] and not report.get("degraded"):
+        return "ok"
+    return "initializing" if report.get("initializing") else "degraded"
+
+
 @app.get("/ready")
 def ready():
     report = fs.health()
-    return {"status": "ok" if report["ok"] and not report.get("degraded") else "degraded", **report}
+    return {"status": _health_word(report), **report}
 
 
 @app.get("/v2/status")
@@ -628,7 +639,7 @@ def v2_status():
         "status": "ok" if report["ok"] and not report.get("degraded") and all(
             row["status"] in {"ready", "not_configured"} for row in worker_status.values())
             and _BACKFILL_JOB.state["status"] in {"disabled", "running", "complete"}
-            else "degraded",
+            else "initializing" if _health_word(report) == "initializing" else "degraded",
         "workers": worker_status,
         "adblock": fetcher.adblock.status(),
         "multilingual_backfill": dict(_BACKFILL_JOB.state),
@@ -1071,7 +1082,7 @@ def _queue_corpus(rows, background=None, *, namespace="local"):
 
 
 @app.post("/fetch")
-@app.post("/extract")            # alias, for callers written against the old name
+@app.post("/extract", deprecated=True)  # alias of /fetch for old callers; use /fetch
 def fetch_urls(body: FetchBody, background: BackgroundTasks):
     # Named URLs: try hard, OCR included.
     # format is the contract's single name; raw/links remain accepted for
@@ -1665,7 +1676,7 @@ def drive(body: DriveBody):
 
 
 @app.post("/search-and-fetch")
-@app.post("/search-and-extract")     # alias
+@app.post("/search-and-extract", deprecated=True)  # alias; use /search-and-fetch
 def search_and_fetch(body: SearchFetchBody, background: BackgroundTasks):
     rows, meta, _limit = _ranked(body)
     def read(indexed):

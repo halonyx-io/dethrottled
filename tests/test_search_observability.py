@@ -376,3 +376,11 @@ def test_already_received_results_survive_a_parallel_retry_after():
     fs._ddg_finish(rows, report, False)
     assert rows and report["upstream_status"] == "cooldown"
     assert diag.outcome(1, report) == "degraded"
+
+
+def test_status_says_initializing_before_the_first_search(monkeypatch):
+    cold = {"ok": False, "degraded": True, "initializing": True}
+    monkeypatch.setattr(fs, "health", lambda: cold)
+    assert server.ready()["status"] == "initializing"
+    monkeypatch.setattr(fs, "health", lambda: dict(cold, initializing=False))
+    assert server.ready()["status"] == "degraded"

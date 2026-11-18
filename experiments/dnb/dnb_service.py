@@ -54,7 +54,10 @@ WAITING = 0
 DRIVE_INFLIGHT = 0
 OPERATIONS = {}
 CRAWL_BROWSER_LOCK = asyncio.Lock()
-CRAWL_IDLE_SECONDS = float(os.getenv("DETHROTTLED_BROWSER_IDLE_SECONDS", "300"))
+# 900 s, not 300: a cold render browser cost ~2 s per read for callers spacing
+# requests minutes apart (walmart.com 6.1 s cold vs 4.1 s warm, 18 Nov 2026);
+# keeping it open costs about 300-500 MB.
+CRAWL_IDLE_SECONDS = float(os.getenv("DETHROTTLED_BROWSER_IDLE_SECONDS", "900"))
 LAST_CRAWL_USE = time.monotonic()
 
 _STATE_DIR = Path(

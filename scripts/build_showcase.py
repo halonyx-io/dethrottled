@@ -82,8 +82,9 @@ s += arrow(295, 193, 345, 193)
 s += f'<path d="M750 258 V290 H220 M750 290 H980" stroke="{CYAN}" stroke-width="2" fill="none"/>'
 for i, (name, lines) in enumerate(
     [
-        ("DNB browser", ["Headed Chromium", "DDG, rendering and drive", "Sessions + checkpoints"]),
-        ("SearXNG", ["Supplementary search", "Private engine gateway"]),
+        ("DNB browser", ["Headed Chrome, firewalled", "Search, rendering, drive",
+                         "Sessions + checkpoints"]),
+        ("SearXNG", ["Yandex and news engines", "Private engine gateway"]),
         ("Format reader", ["MSG and XLSB", "Private Apache Tika"]),
     ]
 ):

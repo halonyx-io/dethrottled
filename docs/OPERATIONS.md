@@ -215,6 +215,20 @@ Google Scholar's, are reported as blocks instead of content (`/drive` reports
 Google's `/sorry/` page as `access.status: challenge`); automatic
 browser reads of a bare domain may follow its redirect to the `www.` host.
 
+For 1.9.5, rebuild the API, DNB and adapter images; keep all volumes. The REST
+gateway also accepts `url` for one page (1.9.4 added it to the API and MCP only).
+Yahoo's own date element is read as the provider date (`published_at`, `date_source:
+structured`) instead of being left in the snippet; DDG's copies of the same URLs
+take it through the usual merge. DDG Lite itself still shows no dates. The render
+browser now stays open 15 minutes after its last use instead of 5 (a cold start
+added about 2 s to a rendered read; it costs about 300-500 MB while open), so
+rebuild the DNB image too. `crawl_site` also accepts `url`. `/ready` and
+`/v2/status` report `initializing` (not `degraded`) until the first search after
+start-up. `/extract` and `/search-and-extract` are marked deprecated aliases of
+`/fetch` and `/search-and-fetch`; they still work. `fast` now waits up to 0.3 s
+after DDG for Yahoo's page: with no grace its dates came and went between queries,
+since Yahoo lands 50-440 ms after DDG on most of them.
+
 For 1.9.4, rebuild the API and adapter images; keep all volumes. `fetch` (MCP and
 HTTP) accepts `url` for one page as well as `urls`. `engines` names each engine once
 (a Yahoo answer standing in for DDG and Yahoo's parallel page were listed as two).

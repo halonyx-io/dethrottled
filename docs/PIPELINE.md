@@ -38,7 +38,7 @@ three choices each, six total, and the complete unique menu defaults to and is c
 Normal web/balanced/thorough profiles run the web chain (DDG Lite first; if it refuses or answers thinly, Yahoo's and then Bing's own result pages are read directly (each paced and rested on its own, a decoy page rested like a refusal), then the browser's DDG race, and Google in the real browser only as the last resort) and separate
 Yahoo's page (beside DDG, lending dates to DDG's rows) and Yandex/Mwmbl supplements
 concurrently, waiting at most 1 s for supplements; one novel supplement row follows
-every three primary rows. Fast is the web chain plus Yahoo only if already in, with no
+every three primary rows. Fast is the web chain plus Yahoo if it answers within 0.3 s, with no
 neural rerank; thorough adds Bing and waits for every supplement; academic adds specialist sources. News uses RSS and the
 configured SearXNG news engines; academic can add Crossref, OpenAlex and arXiv.
 Explicit engines can select optional metered providers only when configured.
