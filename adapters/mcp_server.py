@@ -811,13 +811,14 @@ async def inspect_document(document_id: str, focus: str = "", offset: int = 0,
 
 
 @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, openWorldHint=True))
-async def crawl_site(urls: list[str],
+async def crawl_site(urls: list[str] | None = None,
                      max_pages: Annotated[int, Field(ge=1, le=50)] = 10,
                      max_depth: Annotated[int, Field(ge=0, le=5)] = 2,
                      path_prefix: str = "/",
                      render: Literal["auto", "always", "never"] = "auto",
                      mode: Literal["crawl", "map"] = "crawl",
                      max_discovery_requests: Annotated[int, Field(ge=1, le=20)] = 5,
+                     url: str = "",
                      ) -> dict[str, Any]:
     """Discover and retain linked/sitemap sources within one site and report coverage.
 
@@ -829,6 +830,10 @@ async def crawl_site(urls: list[str],
     fetching every candidate. max_pages bounds URLs; max_discovery_requests bounds
     discovery acquisitions. Inspect discovery_attempts, not just attempted=0.
     """
+    if not urls and url:
+        urls = [url]
+    if not urls:
+        raise ValueError("crawl_site needs urls=[...] (or url=... for one site)")
     return await _backend_post("/site/crawl", {"urls": _bounded_urls(urls),
         "max_pages": max_pages, "max_depth": max_depth, "path_prefix": path_prefix,
         "render": render, "mode": mode,

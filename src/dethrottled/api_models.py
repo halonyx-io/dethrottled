@@ -333,6 +333,11 @@ class StructureBody(BaseModel):
 class SiteBody(BaseModel):
     model_config = ConfigDict(extra="forbid")
     urls: list[str] = Field(min_length=1, max_length=10)
+
+    @model_validator(mode="before")
+    @classmethod
+    def single_url(cls, data):
+        return FetchBody.single_url(data)
     max_pages: int = Field(default=10, ge=1, le=50)
     mode: Literal["crawl", "map"] = "crawl"
     max_discovery_requests: int = Field(default=5, ge=1, le=20,

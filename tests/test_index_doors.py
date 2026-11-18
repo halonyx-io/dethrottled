@@ -21,12 +21,13 @@ def bing_page(rows):
     return f'<html><ol id="b_results">{items}</ol></html>'
 
 
-def yahoo_page(rows):
+def yahoo_page(rows, date=""):
+    stamp = f'<span class="fc-smoke">{date} · </span>' if date else ""
     items = "".join(
         f'<div class="dd algo algo-sr"><div class="compTitle"><a href="https://r.search.yahoo.com'
         f'/_ylt=x/RV=2/RE=1/RO=10/RU={u.replace(":", "%3a").replace("/", "%2f")}/RK=2/RS=y-">'
         f'<span>breadcrumb</span><h3><span>{t}</span></h3></a></div>'
-        f'<div class="compText"><p>{s}</p></div></div>' for u, t, s in rows)
+        f'<div class="compText"><p>{stamp}{s}</p></div></div>' for u, t, s in rows)
     return f"<html>{items}</html>"
 
 
@@ -319,3 +320,34 @@ def test_one_engine_is_named_once():
     consensus.annotate_consensus([row])
     assert row["engines"] == ["web-tls-yahoo", "searxng:yandex"]
     assert row["engines_consensus"] == 2
+
+
+def test_yahoos_date_element_is_the_provider_date(monkeypatch):
+    plain = [(u, t, "How to tune autovacuum thresholds and cost limits.") for u, t, _ in GOOD]
+    serve(monkeypatch, {"yahoo": Response(yahoo_page(plain, date="Oct 31, 2025"))})
+    rows = discovery.door_search("yahoo", QUERY)
+    assert rows[0]["publishedDate"] == "Oct 31, 2025"
+    assert "Oct 31, 2025" not in rows[0]["snippet"]
+
+
+def test_gateway_accepts_url_for_one_page():
+    import ast
+    from pathlib import Path
+    source = (Path(__file__).resolve().parents[1] / "adapters/rest_gateway.py").read_text()
+    assert "'urls': [payload['url']]" in source
+    ast.parse(source)
+
+
+def test_fast_waits_a_short_grace_for_yahoo(monkeypatch):
+    import time as _time
+    monkeypatch.setattr(fs, "FAST_GRACE_SECONDS", 0.3)
+    monkeypatch.setattr(fs, "web_search", lambda *a, **k: [_ddg(i) for i in range(5)])
+    dated = [dict(_ddg(i), publishedDate="Oct 31, 2025", engine="web-tls-yahoo")
+             for i in range(5)]
+    for delay, expect_dated in ((0.1, True), (0.8, False)):
+        monkeypatch.setattr(discovery, "door_search",
+                            lambda *a, delay=delay, **k: _time.sleep(delay) or dated)
+        started = _time.monotonic()
+        rows, meta = fs.search(QUERY, max_items=5, profile="fast")
+        assert _time.monotonic() - started < 0.7
+        assert bool(rows[0].get("publishedDate")) is expect_dated

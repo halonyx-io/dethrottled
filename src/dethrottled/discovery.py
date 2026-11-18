@@ -213,7 +213,7 @@ def _bing_rows(html: str) -> list:
             continue
         snippet = item.css_first(".b_caption p") or item.css_first("p")
         out.append((_bing_target(link.attributes.get("href") or ""), link.text(),
-                    snippet.text() if snippet else ""))
+                    snippet.text() if snippet else "", ""))
     return out
 
 
@@ -225,8 +225,17 @@ def _yahoo_rows(html: str) -> list:
         if link is None or title is None:
             continue
         snippet = item.css_first(".compText")
-        out.append((_yahoo_target(link.attributes.get("href") or ""), title.text(),
-                    snippet.text() if snippet else ""))
+        # Yahoo shows the page date in its own element ahead of the snippet
+        # ("Oct 31, 2025 · "): the engine's date, not text to infer one from.
+        dated = snippet.css_first(".fc-smoke") if snippet else None
+        date = " ".join(dated.text().split()).rstrip(" ·") if dated else ""
+        if " ago" in date:
+            date = ""  # relative: left in the snippet for the usual resolver
+        text = snippet.text() if snippet else ""
+        if date and dated is not None:
+            text = text.replace(dated.text(), " ", 1)
+        out.append((_yahoo_target(link.attributes.get("href") or ""), title.text(), text,
+                    date))
     return out
 
 
@@ -298,14 +307,14 @@ def _door_search(name, query, *, max_items=8, cache=None, diagnostics=None):
             rest_door(name)
             return []
         rows, seen, rejected = [], set(), []
-        for target, title, snippet in found:
+        for target, title, snippet, date in found:
             parsed = urlsplit(target)
             title, snippet = " ".join(title.split()), " ".join(snippet.split())
             if (parsed.scheme not in {"http", "https"} or not parsed.hostname
                     or target in seen or len(title) < 10):
                 continue
             row = {"title": title[:300], "url": target, "snippet": snippet[:600],
-                   "engine": "web-" + engine, "publishedDate": "", "cached": False}
+                   "engine": "web-" + engine, "publishedDate": date, "cached": False}
             seen.add(target)
             if not constrained(query, row):
                 # Off-topic for this query, but a real URL from a page that was

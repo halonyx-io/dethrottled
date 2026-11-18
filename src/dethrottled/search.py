@@ -979,6 +979,7 @@ def browser_drive(payload: dict, *, timeout: int | None = None) -> dict:
 # directly with its own pacing and rest (discovery.door_search).
 SUPPLEMENT_WAIT_SECONDS = float(os.environ.get("DETHROTTLED_SUPPLEMENT_WAIT", "1.0"))
 SUPPLEMENT_EVERY = int(os.environ.get("DETHROTTLED_SUPPLEMENT_EVERY", "3"))
+FAST_GRACE_SECONDS = float(os.environ.get("DETHROTTLED_FAST_GRACE", "0.3"))
 INDEX_DOORS = tuple(d.strip() for d in os.environ.get(
     "DETHROTTLED_INDEX_DOORS", "yahoo,bing").split(",") if d.strip() in {"bing", "yahoo"})
 GOOGLE_LAST_RESORT = os.environ.get("DETHROTTLED_GOOGLE_LAST_RESORT", "1") == "1"
@@ -1338,10 +1339,14 @@ def search(query: str, *, max_items: int = SEARCH_MENU_LIMIT, categories: str = 
                 # SUPPLEMENT_WAIT_SECONDS after the search began (fast: not at
                 # all once the chain has answered). 2 of 8 measured searches
                 # waited 0.4-0.6 s on one slow supplement (18 Nov 2026).
+                # fast waits FAST_GRACE_SECONDS past the chain's answer: Yahoo
+                # (its dates) landed 50-440 ms after DDG on 6 of 8 queries, so
+                # with no grace its dates came and went (Nyx: 7/8 vs 0/8).
                 if wait_until is None:
-                    grace = (0.0 if profile == "fast" and completed.get("web")
-                             else SUPPLEMENT_WAIT_SECONDS)
-                    wait_until = max(started + grace, time.time())
+                    if profile == "fast" and completed.get("web"):
+                        wait_until = time.time() + FAST_GRACE_SECONDS
+                    else:
+                        wait_until = max(started + SUPPLEMENT_WAIT_SECONDS, time.time())
                 completed[name] = task.result(timeout=max(0.01, wait_until - time.time()))
             else:
                 completed[name] = task.result()

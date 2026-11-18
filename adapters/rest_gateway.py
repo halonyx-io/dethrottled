@@ -256,6 +256,10 @@ async def dispatch(path: str, request: Request):
                     type(chars) is not int or not 500 <= chars <= 120000):
                 return JSONResponse({'error': 'invalid research limits'}, status_code=400)
     elif route in FETCH_PATHS | {'/site/crawl'}:
+        if 'urls' not in payload and isinstance(payload.get('url'), str):
+            # {"url": "..."} for one page, as the API and MCP accept (1.9.4).
+            payload = {**{k: v for k, v in payload.items() if k != 'url'},
+                       'urls': [payload['url']]}
         urls = payload.get('urls')
         if not isinstance(urls, list) or not 1 <= len(urls) <= MAX_URLS:
             return JSONResponse({'error': 'invalid URLs'}, status_code=400)
