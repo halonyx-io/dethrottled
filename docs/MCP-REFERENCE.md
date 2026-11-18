@@ -236,13 +236,14 @@ Discover and retain linked/sitemap sources within one site and report coverage.
 
 | Argument | Type/choices | Required/default |
 |---|---|---|
-| `urls` | list[str] | required |
+| `urls` | list[str] \| None | None |
 | `max_pages` | Annotated[int, Field(ge=1, le=50)] | 10 |
 | `max_depth` | Annotated[int, Field(ge=0, le=5)] | 2 |
 | `path_prefix` | str | '/' |
 | `render` | Literal['auto', 'always', 'never'] | 'auto' |
 | `mode` | Literal['crawl', 'map'] | 'crawl' |
 | `max_discovery_requests` | Annotated[int, Field(ge=1, le=20)] | 5 |
+| `url` | str | '' |
 ## corpus_search
 
 Search public evidence. Broad support includes warned single-model candidates.

@@ -245,10 +245,10 @@ Capabilities `request_contracts` derives methods, accepted body field names,
 required fields and query parameter names from the actual core OpenAPI schema.
 For full types/defaults/constraints use the linked `/openapi.json` or generated
 HTTP reference. REST research requires `question`; search requires `query`;
-corpus search is GET with `q`; fetch/crawl/job submission require `urls`;
-document reads require `document_id`; job polling requires `job_id`. MCP tool
-schemas remain authoritative for MCP argument names. No new REST aliases were
-added to conceal these differences.
+corpus search is GET with `q`; fetch, crawl and job submission take `urls` (a
+list), or `url` for a single page (since 1.9.5 on REST; the API and MCP since
+1.9.4); document reads require `document_id`; job polling requires `job_id`. MCP
+tool schemas remain authoritative for MCP argument names.
 
 ## Source selection and field extraction
 

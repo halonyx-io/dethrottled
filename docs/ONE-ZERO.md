@@ -1,5 +1,9 @@
 # Dethrottled 1.0 release gates
 
+> Historical release record: this describes 1.0 as released (Crawl4AI renderer,
+> SearXNG Yahoo/Yandex supplements). Current behaviour is in the
+> [current guides](README.md).
+
 Dethrottled 1.0 gives an agent one path from a question to
 inspectable web evidence, with browser control when ordinary reading is
 insufficient. The default Compose stack works without keys or a host-specific setup file.

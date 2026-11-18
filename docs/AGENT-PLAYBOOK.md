@@ -81,7 +81,7 @@ No automatic DDG pagination fills that menu. Fewer usable results is normal.
 |---|---|
 | `query` | State the actual information need; refine around a missing fact instead of requesting a huge menu |
 | `limit` | 1–15 displayed choices; changing this is not a promise of more upstream searches |
-| `profile="fast"` | One round of requests (about the time of one search engine): web chain, plus Yahoo if it is already in; no supplement wait, no neural rerank. Dates only when Yahoo answered |
+| `profile="fast"` | One round of requests (about 0.7-0.9 s on the server; add your network): web chain, plus Yahoo if it answers within 0.3 s of it (its dates); no Yandex/Mwmbl, no neural rerank |
 | `profile="web"` (default) or `"balanced"` (same) | Web chain plus Yahoo beside it (dates for DDG's rows) and Yandex/Mwmbl supplements, waited for up to 1 s; one supplement after every three primary rows |
 | `profile="thorough"` | Also Bing's page, and waits for every supplement |
 | `profile="news"` | Dated news engines first (DuckDuckGo News, Google News, Qwant News, Reuters, Bing News), then web. Ordered fresh (within a week), undated, older, then front pages, social posts and headline roundups; at most two leading places per site. A SearXNG engine that missed the time cap is listed as `capped` in its attempt, with status `degraded`. Reuters articles usually cannot be read here (DataDome); cite them or read another outlet's report |
@@ -283,7 +283,7 @@ and connected server control which fields are supported. Framework `/docs` and
 | `POST /extract` | Compatibility alias for fetch |
 | `POST /extract-with-links` | `extract_with_links` |
 | `POST /search-and-fetch` | `search_and_fetch` |
-| `POST /search-and-extract` | Compatibility alias for combined search/read |
+| `POST /search-and-extract` | Deprecated alias of `/search-and-fetch`; still works |
 | `POST /research` | `research` |
 | `POST /drive` | `drive` |
 | `POST /site/crawl` | `crawl_site` |

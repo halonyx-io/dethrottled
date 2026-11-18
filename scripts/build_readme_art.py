@@ -157,9 +157,9 @@ def escalation(fonts):
         ("01", "Plain HTTP", ["Static pages, PDFs and", "files usually stop here."]),
         ("02", "TLS impersonation", ["A browser-grade handshake", "for sites that refuse",
                                      "plain clients."]),
-        ("03", "JavaScript render", ["Headless Chromium. Waits", "for text to settle and",
-                                     "scrolls endless feeds."]),
-        ("04", "Real browser", ["Headed Chromium clears", "challenges, opens collapsed",
+        ("03", "JavaScript render", ["Chrome renders the page,", "waits for text to settle",
+                                     "and scrolls endless feeds."]),
+        ("04", "Real browser", ["Headed Chrome clears", "challenges, opens collapsed",
                                 "sections, waits out loaders."]),
     ]
     width, gap, base = 262, 40, 352

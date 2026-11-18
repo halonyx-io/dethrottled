@@ -21,9 +21,9 @@ Names are the MCP tools; the HTTP route does the same job on the raw API
 
 | You need | MCP tool | HTTP route | Notes |
 |---|---|---|---|
-| Sources for a question | `search` | `POST /v2/search` | Start with `limit` 5–10; at most 15 come back. Use `profile` `news` or `academic` when it fits, `fast` when one quick round is enough |
+| Sources for a question | `search` | `POST /v2/search` | Start with `limit` 5–10; at most 15 come back. Profiles: `web` (default), `fast` for one quick round, `thorough` to wait for every engine, `news`, `academic` |
 | The contents of a known URL | `fetch` | `POST /fetch` | Takes `urls`, a list (up to 10); `url` works for one page. Add `focus` to get only the relevant passages |
-| Several angles, with citations | `research` | `POST /research` | Returns an evidence bundle and its gaps, not an answer; typically 10–20 s |
+| Several angles, with citations | `research` | `POST /research` | Returns an evidence bundle and its gaps, not an answer; typically 5–20 s |
 | Search and read in one step | `search_and_fetch` | `POST /search-and-fetch` | A quick look; `research` is better for real questions |
 | A page's text plus its outbound links | `extract_with_links` | `POST /extract-with-links` | |
 | Exact values from HTML | `fetch` with `selectors` | `POST /fetch` | CSS `selector`, optional `attribute` and `all` |
@@ -32,7 +32,7 @@ Names are the MCP tools; the HTTP route does the same job on the raw API
 | To check OCR, a chart or a table | `view_document_image` | `POST /documents/image` | Source pixels for a retained PDF or image |
 | Whether you already have something | `document_status` | `POST /documents/status` | Your retained evidence by URL or `document_id`; no network read |
 | Something you read before | `corpus_search` | `GET /corpus/search?q=...` | Searches past public reads; `corpus_stats` (`GET /corpus/stats`) for counts |
-| URLs within one site | `crawl_site` with `mode` `map` | `POST /site/crawl` | Lists candidates; fetch the ones you need |
+| URLs within one site | `crawl_site` with `mode` `map` | `POST /site/crawl` | `url` or `urls`; lists candidates, fetch the ones you need |
 | Many slow reads in the background | `start_fetch_job`, `read_fetch_job` | `POST /jobs/fetch`, `POST /jobs/read` | Poll with the returned cursor; `cancel_fetch_job` and `resume_fetch_job` (`/jobs/cancel`, `/jobs/resume`) manage it |
 | To click, type, scroll or log in | `drive` | `POST /drive` | See "Drive a browser" below |
 | What this installation can do | `capabilities`, `status`, `ready`, `stats` | `GET /v2/capabilities`, `/v2/status`, `/ready`, `/stats` | For configuring or diagnosing, not every task |
@@ -41,8 +41,9 @@ Names are the MCP tools; the HTTP route does the same job on the raw API
 
 - MCP `fetch` returns `concise` responses by default; HTTP `/fetch` returns
   `detailed` unless you send `"response_format": "concise"`. Send it.
-- HTTP `/fetch` takes a list: `{"urls": ["https://..."]}`, and returns one row
-  per URL in order.
+- HTTP `/fetch` takes a list, `{"urls": ["https://..."]}`, or one page as
+  `{"url": "https://..."}`, on the raw API and the authenticated REST adapter alike.
+  It returns one row per URL in order.
 - Corpus search is `query` over MCP and `q` over HTTP.
 - Search diagnostics: MCP `search` with `diagnostics=true`, or HTTP
   `POST /v2/search`. The older `POST /search` returns a bare array and takes no
@@ -91,9 +92,11 @@ Names are the MCP tools; the HTTP route does the same job on the raw API
 
 ## Dates
 
-- Search rows: `published_at` is a date the search provider reported. `date_hint`
-  is an unverified lead from snippet text; for "3 days ago" it also carries
-  `resolved`, `precision` and `observed_at`.
+- Search rows: `published_at` is a date the search engine itself reported (Yahoo's
+  date, which DuckDuckGo's copy of the same page inherits, or a news engine's).
+  `date_hint` is an unverified lead from snippet text; for "3 days ago" it also
+  carries `resolved`, `precision` and `observed_at`. A row only DuckDuckGo found
+  usually has no date: its results show none.
 - Fetched pages: `published` with `date_source` `page` is the date the page itself
   declares.
 - `date_hint_rejected` means a date was impossible or contradicted and was not
@@ -115,6 +118,10 @@ Names are the MCP tools; the HTTP route does the same job on the raw API
 - `engines` lists every search engine that found a result. Several engines agreeing
   is a stronger lead than one, but DuckDuckGo, Bing and Yahoo largely share one
   index, so their agreement is weaker than agreement with Yandex or Mwmbl.
+- `profile` `fast` is one quick round: about as fast as `web` or faster, with no
+  reranking and no Yandex or Mwmbl. It waits only 0.3 s for Yahoo, so when Yahoo
+  is slow a `fast` search can come back with few or no dates; use `web` when dates
+  matter.
 - Search keeps working when one engine blocks the server: it moves on to the next
   route by itself. You do not need to pick engines; leave `engines` unset.
 - A row with `destination.inferred: true` has a URL matched from another engine,
@@ -126,7 +133,8 @@ Names are the MCP tools; the HTTP route does the same job on the raw API
 - With diagnostics on (see above), check `outcome` and `degraded`: an empty
   result during an upstream outage is not "nothing exists". `status` reports
   `degraded` only when an engine was seen failing recently, not when the server
-  has merely been idle.
+  has merely been idle, and `initializing` before its first search after a
+  restart.
 - Respect cooldowns and `Retry-After`. Use `fresh` or `cache_mode` only when you
   need a new read; a cache hit says nothing about whether the source changed.
 
@@ -148,7 +156,9 @@ and permission, and use `operation_id` so a retried call is not performed twice.
 
 ## Larger jobs
 
-- A long list of URLs from a script: [DPR](docs/DPR.md) over HTTP or the CLI.
+- A long list of URLs from a script: [DPR](docs/DPR.md) over HTTP or the CLI. It is
+  the lightweight path (lean rows, durable jobs); its `resolve` turns one search
+  into the first usable page.
 - Field extraction details, PDF pages, OCR and spreadsheets:
   [API workflows](docs/API.md).
 - Every tool, field and switch: [client playbook](docs/AGENT-PLAYBOOK.md),

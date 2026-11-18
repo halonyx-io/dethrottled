@@ -52,7 +52,8 @@ application settings need an `environment` entry in a local override. Inspect
 | `DETHROTTLED_CHEAP_DISCOVERY` | `1` in Compose | Static DDG Lite probe before browser fallback; standalone default 0 |
 | `DETHROTTLED_INDEX_DOORS` | `yahoo,bing` | Result pages read directly, in order, when DDG Lite refuses or answers thinly; each is paced and rested on its own for half an hour after a refusal or decoy page. Empty turns them off |
 | `DETHROTTLED_GOOGLE_LAST_RESORT` | `1` | Ask Google through the headed browser only when every other web route gave nothing. `0` turns it off |
-| `DETHROTTLED_SUPPLEMENT_WAIT` | `1.0` | Seconds from the start of a search that supplements (Yahoo, Yandex, Mwmbl) are waited for; later ones are dropped for that search and reported `capped`. `thorough` waits for all; `fast` takes only those already in |
+| `DETHROTTLED_SUPPLEMENT_WAIT` | `1.0` | Seconds from the start of a search that supplements (Yahoo, Yandex, Mwmbl) are waited for; later ones are dropped for that search and reported `capped`. `thorough` waits for all; `fast` waits `DETHROTTLED_FAST_GRACE` after the web chain |
+| `DETHROTTLED_FAST_GRACE` | `0.3` | `fast`: seconds after the web chain answers that Yahoo's page (its dates) is still waited for |
 | `DETHROTTLED_SUPPLEMENT_EVERY` | `3` | One novel supplement row after every N primary rows (0: all supplements after the primary rows, as before 1.9.2) |
 | `DETHROTTLED_STATIC_MIN_CHARS` | `80` | A short page with no sign of JavaScript-built content (no app markers, at most three external scripts, little inline script) is accepted from plain HTTP/TLS at this many characters instead of going to the browser |
 | `DETHROTTLED_DIRECT_DOORS` | `1` | `0` turns off the direct Bing/Yahoo page reads entirely (doors and supplements) |
@@ -103,7 +104,7 @@ through a local override:
 |---|---|---|
 | `DETHROTTLED_CACHE_MAX_BYTES` | `536870912` | API: cache footprint ceiling; oldest rows are evicted past 90% and compacted |
 | `DETHROTTLED_CACHE_MAINTENANCE_EVERY` | `200` | API: writes between expiry/size maintenance runs; `0` disables automatic runs |
-| `DETHROTTLED_BROWSER_IDLE_SECONDS` | `300` | browser worker: close the separate crawl browser when idle; `0` keeps it warm |
+| `DETHROTTLED_BROWSER_IDLE_SECONDS` | `900` | browser worker: close the separate render browser after this many idle seconds; `0` keeps it warm. A cold start adds about 2 s to the next rendered read; keeping it open costs about 300-500 MB |
 | `DETHROTTLED_MEMORY_PRESSURE` | `1` | browser worker: ask Chrome to release caches after crawl/drive; `0` disables |
 | `MCP_TOOL_PROFILE` | `full` | MCP adapter: `core` exposes six high-use tools; `full` exposes all 20 |
 | `DETHROTTLED_SEARCH_FANOUT` | `0` | API: one extra intent-aware query variant; extra upstream requests |

@@ -78,8 +78,8 @@ and their provenance. A copy at a different address is listed under the row's
 `duplicates` (`url`, `provider`, `reason`); `deduplication` counts the merges. A decoy bucket is dropped only when another provider proves the
 query can be echoed.
 
-`profile="fast"` is one round of requests: the web chain, plus Yahoo's page only if
-it has already answered, with no supplement wait and no neural rerank. `web` (the
+`profile="fast"` is one round of requests: the web chain, plus Yahoo's page if it
+answers within `DETHROTTLED_FAST_GRACE` (0.3 s) of the chain, and no neural rerank. `web` (the
 default; `balanced` is the same) adds Yahoo's page beside DDG, whose copies of the
 same URLs lend DDG's rows their dates, and the Yandex and Mwmbl supplements, waited
 for at most `DETHROTTLED_SUPPLEMENT_WAIT` (1 s). `thorough` also reads Bing's page and
@@ -124,7 +124,7 @@ curl -sS http://127.0.0.1:8787/fetch \
   -d '{"urls":["https://docs.python.org/3/library/sqlite3.html"],"focus":"in-memory database","max_chars":8000}'
 ```
 
-`/fetch` and `/extract` read one to ten URLs. `format` is `text`, `links` or
+`/fetch` reads one to ten URLs (`/extract` is a deprecated alias). `format` is `text`, `links` or
 `html`; `/extract-with-links` retains links. REST accepts legacy `raw`/`links`
 booleans; MCP uses canonical `format`. `focus` requires text format.
 
@@ -232,7 +232,7 @@ are not silently indexed into the corpus or counted as clean evidence.
 
 ## Combine discovery and evidence
 
-`POST /search-and-fetch` (alias `/search-and-extract`) ranks/selects before
+`POST /search-and-fetch` (deprecated alias `/search-and-extract`) ranks/selects before
 reading and returns search metadata with each extraction outcome. OCR controls
 are explicit; it is not a general prohibition on OCR in combined reads.
 
@@ -275,8 +275,10 @@ another identity with raw internal `evidence_namespace`/`public_only` fields.
 
 `/health` proves liveness. `/ready` reports recent real-search observations,
 separating primary discovery from supplements/news. Status reads issue **no upstream
-search probes**. Cold or stale observations are `unknown`; successful cached results
-do not establish fresh upstream availability. The observation window is 60 seconds.
+search probes**. Until the first search after start-up, `status` is `initializing`
+(no evidence yet, not an outage). An observation is current for 60 seconds and still
+stands, marked stale, for 30 minutes; only a provider seen failing makes `status`
+`degraded`. Successful cached results do not establish fresh upstream availability.
 Use one normal search to obtain current evidence, rather than polling readiness.
 `ddg_family` distinguishes active cooldown from recovery due; timer expiry does not
 establish recovery. Worker liveness is reported separately;
@@ -370,12 +372,12 @@ request. Use the diagnostic envelope to inspect empty responses.
 
 ## Extract named HTML fields
 
-`/fetch` and its `/extract` alias accept `selectors`, a dictionary of named CSS
+`/fetch` (and its deprecated `/extract` alias) accepts `selectors`, a dictionary of named CSS
 field specifications. This is deterministic text/attribute extraction, not JSON
 Schema inference or an LLM. It works for non-agent applications too.
 
 ```sh
-curl -sS http://127.0.0.1:8787/extract \
+curl -sS http://127.0.0.1:8787/fetch \
   -H 'Content-Type: application/json' \
   -d '{"urls":["https://example.org"],"response_format":"concise","selectors":{"title":{"selector":"title"},"destinations":{"selector":"a[href]","attribute":"href","all":true,"required":false,"max_matches":10}}}'
 ```
