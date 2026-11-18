@@ -88,7 +88,7 @@ dethrottled stack status
 
 ### Search
 
-One query goes to DuckDuckGo first; when it refuses, Bing's and then Yahoo's own
+One query goes to DuckDuckGo first; when it refuses, Yahoo's and then Bing's own
 result pages are read directly, with Google in the real browser as the last
 resort. Yahoo's page also runs beside DuckDuckGo and lends its results their dates;
 Yandex (through a bundled SearXNG) and Mwmbl add sources from indexes of their own, and everything comes back as a compact menu of at most fifteen unique
@@ -238,7 +238,7 @@ A real `fetch` response, trimmed:
 Read [AGENTS.md](https://github.com/halonyx-io/dethrottled/blob/main/AGENTS.md) before changing code. It sets out the rules
 contributors (human or AI) follow here, and the checks a change must pass.
 
-This checkout is **1.9.3**. A running service reports its own version at `/health`.
+This checkout is **1.9.4**. A running service reports its own version at `/health`.
 
 ## License
 

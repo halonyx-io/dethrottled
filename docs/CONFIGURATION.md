@@ -50,7 +50,7 @@ application settings need an `environment` entry in a local override. Inspect
 | `DETHROTTLED_AUTO_WORKERS` | `1` in Compose | Discover started local speech/layout/format workers; explicit URLs or `off` take precedence |
 | `DETHROTTLED_BIND`, `DETHROTTLED_PORT` | `127.0.0.1`, `8787` | Host API publication |
 | `DETHROTTLED_CHEAP_DISCOVERY` | `1` in Compose | Static DDG Lite probe before browser fallback; standalone default 0 |
-| `DETHROTTLED_INDEX_DOORS` | `bing,yahoo` | Result pages read directly, in order, when DDG Lite refuses or answers thinly; each is paced and rested on its own for half an hour after a refusal or decoy page. Empty turns them off |
+| `DETHROTTLED_INDEX_DOORS` | `yahoo,bing` | Result pages read directly, in order, when DDG Lite refuses or answers thinly; each is paced and rested on its own for half an hour after a refusal or decoy page. Empty turns them off |
 | `DETHROTTLED_GOOGLE_LAST_RESORT` | `1` | Ask Google through the headed browser only when every other web route gave nothing. `0` turns it off |
 | `DETHROTTLED_SUPPLEMENT_WAIT` | `1.0` | Seconds from the start of a search that supplements (Yahoo, Yandex, Mwmbl) are waited for; later ones are dropped for that search and reported `capped`. `thorough` waits for all; `fast` takes only those already in |
 | `DETHROTTLED_SUPPLEMENT_EVERY` | `3` | One novel supplement row after every N primary rows (0: all supplements after the primary rows, as before 1.9.2) |

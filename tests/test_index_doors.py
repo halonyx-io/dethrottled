@@ -303,3 +303,19 @@ def test_a_capped_supplement_does_not_degrade_the_search(monkeypatch):
     rows, meta = fs.search(QUERY, max_items=8, profile="web")
     assert meta["per_source"]["yahoo"] == "capped"
     assert meta["discovery"]["degraded"] is False
+
+
+def test_fetch_accepts_url_for_one_page():
+    from dethrottled.api_models import FetchBody
+    assert FetchBody(url="https://example.org/a").urls == ["https://example.org/a"]
+    assert FetchBody(urls=["https://example.org/a"]).urls == ["https://example.org/a"]
+
+
+def test_one_engine_is_named_once():
+    from dethrottled import consensus
+    row = {"url": "https://example.org/a", "engine": "web-tls-yahoo",
+           "discovery": [{"provider": "web"}, {"provider": "yahoo"},
+                         {"provider": "searxng:yandex"}]}
+    consensus.annotate_consensus([row])
+    assert row["engines"] == ["web-tls-yahoo", "searxng:yandex"]
+    assert row["engines_consensus"] == 2

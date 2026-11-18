@@ -34,11 +34,12 @@ Find pages. Returns ranked results with url, title and snippet.
 | `max_age` | float \| None | None |
 ## fetch
 
-Read pages you already have URLs for.
+Read pages you already have URLs for: urls=[...] (one or more); url="..."
+is accepted for a single page.
 
 | Argument | Type/choices | Required/default |
 |---|---|---|
-| `urls` | list[str] | required |
+| `urls` | list[str] \| None | None |
 | `max_chars` | Annotated[int, Field(ge=1, le=MAX_CHARS)] | 12000 |
 | `format` | Literal['text', 'links', 'html'] | 'text' |
 | `render` | Literal['auto', 'always', 'never'] | 'auto' |
@@ -61,6 +62,7 @@ Read pages you already have URLs for.
 | `sheet` | str | '' |
 | `max_cell_chars` | Annotated[int \| None, Field(ge=1, le=1000000)] | None |
 | `selectors` | dict[str, dict[str, Any]] \| None | None |
+| `url` | str | '' |
 ## extract_with_links
 
 Read public URLs while retaining resolved outbound links.

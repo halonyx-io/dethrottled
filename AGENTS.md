@@ -40,7 +40,7 @@ for sets the task; this file sets the house rules.
   key, model API or paid service. Optional providers stay explicit opt-ins. Do
   not reintroduce a hosted-reader fallback.
 - **Search is a compact menu.** Ten choices from the web chain (DDG Lite, then
-  Bing's and Yahoo's pages read directly, then the browser, Google last), at most
+  Yahoo's and Bing's pages read directly, then the browser, Google last), at most
   three per supplementary engine (Yahoo, Yandex, Mwmbl) and six supplements in
   total, one after every three primary rows, fifteen unique URLs. DDG, Bing and Yahoo share mostly one index: they are
   alternative doors, not independent votes. No search route may need an API key. Changing these
