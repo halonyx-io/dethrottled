@@ -5,7 +5,7 @@
 
 services:
   pdf-worker:
-    image: dethrottled-dnb:${DETHROTTLED_VERSION:-1.9.2}
+    image: dethrottled-dnb:${DETHROTTLED_VERSION:-1.9.3}
     user: "10002:10002"
     restart: unless-stopped
     # PID 1 here is Python, which does not reap children. Without an init process every browser helper that
