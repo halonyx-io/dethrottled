@@ -209,3 +209,16 @@ def test_connected_slow_body_retains_read_allowance(monkeypatch, transport):
         httpd.shutdown()
         httpd.server_close()
         thread.join(timeout=1)
+
+
+def test_static_page_rule_accepts_text_pages_and_rejects_app_shells():
+    from dethrottled import fetch as f
+    page = ("<html><head><title>Example Domain</title><script src=/s.js></script></head>"
+            "<body><h1>Example Domain</h1><p>" + "This domain is for use in examples. " * 4
+            + "</p></body></html>")
+    assert f._static_page(page, 150)
+    assert not f._static_page(page.replace("<body>", '<body><div id="root"></div>'), 150)
+    inline = "<script>" + "x=1;" * 600 + "</script></head>"
+    assert not f._static_page(page.replace("</head>", inline), 150)
+    assert not f._static_page(page + "<script src=a.js></script>" * 4, 150)
+    assert not f._static_page(page + " " * 5000, 150)  # far more markup than text
