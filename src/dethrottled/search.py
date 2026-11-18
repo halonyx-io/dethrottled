@@ -20,6 +20,7 @@ import re
 import threading
 import time
 from collections import deque
+from concurrent.futures import TimeoutError as FuturesTimeout
 from pathlib import Path
 from urllib.parse import parse_qs, quote_plus, urlparse
 
@@ -121,23 +122,29 @@ def drop_decoy_buckets(rows: list, query: str) -> tuple:
     return [row for row in rows if result_family(row) not in dropped], reports
 
 
+# The web chain's other doors answer in DDG's place: their rows are primary
+# results with DDG's budget, not three-row supplements (1.9.1 capped a Yahoo
+# answer at three rows when DDG refused, halving the menu).
+WEB_CHAIN_FAMILIES = {"ddg", "tls-bing", "tls-yahoo", "google"}
+
+
 def bounded_results(rows, limit=SEARCH_MENU_LIMIT, *, primary_limit=PRIMARY_SEARCH_LIMIT):
-    """One DDG-family budget; small supplements, canonical deduplication."""
+    """One budget per web-chain family; small supplements, canonical deduplication."""
     out, counts, seen, supplements = [], {}, {}, 0
     for row in rows:
         key = url_key(row.get("url", ""))
         family = result_family(row)
-        cap = primary_limit if family == "ddg" else SUPPLEMENT_SEARCH_LIMIT
+        cap = primary_limit if family in WEB_CHAIN_FAMILIES else SUPPLEMENT_SEARCH_LIMIT
         if key and key in seen:
             merge_into(seen[key], row)
             continue
         if (not key or counts.get(family, 0) >= cap
-                or (family != "ddg" and supplements >= 6)):
+                or (family not in WEB_CHAIN_FAMILIES and supplements >= 6)):
             continue
         row = dict(row)
         seen[key] = row
         counts[family] = counts.get(family, 0) + 1
-        supplements += family != "ddg"
+        supplements += family not in WEB_CHAIN_FAMILIES
         out.append(row)
         if len(out) >= min(limit, SEARCH_MENU_LIMIT):
             break
@@ -970,6 +977,8 @@ def browser_drive(payload: dict, *, timeout: int | None = None) -> dict:
 
 # Front doors to the same (mostly Bing) index after DuckDuckGo, each called
 # directly with its own pacing and rest (discovery.door_search).
+SUPPLEMENT_WAIT_SECONDS = float(os.environ.get("DETHROTTLED_SUPPLEMENT_WAIT", "1.0"))
+SUPPLEMENT_EVERY = int(os.environ.get("DETHROTTLED_SUPPLEMENT_EVERY", "3"))
 INDEX_DOORS = tuple(d.strip() for d in os.environ.get(
     "DETHROTTLED_INDEX_DOORS", "bing,yahoo").split(",") if d.strip() in {"bing", "yahoo"})
 GOOGLE_LAST_RESORT = os.environ.get("DETHROTTLED_GOOGLE_LAST_RESORT", "1") == "1"
@@ -1258,7 +1267,7 @@ def search(query: str, *, max_items: int = SEARCH_MENU_LIMIT, categories: str = 
             seen[key] = row
             merged.append(row)
             added += 1
-        if per_source.get(tag) != "failed":
+        if isinstance(per_source.get(tag, 0), int):  # not "failed" or "capped"
             per_source[tag] = per_source.get(tag, 0) + added
 
     browser_diagnostics = {}
@@ -1284,12 +1293,16 @@ def search(query: str, *, max_items: int = SEARCH_MENU_LIMIT, categories: str = 
         tasks["mwmbl"] = _SOURCE_POOL.submit(
             mwmbl_search, query, max_items=SUPPLEMENT_SEARCH_LIMIT, cache=cache,
             diagnostics=report)
+    def door_supplement(door, report):
+        # The whole first page: its rows lend dates to DDG's copies of the
+        # same URLs (DDG Lite snippets carry none); at most three novel rows
+        # join the menu. Named as a supplement, not a web-chain answer.
+        return [dict(row, engine=door) for row in door_search(
+            door, query, max_items=PRIMARY_SEARCH_LIMIT, cache=cache, diagnostics=report)]
     for door in ("bing", "yahoo"):
         if door in sources:
             report = source_reports["supplements"].setdefault(door, {})
-            tasks[door] = _SOURCE_POOL.submit(
-                door_search, door, query, max_items=SUPPLEMENT_SEARCH_LIMIT, cache=cache,
-                diagnostics=report)
+            tasks[door] = _SOURCE_POOL.submit(door_supplement, door, report)
     if "news" in sources:
         source_reports["bing-news"] = {}
         tasks["bing-news"] = _SOURCE_POOL.submit(
@@ -1316,9 +1329,26 @@ def search(query: str, *, max_items: int = SEARCH_MENU_LIMIT, categories: str = 
             tasks[provider] = _SOURCE_POOL.submit(
                 providers.search, provider, query, min(max_items, SUPPLEMENT_SEARCH_LIMIT), report)
     completed = {}
-    for name, task in tasks.items():
+    supplement_names = {"yandex", "mwmbl", "bing", "yahoo"}
+    wait_until = None
+    for name, task in sorted(tasks.items(), key=lambda item: item[0] in supplement_names):
         try:
-            completed[name] = task.result()
+            if name in supplement_names and profile != "thorough":
+                # The web chain is waited for in full; supplements only until
+                # SUPPLEMENT_WAIT_SECONDS after the search began (fast: not at
+                # all once the chain has answered). 2 of 8 measured searches
+                # waited 0.4-0.6 s on one slow supplement (18 Nov 2026).
+                if wait_until is None:
+                    grace = (0.0 if profile == "fast" and completed.get("web")
+                             else SUPPLEMENT_WAIT_SECONDS)
+                    wait_until = max(started + grace, time.time())
+                completed[name] = task.result(timeout=max(0.01, wait_until - time.time()))
+            else:
+                completed[name] = task.result()
+        except FuturesTimeout:
+            completed[name] = []
+            per_source[name] = "capped"
+            source_reports["supplements"].get(name, {}).update(status="capped")
         except Exception as exc:
             completed[name] = []
             per_source[name] = "failed"
@@ -1345,13 +1375,34 @@ def search(query: str, *, max_items: int = SEARCH_MENU_LIMIT, categories: str = 
             add([row], tagged[id(row)])
     if "web" in completed:
         add(completed["web"], "web")
-    # Primary order stays intact. Alternate small supplements rather than
-    # letting one engine occupy all remaining slots of the 15-choice menu.
-    supplements = ("yandex", "mwmbl", "bing", "yahoo")
+    supplements = ("yandex", "mwmbl", "yahoo", "bing")
+    # A supplement's copy of a URL already listed merges into it (dates,
+    # provenance); only novel rows compete for the three supplement places.
+    for engine in supplements:
+        novel = []
+        for row in completed.get(engine, []):
+            if url_key(row.get("url", "")) in seen:
+                add([row], engine)
+            else:
+                novel.append(row)
+        if engine in completed:
+            completed[engine] = novel
+    primary_count = len(merged)
     for index in range(SUPPLEMENT_SEARCH_LIMIT):
         for engine in supplements:
             if engine in completed:
                 add(completed[engine][index:index + 1], engine)
+    if not news_policy and SUPPLEMENT_EVERY > 0:
+        # Supplements used to start at row eleven, after DDG's ten, so at any
+        # limit up to ten callers saw DDG alone. One now follows every
+        # SUPPLEMENT_EVERY primary rows; DDG's own top rows keep their order.
+        primary, extra = merged[:primary_count], merged[primary_count:]
+        mixed = []
+        for index, row in enumerate(primary, 1):
+            mixed.append(row)
+            if index % SUPPLEMENT_EVERY == 0 and extra:
+                mixed.append(extra.pop(0))
+        merged[:] = mixed + extra
     for name, rows in completed.items():
         if name not in {"web", *supplements} and not (
                 news_policy and name in {"searxng", "bing-news", "google-news", "reuters"}):

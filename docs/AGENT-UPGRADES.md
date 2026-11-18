@@ -51,7 +51,7 @@ When useful evidence is missing, read the promising choices, rewrite around the
 missing fact or choose the appropriate specialist profile. DDG is hard capped at
 ten across its acquisition routes; each supplementary engine gets three, with six
 supplements and fifteen unique choices total. Yandex/Mwmbl supplement the web chain by
-default; fast is the web chain only; the news profile leads with dated news engines inside
+default (Yahoo also runs beside DDG for dates); fast is one round of requests; the news profile leads with dated news engines inside
 the same caps. Research admits 24 unique candidates across facets and
 reads ten sources by default, up to twenty when requested. Drive snapshots/network lists are capped at ten; narrow selectors for more
 specific inspection. More providers do not guarantee

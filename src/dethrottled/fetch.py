@@ -284,6 +284,37 @@ SHELL_RENDER_TEXT = int(os.environ.get("DETHROTTLED_SHELL_RENDER_TEXT", "1200"))
 SHELL_TIERS = {"direct", "tls", "render"}
 
 
+STATIC_MIN_CHARS = int(os.environ.get("DETHROTTLED_STATIC_MIN_CHARS", "80"))
+_APP_MARKERS = re.compile(
+    r'id=["\'](?:root|app|__next|__nuxt|svelte|main-app)["\']|data-reactroot|ng-version|'
+    r'__NEXT_DATA__|__NUXT__|window\.__[A-Z_]+__\s*=|<noscript\b|<iframe\b', re.I)
+_INLINE_SCRIPT = re.compile(r"<script\b(?![^>]*\bsrc=)[^>]*>(.*?)</script>", re.I | re.S)
+
+
+def _static_page(html: str, chars: int) -> bool:
+    """No sign that JavaScript builds this page's content.
+
+    No framework or app-root marker, at most three external scripts and under
+    2,000 characters of inline script (analytics, not an app), and no more than
+    20 bytes of HTML per character of text already read. example.com (one
+    analytics script, 577 bytes for 156 characters) passes; script shells fail.
+    """
+    if not html or len(html) > 300_000 or _APP_MARKERS.search(html):
+        return False
+    external = len(re.findall(r"<script\b[^>]*\bsrc=", html, re.I))
+    inline = sum(len(body) for body in _INLINE_SCRIPT.findall(html))
+    return external <= 3 and inline < 2000 and len(html) <= 20 * max(chars, 1)
+
+
+def _is_block_text(candidate: dict, html: str) -> bool:
+    """A gate, login or challenge page: short and script-free, but not content."""
+    from . import challenges
+    from .content import gate_kind
+    text = candidate.get("text") or ""
+    return bool(gate_kind(candidate.get("title", ""), text, html)
+                or challenges.classify(html or text))
+
+
 def _looks_like_shell(name: str, candidate: dict, html) -> bool:
     """`html` is the page source, or its byte count when only that was kept."""
     # Judge the page's own text: an added metadata description must not lift a
@@ -1587,6 +1618,25 @@ def _fetch_and_extract(url: str, *, max_chars: int = 3500, timeout: int = DEFAUL
             _tier_stats[name] += 1
             return finish(candidate)
 
+        # A short page served with no script at all is complete: no browser can
+        # add to it (example.com: 26 words, sent to Chrome by the thin floor,
+        # 18 Nov 2026). Its whole-page text is kept, since main-content
+        # extraction kept 68 of its ~160 characters.
+        html_text = payload.get("html") if isinstance(payload.get("html"), str) else ""
+        if (name in {"direct", "tls"} and candidate.get("content_type") == "html"
+                and _static_page(html_text, candidate["chars"]) and not candidate.get("warnings")
+                and not _sites.advice(url) and not _is_block_text(candidate, html_text)):
+            from . import extract as _fx
+            whole = _fx.rendered_text(html_text).strip()
+            if len(whole) > candidate["chars"]:
+                candidate.update(text=whole, chars=len(whole))
+            if candidate["chars"] >= STATIC_MIN_CHARS:
+                candidate["extraction"] = {**candidate.get("extraction", {}),
+                                           "static_page": True}
+                attempt["outcome"] = "extracted"
+                reasons.append("%s:static_page/%d" % (name, candidate["chars"]))
+                _tier_stats[name] += 1
+                return finish(candidate)
         # Thin: keep it as a floor and let a later tier try to beat it, rather
         # than either discarding a real result or stopping on a teaser.
         attempt["outcome"] = "thin"

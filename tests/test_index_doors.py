@@ -42,6 +42,7 @@ class Response:
 
 @pytest.fixture(autouse=True)
 def fresh_doors(monkeypatch):
+    monkeypatch.setenv("DETHROTTLED_DIRECT_DOORS", "1")
     monkeypatch.setattr(discovery, "_DOOR_REST", {})
     monkeypatch.setattr(discovery, "_DOOR_NEXT", {})
 
@@ -244,3 +245,45 @@ def test_worker_reads_the_breadcrumb_domain():
     assert scope["_cite_host"]("https://www.learnomate.org \u203a PostgreSQL") == "learnomate.org"
     assert scope["_cite_host"]("2 years ago") == ""
     assert scope["_cite_host"]("") == ""
+
+
+# --- 1.9.2: Yahoo beside DDG, visible supplements, bounded waits ------------
+
+def _ddg(i):
+    return {"url": f"https://example.org/page-{i}", "title": f"Autovacuum tuning page {i}",
+            "snippet": "Tuning autovacuum thresholds in PostgreSQL databases.",
+            "engine": "web-tls-ddg-lite"}
+
+
+def test_yahoos_copy_lends_ddg_its_date_and_only_novel_rows_join(monkeypatch):
+    monkeypatch.setattr(fs, "web_search", lambda *a, **k: [_ddg(i) for i in range(10)])
+    monkeypatch.setattr(fs, "searxng", lambda *a, **k: [])
+    monkeypatch.setattr(discovery, "mwmbl_search", lambda *a, **k: [])
+    dated = [dict(_ddg(i), snippet="Oct 31, 2025 · Tuning autovacuum thresholds.",
+                  engine="web-tls-yahoo") for i in range(5)]
+    novel = [dict(_ddg(50), url="https://example.org/only-on-yahoo", engine="web-tls-yahoo")]
+    monkeypatch.setattr(discovery, "door_search", lambda name, query, **k: dated + novel)
+    rows, meta = fs.search(QUERY, max_items=15, profile="web")
+    first = next(r for r in rows if r["url"] == _ddg(0)["url"])
+    assert first["engine"] == "web-tls-ddg-lite" and "Oct 31, 2025" in (
+        first.get("publishedDate") or first.get("date_hint", {}).get("value", "")
+        or str(first.get("date_hint") or ""))
+    assert [r["engine"] for r in rows].count("yahoo") == 1  # the novel row only
+    assert rows[3]["engine"] == "yahoo"  # visible at small limits
+
+
+def test_a_door_answering_for_ddg_is_not_capped_at_three(monkeypatch):
+    rows = [dict(_ddg(i), engine="web-tls-yahoo") for i in range(7)]
+    assert len(fs.bounded_results(rows, 10)) == 7
+
+
+def test_a_slow_supplement_is_capped_not_waited_for(monkeypatch):
+    import time as _time
+    monkeypatch.setattr(fs, "SUPPLEMENT_WAIT_SECONDS", 0.2)
+    monkeypatch.setattr(fs, "web_search", lambda *a, **k: [_ddg(i) for i in range(3)])
+    monkeypatch.setattr(fs, "searxng", lambda *a, **k: _time.sleep(1.5) or [])
+    monkeypatch.setattr(discovery, "mwmbl_search", lambda *a, **k: [])
+    monkeypatch.setattr(discovery, "door_search", lambda *a, **k: [])
+    started = _time.monotonic()
+    rows, meta = fs.search(QUERY, max_items=8, profile="web")
+    assert _time.monotonic() - started < 1.0 and meta["per_source"]["yandex"] == "capped"

@@ -283,7 +283,8 @@ def test_news_profile_leads_with_news_engines_within_family_caps(monkeypatch):
 
 
     default, _ = fs.search("a current event", max_items=4, profile="web")
-    assert [row["engine"] for row in default[:4]] == ["web-browser-ddg-lite"] * 4
+    assert [row["engine"] for row in default[:4]] == ["web-browser-ddg-lite"] * 3 + [
+        "duckduckgo news"]  # the stubbed Yandex supplement, now at row four
 
 
 def test_explicit_news_fills_missing_source_slots():
@@ -328,8 +329,11 @@ def test_default_menu_preserves_ddg_then_alternates_bounded_supplements(monkeypa
         calls.append(('mwmbl', k['max_items'])) or [result('mwmbl', i) for i in range(3)]))
     monkeypatch.setattr(fs, 'bing_news', lambda *a, **k: pytest.fail('Not a news search'))
     menu, meta = fs.search('evidence')
-    assert [r['engine'] for r in menu] == ['web-ddg-lite'] * 10 + [
-        'yandex', 'mwmbl', 'yandex', 'mwmbl', 'yandex']
+    # One supplement after every three primary rows, so callers at small
+    # limits see them; DDG's own order is kept around them.
+    d = 'web-ddg-lite'
+    assert [r['engine'] for r in menu] == [d, d, d, 'yandex', d, d, d, 'mwmbl', d, d, d,
+                                           'yandex', d, 'mwmbl', 'yandex']
     assert sorted(calls) == [('mwmbl', 3), ('yandex', 3)]
     assert meta['policy']['automatic_pagination'] is False
     assert meta['per_source']['searxng'] == 3

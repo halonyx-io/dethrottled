@@ -17,11 +17,15 @@ from .content import constrained
 # Yandex through SearXNG and Mwmbl's keyless API, both independent of Bing's
 # index. SearXNG's Yahoo engine returned nothing on every live search (17 Nov
 # 2026) while Yahoo's own page answered, so Yahoo is now a direct door.
+# Yahoo runs beside DDG, not only after it: same (Bing) index, so most of
+# DDG's rows are on Yahoo's page too, and Yahoo's snippets carry the dates
+# DDG Lite's lack (0/80 DDG rows dated; 39/80 gain a date from Yahoo's copy,
+# 18 Nov 2026). fast takes Yahoo only if it is already in when DDG answers.
 SOURCE_PROFILES = {
-    "fast": ("web",),
-    "web": ("web", "yandex", "mwmbl"),
-    "balanced": ("web", "yandex", "mwmbl"),
-    "thorough": ("web", "yandex", "mwmbl"),
+    "fast": ("web", "yahoo"),
+    "web": ("web", "yahoo", "yandex", "mwmbl"),
+    "balanced": ("web", "yahoo", "yandex", "mwmbl"),
+    "thorough": ("web", "yahoo", "bing", "yandex", "mwmbl"),
     "news": ("web", "news"),
     "academic": ("web", "crossref", "openalex", "arxiv"),
 }
@@ -139,6 +143,7 @@ def tls_search(query, *, max_items=8, cache=None, diagnostics=None, worker=""):
 _DOOR_LOCK = threading.Lock()
 _DOOR_NEXT: dict = {}
 _DOOR_REST: dict = {}
+_DOOR_SESSIONS = threading.local()
 DOOR_REST_SECONDS = 1800
 
 
@@ -162,8 +167,18 @@ def _door_get(name: str, url: str, timeout: float = 4.0):
         _DOOR_NEXT[name] = max(time.monotonic(), _DOOR_NEXT.get(name, 0)) + 1.0
     if delay > 0:
         time.sleep(delay)
-    return requests.get_using(tls_requests.get, url, impersonate=TLS_IMPERSONATE,
-                              timeout=timeout)
+    # Cookies are kept: since 18 Nov 2026 Yahoo first answers 307 to a
+    # bot-verification step (/_bv/v.gif) that sets a cookie, and without it the
+    # search returns 500. One session per door per worker thread (sessions are
+    # not shared across threads), so the step is paid once, not per search.
+    # Every hop is still checked by netfilter.
+    sessions = getattr(_DOOR_SESSIONS, "by_door", None)
+    if sessions is None:
+        sessions = _DOOR_SESSIONS.by_door = {}
+    session = sessions.get(name)
+    if session is None:
+        session = sessions[name] = tls_requests.Session(impersonate=TLS_IMPERSONATE)
+    return requests.get_using(session.get, url, timeout=timeout)
 
 
 def _bing_target(href: str) -> str:
@@ -223,7 +238,36 @@ _DOORS = {
 }
 
 
+_INFLIGHT: dict = {}
+
+
 def door_search(name, query, *, max_items=8, cache=None, diagnostics=None):
+    """One direct front door (bing, yahoo); concurrent identical asks share one request."""
+    key = (name, query, max(1, min(max_items, 10)))
+    with _DOOR_LOCK:
+        shared = _INFLIGHT.get(key)
+        mine = shared is None
+        if mine:
+            shared = _INFLIGHT[key] = {"done": threading.Event()}
+    if not mine:
+        shared["done"].wait(10)
+        if diagnostics is not None:
+            diagnostics.update(shared.get("report", {}), shared_request=True)
+        return list(shared.get("rows", []))
+    report = {}
+    try:
+        rows = _door_search(name, query, max_items=max_items, cache=cache, diagnostics=report)
+        shared.update(rows=rows, report=report)
+        return rows
+    finally:
+        if diagnostics is not None:
+            diagnostics.update(report)
+        shared["done"].set()
+        with _DOOR_LOCK:
+            _INFLIGHT.pop(key, None)
+
+
+def _door_search(name, query, *, max_items=8, cache=None, diagnostics=None):
     """One direct front door (bing, yahoo). Refusals rest it for half an hour."""
     max_items = max(1, min(max_items, 10))
     diagnostics = diagnostics if diagnostics is not None else {}
@@ -231,6 +275,9 @@ def door_search(name, query, *, max_items=8, cache=None, diagnostics=None):
     attempt = {"engine": engine, "status": "unavailable", "count": 0}
     started = time.monotonic()
     try:
+        if os.environ.get("DETHROTTLED_DIRECT_DOORS", "1") == "0":
+            attempt["status"] = "not_configured"
+            return []
         if cache is not None:
             hit = cache.get("search", engine, query, max_items)
             if hit is not None:
